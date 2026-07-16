@@ -9,6 +9,10 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
+    // *.test.ts는 node --test로 직접 돌린다. node의 타입 스트리핑은 상대 경로에
+    // 확장자를 요구하는데 TS는 기본적으로 거부해서, 그 충돌을 여기서 푼다.
+    // noEmit이라 빌드 산출물에는 영향이 없다.
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",

@@ -1,6 +1,73 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { parseStory, StoryParseError } from "./story-format.ts";
+import { parseOutline, parseStory, StoryParseError } from "./story-format.ts";
+
+// Opus 4.8이 실제로 뱉은 출력. 손으로 지어낸 게 아니라 첫 호출의 원문이다.
+const REAL_OUTLINE = `@@TITLE@@ 지민이와 작은 공룡알
+@@SUMMARY@@ 공룡을 무서워하던 지민이가 길 잃은 아기 공룡을 스스로 도와주는 이야기.
+@@ACT@@ 기
+@@TEXT@@ 여섯 살 지민이는 공룡 그림책은 좋아하지만 큰 공룡은 무서워한다. 어느 날 놀이터 모래밭에서 반짝이는 작은 알 하나를 발견한다.
+@@ACT@@ 승
+@@TEXT@@ 알에서 조그만 아기 공룡이 태어나 지민이 뒤만 졸졸 따라다닌다.
+@@ACT@@ 전
+@@TEXT@@ 아기 공룡이 엄마를 찾아 울자, 지민이는 커다란 엄마 공룡이 다가오는 것을 보고 다리가 떨린다.
+@@ACT@@ 결
+@@TEXT@@ 지민이는 용기를 내 아기 공룡을 품에 안고 엄마 공룡 앞까지 걸어가 건네준다.
+`;
+
+describe("parseOutline", () => {
+  it("실제 모델 출력에서 제목·요약·4막을 뽑는다", () => {
+    const outline = parseOutline(REAL_OUTLINE);
+
+    assert.equal(outline.title, "지민이와 작은 공룡알");
+    assert.match(outline.summary, /공룡을 무서워하던/);
+    assert.deepEqual(
+      outline.acts.map((a) => a.act),
+      ["기", "승", "전", "결"],
+    );
+    assert.match(outline.acts[0].text, /놀이터 모래밭/);
+  });
+
+  it("막 순서가 뒤바뀌어 나와도 기승전결로 세운다", () => {
+    const outline = parseOutline(`@@TITLE@@ 무제
+@@ACT@@ 결
+@@TEXT@@ 넷째
+@@ACT@@ 기
+@@TEXT@@ 첫째
+@@ACT@@ 전
+@@TEXT@@ 셋째
+@@ACT@@ 승
+@@TEXT@@ 둘째
+`);
+
+    assert.deepEqual(
+      outline.acts.map((a) => a.text),
+      ["첫째", "둘째", "셋째", "넷째"],
+    );
+  });
+
+  it("막이 하나라도 빠지면 실패한다 (본문 단계에서 구조가 무너지므로)", () => {
+    assert.throws(
+      () =>
+        parseOutline(`@@TITLE@@ 무제
+@@ACT@@ 기
+@@TEXT@@ 첫째
+@@ACT@@ 승
+@@TEXT@@ 둘째
+@@ACT@@ 전
+@@TEXT@@ 셋째
+`),
+      /결 막이 비어 있습니다/,
+    );
+  });
+
+  it("기승전결이 아닌 막 이름은 거부한다", () => {
+    assert.throws(
+      () => parseOutline("@@TITLE@@ 무제\n@@ACT@@ 프롤로그\n@@TEXT@@ ..."),
+      /기·승·전·결이 아닙니다/,
+    );
+  });
+});
 
 // 실제 샘플책(arin-treasure) 톤을 그대로 옮긴 것. 대사 따옴표가 많은 게 핵심이다.
 const SAMPLE = `네, 아린이를 위한 동화를 만들어 드릴게요!

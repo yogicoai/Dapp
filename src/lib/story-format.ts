@@ -21,6 +21,21 @@
  *   ...
  */
 
+/** 기승전결. 줄거리 단계의 출력이자 본문 단계의 입력. */
+export const ACTS = ["기", "승", "전", "결"] as const;
+export type ActName = (typeof ACTS)[number];
+
+export type OutlineAct = {
+  act: ActName;
+  text: string;
+};
+
+export type ParsedOutline = {
+  title: string;
+  summary: string;
+  acts: OutlineAct[];
+};
+
 export type StoryCharacter = {
   name: string;
   description: string;
@@ -71,6 +86,76 @@ function toBlocks(raw: string): Block[] {
 
 function joinBody(block: Block): string {
   return block.body.join("\n").trim();
+}
+
+/**
+ * 줄거리(1단계)를 파싱한다.
+ *
+ * 본문을 바로 뽑지 않고 줄거리를 먼저 받는 이유는 원가다. 삽화 8장이 ₩440인데
+ * 줄거리는 ₩22라, 부모가 마음에 들 때까지 굴려도 부담이 없다. 확정된 뒤에야
+ * 비싼 단계로 넘어간다. 덤으로 출력이 짧아 기승전결 구조가 덜 흔들린다.
+ */
+export function parseOutline(raw: string): ParsedOutline {
+  const blocks = toBlocks(raw);
+  if (blocks.length === 0) {
+    throw new StoryParseError("마커를 하나도 찾지 못했습니다.");
+  }
+
+  let title = "";
+  let summary = "";
+  const acts: OutlineAct[] = [];
+  let current: OutlineAct | null = null;
+
+  const flush = () => {
+    if (current) acts.push(current);
+    current = null;
+  };
+
+  for (const block of blocks) {
+    const inlineOrBody = block.inline || joinBody(block);
+
+    switch (block.tag) {
+      case "TITLE":
+        title = inlineOrBody;
+        break;
+
+      case "SUMMARY":
+        summary = inlineOrBody;
+        break;
+
+      case "ACT": {
+        flush();
+        const act = ACTS.find((a) => a === block.inline);
+        if (!act) {
+          throw new StoryParseError(`@@ACT@@가 기·승·전·결이 아닙니다: "${block.inline}"`);
+        }
+        current = { act, text: "" };
+        break;
+      }
+
+      case "TEXT":
+        if (!current) throw new StoryParseError("@@ACT@@ 없이 @@TEXT@@가 먼저 나왔습니다.");
+        current.text = inlineOrBody;
+        break;
+
+      default:
+        break;
+    }
+  }
+  flush();
+
+  if (!title) throw new StoryParseError("@@TITLE@@이 없습니다.");
+
+  // 4막이 전부 있어야 한다. 하나라도 빠지면 본문 단계에서 구조가 무너진다.
+  const missing = ACTS.filter((a) => !acts.some((x) => x.act === a && x.text));
+  if (missing.length > 0) {
+    throw new StoryParseError(`${missing.join("·")} 막이 비어 있습니다.`);
+  }
+
+  // 모델이 순서를 바꿔 내놔도 기승전결로 세운다.
+  acts.sort((a, b) => ACTS.indexOf(a.act) - ACTS.indexOf(b.act));
+
+  return { title, summary, acts };
 }
 
 export function parseStory(raw: string): ParsedStory {
