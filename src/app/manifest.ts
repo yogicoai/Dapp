@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 /**
  * PWA manifest. TWA로 Play 스토어에 올리면 여기 orientation이 그대로 먹혀서
  * 안드로이드 앱에서는 가로가 강제된다. 브라우저에서는 무시되므로 세로일 때는
- * OrientationGate가 안내를 대신한다.
+ * OrientationHint가 한 번 권하고 비켜준다.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {

@@ -23,3 +23,15 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
 }
+
+/* 가로 안내 힌트: 잠깐 떠 있다가 스스로 사라진다. OrientationHint에서 쓴다. */
+@keyframes rotate-hint {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

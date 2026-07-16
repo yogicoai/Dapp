@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Book } from "@/lib/types";
-import { OrientationGate } from "./OrientationGate";
+import { OrientationHint } from "./OrientationHint";
 
 /**
  * 삽화가 아직 없을 때 까는 파스텔 배경.
@@ -57,7 +57,7 @@ export function BookViewer({ book }: { book: Book }) {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <OrientationGate />
+      <OrientationHint />
 
       <div
         className="flex h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
