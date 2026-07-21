@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { loadTextPos } from "@/lib/prefs";
+import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import {
   buildPresetUtterance,
@@ -258,8 +259,18 @@ export function BookViewer({ book }: { book: Book }) {
     [lastIndex, index],
   );
 
-  // 뷰어를 떠날 때 소리를 끈다.
+  // 뷰어를 떠날 때 소리를 끄고, 전체화면·가로 고정도 되돌린다.
   useEffect(() => stopReading, [stopReading]);
+  useEffect(() => () => exitStoryMode(), []);
+
+  // "가로로 보기" 버튼 상태 — 전체화면 여부를 따라간다 (브라우저 뒤로가기로
+  // 빠져나가는 경우까지 이벤트로 감지).
+  const [storyMode, setStoryMode] = useState(false);
+  useEffect(() => {
+    const onChange = () => setStoryMode(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
 
   // 크롬은 음성 목록이 늦게 채워진다 — 첫 "읽어주기"부터 배정 음성이 적용되게 예열.
   useEffect(() => warmUpVoices(), []);
@@ -472,12 +483,23 @@ export function BookViewer({ book }: { book: Book }) {
         </div>
       )}
 
-      <Link
-        href="/"
-        className="absolute left-4 top-4 rounded-full bg-black/40 px-4 py-2 text-sm text-white/90 backdrop-blur transition hover:bg-black/60"
-      >
-        ← 서재
-      </Link>
+      <div className="absolute left-4 top-4 z-10 flex gap-2">
+        <Link
+          href="/"
+          className="rounded-full bg-black/40 px-4 py-2 text-sm text-white/90 backdrop-blur transition hover:bg-black/60"
+        >
+          ← 서재
+        </Link>
+        {/* 가로로 보기 — 클릭(제스처) 안에서 전체화면 + 가로 고정을 요청한다.
+            미지원 기기는 조용히 무시되고 회전 안내 힌트가 대신한다. */}
+        <button
+          type="button"
+          onClick={() => (storyMode ? exitStoryMode() : enterStoryMode())}
+          className="rounded-full bg-black/40 px-4 py-2 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none"
+        >
+          {storyMode ? "원래대로" : "⛶ 가로로 보기"}
+        </button>
+      </div>
 
       {/* 읽어주기 — 넘김 영역보다 위에 떠 있는 버튼 */}
       <button

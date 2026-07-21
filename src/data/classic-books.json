@@ -178,88 +178,186 @@
     "pages": [
       {
         "text": "펑펑 흰 눈이 내리던 겨울날, 어느 왕국에 공주님이 태어났어요.\n눈처럼 하얀 피부에 까만 머리카락이 어찌나 고운지,\n사람들은 공주를 '백설공주'라고 불렀답니다.",
-        "image": null,
-        "audio": null
+        "image": "/classic/snowwhite/p1.webp",
+        "audio": "/classic/snowwhite/narr-p1.mp3",
+        "hotspots": []
       },
       {
         "text": "그런데 공주가 어릴 적, 어머니가 일찍 하늘나라로 떠났어요.\n왕궁에는 새 왕비가 오게 되었지요.\n새 왕비는 아름다웠지만, 자기보다 예쁜 사람은 참지 못했답니다.",
-        "image": null,
-        "audio": null
+        "image": "/classic/snowwhite/p2.webp",
+        "audio": "/classic/snowwhite/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "queen",
+            "box": [
+              201,
+              131,
+              874,
+              577
+            ],
+            "audio": "/classic/snowwhite/say-p2-queen.mp3",
+            "line": "나보다 예쁜 사람은 절대 못 참아!"
+          }
+        ]
       },
       {
         "text": "새 왕비에게는 신기한 요술 거울이 있었어요.\n\"거울아 거울아, 세상에서 누가 제일 예쁘니?\"\n\"그야 물론 왕비님이지요.\"\n왕비는 그 대답을 들어야만 잠이 왔답니다.",
-        "image": null,
-        "audio": null
+        "image": "/classic/snowwhite/p3.webp",
+        "audio": "/classic/snowwhite/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "mirror",
+            "box": [
+              69,
+              239,
+              597,
+              502
+            ],
+            "audio": "/classic/snowwhite/say-p3-mirror.mp3",
+            "line": "그야 물론 왕비님이지요."
+          },
+          {
+            "label": "queen",
+            "box": [
+              194,
+              465,
+              903,
+              849
+            ],
+            "audio": "/classic/snowwhite/say-p3-queen.mp3",
+            "line": "거울아 거울아, 세상에서 누가 제일 예쁘니?"
+          }
+        ]
       },
       {
         "text": "백설공주는 무럭무럭 자라 마음씨 고운 아가씨가 되었어요.\n그러던 어느 날, 거울의 대답이 바뀌었지요.\n\"이제는 백설공주님이 제일 예쁩니다!\"\n\"뭐라고?!\" 왕비의 마음속에 뾰족한 질투가 자라났어요.",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p4.mp3",
+        "hotspots": []
       },
       {
         "text": "왕비는 사냥꾼을 불러 무서운 명령을 내렸어요.\n\"백설공주를 다시는 돌아오지 못할 깊은 숲속으로 데려가거라!\"\n숲에 도착하자, 마음 착한 사냥꾼은 조용히 속삭였지요.\n\"공주님, 궁전으로 돌아가면 위험해요. 부디 몸을 숨기세요!\"",
-        "image": null,
-        "audio": null
+        "image": "/classic/snowwhite/p5.webp",
+        "audio": "/classic/snowwhite/narr-p5.mp3",
+        "hotspots": [
+          {
+            "label": "huntsman",
+            "box": [
+              279,
+              246,
+              799,
+              588
+            ],
+            "audio": "/classic/snowwhite/say-p5-huntsman.mp3",
+            "line": "공주님, 궁전은 위험해요. 부디 몸을 숨기세요!"
+          },
+          {
+            "label": "snowwhite",
+            "box": [
+              234,
+              532,
+              842,
+              829
+            ],
+            "audio": "/classic/snowwhite/say-p5-snowwhite.mp3",
+            "line": "고마워요, 아저씨…"
+          }
+        ]
       },
       {
         "text": "백설공주는 눈물을 닦고 숲속을 한참 걸었어요.\n그러다 작고 아담한 오두막을 발견했지요.\n안에는 조그만 식탁에 접시가 일곱 개, 빵이 일곱 조각,\n조그만 침대도 일곱 개 나란히 놓여 있었답니다.",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p6.mp3",
+        "hotspots": []
       },
       {
         "text": "배가 고팠던 공주는 식탁에 놓인 빵을 맛있게 먹었어요.\n다 먹고 나니 눈꺼풀이 스르르 —\n공주는 일곱 번째 작은 침대에서 새근새근 잠이 들었답니다.",
-        "image": null,
-        "audio": null
+        "image": "/classic/snowwhite/p7.webp",
+        "audio": "/classic/snowwhite/narr-p7.mp3",
+        "hotspots": [
+          {
+            "label": "snowwhite",
+            "box": [
+              206,
+              75,
+              881,
+              359
+            ],
+            "audio": "/classic/snowwhite/say-p7-snowwhite.mp3",
+            "line": "냠냠, 이제 좀 살 것 같아… 아, 졸려…"
+          },
+          {
+            "label": "snowwhite",
+            "box": [
+              388,
+              431,
+              519,
+              532
+            ],
+            "audio": "/classic/snowwhite/say-p7-snowwhite.mp3",
+            "line": "냠냠, 이제 좀 살 것 같아… 아, 졸려…"
+          }
+        ]
       },
       {
         "text": "밤이 되자 광산에서 일곱 난쟁이들이 돌아왔어요.\n\"어? 누가 내 빵을 먹었지?\" \"누가 내 의자를 옮겼지?\"\n\"쉿! 이것 봐, 예쁜 공주님이 자고 있어!\"\n난쟁이들은 공주가 깰까 봐 발끝으로 살금살금 걸었답니다.",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p8.mp3",
+        "hotspots": []
       },
       {
         "text": "다음 날 아침, 공주는 그동안의 일을 모두 이야기했어요.\n\"가엾어라! 우리와 함께 살아요, 공주님.\"\n\"대신 꼭 약속해요. 우리가 일하러 간 낮에는\n누가 와도 절대 문을 열어 주면 안 돼요!\"",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p9.mp3",
+        "hotspots": []
       },
       {
         "text": "한편 왕비는 다시 거울에게 물었어요.\n\"거울아, 이제 내가 제일 예쁘지?\"\n\"아니요. 일곱 고개 너머 난쟁이 집에 사는\n백설공주님이 제일 예쁩니다!\"",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p10.mp3",
+        "hotspots": []
       },
       {
         "text": "\"살아 있었다니!\" 왕비는 허리 굽은 장사꾼 할머니로 변장했어요.\n그리고 새빨간 사과에 마법을 걸었지요.\n\"이 사과를 한 입 물면 깊은 잠에 빠질 것이다… 호호호.\"\n왕비는 일곱 고개를 넘어 난쟁이 집으로 향했답니다.",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p11.mp3",
+        "hotspots": []
       },
       {
         "text": "\"똑똑. 예쁜 아가씨, 맛있는 사과 사려~\"\n\"안 돼요. 문을 열어 주지 않기로 약속했는걸요.\"\n\"착하기도 하지. 그럼 창문으로 하나만 받아요.\"\n공주가 창문 너머로 사과를 받아 한 입 물자… 스르르, 깊은 잠에 빠지고 말았어요.",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p12.mp3",
+        "hotspots": []
       },
       {
         "text": "돌아온 난쟁이들은 잠든 공주를 보고 엉엉 울었어요.\n흔들어도 불러도 공주는 깨어나지 않았지요.\n난쟁이들은 공주를 반짝이는 유리 침대에 눕히고\n밤낮으로 곁을 지켰답니다.",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p13.mp3",
+        "hotspots": []
       },
       {
         "text": "그러던 어느 날, 이웃 나라 왕자님이 숲을 지나다가\n유리 침대에 잠든 백설공주를 보게 되었어요.\n\"이렇게 곱고 평화로운 얼굴은 처음이야…\"\n왕자님의 가슴이 두근두근 뛰었지요.",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p14.mp3",
+        "hotspots": []
       },
       {
         "text": "왕자님이 공주의 이마에 살며시 입을 맞춘 순간,\n따뜻한 사랑의 힘이 잠자는 마법을 사르르 녹였어요.\n\"아… 내가 얼마나 잠든 거죠?\"\n백설공주가 눈을 떴답니다!",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p15.mp3",
+        "hotspots": []
       },
       {
         "text": "\"공주님이 깨어났다! 만세!\" 난쟁이들이 덩실덩실 춤을 추었어요.\n왕자님은 그 자리에서 청혼했지요.\n\"저와 결혼해 주시겠어요?\"\n왕국에서는 성대한 결혼 잔치가 열리게 되었답니다.",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p16.mp3",
+        "hotspots": []
       },
       {
         "text": "소식을 들은 왕비도 잔치에 달려왔어요.\n하지만 환하게 빛나는 백설공주를 보자 겁이 나서\n멀리멀리 도망쳐 다시는 나타나지 않았지요.\n백설공주와 왕자님은 일곱 난쟁이들과 오래오래 행복하게 살았답니다.",
         "image": null,
-        "audio": null
+        "audio": "/classic/snowwhite/narr-p17.mp3",
+        "hotspots": []
       }
     ]
   }

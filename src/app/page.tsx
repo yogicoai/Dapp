@@ -111,7 +111,8 @@ export default function Home() {
                 onClick={() => setShelf(t.key)}
                 aria-pressed={active}
                 style={active ? { color: theme.colors.accentDark } : undefined}
-                className={`rounded-full px-5 py-2.5 text-base font-extrabold shadow-md backdrop-blur transition ${
+                // 폰에서는 작게(줄바꿈 금지), sm부터 원래 크기 — 탭 세 개가 한 줄에 서게.
+                className={`whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-extrabold shadow-md backdrop-blur transition sm:px-5 sm:py-2.5 sm:text-base ${
                   active
                     ? "scale-105 bg-white"
                     : // 흰 글자는 공주나라 같은 파스텔 배경에서 통째로 묻힌다 —
