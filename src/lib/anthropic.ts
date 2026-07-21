@@ -57,7 +57,11 @@ const VOICE = `너는 한국 유아·아동용 그림동화 작가다. 아이가
 지켜야 할 것:
 - 결말에는 아이가 스스로 해낸 것이 남는다. 어른이 대신 해결해주지 않는다.
 - 교훈을 설교하지 않는다. 이야기 안에서 저절로 남게 한다.
-- 성별로 소재를 가르지 않는다. 주제는 아이가 고른 그대로 쓴다.`;
+- 성별로 소재를 가르지 않는다. 주제는 아이가 고른 그대로 쓴다.
+- 주제가 감정(화남·무서움·슬픔·질투·부끄러움 등)이면 감정동화로 짓는다:
+  감정에 이름을 붙여주고, 몸으로 느끼는 감각(가슴이 콩닥콩닥, 얼굴이 뜨끈)으로
+  표현한다. 감정 자체를 나쁘다고 하지 않는다 — 아이가 감정을 알아차리고
+  스스로 가라앉히는 과정이 이야기가 된다.`;
 
 const OUTLINE_SYSTEM = `${VOICE}
 
@@ -80,6 +84,10 @@ const OUTLINE_SYSTEM = `${VOICE}
 export async function generateOutline(input: {
   child: ChildProfile;
   theme: string;
+  /** 특별한 날(생일·돌·졸업·동생). 있으면 그 날을 축하하는 이야기가 된다. */
+  occasion?: string;
+  /** 분위기(무드). 이야기 톤에 반영한다. */
+  mood?: string;
 }): Promise<ParsedOutline> {
   const message = await client.messages.create({
     model: MODEL,
@@ -90,7 +98,16 @@ export async function generateOutline(input: {
     messages: [
       {
         role: "user",
-        content: `아이: ${describeChild(input.child)}\n주제: ${input.theme}`,
+        content: [
+          `아이: ${describeChild(input.child)}`,
+          `주제: ${input.theme}`,
+          ...(input.occasion
+            ? [
+                `특별한 날: ${input.occasion} — 이 날을 축하하는 이야기로 지어라. 축하가 결말에 자연스럽게 스며들게 한다.`,
+              ]
+            : []),
+          ...(input.mood ? [`분위기: ${input.mood} — 이야기 전체 톤에 반영한다.`] : []),
+        ].join("\n"),
       },
     ],
   });
@@ -120,6 +137,8 @@ const STORY_SYSTEM = `${VOICE}
 export async function generateStory(input: {
   child: ChildProfile;
   outline: ParsedOutline;
+  occasion?: string;
+  mood?: string;
 }): Promise<ParsedStory> {
   const outlineText = input.outline.acts
     .map((a) => `[${a.act}] ${a.text}`)
@@ -137,6 +156,10 @@ export async function generateStory(input: {
         content: [
           `아이: ${describeChild(input.child)}`,
           `분량: ${lengthGuide(input.child.age)}`,
+          ...(input.occasion
+            ? [`특별한 날: ${input.occasion} — 축하가 이야기에 자연스럽게 스며들게.`]
+            : []),
+          ...(input.mood ? [`분위기: ${input.mood}`] : []),
           "",
           `제목: ${input.outline.title}`,
           "줄거리:",

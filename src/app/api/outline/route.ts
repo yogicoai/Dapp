@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { generateOutline } from "@/lib/anthropic";
 import { StoryParseError } from "@/lib/story-format";
-import { parseChild } from "../_input";
+import { parseChild, parseMood, parseOccasion } from "../_input";
 
 /**
  * 1단계 — 줄거리. 부모가 마음에 들 때까지 굴리는 관문이다.
@@ -17,22 +17,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "요청 본문이 JSON이 아닙니다." }, { status: 400 });
   }
 
-  const input = body as { child?: unknown; theme?: unknown };
+  const input = body as { child?: unknown; theme?: unknown; occasion?: unknown; mood?: unknown };
 
-  let child;
+  let child, occasion, mood;
   try {
     child = parseChild(input.child);
+    occasion = parseOccasion(input.occasion);
+    mood = parseMood(input.mood);
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 400 });
   }
 
+  // 200자 — 단어뿐 아니라 "오늘 겪은 일" 같은 문장 두엇도 주제로 받는다.
   const theme = typeof input.theme === "string" ? input.theme.trim() : "";
-  if (!theme || theme.length > 100) {
-    return NextResponse.json({ error: "주제를 1~100자로 적어주세요." }, { status: 400 });
+  if (!theme || theme.length > 200) {
+    return NextResponse.json({ error: "주제를 1~200자로 적어주세요." }, { status: 400 });
   }
 
   try {
-    const outline = await generateOutline({ child, theme });
+    const outline = await generateOutline({ child, theme, occasion, mood });
     return NextResponse.json({ outline });
   } catch (e) {
     // 파싱 실패는 모델이 형식을 어긴 것 — 같은 입력으로 다시 하면 대개 통과한다.

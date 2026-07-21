@@ -41,3 +41,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# UI 에셋 원본 PNG 보관용 (배포는 public/의 webp만 쓴다)
+/originals-png/

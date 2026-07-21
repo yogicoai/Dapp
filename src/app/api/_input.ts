@@ -24,6 +24,20 @@ export function parseChild(value: unknown): ChildProfile {
   return { name, age, gender };
 }
 
+/** 분위기(무드). 자유 문자열, 길이만 제한. 빈 값 허용. */
+export function parseMood(value: unknown): string {
+  const v = typeof value === "string" ? value.trim() : "";
+  if (v.length > 40) throw new Error("분위기는 40자를 넘을 수 없습니다.");
+  return v;
+}
+
+/** 특별한 날(생일·돌·졸업·동생). 자유 문자열이지만 길이만 제한한다. 빈 값은 "일반". */
+export function parseOccasion(value: unknown): string {
+  const v = typeof value === "string" ? value.trim() : "";
+  if (v.length > 30) throw new Error("특별한 날은 30자를 넘을 수 없습니다.");
+  return v;
+}
+
 /**
  * 줄거리는 클라이언트가 되돌려 보낸다(1단계 응답을 그대로).
  * DB가 붙기 전까지는 서버에 보관할 곳이 없어서인데, 그래서 더 검증해야 한다.

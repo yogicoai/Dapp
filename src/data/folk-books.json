@@ -1,0 +1,1519 @@
+[
+  {
+    "id": "folk-heungbu",
+    "lang": "ko",
+    "title": "흥부와 놀부",
+    "summary": "다친 제비를 정성껏 돌본 흥부가 박씨 하나로 복을 받는 이야기",
+    "narrator": "tc-kwonil",
+    "pages": [
+      {
+        "text": "옛날 옛적, 어느 산골 마을에 형제가 살았어요.\n형 놀부는 커다란 기와집에서 배불리 지냈지만,\n동생 흥부는 다 쓰러져 가는 초가집에서 아이들과 가난하게 살았지요.",
+        "image": "/folk/heungbu/p1.webp",
+        "audio": "/folk/heungbu/narr-p1.mp3",
+        "hotspots": [
+          {
+            "label": "nolbu",
+            "box": [
+              575,
+              119,
+              842,
+              245
+            ],
+            "audio": "/folk/heungbu/say-p1-nolbu.mp3",
+            "line": "흥! 나는 이 마을 제일가는 부자, 놀부다!"
+          },
+          {
+            "label": "heungbu",
+            "box": [
+              612,
+              570,
+              847,
+              712
+            ],
+            "audio": "/folk/heungbu/say-p1-heungbu.mp3",
+            "line": "우리 집은 가난하지만, 웃음만은 부자란다!"
+          }
+        ]
+      },
+      {
+        "text": "그래도 흥부네 집에는 웃음이 끊이지 않았어요.\n\"아버지, 오늘은 무슨 이야기 들려주실 거예요?\"\n아이들이 조르면, 흥부는 허허 웃으며 재미난 이야기를 들려주었답니다.",
+        "image": "/folk/heungbu/p2.webp",
+        "audio": "/folk/heungbu/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              276,
+              363,
+              836,
+              638
+            ],
+            "audio": "/folk/heungbu/say-p2-heungbu.mp3",
+            "line": "옛날 옛적에… 오늘은 어떤 이야기를 들려줄까?"
+          }
+        ]
+      },
+      {
+        "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요.\n\"어서 오렴, 제비들아. 우리 집이 좁아도 함께 지내자꾸나.\"\n흥부네 가족은 제비 가족을 반갑게 맞아 주었어요.",
+        "image": "/folk/heungbu/p3.webp",
+        "audio": "/folk/heungbu/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "swallow",
+            "box": [
+              145,
+              354,
+              310,
+              504
+            ],
+            "audio": "/folk/heungbu/say-p3-swallow.mp3",
+            "line": "짹짹! 처마 밑에 우리 집을 지어야지!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              138,
+              534,
+              274,
+              672
+            ],
+            "audio": "/folk/heungbu/say-p3-swallow.mp3",
+            "line": "짹짹! 처마 밑에 우리 집을 지어야지!"
+          },
+          {
+            "label": "heungbu",
+            "box": [
+              413,
+              219,
+              826,
+              452
+            ],
+            "audio": "/folk/heungbu/say-p3-heungbu.mp3",
+            "line": "어서 오렴, 제비들아! 우리 집에서 함께 지내자."
+          }
+        ]
+      },
+      {
+        "text": "알에서 깬 아기 제비들은 짹짹짹 노래하며 무럭무럭 자랐어요.\n아이들은 날마다 둥지를 올려다보며 인사했지요.\n\"안녕, 아기 제비야! 오늘도 잘 잤니?\"",
+        "image": "/folk/heungbu/p4.webp",
+        "audio": "/folk/heungbu/narr-p4.mp3",
+        "hotspots": [
+          {
+            "label": "swallow",
+            "box": [
+              290,
+              680,
+              366,
+              759
+            ],
+            "audio": "/folk/heungbu/say-p4-swallow.mp3",
+            "line": "짹짹짹! 나는 아기 제비야. 안녕!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              287,
+              752,
+              365,
+              836
+            ],
+            "audio": "/folk/heungbu/say-p4-swallow.mp3",
+            "line": "짹짹짹! 나는 아기 제비야. 안녕!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              282,
+              829,
+              360,
+              903
+            ],
+            "audio": "/folk/heungbu/say-p4-swallow.mp3",
+            "line": "짹짹짹! 나는 아기 제비야. 안녕!"
+          }
+        ]
+      },
+      {
+        "text": "그러던 어느 날, 커다란 구렁이가 스르륵 둥지로 다가왔어요.\n화들짝 놀란 아기 제비 한 마리가 그만 둥지 밖으로 뚝 떨어지고 말았지요.\n\"짹짹! 아파요, 아파!\"",
+        "image": "/folk/heungbu/p5.webp",
+        "audio": "/folk/heungbu/narr-p5.mp3",
+        "hotspots": [
+          {
+            "label": "swallow",
+            "box": [
+              531,
+              270,
+              796,
+              520
+            ],
+            "audio": "/folk/heungbu/say-p5-swallow.mp3",
+            "line": "짹짹! 도와주세요! 다리를 다쳤어요…"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              261,
+              686,
+              366,
+              769
+            ],
+            "audio": "/folk/heungbu/say-p5-swallow.mp3",
+            "line": "짹짹! 도와주세요! 다리를 다쳤어요…"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              263,
+              759,
+              363,
+              856
+            ],
+            "audio": "/folk/heungbu/say-p5-swallow.mp3",
+            "line": "짹짹! 도와주세요! 다리를 다쳤어요…"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              251,
+              846,
+              356,
+              929
+            ],
+            "audio": "/folk/heungbu/say-p5-swallow.mp3",
+            "line": "짹짹! 도와주세요! 다리를 다쳤어요…"
+          }
+        ]
+      },
+      {
+        "text": "\"저런, 다리가 부러졌구나!\"\n흥부는 아기 제비를 두 손으로 고이 감싸 안고, 명주실로 다친 다리를 정성껏 싸매 주었답니다.\n\"곧 나을 거야. 걱정하지 마렴.\"",
+        "image": "/folk/heungbu/p6.webp",
+        "audio": "/folk/heungbu/narr-p6.mp3",
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              81,
+              381,
+              903,
+              715
+            ],
+            "audio": "/folk/heungbu/say-p6-heungbu.mp3",
+            "line": "가엾은 아기 제비야, 곧 나을 거야. 걱정 마렴."
+          },
+          {
+            "label": "swallow",
+            "box": [
+              542,
+              461,
+              711,
+              568
+            ],
+            "audio": "/folk/heungbu/say-p6-swallow.mp3",
+            "line": "고마워요, 흥부 아저씨. 이제 하나도 안 아파요!"
+          }
+        ]
+      },
+      {
+        "text": "흥부네 가족의 보살핌 덕분에 아기 제비는 씩씩하게 나았어요.\n가을이 되자 제비는 흥부네 마당을 빙글빙글 돌며 인사했지요.\n\"고마웠어요! 내년 봄에 꼭 다시 올게요!\"",
+        "image": "/folk/heungbu/p7.webp",
+        "audio": "/folk/heungbu/narr-p7.mp3",
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              503,
+              353,
+              827,
+              521
+            ],
+            "audio": "/folk/heungbu/say-p7-heungbu.mp3",
+            "line": "잘 가렴, 제비야! 내년 봄에 또 만나자!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              122,
+              357,
+              344,
+              592
+            ],
+            "audio": "/folk/heungbu/say-p7-swallow.mp3",
+            "line": "짹짹! 이 은혜는 꼭 갚을게요!"
+          }
+        ]
+      },
+      {
+        "text": "이듬해 봄, 그 제비가 정말 돌아왔어요!\n입에는 조그만 박씨 하나를 물고 있었지요.\n\"이게 웬 박씨일까?\" 흥부는 박씨를 마당 한켠에 심고 물을 듬뿍 주었답니다.",
+        "image": "/folk/heungbu/p8.webp",
+        "audio": "/folk/heungbu/narr-p8.mp3",
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              304,
+              65,
+              808,
+              373
+            ],
+            "audio": "/folk/heungbu/say-p8-heungbu.mp3",
+            "line": "아니, 이게 웬 박씨일까? 고맙다, 제비야!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              203,
+              389,
+              432,
+              549
+            ],
+            "audio": "/folk/heungbu/say-p8-swallow.mp3",
+            "line": "은혜 갚는 박씨예요! 얼른 심어 보세요!"
+          }
+        ]
+      },
+      {
+        "text": "박씨는 무럭무럭 자라 지붕 위까지 덩굴을 뻗었어요.\n가을이 되자 집채만 한 박이 주렁주렁 열렸지요.\n\"우아! 이 박으로 박죽이라도 끓여 먹자꾸나.\"",
+        "image": "/folk/heungbu/p9.webp",
+        "audio": "/folk/heungbu/narr-p9.mp3",
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              534,
+              203,
+              851,
+              396
+            ],
+            "audio": "/folk/heungbu/say-p9-heungbu.mp3",
+            "line": "우아, 박이 집채만 하게 열렸구나!"
+          }
+        ]
+      },
+      {
+        "text": "\"슬근슬근 톱질하세, 영차영차 톱질하세!\"\n온 가족이 노래하며 박을 갈랐어요.\n그런데 이게 웬일이에요? 박 속에서 하얀 쌀이 산처럼 쏟아져 나왔어요!",
+        "image": "/folk/heungbu/p10.webp",
+        "audio": "/folk/heungbu/narr-p10.mp3",
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              353,
+              190,
+              831,
+              388
+            ],
+            "audio": "/folk/heungbu/say-p10-heungbu.mp3",
+            "line": "슬근슬근 톱질하세! 영차영차!"
+          }
+        ]
+      },
+      {
+        "text": "두 번째 박에서는 금은보화가 와르르,\n세 번째 박에서는 고운 비단과 번쩍번쩍한 새 기와집까지 나왔답니다.\n\"제비야, 고맙다!\" 흥부네 가족은 얼싸안고 덩실덩실 춤을 추었어요.",
+        "image": "/folk/heungbu/p11.webp",
+        "audio": "/folk/heungbu/narr-p11.mp3",
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              394,
+              304,
+              836,
+              557
+            ],
+            "audio": "/folk/heungbu/say-p11-heungbu.mp3",
+            "line": "보물이 쏟아진다! 제비야, 정말 고맙다!"
+          }
+        ]
+      },
+      {
+        "text": "이 소식을 들은 놀부는 배가 아팠어요.\n\"흥, 나도 제비 다리를 고쳐 주면 부자가 되겠지?\"\n놀부는 일부러 아기 제비의 다리를 부러뜨리고는 대충 싸매 주었지요.",
+        "image": "/folk/heungbu/p12.webp",
+        "audio": "/folk/heungbu/narr-p12.mp3",
+        "hotspots": [
+          {
+            "label": "nolbu",
+            "box": [
+              282,
+              137,
+              911,
+              452
+            ],
+            "audio": "/folk/heungbu/say-p12-nolbu.mp3",
+            "line": "흥부가 부자가 됐다고? 배가 아파 못 살겠네!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              617,
+              376,
+              915,
+              545
+            ],
+            "audio": "/folk/heungbu/say-p12-swallow.mp3",
+            "line": "짹… 왜 일부러 아프게 하는 거예요…"
+          }
+        ]
+      },
+      {
+        "text": "이듬해 봄, 놀부네 제비도 박씨를 물어다 주었어요.\n\"옳지! 이제 나도 보물 부자다!\"\n놀부는 신이 나서 박씨를 심고, 박이 열리기만 밤낮으로 기다렸답니다.",
+        "image": "/folk/heungbu/p13.webp",
+        "audio": "/folk/heungbu/narr-p13.mp3",
+        "hotspots": [
+          {
+            "label": "nolbu",
+            "box": [
+              76,
+              237,
+              829,
+              631
+            ],
+            "audio": "/folk/heungbu/say-p13-nolbu.mp3",
+            "line": "옳지! 박씨야, 어서 자라라! 나도 보물 부자다!"
+          }
+        ]
+      },
+      {
+        "text": "\"슬근슬근 톱질하세!\"\n놀부가 첫 박을 가르자, 무시무시한 도깨비들이 우르르 쏟아져 나왔어요.\n\"심술쟁이 놀부야! 네 욕심을 벌하러 왔다!\"",
+        "image": "/folk/heungbu/p14.webp",
+        "audio": "/folk/heungbu/narr-p14.mp3",
+        "hotspots": [
+          {
+            "label": "nolbu",
+            "box": [
+              359,
+              107,
+              821,
+              452
+            ],
+            "audio": "/folk/heungbu/say-p14-nolbu.mp3",
+            "line": "으악! 이게 뭐야! 도깨비잖아!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              175,
+              680,
+              311,
+              794
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              204,
+              796,
+              362,
+              944
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              275,
+              606,
+              423,
+              699
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              330,
+              681,
+              508,
+              804
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              334,
+              532,
+              496,
+              617
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              433,
+              542,
+              545,
+              658
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              498,
+              678,
+              618,
+              778
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              415,
+              771,
+              578,
+              897
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              344,
+              796,
+              440,
+              885
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          }
+        ]
+      },
+      {
+        "text": "도깨비들은 놀부네 곳간을 탈탈 털고 기와집까지 몽땅 가져가 버렸어요.\n빈털터리가 된 놀부는 그제야 엉엉 울며 뉘우쳤지요.\n\"내가 잘못했어. 욕심을 부려서 미안해…\"",
+        "image": "/folk/heungbu/p15.webp",
+        "audio": "/folk/heungbu/narr-p15.mp3",
+        "hotspots": [
+          {
+            "label": "nolbu",
+            "box": [
+              435,
+              118,
+              844,
+              329
+            ],
+            "audio": "/folk/heungbu/say-p15-nolbu.mp3",
+            "line": "엉엉… 내가 잘못했어. 욕심부려서 미안해…"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              366,
+              451,
+              626,
+              574
+            ],
+            "audio": "/folk/heungbu/say-p15-dokkaebi.mp3",
+            "line": "욕심쟁이는 벌을 받는 법이지!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              531,
+              506,
+              751,
+              604
+            ],
+            "audio": "/folk/heungbu/say-p15-dokkaebi.mp3",
+            "line": "욕심쟁이는 벌을 받는 법이지!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              508,
+              679,
+              582,
+              754
+            ],
+            "audio": "/folk/heungbu/say-p15-dokkaebi.mp3",
+            "line": "욕심쟁이는 벌을 받는 법이지!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              541,
+              663,
+              845,
+              804
+            ],
+            "audio": "/folk/heungbu/say-p15-dokkaebi.mp3",
+            "line": "욕심쟁이는 벌을 받는 법이지!"
+          }
+        ]
+      },
+      {
+        "text": "마음 착한 흥부는 형의 손을 꼭 잡았어요.\n\"형님, 우리 집에서 함께 살아요.\"\n그날부터 흥부와 놀부는 서로 도우며 사이좋게, 오래오래 행복하게 살았답니다.",
+        "image": "/folk/heungbu/p16.webp",
+        "audio": "/folk/heungbu/narr-p16.mp3",
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              380,
+              311,
+              846,
+              501
+            ],
+            "audio": "/folk/heungbu/say-p16-heungbu.mp3",
+            "line": "형님, 우리 함께 살아요. 가족이잖아요."
+          },
+          {
+            "label": "nolbu",
+            "box": [
+              254,
+              432,
+              842,
+              686
+            ],
+            "audio": "/folk/heungbu/say-p16-nolbu.mp3",
+            "line": "고맙다, 흥부야… 이 형이 미안했다."
+          }
+        ]
+      }
+    ],
+    "coverImage": "/folk/heungbu/p16.webp"
+  },
+  {
+    "id": "folk-tortoise",
+    "lang": "ko",
+    "title": "토끼와 거북이",
+    "summary": "느려도 한 번도 멈추지 않은 거북이가 달리기 시합에서 이기는 이야기",
+    "narrator": "tc-mongsil",
+    "pages": [
+      {
+        "text": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요.\n\"이 숲에서 나보다 빠른 동물은 아무도 없지!\"\n토끼는 만나는 친구마다 자랑을 늘어놓았지요.",
+        "image": "/folk/tortoise/p1.webp",
+        "audio": "/folk/tortoise/narr-p1.mp3",
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "box": [
+              276,
+              393,
+              777,
+              626
+            ],
+            "audio": "/folk/tortoise/say-p1-rabbit.mp3",
+            "line": "나보다 빠른 동물은 없지! 다들 비켜 비켜~"
+          }
+        ]
+      },
+      {
+        "text": "그 숲에는 느릿느릿 거북이도 살고 있었어요.\n거북이는 걸음은 느렸지만,\n무슨 일이든 끝까지 해내는 성실한 친구였답니다.",
+        "image": "/folk/tortoise/p2.webp",
+        "audio": "/folk/tortoise/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "tortoise",
+            "box": [
+              349,
+              497,
+              707,
+              785
+            ],
+            "audio": "/folk/tortoise/say-p2-tortoise.mp3",
+            "line": "느려도 괜찮아. 나는 끝까지 해내거든!"
+          }
+        ]
+      },
+      {
+        "text": "어느 날, 토끼가 거북이를 보고 깔깔 웃었어요.\n\"거북아, 너는 세상에서 제일가는 느림보야!\n그 걸음으로 어디를 간다는 거니?\"",
+        "image": "/folk/tortoise/p3.webp",
+        "audio": "/folk/tortoise/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "box": [
+              243,
+              307,
+              715,
+              540
+            ],
+            "audio": "/folk/tortoise/say-p3-rabbit.mp3",
+            "line": "거북아, 넌 정말 느림보구나! 하하!"
+          },
+          {
+            "label": "tortoise",
+            "box": [
+              389,
+              559,
+              706,
+              816
+            ],
+            "audio": "/folk/tortoise/say-p3-tortoise.mp3",
+            "line": "괜찮아. 나는 내 걸음이 좋아."
+          }
+        ]
+      },
+      {
+        "text": "거북이는 잠시 생각하더니 조용히 말했어요.\n\"토끼야, 그럼 나랑 달리기 시합을 해 볼래?\n저기 언덕 꼭대기의 큰 소나무까지 말이야.\"",
+        "image": "/folk/tortoise/p4.webp",
+        "audio": "/folk/tortoise/narr-p4.mp3",
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "box": [
+              266,
+              283,
+              693,
+              492
+            ],
+            "audio": "/folk/tortoise/say-p4-rabbit.mp3",
+            "line": "뭐라고? 재미있겠는걸?"
+          },
+          {
+            "label": "tortoise",
+            "box": [
+              386,
+              519,
+              691,
+              792
+            ],
+            "audio": "/folk/tortoise/say-p4-tortoise.mp3",
+            "line": "토끼야, 나랑 달리기 시합 할래?"
+          }
+        ]
+      },
+      {
+        "text": "\"뭐라고? 네가 나랑 시합을?\"\n토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요.",
+        "image": "/folk/tortoise/p5.webp",
+        "audio": "/folk/tortoise/narr-p5.mp3",
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "box": [
+              265,
+              338,
+              693,
+              518
+            ],
+            "audio": "/folk/tortoise/say-p5-rabbit.mp3",
+            "line": "네가 나랑 시합을? 하하하, 좋아!"
+          },
+          {
+            "label": "tortoise",
+            "box": [
+              382,
+              547,
+              691,
+              793
+            ],
+            "audio": "/folk/tortoise/say-p5-tortoise.mp3",
+            "line": "언덕 위 소나무까지야. 준비됐어!"
+          }
+        ]
+      },
+      {
+        "text": "부엉이 할아버지가 심판을 맡았어요.\n\"자, 준비… 시작!\"\n외침과 함께 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요.",
+        "image": "/folk/tortoise/p6.webp",
+        "audio": "/folk/tortoise/narr-p6.mp3",
+        "hotspots": [
+          {
+            "label": "tortoise",
+            "box": [
+              412,
+              93,
+              679,
+              308
+            ],
+            "audio": "/folk/tortoise/say-p6-tortoise.mp3",
+            "line": "나도 출발! 엉금엉금."
+          },
+          {
+            "label": "owl",
+            "box": [
+              206,
+              309,
+              580,
+              582
+            ],
+            "audio": "/folk/tortoise/say-p6-owl.mp3",
+            "line": "자, 준비… 시작!"
+          },
+          {
+            "label": "rabbit",
+            "box": [
+              321,
+              532,
+              711,
+              722
+            ],
+            "audio": "/folk/tortoise/say-p6-rabbit.mp3",
+            "line": "먼저 간다~! 씽씽!"
+          }
+        ]
+      },
+      {
+        "text": "거북이는 한 걸음, 또 한 걸음. 엉금엉금 천천히 걸었어요.\n\"괜찮아. 나는 나의 걸음으로 가면 돼.\"\n거북이는 씩씩하게 앞만 보았답니다.",
+        "image": "/folk/tortoise/p7.webp",
+        "audio": "/folk/tortoise/narr-p7.mp3",
+        "hotspots": [
+          {
+            "label": "tortoise",
+            "box": [
+              388,
+              620,
+              701,
+              874
+            ],
+            "audio": "/folk/tortoise/say-p7-tortoise.mp3",
+            "line": "괜찮아. 나는 나의 걸음으로 가면 돼."
+          }
+        ]
+      },
+      {
+        "text": "한참을 달린 토끼가 뒤를 돌아보았어요.\n거북이는 점처럼 조그맣게 보였지요.\n\"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\"",
+        "image": "/folk/tortoise/p8.webp",
+        "audio": "/folk/tortoise/narr-p8.mp3",
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "box": [
+              340,
+              219,
+              823,
+              441
+            ],
+            "audio": "/folk/tortoise/say-p8-rabbit.mp3",
+            "line": "하암~ 저 느림보 오려면 멀었네. 낮잠이나 자자."
+          }
+        ]
+      },
+      {
+        "text": "토끼는 시원한 나무 그늘에 벌렁 누웠어요.\n솔솔 부는 바람이 어찌나 시원한지,\n토끼는 금세 쿨쿨 잠이 들고 말았답니다.",
+        "image": "/folk/tortoise/p9.webp",
+        "audio": "/folk/tortoise/narr-p9.mp3",
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "box": [
+              535,
+              219,
+              781,
+              595
+            ],
+            "audio": "/folk/tortoise/say-p9-rabbit.mp3",
+            "line": "쿨쿨… 드르렁… 새근새근…"
+          }
+        ]
+      },
+      {
+        "text": "그동안에도 거북이는 멈추지 않았어요.\n뜨거운 햇살 아래에서도, 가파른 오르막에서도,\n딱 한 번도 쉬지 않고 엉금엉금 걸어갔지요.",
+        "image": "/folk/tortoise/p10.webp",
+        "audio": "/folk/tortoise/narr-p10.mp3",
+        "hotspots": [
+          {
+            "label": "tortoise",
+            "box": [
+              253,
+              407,
+              618,
+              705
+            ],
+            "audio": "/folk/tortoise/say-p10-tortoise.mp3",
+            "line": "한 걸음, 또 한 걸음. 절대 포기하지 않아!"
+          }
+        ]
+      },
+      {
+        "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 깨우지 않고 묵묵히 언덕을 올라갔답니다.",
+        "image": "/folk/tortoise/p11.webp",
+        "audio": "/folk/tortoise/narr-p11.mp3",
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "box": [
+              445,
+              187,
+              695,
+              502
+            ],
+            "audio": "/folk/tortoise/say-p11-rabbit.mp3",
+            "line": "드르렁… 쿨쿨…"
+          },
+          {
+            "label": "tortoise",
+            "box": [
+              393,
+              606,
+              701,
+              856
+            ],
+            "audio": "/folk/tortoise/say-p11-tortoise.mp3",
+            "line": "쉿! 토끼를 깨우지 말고 살금살금…"
+          }
+        ]
+      },
+      {
+        "text": "\"드르렁… 푸우…\"\n한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가 소스라치게 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!",
+        "image": "/folk/tortoise/p12.webp",
+        "audio": "/folk/tortoise/narr-p12.mp3",
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "box": [
+              245,
+              176,
+              686,
+              375
+            ],
+            "audio": "/folk/tortoise/say-p12-rabbit.mp3",
+            "line": "으악! 안 돼! 큰일 났다!"
+          },
+          {
+            "label": "tortoise",
+            "box": [
+              254,
+              649,
+              372,
+              745
+            ],
+            "audio": "/folk/tortoise/say-p12-tortoise.mp3",
+            "line": "조금만 더! 거의 다 왔어!"
+          }
+        ]
+      },
+      {
+        "text": "\"안 돼!\"\n토끼는 있는 힘껏 달렸지만 이미 늦었어요. 거북이가 한 발 먼저 큰 소나무를 짚었답니다.\n\"거북이 승리!\" 부엉이 할아버지가 크게 외쳤어요.",
+        "image": "/folk/tortoise/p13.webp",
+        "audio": "/folk/tortoise/narr-p13.mp3",
+        "hotspots": [
+          {
+            "label": "owl",
+            "box": [
+              110,
+              580,
+              297,
+              758
+            ],
+            "audio": "/folk/tortoise/say-p13-owl.mp3",
+            "line": "거북이 승리! 부엉부엉!"
+          },
+          {
+            "label": "rabbit",
+            "box": [
+              380,
+              267,
+              720,
+              437
+            ],
+            "audio": "/folk/tortoise/say-p13-rabbit.mp3",
+            "line": "아이고, 늦어 버렸네…"
+          },
+          {
+            "label": "tortoise",
+            "box": [
+              449,
+              532,
+              725,
+              775
+            ],
+            "audio": "/folk/tortoise/say-p13-tortoise.mp3",
+            "line": "해냈다! 정말 기뻐!"
+          }
+        ]
+      },
+      {
+        "text": "숲속 친구들이 우레 같은 박수를 보냈어요.\n\"거북아, 잘난 척해서 미안해.\" \"괜찮아, 우리 좋은 친구가 되자!\"\n느려도 포기하지 않는 마음이 결국 해낸답니다.",
+        "image": "/folk/tortoise/p14.webp",
+        "audio": "/folk/tortoise/narr-p14.mp3",
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "box": [
+              261,
+              308,
+              709,
+              510
+            ],
+            "audio": "/folk/tortoise/say-p14-rabbit.mp3",
+            "line": "거북아, 잘난 척해서 미안해."
+          },
+          {
+            "label": "tortoise",
+            "box": [
+              379,
+              503,
+              703,
+              776
+            ],
+            "audio": "/folk/tortoise/say-p14-tortoise.mp3",
+            "line": "괜찮아! 우리 좋은 친구가 되자!"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "folk-kongjwi",
+    "lang": "ko",
+    "title": "콩쥐 팥쥐",
+    "summary": "동물 친구들과 선녀님의 도움으로 잔치에 간 콩쥐와 꽃신 이야기",
+    "narrator": "tc-jungsook",
+    "pages": [
+      {
+        "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n콩쥐는 일찍 어머니를 여의고,\n아버지가 새로 맞이한 새어머니, 동생 팥쥐와 함께 살게 되었지요.",
+        "image": "/folk/kongjwi/p1.webp",
+        "audio": "/folk/kongjwi/narr-p1.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              334,
+              755,
+              694,
+              903
+            ],
+            "audio": "/folk/kongjwi/say-p1-kongjwi.mp3",
+            "line": "안녕! 나는 콩쥐야. 만나서 반가워!"
+          }
+        ]
+      },
+      {
+        "text": "그런데 새어머니는 콩쥐에게만 힘든 일을 잔뜩 시켰어요.\n\"콩쥐야! 밭을 매고, 물도 길어 오너라!\"\n팥쥐는 그늘에서 놀기만 하는데 말이에요.",
+        "image": "/folk/kongjwi/p2.webp",
+        "audio": "/folk/kongjwi/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              226,
+              630,
+              706,
+              900
+            ],
+            "audio": "/folk/kongjwi/say-p2-kongjwi.mp3",
+            "line": "괜찮아. 열심히 하다 보면 좋은 일이 올 거야."
+          }
+        ]
+      },
+      {
+        "text": "그래도 콩쥐는 불평 한마디 없이 일했어요.\n나무 호미가 뚝 부러져 눈물이 날 때면,\n어디선가 검은 소가 나타나 밭을 갈아 주었답니다.",
+        "image": "/folk/kongjwi/p3.webp",
+        "audio": "/folk/kongjwi/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              283,
+              166,
+              672,
+              321
+            ],
+            "audio": "/folk/kongjwi/say-p3-kongjwi.mp3",
+            "line": "소야, 고마워! 덕분에 힘이 나!"
+          },
+          {
+            "label": "ox",
+            "box": [
+              183,
+              313,
+              642,
+              792
+            ],
+            "audio": "/folk/kongjwi/say-p3-ox.mp3",
+            "line": "음머~ 착한 콩쥐야, 내가 도와주마."
+          }
+        ]
+      },
+      {
+        "text": "어느 날, 마을에 큰 잔치가 열린다는 소식이 들려왔어요.\n\"저도 잔치에 가고 싶어요!\"\n\"흥, 그럼 이 항아리에 물을 가득 채워 놓고 오너라!\"",
+        "image": "/folk/kongjwi/p4.webp",
+        "audio": "/folk/kongjwi/narr-p4.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              330,
+              694,
+              725,
+              856
+            ],
+            "audio": "/folk/kongjwi/say-p4-kongjwi.mp3",
+            "line": "잔치에 꼭 가고 싶어!"
+          }
+        ]
+      },
+      {
+        "text": "그런데 이게 웬일이에요?\n항아리에는 커다란 구멍이 뻥 뚫려 있었어요.\n물을 아무리 부어도 줄줄 새어 나갔지요.",
+        "image": "/folk/kongjwi/p5.webp",
+        "audio": "/folk/kongjwi/narr-p5.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              147,
+              454,
+              755,
+              733
+            ],
+            "audio": "/folk/kongjwi/say-p5-kongjwi.mp3",
+            "line": "항아리에 구멍이… 어쩌지?"
+          }
+        ]
+      },
+      {
+        "text": "그때 두꺼비가 엉금엉금 기어 나왔어요.\n\"콩쥐야, 울지 마. 내가 구멍을 막아 줄게!\"\n두꺼비가 구멍을 막자 항아리에 금세 물이 가득 찼답니다.",
+        "image": "/folk/kongjwi/p6.webp",
+        "audio": "/folk/kongjwi/narr-p6.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              153,
+              508,
+              736,
+              764
+            ],
+            "audio": "/folk/kongjwi/say-p6-kongjwi.mp3",
+            "line": "고마워, 두꺼비야!"
+          },
+          {
+            "label": "toad",
+            "box": [
+              520,
+              301,
+              678,
+              421
+            ],
+            "audio": "/folk/kongjwi/say-p6-toad.mp3",
+            "line": "걱정 마, 콩쥐야! 내가 막아 줄게!"
+          }
+        ]
+      },
+      {
+        "text": "이번에는 마당 가득 벼가 쌓였어요. \"이 벼를 다 찧어 놓아라!\"\n그러자 참새 떼가 포르르 날아왔어요.\n\"짹짹! 우리가 도와줄게!\" 참새들은 순식간에 벼를 다듬어 주었지요.",
+        "image": "/folk/kongjwi/p7.webp",
+        "audio": "/folk/kongjwi/narr-p7.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              496,
+              194,
+              885,
+              401
+            ],
+            "audio": "/folk/kongjwi/say-p7-kongjwi.mp3",
+            "line": "참새들아, 고마워!"
+          },
+          {
+            "label": "sparrow",
+            "box": [
+              358,
+              348,
+              412,
+              402
+            ],
+            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
+            "line": "짹짹! 우리가 도와줄게!"
+          },
+          {
+            "label": "sparrow",
+            "box": [
+              255,
+              349,
+              313,
+              404
+            ],
+            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
+            "line": "짹짹! 우리가 도와줄게!"
+          },
+          {
+            "label": "sparrow",
+            "box": [
+              163,
+              370,
+              221,
+              415
+            ],
+            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
+            "line": "짹짹! 우리가 도와줄게!"
+          },
+          {
+            "label": "sparrow",
+            "box": [
+              105,
+              442,
+              159,
+              495
+            ],
+            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
+            "line": "짹짹! 우리가 도와줄게!"
+          },
+          {
+            "label": "sparrow",
+            "box": [
+              98,
+              535,
+              149,
+              586
+            ],
+            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
+            "line": "짹짹! 우리가 도와줄게!"
+          },
+          {
+            "label": "sparrow",
+            "box": [
+              142,
+              606,
+              194,
+              663
+            ],
+            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
+            "line": "짹짹! 우리가 도와줄게!"
+          },
+          {
+            "label": "sparrow",
+            "box": [
+              206,
+              631,
+              273,
+              684
+            ],
+            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
+            "line": "짹짹! 우리가 도와줄게!"
+          },
+          {
+            "label": "sparrow",
+            "box": [
+              358,
+              627,
+              411,
+              682
+            ],
+            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
+            "line": "짹짹! 우리가 도와줄게!"
+          },
+          {
+            "label": "sparrow",
+            "box": [
+              432,
+              633,
+              492,
+              689
+            ],
+            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
+            "line": "짹짹! 우리가 도와줄게!"
+          }
+        ]
+      },
+      {
+        "text": "\"착한 콩쥐야, 이제 잔치에 갈 시간이야.\"\n하늘에서 선녀님이 사뿐히 내려와\n고운 비단 치마와 반짝이는 꽃신 한 켤레를 주었답니다.",
+        "image": "/folk/kongjwi/p8.webp",
+        "audio": "/folk/kongjwi/narr-p8.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              393,
+              263,
+              742,
+              411
+            ],
+            "audio": "/folk/kongjwi/say-p8-kongjwi.mp3",
+            "line": "우와, 예쁜 꽃신! 감사합니다!"
+          },
+          {
+            "label": "fairy",
+            "box": [
+              137,
+              497,
+              521,
+              764
+            ],
+            "audio": "/folk/kongjwi/say-p8-fairy.mp3",
+            "line": "착한 콩쥐야, 어서 잔치에 가 보렴."
+          }
+        ]
+      },
+      {
+        "text": "고운 옷을 입은 콩쥐는 나는 듯이 잔치에 달려갔어요.\n그런데 개울을 폴짝 건너다가 그만!\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았지요.",
+        "image": "/folk/kongjwi/p9.webp",
+        "audio": "/folk/kongjwi/narr-p9.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              139,
+              411,
+              554,
+              686
+            ],
+            "audio": "/folk/kongjwi/say-p9-kongjwi.mp3",
+            "line": "아앗! 내 꽃신!"
+          }
+        ]
+      },
+      {
+        "text": "\"아이, 어쩌지? 잔치에 늦겠는걸.\"\n콩쥐는 남은 한 짝만 품에 안고\n서둘러 잔치 마당으로 갔어요.",
+        "image": "/folk/kongjwi/p10.webp",
+        "audio": "/folk/kongjwi/narr-p10.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              253,
+              497,
+              672,
+              727
+            ],
+            "audio": "/folk/kongjwi/say-p10-kongjwi.mp3",
+            "line": "늦겠다, 서두르자!"
+          }
+        ]
+      },
+      {
+        "text": "마침 그 개울가를 지나던 원님이 반짝이는 꽃신을 주웠어요.\n\"이렇게 고운 신이라니! 주인이 분명 고운 마음씨를 가졌겠구나.\"\n원님은 꽃신의 주인을 찾아 나섰답니다.",
+        "image": "/folk/kongjwi/p11.webp",
+        "audio": "/folk/kongjwi/narr-p11.mp3",
+        "hotspots": [
+          {
+            "label": "magistrate",
+            "box": [
+              141,
+              403,
+              748,
+              673
+            ],
+            "audio": "/folk/kongjwi/say-p11-magistrate.mp3",
+            "line": "이 고운 신의 주인은 누구일까?"
+          }
+        ]
+      },
+      {
+        "text": "\"이 꽃신의 주인을 찾습니다!\"\n팥쥐도 욕심을 내며 신어 보았지만 발이 들어가지 않았어요.\n꽃신은 콩쥐의 발에 쏙, 꼭 맞았답니다.",
+        "image": "/folk/kongjwi/p12.webp",
+        "audio": "/folk/kongjwi/narr-p12.mp3",
+        "hotspots": [
+          {
+            "label": "magistrate",
+            "box": [
+              209,
+              368,
+              611,
+              576
+            ],
+            "audio": "/folk/kongjwi/say-p12-magistrate.mp3",
+            "line": "이 꽃신의 주인을 찾습니다!"
+          }
+        ]
+      },
+      {
+        "text": "\"그대가 바로 꽃신의 주인이군요!\"\n원님은 콩쥐의 착하고 부지런한 마음을 온 마을에 칭찬했어요.\n마을 사람들이 모두 박수를 보냈지요.",
+        "image": "/folk/kongjwi/p13.webp",
+        "audio": "/folk/kongjwi/narr-p13.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              358,
+              393,
+              702,
+              534
+            ],
+            "audio": "/folk/kongjwi/say-p13-kongjwi.mp3",
+            "line": "네, 제 신이에요!"
+          },
+          {
+            "label": "magistrate",
+            "box": [
+              346,
+              552,
+              703,
+              720
+            ],
+            "audio": "/folk/kongjwi/say-p13-magistrate.mp3",
+            "line": "그대가 꽃신의 주인이군요!"
+          }
+        ]
+      },
+      {
+        "text": "새어머니와 팥쥐도 그동안의 잘못을 뉘우치고 콩쥐에게 사과했어요.\n\"콩쥐야, 미안했다.\"\n그 뒤로 온 가족은 서로 아끼며 오래오래 행복하게 살았답니다.",
+        "image": "/folk/kongjwi/p14.webp",
+        "audio": "/folk/kongjwi/narr-p14.mp3",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "box": [
+              346,
+              483,
+              687,
+              642
+            ],
+            "audio": "/folk/kongjwi/say-p14-kongjwi.mp3",
+            "line": "우리 이제 사이좋게 지내요!"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "folk-haedal",
+    "lang": "ko",
+    "title": "해님 달님",
+    "summary": "호랑이를 피해 하늘로 올라간 오누이가 해님과 달님이 된 이야기",
+    "narrator": "tc-seohyeon",
+    "pages": [
+      {
+        "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고 있으렴.\"\n어느 날도 어머니는 떡 광주리를 이고\n꼬불꼬불 산길을 넘어갔어요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "그런데 해가 뉘엿뉘엿 지는 고갯길에서\n커다란 호랑이가 어흥! 하고 나타났어요.\n\"떡 하나 주면 안 잡아먹지!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "어머니는 얼른 떡을 하나 던져 주었어요.\n호랑이는 냠냠 먹고는 다음 고개에서 또 나타났지요.\n\"떡 하나 주면 안 잡아먹지!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "고개를 넘을 때마다 호랑이가 나타나\n광주리의 떡이 모두 없어지고 말았어요.\n욕심쟁이 호랑이는 이번엔 오누이네 집으로 향했답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "똑똑똑. \"얘들아, 엄마 왔단다. 문 열어 주렴.\"\n그런데 목소리가 어쩐지 이상했어요.\n\"우리 엄마 목소리가 아닌데?\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "\"그럼 문틈으로 손을 보여 주세요.\"\n문틈으로 들어온 손은 털이 북슬북슬!\n\"호랑이다!\" 오누이는 살그머니 뒷문으로 빠져나갔어요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "오누이는 우물가 큰 나무 위로 재빨리 올라갔어요.\n호랑이는 우물에 비친 그림자를 보고 나무 위를 올려다보았지요.\n\"거기 올라가면 못 잡을 줄 알고?\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "호랑이가 나무를 타고 슬금슬금 올라오기 시작했어요.\n오누이는 두 손을 꼭 모으고 하늘에 빌었답니다.\n\"하느님, 저희를 살려 주시려거든 튼튼한 동아줄을 내려 주세요!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이는 줄을 꼭 잡았고,\n동아줄은 두둥실 하늘로 올라갔답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "호랑이도 얼른 하늘에 빌었어요.\n\"나도 동아줄을 내려 다오!\"\n하늘은 호랑이에게 썩은 동아줄을 내려 주었지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "썩은 줄을 잡고 올라가던 호랑이는\n뚝! 줄이 끊어지며 수숫대 밭으로 떨어지고 말았어요.\n\"아이고 엉덩이야!\" 그래서 수숫대가 빨갛게 물들었다지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "하늘로 올라간 오누이는 별나라 임금님을 만났어요.\n\"착하고 지혜로운 아이들아, 세상을 밝혀 주겠니?\"\n오빠는 달님이, 동생은 해님이 되었답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "그 뒤로 낮에는 해님이, 밤에는 달님이\n온 세상을 따뜻하게 비춰 주어요.\n오늘 밤 달님을 보면 손을 흔들어 주세요. 오누이가 웃고 있을 거예요.",
+        "image": null,
+        "audio": null
+      }
+    ]
+  },
+  {
+    "id": "folk-goldaxe",
+    "lang": "ko",
+    "title": "금도끼 은도끼",
+    "summary": "연못에 도끼를 빠뜨린 정직한 나무꾼이 산신령님께 상을 받는 이야기",
+    "narrator": "tc-sanghyun",
+    "pages": [
+      {
+        "text": "옛날 어느 산골에 부지런한 나무꾼이 살았어요.\n나무꾼은 홀어머니를 모시고\n날마다 산에 올라 열심히 나무를 했답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "\"오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!\"\n나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만,\n나무꾼은 도끼를 보물처럼 아꼈어요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "풍덩! 도끼가 깊은 연못 속으로 가라앉고 말았어요.\n\"아이고, 내 도끼! 하나뿐인 내 도끼!\"\n나무꾼은 연못가에 주저앉아 엉엉 울었답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "그때였어요. 연못 물이 반짝반짝 빛나더니\n하얀 수염을 길게 늘어뜨린 산신령님이 스르르 나타났어요.\n\"나무꾼아, 왜 그리 슬피 우느냐?\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "\"도끼를 연못에 빠뜨렸습니다.\n그 도끼가 없으면 나무를 할 수가 없어요.\"\n산신령님은 고개를 끄덕이더니 연못 속으로 사라졌지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요.\n\"이 금도끼가 네 도끼냐?\"\n\"아니요, 제 도끼가 아닙니다.\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "산신령님이 이번에는 은도끼를 들고 나왔어요.\n\"그럼 이 은도끼가 네 도끼냐?\"\n\"아니요, 그것도 제 것이 아닙니다.\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "마지막으로 낡은 쇠도끼를 들고 나오자\n나무꾼의 얼굴이 환해졌어요.\n\"맞아요! 그게 바로 제 도끼입니다!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "산신령님이 껄껄 웃으며 말했어요.\n\"참으로 정직하구나. 네 정직한 마음에 감동했으니\n금도끼와 은도끼도 모두 너에게 주마!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "나무꾼은 도끼 세 자루를 안고 집으로 돌아왔어요.\n금도끼를 판 돈으로 어머니 약을 짓고,\n마을 사람들에게도 아낌없이 나누어 주었답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "이 소식을 들은 이웃 마을 욕심쟁이가 무릎을 쳤어요.\n\"옳지! 나도 도끼를 빠뜨리면 금도끼를 받겠구나!\"\n욕심쟁이는 연못으로 달려가 일부러 도끼를 풍덩 던졌지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "산신령님이 금도끼를 들고 나타나자 욕심쟁이가 냉큼 외쳤어요.\n\"맞아요! 그 금도끼가 제 도끼입니다!\"\n산신령님의 얼굴이 무섭게 굳어졌지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "\"거짓말쟁이에게는 아무것도 줄 수 없다!\"\n산신령님은 욕심쟁이의 쇠도끼마저 돌려주지 않았어요.\n정직한 마음이야말로 가장 큰 보물이랍니다.",
+        "image": null,
+        "audio": null
+      }
+    ]
+  }
+]
