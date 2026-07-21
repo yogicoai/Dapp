@@ -190,10 +190,10 @@
           {
             "label": "queen",
             "box": [
-              201,
-              131,
-              874,
-              577
+              198,
+              127,
+              876,
+              576
             ],
             "audio": "/classic/snowwhite/say-p2-queen.mp3",
             "line": "나보다 예쁜 사람은 절대 못 참아!"
@@ -208,10 +208,10 @@
           {
             "label": "mirror",
             "box": [
-              69,
-              239,
-              597,
-              502
+              64,
+              237,
+              600,
+              503
             ],
             "audio": "/classic/snowwhite/say-p3-mirror.mp3",
             "line": "그야 물론 왕비님이지요."
@@ -220,9 +220,9 @@
             "label": "queen",
             "box": [
               194,
-              465,
+              467,
               903,
-              849
+              850
             ],
             "audio": "/classic/snowwhite/say-p3-queen.mp3",
             "line": "거울아 거울아, 세상에서 누가 제일 예쁘니?"
@@ -243,10 +243,10 @@
           {
             "label": "huntsman",
             "box": [
-              279,
-              246,
-              799,
-              588
+              278,
+              248,
+              798,
+              594
             ],
             "audio": "/classic/snowwhite/say-p5-huntsman.mp3",
             "line": "공주님, 궁전은 위험해요. 부디 몸을 숨기세요!"
@@ -254,10 +254,10 @@
           {
             "label": "snowwhite",
             "box": [
-              234,
-              532,
-              842,
-              829
+              235,
+              529,
+              843,
+              831
             ],
             "audio": "/classic/snowwhite/say-p5-snowwhite.mp3",
             "line": "고마워요, 아저씨…"
@@ -266,9 +266,21 @@
       },
       {
         "text": "백설공주는 눈물을 닦고 숲속을 한참 걸었어요.\n그러다 작고 아담한 오두막을 발견했지요.\n안에는 조그만 식탁에 접시가 일곱 개, 빵이 일곱 조각,\n조그만 침대도 일곱 개 나란히 놓여 있었답니다.",
-        "image": null,
+        "image": "/classic/snowwhite/p6.webp",
         "audio": "/classic/snowwhite/narr-p6.mp3",
-        "hotspots": []
+        "hotspots": [
+          {
+            "label": "snowwhite",
+            "box": [
+              206,
+              542,
+              764,
+              822
+            ],
+            "audio": "/classic/snowwhite/say-p6-snowwhite.mp3",
+            "line": "어머, 뭐든지 일곱 개씩이네?"
+          }
+        ]
       },
       {
         "text": "배가 고팠던 공주는 식탁에 놓인 빵을 맛있게 먹었어요.\n다 먹고 나니 눈꺼풀이 스르르 —\n공주는 일곱 번째 작은 침대에서 새근새근 잠이 들었답니다.",
@@ -278,10 +290,10 @@
           {
             "label": "snowwhite",
             "box": [
-              206,
-              75,
-              881,
-              359
+              286,
+              161,
+              850,
+              417
             ],
             "audio": "/classic/snowwhite/say-p7-snowwhite.mp3",
             "line": "냠냠, 이제 좀 살 것 같아… 아, 졸려…"
@@ -289,10 +301,10 @@
           {
             "label": "snowwhite",
             "box": [
-              388,
-              431,
-              519,
-              532
+              362,
+              611,
+              467,
+              706
             ],
             "audio": "/classic/snowwhite/say-p7-snowwhite.mp3",
             "line": "냠냠, 이제 좀 살 것 같아… 아, 졸려…"
@@ -319,9 +331,21 @@
       },
       {
         "text": "\"살아 있었다니!\" 왕비는 허리 굽은 장사꾼 할머니로 변장했어요.\n그리고 새빨간 사과에 마법을 걸었지요.\n\"이 사과를 한 입 물면 깊은 잠에 빠질 것이다… 호호호.\"\n왕비는 일곱 고개를 넘어 난쟁이 집으로 향했답니다.",
-        "image": null,
+        "image": "/classic/snowwhite/p11.webp",
         "audio": "/classic/snowwhite/narr-p11.mp3",
-        "hotspots": []
+        "hotspots": [
+          {
+            "label": "queen",
+            "box": [
+              218,
+              381,
+              888,
+              771
+            ],
+            "audio": "/classic/snowwhite/say-p11-queen.mp3",
+            "line": "이 사과를 한 입 물면 깊은 잠에 빠질 것이다… 호호호!"
+          }
+        ]
       },
       {
         "text": "\"똑똑. 예쁜 아가씨, 맛있는 사과 사려~\"\n\"안 돼요. 문을 열어 주지 않기로 약속했는걸요.\"\n\"착하기도 하지. 그럼 창문으로 하나만 받아요.\"\n공주가 창문 너머로 사과를 받아 한 입 물자… 스르르, 깊은 잠에 빠지고 말았어요.",
@@ -337,15 +361,50 @@
       },
       {
         "text": "그러던 어느 날, 이웃 나라 왕자님이 숲을 지나다가\n유리 침대에 잠든 백설공주를 보게 되었어요.\n\"이렇게 곱고 평화로운 얼굴은 처음이야…\"\n왕자님의 가슴이 두근두근 뛰었지요.",
-        "image": null,
+        "image": "/classic/snowwhite/p14.webp",
         "audio": "/classic/snowwhite/narr-p14.mp3",
-        "hotspots": []
+        "hotspots": [
+          {
+            "label": "prince",
+            "box": [
+              261,
+              248,
+              784,
+              573
+            ],
+            "audio": "/classic/snowwhite/say-p14-prince.mp3",
+            "line": "이렇게 곱고 평화로운 얼굴은 처음이야…"
+          }
+        ]
       },
       {
         "text": "왕자님이 공주의 이마에 살며시 입을 맞춘 순간,\n따뜻한 사랑의 힘이 잠자는 마법을 사르르 녹였어요.\n\"아… 내가 얼마나 잠든 거죠?\"\n백설공주가 눈을 떴답니다!",
-        "image": null,
+        "image": "/classic/snowwhite/p15.webp",
         "audio": "/classic/snowwhite/narr-p15.mp3",
-        "hotspots": []
+        "hotspots": [
+          {
+            "label": "snowwhite",
+            "box": [
+              404,
+              187,
+              853,
+              545
+            ],
+            "audio": "/classic/snowwhite/say-p15-snowwhite.mp3",
+            "line": "아… 내가 얼마나 잠든 거죠?"
+          },
+          {
+            "label": "prince",
+            "box": [
+              299,
+              483,
+              788,
+              765
+            ],
+            "audio": "/classic/snowwhite/say-p15-prince.mp3",
+            "line": "깨어났군요! 정말 다행이에요!"
+          }
+        ]
       },
       {
         "text": "\"공주님이 깨어났다! 만세!\" 난쟁이들이 덩실덩실 춤을 추었어요.\n왕자님은 그 자리에서 청혼했지요.\n\"저와 결혼해 주시겠어요?\"\n왕국에서는 성대한 결혼 잔치가 열리게 되었답니다.",
