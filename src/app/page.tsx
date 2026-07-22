@@ -12,6 +12,9 @@ import type { Book } from "@/lib/types";
 
 export default function Home() {
   const { theme } = useTheme();
+  // 그림책나라 배경(이사님 hero)은 인물이 크게 담겨 넓은 화면에서 꽉 차 부담스럽다.
+  // 살짝 흐리고 흰 베일을 더 얹어 은은하게 가라앉힌다 — 이 테마에만 적용한다.
+  const softBg = theme.id === "picturebook";
 
   // 언어는 설정(⚙️)에서 고른다. 메인은 아이가 보는 화면이라 컨트롤을 두지 않는다.
   const all = books as Book[];
@@ -33,7 +36,9 @@ export default function Home() {
       <img
         src={theme.background}
         alt=""
-        className="fixed inset-0 -z-10 h-full w-full object-cover"
+        className={`fixed inset-0 -z-10 h-full w-full object-cover ${
+          softBg ? "scale-110 blur-[3px]" : ""
+        }`}
       />
       {/* 우주 테마 — 은은하게 움직이는 배경 영상. 정지 이미지(위 img)를 poster로
           깔아 로딩 지연이 없고, "모션 줄이기" 설정 기기에서는 영상이 숨겨져 정지
@@ -46,13 +51,16 @@ export default function Home() {
           loop
           playsInline
           poster={theme.background}
-          className="pointer-events-none fixed inset-0 -z-10 h-full w-full object-cover motion-reduce:hidden"
+          className={`pointer-events-none fixed inset-0 -z-10 h-full w-full object-cover motion-reduce:hidden ${
+            softBg ? "scale-110 blur-[3px]" : ""
+          }`}
         >
           <source src={`/themes/${theme.id}/bg-video.mp4`} type="video/mp4" />
         </video>
       )}
-      {/* 원색 배경이 너무 세면 책 표지가 묻힌다 — 흰 베일로 채도를 한 김 뺀다. */}
-      <div className="fixed inset-0 -z-10 bg-white/25" />
+      {/* 원색 배경이 너무 세면 책 표지가 묻힌다 — 흰 베일로 채도를 한 김 뺀다.
+          그림책나라는 배경이 꽉 차서 베일을 한 겹 더 진하게 얹는다. */}
+      <div className={`fixed inset-0 -z-10 ${softBg ? "bg-white/45" : "bg-white/25"}`} />
 
       {/* 아래 여백: 폰은 버튼이 흐름 안에 있어 얕게, sm부터는 떠 있는 버튼 자리만큼. */}
       <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center px-6 pb-10 pt-6 sm:pb-32">
