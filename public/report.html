@@ -115,6 +115,17 @@
   .pricecard .big small { font-size: 14px; font-weight: 700; color: var(--ink-soft); }
   .pricecard .range { margin: 8px 0 0; font-size: 12.5px; color: var(--ink-soft); }
 
+  .storycard { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: var(--card); box-shadow: var(--shadow); }
+  .storycard.opus { border-top: 3px solid var(--rust); }
+  .storycard.sonnet { border-top: 3px solid var(--sage); }
+  .storycard .m { font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+  .storycard.opus .m { color: var(--rust); }
+  .storycard.sonnet .m { color: var(--sage); }
+  .storycard h4 { margin: 4px 0 12px; font-size: 15px; font-weight: 800; }
+  .storycard ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 7px; }
+  .storycard ol li { font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; }
+  h3.mini-h { margin: 24px 0 2px; font-size: 16px; font-weight: 800; scroll-margin-top: 20px; }
+
   .agenda { display: flex; flex-direction: column; gap: 10px; }
   .agenda .q { display: flex; gap: 13px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: var(--shadow); }
   .agenda .qn { flex: 0 0 auto; width: 24px; height: 24px; border-radius: 8px; background: var(--sage-soft); color: var(--sage); font-weight: 800; font-size: 13px; display: grid; place-items: center; margin-top: 1px; }
@@ -144,6 +155,7 @@
       <a href="#done">개발 현황</a>
       <a href="#todo">남은 작업</a>
       <a href="#cost">1권 원가</a>
+      <a href="#compare">품질 비교</a>
       <a href="#sale">판매가</a>
       <a href="#models">요금 모델</a>
       <a href="#agenda">회의 안건</a>
@@ -198,8 +210,8 @@
           <tr><td class="rowlabel">고성능 Opus<small>최고 품질</small></td><td>360</td><td>480</td><td>590</td></tr>
           <tr class="group"><td colspan="4">삽화 — Gemini 2.5 Flash Image (장당 ₩55)</td></tr>
           <tr><td class="rowlabel">삽화 (본문 장수 + 캐릭터 1장)</td><td>220</td><td>385</td><td>495</td></tr>
-          <tr class="group"><td colspan="4">음성 — Typecast 성우 (무료 범위)</td></tr>
-          <tr><td class="rowlabel">음성 (월 3만 자 무료 내)</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr class="group"><td colspan="4">음성 — Typecast API (무료 월 3만 자 ≈ 35권)</td></tr>
+          <tr><td class="rowlabel">음성 (무료 범위 0 · 초과 시 +₩100/권)</td><td>0</td><td>0</td><td>0</td></tr>
           <tr class="total sonnet"><td>합계 — Sonnet 기준</td><td>290</td><td>480</td><td>615</td></tr>
           <tr class="total opus"><td>합계 — Opus 기준</td><td>580</td><td>865</td><td>1,085</td></tr>
         </tbody>
@@ -218,13 +230,13 @@
         </tbody></table>
       </div>
       <div class="detail">
-        <h4>🔊 음성 — Typecast 성우 낭독</h4>
-        <p class="unit">월 30,000자 무료</p>
-        <p class="d">1권 낭독 ≈ <b>840자</b>(나레이션 + 대사) → 무료 한도로 <b>월 약 35권까지 0원</b>.</p>
+        <h4>🔊 음성 — Typecast API (성우 낭독)</h4>
+        <p class="unit">월 30,000자 무료 <span>(크레딧 = 글자수)</span></p>
+        <p class="d">1권 낭독 ≈ <b>840자</b> → 무료로 <b>월 약 35권</b>. 넘으면 크레딧당 자동 과금이라 <b>1권 약 ₩100</b>. <b>성우 개수·종류는 요금과 무관</b>(총 글자수 기준).</p>
         <table class="mini"><tbody>
-          <tr><td>무료 한도</td><td style="text-align:right">월 30,000자 (≈ 35권)</td></tr>
-          <tr><td>1권당 분량</td><td style="text-align:right">약 840자</td></tr>
-          <tr><td>초과 시</td><td style="text-align:right">유료 플랜 · <b>단가 확정 필요</b></td></tr>
+          <tr><td>무료</td><td style="text-align:right">월 30,000자(≈35권) · <b>₩0</b></td></tr>
+          <tr><td>라이트 $15/월</td><td style="text-align:right">20만 자(≈238권)</td></tr>
+          <tr><td>초과 1권</td><td style="text-align:right">약 ₩100 ($0.09/1,000자)</td></tr>
         </tbody></table>
       </div>
     </div>
@@ -235,7 +247,40 @@
     </div>
 
     <div class="callout sage">
-      <p><b class="sage">핵심.</b> 원가의 약 절반은 삽화(장당 ₩55 고정), 나머지가 글입니다. 음성은 초기 무료(월 3만 자 ≈ 35권)라 0원. <b class="sage">글을 Sonnet으로 쓰면 원가가 1/5</b>로 내려가 1권이 ₩600대가 됩니다.</p>
+      <p><b class="sage">핵심.</b> 원가의 약 절반은 삽화(장당 ₩55 고정), 나머지가 글입니다. 음성은 <b class="sage">월 35권까지 무료</b>(넘으면 1권 약 ₩100). <b class="sage">글을 Sonnet으로 쓰면 원가가 1/5</b>로 내려가 1권이 ₩600대가 됩니다.</p>
+    </div>
+
+    <h3 class="mini-h" id="compare">글 모델 실제 품질 비교 (같은 재료로 생성)</h3>
+    <p class="section-note">아이 <b>요기코(6세)</b> · 우주 로켓 · 친구 <b>토토</b> · 6장면 — 같은 재료를 <b>두 모델에 실제로 돌린</b> 결과입니다.</p>
+    <div class="cards2">
+      <div class="storycard opus">
+        <span class="m">Opus · 고성능</span>
+        <h4>슝! 우주 로켓 타고 새 친구를 만나요</h4>
+        <ol>
+          <li>요기코와 토토는 상자로 멋진 우주 로켓을 만들었어요. “별나라까지 신나게 날아가 보자!” 요기코가 외치자 로켓이 슝 하늘로 솟았어요.</li>
+          <li>반짝이는 별들 사이를 날던 로켓에 갑자기 삐뽀삐뽀 신호가 울렸어요. “저기 봐, 작은 우주선이 빙글빙글 돌고 있어!” 토토가 창밖을 가리켰어요.</li>
+          <li>요기코가 다가가 보니, 초록빛 아기 외계인이 울고 있었어요. “나는 삐용이야. 집으로 가는 길을 잃어버렸어.” 친구의 눈에서 별방울이 뚝뚝 떨어졌어요.</li>
+          <li>그런데 삐용이의 우주선은 날개가 부러져 꼼짝도 못 했어요. 깜깜한 우주에 셋만 둥둥, 요기코의 가슴도 두근두근 뛰었어요. “어떻게 집을 찾아 주지?”</li>
+          <li>요기코는 반짝이는 별들을 이어 길을 그렸어요. “삐용아, 저 노란 별을 따라가면 네 별이 나와!” 요기코가 로켓으로 앞장서서 길을 안내했어요.</li>
+          <li>드디어 삐용이의 초록 별에 무사히 도착했어요! “고마워, 요기코! 우리 이제 우주 친구야.” 셋은 별빛 아래에서 손을 마주 잡고 활짝 웃었어요.</li>
+        </ol>
+      </div>
+      <div class="storycard sonnet">
+        <span class="m">Sonnet · 가성비</span>
+        <h4>요기코의 우주 로켓과 별별 친구</h4>
+        <ol>
+          <li>요기코와 토토는 마당에서 커다란 종이상자로 우주 로켓을 뚝딱뚝딱 만들었어요. 오늘은 진짜 우주로 떠나는 아주 특별한 날이랍니다.</li>
+          <li>버튼을 힘차게 누르자 로켓이 붕 떠올라 반짝이는 별빛 사이로 신나게 날아갔어요. 요기코와 토토는 손을 맞잡고 함성을 질렀어요.</li>
+          <li>저 멀리 반짝이는 초록별에서 이상한 빛이 깜빡깜빡 신호를 보내왔어요. 궁금해진 두 친구는 로켓을 그 별 쪽으로 살짝 돌려 다가갔어요.</li>
+          <li>쿵! 로켓이 초록별에 사뿐히 내려앉자 커다란 그림자가 쓱 하고 나타났어요. 요기코와 토토는 깜짝 놀라서 서로 손을 꼭 붙잡았어요.</li>
+          <li>요기코는 두근거리는 마음을 꾹 누르고 먼저 손을 흔들며 씩씩하게 인사했어요. 그러자 외계 친구도 활짝 웃으며 반갑게 손을 흔들어 주었어요.</li>
+          <li>셋은 반짝이는 별사탕을 나눠 먹으며 함께 깔깔 웃었고, 요기코는 새 친구와 손을 꼭 잡고 씩씩하게 지구로 무사히 돌아왔답니다.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="callout amber">
+      <p><b class="amber">편집자 비교.</b> 두 버전 모두 6세 눈높이의 의성어·의태어와 밝은 결말을 갖췄지만, 차이는 ‘감정의 밀도’와 ‘갈등’에 있습니다. <b>Opus</b>는 길 잃은 삐용이의 ‘별방울’, 부러진 날개, ‘별을 이어 길 그리기’ 같은 구체적 위기·해결로 뚜렷한 서사 아치를 만듭니다. <b>Sonnet</b>은 문장이 매끄럽고 리듬이 좋으나 갈등이 ‘그림자에 놀람’ 정도로 약하고 마무리가 다소 빠릅니다.</p>
+      <p><b class="amber">판단.</b> 감정 깊이·서사 완성도가 중요한 <b>대표 콘텐츠는 Opus</b>, 매끄러운 문장이면 충분한 <b>대량 생성은 Sonnet</b>이 비용 대비 합리적입니다.</p>
     </div>
   </section>
 
@@ -292,7 +337,7 @@
   </section>
 
   <p class="disclaimer">
-    <b>산정 기준 및 주의.</b> 원가는 환율 ₩1,400/$ 가정과 사용량 실측 추정치, 부가세 별도 기준입니다. <b>삽화는 Gemini 2.5 Flash Image(장당 ₩55, $0.039)로 확정</b>됐고, 음성은 무료 티어(월 3만 자) 내 0원으로 잡았습니다. 글 모델 단가·결제 수수료·음성 초과분 단가는 실제 계약·정산에 따라 갱신이 필요합니다. 판매가·팩 가격·코인 매칭은 <b>의사결정용 예시</b>로, 실제 청구액과 오차가 있을 수 있습니다.
+    <b>산정 기준 및 주의.</b> 원가는 환율 ₩1,400/$ 가정과 사용량 실측 추정치, 부가세 별도 기준입니다. <b>삽화는 Gemini 2.5 Flash Image(장당 ₩55, $0.039)</b>, <b>음성은 Typecast API(무료 월 3만 자·약 35권, 초과 시 1권 약 ₩100 = $0.09/1,000자)</b>로 단가가 확인됐습니다. 남은 변수는 <b>글 모델 최종 선택(Opus/Sonnet)</b>과 결제 수수료 정도입니다. 판매가·팩 가격·코인 매칭은 <b>의사결정용 예시</b>로, 실제 청구액과 오차가 있을 수 있습니다.
   </p>
   <p class="foothint">우리 가족 보이스 동화 · 개발 현황 · 가격 정책 보고 · 2026-07-22 · 내부 회의용 (임시 파일: public/report.html)</p>
 </div>
