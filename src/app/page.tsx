@@ -46,6 +46,10 @@ export default function Home() {
           아래 정지 이미지가 대신 보여 어떤 기기에서도 안전하다. */}
       {(theme.id === "space" || theme.id === "picturebook") && (
         <video
+          // 테마가 바뀌면 video를 새로 마운트해 소스를 다시 로드한다.
+          // key가 없으면 React가 <source>만 갈아끼우고 .load()를 안 불러
+          // 새로고침·테마전환 때 poster만 뜨고 영상이 안 나온다.
+          key={theme.id}
           autoPlay
           muted
           loop
