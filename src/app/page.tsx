@@ -35,8 +35,24 @@ export default function Home() {
         alt=""
         className="fixed inset-0 -z-10 h-full w-full object-cover"
       />
+      {/* 우주 테마 — 은은하게 움직이는 배경 영상. 정지 이미지(위 img)를 poster로
+          깔아 로딩 지연이 없고, "모션 줄이기" 설정 기기에서는 영상이 숨겨져 정지
+          이미지가 그대로 보인다(motion-reduce:hidden). 영상 파일이 없거나 못 틀면
+          아래 정지 이미지가 대신 보여 어떤 기기에서도 안전하다. */}
+      {(theme.id === "space" || theme.id === "picturebook") && (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster={theme.background}
+          className="pointer-events-none fixed inset-0 -z-10 h-full w-full object-cover motion-reduce:hidden"
+        >
+          <source src={`/themes/${theme.id}/bg-video.mp4`} type="video/mp4" />
+        </video>
+      )}
       {/* 원색 배경이 너무 세면 책 표지가 묻힌다 — 흰 베일로 채도를 한 김 뺀다. */}
-      <div className="fixed inset-0 -z-10 bg-white/30" />
+      <div className="fixed inset-0 -z-10 bg-white/25" />
 
       {/* 아래 여백: 폰은 버튼이 흐름 안에 있어 얕게, sm부터는 떠 있는 버튼 자리만큼. */}
       <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center px-6 pb-10 pt-6 sm:pb-32">
@@ -60,7 +76,16 @@ export default function Home() {
               className="h-28 w-28 rounded-full border-4 border-white object-cover sm:h-32 sm:w-32"
             />
           </div>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)] sm:text-4xl">
+          {/* 흰 제목이 밝은 배경(그림책나라 크림 등)에 묻히지 않게, 어두운
+              외곽선(text-stroke)+다층 그림자로 어느 테마에서든 윤곽이 뜨게 한다. */}
+          <h1
+            className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl"
+            style={{
+              textShadow:
+                "0 2px 8px rgba(0,0,0,0.5), 0 0 6px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.45)",
+              WebkitTextStroke: "0.6px rgba(60,40,25,0.4)",
+            }}
+          >
             우리 가족 보이스 동화
           </h1>
           {/* 밝은 하늘 배경 위라 흰 글자는 묻힌다 — 불투명 흰 알약 + 짙은 글자로 */}
@@ -94,13 +119,14 @@ export default function Home() {
           <span className="text-xl font-extrabold tracking-tight">동화 만들기</span>
         </Link>
 
-        {/* 책장 탭 — 아이 책장이 비어 있어도 전래동화가 있어 첫 화면이 허전하지 않다. */}
+        {/* 책장 탭 — 아이 책장이 비어 있어도 전래동화가 있어 첫 화면이 허전하지 않다.
+            아이콘은 힉스필드 스티커(책더미·청사초롱·동화성) — 이모지 졸업. */}
         <div className="mb-6 flex justify-center gap-2">
           {(
             [
-              { key: "mine", label: "📚 우리 가족 책장" },
-              { key: "folk", label: "🏮 전래동화" },
-              { key: "classic", label: "🏰 세계명작" },
+              { key: "mine", label: "우리 가족 책장", icon: "/icons/tab-mine.webp" },
+              { key: "folk", label: "전래동화", icon: "/icons/tab-folk.webp" },
+              { key: "classic", label: "세계명작", icon: "/icons/tab-classic.webp" },
             ] as const
           ).map((t) => {
             const active = shelf === t.key;
@@ -112,7 +138,7 @@ export default function Home() {
                 aria-pressed={active}
                 style={active ? { color: theme.colors.accentDark } : undefined}
                 // 폰에서는 작게(줄바꿈 금지), sm부터 원래 크기 — 탭 세 개가 한 줄에 서게.
-                className={`whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-extrabold shadow-md backdrop-blur transition sm:px-5 sm:py-2.5 sm:text-base ${
+                className={`flex items-center gap-1 whitespace-nowrap rounded-full py-1.5 pl-1.5 pr-3.5 text-sm font-extrabold shadow-md backdrop-blur transition sm:py-2 sm:pr-5 sm:text-base ${
                   active
                     ? "scale-105 bg-white"
                     : // 흰 글자는 공주나라 같은 파스텔 배경에서 통째로 묻힌다 —
@@ -120,6 +146,8 @@ export default function Home() {
                       "bg-white/70 text-neutral-500 hover:bg-white/90"
                 }`}
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={t.icon} alt="" className="h-7 w-7 object-contain sm:h-8 sm:w-8" />
                 {t.label}
               </button>
             );
@@ -149,7 +177,7 @@ export default function Home() {
                 <p className="text-lg font-extrabold text-neutral-700">열심히 준비하고 있어요!</p>
                 <p className="text-sm font-bold leading-relaxed text-neutral-400">
                   {shelf === "classic"
-                    ? "신데렐라, 백설공주 같은 세계명작 동화들이 곧 도착해요."
+                    ? "신데렐라, 미운오리새끼 같은 세계명작 동화들이 곧 도착해요."
                     : "재미있는 이야기들이 곧 도착해요."}
                 </p>
               </>

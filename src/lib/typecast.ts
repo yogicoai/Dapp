@@ -87,16 +87,24 @@ export async function synthesize(input: {
   text: string;
   voiceId: string;
   model?: string;
+  /** 감정 프리셋(happy·sad·angry·toneup 등) — 대사 연기용. 음성이 지원할 때만 먹는다. */
+  emotion?: string;
 }): Promise<{ audio: ArrayBuffer; contentType: string }> {
+  const body: Record<string, unknown> = {
+    voice_id: input.voiceId,
+    text: input.text,
+    model: input.model || "ssfm-v30",
+    language: "kor",
+  };
+  if (input.emotion && input.emotion !== "normal") {
+    // ssfm-v30의 감정 연기. intensity는 1이 기본 — 살짝 과장해 동화 낭독 톤으로.
+    body.prompt = { emotion_preset: input.emotion, emotion_intensity: 1.4 };
+  }
+
   const res = await fetch(`${BASE}/v1/text-to-speech`, {
     method: "POST",
     headers: { "X-API-KEY": apiKey(), "Content-Type": "application/json" },
-    body: JSON.stringify({
-      voice_id: input.voiceId,
-      text: input.text,
-      model: input.model || "ssfm-v30",
-      language: "kor",
-    }),
+    body: JSON.stringify(body),
   });
   if (!res.ok) {
     throw new TypecastError(

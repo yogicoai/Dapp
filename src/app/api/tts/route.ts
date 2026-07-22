@@ -13,10 +13,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "요청 본문이 JSON이 아닙니다." }, { status: 400 });
   }
 
-  const input = body as { text?: unknown; voiceId?: unknown; model?: unknown };
+  const input = body as {
+    text?: unknown;
+    voiceId?: unknown;
+    model?: unknown;
+    emotion?: unknown;
+  };
   const text = typeof input.text === "string" ? input.text.trim() : "";
   const voiceId = typeof input.voiceId === "string" ? input.voiceId.trim() : "";
   const model = typeof input.model === "string" ? input.model.trim() : undefined;
+  const emotion =
+    typeof input.emotion === "string" ? input.emotion.trim().slice(0, 20) : undefined;
 
   if (!text || text.length > 500) {
     return NextResponse.json({ error: "문장을 1~500자로 보내주세요." }, { status: 400 });
@@ -26,7 +33,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { audio, contentType } = await synthesize({ text, voiceId, model });
+    const { audio, contentType } = await synthesize({ text, voiceId, model, emotion });
     return new Response(audio, {
       headers: { "Content-Type": contentType, "Cache-Control": "no-store" },
     });

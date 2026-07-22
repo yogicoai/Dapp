@@ -11,6 +11,7 @@
 
 export type ThemeId =
   | "storybook"
+  | "picturebook"
   | "dino"
   | "car"
   | "princess"
@@ -79,6 +80,30 @@ export const THEMES: Record<ThemeId, Theme> = {
       circleTop: "51.5%",
       circleWidth: "62%",
       ink: "#b45309", // 금테와 어울리는 앰버
+    },
+  },
+
+  // 이사님이 잡은 그림동화 컨셉 — 브랜드 히어로(수채화, 아이가 마법 책을 읽는
+  // 장면)를 그대로 배경으로 쓴다. hero.jpg=배경, hero.mp4=은은한 배경 영상.
+  picturebook: {
+    id: "picturebook",
+    label: "그림책나라",
+    background: "/themes/picturebook/background.webp",
+    mascot: "/themes/picturebook/mascot.webp",
+    mascotName: "토리",
+    colors: {
+      accent: "#d97706", // amber-600 — 히어로의 따뜻한 크림·테라코타 톤
+      accentDark: "#b45309", // amber-700
+      accentSoft: "#fffbeb", // amber-50
+    },
+    icons: { voice: "/icons/func-mic.webp", book: "/themes/picturebook/icon-book.webp" },
+    cover: {
+      // 전용 수채화 틀 — 잠든 여우·책더미·나뭇잎이 그려진 크림빛 프레임.
+      frame: "/covers/frame-picturebook.webp",
+      titleTop: "14%",
+      circleTop: "52%",
+      circleWidth: "52%",
+      ink: "#a15c3e", // 틀의 크림·테라코타와 어울리는 짙은 브라운
     },
   },
 
@@ -170,16 +195,17 @@ export const THEMES: Record<ThemeId, Theme> = {
 
 /** 실제로 쓸 수 있는(에셋이 갖춰진) 테마만 화면에 띄운다. */
 export const READY_THEME_IDS: ThemeId[] = [
+  "picturebook",
+  "space",
   "storybook",
   "dino",
   "car",
   "princess",
-  "space",
   "ocean",
 ];
 
 export const THEME_LIST = READY_THEME_IDS.map((id) => THEMES[id]);
-export const DEFAULT_THEME: ThemeId = "storybook";
+export const DEFAULT_THEME: ThemeId = "space";
 
 /** 아이콘 값이 이미지 경로인지(스티커) 이모지인지 구분. */
 export function isImageIcon(value: string): boolean {

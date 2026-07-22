@@ -11,32 +11,24 @@ import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
 
 type Gender = "girl" | "boy" | "unspecified";
-type Act = { act: string; text: string };
-type Outline = { title: string; summary: string; acts: Act[] };
+type Scene = { sceneNo: number; text: string };
+type Outline = { title: string; summary: string; scenes: Scene[] };
 type StoryPage = { pageNo: number; text: string; imagePrompt: string };
 type Character = { name: string; description: string };
 type Story = { title: string; summary: string; characters: Character[]; pages: StoryPage[] };
 
 type Step = "child" | "theme" | "style" | "outline" | "story" | "illustrate" | "done";
 
+/**
+ * 삽화(Gemini) 생성 스위치 — 테스트 동안은 글만 받는다(이미지는 토큰이 크다).
+ * 이미지 준비가 되면 true로만 바꾸면 "그림까지 그리기"가 다시 살아난다.
+ */
+const IMAGES_ENABLED = false;
+
 const AGES = [3, 4, 5, 6, 7, 8];
 const GENDERS: { value: Gender; label: string; icon: string }[] = [
   { value: "girl", label: "여자", icon: "/icons/gender-girl.webp" },
   { value: "boy", label: "남자", icon: "/icons/gender-boy.webp" },
-  { value: "unspecified", label: "상관없어요", icon: "/icons/gender-any.webp" },
-];
-
-/**
- * 특별한 날. 동화가 "선물"이 되는 지점이라 이야기 톤에도 반영된다.
- * 대부분 "일반"이라 별도 화면이 아니라 그림체 화면의 선택 한 줄로 보여준다.
- * 아이콘은 힉스필드 스티커 아트(흰 배경) — 흰 칩 안에 넣어 자연스럽게 보인다.
- */
-const OCCASIONS = [
-  { value: "", label: "일반", icon: "/icons/occasion-none.webp" },
-  { value: "생일 축하", label: "생일 축하", icon: "/icons/occasion-birthday.webp" },
-  { value: "첫 생일(돌) 축하", label: "첫 생일(돌)", icon: "/icons/occasion-first.webp" },
-  { value: "졸업 축하", label: "졸업 축하", icon: "/icons/occasion-grad.webp" },
-  { value: "새 동생 맞이", label: "새 동생 맞이", icon: "/icons/occasion-sibling.webp" },
 ];
 
 /**
@@ -44,9 +36,9 @@ const OCCASIONS = [
  * 카드(힉스필드 스티커)를 누르면 그 갈래의 칩이 펼쳐진다. 칩에는 이모지를 붙여
  * 미취학 아이에게 시각 단서를 준다.
  *
- * 재미·동화나라는 아이가 고르고, 습관·마음은 부모가 고른다.
+ * 재미·동화나라는 아이가 고르고, 습관은 부모가 고른다.
  * 습관 주제가 부모가 지갑을 여는 이유라 재미 못지않게 중요하다.
- * 마음(감정동화) 갈래는 3~4세 감정 발달용 — 감정에 이름을 붙이고 다루는 이야기.
+ * 감정(마음)은 여기 두지 않는다 — 별도 「감정 동화」 모드로 뺐다(중복 제거).
  */
 const THEME_GROUPS = [
   {
@@ -76,19 +68,6 @@ const THEME_GROUPS = [
     ],
   },
   {
-    label: "마음 이야기",
-    icon: "/icons/topic-feelings.webp",
-    example: "예: 오늘 놀이터에서 친구랑 싸웠다가 화해했어요",
-    items: [
-      { t: "화가 나요", e: "😠" },
-      { t: "무서워요", e: "😨" },
-      { t: "슬퍼요", e: "😢" },
-      { t: "샘이 나요", e: "😾" },
-      { t: "부끄러워요", e: "😳" },
-      { t: "행복해요", e: "😊" },
-    ],
-  },
-  {
     label: "좋은 습관 이야기",
     icon: "/icons/topic-habits.webp",
     example: "예: 양치질을 싫어하는 OO가 치카치카 용사가 돼요",
@@ -104,6 +83,81 @@ const THEME_GROUPS = [
 ];
 
 /**
+ * 이야기 재료 — "오늘 있었던 일을 적으세요"는 백지 공포를 준다. 대신 재료를
+ * 칩으로 골라 담으면 클로드가 기승전결로 엮는다. 갈래와 무관하게 어디에나
+ * 어울리는 범용 재료라 조건 분기 없이 모든 주제에 얹는다. 안 골라도 된다.
+ */
+const WHO_OPTIONS = [
+  { t: "혼자서", e: "🧒" },
+  { t: "친구랑", e: "👫" },
+  { t: "엄마 아빠랑", e: "👨‍👩‍👧" },
+  { t: "동물 친구랑", e: "🐶" },
+  { t: "형·누나·동생이랑", e: "👦" },
+];
+const HAPPENING_OPTIONS = [
+  { t: "신나는 모험을 떠나요", e: "🗺️" },
+  { t: "무언가를 찾으러 가요", e: "🔍" },
+  { t: "새 친구를 만나요", e: "🤗" },
+  { t: "어려움을 이겨내요", e: "💪" },
+  { t: "실수하고 뉘우쳐요", e: "🌱" },
+  { t: "소중한 걸 배워요", e: "🎁" },
+];
+
+/**
+ * 「오늘의 이야기」 — 아이가 실제 겪은 일을 유도 질문으로 받는다.
+ * "오늘 있었던 일 적으세요"의 백지 공포를 없애려 어디·누구·기분은 칩으로,
+ * "무슨 일"만 자유롭게 적게 한다.
+ */
+const TODAY_PLACES = [
+  { t: "유치원", e: "🏫" },
+  { t: "어린이집", e: "🧸" },
+  { t: "놀이터", e: "🎠" },
+  { t: "집", e: "🏠" },
+  { t: "할머니 댁", e: "👵" },
+  { t: "마트", e: "🛒" },
+  { t: "병원", e: "🏥" },
+  { t: "동물원", e: "🦁" },
+  { t: "바깥 나들이", e: "🌳" },
+];
+const TODAY_WHO = [
+  { t: "친구랑", e: "👫" },
+  { t: "선생님이랑", e: "👩‍🏫" },
+  { t: "엄마 아빠랑", e: "👨‍👩‍👧" },
+  { t: "동생이랑", e: "👶" },
+  { t: "혼자서", e: "🧒" },
+];
+const FEELINGS = [
+  { t: "신났어요", e: "😄" },
+  { t: "속상했어요", e: "😢" },
+  { t: "무서웠어요", e: "😨" },
+  { t: "뿌듯했어요", e: "😊" },
+  { t: "화났어요", e: "😠" },
+];
+
+/**
+ * 「감정 동화」용 — 아이가 느낀 마음. 감정에 이름을 붙여 다루는 감정동화가 된다.
+ * 아이가 말로 표현하기 어려워하는 마음일수록 이야기로 다뤄줄 값어치가 크다 —
+ * 그래서 화·무서움뿐 아니라 외로움·걱정·서운함·질투처럼 이름 붙이기 힘든 마음까지
+ * 폭넓게 담았다. 긍정 감정(뿌듯·설렘)도 몇 개 둬서 "좋은 마음"도 이야기가 되게 한다.
+ */
+const EMOTIONS = [
+  { t: "화가 나요", e: "😠" },
+  { t: "무서워요", e: "😨" },
+  { t: "슬퍼요", e: "😢" },
+  { t: "샘이 나요", e: "😾" },
+  { t: "부끄러워요", e: "😳" },
+  { t: "속상해요", e: "😔" },
+  { t: "외로워요", e: "🥺" },
+  { t: "걱정돼요", e: "😟" },
+  { t: "답답해요", e: "😤" },
+  { t: "서운해요", e: "🙁" },
+  { t: "미안해요", e: "😞" },
+  { t: "뿌듯해요", e: "😊" },
+  { t: "설레요", e: "🤗" },
+  { t: "심심해요", e: "😑" },
+];
+
+/**
  * 분위기 — 옛 앱의 무드 6종을 이어받았다.
  * ko는 이야기 톤(클로드)에, en은 삽화 조명·색감(Gemini)에 실린다.
  */
@@ -115,6 +169,57 @@ const MOODS = [
   { ko: "용감한 모험", en: "adventurous heroic exciting, kid-friendly", icon: "/icons/mood-adventure.webp" },
   { ko: "장난스럽고 웃긴", en: "playful silly humorous", icon: "/icons/mood-funny.webp" },
 ];
+
+/** 장면(쪽) 수 선택지 3~8. 삽화를 켜면 쪽수가 곧 그림 장수(=크레딧)라 8이 상한. */
+const PAGE_OPTIONS = [3, 4, 5, 6, 7, 8];
+
+/**
+ * 나이에 맞는 장면 수를 추천한다 — 어린 아이는 짧게, 큰 아이는 넉넉히.
+ * 강제는 아니고 별표(추천)로만 표시한다.
+ */
+function recommendedPages(age: number | null): number {
+  if (age === null) return 6;
+  if (age <= 4) return 4;
+  if (age <= 6) return 6;
+  return 8;
+}
+
+/** 조사를 떼어 지칭어를 만든다 — "친구랑"→"친구", "동생이랑"→"동생". */
+function companionTerm(who: string): string {
+  return who.replace(/(이랑|랑|이와|와|과|하고)$/u, "");
+}
+
+/**
+ * 동행 이름 입력 — "친구랑" 같은 사람 동행을 골랐을 때만 뜬다. 이름을 넣으면 그
+ * 이름을 그대로 쓰고, 비우면 "친구"처럼 지칭어로만 부른다("친구토토" 엉킴 방지).
+ * "혼자서"엔 뜨지 않는다.
+ */
+function WhoNameInput({
+  who,
+  value,
+  onChange,
+}: {
+  who: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  if (!who || who === "혼자서") return null;
+  const term = companionTerm(who);
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="text-xs font-bold text-neutral-400">
+        {term} 이름 <span className="font-medium">(선택)</span>
+      </p>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value.slice(0, 20))}
+        maxLength={20}
+        placeholder="이름만 적어요 (예: 토토, 민지)"
+        className="w-full rounded-2xl border-2 border-dashed border-neutral-200 px-4 py-2.5 text-sm font-bold outline-none focus:border-neutral-400"
+      />
+    </div>
+  );
+}
 
 /** 밝은 톤 공통 버튼. 강조색은 활성 테마에서 온다. */
 function BigButton({
@@ -155,7 +260,7 @@ export default function CreatePage() {
   const { accent, accentDark, accentSoft } = ui.colors;
 
   // 설정(⚙️)에 아이 정보가 있으면 미리 채우고 아이정보 단계는 건너뛴다.
-  // 주제가 첫 질문이다 — 아이가 고를 것부터. 특별한 날은 그림체 화면의 선택 항목.
+  // 주제가 첫 질문이다 — 아이가 고를 것부터. 형제 동화는 재료 화면의 "누구랑"에서 다룬다.
   const [stored] = useState(loadChild);
   const [step, setStep] = useState<Step>(
     stored?.name && stored.age !== null ? "theme" : "child",
@@ -174,14 +279,40 @@ export default function CreatePage() {
   // 입력값
   const [name, setName] = useState(stored?.name ?? "");
   const [age, setAge] = useState<number | null>(stored?.age ?? null);
-  const [gender, setGender] = useState<Gender>(stored?.gender ?? "unspecified");
-  const [occasion, setOccasion] = useState("");
+  const [gender, setGender] = useState<Gender>(stored?.gender ?? "girl");
   const [theme, setTheme] = useState("");
   // 주제 고르기 1단계 — 펼쳐진 갈래 카드. null이면 아직 안 골랐다.
   const [themeGroup, setThemeGroup] = useState<string | null>(null);
+  // 이야기 갈래 — 오늘의 이야기(실경험) / 상상 이야기(칩) / 감정 동화(마음). null=미선택.
+  const [storyMode, setStoryMode] = useState<"today" | "imagine" | "emotion" | null>(null);
+  // 이야기 재료 — 누구랑·무슨 일. 세부주제(theme)와 함께 씨앗을 이룬다.
+  const [who, setWho] = useState("");
+  // 동행의 실제 이름(선택). "친구랑" 고르고 이름을 넣으면 그 이름을 그대로 쓴다.
+  const [whoName, setWhoName] = useState("");
+  const [happening, setHappening] = useState("");
+  const [extra, setExtra] = useState("");
+  // 「오늘의 이야기」 전용 — 어디서·무슨 일(자유)·기분. 누구랑(who)은 공유한다.
+  const [place, setPlace] = useState("");
+  const [todayEvent, setTodayEvent] = useState("");
+  const [feeling, setFeeling] = useState("");
+  // 「감정 동화」 전용 — 어떤 마음·그런 마음이 든 상황. 누구랑(who)은 공유한다.
+  const [emotion, setEmotion] = useState("");
+  const [situation, setSituation] = useState("");
+
+  // 재료 미리보기 겸 "다음" 버튼 활성 조건. 갈래마다 다른 재료를 이어 붙인다.
+  const seed =
+    storyMode === "today"
+      ? [place, who, todayEvent.trim(), feeling].filter(Boolean).join(", ")
+      : storyMode === "emotion"
+        ? [emotion, situation.trim(), who].filter(Boolean).join(", ")
+        : [theme, who, happening, extra.trim()].filter(Boolean).join(", ");
   // 그림체 — 지금은 저장만 한다. Gemini 삽화가 붙으면 이 스타일의 prompt가 쓰인다.
   const [artStyle, setArtStyle] = useState(ART_STYLES[0].id);
   const [mood, setMood] = useState(MOODS[0]);
+  // 장면(쪽) 수 3~8. 나이에 맞는 추천값으로 시작한다(부모가 바꿀 수 있다).
+  const [pageCount, setPageCount] = useState(() =>
+    recommendedPages(stored?.age ?? null),
+  );
 
   // 생성 결과
   const [outline, setOutline] = useState<Outline | null>(null);
@@ -191,6 +322,13 @@ export default function CreatePage() {
   const [drawn, setDrawn] = useState(0);
 
   const child = { name: name.trim(), age: age ?? 0, gender };
+
+  // 동행 칩을 누르면(또는 껐다 켜면) 이름은 초기화한다 — "친구랑"에 넣은 이름이
+  // "동생이랑"으로 바꿔도 남아 엉키는 걸 막는다.
+  function chooseWho(t: string) {
+    setWho((prev) => (prev === t ? "" : t));
+    setWhoName("");
+  }
 
   async function makeOutline() {
     if (busyRef.current) return;
@@ -205,7 +343,52 @@ export default function CreatePage() {
       const r = await fetch("/api/outline", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ child, theme: theme.trim(), occasion, mood: mood.ko }),
+        body: JSON.stringify({
+          child,
+          // 항목별로 보낸다(콤마로 안 뭉침). 갈래에 따라 재료 형태가 다르다:
+          // 오늘=실경험(어디·누구·무슨일·기분), 상상=칩 조합(소재·누구·사건·자유).
+          material:
+            storyMode === "today"
+              ? {
+                  kind: "today",
+                  subject: "",
+                  who,
+                  whoName: whoName.trim(),
+                  happening: todayEvent.trim(),
+                  place,
+                  feeling,
+                  emotion: "",
+                  situation: "",
+                  extra: "",
+                }
+              : storyMode === "emotion"
+                ? {
+                    kind: "emotion",
+                    subject: "",
+                    who,
+                    whoName: whoName.trim(),
+                    happening: "",
+                    place: "",
+                    feeling: "",
+                    emotion,
+                    situation: situation.trim(),
+                    extra: "",
+                  }
+                : {
+                    kind: "imagine",
+                    subject: theme,
+                    who,
+                    whoName: whoName.trim(),
+                    happening,
+                    place: "",
+                    feeling: "",
+                    emotion: "",
+                    situation: "",
+                    extra: extra.trim(),
+                  },
+          pageCount,
+          mood: mood.ko,
+        }),
         signal: ac.signal,
       });
       const data = await r.json();
@@ -232,7 +415,7 @@ export default function CreatePage() {
       const r = await fetch("/api/story", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ child, outline, occasion, mood: mood.ko }),
+        body: JSON.stringify({ child, outline, mood: mood.ko }),
         signal: ac.signal,
       });
       const data = await r.json();
@@ -428,104 +611,376 @@ export default function CreatePage() {
           {step === "theme" && (
             <section className="flex flex-col gap-5">
               <h1 className="text-center text-2xl font-extrabold text-neutral-800">
-                {name}의 동화, 무슨 이야기로 할까요?
+                {storyMode === "today"
+                  ? `${name}에게 오늘 무슨 일이 있었어요?`
+                  : storyMode === "imagine"
+                    ? `${name}의 동화, 무슨 이야기로 할까요?`
+                    : `${name}의 동화, 어떤 이야기를 만들까요?`}
               </h1>
 
-              {/* 아이가 말로 이야기를 넣을 수 있다. 말하면 아래 입력창에 채워진다. */}
-              <div className="flex justify-center py-1">
-                <VoiceInput onResult={(t) => setTheme(t)} />
-              </div>
-
-              {/* 1단계 — 갈래를 그림 카드로 고른다 (글 못 읽는 아이용). */}
-              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-                {THEME_GROUPS.map((group) => {
-                  const active = themeGroup === group.label;
-                  return (
+              {/* 갈래 고르기 — 오늘 겪은 일(실경험)이냐 상상 이야기냐. 둘은 입력 방식이 다르다. */}
+              {storyMode === null && (
+                <>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <button
-                      key={group.label}
                       type="button"
-                      onClick={() => setThemeGroup(active ? null : group.label)}
-                      aria-pressed={active}
-                      style={active ? { background: accent } : undefined}
-                      className={`flex flex-col items-center gap-1.5 rounded-2xl py-3 font-bold transition ${
-                        active
-                          ? "text-white shadow"
-                          : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                      }`}
+                      onClick={() => setStoryMode("today")}
+                      className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-200"
                     >
-                      <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={group.icon} alt="" className="h-14 w-14 object-contain" />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/icons/topic-today.webp" alt="" className="h-16 w-16 object-contain" />
+                      <b className="text-lg text-neutral-800">오늘의 이야기</b>
+                      <span className="text-sm font-bold text-neutral-500">
+                        오늘 있었던 일을 동화로
                       </span>
-                      <span className="text-[13px] leading-tight">{group.label}</span>
                     </button>
-                  );
-                })}
-              </div>
-
-              {/* 2단계 — 고른 갈래의 세부 주제 칩. 이모지가 시각 단서다. */}
-              {(() => {
-                const group = THEME_GROUPS.find((g) => g.label === themeGroup);
-                if (!group) {
-                  return (
-                    <p className="text-center text-sm font-bold text-neutral-400">
-                      👆 카드를 눌러 골라보세요
-                    </p>
-                  );
-                }
-                return (
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {group.items.map((it) => (
-                      <button
-                        key={it.t}
-                        type="button"
-                        onClick={() => setTheme(it.t)}
-                        style={theme === it.t ? { background: accent } : undefined}
-                        className={`flex items-center gap-1.5 rounded-full px-4 py-2.5 text-[15px] font-bold transition ${
-                          theme === it.t
-                            ? "text-white"
-                            : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                        }`}
-                      >
-                        <span className="text-lg leading-none">{it.e}</span>
-                        {it.t}
-                      </button>
-                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setStoryMode("imagine")}
+                      className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-200"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/icons/topic-imagine.webp" alt="" className="h-16 w-16 object-contain" />
+                      <b className="text-lg text-neutral-800">상상 이야기</b>
+                      <span className="text-sm font-bold text-neutral-500">
+                        공룡 나라·공주님 같은 상상 동화
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStoryMode("emotion")}
+                      className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-200"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/icons/topic-emotion.webp" alt="" className="h-16 w-16 object-contain" />
+                      <b className="text-lg text-neutral-800">감정 동화</b>
+                      <span className="text-sm font-bold text-neutral-500">
+                        아이 마음을 다독이는 동화
+                      </span>
+                    </button>
                   </div>
-                );
-              })()}
+                  <div className="flex justify-center">
+                    <BigButton tone="white" onClick={() => setStep("child")}>
+                      ← 뒤로
+                    </BigButton>
+                  </div>
+                </>
+              )}
 
-              {/* 직접 입력 — 단어가 아니라 "오늘 겪은 일"을 그대로 적으라고 안내한다.
-                  아이의 하루가 동화가 되는 게 이 앱의 마법이라서. */}
-              <div>
-                <p className="mb-1.5 text-xs font-bold text-neutral-400">
-                  오늘 있었던 일이나 만들고 싶은 이야기를 그대로 적어도 돼요
-                </p>
-                <input
-                  value={theme}
-                  onChange={(e) => setTheme(e.target.value)}
-                  maxLength={200}
-                  placeholder={(
-                    THEME_GROUPS.find((g) => g.label === themeGroup)?.example ??
-                    "예: 오늘 놀이터에서 친구랑 싸웠다가 화해했어요"
-                  ).replace("OO", name.trim() || "우리 아이")}
-                  className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-lg font-bold outline-none focus:border-neutral-400"
-                />
-              </div>
+              {/* ── 오늘의 이야기 — 유도 질문(어디·누구·무슨일·기분) ── */}
+              {storyMode === "today" && (
+                <>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-neutral-400">어디에서 있었던 일이에요?</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {TODAY_PLACES.map((it) => (
+                        <button
+                          key={it.t}
+                          type="button"
+                          onClick={() => setPlace(place === it.t ? "" : it.t)}
+                          style={place === it.t ? { background: accent } : undefined}
+                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                            place === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          }`}
+                        >
+                          <span className="text-base leading-none">{it.e}</span>
+                          {it.t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-              <div className="mt-2 flex justify-center gap-3">
-                <BigButton tone="white" onClick={() => setStep("child")}>
-                  ← 뒤로
-                </BigButton>
-                <BigButton
-                  accent={accent}
-                  accentDark={accentDark}
-                  onClick={() => setStep("style")}
-                  disabled={!theme.trim()}
-                >
-                  다음 →
-                </BigButton>
-              </div>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-neutral-400">누구랑 있었어요?</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {TODAY_WHO.map((it) => (
+                        <button
+                          key={it.t}
+                          type="button"
+                          onClick={() => chooseWho(it.t)}
+                          style={who === it.t ? { background: accent } : undefined}
+                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                            who === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          }`}
+                        >
+                          <span className="text-base leading-none">{it.e}</span>
+                          {it.t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 무슨 일 — 여기만 자유롭게. 말로도 글로도 받는다 (실경험의 핵심). */}
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-neutral-400">
+                      어떤 일이 있었어요? <span className="font-medium">(말로 해도 돼요)</span>
+                    </p>
+                    <div className="flex justify-center py-1">
+                      <VoiceInput onResult={(t) => setTodayEvent(t)} />
+                    </div>
+                    <textarea
+                      value={todayEvent}
+                      onChange={(e) => setTodayEvent(e.target.value.slice(0, 200))}
+                      rows={2}
+                      placeholder="예: 그네를 타다가 넘어졌는데 친구가 일으켜 줬어요"
+                      className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                    />
+                  </div>
+
+                  <WhoNameInput who={who} value={whoName} onChange={setWhoName} />
+
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-neutral-400">그때 기분이 어땠어요?</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {FEELINGS.map((it) => (
+                        <button
+                          key={it.t}
+                          type="button"
+                          onClick={() => setFeeling(feeling === it.t ? "" : it.t)}
+                          style={feeling === it.t ? { background: accent } : undefined}
+                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                            feeling === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          }`}
+                        >
+                          <span className="text-base leading-none">{it.e}</span>
+                          {it.t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {seed && (
+                    <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-center text-sm font-bold text-neutral-500">
+                      🌱 {name.trim() || "우리 아이"}의 오늘 이야기 — <span className="text-neutral-800">{seed}</span>
+                    </p>
+                  )}
+
+                  <div className="mt-2 flex justify-center gap-3">
+                    <BigButton tone="white" onClick={() => setStoryMode(null)}>
+                      ← 뒤로
+                    </BigButton>
+                    <BigButton accent={accent} accentDark={accentDark} onClick={() => setStep("style")} disabled={!seed}>
+                      다음 →
+                    </BigButton>
+                  </div>
+                </>
+              )}
+
+              {/* ── 감정 동화 — 어떤 마음·언제 그랬나(선택)·누구랑(선택) ── */}
+              {storyMode === "emotion" && (
+                <>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-neutral-400">어떤 마음이 들었어요?</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {EMOTIONS.map((it) => (
+                        <button
+                          key={it.t}
+                          type="button"
+                          onClick={() => setEmotion(emotion === it.t ? "" : it.t)}
+                          style={emotion === it.t ? { background: accent } : undefined}
+                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                            emotion === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          }`}
+                        >
+                          <span className="text-base leading-none">{it.e}</span>
+                          {it.t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 언제 그런 마음이 들었나 — 상황을 자유롭게. 감정에 맥락을 준다. */}
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-neutral-400">
+                      언제 그런 마음이 들었어요? <span className="font-medium">(선택, 말로도 돼요)</span>
+                    </p>
+                    <div className="flex justify-center py-1">
+                      <VoiceInput onResult={(t) => setSituation(t)} />
+                    </div>
+                    <textarea
+                      value={situation}
+                      onChange={(e) => setSituation(e.target.value.slice(0, 200))}
+                      rows={2}
+                      placeholder="예: 동생이 내 장난감을 가져갔을 때"
+                      className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-neutral-400">
+                      누구랑 있었어요? <span className="font-medium">(선택)</span>
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {TODAY_WHO.map((it) => (
+                        <button
+                          key={it.t}
+                          type="button"
+                          onClick={() => chooseWho(it.t)}
+                          style={who === it.t ? { background: accent } : undefined}
+                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                            who === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          }`}
+                        >
+                          <span className="text-base leading-none">{it.e}</span>
+                          {it.t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <WhoNameInput who={who} value={whoName} onChange={setWhoName} />
+
+                  {seed && (
+                    <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-center text-sm font-bold text-neutral-500">
+                      🌱 {name.trim() || "우리 아이"}의 마음 이야기 — <span className="text-neutral-800">{seed}</span>
+                    </p>
+                  )}
+
+                  <div className="mt-2 flex justify-center gap-3">
+                    <BigButton tone="white" onClick={() => setStoryMode(null)}>
+                      ← 뒤로
+                    </BigButton>
+                    <BigButton accent={accent} accentDark={accentDark} onClick={() => setStep("style")} disabled={!seed}>
+                      다음 →
+                    </BigButton>
+                  </div>
+                </>
+              )}
+
+              {/* ── 상상 이야기 — 갈래 카드 + 세부 칩 + 누구랑·무슨일 ── */}
+              {storyMode === "imagine" && (
+                <>
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {THEME_GROUPS.map((group) => {
+                      const active = themeGroup === group.label;
+                      return (
+                        <button
+                          key={group.label}
+                          type="button"
+                          onClick={() => setThemeGroup(active ? null : group.label)}
+                          aria-pressed={active}
+                          style={active ? { background: accent } : undefined}
+                          className={`flex flex-col items-center gap-1.5 rounded-2xl py-3 font-bold transition ${
+                            active
+                              ? "text-white shadow"
+                              : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          }`}
+                        >
+                          <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={group.icon} alt="" className="h-14 w-14 object-contain" />
+                          </span>
+                          <span className="text-[13px] leading-tight">{group.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {(() => {
+                    const group = THEME_GROUPS.find((g) => g.label === themeGroup);
+                    if (!group) {
+                      return (
+                        <p className="text-center text-sm font-bold text-neutral-400">
+                          👆 카드를 눌러 골라보세요
+                        </p>
+                      );
+                    }
+                    return (
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {group.items.map((it) => (
+                          <button
+                            key={it.t}
+                            type="button"
+                            onClick={() => setTheme(it.t)}
+                            style={theme === it.t ? { background: accent } : undefined}
+                            className={`flex items-center gap-1.5 rounded-full px-4 py-2.5 text-[15px] font-bold transition ${
+                              theme === it.t
+                                ? "text-white"
+                                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                            }`}
+                          >
+                            <span className="text-lg leading-none">{it.e}</span>
+                            {it.t}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()}
+
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-neutral-400">누구랑 함께할까요?</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {WHO_OPTIONS.map((it) => (
+                        <button
+                          key={it.t}
+                          type="button"
+                          onClick={() => chooseWho(it.t)}
+                          style={who === it.t ? { background: accent } : undefined}
+                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                            who === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          }`}
+                        >
+                          <span className="text-base leading-none">{it.e}</span>
+                          {it.t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <WhoNameInput who={who} value={whoName} onChange={setWhoName} />
+
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-neutral-400">무슨 일이 생길까요?</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {HAPPENING_OPTIONS.map((it) => (
+                        <button
+                          key={it.t}
+                          type="button"
+                          onClick={() => setHappening(happening === it.t ? "" : it.t)}
+                          style={happening === it.t ? { background: accent } : undefined}
+                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                            happening === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          }`}
+                        >
+                          <span className="text-base leading-none">{it.e}</span>
+                          {it.t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="mb-1.5 text-xs font-bold text-neutral-400">
+                      더 넣고 싶은 이야기가 있나요? <span className="font-medium">(선택)</span>
+                    </p>
+                    <input
+                      value={extra}
+                      onChange={(e) => setExtra(e.target.value)}
+                      maxLength={200}
+                      placeholder={(
+                        THEME_GROUPS.find((g) => g.label === themeGroup)?.example ??
+                        "예: 마법 숲에서 반짝이는 보물을 찾아요"
+                      ).replace("OO", name.trim() || "우리 아이")}
+                      className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                    />
+                  </div>
+
+                  {seed && (
+                    <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-center text-sm font-bold text-neutral-500">
+                      🌱 {name.trim() || "우리 아이"}의 <span className="text-neutral-800">{seed}</span> 이야기
+                    </p>
+                  )}
+
+                  <div className="mt-2 flex justify-center gap-3">
+                    <BigButton tone="white" onClick={() => setStoryMode(null)}>
+                      ← 뒤로
+                    </BigButton>
+                    <BigButton accent={accent} accentDark={accentDark} onClick={() => setStep("style")} disabled={!seed}>
+                      다음 →
+                    </BigButton>
+                  </div>
+                </>
+              )}
             </section>
           )}
 
@@ -598,37 +1053,44 @@ export default function CreatePage() {
                 </div>
               </div>
 
-              {/* 특별한 날 — 대부분 "일반"이라 별도 화면 대신 여기 한 줄로 접었다.
-                  고르면 그 날을 축하하는 이야기가 된다 (선물용). */}
+              {/* 장면 수 — 이야기를 몇 쪽으로 나눌지. 나이 추천값을 별로 표시한다.
+                  글만 받는 지금은 장수와 상관없이 무료, 삽화를 켜면 장면당 과금. */}
               <div>
                 <p className="mb-1.5 text-xs font-bold text-neutral-400">
-                  특별한 날인가요? <span className="font-medium">(선택)</span>
+                  몇 장면으로 만들까요?
                 </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {OCCASIONS.map((o) => {
-                    const active = occasion === o.value;
+                <div className="flex flex-wrap gap-2">
+                  {PAGE_OPTIONS.map((n) => {
+                    const active = pageCount === n;
+                    const rec = n === recommendedPages(age);
                     return (
                       <button
-                        key={o.label}
+                        key={n}
                         type="button"
-                        onClick={() => setOccasion(o.value)}
-                        aria-pressed={active}
+                        onClick={() => setPageCount(n)}
                         style={active ? { background: accent } : undefined}
-                        className={`flex items-center gap-1.5 rounded-full py-1.5 pl-1.5 pr-3 text-xs font-bold transition ${
+                        className={`relative h-11 min-w-[3.4rem] rounded-full px-3 text-sm font-extrabold transition ${
                           active
-                            ? "text-white shadow"
+                            ? "scale-105 text-white shadow"
                             : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                         }`}
                       >
-                        <span className="h-6 w-6 overflow-hidden rounded-full bg-white">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={o.icon} alt="" className="h-full w-full object-cover" />
-                        </span>
-                        {o.label}
+                        {n}장
+                        {rec && (
+                          <span className="absolute -right-1 -top-1.5 text-sm leading-none">
+                            ⭐
+                          </span>
+                        )}
                       </button>
                     );
                   })}
                 </div>
+                <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
+                  ⭐ {age ?? "우리 아이"}세에게 알맞은 길이예요
+                  {IMAGES_ENABLED
+                    ? ` · 그림은 장면당 약 55원 (${pageCount}장 ≈ ${pageCount * 55}원)`
+                    : " · 지금은 글만 만들어 장면 수와 상관없이 무료예요"}
+                </p>
               </div>
 
               {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
@@ -698,14 +1160,14 @@ export default function CreatePage() {
                   {outline.title}
                 </h2>
                 <ol className="mt-3 flex flex-col gap-2.5">
-                  {outline.acts.map((a) => (
-                    <li key={a.act} className="flex gap-2.5">
+                  {outline.scenes.map((s) => (
+                    <li key={s.sceneNo} className="flex gap-2.5">
                       <span style={{ background: accent }}
                         className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white">
-                        {a.act}
+                        {s.sceneNo}
                       </span>
                       <p className="text-sm font-medium leading-relaxed text-neutral-700">
-                        {a.text}
+                        {s.text}
                       </p>
                     </li>
                   ))}
@@ -767,26 +1229,44 @@ export default function CreatePage() {
 
               <div className="mt-1 flex flex-col items-center gap-2">
                 <div className="flex flex-wrap justify-center gap-3">
-                  <BigButton
-                    accent={accent}
-                    accentDark={accentDark}
-                    onClick={() => illustrate(story)}
-                  >
-                    그림까지 그리기 🎨
-                  </BigButton>
-                  <BigButton
-                    tone="white"
-                    onClick={() => {
-                      setPageImages([]);
-                      setStep("done");
-                    }}
-                  >
-                    글 동화로 바로 보기 📖
-                  </BigButton>
+                  {IMAGES_ENABLED && (
+                    <BigButton
+                      accent={accent}
+                      accentDark={accentDark}
+                      onClick={() => illustrate(story)}
+                    >
+                      그림까지 그리기 🎨
+                    </BigButton>
+                  )}
+                  {/* 이미지 off일 때는 글 동화 버튼이 메인이 된다. */}
+                  {IMAGES_ENABLED ? (
+                    <BigButton
+                      tone="white"
+                      onClick={() => {
+                        setPageImages([]);
+                        setStep("done");
+                      }}
+                    >
+                      글 동화로 바로 보기 📖
+                    </BigButton>
+                  ) : (
+                    <BigButton
+                      accent={accent}
+                      accentDark={accentDark}
+                      onClick={() => {
+                        setPageImages([]);
+                        setStep("done");
+                      }}
+                    >
+                      이 이야기로 동화 보기 📖
+                    </BigButton>
+                  )}
                 </div>
-                <p className="text-[11px] font-medium text-neutral-400">
-                  그림은 1~2분 정도 걸려요 · 글 동화는 바로 읽을 수 있어요
-                </p>
+                {IMAGES_ENABLED && (
+                  <p className="text-[11px] font-medium text-neutral-400">
+                    그림은 1~2분 정도 걸려요 · 글 동화는 바로 읽을 수 있어요
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={makeStory}

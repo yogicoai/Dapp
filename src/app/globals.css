@@ -41,6 +41,80 @@ body {
   }
 }
 
+/* 컷아웃 배우가 발끝을 축으로 좌우로 기우뚱기우뚱 — 뒤뚱뒤뚱 걷는 느낌. */
+@keyframes waddle {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg) translateY(-1.5%);
+  }
+}
+
+/* 읽어주기 중 삽화가 아주 천천히 숨 쉬듯 커졌다 작아진다 — 정지 그림에
+   생기를 주는 가장 싼 방법. 멀미를 피하려 아주 미세하게(1.015배)만 움직인다. */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.015) translateY(-0.2%);
+  }
+}
+
+/* 말풍선 등장 — 작게 시작해 살짝 넘치게 커졌다 제자리로 (통통 튀는 팝).
+   위치는 바깥 wrapper가 잡으므로 여기선 scale·opacity만 다룬다. */
+@keyframes bubble-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 캐릭터 클릭 반짝이 — 위로 뜨며 커지다 사라진다. */
+@keyframes sparkle-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3) rotate(-15deg);
+    opacity: 0;
+  }
+  35% {
+    transform: translate(-50%, -80%) scale(1.2) rotate(8deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -140%) scale(0.8) rotate(-6deg);
+    opacity: 0;
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: rotate(16deg) translateX(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.95;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  22%,
+  100% {
+    transform: rotate(16deg) translateX(-135vmax);
+    opacity: 0;
+  }
+}
+
 /* 가로 안내 힌트: 잠깐 떠 있다가 스스로 사라진다. OrientationHint에서 쓴다. */
 @keyframes rotate-hint {
   0%,

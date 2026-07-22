@@ -1027,9 +1027,9 @@
         ]
       },
       {
-        "text": "어느 날, 마을에 큰 잔치가 열린다는 소식이 들려왔어요.\n\"저도 잔치에 가고 싶어요!\"\n\"흥, 그럼 이 항아리에 물을 가득 채워 놓고 오너라!\"",
+        "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n\"저도 잔치에 가고 싶어요!\"\n\"흥! 그럼 이 항아리에 물을 가득 채워 놓고 오너라!\"\n새어머니는 팥쥐만 데리고 고운 옷을 입고 먼저 떠나 버렸지요.",
         "image": "/folk/kongjwi/p4.webp",
-        "audio": "/folk/kongjwi/narr-p4.mp3",
+        "audio": "/folk/kongjwi/narr-p4.wav",
         "hotspots": [
           {
             "label": "kongjwi",
@@ -1045,9 +1045,9 @@
         ]
       },
       {
-        "text": "그런데 이게 웬일이에요?\n항아리에는 커다란 구멍이 뻥 뚫려 있었어요.\n물을 아무리 부어도 줄줄 새어 나갔지요.",
+        "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 새어머니가 준 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.",
         "image": "/folk/kongjwi/p5.webp",
-        "audio": "/folk/kongjwi/narr-p5.mp3",
+        "audio": "/folk/kongjwi/narr-p5.wav",
         "hotspots": [
           {
             "label": "kongjwi",
@@ -1092,9 +1092,9 @@
         ]
       },
       {
-        "text": "이번에는 마당 가득 벼가 쌓였어요. \"이 벼를 다 찧어 놓아라!\"\n그러자 참새 떼가 포르르 날아왔어요.\n\"짹짹! 우리가 도와줄게!\" 참새들은 순식간에 벼를 다듬어 주었지요.",
+        "text": "항아리를 다 채우고 나니, 이번에는 마당 가득 쌓인 벼가 보였어요.\n\"이 벼까지 다 찧어 놓으라고 하셨는데…\"\n그러자 참새 떼가 포르르 날아왔지요.\n\"짹짹! 우리가 도와줄게!\" 참새들은 순식간에 벼를 다듬어 주었답니다.",
         "image": "/folk/kongjwi/p7.webp",
-        "audio": "/folk/kongjwi/narr-p7.mp3",
+        "audio": "/folk/kongjwi/narr-p7.wav",
         "hotspots": [
           {
             "label": "kongjwi",
@@ -1238,27 +1238,27 @@
         ]
       },
       {
-        "text": "고운 옷을 입은 콩쥐는 나는 듯이 잔치에 달려갔어요.\n그런데 개울을 폴짝 건너다가 그만!\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았지요.",
-        "image": "/folk/kongjwi/p9.webp",
-        "audio": "/folk/kongjwi/narr-p9.mp3",
+        "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n콩쥐도 오랜만에 마음껏 웃으며 즐거웠지요.\n그때, 잔치를 연 젊은 원님이\n환하게 웃는 콩쥐를 보고 한눈에 반하고 말았답니다.",
+        "image": "/folk/kongjwi/p9-feast.webp",
+        "audio": "/folk/kongjwi/narr-p9.wav",
         "hotspots": [
           {
-            "label": "kongjwi",
+            "label": "magistrate",
             "box": [
-              139,
-              411,
-              554,
-              686
+              310,
+              730,
+              700,
+              860
             ],
-            "audio": "/folk/kongjwi/say-p9-kongjwi.mp3",
-            "line": "아앗! 내 꽃신!"
+            "audio": "/folk/kongjwi/say-p9-magistrate.wav",
+            "line": "저기 환하게 웃는 아가씨는 누구지? 참으로 곱구나."
           }
         ]
       },
       {
-        "text": "\"아이, 어쩌지? 잔치에 늦겠는걸.\"\n콩쥐는 남은 한 짝만 품에 안고\n서둘러 잔치 마당으로 갔어요.",
+        "text": "'새어머니가 보시기 전에 얼른 집에 가야 해!'\n콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요.",
         "image": "/folk/kongjwi/p10.webp",
-        "audio": "/folk/kongjwi/narr-p10.mp3",
+        "audio": "/folk/kongjwi/narr-p10.wav",
         "hotspots": [
           {
             "label": "kongjwi",
@@ -1268,15 +1268,15 @@
               672,
               727
             ],
-            "audio": "/folk/kongjwi/say-p10-kongjwi.mp3",
-            "line": "늦겠다, 서두르자!"
+            "audio": "/folk/kongjwi/say-p9-kongjwi.mp3",
+            "line": "아앗! 내 꽃신!"
           }
         ]
       },
       {
-        "text": "마침 그 개울가를 지나던 원님이 반짝이는 꽃신을 주웠어요.\n\"이렇게 고운 신이라니! 주인이 분명 고운 마음씨를 가졌겠구나.\"\n원님은 꽃신의 주인을 찾아 나섰답니다.",
+        "text": "콩쥐를 뒤따라 나온 원님은\n개울가에서 반짝이는 꽃신 한 짝을 발견했어요.\n\"이 신의 주인이 아까 그 아가씨로구나!\n온 마을을 뒤져서라도 꼭 찾아내야겠다.\"",
         "image": "/folk/kongjwi/p11.webp",
-        "audio": "/folk/kongjwi/narr-p11.mp3",
+        "audio": "/folk/kongjwi/narr-p11.wav",
         "hotspots": [
           {
             "label": "magistrate",
@@ -1286,15 +1286,15 @@
               748,
               673
             ],
-            "audio": "/folk/kongjwi/say-p11-magistrate.mp3",
-            "line": "이 고운 신의 주인은 누구일까?"
+            "audio": "/folk/kongjwi/say-p11-magistrate.wav",
+            "line": "이 꽃신의 주인을 꼭 찾아내야겠다!"
           }
         ]
       },
       {
-        "text": "\"이 꽃신의 주인을 찾습니다!\"\n팥쥐도 욕심을 내며 신어 보았지만 발이 들어가지 않았어요.\n꽃신은 콩쥐의 발에 쏙, 꼭 맞았답니다.",
+        "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요.\n콩쥐네 집에서는 팥쥐가 냉큼 발을 들이밀었지요.\n하지만 아무리 용을 써도 발이 들어가지 않았답니다.",
         "image": "/folk/kongjwi/p12.webp",
-        "audio": "/folk/kongjwi/narr-p12.mp3",
+        "audio": "/folk/kongjwi/narr-p12.wav",
         "hotspots": [
           {
             "label": "magistrate",
@@ -1304,15 +1304,15 @@
               611,
               576
             ],
-            "audio": "/folk/kongjwi/say-p12-magistrate.mp3",
+            "audio": "/folk/kongjwi/say-p12-magistrate.wav",
             "line": "이 꽃신의 주인을 찾습니다!"
           }
         ]
       },
       {
-        "text": "\"그대가 바로 꽃신의 주인이군요!\"\n원님은 콩쥐의 착하고 부지런한 마음을 온 마을에 칭찬했어요.\n마을 사람들이 모두 박수를 보냈지요.",
+        "text": "\"저… 저도 신어 봐도 될까요?\"\n콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요!\n\"아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!\"\n원님의 얼굴에 환한 웃음이 번졌지요.",
         "image": "/folk/kongjwi/p13.webp",
-        "audio": "/folk/kongjwi/narr-p13.mp3",
+        "audio": "/folk/kongjwi/narr-p13.wav",
         "hotspots": [
           {
             "label": "kongjwi",
@@ -1333,15 +1333,15 @@
               703,
               720
             ],
-            "audio": "/folk/kongjwi/say-p13-magistrate.mp3",
-            "line": "그대가 꽃신의 주인이군요!"
+            "audio": "/folk/kongjwi/say-p13-magistrate.wav",
+            "line": "드디어 찾았습니다! 꽃신의 주인님!"
           }
         ]
       },
       {
-        "text": "새어머니와 팥쥐도 그동안의 잘못을 뉘우치고 콩쥐에게 사과했어요.\n\"콩쥐야, 미안했다.\"\n그 뒤로 온 가족은 서로 아끼며 오래오래 행복하게 살았답니다.",
+        "text": "얼마 뒤, 원님과 콩쥐는 온 마을의 축복 속에 혼례를 올렸어요.\n새어머니와 팥쥐도 그동안의 잘못을 뉘우치고 사과했지요.\n\"콩쥐야, 미안했다.\"\n콩쥐는 활짝 웃으며 모두를 안아 주었고, 오래오래 행복하게 살았답니다.",
         "image": "/folk/kongjwi/p14.webp",
-        "audio": "/folk/kongjwi/narr-p14.mp3",
+        "audio": "/folk/kongjwi/narr-p14.wav",
         "hotspots": [
           {
             "label": "kongjwi",
@@ -1367,73 +1367,206 @@
     "pages": [
       {
         "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다.",
-        "image": null,
-        "audio": null
+        "image": "/folk/haedal/p1.webp",
+        "audio": "/folk/haedal/narr-p1.mp3"
       },
       {
-        "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고 있으렴.\"\n어느 날도 어머니는 떡 광주리를 이고\n꼬불꼬불 산길을 넘어갔어요.",
-        "image": null,
-        "audio": null
+        "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 된다!\"\n어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요.",
+        "image": "/folk/haedal/p2.webp",
+        "audio": "/folk/haedal/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "mother",
+            "box": [
+              250,
+              150,
+              850,
+              500
+            ],
+            "audio": "/folk/haedal/say-p2-mother.wav",
+            "line": "문 꼭 잠그고 있으렴!"
+          }
+        ]
       },
       {
-        "text": "그런데 해가 뉘엿뉘엿 지는 고갯길에서\n커다란 호랑이가 어흥! 하고 나타났어요.\n\"떡 하나 주면 안 잡아먹지!\"",
-        "image": null,
-        "audio": null
+        "text": "해가 뉘엿뉘엿 지는 고갯길,\n커다란 호랑이가 어흥! 하고 나타났어요.\n\"떡 하나 주면 안 잡아먹지!\"\n어머니는 얼른 떡을 하나 던져 주고 달아났지요.",
+        "image": "/folk/haedal/p3.webp",
+        "audio": "/folk/haedal/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "tiger",
+            "box": [
+              250,
+              450,
+              850,
+              900
+            ],
+            "audio": "/folk/haedal/say-p3-tiger.wav",
+            "line": "떡 하나 주면 안 잡아먹지!"
+          }
+        ]
       },
       {
-        "text": "어머니는 얼른 떡을 하나 던져 주었어요.\n호랑이는 냠냠 먹고는 다음 고개에서 또 나타났지요.\n\"떡 하나 주면 안 잡아먹지!\"",
-        "image": null,
-        "audio": null
+        "text": "그런데 고개를 넘을 때마다 호랑이가 또 나타났어요.\n\"떡 하나 주면 안 잡아먹지!\"\n마지막 고개에서 떡이 다 떨어지자, 심술 난 호랑이는\n어머니의 옷과 광주리를 빼앗고 어머니를 깊은 굴에 가둬 버렸답니다.",
+        "image": "/folk/haedal/p4.webp",
+        "audio": "/folk/haedal/narr-p4.mp3"
       },
       {
-        "text": "고개를 넘을 때마다 호랑이가 나타나\n광주리의 떡이 모두 없어지고 말았어요.\n욕심쟁이 호랑이는 이번엔 오누이네 집으로 향했답니다.",
-        "image": null,
-        "audio": null
+        "text": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요.\n똑똑똑. \"얘들아, 엄마 왔단다. 문 열어 주렴.\"\n\"어? 우리 엄마 목소리가 아닌데?\"\n오누이는 고개를 갸웃했지요.",
+        "image": "/folk/haedal/p5.webp",
+        "audio": "/folk/haedal/narr-p5.mp3",
+        "hotspots": [
+          {
+            "label": "tiger",
+            "box": [
+              250,
+              350,
+              850,
+              750
+            ],
+            "audio": "/folk/haedal/say-p5-tiger.wav",
+            "line": "얘들아, 엄마 왔단다~"
+          }
+        ]
       },
       {
-        "text": "똑똑똑. \"얘들아, 엄마 왔단다. 문 열어 주렴.\"\n그런데 목소리가 어쩐지 이상했어요.\n\"우리 엄마 목소리가 아닌데?\"",
-        "image": null,
-        "audio": null
+        "text": "\"그럼 문틈으로 손을 보여 주세요.\"\n문틈으로 쑥 들어온 손은 털이 북슬북슬!\n\"호, 호랑이다!\"\n오누이는 살그머니 뒷문으로 빠져나가 우물가 큰 나무 위로 올라갔어요.",
+        "image": "/folk/haedal/p6.webp",
+        "audio": "/folk/haedal/narr-p6.mp3",
+        "hotspots": [
+          {
+            "label": "brother",
+            "box": [
+              300,
+              550,
+              800,
+              900
+            ],
+            "audio": "/folk/haedal/say-p6-brother.wav",
+            "line": "우리 엄마 목소리가 아닌데?"
+          }
+        ]
       },
       {
-        "text": "\"그럼 문틈으로 손을 보여 주세요.\"\n문틈으로 들어온 손은 털이 북슬북슬!\n\"호랑이다!\" 오누이는 살그머니 뒷문으로 빠져나갔어요.",
-        "image": null,
-        "audio": null
+        "text": "집 안을 다 뒤진 호랑이가 우물가로 어슬렁어슬렁 왔어요.\n우물 속에 비친 오누이를 보고 소리쳤지요.\n\"옳지, 너희 우물 속에 숨었구나!\"\n그 모습이 우스워서 동생이 그만 킥킥 웃고 말았답니다.",
+        "image": "/folk/haedal/p7.webp",
+        "audio": "/folk/haedal/narr-p7.mp3",
+        "hotspots": [
+          {
+            "label": "sister",
+            "box": [
+              200,
+              550,
+              650,
+              900
+            ],
+            "audio": "/folk/haedal/say-p7-sister.wav",
+            "line": "호호, 바보 호랑이!"
+          }
+        ]
       },
       {
-        "text": "오누이는 우물가 큰 나무 위로 재빨리 올라갔어요.\n호랑이는 우물에 비친 그림자를 보고 나무 위를 올려다보았지요.\n\"거기 올라가면 못 잡을 줄 알고?\"",
-        "image": null,
-        "audio": null
+        "text": "웃음소리에 위를 올려다본 호랑이가 물었어요.\n\"얘들아, 거기는 어떻게 올라갔니?\"\n오빠가 꾀를 내어 대답했지요.\n\"손에 참기름을 바르고 올라왔지요!\"",
+        "image": "/folk/haedal/p8.webp",
+        "audio": "/folk/haedal/narr-p8.mp3",
+        "hotspots": [
+          {
+            "label": "brother",
+            "box": [
+              200,
+              550,
+              650,
+              900
+            ],
+            "audio": "/folk/haedal/say-p8-brother.wav",
+            "line": "참기름을 바르고 올라왔지요!"
+          }
+        ]
       },
       {
-        "text": "호랑이가 나무를 타고 슬금슬금 올라오기 시작했어요.\n오누이는 두 손을 꼭 모으고 하늘에 빌었답니다.\n\"하느님, 저희를 살려 주시려거든 튼튼한 동아줄을 내려 주세요!\"",
-        "image": null,
-        "audio": null
+        "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요.\n\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n\"앗, 안 돼!\"",
+        "image": "/folk/haedal/p9.webp",
+        "audio": "/folk/haedal/narr-p9.mp3"
       },
       {
-        "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이는 줄을 꼭 잡았고,\n동아줄은 두둥실 하늘로 올라갔답니다.",
-        "image": null,
-        "audio": null
+        "text": "호랑이가 도끼로 쿵! 쿵! 나무를 찍으며 올라오기 시작했어요.\n오누이는 두 손을 꼭 모으고 하늘에 빌었답니다.\n\"하느님, 저희를 살려 주시려거든 튼튼한 동아줄을 내려 주세요!\"",
+        "image": "/folk/haedal/p10.webp",
+        "audio": "/folk/haedal/narr-p10.mp3",
+        "hotspots": [
+          {
+            "label": "brother",
+            "box": [
+              150,
+              300,
+              600,
+              700
+            ],
+            "audio": "/folk/haedal/say-p10-brother.wav",
+            "line": "하느님, 동아줄을 내려 주세요!"
+          }
+        ]
       },
       {
-        "text": "호랑이도 얼른 하늘에 빌었어요.\n\"나도 동아줄을 내려 다오!\"\n하늘은 호랑이에게 썩은 동아줄을 내려 주었지요.",
-        "image": null,
-        "audio": null
+        "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n호랑이도 얼른 따라 빌었어요.\n\"나도 동아줄을 내려 다오!\"",
+        "image": "/folk/haedal/p11.webp",
+        "audio": "/folk/haedal/narr-p11.mp3"
       },
       {
-        "text": "썩은 줄을 잡고 올라가던 호랑이는\n뚝! 줄이 끊어지며 수숫대 밭으로 떨어지고 말았어요.\n\"아이고 엉덩이야!\" 그래서 수숫대가 빨갛게 물들었다지요.",
-        "image": null,
-        "audio": null
+        "text": "하늘은 호랑이에게 썩은 동아줄을 내려 주었어요.\n신이 나서 올라가던 호랑이는 — 뚝!\n줄이 끊어져 수숫대 밭에 쿵 떨어지고 말았지요.\n\"아이고 엉덩이야!\" 그래서 수숫대가 빨갛게 물들었다지요.",
+        "image": "/folk/haedal/p12.webp",
+        "audio": "/folk/haedal/narr-p12.mp3",
+        "hotspots": [
+          {
+            "label": "tiger",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/folk/haedal/say-p12-tiger.wav",
+            "line": "아이고 엉덩이야!"
+          }
+        ]
       },
       {
-        "text": "하늘로 올라간 오누이는 별나라 임금님을 만났어요.\n\"착하고 지혜로운 아이들아, 세상을 밝혀 주겠니?\"\n오빠는 달님이, 동생은 해님이 되었답니다.",
-        "image": null,
-        "audio": null
+        "text": "하늘나라 임금님이 오누이를 반겨 주었어요.\n\"착하고 지혜로운 아이들아, 소원이 있느냐?\"\n\"굴에 갇힌 우리 엄마를 구해 주세요!\"\n임금님은 어머니도 하늘로 데려와 셋을 꼭 안아 주었답니다.",
+        "image": "/folk/haedal/p13.webp",
+        "audio": "/folk/haedal/narr-p13.mp3"
       },
       {
-        "text": "그 뒤로 낮에는 해님이, 밤에는 달님이\n온 세상을 따뜻하게 비춰 주어요.\n오늘 밤 달님을 보면 손을 흔들어 주세요. 오누이가 웃고 있을 거예요.",
-        "image": null,
-        "audio": null
+        "text": "임금님이 말했어요. \"너희가 세상을 밝혀 주겠니?\"\n처음엔 오빠가 해님, 동생이 달님이 되기로 했어요.\n그런데 동생이 소곤소곤. \"오빠… 나 깜깜한 밤은 무서워.\"\n\"그럼 우리 바꾸자!\" 오빠는 웃으며 달님이 되어 주었답니다.",
+        "image": "/folk/haedal/p14.webp",
+        "audio": "/folk/haedal/narr-p14.mp3",
+        "hotspots": [
+          {
+            "label": "sister",
+            "box": [
+              300,
+              550,
+              800,
+              850
+            ],
+            "audio": "/folk/haedal/say-p14-sister.wav",
+            "line": "오빠, 나 밤은 무서워…"
+          },
+          {
+            "label": "brother",
+            "box": [
+              300,
+              150,
+              800,
+              500
+            ],
+            "audio": "/folk/haedal/say-p14-brother.wav",
+            "line": "그럼 우리 바꾸자!"
+          }
+        ]
+      },
+      {
+        "text": "그 뒤로 낮에는 동생 해님이 세상을 따뜻하게 비추고,\n밤에는 오빠 달님이 어두운 길을 밝혀 주어요.\n어머니는 포근한 저녁노을이 되어 두 아이를 지켜본답니다.\n오늘 밤 달님을 보면 손을 흔들어 주세요. 오빠가 웃고 있을 거예요.",
+        "image": "/folk/haedal/p15.webp",
+        "audio": "/folk/haedal/narr-p15.mp3"
       }
     ]
   },
@@ -1446,73 +1579,211 @@
     "pages": [
       {
         "text": "옛날 어느 산골에 부지런한 나무꾼이 살았어요.\n나무꾼은 홀어머니를 모시고\n날마다 산에 올라 열심히 나무를 했답니다.",
-        "image": null,
-        "audio": null
+        "image": "/folk/goldaxe/p1.webp",
+        "audio": "/folk/goldaxe/narr-p1.mp3"
       },
       {
         "text": "\"오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!\"\n나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만,\n나무꾼은 도끼를 보물처럼 아꼈어요.",
-        "image": null,
-        "audio": null
+        "image": "/folk/goldaxe/p2.webp",
+        "audio": "/folk/goldaxe/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "woodcutter",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/folk/goldaxe/say-p2-woodcutter.wav",
+            "line": "오늘도 부지런히 나무하러 가자!"
+          }
+        ]
       },
       {
         "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았지요.",
-        "image": null,
-        "audio": null
+        "image": "/folk/goldaxe/p3.webp",
+        "audio": "/folk/goldaxe/narr-p3.mp3"
       },
       {
         "text": "풍덩! 도끼가 깊은 연못 속으로 가라앉고 말았어요.\n\"아이고, 내 도끼! 하나뿐인 내 도끼!\"\n나무꾼은 연못가에 주저앉아 엉엉 울었답니다.",
-        "image": null,
-        "audio": null
+        "image": "/folk/goldaxe/p4.webp",
+        "audio": "/folk/goldaxe/narr-p4.mp3",
+        "hotspots": [
+          {
+            "label": "woodcutter",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/folk/goldaxe/say-p4-woodcutter.wav",
+            "line": "아이고, 내 도끼!"
+          }
+        ]
       },
       {
         "text": "그때였어요. 연못 물이 반짝반짝 빛나더니\n하얀 수염을 길게 늘어뜨린 산신령님이 스르르 나타났어요.\n\"나무꾼아, 왜 그리 슬피 우느냐?\"",
-        "image": null,
-        "audio": null
+        "image": "/folk/goldaxe/p5.webp",
+        "audio": "/folk/goldaxe/narr-p5.mp3"
       },
       {
         "text": "\"도끼를 연못에 빠뜨렸습니다.\n그 도끼가 없으면 나무를 할 수가 없어요.\"\n산신령님은 고개를 끄덕이더니 연못 속으로 사라졌지요.",
-        "image": null,
-        "audio": null
+        "image": "/folk/goldaxe/p6.webp",
+        "audio": "/folk/goldaxe/narr-p6.mp3",
+        "hotspots": [
+          {
+            "label": "spirit",
+            "box": [
+              150,
+              350,
+              800,
+              750
+            ],
+            "audio": "/folk/goldaxe/say-p6-spirit.wav",
+            "line": "나무꾼아, 왜 그리 슬피 우느냐?"
+          }
+        ]
       },
       {
         "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요.\n\"이 금도끼가 네 도끼냐?\"\n\"아니요, 제 도끼가 아닙니다.\"",
-        "image": null,
-        "audio": null
+        "image": "/folk/goldaxe/p7.webp",
+        "audio": "/folk/goldaxe/narr-p7.mp3"
       },
       {
         "text": "산신령님이 이번에는 은도끼를 들고 나왔어요.\n\"그럼 이 은도끼가 네 도끼냐?\"\n\"아니요, 그것도 제 것이 아닙니다.\"",
-        "image": null,
-        "audio": null
+        "image": "/folk/goldaxe/p8.webp",
+        "audio": "/folk/goldaxe/narr-p8.mp3",
+        "hotspots": [
+          {
+            "label": "spirit",
+            "box": [
+              150,
+              350,
+              800,
+              750
+            ],
+            "audio": "/folk/goldaxe/say-p8-spirit.wav",
+            "line": "이 금도끼가 네 도끼냐?"
+          },
+          {
+            "label": "woodcutter",
+            "box": [
+              400,
+              100,
+              900,
+              450
+            ],
+            "audio": "/folk/goldaxe/say-p8-woodcutter.wav",
+            "line": "아니요, 제 도끼가 아닙니다."
+          }
+        ]
       },
       {
         "text": "마지막으로 낡은 쇠도끼를 들고 나오자\n나무꾼의 얼굴이 환해졌어요.\n\"맞아요! 그게 바로 제 도끼입니다!\"",
-        "image": null,
-        "audio": null
+        "image": "/folk/goldaxe/p9.webp",
+        "audio": "/folk/goldaxe/narr-p9.mp3"
       },
       {
         "text": "산신령님이 껄껄 웃으며 말했어요.\n\"참으로 정직하구나. 네 정직한 마음에 감동했으니\n금도끼와 은도끼도 모두 너에게 주마!\"",
-        "image": null,
-        "audio": null
+        "image": "/folk/goldaxe/p10.webp",
+        "audio": "/folk/goldaxe/narr-p10.mp3",
+        "hotspots": [
+          {
+            "label": "woodcutter",
+            "box": [
+              400,
+              100,
+              900,
+              450
+            ],
+            "audio": "/folk/goldaxe/say-p10-woodcutter.wav",
+            "line": "맞아요! 그게 제 도끼예요!"
+          }
+        ]
       },
       {
-        "text": "나무꾼은 도끼 세 자루를 안고 집으로 돌아왔어요.\n금도끼를 판 돈으로 어머니 약을 짓고,\n마을 사람들에게도 아낌없이 나누어 주었답니다.",
-        "image": null,
-        "audio": null
+        "text": "나무꾼은 도끼 세 자루를 안고 한달음에 집으로 갔어요.\n\"어머니! 산신령님이 이런 선물을 주셨어요!\"\n금도끼를 판 돈으로 어머니 약을 짓고,\n남은 것은 마을 사람들과 아낌없이 나누었답니다.",
+        "image": "/folk/goldaxe/p11.webp",
+        "audio": "/folk/goldaxe/narr-p11.mp3",
+        "hotspots": [
+          {
+            "label": "spirit",
+            "box": [
+              150,
+              350,
+              800,
+              750
+            ],
+            "audio": "/folk/goldaxe/say-p11-spirit.wav",
+            "line": "참으로 정직하구나!"
+          }
+        ]
       },
       {
-        "text": "이 소식을 들은 이웃 마을 욕심쟁이가 무릎을 쳤어요.\n\"옳지! 나도 도끼를 빠뜨리면 금도끼를 받겠구나!\"\n욕심쟁이는 연못으로 달려가 일부러 도끼를 풍덩 던졌지요.",
-        "image": null,
-        "audio": null
+        "text": "이 소식을 들은 이웃 마을 욕심쟁이가 무릎을 탁 쳤어요.\n\"옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!\"\n욕심쟁이는 연못으로 달려가\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는 거짓 울음을 울었지요.\n\"아이고, 내 도끼야! 엉엉!\"",
+        "image": "/folk/goldaxe/p12.webp",
+        "audio": "/folk/goldaxe/narr-p12.mp3"
       },
       {
-        "text": "산신령님이 금도끼를 들고 나타나자 욕심쟁이가 냉큼 외쳤어요.\n\"맞아요! 그 금도끼가 제 도끼입니다!\"\n산신령님의 얼굴이 무섭게 굳어졌지요.",
-        "image": null,
-        "audio": null
+        "text": "연못이 반짝이더니 산신령님이 금도끼를 들고 나타났어요.\n\"이 금도끼가 네 도끼냐?\"\n\"맞아요, 맞아! 그 금도끼가 제 것입니다!\"\n욕심쟁이는 손을 뻗으며 냉큼 외쳤지요.",
+        "image": "/folk/goldaxe/p13.webp",
+        "audio": "/folk/goldaxe/narr-p13.mp3",
+        "hotspots": [
+          {
+            "label": "greedy",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/folk/goldaxe/say-p13-greedy.wav",
+            "line": "아이고, 내 도끼야! 엉엉!"
+          }
+        ]
       },
       {
-        "text": "\"거짓말쟁이에게는 아무것도 줄 수 없다!\"\n산신령님은 욕심쟁이의 쇠도끼마저 돌려주지 않았어요.\n정직한 마음이야말로 가장 큰 보물이랍니다.",
-        "image": null,
-        "audio": null
+        "text": "산신령님의 얼굴이 무섭게 굳어졌어요.\n\"네 도끼는 낡은 쇠도끼가 아니더냐.\n거짓말을 하는구나!\"\n산신령님은 연못 속으로 스르르 사라져 버렸지요.",
+        "image": "/folk/goldaxe/p14.webp",
+        "audio": "/folk/goldaxe/narr-p14.mp3",
+        "hotspots": [
+          {
+            "label": "spirit",
+            "box": [
+              150,
+              350,
+              800,
+              750
+            ],
+            "audio": "/folk/goldaxe/say-p14-spirit.wav",
+            "line": "거짓말을 하는구나!"
+          }
+        ]
+      },
+      {
+        "text": "욕심쟁이는 해가 지도록 연못가에서 기다렸지만\n산신령님은 다시 나오지 않았어요.\n금도끼는커녕 제 쇠도끼까지 잃고\n터덜터덜 빈손으로 돌아갔답니다.",
+        "image": "/folk/goldaxe/p15.webp",
+        "audio": "/folk/goldaxe/narr-p15.mp3"
+      },
+      {
+        "text": "그날 저녁, 나무꾼네 마당에서는 잔치가 열렸어요.\n나무꾼은 풀 죽은 욕심쟁이에게도 떡을 건넸지요.\n\"자, 같이 들어요!\"\n욕심쟁이는 얼굴이 홍당무처럼 빨개져 고개를 숙였고,\n그 뒤로는 남의 것을 탐내지 않게 되었답니다.",
+        "image": "/folk/goldaxe/p16.webp",
+        "audio": "/folk/goldaxe/narr-p16.mp3",
+        "hotspots": [
+          {
+            "label": "woodcutter",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/folk/goldaxe/say-p16-woodcutter.wav",
+            "line": "자, 같이 들어요!"
+          }
+        ]
       }
     ]
   }

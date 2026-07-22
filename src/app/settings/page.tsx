@@ -29,12 +29,9 @@ import {
   loadSelectedVoiceId,
   loadVoiceAudio,
   loadVoiceRate,
-  listKoreanVoices,
   saveCustomVoices,
   saveSelectedVoiceId,
   saveVoiceRate,
-  systemVoiceFor,
-  warmUpVoices,
   type CustomVoice,
   type PresetVoice,
   type TypecastPreset,
@@ -44,7 +41,6 @@ const AGES = [3, 4, 5, 6, 7, 8];
 const GENDERS: { value: Gender; label: string; icon: string }[] = [
   { value: "girl", label: "여자", icon: "/icons/gender-girl.webp" },
   { value: "boy", label: "남자", icon: "/icons/gender-boy.webp" },
-  { value: "unspecified", label: "상관없어요", icon: "/icons/gender-any.webp" },
 ];
 
 /**
@@ -62,7 +58,7 @@ export default function SettingsPage() {
   const stored = loadChild();
   const [name, setName] = useState(stored?.name ?? "");
   const [age, setAge] = useState<number | null>(stored?.age ?? null);
-  const [gender, setGender] = useState<Gender>(stored?.gender ?? "unspecified");
+  const [gender, setGender] = useState<Gender>(stored?.gender ?? "girl");
   const [lang, setLang] = useState(loadLang);
 
   // 목소리 — 프리셋 선택 + 엄마·아빠 녹음 관리
@@ -71,24 +67,6 @@ export default function SettingsPage() {
   // 책 화면 — 글자 위치(위/아래)
   const [textPos, setTextPos] = useState(loadTextPos);
   const [customVoices, setCustomVoices] = useState<CustomVoice[]>(loadCustomVoices);
-
-  // 크롬은 음성 목록이 늦게 채워진다 — 미리 예열하고, 채워지면 다시 읽는다.
-  // 목록(이름까지)을 화면에 보여줘 "왜 다 같은 목소리지?"를 눈으로 확인할 수 있게 한다.
-  const [koVoiceNames, setKoVoiceNames] = useState<string[]>([]);
-  useEffect(() => {
-    if (!("speechSynthesis" in window)) return;
-    const load = () =>
-      setKoVoiceNames(
-        listKoreanVoices().map((v) =>
-          // "Microsoft Heami - Korean (Korean)" → "Heami" 처럼 짧게
-          v.name.replace(/^Microsoft |^Google /, "").replace(/ ?[-(].*$/, "").trim(),
-        ),
-      );
-    warmUpVoices();
-    load();
-    window.speechSynthesis.addEventListener("voiceschanged", load);
-    return () => window.speechSynthesis.removeEventListener("voiceschanged", load);
-  }, []);
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
 
   // ESC로 설정을 닫는다(홈으로). 녹음 팝업이 열려 있으면 팝업이 먼저 닫히고,
@@ -318,65 +296,14 @@ export default function SettingsPage() {
             <ThemePicker />
           </section>
 
-          {/* ── 목소리 ── */}
+          {/* ── 목소리 (성우 전용) ── */}
           <section className="flex flex-col gap-2.5">
             <h2 className="text-sm font-extrabold text-neutral-400">읽어주는 목소리</h2>
 
-            {/* 캐릭터 프리셋 (지금 바로 작동) + 커스텀(엄마·아빠) */}
-            <div className="flex flex-wrap gap-2">
-              {PRESET_VOICES.map((v) => {
-                const active = voiceId === v.id;
-                return (
-                  <button
-                    key={v.id}
-                    type="button"
-                    onClick={() => pickVoice(v.id, v)}
-                    aria-pressed={active}
-                    title={systemVoiceFor(v.id)?.name}
-                    style={active ? { background: accent } : undefined}
-                    className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                      active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                    }`}
-                  >
-                    <span className="h-7 w-7 overflow-hidden rounded-full bg-white">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={v.icon} alt="" className="h-full w-full object-cover" />
-                    </span>
-                    {v.label}
-                  </button>
-                );
-              })}
-
-              {customVoices.map((v) => (
-                <span
-                  key={v.id}
-                  className="flex items-center gap-1.5 rounded-full bg-amber-100 px-3.5 py-2 text-sm font-bold text-amber-800"
-                >
-                  <button
-                    type="button"
-                    onClick={() => previewCustom(v)}
-                    aria-label={`${v.label} 목소리 들어보기`}
-                    className="flex items-center gap-1.5"
-                  >
-                    <span className="text-lg leading-none">{v.emoji}</span>
-                    {v.label} 🔊
-                  </button>
-                  <span className="rounded-full bg-white/70 px-1.5 text-[10px]">녹음 완료 · 준비 중</span>
-                  <button
-                    type="button"
-                    aria-label={`${v.label} 목소리 삭제`}
-                    onClick={() => removeCustom(v)}
-                    className="text-amber-600"
-                  >
-                    ✕
-                  </button>
-                </span>
-              ))}
-            </div>
-
-            {/* 성우 목소리 (Typecast 무료 티어) — 처음 듣는 문장만 크레딧이 나간다. */}
-            <p className="mt-1 text-xs font-extrabold text-neutral-400">
-              성우 목소리 — 진짜 성우가 읽어줘요 (인터넷 필요)
+            {/* 성우 목소리 (Typecast) — 진짜 성우가 읽어준다. 브라우저 기계음 프리셋은
+                UI에서 뺐다 (성우를 못 받는 오프라인 등에서만 뒤에서 대체로 쓰인다). */}
+            <p className="text-[11px] font-medium text-neutral-400">
+              진짜 성우가 감정을 담아 읽어줘요 (인터넷 필요)
             </p>
             <div className="flex flex-wrap gap-2">
               {TYPECAST_VOICES.map((v) => {
@@ -403,12 +330,36 @@ export default function SettingsPage() {
             </div>
             {ttsError && <p className="text-[11px] font-bold text-rose-500">{ttsError}</p>}
 
-            {/* 이 기기에서 실제로 몇 가지 목소리가 나는지 숨기지 않고 알려준다. */}
-            <p className="text-[11px] font-medium text-neutral-400">
-              {koVoiceNames.length <= 1
-                ? "이 브라우저에는 한국어 음성이 하나뿐이라 캐릭터마다 말 빠르기만 달라져요. 엣지 브라우저나 태블릿에서는 진짜 다른 목소리로 들려요."
-                : `이 기기의 한국어 음성 ${koVoiceNames.length}개(${koVoiceNames.join(", ")})를 캐릭터들이 나눠 쓰고 있어요.`}
-            </p>
+            {/* 녹음한 엄마·아빠 목소리 (클로닝 붙기 전까지 준비 중) */}
+            {customVoices.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {customVoices.map((v) => (
+                  <span
+                    key={v.id}
+                    className="flex items-center gap-1.5 rounded-full bg-amber-100 px-3.5 py-2 text-sm font-bold text-amber-800"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => previewCustom(v)}
+                      aria-label={`${v.label} 목소리 들어보기`}
+                      className="flex items-center gap-1.5"
+                    >
+                      <span className="text-lg leading-none">{v.emoji}</span>
+                      {v.label} 🔊
+                    </button>
+                    <span className="rounded-full bg-white/70 px-1.5 text-[10px]">녹음 완료 · 준비 중</span>
+                    <button
+                      type="button"
+                      aria-label={`${v.label} 목소리 삭제`}
+                      onClick={() => removeCustom(v)}
+                      className="text-amber-600"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* 읽기 속도 — 느리다고 느끼는 집을 위해. 누르면 그 속도로 바로 들린다. */}
             <div className="flex flex-wrap items-center gap-2">

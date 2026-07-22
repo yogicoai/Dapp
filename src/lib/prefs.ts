@@ -12,6 +12,8 @@ export type ChildPrefs = {
   gender: Gender;
 };
 
+// 아이는 한 명만 저장한다. 형제 동화는 만들기에서 "누구랑 → 형·동생 + 이름"으로
+// 다룬다 — 데이터를 여러 벌 들고 있지 않아 관리가 단순하다.
 const CHILD_KEY = "voice-storybook:child";
 const LANG_KEY = "voice-storybook:lang";
 
@@ -66,4 +68,29 @@ export function loadTextPos(): TextPos {
 export function saveTextPos(pos: TextPos): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(TEXT_POS_KEY, pos);
+}
+
+/**
+ * 소리 설정 — 책장 넘김 효과음과 배경음.
+ * 효과음은 짧아 나레이션과 안 겹치니 기본 켬. 배경음은 낭독을 덮을 수 있어
+ * 기본 끔 — 뷰어의 ♪ 버튼으로 켠다.
+ */
+const SFX_KEY = "voice-storybook:sfx";
+const BGM_KEY = "voice-storybook:bgm";
+
+export function loadSfxOn(): boolean {
+  if (typeof window === "undefined") return true;
+  return window.localStorage.getItem(SFX_KEY) !== "off";
+}
+export function saveSfxOn(on: boolean): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(SFX_KEY, on ? "on" : "off");
+}
+export function loadBgmOn(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(BGM_KEY) === "on";
+}
+export function saveBgmOn(on: boolean): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(BGM_KEY, on ? "on" : "off");
 }

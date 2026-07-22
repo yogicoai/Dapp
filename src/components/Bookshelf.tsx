@@ -37,14 +37,19 @@ export function Bookshelf({ books }: { books: Book[] }) {
               className={`relative w-36 sm:w-44 ${tilt} transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform group-hover:-translate-y-3 group-hover:rotate-0 group-focus-visible:-translate-y-3 group-focus-visible:rotate-0`}
             >
               <div className="relative aspect-[3/4] overflow-hidden rounded-xl shadow-[0_10px_22px_rgba(0,0,0,0.28)]">
-                {/* 장식 표지 틀 (테마별 힉스필드 아트) */}
+                {/* 장식 표지 틀 (테마별 힉스필드 아트). 원본이 반짝이·별이 많아
+                    화려하니 채도를 낮춰 한 김 가라앉힌다 (표지끼리 안 튀게). */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={cover.frame} alt="" className="absolute inset-0 h-full w-full" />
+                <img
+                  src={cover.frame}
+                  alt=""
+                  className="absolute inset-0 h-full w-full saturate-[.8]"
+                />
 
                 {/* 제목 — 리본 안 */}
                 <h2
                   className="absolute left-1/2 w-[56%] -translate-x-1/2 overflow-hidden text-center text-[11px] font-extrabold leading-tight [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] sm:text-[13px]"
-                  style={{ top: cover.titleTop, color: cover.ink }}
+                  style={{ top: `calc(${cover.titleTop} - 2%)`, color: cover.ink }}
                 >
                   {book.title}
                 </h2>

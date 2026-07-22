@@ -4,9 +4,10 @@ import { StoryParseError } from "@/lib/story-format";
 import { parseChild, parseMood, parseOccasion, parseOutlineInput } from "../_input";
 
 /**
- * 2단계 — 확정된 줄거리를 8쪽 본문으로. 이야기를 새로 짓지 않고 살만 붙인다.
+ * 2단계 — 확정된 장면별 줄거리를 본문으로. 장면 하나가 한 쪽이 된다(1:1).
+ * 이야기를 새로 짓지 않고 각 장면에 살만 붙인다. 쪽수는 줄거리 장면 수를 따른다.
  *
- * 뼈대가 이미 정해져 있어서 기승전결이 덜 흔들리고, 실패해도 줄거리는 남아
+ * 뼈대가 이미 정해져 있어서 이야기 구조가 덜 흔들리고, 실패해도 줄거리는 남아
  * 이 단계만 다시 하면 된다.
  */
 export async function POST(request: Request) {

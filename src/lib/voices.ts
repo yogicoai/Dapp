@@ -303,15 +303,19 @@ function hashText(s: string): string {
  * 실패(크레딧 소진·오프라인·키 없음)는 그대로 던진다 — 부른 쪽이
  * 브라우저 목소리로 물러날지 정한다.
  */
-export async function fetchTypecastAudio(tc: TypecastPreset, text: string): Promise<Blob> {
-  const cacheId = `tts:${tc.voiceId}:${hashText(text)}`;
+export async function fetchTypecastAudio(
+  tc: TypecastPreset,
+  text: string,
+  emotion?: string,
+): Promise<Blob> {
+  const cacheId = `tts:${tc.voiceId}:${emotion ?? "normal"}:${hashText(text)}`;
   const cached = await loadVoiceAudio(cacheId).catch(() => null);
   if (cached) return cached;
 
   const r = await fetch("/api/tts", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, voiceId: tc.voiceId, model: tc.model }),
+    body: JSON.stringify({ text, voiceId: tc.voiceId, model: tc.model, emotion }),
   });
   if (!r.ok) {
     const data = (await r.json().catch(() => null)) as { error?: string } | null;
@@ -321,4 +325,93 @@ export async function fetchTypecastAudio(tc: TypecastPreset, text: string): Prom
   // 캐시 저장 실패는 무시한다 — 재생이 우선이다.
   saveVoiceAudio(cacheId, blob).catch(() => {});
   return blob;
+}
+
+/* ── 대사 연기 — 쪽 텍스트를 지문/대사로 나눠 감정을 입힌다 ── */
+
+export type PageAudioSegment = {
+  blob: Blob;
+  /** 원문에서 이 조각이 차지하는 글자 범위 — 노래방 색칠 동기화용. */
+  from: number;
+  to: number;
+};
+
+/** 조각이 합성하기에 너무 짧은지 — Typecast는 아주 짧은 감탄문을 거부한다(실측). */
+function tooShort(s: string): boolean {
+  return s.replace(/[\s"“”…!?,.~—-]/g, "").length < 5;
+}
+
+/**
+ * 따옴표로 묶인 대사와 지문을 나눈다.
+ * 이어 붙이면 원문과 정확히 같아야 한다 (색칠 동기화가 글자 수로 돌기 때문).
+ */
+export function splitDialogue(text: string): { text: string; dialogue: boolean }[] {
+  const parts = text.split(/("[^"]*"|“[^”]*”)/).filter((s) => s.length > 0);
+  const segs = parts.map((s) => ({ text: s, dialogue: /^["“]/.test(s) }));
+
+  // 짧은 조각은 앞 조각에 붙인다. 맨 앞이 짧으면 뒤 조각에 붙인다.
+  const merged: { text: string; dialogue: boolean }[] = [];
+  for (const s of segs) {
+    const prev = merged[merged.length - 1];
+    if (prev && tooShort(s.text)) {
+      prev.text += s.text;
+      continue;
+    }
+    merged.push({ ...s });
+  }
+  while (merged.length >= 2 && tooShort(merged[0].text)) {
+    merged[1].text = merged[0].text + merged[1].text;
+    merged.shift();
+  }
+  return merged;
+}
+
+/**
+ * 대사의 감정을 내용으로 추정한다. 확신이 없으면 toneup(생기 있는 연기톤).
+ * 잘못 짚어도 "감정이 들어간 낭독"이라는 목표는 지켜진다.
+ */
+export function guessEmotion(line: string): string {
+  if (/으악|살려|엉엉|훌쩍|눈물|슬퍼|무서|가엾|흑흑|어떡해/.test(line)) return "sad";
+  if (/잡아먹|안 돼|버럭|어흥|크르렁|날려 버리|호통|이놈|썩 /.test(line)) return "angry";
+  if (/만세|신나|좋아|와아|우와|기뻐|히히|하하|최고|고마워/.test(line)) return "happy";
+  return "toneup";
+}
+
+/**
+ * 한 쪽을 지문/대사 조각으로 나눠 합성한다. 대사에는 감정 연기가 실린다.
+ * 감정을 지원하지 않는 음성이면 그 조각만 기본톤으로 물러난다 — 재생은 끊기지 않는다.
+ * 글자 수 총합은 통짜 합성과 같아 크레딧 비용도 같다.
+ */
+export async function fetchTypecastPageAudio(
+  tc: TypecastPreset,
+  text: string,
+): Promise<PageAudioSegment[]> {
+  const segs = splitDialogue(text);
+
+  // 대사가 없으면 통짜 한 번 — 기존 캐시도 그대로 재사용된다.
+  if (segs.length <= 1 || !segs.some((s) => s.dialogue)) {
+    const blob = await fetchTypecastAudio(tc, text);
+    return [{ blob, from: 0, to: text.length }];
+  }
+
+  const out: PageAudioSegment[] = [];
+  let pos = 0;
+  for (const s of segs) {
+    const from = pos;
+    pos += s.text.length;
+    let blob: Blob;
+    if (s.dialogue) {
+      const emotion = guessEmotion(s.text);
+      try {
+        blob = await fetchTypecastAudio(tc, s.text, emotion);
+      } catch {
+        // 감정 미지원·일시 오류 — 기본톤으로 한 번 더.
+        blob = await fetchTypecastAudio(tc, s.text);
+      }
+    } else {
+      blob = await fetchTypecastAudio(tc, s.text);
+    }
+    out.push({ blob, from, to: pos });
+  }
+  return out;
 }

@@ -3,17 +3,23 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { loadTextPos } from "@/lib/prefs";
+import {
+  loadBgmOn,
+  loadSfxOn,
+  loadTextPos,
+  saveBgmOn,
+} from "@/lib/prefs";
 import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import {
   buildPresetUtterance,
-  fetchTypecastAudio,
+  fetchTypecastPageAudio,
   findPreset,
   findTypecast,
   loadSelectedVoiceId,
   loadVoiceRate,
   warmUpVoices,
+  type PageAudioSegment,
 } from "@/lib/voices";
 import { OrientationHint } from "./OrientationHint";
 import { useTheme } from "./ThemeProvider";
@@ -38,6 +44,35 @@ const HOTSPOT_KO: Record<string, string> = {
   fairy: "선녀님",
   magistrate: "원님",
   ox: "소",
+  pig1: "첫째 돼지",
+  pig2: "둘째 돼지",
+  pig3: "막내 돼지",
+  pigs: "아기 돼지들",
+  mompig: "엄마 돼지",
+  wolf: "늑대",
+  duckling: "아기 오리",
+  duckmom: "엄마 오리",
+  swan: "백조",
+  redhood: "빨간 모자",
+  mother: "엄마",
+  grandma: "할머니",
+  hunter: "사냥꾼",
+  donkey: "당나귀",
+  dog: "개",
+  cat: "고양이",
+  rooster: "수탉",
+  robber: "도둑",
+  ant: "개미",
+  littleant: "꼬마 개미",
+  grasshopper: "베짱이",
+  countrymouse: "시골 쥐",
+  citymouse: "도시 쥐",
+  brother: "오빠",
+  sister: "여동생",
+  tiger: "호랑이",
+  spirit: "산신령",
+  woodcutter: "나무꾼",
+  greedy: "욕심쟁이",
 };
 
 export function BookViewer({ book }: { book: Book }) {
@@ -75,9 +110,21 @@ export function BookViewer({ book }: { book: Book }) {
   // 순번이 다르면 전부 무시한다.
   const runIdRef = useRef(0);
 
-  // 캐릭터 대사 — 본문 낭독과 별도 채널이라 낭독 중에도 짧게 겹쳐 나온다.
+  // 소리 — 책장 넘김 효과음(짧아서 낭독과 안 겹침) + 배경음(토글로 켜고 끈다).
+  const sfxRef = useRef<HTMLAudioElement | null>(null);
+  const bgmRef = useRef<HTMLAudioElement | null>(null);
+  const [bgmOn, setBgmOn] = useState(loadBgmOn);
+
+  // 캐릭터 클릭 반응 — 정지 그림이라 캐릭터 자체는 못 움직이지만, 누른 자리에서
+  // 반짝이가 통통 튀어올라 "반응하는" 느낌을 준다. key로 매 클릭마다 다시 튼다.
+  const burstKey = useRef(0);
+  const [burst, setBurst] = useState<{ cx: number; cy: number; key: number } | null>(null);
+
+  // 캐릭터 대사 — 본문 낭독과 별도 채널.
   // speaking: 지금 말하는 캐릭터 — 말풍선과 반짝임 표시용. 소리가 끝나면 사라진다.
   const sayRef = useRef<HTMLAudioElement | null>(null);
+  // 대사가 나오는 동안 낭독을 잠깐 멈춘 상태 — TTS 추정 타이머도 같이 멈춘다.
+  const narrPausedRef = useRef(false);
   const [speaking, setSpeaking] = useState<{
     page: number;
     label: string;
@@ -92,15 +139,43 @@ export function BookViewer({ book }: { book: Book }) {
     sayRef.current = el;
     el.src = h.audio;
     el.currentTime = 0;
+
+    // 낭독 중이면 잠깐 멈춘다 — 대사가 끝나면 이어서 읽는다. 두 소리가 겹치면
+    // 아이가 둘 다 못 알아듣는다.
+    const narr = audioRef.current;
+    const run = runIdRef.current;
+    const wasNarrating = readingRef.current;
+    if (wasNarrating) {
+      narr?.pause();
+      if (typeof window !== "undefined") window.speechSynthesis?.pause();
+      narrPausedRef.current = true;
+    }
+    const done = () => {
+      setSpeaking(null);
+      if (!wasNarrating) return;
+      narrPausedRef.current = false;
+      // 대사를 듣는 사이 쪽을 넘겼거나 정지했으면 건드리지 않는다.
+      if (run !== runIdRef.current || !readingRef.current) return;
+      narr?.play().catch(() => {});
+      if (typeof window !== "undefined") window.speechSynthesis?.resume();
+    };
+
     setSpeaking({ page, label: h.label, line: h.line, box: h.box });
-    el.onended = () => setSpeaking(null);
-    el.onerror = () => setSpeaking(null);
-    el.play().catch(() => setSpeaking(null));
+    // 누른 캐릭터 자리에서 반짝이가 튀어오른다 (그림 틀 기준 %좌표).
+    setBurst({
+      cx: (h.box[1] + h.box[3]) / 20,
+      cy: (h.box[0] + h.box[2]) / 20,
+      key: ++burstKey.current,
+    });
+    el.onended = done;
+    el.onerror = done;
+    el.play().catch(done);
   };
 
   /** 소리만 멈춘다 — 읽기 모드는 유지. 넘겨서 이어 읽을 때 쓴다. */
   const haltPlayback = () => {
     runIdRef.current++;
+    narrPausedRef.current = false;
     setHighlight(0);
     clearFallback();
     if (typeof window !== "undefined") window.speechSynthesis?.cancel();
@@ -173,16 +248,51 @@ export function BookViewer({ book }: { book: Book }) {
     const selectedId = loadSelectedVoiceId();
     const tc = findTypecast(selectedId);
 
+    // 성우 음성 — 지문/대사 조각을 이어서 재생한다. 대사에는 감정 연기가 실려
+    // 있고, 색칠은 조각의 글자 범위를 따라가서 통짜 비례보다 정확하다.
+    const playSegments = (segments: PageAudioSegment[]) => {
+      const el = audioRef.current ?? new Audio();
+      audioRef.current = el;
+      const urls = segments.map((s) => URL.createObjectURL(s.blob));
+      let si = 0;
+      const playNext = () => {
+        if (run !== runIdRef.current || !readingRef.current || si >= segments.length) {
+          urls.forEach((u) => URL.revokeObjectURL(u));
+          if (run === runIdRef.current && readingRef.current) finishThen();
+          return;
+        }
+        const seg = segments[si];
+        el.src = urls[si];
+        si += 1;
+        el.playbackRate = rateBoost;
+        el.ontimeupdate = () => {
+          if (el.duration > 0) {
+            setHighlight(
+              Math.min(
+                seg.to,
+                seg.from + Math.round((el.currentTime / el.duration) * (seg.to - seg.from)),
+              ),
+            );
+          }
+        };
+        el.onended = playNext;
+        el.play().catch(() => {
+          if (run === runIdRef.current) stopReading();
+        });
+      };
+      playNext();
+    };
+
     if (tc) {
       if (bundled && book.narrator === tc.id) {
         playViaAudio(bundled);
         return;
       }
-      fetchTypecastAudio(tc, page.text)
-        .then((blob) => {
+      fetchTypecastPageAudio(tc, page.text)
+        .then((segments) => {
           // 받는 사이 정지했거나 다른 쪽으로 넘어갔으면 재생하지 않는다.
           if (run !== runIdRef.current || !readingRef.current) return;
-          playViaAudio(URL.createObjectURL(blob));
+          playSegments(segments);
         })
         .catch(() => {
           if (run !== runIdRef.current || !readingRef.current) return;
@@ -227,6 +337,8 @@ export function BookViewer({ book }: { book: Book }) {
       let elapsed = 0;
       fallbackTimer.current = setInterval(() => {
         if (boundaryFired) return clearFallback();
+        // 캐릭터 대사가 나오는 동안은 낭독이 멈춰 있다 — 추정도 같이 멈춘다.
+        if (narrPausedRef.current) return;
         elapsed += 0.25;
         // 프리셋·음성에 따라 과장된 실제 말하기 속도(u.rate) 기준으로 추정한다.
         setHighlight(
@@ -247,6 +359,14 @@ export function BookViewer({ book }: { book: Book }) {
   const go = useCallback(
     (next: number) => {
       const clamped = Math.min(lastIndex, Math.max(0, next));
+      // 책장 넘김 효과음 — 실제로 쪽이 바뀔 때만. 설정에서 끌 수 있다.
+      if (clamped !== index && loadSfxOn()) {
+        const el = sfxRef.current ?? new Audio("/sfx/page-turn.mp3");
+        sfxRef.current = el;
+        el.currentTime = 0;
+        el.volume = 0.5;
+        el.play().catch(() => {});
+      }
       setIndex(clamped);
       if (readingRef.current && clamped !== index) {
         haltPlayback();
@@ -262,6 +382,24 @@ export function BookViewer({ book }: { book: Book }) {
   // 뷰어를 떠날 때 소리를 끄고, 전체화면·가로 고정도 되돌린다.
   useEffect(() => stopReading, [stopReading]);
   useEffect(() => () => exitStoryMode(), []);
+
+  // 배경음 — 켜면 잔잔히 반복, 끄면 멈춘다. 낭독을 덮지 않게 볼륨을 아주 낮게.
+  useEffect(() => {
+    const el = bgmRef.current ?? new Audio("/sfx/bgm.mp3");
+    bgmRef.current = el;
+    el.loop = true;
+    el.volume = 0.12;
+    if (bgmOn) el.play().catch(() => {});
+    else el.pause();
+    return () => el.pause();
+  }, [bgmOn]);
+
+  // 반짝이 이펙트는 잠깐 떴다 사라진다 — 애니메이션이 끝날 때쯤 지운다.
+  useEffect(() => {
+    if (!burst) return;
+    const t = setTimeout(() => setBurst(null), 750);
+    return () => clearTimeout(t);
+  }, [burst]);
 
   // "가로로 보기" 버튼 상태 — 전체화면 여부를 따라간다 (브라우저 뒤로가기로
   // 빠져나가는 경우까지 이벤트로 감지).
@@ -348,11 +486,14 @@ export function BookViewer({ book }: { book: Book }) {
                   aria-hidden
                   className="absolute inset-0 h-full w-full scale-110 object-cover opacity-70 blur-2xl"
                 />
+                {/* 읽는 동안 그림이 천천히 숨 쉰다 — 정지 삽화에 주는 최소한의 생기. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={page.image}
                   alt=""
-                  className="relative h-full w-full object-contain"
+                  className={`relative h-full w-full object-contain ${
+                    i === index && reading ? "animate-[breathe_10s_ease-in-out_infinite]" : ""
+                  }`}
                 />
               </>
             ) : (
@@ -437,14 +578,60 @@ export function BookViewer({ book }: { book: Book }) {
             <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="#404040" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
+        {/* 배경음 토글 — 잔잔한 음악을 켜고 끈다. 켜짐 상태는 저장된다. */}
+        <button
+          type="button"
+          aria-label={bgmOn ? "배경음 끄기" : "배경음 켜기"}
+          onClick={() => {
+            const next = !bgmOn;
+            setBgmOn(next);
+            saveBgmOn(next);
+          }}
+          className={`flex h-11 w-11 items-center justify-center rounded-full shadow-md backdrop-blur transition outline-none focus:outline-none ${
+            bgmOn ? "bg-amber-400 text-white" : "bg-white/85 text-neutral-400 hover:bg-white"
+          }`}
+        >
+          <span className="text-lg leading-none" aria-hidden>
+            {bgmOn ? "♪" : "♪"}
+          </span>
+        </button>
       </div>
+
+      {/* 움직이는 캐릭터(배우) 레이어 — 캐릭터 없는 배경 위에 투명 스티커를
+          겹치고, 낭독 중에는 뒤뚱뒤뚱 움직인다. 클릭은 통과시켜 핫스팟이 받는다. */}
+      {(book.pages[index].actors?.length ?? 0) > 0 && (
+        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center">
+          {/* w-[min(100%,133.333dvh)] — 어떤 창 비율에서도 object-contain된
+              4:3 그림과 정확히 같은 크기를 유지한다 (h-full은 세로 창에서 틀이 늘어남). */}
+          <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)]">
+            {book.pages[index].actors!.map((a, ai) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={ai}
+                src={a.src}
+                alt=""
+                className={`absolute object-contain ${
+                  reading ? "animate-[waddle_1.6s_ease-in-out_infinite]" : ""
+                }`}
+                style={{
+                  top: `${a.box[0] / 10}%`,
+                  left: `${a.box[1] / 10}%`,
+                  height: `${(a.box[2] - a.box[0]) / 10}%`,
+                  width: `${(a.box[3] - a.box[1]) / 10}%`,
+                  transformOrigin: "50% 100%",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 캐릭터 클릭 대사 — 그림 속 캐릭터 자리를 누르면 그 캐릭터가 말한다.
           그림(4:3, contain)과 같은 규칙의 4:3 틀을 겹쳐 좌표를 맞춘다.
           넘김 영역보다 위(z-[5]), 읽어주기 버튼(z-10)보다는 아래. */}
       {book.pages[index].image && (book.pages[index].hotspots?.length ?? 0) > 0 && (
         <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center">
-          <div className="relative aspect-[4/3] h-full max-w-full">
+          <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)]">
             {book.pages[index].hotspots!.map((h, hi) => {
               return (
                 <button
@@ -465,18 +652,59 @@ export function BookViewer({ book }: { book: Book }) {
             })}
 
             {/* 말풍선 — 말하는 캐릭터 머리 위에 대사를 보여준다 (음성과 같은 내용).
-                박스가 화면 위쪽에 붙어 있으면 아래에 띄운다. */}
-            {speaking && speaking.page === index && (
+                박스가 위쪽에 붙어 있으면 아래에 띄운다. 좌우·상하 모두 그림 틀
+                안에 갇히게 여유 있게 클램프한다 — 가장자리 캐릭터도 잘리지 않는다. */}
+            {speaking &&
+              speaking.page === index &&
+              (() => {
+                // 가장자리 캐릭터는 가운데 정렬(-50%)이 틀 밖으로 밀린다 —
+                // 왼쪽 끝은 왼쪽 붙임, 오른쪽 끝은 오른쪽 붙임으로 앵커를 바꾼다.
+                const cx = (speaking.box[1] + speaking.box[3]) / 20;
+                const x =
+                  cx < 28
+                    ? { left: `${Math.max(2, speaking.box[1] / 10)}%`, tx: "0%" }
+                    : cx > 72
+                      ? { left: `${Math.min(98, speaking.box[3] / 10)}%`, tx: "-100%" }
+                      : { left: `${cx}%`, tx: "-50%" };
+                const y =
+                  speaking.box[0] > 180
+                    ? {
+                        top: `${Math.min(94, Math.max(18, speaking.box[0] / 10))}%`,
+                        ty: "-110%",
+                      }
+                    : { top: `${Math.min(78, speaking.box[2] / 10 + 2)}%`, ty: "0%" };
+                const below = y.ty === "0%"; // 말풍선이 캐릭터 아래에 뜬 경우
+                return (
+                  // 바깥 = 위치(translate 앵커), 안쪽 = 통통 팝(scale). transform이
+                  // 하나뿐이라 둘을 겹치면 서로 덮어써서 위치가 틀어진다 → 겹을 나눈다.
+                  <div
+                    className="absolute z-[6] max-w-[44%]"
+                    style={{ left: x.left, top: y.top, transform: `translate(${x.tx}, ${y.ty})` }}
+                  >
+                    <div className="relative animate-[bubble-pop_0.35s_cubic-bezier(0.34,1.56,0.64,1)] rounded-[1.25rem] bg-white px-4 py-2.5 text-center text-[clamp(0.8rem,1.6vw,1.05rem)] font-bold leading-snug text-neutral-800 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
+                      {speaking.line}
+                      {/* 꼬리 — 캐릭터를 가리킨다. 말풍선이 위에 있으면 아래로, 아래면 위로.
+                          말풍선과 같은 순백이라 테두리 없이도 이어져 보인다. */}
+                      <span
+                        aria-hidden
+                        className="absolute left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 bg-white"
+                        style={below ? { top: "-5px" } : { bottom: "-5px" }}
+                      />
+                    </div>
+                  </div>
+                );
+              })()}
+
+            {/* 클릭 반짝이 — 누른 캐릭터 자리에서 통통 튀어오른다.
+                위치 중심 정렬(translate -50%)은 keyframe이 처리하므로 className엔 안 넣는다. */}
+            {burst && (
               <div
-                className="absolute z-[6] max-w-[46%] -translate-x-1/2 rounded-2xl bg-white/95 px-3.5 py-2 text-center text-[clamp(0.8rem,1.6vw,1.05rem)] font-bold leading-snug text-neutral-800 shadow-lg"
-                style={{
-                  left: `${Math.min(78, Math.max(22, (speaking.box[1] + speaking.box[3]) / 20))}%`,
-                  ...(speaking.box[0] > 150
-                    ? { top: `${speaking.box[0] / 10}%`, transform: "translate(-50%, -110%)" }
-                    : { top: `${speaking.box[2] / 10 + 2}%`, transform: "translate(-50%, 0)" }),
-                }}
+                key={burst.key}
+                aria-hidden
+                className="pointer-events-none absolute z-[6] animate-[sparkle-burst_0.7s_ease-out_forwards]"
+                style={{ left: `${burst.cx}%`, top: `${burst.cy}%` }}
               >
-                {speaking.line}
+                <span className="text-4xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">✨</span>
               </div>
             )}
           </div>

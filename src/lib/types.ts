@@ -16,6 +16,15 @@ export type BookPage = {
     line: string;
   }[];
   /**
+   * 움직이는 캐릭터 레이어 — 배경(캐릭터 없는 그림) 위에 투명 스티커를 겹치고
+   * 낭독 중 살짝 움직인다(뒤뚱뒤뚱 등). box 좌표계는 hotspots와 같다.
+   */
+  actors?: {
+    src: string;
+    box: [number, number, number, number];
+    anim?: string;
+  }[];
+  /**
    * 인수인계받은 앱이 만든 3:4 세로 원본. 가로 전체화면 뷰어에는 비율이 맞지 않아
    * 쓸 수 없고, 프롬프트 역설계 참고용으로만 남겨둔다.
    */
