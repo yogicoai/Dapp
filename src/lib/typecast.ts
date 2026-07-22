@@ -107,8 +107,16 @@ export async function synthesize(input: {
     body: JSON.stringify(body),
   });
   if (!res.ok) {
+    const body = (await res.text()).slice(0, 300);
+    // 402(크레딧 소진·계정 비활성)는 부모가 읽어도 뭘 해야 할지 아는 말로 바꾼다.
+    if (res.status === 402 || body.includes("CREDIT_INSUFFICIENT")) {
+      throw new TypecastError(
+        "이번 달 무료 성우 음성을 다 썼어요. 크레딧을 충전하면 성우 목소리를 다시 들을 수 있어요.",
+        402,
+      );
+    }
     throw new TypecastError(
-      `음성 생성에 실패했습니다 (${res.status}): ${(await res.text()).slice(0, 300)}`,
+      `음성 생성에 실패했습니다 (${res.status}): ${body}`,
       res.status === 401 ? 401 : 502,
     );
   }
