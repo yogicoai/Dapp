@@ -527,7 +527,7 @@ export function BookViewer({ book }: { book: Book }) {
               {/* break-keep: 한국어를 단어 단위로만 줄바꿈 ("물고서 / 요." 방지),
                   text-pretty: 마지막 줄에 글자 몇 개만 남는 외톨이 줄을 피한다. */}
               <p
-                className={`whitespace-pre-line break-keep text-pretty text-center text-[clamp(0.95rem,2.1vw,1.6rem)] font-medium leading-relaxed drop-shadow-md ${
+                className={`font-story whitespace-pre-line break-keep text-pretty text-center text-[clamp(0.95rem,2.1vw,1.6rem)] font-medium leading-relaxed drop-shadow-md ${
                   textPos === "bottom" || textPos === "top"
                     ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : // 떠 있는 판 — 그라데이션이 없으니 판 자체가 가독성을 만든다.
@@ -681,7 +681,7 @@ export function BookViewer({ book }: { book: Book }) {
                     className="absolute z-[6] max-w-[44%]"
                     style={{ left: x.left, top: y.top, transform: `translate(${x.tx}, ${y.ty})` }}
                   >
-                    <div className="relative animate-[bubble-pop_0.35s_cubic-bezier(0.34,1.56,0.64,1)] rounded-[1.25rem] bg-white px-4 py-2.5 text-center text-[clamp(0.8rem,1.6vw,1.05rem)] font-bold leading-snug text-neutral-800 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
+                    <div className="font-story relative animate-[bubble-pop_0.35s_cubic-bezier(0.34,1.56,0.64,1)] rounded-[1.25rem] bg-white px-4 py-2.5 text-center text-[clamp(0.8rem,1.6vw,1.05rem)] font-bold leading-snug text-neutral-800 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
                       {speaking.line}
                       {/* 꼬리 — 캐릭터를 가리킨다. 말풍선이 위에 있으면 아래로, 아래면 위로.
                           말풍선과 같은 순백이라 테두리 없이도 이어져 보인다. */}

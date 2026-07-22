@@ -1,8 +1,11 @@
 /*
-  Pretendard 다이나믹 서브셋 — 필요한 글자만 받아 가볍다. 한글 UI 표준 폰트.
+  폰트 — 동화책 본문은 아이용이라 둥글고 '얇은' 동글체(Dongle)를 쓴다(무료·오픈소스, OFL).
+  주아체는 둥글지만 획이 두꺼워 본문이 답답했다. 동글체는 같은 둥근 결에 획이 가벼워
+  긴 본문도 부드럽다. Pretendard는 없는 글자·굵기를 받쳐주는 대비용으로 뒤에 둔다.
   @import는 다른 규칙보다 앞서야 한다. Tailwind v4의 @import "tailwindcss"가 수천 줄로
   펼쳐지므로, 폰트 import를 그 앞(맨 위)에 둬야 CSS 파싱 에러가 안 난다.
 */
+@import url("https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&display=swap");
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/variable/pretendardvariable-dynamic-subset.css");
 @import "tailwindcss";
 
@@ -28,6 +31,16 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/*
+  동화책 '안'의 글자 전용 폰트 — 둥근 주아체. UI(버튼·설정 등)는 Pretendard로 두고,
+  책 본문·제목·대사처럼 아이가 읽는 글에만 이 클래스를 붙인다.
+*/
+.font-story {
+  font-family: "Dongle", "Pretendard Variable", Pretendard, system-ui, sans-serif;
+  /* 동글체는 자간이 좁고 글자가 작게 잡혀, 살짝 벌리고 키워야 본문이 편하다. */
+  letter-spacing: 0.01em;
 }
 
 /* 마스코트가 살짝 둥둥 떠다니는 느낌. */

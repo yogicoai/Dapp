@@ -7,7 +7,9 @@ import {
 } from "./story-format";
 
 const client = new Anthropic();
-const MODEL = process.env.ANTHROPIC_MODEL ?? "claude-opus-4-8";
+// 이야기 생성 모델 — 가성비 Sonnet 기본(원가 약 1/5). 품질이 필요한 순간엔
+// 환경변수 ANTHROPIC_MODEL로 Opus 등으로 바꿀 수 있다.
+const MODEL = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-5";
 
 /**
  * 장면(쪽) 수는 부모가 3~8에서 고른다. 기승전결 네 막을 이 쪽수에 맞게 배분하되
