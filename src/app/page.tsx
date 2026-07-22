@@ -31,40 +31,62 @@ export default function Home() {
 
   return (
     <div className="relative min-h-dvh w-full overflow-hidden">
-      {/* 테마 배경 — 화면을 항상 꽉 채운다. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={theme.background}
-        alt=""
-        className={`fixed inset-0 -z-10 h-full w-full object-cover ${
-          softBg ? "scale-110 blur-[3px]" : ""
-        }`}
-      />
-      {/* 우주 테마 — 은은하게 움직이는 배경 영상. 정지 이미지(위 img)를 poster로
-          깔아 로딩 지연이 없고, "모션 줄이기" 설정 기기에서는 영상이 숨겨져 정지
-          이미지가 그대로 보인다(motion-reduce:hidden). 영상 파일이 없거나 못 틀면
-          아래 정지 이미지가 대신 보여 어떤 기기에서도 안전하다. */}
-      {(theme.id === "space" || theme.id === "picturebook") && (
-        <video
-          // 테마가 바뀌면 video를 새로 마운트해 소스를 다시 로드한다.
-          // key가 없으면 React가 <source>만 갈아끼우고 .load()를 안 불러
-          // 새로고침·테마전환 때 poster만 뜨고 영상이 안 나온다.
-          key={theme.id}
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster={theme.background}
-          className={`pointer-events-none fixed inset-0 -z-10 h-full w-full object-cover motion-reduce:hidden ${
-            softBg ? "scale-110 blur-[3px]" : ""
-          }`}
-        >
-          <source src={`/themes/${theme.id}/bg-video.mp4`} type="video/mp4" />
-        </video>
+      {softBg ? (
+        // 그림책나라 — 배경(이사님 hero)을 화면 가득 채우면 인물이 크고 눈이
+        // 피로하다. 흐림도 뿌옇게 보여 오히려 이상하다. 그래서 영상을 중앙
+        // 1200px 폭 '액자' 안에만 두고, 바깥은 크림빛 여백으로 감싼다. 넓은
+        // 화면일수록 양옆 크림이 넉넉해져 아늑한 그림책 펼침면처럼 보인다.
+        <div className="fixed inset-0 -z-10 bg-[#efe6d4]">
+          <div className="relative mx-auto h-full w-full max-w-[1200px] overflow-hidden shadow-[0_0_80px_rgba(120,90,50,0.12)]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={theme.background}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <video
+              key={theme.id}
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={theme.background}
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
+            >
+              <source src={`/themes/${theme.id}/bg-video.mp4`} type="video/mp4" />
+            </video>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* 테마 배경 — 화면을 항상 꽉 채운다. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={theme.background}
+            alt=""
+            className="fixed inset-0 -z-10 h-full w-full object-cover"
+          />
+          {/* 우주 테마 — 은은하게 움직이는 배경 영상. 정지 이미지(poster)를 깔아
+              로딩 지연이 없고, "모션 줄이기" 기기에선 영상이 숨겨진다. key가 없으면
+              테마 전환 때 소스가 다시 로드되지 않아 poster만 뜬다. */}
+          {theme.id === "space" && (
+            <video
+              key={theme.id}
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={theme.background}
+              className="pointer-events-none fixed inset-0 -z-10 h-full w-full object-cover motion-reduce:hidden"
+            >
+              <source src="/themes/space/bg-video.mp4" type="video/mp4" />
+            </video>
+          )}
+        </>
       )}
       {/* 원색 배경이 너무 세면 책 표지가 묻힌다 — 흰 베일로 채도를 한 김 뺀다.
-          그림책나라는 배경이 꽉 차서 베일을 한 겹 더 진하게 얹는다. */}
-      <div className={`fixed inset-0 -z-10 ${softBg ? "bg-white/45" : "bg-white/25"}`} />
+          그림책나라는 중앙 영상만이라 아주 옅게(제목 대비는 글자 그림자로 낸다). */}
+      <div className={`fixed inset-0 -z-10 ${softBg ? "bg-white/10" : "bg-white/25"}`} />
 
       {/* 아래 여백: 폰은 버튼이 흐름 안에 있어 얕게, sm부터는 떠 있는 버튼 자리만큼. */}
       <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center px-6 pb-10 pt-6 sm:pb-32">
