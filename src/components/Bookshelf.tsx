@@ -36,6 +36,7 @@ export function Bookshelf({ books }: { books: Book[] }) {
             <div
               className={`relative w-36 sm:w-44 ${tilt} transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform group-hover:-translate-y-3 group-hover:rotate-0 group-focus-visible:-translate-y-3 group-focus-visible:rotate-0`}
             >
+<<<<<<< HEAD
               {/* 페이지 뭉치 — 표지 뒤에서 오른쪽·아래로 살짝 삐져나와 종이 두께를
                   만든다. 크림색에 아주 얇은 결을 넣어 낱장이 쌓인 느낌. */}
               <div
@@ -45,6 +46,9 @@ export function Bookshelf({ books }: { books: Book[] }) {
 
               {/* 표지 — 책등 쪽(왼쪽)은 각지게, 배지 쪽(오른쪽)은 둥글게. */}
               <div className="relative aspect-[3/4] overflow-hidden rounded-l-[2px] rounded-r-xl shadow-[0_8px_16px_rgba(0,0,0,0.22)]">
+=======
+              <div className="relative aspect-[3/4] overflow-hidden rounded-xl shadow-[0_10px_22px_rgba(0,0,0,0.28)]">
+>>>>>>> 0adf6671470f25840427ad12ad38f0f03aef487b
                 {/* 장식 표지 틀 (테마별 힉스필드 아트). 원본이 반짝이·별이 많아
                     화려하니 채도를 낮춰 한 김 가라앉힌다 (표지끼리 안 튀게). */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -54,6 +58,7 @@ export function Bookshelf({ books }: { books: Book[] }) {
                   className="absolute inset-0 h-full w-full saturate-[.8]"
                 />
 
+<<<<<<< HEAD
                 {/* 책등 — 왼쪽에 짙은 그림자 띠 + 접힘선 하이라이트로 책이 접히는
                     느낌을 준다. 카드→책으로 바뀌는 핵심. */}
                 <div className="pointer-events-none absolute inset-y-0 left-0 w-[11%] bg-gradient-to-r from-black/45 via-black/15 to-transparent" />
@@ -62,6 +67,8 @@ export function Bookshelf({ books }: { books: Book[] }) {
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-gradient-to-b from-black/20 to-transparent" />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2 bg-gradient-to-t from-black/25 to-transparent" />
 
+=======
+>>>>>>> 0adf6671470f25840427ad12ad38f0f03aef487b
                 {/* 제목 — 리본 안 */}
                 <h2
                   className="absolute left-1/2 w-[56%] -translate-x-1/2 overflow-hidden text-center text-[11px] font-extrabold leading-tight [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] sm:text-[13px]"
