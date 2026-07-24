@@ -2,10 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-<<<<<<< HEAD
 import { BgVideo } from "@/components/BgVideo";
-=======
->>>>>>> 0adf6671470f25840427ad12ad38f0f03aef487b
 import { Bookshelf } from "@/components/Bookshelf";
 import { useTheme } from "@/components/ThemeProvider";
 import classicBooksJson from "@/data/classic-books.json";
@@ -25,7 +22,6 @@ export default function Home() {
   const [lang] = useState(loadLang);
   const mine = all.filter((b) => b.lang === lang);
 
-<<<<<<< HEAD
   // 은은하게 움직이는 배경 영상(/themes/<id>/bg-video.mp4)이 있는 테마.
   // 파일을 넣고 여기 id만 추가하면 그 테마 홈이 살아 움직인다.
   const THEMES_WITH_BG_VIDEO = new Set([
@@ -36,9 +32,6 @@ export default function Home() {
     "ocean",
     "storybook",
   ]);
-
-=======
->>>>>>> 0adf6671470f25840427ad12ad38f0f03aef487b
   // 책장 탭 — 내가 만든 책 | 제공 서가(전래동화·세계명작, 빈 책장 해결사).
   // 제공 서가는 언어 필터를 안 탄다 — 서가 자체가 콘텐츠다.
   const [shelf, setShelf] = useState<"mine" | "folk" | "classic">("mine");
@@ -62,25 +55,11 @@ export default function Home() {
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
             />
-<<<<<<< HEAD
             <BgVideo
               src={`/themes/${theme.id}/bg-video.mp4`}
               poster={theme.background}
               className="pointer-events-none absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
             />
-=======
-            <video
-              key={theme.id}
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster={theme.background}
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
-            >
-              <source src={`/themes/${theme.id}/bg-video.mp4`} type="video/mp4" />
-            </video>
->>>>>>> 0adf6671470f25840427ad12ad38f0f03aef487b
           </div>
         </div>
       ) : (
@@ -92,7 +71,6 @@ export default function Home() {
             alt=""
             className="fixed inset-0 -z-10 h-full w-full object-cover"
           />
-<<<<<<< HEAD
           {/* 은은하게 움직이는 배경 영상이 있는 테마만 재생한다. 정지 이미지(poster)를
               깔아 로딩 지연이 없고, "모션 줄이기" 기기에선 영상이 숨겨진다. key가 없으면
               테마 전환 때 소스가 다시 로드되지 않아 poster만 뜬다. */}
@@ -102,23 +80,6 @@ export default function Home() {
               poster={theme.background}
               className="pointer-events-none fixed inset-0 -z-10 h-full w-full object-cover motion-reduce:hidden"
             />
-=======
-          {/* 우주 테마 — 은은하게 움직이는 배경 영상. 정지 이미지(poster)를 깔아
-              로딩 지연이 없고, "모션 줄이기" 기기에선 영상이 숨겨진다. key가 없으면
-              테마 전환 때 소스가 다시 로드되지 않아 poster만 뜬다. */}
-          {theme.id === "space" && (
-            <video
-              key={theme.id}
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster={theme.background}
-              className="pointer-events-none fixed inset-0 -z-10 h-full w-full object-cover motion-reduce:hidden"
-            >
-              <source src="/themes/space/bg-video.mp4" type="video/mp4" />
-            </video>
->>>>>>> 0adf6671470f25840427ad12ad38f0f03aef487b
           )}
         </>
       )}

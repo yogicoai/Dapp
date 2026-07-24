@@ -388,12 +388,8 @@ export function BookViewer({ book }: { book: Book }) {
     const el = bgmRef.current ?? new Audio("/sfx/bgm.mp3");
     bgmRef.current = el;
     el.loop = true;
-<<<<<<< HEAD
     // 낭독·대사를 덮지 않게 아주 은은하게 (0.12 → 0.06으로 반 줄임).
     el.volume = 0.06;
-=======
-    el.volume = 0.12;
->>>>>>> 0adf6671470f25840427ad12ad38f0f03aef487b
     if (bgmOn) el.play().catch(() => {});
     else el.pause();
     return () => el.pause();
@@ -491,7 +487,6 @@ export function BookViewer({ book }: { book: Book }) {
                   aria-hidden
                   className="absolute inset-0 h-full w-full scale-110 object-cover opacity-70 blur-2xl"
                 />
-<<<<<<< HEAD
                 {/* 움직이는 삽화가 있으면 영상을, 없으면 정지 이미지를 담는다.
                     정지 이미지는 poster로 깔아 로딩 지연 없이 이어진다. 현재 쪽만
                     재생하고(다른 쪽은 poster) 넘겨서 이 쪽이 되면 자동 재생된다. */}
@@ -517,17 +512,6 @@ export function BookViewer({ book }: { book: Book }) {
                     }`}
                   />
                 )}
-=======
-                {/* 읽는 동안 그림이 천천히 숨 쉰다 — 정지 삽화에 주는 최소한의 생기. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={page.image}
-                  alt=""
-                  className={`relative h-full w-full object-contain ${
-                    i === index && reading ? "animate-[breathe_10s_ease-in-out_infinite]" : ""
-                  }`}
-                />
->>>>>>> 0adf6671470f25840427ad12ad38f0f03aef487b
               </>
             ) : (
               // 그림 없는 쪽(글 동화)은 테마 배경을 깐다 — 게시판이 아니라
@@ -560,11 +544,7 @@ export function BookViewer({ book }: { book: Book }) {
               {/* break-keep: 한국어를 단어 단위로만 줄바꿈 ("물고서 / 요." 방지),
                   text-pretty: 마지막 줄에 글자 몇 개만 남는 외톨이 줄을 피한다. */}
               <p
-<<<<<<< HEAD
                 className={`font-story whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.2rem,3vw,2.2rem)] font-medium leading-relaxed drop-shadow-md ${
-=======
-                className={`font-story whitespace-pre-line break-keep text-pretty text-center text-[clamp(0.95rem,2.1vw,1.6rem)] font-medium leading-relaxed drop-shadow-md ${
->>>>>>> 0adf6671470f25840427ad12ad38f0f03aef487b
                   textPos === "bottom" || textPos === "top"
                     ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : // 떠 있는 판 — 그라데이션이 없으니 판 자체가 가독성을 만든다.

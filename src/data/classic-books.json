@@ -1478,7 +1478,6 @@
       },
       {
         "text": "그 뒤로 두 쥐는 자주 편지를 주고받았어요.\n\"여름엔 시골로 산딸기 먹으러 오렴!\"\n\"겨울엔 도시 구경 시켜 줄게!\"\n서로 다른 집에서, 둘은 각자 행복했답니다.",
-<<<<<<< HEAD
         "image": "/classic/twomice/p12.webp",
         "audio": "/classic/twomice/narr-p12.mp3"
       }
@@ -1637,11 +1636,3 @@
     ]
   }
 ]
-=======
-        "image": null,
-        "audio": "/classic/twomice/narr-p12.mp3"
-      }
-    ]
-  }
-]
->>>>>>> 0adf6671470f25840427ad12ad38f0f03aef487b
