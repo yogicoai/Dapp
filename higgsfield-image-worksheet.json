@@ -1,0 +1,373 @@
+{
+  "info": "이미지 없는 5권 페이지 생성용. 무료판이 4장씩이라 batches_of_4 순서로. 팁: 각 책 p1을 먼저 만들어 그 결과를 다음 배치의 캐릭터 레퍼런스로 올리면 인물이 일관됩니다.",
+  "model": "Nano Banana (Unlimited/무료 모드, 4장씩)",
+  "aspect": "4:3 가로",
+  "books": [
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "style_anchor": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements.",
+      "character_anchor": "Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier.",
+      "aspect": "4:3 가로 (1184x864)",
+      "pages": [
+        {
+          "page": 1,
+          "save_as": "/folk/patjuk/p1.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: A kind old grandmother tends a red-bean field in an autumn mountain valley; a big friendly tiger suddenly appears with a roar. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 2,
+          "save_as": "/folk/patjuk/p2.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: The startled but clever grandmother talks to the tiger, promising to cook red-bean porridge in autumn. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 3,
+          "save_as": "/folk/patjuk/p3.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: Autumn: red beans ripen; grandmother cooks a big pot of red-bean porridge but wipes tears, worrying about the tiger. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 4,
+          "save_as": "/folk/patjuk/p4.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: A little chestnut pops out of the kitchen fire-hole and asks why she cries; she shares porridge with it. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 5,
+          "save_as": "/folk/patjuk/p5.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: A soft-shell turtle crawls out of the water jar, eats porridge, and hides in the jar to help. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 6,
+          "save_as": "/folk/patjuk/p6.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: More helper friends eat porridge and take their hiding spots around the hanok house and yard. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 7,
+          "save_as": "/folk/patjuk/p7.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: Dark night: the tiger arrives asking where the porridge is; grandmother points to the kitchen fire-hole. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 8,
+          "save_as": "/folk/patjuk/p8.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: As the tiger peers into the fire-hole, the hot chestnut pops out and hits the tiger's eye. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 9,
+          "save_as": "/folk/patjuk/p9.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: The tiger reaches into the water jar; the turtle bites its paw; the tiger stumbles onto the cow-dung. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 10,
+          "save_as": "/folk/patjuk/p10.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: The fallen tiger is rolled up by the straw mat as the A-frame carrier steps in. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 11,
+          "save_as": "/folk/patjuk/p11.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: The wooden carrier throws the tiger into a deep river; the tiger swims out and flees over the mountain. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 12,
+          "save_as": "/folk/patjuk/p12.webp",
+          "prompt": "Warm Korean traditional folk-tale storybook illustration, soft gouache and watercolor, cozy autumn palette, hanok village, gentle rounded kid-friendly shapes, no scary elements. Grandma: kind elderly Korean woman in beige hanbok, gray hair in a bun, warm smile. Tiger: large but friendly orange tiger with round eyes (not scary). Helper friends: a chestnut, a soft-shell turtle, a cow-dung, a rolled straw mat, an A-frame wooden carrier. Scene: Grandmother sits her helper friends in a circle and shares warm red-bean porridge; cozy happy ending. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        }
+      ],
+      "batches_of_4": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          5,
+          6,
+          7,
+          8
+        ],
+        [
+          9,
+          10,
+          11,
+          12
+        ]
+      ]
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "style_anchor": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary).",
+      "character_anchor": "Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly.",
+      "aspect": "4:3 가로 (1184x864)",
+      "pages": [
+        {
+          "page": 1,
+          "save_as": "/folk/hokburi/p1.webp",
+          "prompt": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary). Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly. Scene: A kind old man with a big lump on his chin sings cheerfully in a warm Korean village. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 2,
+          "save_as": "/folk/hokburi/p2.webp",
+          "prompt": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary). Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly. Scene: He goes to gather firewood; night falls; he shelters in an empty hut and sings to calm his fear. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 3,
+          "save_as": "/folk/hokburi/p3.webp",
+          "prompt": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary). Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly. Scene: Cute dokkaebi goblins rush into the hut; he keeps singing; the dokkaebi chief's eyes sparkle. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 4,
+          "save_as": "/folk/hokburi/p4.webp",
+          "prompt": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary). Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly. Scene: He points to the lump on his chin, saying his song comes from it; the chief offers treasure to buy it. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 5,
+          "save_as": "/folk/hokburi/p5.webp",
+          "prompt": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary). Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly. Scene: Lump gone and treasure gained, the old man dances home happily; word spreads through the village. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 6,
+          "save_as": "/folk/hokburi/p6.webp",
+          "prompt": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary). Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly. Scene: A greedy old man from the next village hurries to the same hut and waits for the dokkaebi. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 7,
+          "save_as": "/folk/hokburi/p7.webp",
+          "prompt": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary). Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly. Scene: Night: the dokkaebi return; the greedy old man claims the song comes from his own lump. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 8,
+          "save_as": "/folk/hokburi/p8.webp",
+          "prompt": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary). Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly. Scene: The dokkaebi chief laughs and sticks the old fake lump onto the greedy man's face too. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 9,
+          "save_as": "/folk/hokburi/p9.webp",
+          "prompt": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary). Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly. Scene: The greedy old man, now with two lumps, trudges home looking miserable. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 10,
+          "save_as": "/folk/hokburi/p10.webp",
+          "prompt": "Korean folk-tale storybook, warm gouache, night mountain and old hut, cute cartoon dokkaebi goblins with small horns and clubs (friendly, not scary). Kind old man with a large lump on his chin, simple hanbok, cheerful. Greedy old man: similar but grumpy. Dokkaebi: colorful cute goblins with small horns and big friendly eyes; the chief is bigger and jolly. Scene: The kind old man generously shares his dokkaebi treasure with poor neighbors; warm ending. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        }
+      ],
+      "batches_of_4": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          5,
+          6,
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ]
+      ]
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "style_anchor": "Bright cheerful European folk-tale storybook, gouache, sunny vegetable garden, giant turnip, warm and playful.",
+      "character_anchor": "Grandpa in overalls and straw hat, Grandma in apron and kerchief, a little granddaughter with braids, a dog, a cat, and a tiny mouse. A giant turnip with big green leaves.",
+      "aspect": "4:3 가로 (1184x864)",
+      "pages": [
+        {
+          "page": 1,
+          "save_as": "/classic/turnip/p1.webp",
+          "prompt": "Bright cheerful European folk-tale storybook, gouache, sunny vegetable garden, giant turnip, warm and playful. Grandpa in overalls and straw hat, Grandma in apron and kerchief, a little granddaughter with braids, a dog, a cat, and a tiny mouse. A giant turnip with big green leaves. Scene: Grandpa plants a small turnip seed in a sunny garden; it grows into an enormous giant turnip. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 2,
+          "save_as": "/classic/turnip/p2.webp",
+          "prompt": "Bright cheerful European folk-tale storybook, gouache, sunny vegetable garden, giant turnip, warm and playful. Grandpa in overalls and straw hat, Grandma in apron and kerchief, a little granddaughter with braids, a dog, a cat, and a tiny mouse. A giant turnip with big green leaves. Scene: Harvest day: Grandpa grabs the huge turnip and pulls hard, but it won't budge. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 3,
+          "save_as": "/classic/turnip/p3.webp",
+          "prompt": "Bright cheerful European folk-tale storybook, gouache, sunny vegetable garden, giant turnip, warm and playful. Grandpa in overalls and straw hat, Grandma in apron and kerchief, a little granddaughter with braids, a dog, a cat, and a tiny mouse. A giant turnip with big green leaves. Scene: Grandpa calls Grandma; they pull together in a line, but the turnip stays stuck. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 4,
+          "save_as": "/classic/turnip/p4.webp",
+          "prompt": "Bright cheerful European folk-tale storybook, gouache, sunny vegetable garden, giant turnip, warm and playful. Grandpa in overalls and straw hat, Grandma in apron and kerchief, a little granddaughter with braids, a dog, a cat, and a tiny mouse. A giant turnip with big green leaves. Scene: The little granddaughter joins the pulling line; still the turnip won't move. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 5,
+          "save_as": "/classic/turnip/p5.webp",
+          "prompt": "Bright cheerful European folk-tale storybook, gouache, sunny vegetable garden, giant turnip, warm and playful. Grandpa in overalls and straw hat, Grandma in apron and kerchief, a little granddaughter with braids, a dog, a cat, and a tiny mouse. A giant turnip with big green leaves. Scene: The dog joins the line of pullers; still stuck. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 6,
+          "save_as": "/classic/turnip/p6.webp",
+          "prompt": "Bright cheerful European folk-tale storybook, gouache, sunny vegetable garden, giant turnip, warm and playful. Grandpa in overalls and straw hat, Grandma in apron and kerchief, a little granddaughter with braids, a dog, a cat, and a tiny mouse. A giant turnip with big green leaves. Scene: The cat joins the line; still the giant turnip holds fast. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 7,
+          "save_as": "/classic/turnip/p7.webp",
+          "prompt": "Bright cheerful European folk-tale storybook, gouache, sunny vegetable garden, giant turnip, warm and playful. Grandpa in overalls and straw hat, Grandma in apron and kerchief, a little granddaughter with braids, a dog, a cat, and a tiny mouse. A giant turnip with big green leaves. Scene: The tiny mouse is called and joins the very end of the pulling line. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 8,
+          "save_as": "/classic/turnip/p8.webp",
+          "prompt": "Bright cheerful European folk-tale storybook, gouache, sunny vegetable garden, giant turnip, warm and playful. Grandpa in overalls and straw hat, Grandma in apron and kerchief, a little granddaughter with braids, a dog, a cat, and a tiny mouse. A giant turnip with big green leaves. Scene: All together with one big heave, the giant turnip pops out; everyone tumbles back laughing. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 9,
+          "save_as": "/classic/turnip/p9.webp",
+          "prompt": "Bright cheerful European folk-tale storybook, gouache, sunny vegetable garden, giant turnip, warm and playful. Grandpa in overalls and straw hat, Grandma in apron and kerchief, a little granddaughter with braids, a dog, a cat, and a tiny mouse. A giant turnip with big green leaves. Scene: Evening: the whole family and animals sit around the big sweet turnip sharing a happy meal. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        }
+      ],
+      "batches_of_4": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          5,
+          6,
+          7,
+          8
+        ],
+        [
+          9
+        ]
+      ]
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "style_anchor": "Warm cozy European storybook watercolor, forest cottage interior, three friendly cartoon brown bears, cheerful and gentle.",
+      "character_anchor": "Goldilocks: a little girl with golden curls in a red dress. Papa bear (big), Mama bear (medium), Baby bear (small), all friendly brown bears.",
+      "aspect": "4:3 가로 (1184x864)",
+      "pages": [
+        {
+          "page": 1,
+          "save_as": "/classic/goldilocks/p1.webp",
+          "prompt": "Warm cozy European storybook watercolor, forest cottage interior, three friendly cartoon brown bears, cheerful and gentle. Goldilocks: a little girl with golden curls in a red dress. Papa bear (big), Mama bear (medium), Baby bear (small), all friendly brown bears. Scene: Three bears (big Papa, medium Mama, small Baby) in a cozy forest cottage; their porridge is too hot so they go for a walk. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 2,
+          "save_as": "/classic/goldilocks/p2.webp",
+          "prompt": "Warm cozy European storybook watercolor, forest cottage interior, three friendly cartoon brown bears, cheerful and gentle. Goldilocks: a little girl with golden curls in a red dress. Papa bear (big), Mama bear (medium), Baby bear (small), all friendly brown bears. Scene: Goldilocks, a golden-haired girl, finds the cottage and peeks curiously inside. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 3,
+          "save_as": "/classic/goldilocks/p3.webp",
+          "prompt": "Warm cozy European storybook watercolor, forest cottage interior, three friendly cartoon brown bears, cheerful and gentle. Goldilocks: a little girl with golden curls in a red dress. Papa bear (big), Mama bear (medium), Baby bear (small), all friendly brown bears. Scene: She tastes the big bowl of porridge (too hot) and the medium bowl (too cold), making funny faces. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 4,
+          "save_as": "/classic/goldilocks/p4.webp",
+          "prompt": "Warm cozy European storybook watercolor, forest cottage interior, three friendly cartoon brown bears, cheerful and gentle. Goldilocks: a little girl with golden curls in a red dress. Papa bear (big), Mama bear (medium), Baby bear (small), all friendly brown bears. Scene: She tastes the smallest bowl, finds it just right, and happily eats it all up. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 5,
+          "save_as": "/classic/goldilocks/p5.webp",
+          "prompt": "Warm cozy European storybook watercolor, forest cottage interior, three friendly cartoon brown bears, cheerful and gentle. Goldilocks: a little girl with golden curls in a red dress. Papa bear (big), Mama bear (medium), Baby bear (small), all friendly brown bears. Scene: Full, she tries the chairs: big too hard, medium too soft, and the small chair breaks under her. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 6,
+          "save_as": "/classic/goldilocks/p6.webp",
+          "prompt": "Warm cozy European storybook watercolor, forest cottage interior, three friendly cartoon brown bears, cheerful and gentle. Goldilocks: a little girl with golden curls in a red dress. Papa bear (big), Mama bear (medium), Baby bear (small), all friendly brown bears. Scene: Sleepy, she goes upstairs and tries the beds; the small bed is just right and she falls asleep. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 7,
+          "save_as": "/classic/goldilocks/p7.webp",
+          "prompt": "Warm cozy European storybook watercolor, forest cottage interior, three friendly cartoon brown bears, cheerful and gentle. Goldilocks: a little girl with golden curls in a red dress. Papa bear (big), Mama bear (medium), Baby bear (small), all friendly brown bears. Scene: The three bears return home and notice their porridge has been eaten. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 8,
+          "save_as": "/classic/goldilocks/p8.webp",
+          "prompt": "Warm cozy European storybook watercolor, forest cottage interior, three friendly cartoon brown bears, cheerful and gentle. Goldilocks: a little girl with golden curls in a red dress. Papa bear (big), Mama bear (medium), Baby bear (small), all friendly brown bears. Scene: Upstairs the bears discover the strange golden-haired girl asleep in the small bed. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 9,
+          "save_as": "/classic/goldilocks/p9.webp",
+          "prompt": "Warm cozy European storybook watercolor, forest cottage interior, three friendly cartoon brown bears, cheerful and gentle. Goldilocks: a little girl with golden curls in a red dress. Papa bear (big), Mama bear (medium), Baby bear (small), all friendly brown bears. Scene: Goldilocks wakes, startled, apologizes, and climbs out the window to run home. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        }
+      ],
+      "batches_of_4": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          5,
+          6,
+          7,
+          8
+        ],
+        [
+          9
+        ]
+      ]
+    },
+    {
+      "book_id": "classic-lionmouse",
+      "book_title": "사자와 생쥐",
+      "style_anchor": "Classic Aesop storybook watercolor, warm savanna and forest, gentle and kid-friendly.",
+      "character_anchor": "A big friendly lion with a golden mane and kind eyes, and a tiny brown mouse with big eyes.",
+      "aspect": "4:3 가로 (1184x864)",
+      "pages": [
+        {
+          "page": 1,
+          "save_as": "/classic/lionmouse/p1.webp",
+          "prompt": "Classic Aesop storybook watercolor, warm savanna and forest, gentle and kid-friendly. A big friendly lion with a golden mane and kind eyes, and a tiny brown mouse with big eyes. Scene: A hot day: a big lion naps in tree shade while a tiny mouse hops playfully across his body. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 2,
+          "save_as": "/classic/lionmouse/p2.webp",
+          "prompt": "Classic Aesop storybook watercolor, warm savanna and forest, gentle and kid-friendly. A big friendly lion with a golden mane and kind eyes, and a tiny brown mouse with big eyes. Scene: The lion grabs the mouse with his paw and threatens to eat it; the trembling mouse begs and promises to help someday. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 3,
+          "save_as": "/classic/lionmouse/p3.webp",
+          "prompt": "Classic Aesop storybook watercolor, warm savanna and forest, gentle and kid-friendly. A big friendly lion with a golden mane and kind eyes, and a tiny brown mouse with big eyes. Scene: The lion laughs at the idea of the tiny mouse helping, but kindly lets it go. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 4,
+          "save_as": "/classic/lionmouse/p4.webp",
+          "prompt": "Classic Aesop storybook watercolor, warm savanna and forest, gentle and kid-friendly. A big friendly lion with a golden mane and kind eyes, and a tiny brown mouse with big eyes. Scene: Days later, hunters' big rope net traps the lion; he cannot break free. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 5,
+          "save_as": "/classic/lionmouse/p5.webp",
+          "prompt": "Classic Aesop storybook watercolor, warm savanna and forest, gentle and kid-friendly. A big friendly lion with a golden mane and kind eyes, and a tiny brown mouse with big eyes. Scene: The mouse hears the lion's roar and runs over, gnawing the ropes with its sharp teeth. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 6,
+          "save_as": "/classic/lionmouse/p6.webp",
+          "prompt": "Classic Aesop storybook watercolor, warm savanna and forest, gentle and kid-friendly. A big friendly lion with a golden mane and kind eyes, and a tiny brown mouse with big eyes. Scene: The mouse cuts the ropes one by one until the net falls open and the lion slips free. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        },
+        {
+          "page": 7,
+          "save_as": "/classic/lionmouse/p7.webp",
+          "prompt": "Classic Aesop storybook watercolor, warm savanna and forest, gentle and kid-friendly. A big friendly lion with a golden mane and kind eyes, and a tiny brown mouse with big eyes. Scene: The lion bows gratefully to the tiny mouse; even a small friend can be a big help. Wide 4:3 landscape composition, no text, no letters, no words in the image."
+        }
+      ],
+      "batches_of_4": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          5,
+          6,
+          7
+        ]
+      ]
+    }
+  ],
+  "total_pages": 47
+}
