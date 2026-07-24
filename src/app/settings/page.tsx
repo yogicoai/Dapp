@@ -55,19 +55,34 @@ export default function SettingsPage() {
   const { theme } = useTheme();
   const { accent } = theme.colors;
 
-  const stored = loadChild();
-  const [name, setName] = useState(stored?.name ?? "");
-  const [age, setAge] = useState<number | null>(stored?.age ?? null);
-  const [gender, setGender] = useState<Gender>(stored?.gender ?? "girl");
-  const [lang, setLang] = useState(loadLang);
+  // 설정값은 서버 렌더 중 localStorage에서 읽지 않는다. 마운트 후 불러와야
+  // 저장된 값이 있는 브라우저에서도 서버 HTML과 첫 클라이언트 렌더가 같다.
+  const [name, setName] = useState("");
+  const [age, setAge] = useState<number | null>(null);
+  const [gender, setGender] = useState<Gender>("girl");
+  const [lang, setLang] = useState("ko");
 
   // 목소리 — 프리셋 선택 + 엄마·아빠 녹음 관리
-  const [voiceId, setVoiceId] = useState(loadSelectedVoiceId);
-  const [voiceRate, setVoiceRate] = useState(loadVoiceRate);
+  const [voiceId, setVoiceId] = useState("basic");
+  const [voiceRate, setVoiceRate] = useState(1);
   // 책 화면 — 글자 위치(위/아래)
-  const [textPos, setTextPos] = useState(loadTextPos);
-  const [customVoices, setCustomVoices] = useState<CustomVoice[]>(loadCustomVoices);
+  const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
+  const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
+
+  useEffect(() => {
+    const stored = loadChild();
+    if (stored) {
+      setName(stored.name);
+      setAge(stored.age);
+      setGender(stored.gender);
+    }
+    setLang(loadLang());
+    setVoiceId(loadSelectedVoiceId());
+    setVoiceRate(loadVoiceRate());
+    setTextPos(loadTextPos());
+    setCustomVoices(loadCustomVoices());
+  }, []);
 
   // ESC로 설정을 닫는다(홈으로). 녹음 팝업이 열려 있으면 팝업이 먼저 닫히고,
   // 한 번 더 누르면 설정이 닫힌다.

@@ -80,7 +80,10 @@ export function BookViewer({ book }: { book: Book }) {
   // 그림 없는 쪽의 배경으로 쓴다 — 글 동화도 테마(동화나라) 안에서 읽힌다.
   const { theme: ui } = useTheme();
   // 글자 위치(위/아래) — 설정에서 고른다. 뷰어는 열 때마다 새로 읽으면 충분하다.
-  const [textPos] = useState(loadTextPos);
+  // localStorage 값은 첫 서버 렌더와 다를 수 있으므로 첫 렌더는 기본값으로 맞춘다.
+  // 마운트 후 저장된 위치를 읽어야 hydration mismatch가 발생하지 않는다.
+  const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
+  useEffect(() => setTextPos(loadTextPos()), []);
   const [index, setIndex] = useState(0);
   const lastIndex = book.pages.length - 1;
 
@@ -113,7 +116,8 @@ export function BookViewer({ book }: { book: Book }) {
   // 소리 — 책장 넘김 효과음(짧아서 낭독과 안 겹침) + 배경음(토글로 켜고 끈다).
   const sfxRef = useRef<HTMLAudioElement | null>(null);
   const bgmRef = useRef<HTMLAudioElement | null>(null);
-  const [bgmOn, setBgmOn] = useState(loadBgmOn);
+  const [bgmOn, setBgmOn] = useState(false);
+  useEffect(() => setBgmOn(loadBgmOn()), []);
 
   // 캐릭터 클릭 반응 — 정지 그림이라 캐릭터 자체는 못 움직이지만, 누른 자리에서
   // 반짝이가 통통 튀어올라 "반응하는" 느낌을 준다. key로 매 클릭마다 다시 튼다.
@@ -544,7 +548,7 @@ export function BookViewer({ book }: { book: Book }) {
               {/* break-keep: 한국어를 단어 단위로만 줄바꿈 ("물고서 / 요." 방지),
                   text-pretty: 마지막 줄에 글자 몇 개만 남는 외톨이 줄을 피한다. */}
               <p
-                className={`font-story whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.2rem,3vw,2.2rem)] font-medium leading-relaxed drop-shadow-md ${
+                className={`font-story whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.8rem,4.5vw,3.2rem)] font-semibold leading-[1.35] drop-shadow-md ${
                   textPos === "bottom" || textPos === "top"
                     ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : // 떠 있는 판 — 그라데이션이 없으니 판 자체가 가독성을 만든다.

@@ -261,10 +261,9 @@ export default function CreatePage() {
 
   // 설정(⚙️)에 아이 정보가 있으면 미리 채우고 아이정보 단계는 건너뛴다.
   // 주제가 첫 질문이다 — 아이가 고를 것부터. 형제 동화는 재료 화면의 "누구랑"에서 다룬다.
-  const [stored] = useState(loadChild);
-  const [step, setStep] = useState<Step>(
-    stored?.name && stored.age !== null ? "theme" : "child",
-  );
+  // 저장된 아이 정보는 서버 렌더 이후에 읽는다. 초기 HTML은 항상 같은 단계로
+  // 렌더한 뒤, 마운트 후 저장값이 있으면 주제 단계로 이동시킨다.
+  const [step, setStep] = useState<Step>("child");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -277,9 +276,9 @@ export default function CreatePage() {
   useEffect(() => () => abortRef.current?.abort(), []);
 
   // 입력값
-  const [name, setName] = useState(stored?.name ?? "");
-  const [age, setAge] = useState<number | null>(stored?.age ?? null);
-  const [gender, setGender] = useState<Gender>(stored?.gender ?? "girl");
+  const [name, setName] = useState("");
+  const [age, setAge] = useState<number | null>(null);
+  const [gender, setGender] = useState<Gender>("girl");
   const [theme, setTheme] = useState("");
   // 주제 고르기 1단계 — 펼쳐진 갈래 카드. null이면 아직 안 골랐다.
   const [themeGroup, setThemeGroup] = useState<string | null>(null);
@@ -299,6 +298,16 @@ export default function CreatePage() {
   const [emotion, setEmotion] = useState("");
   const [situation, setSituation] = useState("");
 
+  useEffect(() => {
+    const saved = loadChild();
+    if (!saved) return;
+    setName(saved.name);
+    setAge(saved.age);
+    setGender(saved.gender);
+    if (saved.name && saved.age !== null) setStep("theme");
+    setPageCount(recommendedPages(saved.age));
+  }, []);
+
   // 재료 미리보기 겸 "다음" 버튼 활성 조건. 갈래마다 다른 재료를 이어 붙인다.
   const seed =
     storyMode === "today"
@@ -310,9 +319,7 @@ export default function CreatePage() {
   const [artStyle, setArtStyle] = useState(ART_STYLES[0].id);
   const [mood, setMood] = useState(MOODS[0]);
   // 장면(쪽) 수 3~8. 나이에 맞는 추천값으로 시작한다(부모가 바꿀 수 있다).
-  const [pageCount, setPageCount] = useState(() =>
-    recommendedPages(stored?.age ?? null),
-  );
+  const [pageCount, setPageCount] = useState(() => recommendedPages(null));
 
   // 생성 결과
   const [outline, setOutline] = useState<Outline | null>(null);

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BgVideo } from "@/components/BgVideo";
 import { Bookshelf } from "@/components/Bookshelf";
 import { useTheme } from "@/components/ThemeProvider";
@@ -19,7 +19,9 @@ export default function Home() {
 
   // 언어는 설정(⚙️)에서 고른다. 메인은 아이가 보는 화면이라 컨트롤을 두지 않는다.
   const all = books as Book[];
-  const [lang] = useState(loadLang);
+  // 저장된 언어는 서버 렌더 이후에 읽어 첫 HTML과 클라이언트 첫 렌더를 맞춘다.
+  const [lang, setLang] = useState("ko");
+  useEffect(() => setLang(loadLang()), []);
   const mine = all.filter((b) => b.lang === lang);
 
   // 은은하게 움직이는 배경 영상(/themes/<id>/bg-video.mp4)이 있는 테마.
