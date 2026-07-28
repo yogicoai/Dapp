@@ -62,23 +62,28 @@ export const PRESET_VOICES: PresetVoice[] = [
 ];
 
 /**
- * 성우 10명 — 597개 중 동화용으로 역할이 겹치지 않게 골랐다 (2026-07).
- * 아이 또래(옥지·우니), 언니·선생님(서현·효은·몽실), 엄마·아빠(정숙·상현),
- * 옛날이야기 할아버지(권일 — Storytelling 태그), 만화 캐릭터(주완·수아 — Game·Anime 태그).
+ * 성우 13명 — 사장님이 Typecast 597개 중 직접 고른 12명 + 옛이야기 할아버지(권일).
+ * 아이(부끄·수아), 언니·선생님(다빈·다은·이나·지윤·지영·청아), 엄마·할머니(미소·정순),
+ * 아빠·형아(건석·창수), 옛날이야기 할아버지(권일). 모두 ssfm-v30(감정 연기) 지원.
+ * 주의: "출동!"처럼 아주 짧은 감탄 문장은 Typecast 전처리가 거부한다 (실측).
  */
 export const TYPECAST_VOICES: TypecastPreset[] = [
-  { kind: "tc", id: "tc-seohyeon", label: "서현 언니", emoji: "✨", voiceId: "tc_69f2e455ea79fd197aa0476f", model: "ssfm-v30", desc: "여자 · 또랑또랑한 아나운서", sample: "안녕! 오늘의 동화를 시작해 볼까?" },
-  { kind: "tc", id: "tc-hyoeun", label: "효은 선생님", emoji: "🌼", voiceId: "tc_691d49ccc47926d741f15913", model: "ssfm-v30", desc: "여자 · 상냥한 선생님", sample: "우리 친구들, 이야기 들을 준비 됐나요?" },
-  { kind: "tc", id: "tc-jungsook", label: "정숙 이모", emoji: "🌷", voiceId: "tc_694b51e6dc12c8f4ec1a959c", model: "ssfm-v30", desc: "여자 · 포근한 엄마 목소리", sample: "이리 오렴, 포근한 이야기 들려줄게." },
-  { kind: "tc", id: "tc-mongsil", label: "몽실이", emoji: "☁️", voiceId: "tc_699d27e0e061695d6ed39bc6", model: "ssfm-v30", desc: "여자 · 몽글몽글 캐릭터", sample: "몽실몽실, 신나는 이야기가 왔어요!" },
-  { kind: "tc", id: "tc-okji", label: "꼬마 옥지", emoji: "🍭", voiceId: "tc_699d27b557c86e3f4249c051", model: "ssfm-v30", desc: "여자 어린이 · 아이 또래 친구", sample: "나랑 같이 동화나라로 놀러 가자!" },
-  { kind: "tc", id: "tc-woony", label: "개구쟁이 우니", emoji: "⚡", voiceId: "tc_69c1f8e4f8842d80fbe7fa4f", model: "ssfm-v30", desc: "남자 어린이 · 장난꾸러기 친구", sample: "히히! 오늘 이야기 진짜 재밌다!" },
-  { kind: "tc", id: "tc-sanghyun", label: "상현 아저씨", emoji: "🌙", voiceId: "tc_69fc0cff784968297fb45daa", model: "ssfm-v30", desc: "남자 · 다정한 아빠 목소리", sample: "우리 아이, 재미있는 책 읽어줄게." },
+  { kind: "tc", id: "tc-booqoo", label: "부끄", emoji: "😳", voiceId: "tc_699d27d2f197c861791ac91b", model: "ssfm-v30", desc: "여자 어린이 · 수줍은 친구", sample: "안녕… 나랑 같이 동화 볼래?" },
+  { kind: "tc", id: "tc-sua", label: "수아", emoji: "🎀", voiceId: "tc_6699eb5749dfac016c29445c", model: "ssfm-v30", desc: "여자 어린이 · 밝고 명랑한 친구", sample: "와아, 정말 신나는 이야기야!" },
+  { kind: "tc", id: "tc-chungah", label: "청아", emoji: "🌿", voiceId: "tc_67513c5a498d6471f99d48fc", model: "ssfm-v30", desc: "여자 · 맑고 청아한 목소리", sample: "맑은 목소리로 이야기 들려줄게." },
+  { kind: "tc", id: "tc-miso", label: "미소", emoji: "🌸", voiceId: "tc_677f2ac4934cbfb52bee8a9c", model: "ssfm-v30", desc: "여자 · 미소 가득한 엄마", sample: "포근하게 읽어줄게, 우리 아가." },
+  { kind: "tc", id: "tc-dabin", label: "다빈", emoji: "💜", voiceId: "tc_67ad583c7848a19031f798f7", model: "ssfm-v30", desc: "여자 청소년 · 상냥한 언니", sample: "언니가 재미있게 읽어줄게!" },
+  { kind: "tc", id: "tc-daeun", label: "다은", emoji: "✨", voiceId: "tc_692799c46508f6b9468c54c7", model: "ssfm-v30", desc: "여자 · 또렷한 언니", sample: "오늘의 동화, 시작해 볼까?" },
+  { kind: "tc", id: "tc-ina", label: "이나", emoji: "🌼", voiceId: "tc_62686be9deec4c1bb7fd077c", model: "ssfm-v30", desc: "여자 · 다정한 목소리", sample: "이리 와, 이야기 들려줄게." },
+  { kind: "tc", id: "tc-jiyoon", label: "지윤", emoji: "☁️", voiceId: "tc_62296627a4ff5d1ee6bf4ecc", model: "ssfm-v30", desc: "여자 · 차분한 목소리", sample: "차분하게 읽어줄게." },
+  { kind: "tc", id: "tc-jungsoon", label: "정순", emoji: "👵", voiceId: "tc_5ebea242728f5b00075e6211", model: "ssfm-v30", desc: "여자 · 정겨운 할머니", sample: "옛날 옛적에, 얘야." },
+  { kind: "tc", id: "tc-jiyoung", label: "지영", emoji: "🌷", voiceId: "tc_5c789c34dabcfa0008b0a390", model: "ssfm-v30", desc: "여자 · 밝은 선생님", sample: "친구들, 이야기 들을 준비 됐나요?" },
+  { kind: "tc", id: "tc-gunseok", label: "건석", emoji: "🧔", voiceId: "tc_6731b2e0855f351b98d30c48", model: "ssfm-v30", desc: "남자 · 듬직한 아빠", sample: "아빠가 재미있게 읽어줄게." },
+  { kind: "tc", id: "tc-changsu", label: "창수", emoji: "⚡", voiceId: "tc_6059dad0b83880769a50502f", model: "ssfm-v30", desc: "남자 · 활기찬 형아", sample: "형아랑 신나는 이야기 가자!" },
+  { kind: "tc", id: "tc-siwoo", label: "시우", emoji: "🧒", voiceId: "tc_6699eb3849dfac016c29444c", model: "ssfm-v30", desc: "남자 어린이 · 씩씩한 친구", sample: "나랑 같이 모험 떠나자!" },
+  { kind: "tc", id: "tc-hajun", label: "하준", emoji: "🐯", voiceId: "tc_60db308484130840f23e6ca0", model: "ssfm-v30", desc: "남자 어린이 · 명랑한 친구", sample: "오늘 이야기 진짜 기대돼!" },
+  { kind: "tc", id: "tc-yejoon", label: "예준", emoji: "🎮", voiceId: "tc_63edf3d68aab086d6b782a55", model: "ssfm-v30", desc: "남자 청소년 · 듬직한 형", sample: "형이 재미있게 읽어줄게!" },
   { kind: "tc", id: "tc-kwonil", label: "이야기 할아버지", emoji: "📖", voiceId: "tc_675a73eb789ff3ea6cc80235", model: "ssfm-v30", desc: "남자 · 옛날이야기 전문 할아버지", sample: "허허, 옛날 옛적 이야기를 들려주마." },
-  // 인기 카테고리(Game·Anime) 캐릭터 보이스 2종 — 만화 주인공 톤.
-  // 주의: "출동!"처럼 아주 짧은 감탄 문장은 Typecast 전처리가 거부한다 (실측).
-  { kind: "tc", id: "tc-juwan", label: "만화 주인공 주완", emoji: "🦸", voiceId: "tc_69e0462f3e5413d26878521e", model: "ssfm-v30", desc: "남자 소년 · 애니 주인공 톤", sample: "나랑 같이 신나는 모험을 떠나 보자!" },
-  { kind: "tc", id: "tc-sua", label: "애니 소녀 수아", emoji: "🎀", voiceId: "tc_6699eb5749dfac016c29445c", model: "ssfm-v30", desc: "여자 어린이 · 애니 소녀 톤", sample: "와아, 정말 신나는 이야기야!" },
 ];
 
 export function findTypecast(id: string): TypecastPreset | null {
@@ -378,6 +383,16 @@ export function guessEmotion(line: string): string {
 }
 
 /**
+ * 앱 안에서의 '실시간 성우 합성'을 켜고 끄는 스위치.
+ *
+ * false면 앱에서 책을 읽거나 성우를 바꿔도 Typecast를 호출하지 않는다 → 크레딧 0.
+ * (딸린 나레이션 파일이나 브라우저 기계음으로 자동 대체된다.) 테스트 기간엔 꺼 둔다.
+ * 미리 굽는 스크립트(서버의 /api/tts 직접 호출)는 이 스위치와 무관하게 동작한다.
+ * 실서비스에서 '내가 만든 동화'를 진짜 성우로 읽어주려면 이 값을 true로 바꾼다.
+ */
+export const CLIENT_TTS_ENABLED = false;
+
+/**
  * 한 쪽을 지문/대사 조각으로 나눠 합성한다. 대사에는 감정 연기가 실린다.
  * 감정을 지원하지 않는 음성이면 그 조각만 기본톤으로 물러난다 — 재생은 끊기지 않는다.
  * 글자 수 총합은 통짜 합성과 같아 크레딧 비용도 같다.
@@ -386,11 +401,23 @@ export async function fetchTypecastPageAudio(
   tc: TypecastPreset,
   text: string,
 ): Promise<PageAudioSegment[]> {
+  // 실시간 합성이 꺼져 있으면 호출 자체를 막는다 → 호출한 쪽이 딸린 파일/기계음으로 대체.
+  if (!CLIENT_TTS_ENABLED) throw new Error("client-tts-disabled");
   const segs = splitDialogue(text);
 
-  // 대사가 없으면 통짜 한 번 — 기존 캐시도 그대로 재사용된다.
+  // 감정을 입혀 합성하되, 그 음성이 감정을 거부하면 기본톤으로 한 번 더(재생은 안 끊김).
+  const synthEmo = async (t: string, emotion: string): Promise<Blob> => {
+    try {
+      return await fetchTypecastAudio(tc, t, emotion);
+    } catch {
+      return await fetchTypecastAudio(tc, t);
+    }
+  };
+
+  // 대사가 없어도 지문에 어울리는 감정을 살짝 입혀 밋밋하지 않게 한다.
+  // (예전엔 감정 없이 통짜라, 대사 없는 쪽이 갑자기 무미건조하게 들렸다.)
   if (segs.length <= 1 || !segs.some((s) => s.dialogue)) {
-    const blob = await fetchTypecastAudio(tc, text);
+    const blob = await synthEmo(text, guessEmotion(text));
     return [{ blob, from: 0, to: text.length }];
   }
 
@@ -399,18 +426,9 @@ export async function fetchTypecastPageAudio(
   for (const s of segs) {
     const from = pos;
     pos += s.text.length;
-    let blob: Blob;
-    if (s.dialogue) {
-      const emotion = guessEmotion(s.text);
-      try {
-        blob = await fetchTypecastAudio(tc, s.text, emotion);
-      } catch {
-        // 감정 미지원·일시 오류 — 기본톤으로 한 번 더.
-        blob = await fetchTypecastAudio(tc, s.text);
-      }
-    } else {
-      blob = await fetchTypecastAudio(tc, s.text);
-    }
+    // 대사든 지문이든 내용에 맞는 감정을 입힌다 — 지문은 대개 toneup(생기 있는 낭독),
+    // 대사는 놀람·화남·기쁨 등. 이렇게 해야 페이지마다 톤이 끊기지 않는다.
+    const blob = await synthEmo(s.text, guessEmotion(s.text));
     out.push({ blob, from, to: pos });
   }
   return out;

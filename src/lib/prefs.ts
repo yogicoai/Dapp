@@ -94,3 +94,34 @@ export function saveBgmOn(on: boolean): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(BGM_KEY, on ? "on" : "off");
 }
+
+/**
+ * 이어보기 — 책별로 마지막에 본 쪽을 저장한다. 서재로 나갔다 다시 들어오면
+ * 읽던 쪽부터 보인다. 한 곳(맵)에 {책id: 쪽번호}로 모아 담는다.
+ * 만들기 미리보기(id="new")는 일회성이라 저장하지 않는다.
+ */
+const PROGRESS_KEY = "voice-storybook:progress";
+
+export function loadBookProgress(id: string): number {
+  if (typeof window === "undefined" || !id || id === "new") return 0;
+  try {
+    const raw = window.localStorage.getItem(PROGRESS_KEY);
+    const map = raw ? (JSON.parse(raw) as Record<string, number>) : {};
+    const v = map[id];
+    return typeof v === "number" && v >= 0 ? v : 0;
+  } catch {
+    return 0;
+  }
+}
+
+export function saveBookProgress(id: string, page: number): void {
+  if (typeof window === "undefined" || !id || id === "new") return;
+  try {
+    const raw = window.localStorage.getItem(PROGRESS_KEY);
+    const map = raw ? (JSON.parse(raw) as Record<string, number>) : {};
+    map[id] = page;
+    window.localStorage.setItem(PROGRESS_KEY, JSON.stringify(map));
+  } catch {
+    // 저장 실패는 조용히 넘긴다 — 이어보기는 편의 기능이라 막으면 안 된다.
+  }
+}

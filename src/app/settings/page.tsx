@@ -23,7 +23,6 @@ import {
   VOICE_RATES,
   buildPresetUtterance,
   deleteVoiceAudio,
-  fetchTypecastAudio,
   findTypecast,
   loadCustomVoices,
   loadSelectedVoiceId,
@@ -70,6 +69,8 @@ export default function SettingsPage() {
   const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
 
+  // localStorage 값들은 클라 전용이라 마운트 후에 반영한다(hydration 안전).
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const stored = loadChild();
     if (stored) {
@@ -83,6 +84,7 @@ export default function SettingsPage() {
     setTextPos(loadTextPos());
     setCustomVoices(loadCustomVoices());
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // ESC로 설정을 닫는다(홈으로). 녹음 팝업이 열려 있으면 팝업이 먼저 닫히고,
   // 한 번 더 누르면 설정이 닫힌다.
@@ -134,25 +136,22 @@ export default function SettingsPage() {
   // 같은 인사말은 기기에 캐시되므로 크레딧은 처음 한 번만 나간다.
   const [previewingId, setPreviewingId] = useState<string | null>(null);
   const [ttsError, setTtsError] = useState<string | null>(null);
-  const pickTypecast = async (tc: TypecastPreset) => {
+  const pickTypecast = (tc: TypecastPreset) => {
     setVoiceId(tc.id);
     saveSelectedVoiceId(tc.id);
     flashSaved();
     stopPreview();
     setTtsError(null);
+    // 미리듣기는 '미리 구운 샘플 파일'만 재생한다 → 크레딧 0. 실시간 합성은 안 한다.
+    // 아직 샘플이 없는 성우는 소리 없이 선택만 된다(크레딧 안 씀).
+    const el = previewAudioRef.current ?? new Audio();
+    previewAudioRef.current = el;
+    el.src = `/casting/preview-${tc.id}.mp3`;
+    el.playbackRate = voiceRate;
     setPreviewingId(tc.id);
-    try {
-      const blob = await fetchTypecastAudio(tc, tc.sample);
-      const el = previewAudioRef.current ?? new Audio();
-      previewAudioRef.current = el;
-      el.src = URL.createObjectURL(blob);
-      el.playbackRate = voiceRate;
-      await el.play();
-    } catch (e) {
-      setTtsError((e as Error).message);
-    } finally {
-      setPreviewingId(null);
-    }
+    el.onended = () => setPreviewingId(null);
+    el.onerror = () => setPreviewingId(null); // 샘플 파일 없음 — 조용히 넘긴다
+    el.play().catch(() => setPreviewingId(null));
   };
 
   /** 읽기 속도 — 고르면 지금 목소리로 그 속도를 바로 들려준다. */
@@ -164,17 +163,15 @@ export default function SettingsPage() {
     // 성우를 골라둔 상태면 그 성우 목소리로 들려준다 — 인사말은 캐시라 무료다.
     const tc = findTypecast(voiceId);
     if (tc) {
+      // 속도 미리듣기도 구운 샘플 파일로만 — 크레딧 0.
+      const el = previewAudioRef.current ?? new Audio();
+      previewAudioRef.current = el;
+      el.src = `/casting/preview-${tc.id}.mp3`;
+      el.playbackRate = rate;
       setPreviewingId(tc.id);
-      fetchTypecastAudio(tc, tc.sample)
-        .then((blob) => {
-          const el = previewAudioRef.current ?? new Audio();
-          previewAudioRef.current = el;
-          el.src = URL.createObjectURL(blob);
-          el.playbackRate = rate;
-          return el.play();
-        })
-        .catch((e) => setTtsError((e as Error).message))
-        .finally(() => setPreviewingId(null));
+      el.onended = () => setPreviewingId(null);
+      el.onerror = () => setPreviewingId(null);
+      el.play().catch(() => setPreviewingId(null));
       return;
     }
     const preset = PRESET_VOICES.find((v) => v.id === voiceId) ?? PRESET_VOICES[0];

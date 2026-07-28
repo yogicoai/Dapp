@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   loadBgmOn,
+  loadBookProgress,
   loadSfxOn,
   loadTextPos,
   saveBgmOn,
+  saveBookProgress,
 } from "@/lib/prefs";
 import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
@@ -18,6 +20,9 @@ import {
   findTypecast,
   loadSelectedVoiceId,
   loadVoiceRate,
+  saveSelectedVoiceId,
+  saveVoiceRate,
+  TYPECAST_VOICES,
   warmUpVoices,
   type PageAudioSegment,
 } from "@/lib/voices";
@@ -83,9 +88,27 @@ export function BookViewer({ book }: { book: Book }) {
   // localStorage 값은 첫 서버 렌더와 다를 수 있으므로 첫 렌더는 기본값으로 맞춘다.
   // 마운트 후 저장된 위치를 읽어야 hydration mismatch가 발생하지 않는다.
   const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영(hydration 안전)
   useEffect(() => setTextPos(loadTextPos()), []);
   const [index, setIndex] = useState(0);
   const lastIndex = book.pages.length - 1;
+
+  // 이어보기 — 서재로 나갔다 다시 들어오면 읽던 쪽부터 보인다.
+  // animate=false로 시작해, 마운트 직후의 "읽던 쪽으로 점프"는 애니메이션 없이
+  // 즉시 이동시키고(휘리릭 넘어가는 어색함 방지), 그 뒤 넘김부터 부드럽게 굴린다.
+  const [animate, setAnimate] = useState(false);
+  useEffect(() => {
+    const saved = loadBookProgress(book.id);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage 이어보기 위치 반영
+    if (saved > 0 && saved <= lastIndex) setIndex(saved);
+    const t = setTimeout(() => setAnimate(true), 80);
+    return () => clearTimeout(t);
+  }, [book.id, lastIndex]);
+
+  // 쪽을 넘길 때마다 진행 위치를 저장한다(만들기 미리보기 id="new"는 저장 안 함).
+  useEffect(() => {
+    saveBookProgress(book.id, index);
+  }, [book.id, index]);
 
   /**
    * 읽어주기 — 노래방처럼, 읽힌 글자가 색으로 표시된다.
@@ -117,7 +140,36 @@ export function BookViewer({ book }: { book: Book }) {
   const sfxRef = useRef<HTMLAudioElement | null>(null);
   const bgmRef = useRef<HTMLAudioElement | null>(null);
   const [bgmOn, setBgmOn] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영
   useEffect(() => setBgmOn(loadBgmOn()), []);
+
+  // 재생 속도 — 뷰어 안에서 바로 바꾼다(유튜브식). 설정값을 초기값으로.
+  // rateRef는 readPage가 매번 최신 속도를 읽게 하고, 재생 중이면 즉시 반영한다.
+  const [rate, setRate] = useState(1);
+  const rateRef = useRef(1);
+  const [speedMenu, setSpeedMenu] = useState(false);
+  useEffect(() => {
+    const r = loadVoiceRate();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 저장된 속도를 마운트 후 반영
+    setRate(r);
+    rateRef.current = r;
+  }, []);
+  // 이야기 끝남 — 마지막 쪽 낭독이 끝나면 "다시 듣기"를 띄운다.
+  const [ended, setEnded] = useState(false);
+
+  // 나레이션 성우 — 책 안에서 바로 바꾼다("읽다가 마음에 안 들면"). 초기값은 설정값.
+  // voiceIdRef는 readPage가 최신 성우를 읽게 하고, overriddenRef는 "사용자가 이 책에서
+  // 성우를 직접 바꿨다"는 표시다 — 이 경우엔 완성작이라도 고른 성우로 합성한다(의도적).
+  const [voiceId, setVoiceId] = useState<string>("basic");
+  const voiceIdRef = useRef<string>("basic");
+  const overriddenRef = useRef(false);
+  const [voiceMenu, setVoiceMenu] = useState(false);
+  useEffect(() => {
+    const v = loadSelectedVoiceId();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 저장된 성우를 마운트 후 반영
+    setVoiceId(v);
+    voiceIdRef.current = v;
+  }, []);
 
   // 캐릭터 클릭 반응 — 정지 그림이라 캐릭터 자체는 못 움직이지만, 누른 자리에서
   // 반짝이가 통통 튀어올라 "반응하는" 느낌을 준다. key로 매 클릭마다 다시 튼다.
@@ -219,11 +271,13 @@ export function BookViewer({ book }: { book: Book }) {
       } else {
         readingRef.current = false;
         setReading(false);
+        setEnded(true); // 마지막 쪽까지 다 읽음 → "다시 듣기" 안내를 띄운다
+        saveBookProgress(book.id, 0); // 끝까지 봤으니 이어보기 위치는 처음으로 초기화
       }
     };
 
-    // 설정에서 고른 읽기 속도 — TTS와 mp3 재생 모두에 적용한다.
-    const rateBoost = loadVoiceRate();
+    // 재생 속도 — 뷰어에서 고른 값(rateRef)을 TTS·mp3 모두에 적용한다.
+    const rateBoost = rateRef.current;
 
     // mp3든 성우 음성이든 오디오 재생은 전부 이 길 — 진행률 비례로 색을 채운다.
     const playViaAudio = (audioSrc: string) => {
@@ -244,12 +298,8 @@ export function BookViewer({ book }: { book: Book }) {
       });
     };
 
-    // 설정에서 고른 목소리가 "모든 책"을 읽는다 — 전래동화 같은 제공 책도.
-    // 책에 딸려 온 내장 나레이션(mp3)은 ①고른 성우가 그 책의 기본 나레이터와
-    // 같을 때(즉시 재생·크레딧 0) ②성우 음성을 못 받을 때(오프라인 등)
-    // ③목소리를 따로 고르지 않은 기본 상태일 때만 쓴다.
     const bundled = page.audio ?? page.legacyAudio ?? null;
-    const selectedId = loadSelectedVoiceId();
+    const selectedId = voiceIdRef.current;
     const tc = findTypecast(selectedId);
 
     // 성우 음성 — 지문/대사 조각을 이어서 재생한다. 대사에는 감정 연기가 실려
@@ -287,11 +337,19 @@ export function BookViewer({ book }: { book: Book }) {
       playNext();
     };
 
+    // 완성작(전래·세계명작)은 기본적으로 딸린 나레이션을 쓴다 — 파일 재생이라 무료이고,
+    // 책마다 큐레이션된 성우다. 그래서 설정에서 고른 목소리는 '내가 만든 동화'에만
+    // 적용되어, 완성작을 읽을 때 크레딧이 새지 않는다.
+    // 단, 사용자가 이 책 안에서 성우를 '직접 바꾼'(overriddenRef) 경우엔 그 뜻을 존중해
+    // 고른 성우로 합성한다(의도한 크레딧). 고른 게 이 책 나레이터면 그대로 무료 파일.
+    if (bundled && (!overriddenRef.current || (tc !== null && book.narrator === tc.id))) {
+      playViaAudio(bundled);
+      return;
+    }
+
     if (tc) {
-      if (bundled && book.narrator === tc.id) {
-        playViaAudio(bundled);
-        return;
-      }
+      // 여기까지 왔으면 딸린 음성이 없는 책 = 내가 만든 동화. 고른 성우로 합성한다
+      // (한 번 만들면 기기에 캐시되어 다시 들을 땐 무료).
       fetchTypecastPageAudio(tc, page.text)
         .then((segments) => {
           // 받는 사이 정지했거나 다른 쪽으로 넘어갔으면 재생하지 않는다.
@@ -299,16 +357,12 @@ export function BookViewer({ book }: { book: Book }) {
           playSegments(segments);
         })
         .catch(() => {
+          // 합성 실패·실시간 합성 꺼짐(client-tts-disabled) — 딸린 파일이 있으면
+          // 그걸(무료) 쓰고, 없으면 브라우저 기계음으로 대체한다. 크레딧은 안 나간다.
           if (run !== runIdRef.current || !readingRef.current) return;
           if (bundled) playViaAudio(bundled);
           else speakWithBrowser();
         });
-      return;
-    }
-
-    if (bundled && selectedId === "basic") {
-      // 기본 상태(목소리 미지정) — 책에 딸린 나레이션이 브라우저 기계음보다 낫다.
-      playViaAudio(bundled);
       return;
     }
 
@@ -322,7 +376,7 @@ export function BookViewer({ book }: { book: Book }) {
       }
       // 설정에서 고른 캐릭터 목소리(높낮이·속도). 엄마·아빠(커스텀)는 클로닝이
       // 붙기 전까지 기본 프리셋으로 읽는다.
-      const preset = findPreset(loadSelectedVoiceId()) ?? findPreset("basic")!;
+      const preset = findPreset(voiceIdRef.current) ?? findPreset("basic")!;
       const u = buildPresetUtterance(page.text, preset, rateBoost);
       let boundaryFired = false;
       u.onboundary = (e) => {
@@ -353,9 +407,44 @@ export function BookViewer({ book }: { book: Book }) {
   }
 
   const startReading = () => {
+    setEnded(false);
     readingRef.current = true;
     setReading(true);
     readPage(index);
+  };
+
+  // 다시 듣기 — 이야기가 끝난 그 자리에서 처음 쪽으로 돌아가 바로 다시 읽는다.
+  // (예전엔 서재로 나갔다 다시 들어와야 했다.)
+  const replayFromStart = () => {
+    setEnded(false);
+    setIndex(0);
+    readingRef.current = true;
+    setReading(true);
+    readPage(0);
+  };
+
+  // 재생 속도 변경 — 재생 중이면 지금 오디오에 즉시 반영, 다음 쪽부턴 rateRef로.
+  const applyRate = (r: number) => {
+    setRate(r);
+    rateRef.current = r;
+    saveVoiceRate(r);
+    setSpeedMenu(false);
+    if (audioRef.current) audioRef.current.playbackRate = r;
+  };
+
+  // 나레이션 성우 변경 — 책 안에서 바로. 사용자가 직접 바꾼 것이므로 overridden 표시
+  // (완성작이라도 고른 성우로 합성). 전역에도 저장해 다음에도 이 성우가 기본이 된다.
+  // 읽는 중이면 이 쪽부터 새 성우로 다시 읽어준다.
+  const pickVoice = (id: string) => {
+    setVoiceId(id);
+    voiceIdRef.current = id;
+    overriddenRef.current = true;
+    saveSelectedVoiceId(id);
+    setVoiceMenu(false);
+    if (readingRef.current) {
+      haltPlayback();
+      readPage(index);
+    }
   };
 
   // 사용자가 직접 넘기면: 읽는 중이 아니면 그냥 이동, 읽는 중이면 멈추지 않고
@@ -363,6 +452,7 @@ export function BookViewer({ book }: { book: Book }) {
   const go = useCallback(
     (next: number) => {
       const clamped = Math.min(lastIndex, Math.max(0, next));
+      if (clamped !== index) setEnded(false); // 넘기면 "다시 듣기" 안내는 닫는다
       // 책장 넘김 효과음 — 실제로 쪽이 바뀔 때만. 설정에서 끌 수 있다.
       if (clamped !== index && loadSfxOn()) {
         const el = sfxRef.current ?? new Audio("/sfx/page-turn.mp3");
@@ -471,7 +561,9 @@ export function BookViewer({ book }: { book: Book }) {
               transformOrigin: "left bottom",
               transform:
                 i < index ? "translateX(-118%) rotate(-7deg)" : "translateX(0) rotate(0deg)",
-              transition: "transform 650ms cubic-bezier(0.33, 0.02, 0.2, 1)",
+              // 넘김이 너무 빨라 툭 끊기던 걸 완만하게 — 820ms + 부드러운 감속 곡선.
+              // 마운트 직후 '이어보기' 점프는 animate=false라 애니 없이 즉시 이동한다.
+              transition: animate ? "transform 820ms cubic-bezier(0.22, 0.61, 0.36, 1)" : "none",
               // 안 넘긴 쪽은 현재 쪽이 맨 위, 넘긴 쪽은 넘어가는 동안 그 위에 뜬다
               zIndex: i < index ? book.pages.length + i : book.pages.length - i,
               boxShadow: "0 0 44px rgba(0,0,0,0.45)",
@@ -501,8 +593,18 @@ export function BookViewer({ book }: { book: Book }) {
                     poster={page.image}
                     autoPlay={i === index}
                     muted
-                    loop
                     playsInline
+                    // 무한 반복 대신 '딱 2번'만 재생하고 멈춘다(마지막 프레임에서 정지).
+                    // 끝날 때마다 재생 횟수를 데이터 속성에 세어, 2번째까지만 다시 튼다.
+                    onEnded={(e) => {
+                      const el = e.currentTarget;
+                      const plays = Number(el.dataset.plays || "0") + 1;
+                      el.dataset.plays = String(plays);
+                      if (plays < 2) {
+                        el.currentTime = 0;
+                        el.play().catch(() => {});
+                      }
+                    }}
                     className="relative h-full w-full object-contain"
                   />
                 ) : (
@@ -616,7 +718,47 @@ export function BookViewer({ book }: { book: Book }) {
             {bgmOn ? "♪" : "♪"}
           </span>
         </button>
+        {/* 나레이션 성우 바꾸기 — 읽다가 마음에 안 들면 여기서 바로 교체. */}
+        <button
+          type="button"
+          aria-label="읽어주는 성우 바꾸기"
+          onClick={() => setVoiceMenu((v) => !v)}
+          className={`flex h-11 items-center justify-center gap-1 rounded-full px-3 shadow-md backdrop-blur transition outline-none focus:outline-none ${
+            voiceMenu ? "bg-amber-400 text-white" : "bg-white/85 text-neutral-600 hover:bg-white"
+          }`}
+        >
+          <span className="text-base leading-none" aria-hidden>
+            {TYPECAST_VOICES.find((v) => v.id === voiceId)?.emoji ?? "🎙️"}
+          </span>
+          <span className="text-xs font-extrabold">성우</span>
+        </button>
       </div>
+
+      {/* 성우 목록 — 상단 버튼 아래로 펼쳐진다. 길어서 안에서 스크롤된다. */}
+      {voiceMenu && (
+        <div className="absolute right-4 top-[3.75rem] z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur">
+          <p className="px-2 py-1 text-[11px] font-bold text-neutral-400">
+            읽어주는 성우를 골라요
+          </p>
+          {TYPECAST_VOICES.map((v) => {
+            const active = voiceId === v.id;
+            return (
+              <button
+                key={v.id}
+                type="button"
+                onClick={() => pickVoice(v.id)}
+                className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-bold transition ${
+                  active ? "bg-amber-400 text-white" : "text-neutral-700 hover:bg-neutral-100"
+                }`}
+              >
+                <span className="text-base leading-none" aria-hidden>{v.emoji}</span>
+                <span className="flex-1">{v.label}</span>
+                {active && <span aria-hidden>✓</span>}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* 움직이는 캐릭터(배우) 레이어 — 캐릭터 없는 배경 위에 투명 스티커를
           겹치고, 낭독 중에는 뒤뚱뒤뚱 움직인다. 클릭은 통과시켜 핫스팟이 받는다. */}
@@ -699,10 +841,10 @@ export function BookViewer({ book }: { book: Book }) {
                   // 바깥 = 위치(translate 앵커), 안쪽 = 통통 팝(scale). transform이
                   // 하나뿐이라 둘을 겹치면 서로 덮어써서 위치가 틀어진다 → 겹을 나눈다.
                   <div
-                    className="absolute z-[6] max-w-[44%]"
+                    className="absolute z-[6] max-w-[52%]"
                     style={{ left: x.left, top: y.top, transform: `translate(${x.tx}, ${y.ty})` }}
                   >
-                    <div className="font-story relative animate-[bubble-pop_0.35s_cubic-bezier(0.34,1.56,0.64,1)] rounded-[1.25rem] bg-white px-4 py-2.5 text-center text-[clamp(0.8rem,1.6vw,1.05rem)] font-bold leading-snug text-neutral-800 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
+                    <div className="font-story relative animate-[bubble-pop_0.35s_cubic-bezier(0.34,1.56,0.64,1)] rounded-[1.4rem] bg-white px-6 py-3.5 text-center text-[clamp(1.35rem,3vw,2.1rem)] font-bold leading-snug text-neutral-800 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
                       {speaking.line}
                       {/* 꼬리 — 캐릭터를 가리킨다. 말풍선이 위에 있으면 아래로, 아래면 위로.
                           말풍선과 같은 순백이라 테두리 없이도 이어져 보인다. */}
@@ -750,27 +892,94 @@ export function BookViewer({ book }: { book: Book }) {
         </button>
       </div>
 
-      {/* 읽어주기 — 넘김 영역보다 위에 떠 있는 버튼 */}
-      <button
-        type="button"
-        aria-label={reading ? "그만 읽기" : "읽어주기"}
-        onClick={reading ? stopReading : startReading}
-        className={`absolute bottom-5 right-5 z-10 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full shadow-[0_6px_16px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 ${
-          reading ? "animate-pulse bg-amber-400" : "bg-white"
-        }`}
-      >
-        {reading ? (
-          // 이모지(⏸️)는 윈도우에서 칙칙한 파란 사각형으로 나온다 — 직접 그린
-          // 둥근 막대 두 개가 어느 기기에서든 밝고 또렷하다.
-          <svg viewBox="0 0 24 24" className="h-9 w-9 drop-shadow-[0_2px_2px_rgba(0,0,0,0.25)]" aria-hidden>
-            <rect x="4.5" y="4" width="5.5" height="16" rx="2.75" fill="#fff" />
-            <rect x="14" y="4" width="5.5" height="16" rx="2.75" fill="#fff" />
-          </svg>
-        ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src="/icons/func-speaker.webp" alt="" className="h-12 w-12 object-contain" />
+      {/* 재생 속도 (유튜브식) — 왼쪽 아래. 눌러서 배속을 고른다. 재생 중이면 즉시 반영. */}
+      <div className="absolute bottom-5 left-5 z-10">
+        {speedMenu && (
+          <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
+            {[0.75, 1, 1.25, 1.5, 2].map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => applyRate(s)}
+                className={`px-5 py-2.5 text-left text-sm font-bold outline-none transition ${
+                  rate === s ? "bg-amber-400 text-white" : "text-white/90 hover:bg-white/15"
+                }`}
+              >
+                {s}배속 {rate === s ? "✓" : ""}
+              </button>
+            ))}
+          </div>
         )}
-      </button>
+        <button
+          type="button"
+          aria-label="재생 속도"
+          onClick={() => setSpeedMenu((v) => !v)}
+          className="flex items-center gap-1.5 rounded-full bg-black/45 px-4 py-2.5 text-sm font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none"
+        >
+          <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+            <path d="M12 4a8 8 0 1 0 8 8" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
+            <path d="M12 12l4-3" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
+          </svg>
+          {rate}배속
+        </button>
+      </div>
+
+      {/* 읽어주기 — 재생 버튼임이 한눈에 보이게 ①색이 도는 원 ②흰 재생 세모(▶)
+          ③평소엔 "읽어주기" 라벨을 위에 띄운다. 읽는 중엔 정지(⏸) 막대로 바뀐다. */}
+      <div className="absolute bottom-5 right-5 z-10 flex flex-col items-center gap-2">
+        {!reading && !ended && (
+          <span className="animate-pulse rounded-full bg-black/55 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
+            ▶ 눌러서 읽어주기
+          </span>
+        )}
+        <button
+          type="button"
+          aria-label={reading ? "그만 읽기" : "읽어주기"}
+          onClick={reading ? stopReading : startReading}
+          style={reading ? undefined : { background: ui.colors.accent }}
+          className={`flex h-16 w-16 items-center justify-center rounded-full text-white shadow-[0_6px_16px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 ${
+            reading ? "animate-pulse bg-amber-400" : ""
+          }`}
+        >
+          {reading ? (
+            // 정지(⏸) — 둥근 막대 두 개. 이모지는 윈도우에서 칙칙해 직접 그린다.
+            <svg viewBox="0 0 24 24" className="h-8 w-8 drop-shadow-[0_2px_2px_rgba(0,0,0,0.25)]" aria-hidden>
+              <rect x="4.5" y="4" width="5.5" height="16" rx="2.75" fill="#fff" />
+              <rect x="14" y="4" width="5.5" height="16" rx="2.75" fill="#fff" />
+            </svg>
+          ) : (
+            // 재생(▶) — 오른쪽을 향한 흰 세모. 시각적 중심을 위해 살짝 오른쪽으로.
+            <svg viewBox="0 0 24 24" className="h-9 w-9 drop-shadow-[0_2px_2px_rgba(0,0,0,0.25)]" aria-hidden>
+              <path d="M8.5 5.5 19 12 8.5 18.5 Z" fill="#fff" />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* 이야기 끝 — 그 자리에서 처음부터 다시 듣기 (서재로 나갔다 올 필요 없음). */}
+      {ended && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/45 p-6 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-5 rounded-[28px] bg-white/95 px-8 py-9 text-center shadow-2xl">
+            <p className="text-2xl font-extrabold text-neutral-800">이야기가 끝났어요! 🎉</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                type="button"
+                onClick={replayFromStart}
+                style={{ background: ui.colors.accent }}
+                className="rounded-full px-7 py-3.5 text-base font-extrabold text-white shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0"
+              >
+                🔄 처음부터 다시 듣기
+              </button>
+              <Link
+                href="/"
+                className="rounded-full bg-neutral-100 px-7 py-3.5 text-base font-extrabold text-neutral-500 transition hover:bg-neutral-200"
+              >
+                ← 서재로
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
