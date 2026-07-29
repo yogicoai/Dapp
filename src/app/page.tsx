@@ -8,7 +8,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
-import { loadLang } from "@/lib/prefs";
+import { deleteMyBook, loadLang, loadMyBooks } from "@/lib/prefs";
 import type { Book } from "@/lib/types";
 
 export default function Home() {
@@ -21,8 +21,20 @@ export default function Home() {
   const all = books as Book[];
   // 저장된 언어는 서버 렌더 이후에 읽어 첫 HTML과 클라이언트 첫 렌더를 맞춘다.
   const [lang, setLang] = useState("ko");
-  useEffect(() => setLang(loadLang()), []);
-  const mine = all.filter((b) => b.lang === lang);
+  // 내가 만든 책도 서버 렌더 이후(마운트 후) localStorage에서 읽는다.
+  const [myBooks, setMyBooks] = useState<Book[]>([]);
+  useEffect(() => {
+    setLang(loadLang());
+    setMyBooks(loadMyBooks());
+  }, []);
+  // 내가 만든 책(최신 먼저) + 샘플. "우리 가족 책장"에 함께 뜬다.
+  const mine = [...myBooks, ...all].filter((b) => b.lang === lang);
+  // 내가 만든 책만 지울 수 있다(샘플·제공 서가는 못 지운다).
+  const myIds = new Set(myBooks.map((b) => b.id));
+  function handleDelete(id: string) {
+    deleteMyBook(id);
+    setMyBooks((prev) => prev.filter((b) => b.id !== id));
+  }
 
   // 은은하게 움직이는 배경 영상(/themes/<id>/bg-video.mp4)이 있는 테마.
   // 파일을 넣고 여기 id만 추가하면 그 테마 홈이 살아 움직인다.
@@ -219,7 +231,11 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <Bookshelf books={shown} />
+          <Bookshelf
+            books={shown}
+            deletableIds={shelf === "mine" ? myIds : undefined}
+            onDelete={handleDelete}
+          />
         )}
 
 

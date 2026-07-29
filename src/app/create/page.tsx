@@ -6,7 +6,7 @@ import { BookViewer } from "@/components/BookViewer";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceInput } from "@/components/VoiceInput";
 import { ART_STYLES } from "@/lib/art-styles";
-import { loadChild, saveChild } from "@/lib/prefs";
+import { loadChild, saveChild, saveMyBook } from "@/lib/prefs";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
 
@@ -20,10 +20,10 @@ type Story = { title: string; summary: string; characters: Character[]; pages: S
 type Step = "child" | "theme" | "style" | "outline" | "story" | "illustrate" | "done";
 
 /**
- * 삽화(Gemini) 생성 스위치 — 테스트 동안은 글만 받는다(이미지는 토큰이 크다).
- * 이미지 준비가 되면 true로만 바꾸면 "그림까지 그리기"가 다시 살아난다.
+ * 삽화(Gemini) 생성 스위치. 켜면 이야기 완성 후 "그림까지 그리기 🎨" 버튼이 뜨고,
+ * 누를 때만 Gemini 삽화(장당 약 ₩55)를 그린다. 켠다고 자동 과금되진 않는다.
  */
-const IMAGES_ENABLED = false;
+const IMAGES_ENABLED = true;
 
 const AGES = [3, 4, 5, 6, 7, 8];
 const GENDERS: { value: Gender; label: string; icon: string }[] = [
@@ -327,6 +327,10 @@ export default function CreatePage() {
   // 쪽별 삽화(data URL). 실패한 쪽은 null → 뷰어가 플레이스홀더를 그린다.
   const [pageImages, setPageImages] = useState<(string | null)[]>([]);
   const [drawn, setDrawn] = useState(0);
+  // 완성해 책장에 저장한 책 — done 화면은 이걸 뷰어로 보여준다(id="new" 대신 진짜 id).
+  const [finalBook, setFinalBook] = useState<Book | null>(null);
+  // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
+  const [confirmMake, setConfirmMake] = useState(false);
 
   const child = { name: name.trim(), age: age ?? 0, gender };
 
@@ -394,7 +398,8 @@ export default function CreatePage() {
                     extra: extra.trim(),
                   },
           pageCount,
-          mood: mood.ko,
+          // 감정동화는 감정이 톤을 정하므로 분위기를 안 넘긴다(톤 충돌 방지).
+          mood: storyMode === "emotion" ? "" : mood.ko,
         }),
         signal: ac.signal,
       });
@@ -422,15 +427,20 @@ export default function CreatePage() {
       const r = await fetch("/api/story", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ child, outline, mood: mood.ko }),
+        body: JSON.stringify({ child, outline, mood: storyMode === "emotion" ? "" : mood.ko }),
         signal: ac.signal,
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error ?? "동화를 만들지 못했어요.");
       setStory(data.story);
-      // 바로 그림으로 가지 않는다 — 부모가 이야기를 읽어보고, 마음에 들 때만
-      // 그림(비용의 80%)을 만든다. 그림 없이도 테마 배경 위 글 동화로 볼 수 있다.
-      setStep("story");
+      // 고객은 줄거리(상황설명)에서 이미 판단했다 — 본문 검토를 또 시키지 않는다.
+      // 그림이 켜져 있으면 이어서 삽화까지 그려 완성하고(illustrate가 자체 진행화면을
+      // 띄운다 — await 안 해 busy 오버레이와 안 겹친다), 꺼져 있으면 글 동화로 마무리.
+      if (IMAGES_ENABLED) {
+        illustrate(data.story);
+      } else {
+        finish([], data.story);
+      }
     } catch (e) {
       // ESC로 취소한 경우는 오류가 아니다 — 줄거리 화면에 그대로 남는다.
       if ((e as Error).name !== "AbortError") setError((e as Error).message);
@@ -482,24 +492,43 @@ export default function CreatePage() {
         setPageImages([...images]);
       }
     } catch (e) {
-      // 취소는 정상 경로. 그 외 실패(키 없음 등)는 글만으로 진행한다.
-      if ((e as Error).name !== "AbortError") console.warn("[illustrate]", e);
+      // 취소는 정상 경로 — 그때까지 그린 쪽으로 조용히 마무리한다.
+      // 그 외(키·결제·안전필터 등)는 조용히 넘기지 말고 이유를 보여주고 검토 화면으로
+      // 돌려보낸다. 첫 라이브 호출 실패를 부모가 바로 알고 다시 시도할 수 있게.
+      if ((e as Error).name !== "AbortError") {
+        console.warn("[illustrate]", e);
+        setError((e as Error).message || "삽화를 그리지 못했어요. 다시 시도해주세요.");
+        setStep("story");
+        return;
+      }
     }
     // 취소했더라도 그때까지 그린 쪽으로 완성 화면을 보여준다 (나머지는 플레이스홀더).
     setPageImages(images);
+    finish(images, s);
+  }
+
+  /**
+   * 완성 → 책장에 저장하고 뷰어로. 진짜 id를 붙여 저장해야 "우리 가족 책장"에 남고
+   * /book/[id]로 다시 열 수 있다(예전엔 id="new"로 한 번 보고 사라졌다).
+   * story는 인자로 받는다 — setStory 직후엔 state가 아직 안 바뀌어 있어서다.
+   */
+  function finish(images: (string | null)[], s: Story | null = story) {
+    if (!s) return;
+    const book: Book = {
+      id: `my-${Date.now().toString(36)}`,
+      lang: "ko",
+      title: s.title,
+      summary: s.summary,
+      pages: s.pages.map((p, i) => ({ text: p.text, image: images[i] ?? null })),
+    };
+    saveMyBook(book);
+    setFinalBook(book);
     setStep("done");
   }
 
-  // 완성 → 뷰어. 삽화가 있으면 넣고, 실패한 쪽은 플레이스홀더.
-  if (step === "done" && story) {
-    const book: Book = {
-      id: "new",
-      lang: "ko",
-      title: story.title,
-      summary: story.summary,
-      pages: story.pages.map((p, i) => ({ text: p.text, image: pageImages[i] ?? null })),
-    };
-    return <BookViewer book={book} />;
+  // 완성 → 저장해 둔 책을 뷰어로 보여준다.
+  if (step === "done" && finalBook) {
+    return <BookViewer book={finalBook} />;
   }
 
   return (
@@ -1034,7 +1063,10 @@ export default function CreatePage() {
                 })}
               </div>
 
-              {/* 분위기 — 이야기 톤과 그림 조명에 함께 반영된다 */}
+              {/* 분위기 — 이야기 톤과 그림 조명에 함께 반영된다.
+                  감정동화에선 감정 자체가 톤을 정하고 마무리는 늘 따뜻해서, 분위기를
+                  또 고르면 톤이 충돌한다. 그래서 감정동화 모드에선 숨긴다. */}
+              {storyMode !== "emotion" && (
               <div>
                 <p className="mb-1.5 text-xs font-bold text-neutral-400">분위기</p>
                 <div className="flex flex-wrap gap-2">
@@ -1059,6 +1091,7 @@ export default function CreatePage() {
                   ))}
                 </div>
               </div>
+              )}
 
               {/* 장면 수 — 이야기를 몇 쪽으로 나눌지. 나이 추천값을 별로 표시한다.
                   글만 받는 지금은 장수와 상관없이 무료, 삽화를 켜면 장면당 과금. */}
@@ -1184,7 +1217,32 @@ export default function CreatePage() {
               {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
 
               <div className="mt-1 flex flex-col items-center gap-2">
-                <BigButton accent={accent} accentDark={accentDark} onClick={makeStory}>이 이야기로 동화 만들기 📖</BigButton>
+                {confirmMake ? (
+                  <div className="flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-neutral-200 p-3">
+                    <p className="text-sm font-extrabold text-neutral-700">
+                      이 줄거리로 동화 본문을 만들까요?
+                    </p>
+                    <div className="flex gap-3">
+                      <BigButton
+                        accent={accent}
+                        accentDark={accentDark}
+                        onClick={() => {
+                          setConfirmMake(false);
+                          makeStory();
+                        }}
+                      >
+                        네, 만들게요 ✓
+                      </BigButton>
+                      <BigButton tone="white" onClick={() => setConfirmMake(false)}>
+                        아니요
+                      </BigButton>
+                    </div>
+                  </div>
+                ) : (
+                  <BigButton accent={accent} accentDark={accentDark} onClick={() => setConfirmMake(true)}>
+                    이 이야기로 동화 만들기 📖
+                  </BigButton>
+                )}
                 <button
                   type="button"
                   onClick={makeOutline}
@@ -1247,24 +1305,11 @@ export default function CreatePage() {
                   )}
                   {/* 이미지 off일 때는 글 동화 버튼이 메인이 된다. */}
                   {IMAGES_ENABLED ? (
-                    <BigButton
-                      tone="white"
-                      onClick={() => {
-                        setPageImages([]);
-                        setStep("done");
-                      }}
-                    >
+                    <BigButton tone="white" onClick={() => finish([])}>
                       글 동화로 바로 보기 📖
                     </BigButton>
                   ) : (
-                    <BigButton
-                      accent={accent}
-                      accentDark={accentDark}
-                      onClick={() => {
-                        setPageImages([]);
-                        setStep("done");
-                      }}
-                    >
+                    <BigButton accent={accent} accentDark={accentDark} onClick={() => finish([])}>
                       이 이야기로 동화 보기 📖
                     </BigButton>
                   )}

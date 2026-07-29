@@ -4,6 +4,8 @@
  * Supabase가 붙으면 이 파일의 저장처만 DB로 바뀐다.
  */
 
+import type { Book } from "@/lib/types";
+
 export type Gender = "girl" | "boy" | "unspecified";
 
 export type ChildPrefs = {
@@ -123,5 +125,49 @@ export function saveBookProgress(id: string, page: number): void {
     window.localStorage.setItem(PROGRESS_KEY, JSON.stringify(map));
   } catch {
     // 저장 실패는 조용히 넘긴다 — 이어보기는 편의 기능이라 막으면 안 된다.
+  }
+}
+
+/**
+ * 내가 만든 책 — 만들기에서 완성한 동화를 기기에 저장한다. "우리 가족 책장"이
+ * 이 목록을 읽고, /book/[id]가 JSON에 없는 id를 여기서 찾는다.
+ * DB(Supabase)가 붙기 전까지 localStorage. 삽화는 data URL이라 용량이 커질 수 있어
+ * 최신 것부터 앞에 쌓고, 저장 실패(용량 초과 등)는 조용히 넘긴다.
+ */
+const MY_BOOKS_KEY = "voice-storybook:mybooks";
+
+export function loadMyBooks(): Book[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(MY_BOOKS_KEY);
+    const arr = raw ? (JSON.parse(raw) as Book[]) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+export function loadMyBook(id: string): Book | null {
+  return loadMyBooks().find((b) => b.id === id) ?? null;
+}
+
+export function saveMyBook(book: Book): void {
+  if (typeof window === "undefined") return;
+  try {
+    const books = loadMyBooks().filter((b) => b.id !== book.id);
+    books.unshift(book); // 최신이 책장 맨 앞
+    window.localStorage.setItem(MY_BOOKS_KEY, JSON.stringify(books));
+  } catch {
+    // 용량 초과 등 — 조용히 넘긴다(글은 작아 대개 문제 없다).
+  }
+}
+
+export function deleteMyBook(id: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const books = loadMyBooks().filter((b) => b.id !== id);
+    window.localStorage.setItem(MY_BOOKS_KEY, JSON.stringify(books));
+  } catch {
+    // 조용히 넘긴다.
   }
 }

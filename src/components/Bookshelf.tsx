@@ -15,7 +15,16 @@ const FALLBACK_EMOJI = ["🌈", "🍀", "⭐", "🎈"];
  * 제목(리본 안)·그림(원 창)·쪽수만 얹는다. 틀과 좌표는 테마가 들고 있어서
  * 공룡나라로 넘어가면 표지도 정글 틀로 바뀐다.
  */
-export function Bookshelf({ books }: { books: Book[] }) {
+export function Bookshelf({
+  books,
+  deletableIds,
+  onDelete,
+}: {
+  books: Book[];
+  /** 이 id들만 삭제(×) 버튼이 뜬다 — 내가 만든 책만. */
+  deletableIds?: Set<string>;
+  onDelete?: (id: string) => void;
+}) {
   const { theme } = useTheme();
   const cover = theme.cover;
 
@@ -25,13 +34,29 @@ export function Bookshelf({ books }: { books: Book[] }) {
         const art = book.coverImage ?? book.pages.find((p) => p.image)?.image ?? null;
         const tilt = TILTS[i % TILTS.length];
         const emoji = FALLBACK_EMOJI[i % FALLBACK_EMOJI.length];
+        const canDelete = !!onDelete && deletableIds?.has(book.id);
 
         return (
+          <div key={book.id} className="relative">
+            {/* 삭제(×) — 내가 만든 책에만. Link 밖에 둬서 표지를 눌러도 안 열린다. */}
+            {canDelete && (
+              <button
+                type="button"
+                aria-label={`${book.title} 지우기`}
+                onClick={() => {
+                  if (window.confirm(`"${book.title}"을(를) 책장에서 지울까요?`)) {
+                    onDelete!(book.id);
+                  }
+                }}
+                className="absolute -right-1.5 -top-1.5 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-sm font-black text-white shadow-md transition hover:bg-red-600 active:scale-95"
+              >
+                ×
+              </button>
+            )}
           <Link
-            key={book.id}
             href={`/book/${book.id}`}
             aria-label={`${book.title} 펼치기`}
-            className="group outline-none"
+            className="group block outline-none"
           >
             <div
               className={`relative w-36 sm:w-44 ${tilt} transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform group-hover:-translate-y-3 group-hover:rotate-0 group-focus-visible:-translate-y-3 group-focus-visible:rotate-0`}
@@ -98,6 +123,7 @@ export function Bookshelf({ books }: { books: Book[] }) {
               <div className="absolute -bottom-2.5 left-1/2 h-3 w-4/5 -translate-x-1/2 rounded-full bg-black/25 blur-md" />
             </div>
           </Link>
+          </div>
         );
       })}
     </div>

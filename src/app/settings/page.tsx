@@ -221,7 +221,7 @@ export default function SettingsPage() {
       />
       <div className="fixed inset-0 -z-10 bg-white/30" />
 
-      <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col justify-center px-6 py-10">
+      <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col justify-center px-6 pb-10 pt-20">
         <Link
           href="/"
           className="absolute left-4 top-4 rounded-full bg-white/70 px-4 py-2 text-sm font-bold text-neutral-700 backdrop-blur"
@@ -231,7 +231,7 @@ export default function SettingsPage() {
 
         {/* 설정 항목이 많아 화면보다 길어질 수 있다 — 카드에 최대 높이를 주고
             안에서 스크롤되게 해 위아래가 짤리지 않게 한다. */}
-        <div className="flex max-h-[calc(100dvh-4rem)] flex-col gap-5 overflow-y-auto rounded-[28px] bg-white/90 p-7 shadow-xl backdrop-blur">
+        <div className="flex max-h-[calc(100dvh-7rem)] flex-col gap-5 overflow-y-auto rounded-[28px] bg-white/90 p-7 shadow-xl backdrop-blur">
           <h1 className="text-center text-2xl font-extrabold text-neutral-800">⚙️ 설정</h1>
           {/* 저장 버튼이 없는 이유를 화면이 직접 말해준다 + 바뀔 때마다 확인 표시 */}
           <p className="-mt-4 text-center text-xs font-bold" aria-live="polite">

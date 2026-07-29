@@ -650,7 +650,7 @@ export function BookViewer({ book }: { book: Book }) {
               {/* break-keep: 한국어를 단어 단위로만 줄바꿈 ("물고서 / 요." 방지),
                   text-pretty: 마지막 줄에 글자 몇 개만 남는 외톨이 줄을 피한다. */}
               <p
-                className={`font-story whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.8rem,4.5vw,3.2rem)] font-semibold leading-[1.35] drop-shadow-md ${
+                className={`font-story whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.7rem,3.6vw,2.15rem)] font-semibold leading-[1.3] drop-shadow-md ${
                   textPos === "bottom" || textPos === "top"
                     ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : // 떠 있는 판 — 그라데이션이 없으니 판 자체가 가독성을 만든다.
