@@ -148,6 +148,7 @@
     <p class="lede">아이가 주인공인 AI 그림동화 앱. 이야기 생성·음성·콘텐츠·테마까지 완성했고, 남은 것은 회원가입·저장·결제와 배포입니다. 아래는 <b>개발 현황</b>과 <b>동화 1권 원가 → 판매가·크레딧 정책</b>을 정리한 회의 자료입니다.</p>
     <div class="meta">
       <span><b>작성일</b> 2026-07-22</span>
+      <span><b>갱신</b> 2026-07-29</span>
       <span><b>기준 원가</b> 1권 ₩615(Sonnet)~₩1,085(Opus)</span>
       <span><b>용도</b> 결제·크레딧 회의</span>
     </div>
@@ -160,7 +161,11 @@
       <a href="#models">요금 모델</a>
       <a href="#agenda">회의 안건</a>
       <a href="#extra">부가 비용</a>
+      <a href="#update">최근 업데이트</a>
     </nav>
+    <div style="background:var(--sage-soft);border:1px solid var(--sage);border-radius:14px;padding:14px 18px;margin-top:18px;font-size:13.5px;color:var(--ink);">
+      <b style="color:var(--sage);">7/29 업데이트.</b> 만든 동화 저장·관리, 삽화(Gemini) 연결, 성우를 만들 때 고르는 구조(방법 B), 이야기 품질 강화, 엄마·아빠 목소리 클로닝 벤더 조사를 진행했습니다 — <b>맨 아래 08번 섹션</b> 참고.
+    </div>
   </header>
 
   <div class="stats">
@@ -176,7 +181,7 @@
     <p class="section-note">앱의 핵심 — “이야기를 만들어 목소리로 들려준다”는 이미 작동합니다.</p>
     <ul class="clean">
       <li><span class="tag done">완료</span><div class="li-body"><b>이야기 생성 엔진 (앱의 심장)</b><p>세 가지 방식 — 오늘 있었던 일 / 상상 이야기 / 감정 동화. 나이(3~8세)별로 글 수준이 자동으로 달라지고, 장면 수(3~8장)를 고르면 장면별 줄거리 → 본문으로 만들어집니다. 친구·형제는 이름을 넣으면 그대로 등장합니다.</p></div></li>
-      <li><span class="tag done">완료</span><div class="li-body"><b>음성 낭독</b><p>진짜 성우 10명(감정 연기), 캐릭터별 목소리, 읽기 속도 조절. 엄마·아빠 목소리 녹음 자리 마련.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>음성 낭독</b><p>진짜 성우 16명(감정 연기), 캐릭터별 목소리, 읽기 속도 조절. 엄마·아빠 목소리 녹음 자리 마련.</p></div></li>
       <li><span class="tag done">완료</span><div class="li-body"><b>기본 콘텐츠 — 전래동화 · 세계명작</b><p>빈 책장이 허전하지 않도록 제공하는 서가. 삽화·나레이션·캐릭터 음성 완비.</p></div></li>
       <li><span class="tag done">완료</span><div class="li-body"><b>테마(나라) 7종 · 그림책나라 신규</b><p>우주·동화·공룡·자동차·공주·바다에 더해, 이사님 컨셉을 <b>그림책나라</b> 테마로 추가(배경·마스코트 여우 “토리”·전용 표지 틀·배경 영상 완비).</p></div></li>
       <li><span class="tag done">완료</span><div class="li-body"><b>책 뷰어 · 만들기 화면</b><p>페이지 넘김·자동 낭독·클릭 반짝임·배경음, 그림 속 캐릭터 클릭 시 대사. 만들기 위저드·스티커 아이콘 정비.</p></div></li>
@@ -190,7 +195,7 @@
     <ul class="clean">
       <li><span class="tag todo">필요</span><div class="li-body"><b>회원가입 · 데이터 저장 (Supabase)</b><p>아이 정보·만든 동화를 계정에 저장. 현재는 기기에만 임시 저장.</p></div></li>
       <li><span class="tag todo">필요</span><div class="li-body"><b>아이 사진 → 주인공 얼굴 반영</b><p>업로드 사진을 삽화 주인공에 반영. 개인정보라 안전한 전용 저장소 필요.</p></div></li>
-      <li><span class="tag todo">필요</span><div class="li-body"><b>삽화 생성 정식 가동</b><p>지금은 테스트 비용을 아끼려 <b>글만</b> 생성. 스위치 하나로 삽화가 켜집니다(그림 AI 결제 필요).</p></div></li>
+      <li><span class="tag done">가동됨</span><div class="li-body"><b>삽화 생성 정식 가동</b><p>Gemini 이미지 AI 연결 완료(7/29). 만들 때 “그림까지 그리기”로 삽화 생성(장당 약 ₩55). 후불 결제·지출한도 세팅으로 <b>테스트 가동 중</b>.</p></div></li>
       <li><span class="tag todo">필요</span><div class="li-body"><b>결제 · 크레딧 시스템 (수익 모델)</b><p>1권당 얼마·무료 몇 권. 오늘 회의의 핵심.</p></div></li>
       <li><span class="tag todo">필요</span><div class="li-body"><b>배포 · 이미지 호스팅 연결</b><p>앱은 Vercel + 회사 도메인. 전래·세계명작 같은 <b>고정 이미지·음성은 카페24 이미지 호스팅</b>, 사용자 사진은 전용 저장소.</p></div></li>
     </ul>
@@ -394,10 +399,26 @@
     </div>
   </section>
 
+  <hr class="rule" />
+
+  <section id="update">
+    <div class="section-head"><span class="section-num">08</span><h2>최근 업데이트 (2026-07-29)</h2></div>
+    <p class="section-note">7/22 보고 이후 진행한 것 — 만들기 흐름과 음성·삽화·콘텐츠 관리를 상용화에 가깝게 다듬었습니다.</p>
+    <ul class="clean">
+      <li><span class="tag done">완료</span><div class="li-body"><b>만든 동화 저장 · 관리</b><p>만든 동화가 “우리 가족 책장”에 저장됩니다(현재 기기 단위). 관리는 책장이 아니라 <b>설정 › 내 동화</b>에서 — <b>숨기기/보이기</b>와 경고 후 <b>영구 삭제</b>. 실수로 지워도 되살릴 수 있게 숨김과 삭제를 분리했습니다.</p></div></li>
+      <li><span class="tag done">신규</span><div class="li-body"><b>삽화(Gemini) 연결 · 가동 준비</b><p>Gemini 이미지 AI(2.5 Flash Image)를 붙였습니다. <b>“그림까지 그리기”</b>를 누르면 캐릭터 얼굴을 먼저 잡고 그 얼굴로 각 쪽을 그려 <b>인물 일관성</b>을 유지합니다(장당 약 ₩55). 후불 결제·월 지출한도로 테스트 가동 중.</p></div></li>
+      <li><span class="tag done">신규</span><div class="li-body"><b>성우를 “만들 때” 고르는 구조 (방법 B)</b><p>만들기 화면에서 <b>읽어줄 성우</b>를 골라 동화에 박아 저장합니다. 뷰어는 그 성우로 낭독하고, 합성 결과는 <b>기기에 캐시</b>되어 반복 재생은 무료입니다(전래동화와 같은 원리). 지금은 크레딧 보호로 잠가 둔 상태 — 스위치만 켜면 “만들 때 한 번 굽고 이후 무료”로 작동합니다.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>이야기 품질 강화</b><p>감정 동화에 <b>“감정 터뜨림 → 가장 힘든 바닥 → 스스로 깨달아 해결 → 또렷한 교훈”</b> 굴곡을 규칙으로 넣었습니다. 읽어주는 책 기준으로 <b>나이별 낭독 분량 상향</b>(4세 40~55자 → 90~120자 등), 줄거리 미리보기도 부드러운 동화체로 변경.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>만들기 흐름 간소화</b><p>줄거리(상황설명) 확인 → 한 번만 확정 → <b>본문 + 그림 한 번에</b> → 곧바로 완성 동화로. 중간 군더더기 검토 화면을 없앴습니다.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>기본 콘텐츠 정리</b><p>세계명작 중 아직 삽화가 없는 4권(신데렐라·커다란 순무·골디락스·사자와 생쥐)을 서가에서 <b>임시 숨김</b> — 이미지 완성 후 다시 노출. 전래동화 7권은 모두 삽화 완비.</p></div></li>
+      <li><span class="tag todo">조사완료</span><div class="li-body"><b>엄마·아빠 목소리 클로닝 — 벤더 조사</b><p>부모가 짧게 녹음(30초~1분)한 목소리로 동화를 읽어주는 기능. <b>Typecast vs ElevenLabs</b> 비교 결과 <b>Typecast 유지</b> 추천 — 한국어 강점(한국 회사), 지금 성우와 같은 벤더/청구, <b>클론 슬롯 경제성</b>(API Lite 월 $15에 50슬롯). 실제 원가 축은 글자수가 아니라 <b>“부모 1명 = 클론 1슬롯”</b>. 녹음·동의 화면은 이미 있고 클로닝 연결만 남았습니다.</p></div></li>
+    </ul>
+  </section>
+
   <p class="disclaimer">
     <b>산정 기준 및 주의.</b> 원가는 환율 ₩1,400/$ 가정과 사용량 실측 추정치, 부가세 별도 기준입니다. <b>삽화는 Gemini 2.5 Flash Image(장당 ₩55, $0.039)</b>, <b>음성은 Typecast API(무료 월 3만 자·약 35권, 초과 시 1권 약 ₩100 = $0.09/1,000자)</b>로 단가가 확인됐습니다. 남은 변수는 <b>글 모델 최종 선택(Opus/Sonnet)</b>과 결제 수수료 정도입니다. 판매가·팩 가격·코인 매칭은 <b>의사결정용 예시</b>로, 실제 청구액과 오차가 있을 수 있습니다.
   </p>
-  <p class="foothint">우리 가족 보이스 동화 · 개발 현황 · 가격 정책 보고 · 2026-07-22 · 내부 회의용 (임시 파일: public/report.html)</p>
+  <p class="foothint">우리 가족 보이스 동화 · 개발 현황 · 가격 정책 보고 · 2026-07-22 작성 · 2026-07-29 갱신 · 내부 회의용 (임시 파일: public/report.html)</p>
 </div>
 </body>
 </html>

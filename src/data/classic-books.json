@@ -1485,6 +1485,7 @@
   },
   {
     "id": "classic-turnip",
+    "hidden": true,
     "lang": "ko",
     "title": "커다란 순무",
     "summary": "쑥 안 뽑히는 커다란 순무를 온 식구와 동물들이 힘을 합쳐 뽑는 이야기",
@@ -1539,6 +1540,7 @@
   },
   {
     "id": "classic-goldilocks",
+    "hidden": true,
     "lang": "ko",
     "title": "골디락스와 곰 세 마리",
     "summary": "곰 세 마리의 집에 들어간 골디락스가 딱 맞는 것을 찾아가는 이야기",
@@ -1593,6 +1595,7 @@
   },
   {
     "id": "classic-lionmouse",
+    "hidden": true,
     "lang": "ko",
     "title": "사자와 생쥐",
     "summary": "작은 생쥐를 살려 준 사자가, 그 생쥐 덕분에 그물에서 풀려나는 이야기",

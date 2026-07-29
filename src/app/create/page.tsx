@@ -9,6 +9,12 @@ import { ART_STYLES } from "@/lib/art-styles";
 import { loadChild, saveChild, saveMyBook } from "@/lib/prefs";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
+import {
+  CLIENT_TTS_ENABLED,
+  TYPECAST_VOICES,
+  fetchTypecastPageAudio,
+  findTypecast,
+} from "@/lib/voices";
 
 type Gender = "girl" | "boy" | "unspecified";
 type Scene = { sceneNo: number; text: string };
@@ -318,6 +324,8 @@ export default function CreatePage() {
   // 그림체 — 지금은 저장만 한다. Gemini 삽화가 붙으면 이 스타일의 prompt가 쓰인다.
   const [artStyle, setArtStyle] = useState(ART_STYLES[0].id);
   const [mood, setMood] = useState(MOODS[0]);
+  // 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로 읽는다.
+  const [narratorVoice, setNarratorVoice] = useState(TYPECAST_VOICES[0].id);
   // 장면(쪽) 수 3~8. 나이에 맞는 추천값으로 시작한다(부모가 바꿀 수 있다).
   const [pageCount, setPageCount] = useState(() => recommendedPages(null));
 
@@ -519,11 +527,35 @@ export default function CreatePage() {
       lang: "ko",
       title: s.title,
       summary: s.summary,
+      // 고른 성우를 책에 박는다 — 뷰어가 이 성우로 읽어준다(방법 B).
+      narrator: narratorVoice,
       pages: s.pages.map((p, i) => ({ text: p.text, image: images[i] ?? null })),
     };
     saveMyBook(book);
+    prewarmNarration(s);
     setFinalBook(book);
     setStep("done");
+  }
+
+  /**
+   * 나레이션 미리 굽기 — 만들 때 고른 성우로 각 쪽을 합성해 기기 캐시를 데운다.
+   * 그럼 아이가 재생할 때 즉시·무료로 나온다(전래동화처럼). 실시간 합성이 잠겨 있으면
+   * (CLIENT_TTS_ENABLED=false) 아무것도 안 해 크레딧이 0이다 — 잠금 풀면 자동 작동.
+   */
+  function prewarmNarration(s: Story) {
+    if (!CLIENT_TTS_ENABLED) return;
+    const tc = findTypecast(narratorVoice);
+    if (!tc) return;
+    // 순차로 캐시를 데운다. 실패는 무시(재생 때 다시 시도한다). 화면은 안 막는다.
+    void (async () => {
+      for (const p of s.pages) {
+        try {
+          await fetchTypecastPageAudio(tc, p.text);
+        } catch {
+          /* 무시 — 재생 시점에 다시 합성한다 */
+        }
+      }
+    })();
   }
 
   // 완성 → 저장해 둔 책을 뷰어로 보여준다.
@@ -1133,6 +1165,37 @@ export default function CreatePage() {
                 </p>
               </div>
 
+              {/* 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로
+                  읽어준다. 실시간 합성이 켜지면 만들 때 한 번 구워 재생은 늘 무료가 된다. */}
+              <div>
+                <p className="mb-1.5 text-xs font-bold text-neutral-400">읽어줄 성우</p>
+                <div className="flex flex-wrap gap-2">
+                  {TYPECAST_VOICES.map((v) => {
+                    const active = narratorVoice === v.id;
+                    return (
+                      <button
+                        key={v.id}
+                        type="button"
+                        onClick={() => setNarratorVoice(v.id)}
+                        aria-pressed={active}
+                        style={active ? { background: accent } : undefined}
+                        className={`flex items-center gap-1.5 rounded-full py-1.5 pl-2.5 pr-3.5 text-sm font-bold transition ${
+                          active
+                            ? "text-white"
+                            : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                        }`}
+                      >
+                        <span>{v.emoji}</span>
+                        {v.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
+                  {TYPECAST_VOICES.find((v) => v.id === narratorVoice)?.desc}
+                </p>
+              </div>
+
               {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
 
               <div className="mt-2 flex justify-center gap-3">
@@ -1220,8 +1283,15 @@ export default function CreatePage() {
                 {confirmMake ? (
                   <div className="flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-neutral-200 p-3">
                     <p className="text-sm font-extrabold text-neutral-700">
-                      이 줄거리로 동화 본문을 만들까요?
+                      {IMAGES_ENABLED
+                        ? "이 줄거리로 그림동화를 만들까요?"
+                        : "이 줄거리로 동화를 만들까요?"}
                     </p>
+                    {IMAGES_ENABLED && (
+                      <p className="text-[11px] font-medium text-neutral-400">
+                        글 + 그림 {outline.scenes.length}쪽 · 약 1~2분 · 약 ₩{outline.scenes.length * 55 + 55}
+                      </p>
+                    )}
                     <div className="flex gap-3">
                       <BigButton
                         accent={accent}
@@ -1240,7 +1310,7 @@ export default function CreatePage() {
                   </div>
                 ) : (
                   <BigButton accent={accent} accentDark={accentDark} onClick={() => setConfirmMake(true)}>
-                    이 이야기로 동화 만들기 📖
+                    {IMAGES_ENABLED ? "이 이야기로 그림동화 만들기 🎨" : "이 이야기로 동화 만들기 📖"}
                   </BigButton>
                 )}
                 <button

@@ -8,7 +8,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
-import { deleteMyBook, loadLang, loadMyBooks } from "@/lib/prefs";
+import { loadLang, loadMyBooks } from "@/lib/prefs";
 import type { Book } from "@/lib/types";
 
 export default function Home() {
@@ -27,14 +27,9 @@ export default function Home() {
     setLang(loadLang());
     setMyBooks(loadMyBooks());
   }, []);
-  // 내가 만든 책(최신 먼저) + 샘플. "우리 가족 책장"에 함께 뜬다.
-  const mine = [...myBooks, ...all].filter((b) => b.lang === lang);
-  // 내가 만든 책만 지울 수 있다(샘플·제공 서가는 못 지운다).
-  const myIds = new Set(myBooks.map((b) => b.id));
-  function handleDelete(id: string) {
-    deleteMyBook(id);
-    setMyBooks((prev) => prev.filter((b) => b.id !== id));
-  }
+  // 내가 만든 책(최신 먼저, 숨긴 건 제외) + 샘플. "우리 가족 책장"에 함께 뜬다.
+  // 책 관리(숨김·삭제)는 책장이 아니라 설정(⚙️) › "내 동화"에서 한다.
+  const mine = [...myBooks, ...all].filter((b) => b.lang === lang && !b.hidden);
 
   // 은은하게 움직이는 배경 영상(/themes/<id>/bg-video.mp4)이 있는 테마.
   // 파일을 넣고 여기 id만 추가하면 그 테마 홈이 살아 움직인다.
@@ -231,11 +226,7 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <Bookshelf
-            books={shown}
-            deletableIds={shelf === "mine" ? myIds : undefined}
-            onDelete={handleDelete}
-          />
+          <Bookshelf books={shown} />
         )}
 
 

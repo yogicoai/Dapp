@@ -8,14 +8,18 @@ import { ThemePicker } from "@/components/ThemePicker";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import {
+  deleteMyBook,
   loadChild,
   loadLang,
+  loadMyBooks,
   loadTextPos,
   saveChild,
   saveLang,
   saveTextPos,
+  setMyBookHidden,
   type Gender,
 } from "@/lib/prefs";
+import type { Book } from "@/lib/types";
 import { useEscClose } from "@/lib/use-esc-close";
 import {
   PRESET_VOICES,
@@ -68,6 +72,8 @@ export default function SettingsPage() {
   const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
   const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
+  // 내 동화 — 만든 책 전체. 여기서 책장 노출(숨기기/보이기)과 영구 삭제를 관리한다.
+  const [myBooks, setMyBooks] = useState<Book[]>([]);
 
   // localStorage 값들은 클라 전용이라 마운트 후에 반영한다(hydration 안전).
   /* eslint-disable react-hooks/set-state-in-effect */
@@ -83,8 +89,23 @@ export default function SettingsPage() {
     setVoiceRate(loadVoiceRate());
     setTextPos(loadTextPos());
     setCustomVoices(loadCustomVoices());
+    setMyBooks(loadMyBooks());
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  // 책장 노출 토글(숨기기/보이기) — 숨기면 책장에서 내려가고, 보이면 다시 뜬다.
+  function toggleHide(id: string, hidden: boolean) {
+    setMyBookHidden(id, hidden);
+    setMyBooks((prev) => prev.map((b) => (b.id === id ? { ...b, hidden } : b)));
+    flashSaved();
+  }
+  // 영구 삭제 — 복원 불가라 경고를 띄우고 한 번 더 확인받는다.
+  function purgeBook(id: string, title: string) {
+    if (!window.confirm(`⚠️ "${title}"을(를) 영구 삭제할까요?\n\n완전히 지워지며 복원할 수 없어요.`)) return;
+    deleteMyBook(id);
+    setMyBooks((prev) => prev.filter((b) => b.id !== id));
+    flashSaved();
+  }
 
   // ESC로 설정을 닫는다(홈으로). 녹음 팝업이 열려 있으면 팝업이 먼저 닫히고,
   // 한 번 더 누르면 설정이 닫힌다.
@@ -512,6 +533,52 @@ export default function SettingsPage() {
               })}
             </div>
           </section>
+
+          {/* ── 내 동화 관리 ── 만든 책 전체. 책장 노출(숨기기/보이기)과 영구 삭제를
+              여기서만 한다(책장에는 관리 버튼을 두지 않는다). 하나도 없으면 칸을 감춘다. */}
+          {myBooks.length > 0 && (
+            <section className="flex flex-col gap-2.5">
+              <h2 className="text-sm font-extrabold text-neutral-400">
+                내 동화 ({myBooks.length})
+              </h2>
+              <p className="-mt-1 text-xs font-medium text-neutral-400">
+                만든 동화 목록이에요. 책장에서 숨기거나, 영구 삭제할 수 있어요.
+              </p>
+              <ul className="flex flex-col gap-2">
+                {myBooks.map((b) => (
+                  <li
+                    key={b.id}
+                    className="flex items-center gap-2 rounded-2xl bg-neutral-100 px-3 py-2"
+                  >
+                    <span className="flex flex-1 items-center gap-1.5 truncate">
+                      <span className="truncate text-sm font-bold text-neutral-700">
+                        {b.title}
+                      </span>
+                      {b.hidden && (
+                        <span className="shrink-0 rounded-full bg-neutral-300 px-1.5 py-0.5 text-[10px] font-extrabold text-neutral-600">
+                          숨김
+                        </span>
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleHide(b.id, !b.hidden)}
+                      className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow-sm"
+                    >
+                      {b.hidden ? "보이기" : "숨기기"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => purgeBook(b.id, b.title)}
+                      className="shrink-0 rounded-full bg-red-500 px-3 py-1.5 text-xs font-extrabold text-white"
+                    >
+                      영구 삭제
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {/* 모두 자동 저장이라 이 버튼은 "닫기"일 뿐이지만, 마무리 버튼이 있어야 안심한다. */}
           <button

@@ -165,11 +165,12 @@ export function BookViewer({ book }: { book: Book }) {
   const overriddenRef = useRef(false);
   const [voiceMenu, setVoiceMenu] = useState(false);
   useEffect(() => {
-    const v = loadSelectedVoiceId();
+    // 만든 동화는 만들 때 고른 성우(book.narrator)로 읽는다(방법 B). 없으면 설정값.
+    const v = book.narrator ?? loadSelectedVoiceId();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 저장된 성우를 마운트 후 반영
     setVoiceId(v);
     voiceIdRef.current = v;
-  }, []);
+  }, [book.narrator]);
 
   // 캐릭터 클릭 반응 — 정지 그림이라 캐릭터 자체는 못 움직이지만, 누른 자리에서
   // 반짝이가 통통 튀어올라 "반응하는" 느낌을 준다. key로 매 클릭마다 다시 튼다.

@@ -162,6 +162,21 @@ export function saveMyBook(book: Book): void {
   }
 }
 
+/**
+ * 숨김/복원 — 책장의 ×는 '숨김'이다(영구 삭제 아님). 실수로 눌러도 설정의
+ * "숨긴 동화"에서 되살릴 수 있다. hidden 책은 책장에서만 내려가고 주소로는 열린다.
+ * 완전 삭제(deleteMyBook)는 설정에서 따로 확인받아 한다.
+ */
+export function setMyBookHidden(id: string, hidden: boolean): void {
+  if (typeof window === "undefined") return;
+  try {
+    const books = loadMyBooks().map((b) => (b.id === id ? { ...b, hidden } : b));
+    window.localStorage.setItem(MY_BOOKS_KEY, JSON.stringify(books));
+  } catch {
+    // 조용히 넘긴다.
+  }
+}
+
 export function deleteMyBook(id: string): void {
   if (typeof window === "undefined") return;
   try {
