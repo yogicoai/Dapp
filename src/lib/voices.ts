@@ -122,9 +122,11 @@ export function saveVoiceRate(rate: number): void {
   window.localStorage.setItem(RATE_KEY, String(rate));
 }
 
+// 기본 성우는 "부끄"(tc-booqoo) — 처음 들어와도 진짜 성우 목소리로 시작한다.
+const DEFAULT_VOICE_ID = "tc-booqoo";
 export function loadSelectedVoiceId(): string {
-  if (typeof window === "undefined") return "basic";
-  return window.localStorage.getItem(SELECTED_KEY) ?? "basic";
+  if (typeof window === "undefined") return DEFAULT_VOICE_ID;
+  return window.localStorage.getItem(SELECTED_KEY) ?? DEFAULT_VOICE_ID;
 }
 
 export function saveSelectedVoiceId(id: string): void {

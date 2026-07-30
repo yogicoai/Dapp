@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
-import { logIn, signUp } from "@/lib/auth";
+import { enterGuest, logIn, signUp } from "@/lib/auth";
 import { SIGNUP_BONUS_TOKENS } from "@/lib/tokens";
 
 /**
@@ -19,13 +19,20 @@ export default function LoginPage() {
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (busy) return;
     setError("");
-    const res = mode === "signup" ? signUp(id, pw) : logIn(id, pw);
-    if (res.ok) router.push("/");
-    else setError(res.error);
+    setBusy(true);
+    const res = await (mode === "signup" ? signUp(id, pw) : logIn(id, pw));
+    if (res.ok) {
+      router.push("/");
+    } else {
+      setError(res.error);
+      setBusy(false);
+    }
   }
 
   return (
@@ -110,6 +117,23 @@ export default function LoginPage() {
               {mode === "signup" ? "가입하고 시작하기" : "로그인"}
             </button>
           </form>
+
+          {/* 비회원 둘러보기 — 전래동화·세계명작만 열람. 만들기·내 책장은 로그인 필요. */}
+          <div className="mt-4 flex items-center gap-3">
+            <span className="h-px flex-1 bg-neutral-200" />
+            <span className="text-xs font-bold text-neutral-400">또는</span>
+            <span className="h-px flex-1 bg-neutral-200" />
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              enterGuest();
+              router.push("/");
+            }}
+            className="mt-3 w-full rounded-full bg-neutral-100 py-3 text-sm font-extrabold text-neutral-600 transition hover:bg-neutral-200"
+          >
+            비회원으로 둘러보기 (전래동화·세계명작)
+          </button>
         </div>
 
         <p className="mt-4 text-center text-xs font-medium text-white/90" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>

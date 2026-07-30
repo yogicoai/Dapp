@@ -9,12 +9,10 @@ import { useTheme } from "@/components/ThemeProvider";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import {
   addTokens,
-  currentUser,
-  currentUserId,
-  isMaster,
   loadAllUsers,
+  loadSession,
   logOut,
-  type BetaUser,
+  type Profile,
 } from "@/lib/auth";
 import {
   deleteMyBook,
@@ -85,65 +83,91 @@ export default function SettingsPage() {
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
   // 내 동화 — 만든 책 전체. 여기서 책장 노출(숨기기/보이기)과 영구 삭제를 관리한다.
   const [myBooks, setMyBooks] = useState<Book[]>([]);
-  // 계정(베타) — 로그인한 아이디·토큰. 마스터면 회원 목록도.
+  // 계정 — 로그인한 아이디·토큰. 게스트면 스킨(테마)만 보인다. 마스터면 회원 목록도.
+  const [guest, setGuest] = useState(false);
   const [acctId, setAcctId] = useState<string | null>(null);
   const [acctTokens, setAcctTokens] = useState(0);
   const [master, setMaster] = useState(false);
-  const [members, setMembers] = useState<BetaUser[]>([]);
+  const [members, setMembers] = useState<Profile[]>([]);
   const [openMember, setOpenMember] = useState<string | null>(null);
+  const [openMemberBooks, setOpenMemberBooks] = useState<Book[]>([]);
 
   // localStorage 값들은 클라 전용이라 마운트 후에 반영한다(hydration 안전).
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    // 로그인 게이트 — 로그인 안 했으면 로그인 화면으로.
-    if (!currentUserId()) {
-      router.replace("/login");
-      return;
-    }
-    const stored = loadChild();
-    if (stored) {
-      setName(stored.name);
-      setAge(stored.age);
-      setGender(stored.gender);
-    }
-    setLang(loadLang());
-    setVoiceId(loadSelectedVoiceId());
-    setVoiceRate(loadVoiceRate());
-    setTextPos(loadTextPos());
-    setCustomVoices(loadCustomVoices());
-    setMyBooks(loadMyBooks());
-    const u = currentUser();
-    setAcctId(u?.id ?? null);
-    setAcctTokens(u?.tokens ?? 0);
-    if (isMaster()) {
-      setMaster(true);
-      setMembers(loadAllUsers());
-    }
+    let alive = true;
+    (async () => {
+      const s = await loadSession();
+      if (!alive) return;
+      // 로그인·게스트 둘 다 아니면 로그인 화면으로.
+      if (!s.uid && !s.guest) {
+        router.replace("/login");
+        return;
+      }
+      // 스킨(테마)은 useTheme로 항상 동작. 아래 값들은 표시용.
+      const stored = loadChild();
+      if (stored) {
+        setName(stored.name);
+        setAge(stored.age);
+        setGender(stored.gender);
+      }
+      setLang(loadLang());
+      setVoiceId(loadSelectedVoiceId());
+      setVoiceRate(loadVoiceRate());
+      setTextPos(loadTextPos());
+      setCustomVoices(loadCustomVoices());
+      if (s.guest) {
+        setGuest(true);
+        return; // 게스트는 스킨만 — 아래 계정/책/회원 정보는 안 불러온다.
+      }
+      setAcctId(s.profile?.username ?? null);
+      setAcctTokens(s.profile?.tokens ?? 0);
+      setMyBooks(await loadMyBooks());
+      if (s.isMaster) {
+        setMaster(true);
+        setMembers(await loadAllUsers());
+      }
+    })();
+    return () => {
+      alive = false;
+    };
   }, [router]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  // 마스터가 회원을 펼치면 그 회원의 책을 불러온다.
+  function toggleMember(id: string) {
+    if (openMember === id) {
+      setOpenMember(null);
+      setOpenMemberBooks([]);
+      return;
+    }
+    setOpenMember(id);
+    setOpenMemberBooks([]);
+    loadUserBooks(id).then((bs) => setOpenMemberBooks(bs));
+  }
+
   // 토큰 충전(베타) — 결제 붙기 전 임시. 30개씩 넣어 테스트.
-  function topUp() {
-    addTokens(30);
+  async function topUp() {
+    await addTokens(30);
     setAcctTokens((t) => t + 30);
     flashSaved();
   }
   // 로그아웃 → 로그인 화면.
-  function doLogout() {
-    logOut();
+  async function doLogout() {
+    await logOut();
     router.replace("/login");
   }
 
   // 책장 노출 토글(숨기기/보이기) — 숨기면 책장에서 내려가고, 보이면 다시 뜬다.
-  function toggleHide(id: string, hidden: boolean) {
-    setMyBookHidden(id, hidden);
+  async function toggleHide(id: string, hidden: boolean) {
+    await setMyBookHidden(id, hidden);
     setMyBooks((prev) => prev.map((b) => (b.id === id ? { ...b, hidden } : b)));
     flashSaved();
   }
   // 영구 삭제 — 복원 불가라 경고를 띄우고 한 번 더 확인받는다.
-  function purgeBook(id: string, title: string) {
+  async function purgeBook(id: string, title: string) {
     if (!window.confirm(`⚠️ "${title}"을(를) 영구 삭제할까요?\n\n완전히 지워지며 복원할 수 없어요.`)) return;
-    deleteMyBook(id);
+    await deleteMyBook(id);
     setMyBooks((prev) => prev.filter((b) => b.id !== id));
     flashSaved();
   }
@@ -304,6 +328,14 @@ export default function SettingsPage() {
             )}
           </p>
 
+          {guest && (
+            <p className="rounded-2xl bg-neutral-100 px-4 py-3 text-center text-xs font-bold text-neutral-500">
+              비회원은 <b>스킨(나라)</b>만 바꿀 수 있어요. 로그인하면 아이 정보·목소리·내 동화까지 설정할 수 있어요.
+            </p>
+          )}
+
+          {/* 계정·아이정보 등 회원 전용 설정 — 게스트에겐 숨긴다(스킨만 허용). */}
+          {!guest && (<>
           {/* ── 계정 (베타) ── 로그인한 아이디·토큰·로그아웃. 실제 로그인 상태를 반영한다.
               추후 카카오·네이버 로그인이 붙으면 이 섹션에 연동 계정 표시가 더해진다. */}
           <section className="flex flex-col gap-3">
@@ -317,17 +349,26 @@ export default function SettingsPage() {
                   {acctId ?? "…"} {master && <span className="text-amber-600">· 마스터</span>}
                 </p>
                 <p className="text-xs font-bold text-neutral-500">
-                  🪙 토큰 {acctTokens}개 <span className="text-neutral-400">(1개 ≈ ₩{TOKEN_PRICE_KRW})</span>
+                  {master ? (
+                    <span className="text-amber-600">👑 관리자 · 토큰 무제한</span>
+                  ) : (
+                    <>
+                      <span aria-hidden className="mr-0.5 inline-block rounded-full align-[-0.1em]" style={{ width: 13, height: 13, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
+                      토큰 {acctTokens}개 <span className="text-neutral-400">(1개 ≈ ₩{TOKEN_PRICE_KRW})</span>
+                    </>
+                  )}
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={topUp}
-                style={{ background: accent }}
-                className="shrink-0 rounded-full px-3 py-1.5 text-xs font-extrabold text-white"
-              >
-                +30 충전
-              </button>
+              {!master && (
+                <button
+                  type="button"
+                  onClick={topUp}
+                  style={{ background: accent }}
+                  className="shrink-0 rounded-full px-3 py-1.5 text-xs font-extrabold text-white"
+                >
+                  +30 충전
+                </button>
+              )}
               <button
                 type="button"
                 onClick={doLogout}
@@ -402,13 +443,16 @@ export default function SettingsPage() {
               ))}
             </div>
           </section>
+          </>)}
 
-          {/* ── 나라(테마) ── */}
+          {/* ── 나라(테마) ── 게스트도 바꿀 수 있는 유일한 설정(스킨). */}
           <section className="flex flex-col gap-2.5">
             <h2 className="text-sm font-extrabold text-neutral-400">나라 고르기</h2>
             <ThemePicker />
           </section>
 
+          {/* 아래는 전부 회원 전용 — 게스트에겐 숨긴다. */}
+          {!guest && (<>
           {/* ── 목소리 (성우 전용) ── */}
           <section className="flex flex-col gap-2.5">
             <h2 className="text-sm font-extrabold text-neutral-400">읽어주는 목소리</h2>
@@ -579,26 +623,32 @@ export default function SettingsPage() {
             </p>
           </section>
 
-          {/* ── 언어 ── */}
+          {/* ── 언어 ── 지금은 한국어만 서비스. 영어·일본어는 준비 중이라 못 고른다. */}
           <section className="flex flex-col gap-2.5">
             <h2 className="text-sm font-extrabold text-neutral-400">동화 언어</h2>
             <div className="flex items-center gap-3">
               {FLAGS.map((f) => {
                 const active = f.lang === lang;
+                const ready = f.lang === "ko"; // 한국어만 서비스 중
                 return (
                   <button
                     key={f.lang}
                     type="button"
+                    disabled={!ready}
                     onClick={() => {
+                      if (!ready) return;
                       setLang(f.lang);
                       saveLang(f.lang);
                       flashSaved();
                     }}
                     aria-pressed={active}
-                    className={`flex items-center gap-2 rounded-full border-2 py-1.5 pl-1.5 pr-3.5 font-bold transition ${
-                      active
-                        ? "border-neutral-300 bg-white shadow"
-                        : "border-transparent bg-neutral-100 opacity-70 hover:opacity-100"
+                    title={ready ? undefined : "아직 서비스 준비 전이에요"}
+                    className={`relative flex items-center gap-2 rounded-full border-2 py-1.5 pl-1.5 pr-3.5 font-bold transition ${
+                      !ready
+                        ? "cursor-not-allowed border-transparent bg-neutral-100 opacity-40"
+                        : active
+                          ? "border-neutral-300 bg-white shadow"
+                          : "border-transparent bg-neutral-100 opacity-70 hover:opacity-100"
                     }`}
                   >
                     <span className="block h-7 w-7 overflow-hidden rounded-full border border-black/10">
@@ -606,10 +656,18 @@ export default function SettingsPage() {
                       <img src={f.src} alt="" className="h-full w-full object-cover" />
                     </span>
                     <span className="text-sm text-neutral-700">{f.label}</span>
+                    {!ready && (
+                      <span className="ml-0.5 rounded-full bg-neutral-300 px-1.5 py-0.5 text-[9px] font-extrabold text-neutral-600">
+                        준비중
+                      </span>
+                    )}
                   </button>
                 );
               })}
             </div>
+            <p className="text-[11px] font-medium text-neutral-400">
+              지금은 <b>한국어</b>만 서비스해요. 영어·일본어는 아직 준비 전이에요.
+            </p>
           </section>
 
           {/* ── 내 동화 관리 ── 만든 책 전체. 책장 노출(숨기기/보이기)과 영구 삭제를
@@ -673,30 +731,30 @@ export default function SettingsPage() {
               ) : (
                 <ul className="flex flex-col gap-2">
                   {members.map((m) => {
-                    const books = loadUserBooks(m.id);
                     const open = openMember === m.id;
                     return (
                       <li key={m.id} className="overflow-hidden rounded-2xl bg-neutral-100">
                         <button
                           type="button"
-                          onClick={() => setOpenMember(open ? null : m.id)}
+                          onClick={() => toggleMember(m.id)}
                           className="flex w-full items-center gap-2 px-4 py-3 text-left"
                         >
                           <span className="flex-1 truncate text-sm font-extrabold text-neutral-800">
-                            {m.id}
+                            {m.username}
                           </span>
-                          <span className="shrink-0 text-xs font-bold text-neutral-500">
-                            🪙{m.tokens} · 동화 {books.length}권
+                          <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-neutral-500">
+                            <span aria-hidden className="inline-block rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
+                            {m.tokens}
                           </span>
                           <span className="shrink-0 text-neutral-400">{open ? "▲" : "▼"}</span>
                         </button>
                         {open && (
                           <div className="border-t border-neutral-200 bg-white px-4 py-2">
-                            {books.length === 0 ? (
+                            {openMemberBooks.length === 0 ? (
                               <p className="py-1 text-xs font-medium text-neutral-400">만든 동화가 없어요.</p>
                             ) : (
                               <ul className="flex flex-col divide-y divide-neutral-100">
-                                {books.map((b) => (
+                                {openMemberBooks.map((b) => (
                                   <li key={b.id} className="flex items-center gap-2 py-2">
                                     <span className="flex-1 truncate text-sm font-bold text-neutral-700">
                                       {b.title}
@@ -722,6 +780,7 @@ export default function SettingsPage() {
               )}
             </section>
           )}
+          </>)}
 
           {/* 모두 자동 저장이라 이 버튼은 "닫기"일 뿐이지만, 마무리 버튼이 있어야 안심한다. */}
           <button

@@ -1,161 +1,154 @@
 /**
- * 회원가입/로그인 — 베타. 아이디/비밀번호만 받는다.
+ * 회원가입/로그인 — Supabase Auth 기반.
  *
- * ⚠️ 베타 한정: 계정과 토큰을 이 기기의 localStorage에만 저장한다. 서버가 없어서
- * "실제 보안"은 아니다(기기 주인은 값을 볼 수 있다). Supabase Auth가 붙으면 이 파일의
- * 저장처만 서버로 바꾸면 된다 — 화면·호출부는 그대로 쓴다.
+ * "아이디"만 받되 Supabase는 이메일 로그인이라, 아이디를 `아이디@voice-storybook.local`
+ * 가짜 이메일로 합성해 쓴다(그래서 Supabase Authentication에서 "Confirm email"을 꺼야 함).
+ * 토큰·마스터 여부는 profiles 테이블에 있고, 가입 시 DB 트리거가 자동으로 프로필을 만든다.
+ *
+ * 게스트(비회원 둘러보기)는 서버 계정이 아니라 이 기기의 플래그다.
  */
-import { SIGNUP_BONUS_TOKENS } from "./tokens";
+import { clearChild } from "@/lib/prefs";
+import { getSupabase } from "@/lib/supabase";
 
-export type BetaUser = {
+// 아이디를 이메일로 합성할 때 쓰는 도메인. Supabase가 .local 같은 비표준 TLD는
+// "유효하지 않은 이메일"로 거부하므로, 형식상 유효한 .com을 쓴다(메일은 안 보냄).
+const EMAIL_DOMAIN = "voice-storybook.com";
+const GUEST_KEY = "voice-storybook:guest";
+
+/** 마스터(관리자) 아이디 — 트리거가 이 아이디에 is_master=true를 준다. */
+export const MASTER_ID = "yogico";
+
+export type Profile = {
   id: string;
-  passHash: string;
+  username: string;
   tokens: number;
-  createdAt: string;
+  is_master: boolean;
 };
 
-const USERS_KEY = "voice-storybook:users";
-const SESSION_KEY = "voice-storybook:session";
+export type SessionState = {
+  uid: string | null;
+  profile: Profile | null;
+  guest: boolean;
+  isMaster: boolean;
+};
 
-/** 마스터(관리자) 계정 — 회원 목록·회원별 책장을 열람할 수 있다. 별도 가입 없이 로그인. */
-export const MASTER_ID = "yogico";
-const MASTER_PW = "korea2026!!";
-
-export function isMaster(): boolean {
-  return currentUserId() === MASTER_ID;
-}
-
-/** 베타용 간단 해시(djb2). 암호학적 보안이 아니라 평문 저장만 피하는 수준. */
-function hash(s: string): string {
-  let h = 5381;
-  for (const ch of s) h = ((h * 33) ^ ch.charCodeAt(0)) >>> 0;
-  return h.toString(36);
-}
-function passHash(id: string, password: string): string {
-  return hash(`${id}::${password}::voice-storybook`);
-}
-
-function loadUsers(): Record<string, BetaUser> {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = window.localStorage.getItem(USERS_KEY);
-    const v = raw ? (JSON.parse(raw) as Record<string, BetaUser>) : {};
-    return v && typeof v === "object" ? v : {};
-  } catch {
-    return {};
-  }
-}
-function saveUsers(map: Record<string, BetaUser>): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(USERS_KEY, JSON.stringify(map));
-}
-
-/** 아이디 규칙 — 2~20자, 공백 없이. */
 function normId(id: string): string {
   return id.trim().toLowerCase();
 }
+function emailFor(id: string): string {
+  return `${normId(id)}@${EMAIL_DOMAIN}`;
+}
 
-export type AuthResult = { ok: true; user: BetaUser } | { ok: false; error: string };
+/** Supabase 오류 메시지를 사용자 말로. */
+function friendly(msg: string): string {
+  const m = msg.toLowerCase();
+  if (m.includes("already registered") || m.includes("already been registered")) return "이미 있는 아이디예요.";
+  if (m.includes("invalid login")) return "아이디 또는 비밀번호가 틀렸어요.";
+  if (m.includes("email") && m.includes("confirm")) return "이메일 확인 설정을 꺼주세요(관리자).";
+  return msg;
+}
 
-export function signUp(idRaw: string, password: string): AuthResult {
+export type AuthResult = { ok: true; profile: Profile } | { ok: false; error: string };
+
+/** 현재 로그인 회원의 프로필을 서버에서 읽는다. 로그인 안 했으면 null. */
+export async function fetchProfile(): Promise<Profile | null> {
+  const sb = getSupabase();
+  if (!sb) return null;
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return null;
+  const { data } = await sb.from("profiles").select("id,username,tokens,is_master").eq("id", user.id).maybeSingle();
+  return (data as Profile) ?? null;
+}
+
+/** 로그인/게스트 상태를 한 번에 읽는다 — 페이지 게이트에서 useEffect로 호출. */
+export async function loadSession(): Promise<SessionState> {
+  const guest = isGuest();
+  const sb = getSupabase();
+  if (!sb) return { uid: null, profile: null, guest, isMaster: false };
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return { uid: null, profile: null, guest, isMaster: false };
+  const profile = await fetchProfile();
+  return { uid: user.id, profile, guest: false, isMaster: !!profile?.is_master };
+}
+
+export async function signUp(idRaw: string, password: string): Promise<AuthResult> {
   const id = normId(idRaw);
   if (id.length < 2 || id.length > 20 || /\s/.test(id)) {
     return { ok: false, error: "아이디는 공백 없이 2~20자로 적어주세요." };
   }
-  if (password.length < 4) {
-    return { ok: false, error: "비밀번호는 4자 이상으로 적어주세요." };
-  }
-  const users = loadUsers();
-  if (users[id]) return { ok: false, error: "이미 있는 아이디예요." };
-  const user: BetaUser = {
-    id,
-    passHash: passHash(id, password),
-    tokens: SIGNUP_BONUS_TOKENS, // 가입 보너스
-    createdAt: new Date().toISOString(),
-  };
-  users[id] = user;
-  saveUsers(users);
-  setSession(id);
-  return { ok: true, user };
+  if (password.length < 4) return { ok: false, error: "비밀번호는 4자 이상으로 적어주세요." };
+  const sb = getSupabase();
+  if (!sb) return { ok: false, error: "서버(Supabase)가 설정되지 않았어요." };
+
+  const { error } = await sb.auth.signUp({
+    email: emailFor(id),
+    password,
+    options: { data: { username: id } },
+  });
+  if (error) return { ok: false, error: friendly(error.message) };
+  clearGuest();
+  clearChild(); // 새 계정은 이전 계정의 아이 정보가 남지 않게 비우고 시작
+  // 트리거가 프로필을 만든다. 방금 만들어졌으니 살짝 기다렸다 읽어도 되지만, 대개 즉시 조회됨.
+  const profile = await fetchProfile();
+  if (!profile) return { ok: false, error: "가입은 됐는데 프로필을 못 읽었어요. 이메일 확인 설정을 꺼주세요." };
+  return { ok: true, profile };
 }
 
-export function logIn(idRaw: string, password: string): AuthResult {
+export async function logIn(idRaw: string, password: string): Promise<AuthResult> {
   const id = normId(idRaw);
-  const users = loadUsers();
-
-  // 마스터 계정 — 가입 없이 고정 비번으로 로그인. 없으면 만들어 둔다.
-  if (id === MASTER_ID) {
-    if (password !== MASTER_PW) {
-      return { ok: false, error: "아이디 또는 비밀번호가 틀렸어요." };
-    }
-    let master = users[MASTER_ID];
-    if (!master) {
-      master = { id: MASTER_ID, passHash: passHash(MASTER_ID, MASTER_PW), tokens: 9999, createdAt: new Date().toISOString() };
-      users[MASTER_ID] = master;
-      saveUsers(users);
-    }
-    setSession(MASTER_ID);
-    return { ok: true, user: master };
-  }
-
-  const user = users[id];
-  if (!user || user.passHash !== passHash(id, password)) {
-    return { ok: false, error: "아이디 또는 비밀번호가 틀렸어요." };
-  }
-  setSession(id);
-  return { ok: true, user };
+  const sb = getSupabase();
+  if (!sb) return { ok: false, error: "서버(Supabase)가 설정되지 않았어요." };
+  const { error } = await sb.auth.signInWithPassword({ email: emailFor(id), password });
+  if (error) return { ok: false, error: friendly(error.message) };
+  clearGuest();
+  const profile = await fetchProfile();
+  if (!profile) return { ok: false, error: "로그인은 됐는데 프로필을 못 읽었어요." };
+  return { ok: true, profile };
 }
 
-export function logOut(): void {
+export async function logOut(): Promise<void> {
+  clearGuest();
+  clearChild(); // 계정 전환 시 아이 정보가 섞이지 않게
+  await getSupabase()?.auth.signOut();
+}
+
+/** 토큰 차감 — 잔액이 충분하면 깎고 true, 부족/실패면 false. (베타: 조회 후 갱신) */
+export async function spendTokens(n: number): Promise<boolean> {
+  const sb = getSupabase();
+  if (!sb) return false;
+  const profile = await fetchProfile();
+  if (!profile || profile.tokens < n) return false;
+  const { error } = await sb.from("profiles").update({ tokens: profile.tokens - n }).eq("id", profile.id);
+  return !error;
+}
+
+/** 토큰 충전(베타). */
+export async function addTokens(n: number): Promise<void> {
+  const sb = getSupabase();
+  if (!sb) return;
+  const profile = await fetchProfile();
+  if (!profile) return;
+  await sb.from("profiles").update({ tokens: profile.tokens + n }).eq("id", profile.id);
+}
+
+/** 전체 회원 목록 (마스터만 RLS로 허용). 마스터 자신은 뺀다. */
+export async function loadAllUsers(): Promise<Profile[]> {
+  const sb = getSupabase();
+  if (!sb) return [];
+  const { data } = await sb.from("profiles").select("id,username,tokens,is_master").neq("username", MASTER_ID);
+  return (data as Profile[]) ?? [];
+}
+
+/* ── 게스트(비회원) — 서버 계정이 아니라 이 기기 플래그 ── */
+export function enterGuest(): void {
   if (typeof window === "undefined") return;
-  window.localStorage.removeItem(SESSION_KEY);
+  window.localStorage.setItem(GUEST_KEY, "1");
 }
-
-function setSession(id: string): void {
+export function clearGuest(): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(SESSION_KEY, id);
+  window.localStorage.removeItem(GUEST_KEY);
 }
-
-export function currentUserId(): string | null {
-  if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(SESSION_KEY);
-}
-
-export function currentUser(): BetaUser | null {
-  const id = currentUserId();
-  if (!id) return null;
-  return loadUsers()[id] ?? null;
-}
-
-/** 전체 회원 목록 (마스터 열람용). 마스터 자신은 뺀다. */
-export function loadAllUsers(): BetaUser[] {
-  return Object.values(loadUsers()).filter((u) => u.id !== MASTER_ID);
-}
-
-/** 현재 토큰 잔액. 로그인 안 했으면 0. */
-export function getTokens(): number {
-  return currentUser()?.tokens ?? 0;
-}
-
-/** 토큰 차감 — 잔액이 충분하면 깎고 true, 부족하면 그대로 false. */
-export function spendTokens(n: number): boolean {
-  const id = currentUserId();
-  if (!id) return false;
-  const users = loadUsers();
-  const user = users[id];
-  if (!user || user.tokens < n) return false;
-  user.tokens -= n;
-  saveUsers(users);
-  return true;
-}
-
-/** 토큰 충전(베타) — 나중에 결제로 대체. */
-export function addTokens(n: number): void {
-  const id = currentUserId();
-  if (!id) return;
-  const users = loadUsers();
-  const user = users[id];
-  if (!user) return;
-  user.tokens += n;
-  saveUsers(users);
+export function isGuest(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(GUEST_KEY) === "1";
 }

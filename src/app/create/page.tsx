@@ -7,9 +7,9 @@ import { BookViewer } from "@/components/BookViewer";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceInput } from "@/components/VoiceInput";
 import { ART_STYLES } from "@/lib/art-styles";
-import { currentUserId, getTokens, spendTokens } from "@/lib/auth";
-import { loadChild, saveChild, saveMyBook } from "@/lib/prefs";
-import { COST_ILLUSTRATED_BOOK, COST_TEXT_BOOK } from "@/lib/tokens";
+import { loadSession, spendTokens } from "@/lib/auth";
+import { loadChild, loadMyBooks, saveChild, saveMyBook } from "@/lib/prefs";
+import { COST_ILLUSTRATED_BOOK, COST_TEXT_BOOK, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
 import {
@@ -269,14 +269,31 @@ export default function CreatePage() {
   const { accent, accentDark, accentSoft } = ui.colors;
   const router = useRouter();
 
-  // 로그인 게이트 + 토큰 잔액. 로그인 안 했으면 로그인 화면으로 보낸다.
+  // 로그인 게이트 + 토큰 잔액 + 이미 만든 권수(5권 제한). 로그인 안 했으면 로그인으로.
   const [tokens, setTokens] = useState(0);
+  const [master, setMaster] = useState(false);
+  const [bookCount, setBookCount] = useState(0);
   useEffect(() => {
-    if (!currentUserId()) router.replace("/login");
-    else setTokens(getTokens());
+    let alive = true;
+    (async () => {
+      const s = await loadSession();
+      if (!alive) return;
+      if (!s.uid) {
+        router.replace("/login");
+        return;
+      }
+      setTokens(s.profile?.tokens ?? 0);
+      setMaster(s.isMaster);
+      setBookCount((await loadMyBooks()).length);
+    })();
+    return () => {
+      alive = false;
+    };
   }, [router]);
   // 이번에 만들 동화의 토큰 값 (그림 켜짐=그림동화, 아니면 글동화).
   const bookCost = IMAGES_ENABLED ? COST_ILLUSTRATED_BOOK : COST_TEXT_BOOK;
+  // 베타 권수 제한(마스터 제외).
+  const bookLimitReached = !master && bookCount >= MAX_BOOKS_PER_USER;
 
   // 설정(⚙️)에 아이 정보가 있으면 미리 채우고 아이정보 단계는 건너뛴다.
   // 주제가 첫 질문이다 — 아이가 고를 것부터. 형제 동화는 재료 화면의 "누구랑"에서 다룬다.
@@ -460,7 +477,7 @@ export default function CreatePage() {
       if (IMAGES_ENABLED) {
         illustrate(data.story);
       } else {
-        finish([], data.story);
+        await finish([], data.story);
       }
     } catch (e) {
       // ESC로 취소한 경우는 오류가 아니다 — 줄거리 화면에 그대로 남는다.
@@ -525,7 +542,7 @@ export default function CreatePage() {
     }
     // 취소했더라도 그때까지 그린 쪽으로 완성 화면을 보여준다 (나머지는 플레이스홀더).
     setPageImages(images);
-    finish(images, s);
+    await finish(images, s);
   }
 
   /**
@@ -533,12 +550,13 @@ export default function CreatePage() {
    * /book/[id]로 다시 열 수 있다(예전엔 id="new"로 한 번 보고 사라졌다).
    * story는 인자로 받는다 — setStory 직후엔 state가 아직 안 바뀌어 있어서다.
    */
-  function finish(images: (string | null)[], s: Story | null = story) {
+  async function finish(images: (string | null)[], s: Story | null = story) {
     if (!s) return;
     // 완성 시 토큰 차감 — 그림이 들어갔으면 그림동화 값, 아니면 글동화 값.
     const illustrated = images.some(Boolean);
-    spendTokens(illustrated ? COST_ILLUSTRATED_BOOK : COST_TEXT_BOOK);
-    setTokens(getTokens());
+    const cost = illustrated ? COST_ILLUSTRATED_BOOK : COST_TEXT_BOOK;
+    await spendTokens(cost);
+    setTokens((t) => Math.max(0, t - cost));
     const book: Book = {
       id: `my-${Date.now().toString(36)}`,
       lang: "ko",
@@ -548,7 +566,7 @@ export default function CreatePage() {
       narrator: narratorVoice,
       pages: s.pages.map((p, i) => ({ text: p.text, image: images[i] ?? null })),
     };
-    saveMyBook(book);
+    await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
     prewarmNarration(s);
     setFinalBook(book);
     setStep("done");
@@ -1304,21 +1322,27 @@ export default function CreatePage() {
                         ? "이 줄거리로 그림동화를 만들까요?"
                         : "이 줄거리로 동화를 만들까요?"}
                     </p>
-                    <p className="text-[11px] font-medium text-neutral-400">
-                      🪙 토큰 {bookCost}개 사용 (내 잔액 {tokens}개)
+                    <p className="flex items-center justify-center gap-1 text-[11px] font-medium text-neutral-400">
+                      <span aria-hidden className="inline-block rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
+                      토큰 {bookCost}개 사용 (내 잔액 {tokens}개)
                       {IMAGES_ENABLED && ` · 그림 ${outline.scenes.length}쪽 포함 · 약 1~2분`}
                     </p>
-                    {tokens < bookCost && (
+                    {bookLimitReached ? (
+                      <p className="text-center text-xs font-bold text-red-600">
+                        베타에서는 아이디당 최대 {MAX_BOOKS_PER_USER}권까지 만들 수 있어요.
+                        <br />설정 › 내 동화에서 지우면 다시 만들 수 있어요.
+                      </p>
+                    ) : tokens < bookCost ? (
                       <p className="text-center text-xs font-bold text-red-600">
                         토큰이 부족해요. 설정에서 충전할 수 있어요.
                       </p>
-                    )}
+                    ) : null}
                     <div className="flex gap-3">
                       <BigButton
                         accent={accent}
                         accentDark={accentDark}
                         onClick={() => {
-                          if (tokens < bookCost) return;
+                          if (tokens < bookCost || bookLimitReached) return;
                           setConfirmMake(false);
                           makeStory();
                         }}

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { BgVideo } from "@/components/BgVideo";
 import { Bookshelf } from "@/components/Bookshelf";
 import { useTheme } from "@/components/ThemeProvider";
-import { currentUserId, getTokens, logOut } from "@/lib/auth";
+import { loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
@@ -16,16 +16,30 @@ import type { Book } from "@/lib/types";
 export default function Home() {
   const { theme } = useTheme();
   const router = useRouter();
-  // 로그인 게이트(베타) — 로그인 안 했으면 로그인 화면으로. authed=null은 확인 전(깜빡임 방지).
+  // 로그인 게이트(베타) — 로그인/게스트 둘 다 아니면 로그인 화면으로. authed=null은 확인 전.
   const [authed, setAuthed] = useState<boolean | null>(null);
+  const [guest, setGuest] = useState(false);
+  const [master, setMaster] = useState(false);
   const [tokens, setTokens] = useState(0);
+  const [myBooks, setMyBooks] = useState<Book[]>([]);
   useEffect(() => {
-    if (!currentUserId()) {
-      router.replace("/login");
-      return;
-    }
-    setAuthed(true);
-    setTokens(getTokens());
+    let alive = true;
+    (async () => {
+      const s = await loadSession();
+      if (!alive) return;
+      if (!s.uid && !s.guest) {
+        router.replace("/login");
+        return;
+      }
+      setAuthed(true);
+      setGuest(s.guest);
+      setMaster(s.isMaster);
+      setTokens(s.profile?.tokens ?? 0);
+      if (s.uid) setMyBooks(await loadMyBooks());
+    })();
+    return () => {
+      alive = false;
+    };
   }, [router]);
   // 그림책나라 배경(이사님 hero)은 인물이 크게 담겨 넓은 화면에서 꽉 차 부담스럽다.
   // 살짝 흐리고 흰 베일을 더 얹어 은은하게 가라앉힌다 — 이 테마에만 적용한다.
@@ -35,15 +49,12 @@ export default function Home() {
   const all = books as Book[];
   // 저장된 언어는 서버 렌더 이후에 읽어 첫 HTML과 클라이언트 첫 렌더를 맞춘다.
   const [lang, setLang] = useState("ko");
-  // 내가 만든 책도 서버 렌더 이후(마운트 후) localStorage에서 읽는다.
-  const [myBooks, setMyBooks] = useState<Book[]>([]);
-  useEffect(() => {
-    setLang(loadLang());
-    setMyBooks(loadMyBooks());
-  }, []);
-  // 내가 만든 책(최신 먼저, 숨긴 건 제외) + 샘플. "우리 가족 책장"에 함께 뜬다.
-  // 책 관리(숨김·삭제)는 책장이 아니라 설정(⚙️) › "내 동화"에서 한다.
-  const mine = [...myBooks, ...all].filter((b) => b.lang === lang && !b.hidden);
+  useEffect(() => setLang(loadLang()), []);
+  // (myBooks는 위 로그인 세션 확인 useEffect에서 Supabase로 불러온다.)
+  // "우리 가족 책장" = 내가 만든 책(최신 먼저, 숨긴 건 제외).
+  // 샘플 3권(sample-books.json)은 마스터가 만든 데모라 마스터에게만 보인다 — 일반 회원엔
+  // 안 보인다(빈 책장부터 시작). 책 관리는 설정(⚙️) › "내 동화"에서 한다.
+  const mine = [...myBooks, ...(master ? all : [])].filter((b) => b.lang === lang && !b.hidden);
 
   // 은은하게 움직이는 배경 영상(/themes/<id>/bg-video.mp4)이 있는 테마.
   // 파일을 넣고 여기 id만 추가하면 그 테마 홈이 살아 움직인다.
@@ -58,6 +69,10 @@ export default function Home() {
   // 책장 탭 — 내가 만든 책 | 제공 서가(전래동화·세계명작, 빈 책장 해결사).
   // 제공 서가는 언어 필터를 안 탄다 — 서가 자체가 콘텐츠다.
   const [shelf, setShelf] = useState<"mine" | "folk" | "classic">("mine");
+  // 게스트는 "우리 가족 책장"이 로그인 안내라, 콘텐츠가 있는 전래동화 탭을 먼저 보여준다.
+  useEffect(() => {
+    if (guest) setShelf("folk");
+  }, [guest]);
   // hidden 책은 서가에서만 내린다 (주소로는 열림) — 다듬는 중인 책 보관용.
   const folk = (folkBooksJson as Book[]).filter((b) => !b.hidden);
   const classics = (classicBooksJson as Book[]).filter((b) => !b.hidden);
@@ -115,16 +130,41 @@ export default function Home() {
 
       {/* 아래 여백: 폰은 버튼이 흐름 안에 있어 얕게, sm부터는 떠 있는 버튼 자리만큼. */}
       <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center px-6 pb-10 pt-6 sm:pb-32">
-        {/* 토큰 잔액 배지 — 누르면 설정(충전)으로. 부모용 정보라 좌상단에 얹는다. */}
-        <Link
-          href="/settings"
-          aria-label="내 토큰"
-          className="fixed left-4 top-4 z-10 flex items-center gap-1 rounded-full bg-white/85 px-3.5 py-2 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
-        >
-          🪙 {tokens}
-        </Link>
+        {/* 좌상단 — 회원은 토큰 잔액(누르면 설정), 게스트는 로그인 버튼. */}
+        {guest ? (
+          <Link
+            href="/login"
+            className="fixed left-4 top-4 z-10 flex items-center gap-1 rounded-full bg-white/85 px-3.5 py-2 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+          >
+            로그인 / 회원가입
+          </Link>
+        ) : (
+          <Link
+            href="/settings"
+            aria-label={master ? "관리자" : "내 토큰"}
+            className="fixed left-4 top-4 z-10 flex items-center gap-1 rounded-full bg-white/85 px-3.5 py-2 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+          >
+            {master ? (
+              "👑 관리자"
+            ) : (
+              <>
+                <span
+                  aria-hidden
+                  className="inline-block rounded-full"
+                  style={{
+                    width: 14,
+                    height: 14,
+                    background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)",
+                    boxShadow: "inset 0 0 0 1.5px rgba(255,255,255,.5)",
+                  }}
+                />
+                {tokens}
+              </>
+            )}
+          </Link>
+        )}
 
-        {/* 설정(⚙️) — 아이 정보·나라·언어·계정은 전부 이 뒤에 있다. 부모용. */}
+        {/* 설정(⚙️) — 회원은 전체 설정, 게스트는 스킨(나라)만 바꿀 수 있다. */}
         <Link
           href="/settings"
           aria-label="설정"
@@ -174,7 +214,7 @@ export default function Home() {
             기억하므로 테마마다 바뀌면 매번 다시 배워야 한다. 색만 테마를 따른다.
         */}
         <Link
-          href="/create"
+          href={guest ? "/login" : "/create"}
           aria-label="우리 가족 동화 만들기"
           className="mx-auto mb-7 flex w-full max-w-sm items-center justify-center gap-2 rounded-full px-6 py-3.5 text-white transition-transform active:translate-y-0.5 sm:hidden"
           style={{
@@ -184,7 +224,9 @@ export default function Home() {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/icons/create.webp" alt="" className="h-9 w-9 object-contain" />
-          <span className="text-xl font-extrabold tracking-tight">동화 만들기</span>
+          <span className="text-xl font-extrabold tracking-tight">
+            {guest ? "로그인하고 만들기" : "동화 만들기"}
+          </span>
         </Link>
 
         {/* 책장 탭 — 아이 책장이 비어 있어도 전래동화가 있어 첫 화면이 허전하지 않다.
@@ -231,13 +273,35 @@ export default function Home() {
               alt=""
               className="h-20 w-20 rounded-full border-4 border-white object-cover shadow"
             />
-            {shelf === "mine" ? (
+            {shelf === "mine" && guest ? (
+              <>
+                <p className="text-lg font-extrabold text-neutral-700">로그인하면 나만의 동화를 만들어요</p>
+                <p className="text-sm font-bold leading-relaxed text-neutral-400">
+                  우리 아이가 주인공인 동화를 만들려면 로그인이 필요해요.
+                  <br />
+                  지금은{" "}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/icons/tab-mine.webp" alt="" className="inline-block h-4 w-4 align-[-0.2em]" />{" "}
+                  전래동화·세계명작을 둘러볼 수 있어요.
+                </p>
+                <Link
+                  href="/login"
+                  className="mt-1 rounded-full px-6 py-2.5 text-sm font-extrabold text-white"
+                  style={{ background: theme.colors.accent }}
+                >
+                  로그인 / 회원가입
+                </Link>
+              </>
+            ) : shelf === "mine" ? (
               <>
                 <p className="text-lg font-extrabold text-neutral-700">아직 만든 동화가 없어요</p>
                 <p className="text-sm font-bold leading-relaxed text-neutral-400">
                   우리 아이가 주인공인 첫 동화를 만들어 보세요!
                   <br />
-                  기다리는 동안 🏮 전래동화도 들어볼 수 있어요.
+                  기다리는 동안{" "}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/icons/tab-mine.webp" alt="" className="inline-block h-4 w-4 align-[-0.2em]" />{" "}
+                  전래동화도 들어볼 수 있어요.
                 </p>
               </>
             ) : (
@@ -257,7 +321,7 @@ export default function Home() {
 
 
         <Link
-          href="/create"
+          href={guest ? "/login" : "/create"}
           aria-label="우리 가족 동화 만들기"
           className="fixed bottom-5 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-3 rounded-full px-7 py-3.5 text-white transition-transform hover:-translate-y-0.5 hover:-translate-x-1/2 active:translate-y-0 active:-translate-x-1/2 animate-[float_2.4s_ease-in-out_infinite] sm:flex lg:px-8 lg:py-4 [@media(max-height:600px)]:px-4 [@media(max-height:600px)]:py-2"
           style={{
@@ -273,7 +337,7 @@ export default function Home() {
             className="h-10 w-10 object-contain lg:h-12 lg:w-12 [@media(max-height:600px)]:h-7 [@media(max-height:600px)]:w-7"
           />
           <span className="text-xl font-extrabold tracking-tight lg:text-2xl [@media(max-height:600px)]:text-base">
-            동화 만들기
+            {guest ? "로그인하고 만들기" : "동화 만들기"}
           </span>
         </Link>
       </main>

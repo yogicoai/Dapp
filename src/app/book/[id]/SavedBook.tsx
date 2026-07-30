@@ -13,7 +13,15 @@ import type { Book } from "@/lib/types";
  */
 export function SavedBook({ id }: { id: string }) {
   const [book, setBook] = useState<Book | null | undefined>(undefined);
-  useEffect(() => setBook(loadMyBook(id)), [id]);
+  useEffect(() => {
+    let alive = true;
+    loadMyBook(id).then((b) => {
+      if (alive) setBook(b);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [id]);
 
   if (book === undefined) return null; // 조회 중 — 깜빡임 방지로 빈 화면
   if (book) return <BookViewer book={book} />;
@@ -22,7 +30,7 @@ export function SavedBook({ id }: { id: string }) {
     <div className="flex min-h-dvh flex-col items-center justify-center gap-4 p-8 text-center">
       <p className="text-lg font-extrabold text-neutral-700">동화를 찾을 수 없어요</p>
       <p className="text-sm font-medium text-neutral-400">
-        이 기기에 저장된 책이 아니거나 지워졌을 수 있어요.
+        이 계정으로 볼 수 없는 책이거나 지워졌을 수 있어요.
       </p>
       <Link
         href="/"

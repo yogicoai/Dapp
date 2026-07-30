@@ -4,7 +4,7 @@
  * Supabase가 붙으면 이 파일의 저장처만 DB로 바뀐다.
  */
 
-import { currentUserId } from "@/lib/auth";
+import { getSupabase } from "@/lib/supabase";
 import type { Book } from "@/lib/types";
 
 export type Gender = "girl" | "boy" | "unspecified";
@@ -40,6 +40,12 @@ export function loadChild(): ChildPrefs | null {
 export function saveChild(child: ChildPrefs): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(CHILD_KEY, JSON.stringify(child));
+}
+
+/** 아이 정보 비우기 — 새 계정으로 가입/로그아웃 시 이전 계정의 아이 정보가 남지 않게. */
+export function clearChild(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(CHILD_KEY);
 }
 
 export function loadLang(): string {
@@ -130,88 +136,74 @@ export function saveBookProgress(id: string, page: number): void {
 }
 
 /**
- * 내가 만든 책 — 만들기에서 완성한 동화를 기기에 저장한다. "우리 가족 책장"이
- * 이 목록을 읽고, /book/[id]가 JSON에 없는 id를 여기서 찾는다.
- *
- * 회원별로 분리 저장한다: { 회원id: Book[] }. 그래야 각자 책장이 따로 보이고,
- * 마스터가 회원별 책장을 열람할 수 있다. DB(Supabase)가 붙으면 이 저장처만 바뀐다.
- * (옛 배열 포맷은 무시하고 새 맵으로 시작한다 — 베타 테스트 데이터.)
+ * 내가 만든 책 — Supabase `books` 테이블에 저장한다. "우리 가족 책장"이 이 목록을 읽고,
+ * /book/[id]가 JSON에 없는 id를 여기서 찾는다. 마스터는 RLS로 전 회원 책을 열람할 수 있다.
+ * 삽화·음성은 무거우니 파일 자체는 cafe24 URL로 두고, 여기 data(jsonb)엔 그 URL만 들어간다.
  */
-const MY_BOOKS_KEY = "voice-storybook:mybooks";
-type BooksMap = Record<string, Book[]>;
+type BookRow = { id: string; owner: string; title: string | null; data: Book; hidden: boolean };
 
-function loadBooksMap(): BooksMap {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = window.localStorage.getItem(MY_BOOKS_KEY);
-    const v = raw ? JSON.parse(raw) : {};
-    // 옛 포맷(배열)이면 새 맵으로 취급하지 않는다.
-    return v && typeof v === "object" && !Array.isArray(v) ? (v as BooksMap) : {};
-  } catch {
-    return {};
-  }
-}
-function saveBooksMap(map: BooksMap): void {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(MY_BOOKS_KEY, JSON.stringify(map));
-  } catch {
-    // 용량 초과 등 — 조용히 넘긴다.
-  }
+/** DB 행 → Book 객체 (id·hidden은 컬럼 값으로 덮어써 항상 최신). */
+function rowToBook(r: BookRow): Book {
+  return { ...(r.data as Book), id: r.id, hidden: r.hidden };
 }
 
-/** 현재 로그인한 회원의 책. */
-export function loadMyBooks(): Book[] {
-  const uid = currentUserId();
-  if (!uid) return [];
-  return loadBooksMap()[uid] ?? [];
+/** 현재 로그인한 회원의 책 (최신 먼저). */
+export async function loadMyBooks(): Promise<Book[]> {
+  const sb = getSupabase();
+  if (!sb) return [];
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return [];
+  const { data } = await sb
+    .from("books")
+    .select("id,owner,title,data,hidden")
+    .eq("owner", user.id)
+    .order("created_at", { ascending: false });
+  return ((data as BookRow[]) ?? []).map(rowToBook);
 }
 
-/** 특정 회원의 책 (마스터 열람용). */
-export function loadUserBooks(userId: string): Book[] {
-  return loadBooksMap()[userId] ?? [];
+/** 특정 회원의 책 (마스터 열람용 — RLS가 마스터만 허용). */
+export async function loadUserBooks(userId: string): Promise<Book[]> {
+  const sb = getSupabase();
+  if (!sb) return [];
+  const { data } = await sb
+    .from("books")
+    .select("id,owner,title,data,hidden")
+    .eq("owner", userId)
+    .order("created_at", { ascending: false });
+  return ((data as BookRow[]) ?? []).map(rowToBook);
 }
 
-/** 전체 회원의 책 맵 (마스터 열람용). */
-export function loadAllBooksMap(): BooksMap {
-  return loadBooksMap();
+/** book id로 찾기 — 본인 책(또는 마스터면 전체). 주소로 열기·마스터 열람에 쓴다. */
+export async function loadMyBook(id: string): Promise<Book | null> {
+  const sb = getSupabase();
+  if (!sb) return null;
+  const { data } = await sb.from("books").select("id,owner,title,data,hidden").eq("id", id).maybeSingle();
+  return data ? rowToBook(data as BookRow) : null;
 }
 
-/** book id로 찾기 — 어느 회원 것이든 전부 뒤진다(주소로 열기·마스터 열람). */
-export function loadMyBook(id: string): Book | null {
-  for (const arr of Object.values(loadBooksMap())) {
-    const b = arr.find((x) => x.id === id);
-    if (b) return b;
-  }
-  return null;
+export async function saveMyBook(book: Book): Promise<void> {
+  const sb = getSupabase();
+  if (!sb) return;
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+  await sb.from("books").upsert({
+    id: book.id,
+    owner: user.id,
+    title: book.title,
+    data: book,
+    hidden: !!book.hidden,
+  });
 }
 
-export function saveMyBook(book: Book): void {
-  const uid = currentUserId();
-  if (!uid) return;
-  const map = loadBooksMap();
-  const rest = (map[uid] ?? []).filter((b) => b.id !== book.id);
-  rest.unshift(book); // 최신이 책장 맨 앞
-  map[uid] = rest;
-  saveBooksMap(map);
+/** 숨김/복원 — hidden 책은 책장에서 내려가고 주소로는 열린다. */
+export async function setMyBookHidden(id: string, hidden: boolean): Promise<void> {
+  const sb = getSupabase();
+  if (!sb) return;
+  await sb.from("books").update({ hidden }).eq("id", id);
 }
 
-/**
- * 숨김/복원 — 책장의 ×는 '숨김'이다(영구 삭제 아님). hidden 책은 책장에서만 내려가고
- * 주소로는 열린다. 완전 삭제(deleteMyBook)는 설정에서 따로 확인받아 한다.
- */
-export function setMyBookHidden(id: string, hidden: boolean): void {
-  const uid = currentUserId();
-  if (!uid) return;
-  const map = loadBooksMap();
-  map[uid] = (map[uid] ?? []).map((b) => (b.id === id ? { ...b, hidden } : b));
-  saveBooksMap(map);
-}
-
-export function deleteMyBook(id: string): void {
-  const uid = currentUserId();
-  if (!uid) return;
-  const map = loadBooksMap();
-  map[uid] = (map[uid] ?? []).filter((b) => b.id !== id);
-  saveBooksMap(map);
+export async function deleteMyBook(id: string): Promise<void> {
+  const sb = getSupabase();
+  if (!sb) return;
+  await sb.from("books").delete().eq("id", id);
 }

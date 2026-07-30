@@ -16,3 +16,6 @@ export const COST_ILLUSTRATED_BOOK = 10;
 
 /** 글 동화(삽화 없음) 1권 생성 비용(토큰). */
 export const COST_TEXT_BOOK = 3;
+
+/** 베타 한정 — 아이디당 만들 수 있는 동화 최대 권수. (마스터는 제외) */
+export const MAX_BOOKS_PER_USER = 5;
