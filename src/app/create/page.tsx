@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BookViewer } from "@/components/BookViewer";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceInput } from "@/components/VoiceInput";
 import { ART_STYLES } from "@/lib/art-styles";
+import { currentUserId, getTokens, spendTokens } from "@/lib/auth";
 import { loadChild, saveChild, saveMyBook } from "@/lib/prefs";
+import { COST_ILLUSTRATED_BOOK, COST_TEXT_BOOK } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
 import {
@@ -264,6 +267,16 @@ export default function CreatePage() {
   // 주제 입력 상태 이름이 theme이라, UI 테마는 ui로 받는다.
   const { theme: ui } = useTheme();
   const { accent, accentDark, accentSoft } = ui.colors;
+  const router = useRouter();
+
+  // 로그인 게이트 + 토큰 잔액. 로그인 안 했으면 로그인 화면으로 보낸다.
+  const [tokens, setTokens] = useState(0);
+  useEffect(() => {
+    if (!currentUserId()) router.replace("/login");
+    else setTokens(getTokens());
+  }, [router]);
+  // 이번에 만들 동화의 토큰 값 (그림 켜짐=그림동화, 아니면 글동화).
+  const bookCost = IMAGES_ENABLED ? COST_ILLUSTRATED_BOOK : COST_TEXT_BOOK;
 
   // 설정(⚙️)에 아이 정보가 있으면 미리 채우고 아이정보 단계는 건너뛴다.
   // 주제가 첫 질문이다 — 아이가 고를 것부터. 형제 동화는 재료 화면의 "누구랑"에서 다룬다.
@@ -522,6 +535,10 @@ export default function CreatePage() {
    */
   function finish(images: (string | null)[], s: Story | null = story) {
     if (!s) return;
+    // 완성 시 토큰 차감 — 그림이 들어갔으면 그림동화 값, 아니면 글동화 값.
+    const illustrated = images.some(Boolean);
+    spendTokens(illustrated ? COST_ILLUSTRATED_BOOK : COST_TEXT_BOOK);
+    setTokens(getTokens());
     const book: Book = {
       id: `my-${Date.now().toString(36)}`,
       lang: "ko",
@@ -1287,9 +1304,13 @@ export default function CreatePage() {
                         ? "이 줄거리로 그림동화를 만들까요?"
                         : "이 줄거리로 동화를 만들까요?"}
                     </p>
-                    {IMAGES_ENABLED && (
-                      <p className="text-[11px] font-medium text-neutral-400">
-                        글 + 그림 {outline.scenes.length}쪽 · 약 1~2분 · 약 ₩{outline.scenes.length * 55 + 55}
+                    <p className="text-[11px] font-medium text-neutral-400">
+                      🪙 토큰 {bookCost}개 사용 (내 잔액 {tokens}개)
+                      {IMAGES_ENABLED && ` · 그림 ${outline.scenes.length}쪽 포함 · 약 1~2분`}
+                    </p>
+                    {tokens < bookCost && (
+                      <p className="text-center text-xs font-bold text-red-600">
+                        토큰이 부족해요. 설정에서 충전할 수 있어요.
                       </p>
                     )}
                     <div className="flex gap-3">
@@ -1297,6 +1318,7 @@ export default function CreatePage() {
                         accent={accent}
                         accentDark={accentDark}
                         onClick={() => {
+                          if (tokens < bookCost) return;
                           setConfirmMake(false);
                           makeStory();
                         }}

@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BgVideo } from "@/components/BgVideo";
 import { Bookshelf } from "@/components/Bookshelf";
 import { useTheme } from "@/components/ThemeProvider";
+import { currentUserId, getTokens, logOut } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
@@ -13,6 +15,18 @@ import type { Book } from "@/lib/types";
 
 export default function Home() {
   const { theme } = useTheme();
+  const router = useRouter();
+  // 로그인 게이트(베타) — 로그인 안 했으면 로그인 화면으로. authed=null은 확인 전(깜빡임 방지).
+  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [tokens, setTokens] = useState(0);
+  useEffect(() => {
+    if (!currentUserId()) {
+      router.replace("/login");
+      return;
+    }
+    setAuthed(true);
+    setTokens(getTokens());
+  }, [router]);
   // 그림책나라 배경(이사님 hero)은 인물이 크게 담겨 넓은 화면에서 꽉 차 부담스럽다.
   // 살짝 흐리고 흰 베일을 더 얹어 은은하게 가라앉힌다 — 이 테마에만 적용한다.
   const softBg = theme.id === "picturebook";
@@ -48,6 +62,9 @@ export default function Home() {
   const folk = (folkBooksJson as Book[]).filter((b) => !b.hidden);
   const classics = (classicBooksJson as Book[]).filter((b) => !b.hidden);
   const shown = shelf === "mine" ? mine : shelf === "folk" ? folk : classics;
+
+  // 로그인 확인 전에는 빈 화면 — 로그인 화면으로 리다이렉트되는 동안 깜빡임 방지.
+  if (authed === null) return null;
 
   return (
     <div className="relative min-h-dvh w-full overflow-hidden">
@@ -98,7 +115,16 @@ export default function Home() {
 
       {/* 아래 여백: 폰은 버튼이 흐름 안에 있어 얕게, sm부터는 떠 있는 버튼 자리만큼. */}
       <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center px-6 pb-10 pt-6 sm:pb-32">
-        {/* 설정(⚙️) — 아이 정보·나라·언어는 전부 이 뒤에 있다. 부모용. */}
+        {/* 토큰 잔액 배지 — 누르면 설정(충전)으로. 부모용 정보라 좌상단에 얹는다. */}
+        <Link
+          href="/settings"
+          aria-label="내 토큰"
+          className="fixed left-4 top-4 z-10 flex items-center gap-1 rounded-full bg-white/85 px-3.5 py-2 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+        >
+          🪙 {tokens}
+        </Link>
+
+        {/* 설정(⚙️) — 아이 정보·나라·언어·계정은 전부 이 뒤에 있다. 부모용. */}
         <Link
           href="/settings"
           aria-label="설정"

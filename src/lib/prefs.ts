@@ -4,6 +4,7 @@
  * Supabase가 붙으면 이 파일의 저장처만 DB로 바뀐다.
  */
 
+import { currentUserId } from "@/lib/auth";
 import type { Book } from "@/lib/types";
 
 export type Gender = "girl" | "boy" | "unspecified";
@@ -131,58 +132,86 @@ export function saveBookProgress(id: string, page: number): void {
 /**
  * 내가 만든 책 — 만들기에서 완성한 동화를 기기에 저장한다. "우리 가족 책장"이
  * 이 목록을 읽고, /book/[id]가 JSON에 없는 id를 여기서 찾는다.
- * DB(Supabase)가 붙기 전까지 localStorage. 삽화는 data URL이라 용량이 커질 수 있어
- * 최신 것부터 앞에 쌓고, 저장 실패(용량 초과 등)는 조용히 넘긴다.
+ *
+ * 회원별로 분리 저장한다: { 회원id: Book[] }. 그래야 각자 책장이 따로 보이고,
+ * 마스터가 회원별 책장을 열람할 수 있다. DB(Supabase)가 붙으면 이 저장처만 바뀐다.
+ * (옛 배열 포맷은 무시하고 새 맵으로 시작한다 — 베타 테스트 데이터.)
  */
 const MY_BOOKS_KEY = "voice-storybook:mybooks";
+type BooksMap = Record<string, Book[]>;
 
-export function loadMyBooks(): Book[] {
-  if (typeof window === "undefined") return [];
+function loadBooksMap(): BooksMap {
+  if (typeof window === "undefined") return {};
   try {
     const raw = window.localStorage.getItem(MY_BOOKS_KEY);
-    const arr = raw ? (JSON.parse(raw) as Book[]) : [];
-    return Array.isArray(arr) ? arr : [];
+    const v = raw ? JSON.parse(raw) : {};
+    // 옛 포맷(배열)이면 새 맵으로 취급하지 않는다.
+    return v && typeof v === "object" && !Array.isArray(v) ? (v as BooksMap) : {};
   } catch {
-    return [];
+    return {};
+  }
+}
+function saveBooksMap(map: BooksMap): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(MY_BOOKS_KEY, JSON.stringify(map));
+  } catch {
+    // 용량 초과 등 — 조용히 넘긴다.
   }
 }
 
+/** 현재 로그인한 회원의 책. */
+export function loadMyBooks(): Book[] {
+  const uid = currentUserId();
+  if (!uid) return [];
+  return loadBooksMap()[uid] ?? [];
+}
+
+/** 특정 회원의 책 (마스터 열람용). */
+export function loadUserBooks(userId: string): Book[] {
+  return loadBooksMap()[userId] ?? [];
+}
+
+/** 전체 회원의 책 맵 (마스터 열람용). */
+export function loadAllBooksMap(): BooksMap {
+  return loadBooksMap();
+}
+
+/** book id로 찾기 — 어느 회원 것이든 전부 뒤진다(주소로 열기·마스터 열람). */
 export function loadMyBook(id: string): Book | null {
-  return loadMyBooks().find((b) => b.id === id) ?? null;
+  for (const arr of Object.values(loadBooksMap())) {
+    const b = arr.find((x) => x.id === id);
+    if (b) return b;
+  }
+  return null;
 }
 
 export function saveMyBook(book: Book): void {
-  if (typeof window === "undefined") return;
-  try {
-    const books = loadMyBooks().filter((b) => b.id !== book.id);
-    books.unshift(book); // 최신이 책장 맨 앞
-    window.localStorage.setItem(MY_BOOKS_KEY, JSON.stringify(books));
-  } catch {
-    // 용량 초과 등 — 조용히 넘긴다(글은 작아 대개 문제 없다).
-  }
+  const uid = currentUserId();
+  if (!uid) return;
+  const map = loadBooksMap();
+  const rest = (map[uid] ?? []).filter((b) => b.id !== book.id);
+  rest.unshift(book); // 최신이 책장 맨 앞
+  map[uid] = rest;
+  saveBooksMap(map);
 }
 
 /**
- * 숨김/복원 — 책장의 ×는 '숨김'이다(영구 삭제 아님). 실수로 눌러도 설정의
- * "숨긴 동화"에서 되살릴 수 있다. hidden 책은 책장에서만 내려가고 주소로는 열린다.
- * 완전 삭제(deleteMyBook)는 설정에서 따로 확인받아 한다.
+ * 숨김/복원 — 책장의 ×는 '숨김'이다(영구 삭제 아님). hidden 책은 책장에서만 내려가고
+ * 주소로는 열린다. 완전 삭제(deleteMyBook)는 설정에서 따로 확인받아 한다.
  */
 export function setMyBookHidden(id: string, hidden: boolean): void {
-  if (typeof window === "undefined") return;
-  try {
-    const books = loadMyBooks().map((b) => (b.id === id ? { ...b, hidden } : b));
-    window.localStorage.setItem(MY_BOOKS_KEY, JSON.stringify(books));
-  } catch {
-    // 조용히 넘긴다.
-  }
+  const uid = currentUserId();
+  if (!uid) return;
+  const map = loadBooksMap();
+  map[uid] = (map[uid] ?? []).map((b) => (b.id === id ? { ...b, hidden } : b));
+  saveBooksMap(map);
 }
 
 export function deleteMyBook(id: string): void {
-  if (typeof window === "undefined") return;
-  try {
-    const books = loadMyBooks().filter((b) => b.id !== id);
-    window.localStorage.setItem(MY_BOOKS_KEY, JSON.stringify(books));
-  } catch {
-    // 조용히 넘긴다.
-  }
+  const uid = currentUserId();
+  if (!uid) return;
+  const map = loadBooksMap();
+  map[uid] = (map[uid] ?? []).filter((b) => b.id !== id);
+  saveBooksMap(map);
 }

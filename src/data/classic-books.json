@@ -88,7 +88,7 @@
     "pages": [
       {
         "text": "옛날 옛적, 아기 돼지 삼형제가 살았어요.\n어느 날 엄마 돼지가 말했지요.\n\"이제 너희도 다 컸으니, 각자 집을 짓고 살아 보렴!\"",
-        "image": "/classic/threepigs/p1.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p1.webp",
         "audio": "/classic/threepigs/narr-p1.mp3",
         "hotspots": [
           {
@@ -106,7 +106,7 @@
       },
       {
         "text": "첫째 돼지는 놀고 싶은 마음에\n지푸라기를 슥슥 쌓아 금세 집을 지었어요.\n\"히히, 벌써 다 지었다! 이제 신나게 놀아야지!\"",
-        "image": "/classic/threepigs/p2.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p2.webp",
         "audio": "/classic/threepigs/narr-p2.mp3",
         "hotspots": [
           {
@@ -124,7 +124,7 @@
       },
       {
         "text": "둘째 돼지는 나뭇가지를 뚝딱뚝딱 엮어 집을 지었어요.\n\"이 정도면 튼튼하지 뭐!\n형아, 나도 다 지었어! 같이 놀자!\"",
-        "image": "/classic/threepigs/p3.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p3.webp",
         "audio": "/classic/threepigs/narr-p3.mp3",
         "hotspots": [
           {
@@ -142,7 +142,7 @@
       },
       {
         "text": "막내 돼지는 벽돌을 한 장 한 장 정성껏 쌓았어요.\n형들이 지나가다 킥킥 놀렸지요.\n\"야, 뭐하러 그렇게 힘들게 짓는 거야?\"\n\"우리처럼 뚝딱 짓고 노는 게 최고라구! 히히!\"\n\"난 놀기 전에 튼튼한 집부터 지을 거야.\"\n막내는 땀을 뻘뻘 흘리며 꿋꿋이 벽돌을 쌓았답니다.",
-        "image": "/classic/threepigs/p4.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p4.webp",
         "audio": "/classic/threepigs/narr-p4.mp3",
         "hotspots": [
           {
@@ -171,7 +171,7 @@
       },
       {
         "text": "그러던 어느 날, 배고픈 늑대가 나타났어요!\n늑대는 첫째네 지푸라기 집 앞에서 소리쳤지요.\n\"아기 돼지야, 문 열어라! 안 열면 집을 날려 버리겠다!\"",
-        "image": "/classic/threepigs/p5.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p5.webp",
         "audio": "/classic/threepigs/narr-p5.mp3",
         "hotspots": [
           {
@@ -200,7 +200,7 @@
       },
       {
         "text": "\"싫어! 절대 안 열어 줄 거야!\"\n그러자 늑대가 숨을 크게 들이마시고 — 후우우욱!\n지푸라기 집이 폭삭 날아가 버렸어요!",
-        "image": "/classic/threepigs/p6.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p6.webp",
         "audio": "/classic/threepigs/narr-p6.mp3",
         "hotspots": [
           {
@@ -229,7 +229,7 @@
       },
       {
         "text": "\"으악! 살려 줘!\"\n첫째 돼지는 둘째네 나무 집으로 쌩 도망쳤어요.\n하지만 늑대도 성큼성큼 쫓아왔지요.",
-        "image": "/classic/threepigs/p7.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p7.webp",
         "audio": "/classic/threepigs/narr-p7.mp3",
         "hotspots": [
           {
@@ -258,7 +258,7 @@
       },
       {
         "text": "\"아기 돼지들아, 문 열어라!\"\n\"싫어, 싫어! 절대 안 돼!\"\n늑대가 다시 숨을 들이마시고 — 후우우우욱!\n우지끈! 나무 집도 와르르 무너졌어요.",
-        "image": "/classic/threepigs/p8.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p8.webp",
         "audio": "/classic/threepigs/narr-p8.mp3",
         "hotspots": [
           {
@@ -298,7 +298,7 @@
       },
       {
         "text": "첫째와 둘째는 막내네 벽돌 집으로 달려갔어요.\n\"막내야, 살려 줘! 늑대가 와!\"\n막내는 얼른 문을 열어 형들을 숨겨 주었지요.",
-        "image": "/classic/threepigs/p9.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p9.webp",
         "audio": "/classic/threepigs/narr-p9.mp3",
         "hotspots": [
           {
@@ -327,7 +327,7 @@
       },
       {
         "text": "늑대는 벽돌 집 앞에서 있는 힘껏 바람을 불었어요.\n후욱! 후우욱! 후우우우욱!\n하지만 벽돌 집은 꿈쩍도 하지 않았답니다.\n\"아니, 이 집은 왜 안 무너지는 거야?!\"",
-        "image": "/classic/threepigs/p10-bg.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p10-bg.webp",
         "audio": "/classic/threepigs/narr-p10.mp3",
         "hotspots": [
           {
@@ -355,7 +355,7 @@
         ],
         "actors": [
           {
-            "src": "/classic/threepigs/actor-wolf.webp",
+            "src": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/actor-wolf.webp",
             "box": [
               520,
               140,
@@ -368,7 +368,7 @@
       },
       {
         "text": "약이 오른 늑대는 지붕 위로 기어올라갔어요.\n\"흥, 굴뚝으로 들어가면 되지!\"\n그 소리를 들은 막내 돼지는 얼른 벽난로에\n커다란 솥을 걸고 물을 펄펄 끓였지요.",
-        "image": "/classic/threepigs/p11.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p11.webp",
         "audio": "/classic/threepigs/narr-p11.mp3",
         "hotspots": [
           {
@@ -397,7 +397,7 @@
       },
       {
         "text": "늑대가 굴뚝으로 미끄러져 내려온 순간 —\n풍덩! 뜨거운 솥 속에 빠지고 말았어요!\n\"앗, 뜨거뜨거뜨거!\"\n늑대는 꽁지가 빠지게 산 너머로 도망쳤답니다.",
-        "image": "/classic/threepigs/p12.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p12.webp",
         "audio": "/classic/threepigs/narr-p12.mp3",
         "hotspots": [
           {
@@ -437,7 +437,7 @@
       },
       {
         "text": "\"막내야, 고마워. 우리가 게을렀어.\"\n형들은 막내에게 벽돌 쌓는 법을 배워\n튼튼한 벽돌 집을 나란히 지었어요.\n돼지 삼형제는 오래오래 사이좋게 살았답니다.",
-        "image": "/classic/threepigs/p13.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p13.webp",
         "audio": "/classic/threepigs/narr-p13.mp3",
         "hotspots": [
           {
@@ -475,12 +475,12 @@
     "pages": [
       {
         "text": "따뜻한 봄날, 연못가 둥지에서\n엄마 오리가 알을 품고 있었어요.\n그중에 유난히 크고 회색빛인 알이 하나 있었지요.",
-        "image": "/classic/uglyduckling/p1.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p1.webp",
         "audio": "/classic/uglyduckling/narr-p1.mp3"
       },
       {
         "text": "톡, 토독! 알들이 하나씩 깨어났어요.\n노랗고 보송보송한 아기 오리들 사이에서\n마지막 큰 알에서는 잿빛 아기가 나왔답니다.",
-        "image": "/classic/uglyduckling/p2.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p2.webp",
         "audio": "/classic/uglyduckling/narr-p2.mp3",
         "hotspots": [
           {
@@ -498,7 +498,7 @@
       },
       {
         "text": "\"쟤는 왜 우리랑 다르게 생겼지?\"\n\"회색이잖아. 미운 오리 새끼야!\"\n형제들은 잿빛 아기 오리를 자꾸만 놀렸어요.",
-        "image": "/classic/uglyduckling/p3.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p3.webp",
         "audio": "/classic/uglyduckling/narr-p3.mp3",
         "hotspots": [
           {
@@ -516,7 +516,7 @@
       },
       {
         "text": "연못의 다른 오리들도 수군수군,\n닭들도 꼬꼬댁 흉을 봤어요.\n아기 오리는 너무너무 슬펐지요.\n\"아무도 나를 좋아하지 않아…\"",
-        "image": "/classic/uglyduckling/p4.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p4.webp",
         "audio": "/classic/uglyduckling/narr-p4.mp3",
         "hotspots": [
           {
@@ -534,7 +534,7 @@
       },
       {
         "text": "어느 날 밤, 아기 오리는 조용히 둥지를 떠났어요.\n\"내가 없어지면 다들 편해질 거야.\"\n달빛 아래 홀로 뒤뚱뒤뚱 걸어갔답니다.",
-        "image": "/classic/uglyduckling/p5.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p5.webp",
         "audio": "/classic/uglyduckling/narr-p5.mp3",
         "hotspots": [
           {
@@ -552,12 +552,12 @@
       },
       {
         "text": "넓은 늪에 도착했지만\n그곳의 새들도 아기 오리를 반겨 주지 않았어요.\n\"넌 참 이상하게 생겼구나.\"\n아기 오리는 갈대숲에 혼자 숨어 지냈지요.",
-        "image": "/classic/uglyduckling/p6.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p6.webp",
         "audio": "/classic/uglyduckling/narr-p6.mp3"
       },
       {
         "text": "가을이 되던 어느 날, 하늘 위로\n눈처럼 하얗고 커다란 새들이 날아갔어요.\n\"우와… 정말 아름다운 새들이다.\"\n아기 오리는 한참 동안 하늘만 바라보았답니다.",
-        "image": "/classic/uglyduckling/p7.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p7.webp",
         "audio": "/classic/uglyduckling/narr-p7.mp3",
         "hotspots": [
           {
@@ -575,7 +575,7 @@
       },
       {
         "text": "곧 차가운 겨울이 왔어요.\n호수가 꽁꽁 얼고 눈보라가 몰아쳤지요.\n아기 오리는 갈대숲에서 몸을 웅크리고\n춥고 긴 겨울을 꿋꿋이 견뎠어요.",
-        "image": "/classic/uglyduckling/p8.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p8.webp",
         "audio": "/classic/uglyduckling/narr-p8.mp3",
         "hotspots": [
           {
@@ -593,7 +593,7 @@
       },
       {
         "text": "드디어 얼음이 녹고 봄이 왔어요!\n따뜻한 햇살에 아기 오리는 기지개를 켰지요.\n날개를 펼치자 — 어라?\n몸이 가뿐하게 하늘로 떠올랐어요!",
-        "image": "/classic/uglyduckling/p9.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p9.webp",
         "audio": "/classic/uglyduckling/narr-p9.mp3",
         "hotspots": [
           {
@@ -611,12 +611,12 @@
       },
       {
         "text": "호수에 내려앉으니, 저 멀리서\n그 아름다운 하얀 새들이 헤엄쳐 왔어요.\n\"나 같은 미운 오리를 쫓아내면 어떡하지…\"\n그래도 용기를 내어 천천히 다가갔지요.",
-        "image": "/classic/uglyduckling/p10.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p10.webp",
         "audio": "/classic/uglyduckling/narr-p10.mp3"
       },
       {
         "text": "그때, 맑은 물에 비친 자기 모습을 본 순간 —\n\"이게… 나라고?\"\n물속에는 눈처럼 하얗고 우아한\n백조 한 마리가 있었답니다!",
-        "image": "/classic/uglyduckling/p11.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p11.webp",
         "audio": "/classic/uglyduckling/narr-p11.mp3",
         "hotspots": [
           {
@@ -634,7 +634,7 @@
       },
       {
         "text": "\"어서 와, 우리랑 똑같은 백조구나!\"\n백조들이 다정하게 아기 백조를 감쌌어요.\n호숫가 아이들도 소리쳤지요.\n\"저기 새로 온 백조가 제일 예쁘다!\"",
-        "image": "/classic/uglyduckling/p12.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p12.webp",
         "audio": "/classic/uglyduckling/narr-p12.mp3",
         "hotspots": [
           {
@@ -652,7 +652,7 @@
       },
       {
         "text": "미운 오리 새끼는 이제 알았어요.\n다르게 생긴 게 아니라, 특별하게 태어난 거였다는 걸요.\n아기 백조는 눈부신 날개를 활짝 펴고\n파란 하늘을 훨훨 날았답니다.",
-        "image": "/classic/uglyduckling/p13.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p13.webp",
         "audio": "/classic/uglyduckling/narr-p13.mp3",
         "hotspots": [
           {
@@ -679,7 +679,7 @@
     "pages": [
       {
         "text": "옛날 어느 마을에 귀여운 여자아이가 살았어요.\n할머니가 만들어 주신 빨간 모자를 늘 쓰고 다녀서\n다들 '빨간 모자'라고 불렀답니다.",
-        "image": "/classic/redridinghood/p1.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p1.webp",
         "audio": "/classic/redridinghood/narr-p1.mp3",
         "hotspots": [
           {
@@ -697,7 +697,7 @@
       },
       {
         "text": "어느 날 엄마가 바구니를 건네며 말했어요.\n\"숲 건너 할머니 댁에 이 빵과 수프를 갖다 드리렴.\n길에서 한눈팔지 말고, 곧장 가야 한다!\"\n\"네, 엄마! 다녀올게요!\"",
-        "image": "/classic/redridinghood/p2.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p2.webp",
         "audio": "/classic/redridinghood/narr-p2.mp3",
         "hotspots": [
           {
@@ -715,7 +715,7 @@
       },
       {
         "text": "숲길을 걷던 빨간 모자 앞에\n커다란 늑대가 스윽 나타났어요.\n\"안녕, 꼬마야. 어디 가는 길이니?\"\n\"숲 건너 할머니 댁에 가요.\"",
-        "image": "/classic/redridinghood/p3.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p3.webp",
         "audio": "/classic/redridinghood/narr-p3.mp3",
         "hotspots": [
           {
@@ -744,7 +744,7 @@
       },
       {
         "text": "늑대는 음흉하게 씩 웃으며 말했지요.\n\"저기 예쁜 꽃이 많던데,\n할머니께 꽃다발도 만들어 가면 어떠니?\"\n\"어머, 좋은 생각이에요!\"",
-        "image": "/classic/redridinghood/p4.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p4.webp",
         "audio": "/classic/redridinghood/narr-p4.mp3",
         "hotspots": [
           {
@@ -762,12 +762,12 @@
       },
       {
         "text": "빨간 모자가 꽃을 꺾는 사이,\n늑대는 지름길로 쌩 달려가\n할머니 집 문을 똑똑 두드렸어요.",
-        "image": "/classic/redridinghood/p5.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p5.webp",
         "audio": "/classic/redridinghood/narr-p5.mp3"
       },
       {
         "text": "\"할머니, 저예요. 빨간 모자예요.\"\n늑대가 가는 목소리를 흉내 내자 문이 열렸지요.\n늑대는 할머니를 한입에 꿀꺽 삼키고는\n할머니 옷을 입고 침대에 쏙 누웠답니다.",
-        "image": "/classic/redridinghood/p6.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p6.webp",
         "audio": "/classic/redridinghood/narr-p6.mp3",
         "hotspots": [
           {
@@ -785,12 +785,12 @@
       },
       {
         "text": "잠시 후, 빨간 모자가 도착했어요.\n\"할머니, 저 왔어요!\"\n침대에 누운 할머니가 어쩐지 이상해 보였지요.\n빨간 모자는 고개를 갸웃갸웃했어요.",
-        "image": "/classic/redridinghood/p7.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p7.webp",
         "audio": "/classic/redridinghood/narr-p7.mp3"
       },
       {
         "text": "\"할머니, 귀가 왜 이렇게 커요?\"\n\"네 말을 잘 들으려고 그렇지.\"\n\"할머니, 눈은 왜 이렇게 커요?\"\n\"너를 잘 보려고 그렇지.\"",
-        "image": "/classic/redridinghood/p8.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p8.webp",
         "audio": "/classic/redridinghood/narr-p8.mp3",
         "hotspots": [
           {
@@ -819,7 +819,7 @@
       },
       {
         "text": "\"그런데… 입은 왜 이렇게 커요?\"\n\"그야 너를 꿀꺽 삼키려고 그렇지!\"\n늑대가 벌떡 일어나 빨간 모자도\n한입에 꿀꺽 삼켜 버렸어요!",
-        "image": "/classic/redridinghood/p9.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p9.webp",
         "audio": "/classic/redridinghood/narr-p9.mp3",
         "hotspots": [
           {
@@ -837,7 +837,7 @@
       },
       {
         "text": "배가 빵빵해진 늑대는\n침대에 벌렁 누워 드르렁드르렁 잠이 들었어요.\n마침 숲을 지나던 사냥꾼 아저씨가\n요란한 코골이 소리를 듣고 집 안을 들여다봤지요.",
-        "image": "/classic/redridinghood/p10.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p10.webp",
         "audio": "/classic/redridinghood/narr-p10.mp3",
         "hotspots": [
           {
@@ -855,7 +855,7 @@
       },
       {
         "text": "\"아니, 배가 저렇게 빵빵한 늑대라니!\"\n사냥꾼 아저씨가 늑대의 배를 살살 열어 보니 —\n할머니와 빨간 모자가 폴짝 뛰어나왔어요!\n\"아이고, 살았다! 고맙습니다!\"",
-        "image": "/classic/redridinghood/p11.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p11.webp",
         "audio": "/classic/redridinghood/narr-p11.mp3",
         "hotspots": [
           {
@@ -873,7 +873,7 @@
       },
       {
         "text": "잠에서 깬 늑대는 사냥꾼 아저씨의 호통에\n걸음아 나 살려라 하고 숲 저 멀리 도망쳤어요.\n그 뒤로 다시는 마을 근처에 얼씬도 못 했답니다.",
-        "image": "/classic/redridinghood/p12.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p12.webp",
         "audio": "/classic/redridinghood/narr-p12.mp3",
         "hotspots": [
           {
@@ -891,7 +891,7 @@
       },
       {
         "text": "빨간 모자는 할머니와 따뜻한 수프를 나눠 먹으며 약속했어요.\n\"이제 길에서 한눈팔지 않을게요.\n모르는 사람 말도 함부로 믿지 않을 거예요!\"\n할머니는 빨간 모자를 꼭 안아 주었답니다.",
-        "image": "/classic/redridinghood/p13.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p13.webp",
         "audio": "/classic/redridinghood/narr-p13.mp3",
         "hotspots": [
           {
@@ -929,7 +929,7 @@
     "pages": [
       {
         "text": "옛날 어느 마을에 늙은 당나귀가 살았어요.\n오랫동안 열심히 일했지만, 주인은 이제 늙었다며\n당나귀를 내쫓으려 했지요.\n\"흥, 그렇다면 브레멘에 가서 음악가가 될 테야!\"",
-        "image": "/classic/bremen/p1.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p1.webp",
         "audio": "/classic/bremen/narr-p1.mp3",
         "hotspots": [
           {
@@ -947,7 +947,7 @@
       },
       {
         "text": "길을 가던 당나귀는 축 처진 사냥개를 만났어요.\n\"나는 늙어서 사냥을 못 한다고 쫓겨났어…\"\n\"잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!\" \"멍멍! 좋아!\"",
-        "image": "/classic/bremen/p2.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p2.webp",
         "audio": "/classic/bremen/narr-p2.mp3",
         "hotspots": [
           {
@@ -965,7 +965,7 @@
       },
       {
         "text": "조금 더 가니 담벼락 위에 시무룩한 고양이가 있었어요.\n\"쥐를 못 잡는다고 집에서 쫓겨났다냥…\"\n\"우리랑 같이 가자! 너는 노래를 하면 되겠어!\"\n\"야옹~ 나 노래 잘한다냥!\"",
-        "image": "/classic/bremen/p3.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p3.webp",
         "audio": "/classic/bremen/narr-p3.mp3",
         "hotspots": [
           {
@@ -983,7 +983,7 @@
       },
       {
         "text": "농장 앞을 지나는데 수탉이 목청껏 울고 있었어요.\n\"꼬끼오! 나는 내일 국거리가 될 신세라고!\"\n\"그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 악단의 나팔이야!\"",
-        "image": "/classic/bremen/p4.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p4.webp",
         "audio": "/classic/bremen/narr-p4.mp3",
         "hotspots": [
           {
@@ -1001,17 +1001,17 @@
       },
       {
         "text": "당나귀, 개, 고양이, 수탉.\n넷은 신이 나서 숲길을 걸었어요.\n하지만 날이 저물고 배가 고파졌지요.\n그때 멀리서 반짝, 불빛이 보였어요.",
-        "image": "/classic/bremen/p5.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p5.webp",
         "audio": "/classic/bremen/narr-p5.mp3"
       },
       {
         "text": "불빛을 따라가니 작은 오두막이 나왔어요.\n창문 안을 들여다보니 — 세상에!\n식탁 가득 맛있는 음식이 차려져 있고,\n무섭게 생긴 도둑들이 둘러앉아 있었지요.",
-        "image": "/classic/bremen/p6.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p6.webp",
         "audio": "/classic/bremen/narr-p6.mp3"
       },
       {
         "text": "\"저 음식을 어떻게 먹지?\"\n당나귀가 꾀를 냈어요.\n\"우리 다 같이 무대에 서는 거야!\"\n당나귀 위에 개가, 개 위에 고양이가,\n고양이 위에 수탉이 차곡차곡 올라탔지요.",
-        "image": "/classic/bremen/p7.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p7.webp",
         "audio": "/classic/bremen/narr-p7.mp3",
         "hotspots": [
           {
@@ -1029,7 +1029,7 @@
       },
       {
         "text": "\"자, 브레멘 음악대 첫 공연이다! 하나, 둘, 셋!\"\n히호! 멍멍! 야옹! 꼬끼오오!\n넷이 한꺼번에 목청껏 노래하며\n창문을 와장창 뚫고 뛰어들었어요!",
-        "image": "/classic/bremen/p8.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p8.webp",
         "audio": "/classic/bremen/narr-p8.mp3",
         "hotspots": [
           {
@@ -1047,7 +1047,7 @@
       },
       {
         "text": "\"으악! 괴물이다!\"\n\"도깨비가 나타났다아!\"\n도둑들은 혼비백산해서\n신발도 못 신고 숲으로 도망쳤답니다.",
-        "image": "/classic/bremen/p9.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p9.webp",
         "audio": "/classic/bremen/narr-p9.mp3",
         "hotspots": [
           {
@@ -1065,12 +1065,12 @@
       },
       {
         "text": "\"공연 대성공!\"\n네 친구는 식탁에 둘러앉아\n배가 빵빵해지도록 맛있게 먹었어요.\n그리고 각자 편한 자리에서 쿨쿨 잠이 들었지요.",
-        "image": "/classic/bremen/p10.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p10.webp",
         "audio": "/classic/bremen/narr-p10.mp3"
       },
       {
         "text": "한밤중, 도둑 하나가 살금살금 돌아왔어요.\n어둠 속에서 고양이 눈이 반짝!\n\"할퀴어라!\" \"물어라!\" \"뒷발질!\"\n\"꼬끼오오오!\" 수탉의 나팔 소리까지!",
-        "image": "/classic/bremen/p11.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p11.webp",
         "audio": "/classic/bremen/narr-p11.mp3",
         "hotspots": [
           {
@@ -1088,7 +1088,7 @@
       },
       {
         "text": "도둑은 걸음아 나 살려라 도망치며 외쳤어요.\n\"저 집엔 무서운 괴물이 산다!\n손톱으로 할퀴고, 이빨로 물고, 방망이로 때리고,\n지붕에서 소리까지 질러!\" 도둑들은 다시는 오지 않았답니다.",
-        "image": "/classic/bremen/p12.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p12.webp",
         "audio": "/classic/bremen/narr-p12.mp3",
         "hotspots": [
           {
@@ -1106,7 +1106,7 @@
       },
       {
         "text": "네 친구는 그 오두막이 아주 마음에 들었어요.\n브레멘까지 갈 필요도 없어졌지요.\n낮에는 햇볕을 쬐고, 저녁이면 다 같이 —\n히호! 멍멍! 야옹! 꼬끼오!\n숲속 음악회를 열며 오래오래 행복하게 살았답니다.",
-        "image": "/classic/bremen/p13.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p13.webp",
         "audio": "/classic/bremen/narr-p13.mp3",
         "hotspots": [
           {
@@ -1133,7 +1133,7 @@
     "pages": [
       {
         "text": "쨍쨍한 여름날, 개미들은 부지런히 일했어요.\n영차, 영차. 줄지어 낟알을 나르고\n땀을 뻘뻘 흘리며 곳간을 채웠지요.",
-        "image": "/classic/antgrasshopper/p1.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p1.webp",
         "audio": "/classic/antgrasshopper/narr-p1.mp3",
         "hotspots": [
           {
@@ -1151,7 +1151,7 @@
       },
       {
         "text": "풀잎 위에서는 베짱이가 바이올린을 켜고 있었어요.\n\"찌르르 찌르르~ 개미야, 이 좋은 여름에 왜 일만 하니?\"\n\"겨울이 오면 먹을 게 없어지거든.\n미리미리 모아 두는 거야.\"",
-        "image": "/classic/antgrasshopper/p2.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p2.webp",
         "audio": "/classic/antgrasshopper/narr-p2.mp3",
         "hotspots": [
           {
@@ -1169,7 +1169,7 @@
       },
       {
         "text": "\"에이, 겨울은 아직 멀었는걸!\"\n베짱이는 시원한 그늘에서 신나게 연주했어요.\n찌르르 찌르르~ 숲 친구들이 모여들어\n베짱이의 노래를 듣고 어깨를 들썩였지요.",
-        "image": "/classic/antgrasshopper/p3.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p3.webp",
         "audio": "/classic/antgrasshopper/narr-p3.mp3",
         "hotspots": [
           {
@@ -1187,12 +1187,12 @@
       },
       {
         "text": "어느새 가을이 왔어요.\n개미들의 곳간은 낟알로 가득 찼지요.\n베짱이는 문득 서늘한 바람에 몸을 떨었지만,\n\"아직 괜찮아!\" 하고 또 노래를 불렀답니다.",
-        "image": "/classic/antgrasshopper/p4.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p4.webp",
         "audio": "/classic/antgrasshopper/narr-p4.mp3"
       },
       {
         "text": "드디어 하얀 겨울이 왔어요.\n쌩쌩 눈보라가 몰아치고 온 세상이 꽁꽁 얼었지요.\n먹을 것도, 따뜻한 집도 없는 베짱이는\n바이올린을 안고 덜덜 떨었어요.",
-        "image": "/classic/antgrasshopper/p5.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p5.webp",
         "audio": "/classic/antgrasshopper/narr-p5.mp3",
         "hotspots": [
           {
@@ -1210,7 +1210,7 @@
       },
       {
         "text": "베짱이는 눈길을 헤치고 개미집을 찾아갔어요.\n똑, 똑, 똑.\n\"개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?\"",
-        "image": "/classic/antgrasshopper/p6.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p6.webp",
         "audio": "/classic/antgrasshopper/narr-p6.mp3",
         "hotspots": [
           {
@@ -1228,7 +1228,7 @@
       },
       {
         "text": "문이 활짝 열렸어요.\n\"어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!\"\n개미들은 따뜻한 수프를 내어 주고\n난롯가 제일 좋은 자리를 내주었지요.",
-        "image": "/classic/antgrasshopper/p7.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p7.webp",
         "audio": "/classic/antgrasshopper/narr-p7.mp3",
         "hotspots": [
           {
@@ -1246,12 +1246,12 @@
       },
       {
         "text": "베짱이는 고개를 푹 숙였어요.\n\"너희가 일할 때 나는 놀기만 했는걸…\n이 수프를 얻어먹을 자격이 없어.\"",
-        "image": "/classic/antgrasshopper/p8.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p8.webp",
         "audio": "/classic/antgrasshopper/narr-p8.mp3"
       },
       {
         "text": "그러자 꼬마 개미가 말했어요.\n\"무슨 소리야! 여름에 낟알을 나를 때\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?\"",
-        "image": "/classic/antgrasshopper/p9.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p9.webp",
         "audio": "/classic/antgrasshopper/narr-p9.mp3",
         "hotspots": [
           {
@@ -1269,7 +1269,7 @@
       },
       {
         "text": "베짱이는 눈물을 닦고 바이올린을 들었어요.\n찌르르 찌르르~ 랄랄라~\n개미집에서 겨울 음악회가 열렸지요.\n개미들은 밤늦도록 덩실덩실 춤을 추었답니다.",
-        "image": "/classic/antgrasshopper/p10.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p10.webp",
         "audio": "/classic/antgrasshopper/narr-p10.mp3",
         "hotspots": [
           {
@@ -1287,7 +1287,7 @@
       },
       {
         "text": "봄이 오자 베짱이가 말했어요.\n\"올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘.\"\n개미들과 베짱이는 함께 낟알을 나르고,\n쉬는 시간이면 다 같이 노래를 불렀지요.",
-        "image": "/classic/antgrasshopper/p11.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p11.webp",
         "audio": "/classic/antgrasshopper/narr-p11.mp3",
         "hotspots": [
           {
@@ -1305,7 +1305,7 @@
       },
       {
         "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 음악이 흘러나왔답니다.\n찌르르 찌르르~ 랄랄라~",
-        "image": "/classic/antgrasshopper/p12.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p12.webp",
         "audio": "/classic/antgrasshopper/narr-p12.mp3"
       }
     ]
@@ -1319,7 +1319,7 @@
     "pages": [
       {
         "text": "보리밭 옆 아늑한 굴속에 시골 쥐가 살았어요.\n어느 날 도시에 사는 사촌에게 편지를 썼지요.\n\"사촌아, 놀러 오렴! 맛있는 저녁을 대접할게.\"",
-        "image": "/classic/twomice/p1.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p1.webp",
         "audio": "/classic/twomice/narr-p1.mp3",
         "hotspots": [
           {
@@ -1337,12 +1337,12 @@
       },
       {
         "text": "도시 쥐가 시골에 도착했어요.\n시골 쥐는 정성껏 밥상을 차렸지요.\n고소한 도토리, 따끈한 보리죽, 달콤한 산딸기.\n\"차린 건 없지만 많이 먹으렴!\"",
-        "image": "/classic/twomice/p2.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p2.webp",
         "audio": "/classic/twomice/narr-p2.mp3"
       },
       {
         "text": "도시 쥐는 깨작깨작 먹더니 한숨을 쉬었어요.\n\"넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 진수성찬이 가득한데!\n나랑 같이 가 보자!\"",
-        "image": "/classic/twomice/p3.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p3.webp",
         "audio": "/classic/twomice/narr-p3.mp3",
         "hotspots": [
           {
@@ -1360,12 +1360,12 @@
       },
       {
         "text": "둘은 함께 도시로 갔어요.\n\"우와아…\"\n반짝반짝 불빛이 가득한 커다란 저택!\n시골 쥐의 눈이 휘둥그레졌지요.",
-        "image": "/classic/twomice/p4.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p4.webp",
         "audio": "/classic/twomice/narr-p4.mp3"
       },
       {
         "text": "식탁 위에는 정말 잔칫상이 차려져 있었어요.\n폭신한 케이크, 노란 치즈, 보랏빛 포도!\n\"자, 마음껏 먹으렴!\"\n시골 쥐는 침이 꼴깍 넘어갔답니다.",
-        "image": "/classic/twomice/p5.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p5.webp",
         "audio": "/classic/twomice/narr-p5.mp3",
         "hotspots": [
           {
@@ -1383,7 +1383,7 @@
       },
       {
         "text": "그런데 케이크를 한 입 베어 물려는 순간 —\n쿵! 쿵! 문소리와 함께 사람이 들어왔어요!\n\"숨어!\"\n둘은 후다닥 식탁 밑으로 뛰어내렸지요.",
-        "image": "/classic/twomice/p6.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p6.webp",
         "audio": "/classic/twomice/narr-p6.mp3",
         "hotspots": [
           {
@@ -1401,7 +1401,7 @@
       },
       {
         "text": "사람이 나가고, 살금살금 다시 식탁 위로.\n치즈를 막 집었는데 이번에는 —\n\"야아옹!\"\n번쩍이는 눈의 고양이가 나타났어요!",
-        "image": "/classic/twomice/p7.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p7.webp",
         "audio": "/classic/twomice/narr-p7.mp3",
         "hotspots": [
           {
@@ -1419,7 +1419,7 @@
       },
       {
         "text": "둘은 쥐구멍으로 쏙 숨었어요.\n시골 쥐의 가슴이 콩닥콩닥 뛰었지요.\n\"괜찮아, 늘 있는 일이야. 금방 익숙해져.\"\n도시 쥐는 아무렇지 않게 수염을 다듬었답니다.",
-        "image": "/classic/twomice/p8.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p8.webp",
         "audio": "/classic/twomice/narr-p8.mp3",
         "hotspots": [
           {
@@ -1437,12 +1437,12 @@
       },
       {
         "text": "시골 쥐는 곰곰이 생각했어요.\n'케이크는 정말 달콤해.\n하지만 한 입 먹을 때마다 가슴이 조마조마한걸…'",
-        "image": "/classic/twomice/p9.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p9.webp",
         "audio": "/classic/twomice/narr-p9.mp3"
       },
       {
         "text": "\"사촌아, 초대해 줘서 정말 고마워.\n그런데 나는 마음 편히 먹는 보리죽이 더 좋아.\n우리 집 별빛이 그리워졌어.\"\n시골 쥐는 도시 쥐를 꼭 안아 주었어요.",
-        "image": "/classic/twomice/p10.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p10.webp",
         "audio": "/classic/twomice/narr-p10.mp3",
         "hotspots": [
           {
@@ -1460,7 +1460,7 @@
       },
       {
         "text": "시골로 돌아온 시골 쥐는\n보리죽을 한 그릇 가득 끓였어요.\n풀벌레 소리, 반짝이는 별빛.\n\"아아, 역시 우리 집이 최고야.\"",
-        "image": "/classic/twomice/p11.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p11.webp",
         "audio": "/classic/twomice/narr-p11.mp3",
         "hotspots": [
           {
@@ -1478,7 +1478,7 @@
       },
       {
         "text": "그 뒤로 두 쥐는 자주 편지를 주고받았어요.\n\"여름엔 시골로 산딸기 먹으러 오렴!\"\n\"겨울엔 도시 구경 시켜 줄게!\"\n서로 다른 집에서, 둘은 각자 행복했답니다.",
-        "image": "/classic/twomice/p12.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p12.webp",
         "audio": "/classic/twomice/narr-p12.mp3"
       }
     ]

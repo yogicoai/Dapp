@@ -8,17 +8,28 @@ import { ThemePicker } from "@/components/ThemePicker";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import {
+  addTokens,
+  currentUser,
+  currentUserId,
+  isMaster,
+  loadAllUsers,
+  logOut,
+  type BetaUser,
+} from "@/lib/auth";
+import {
   deleteMyBook,
   loadChild,
   loadLang,
   loadMyBooks,
   loadTextPos,
+  loadUserBooks,
   saveChild,
   saveLang,
   saveTextPos,
   setMyBookHidden,
   type Gender,
 } from "@/lib/prefs";
+import { TOKEN_PRICE_KRW } from "@/lib/tokens";
 import type { Book } from "@/lib/types";
 import { useEscClose } from "@/lib/use-esc-close";
 import {
@@ -74,10 +85,21 @@ export default function SettingsPage() {
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
   // 내 동화 — 만든 책 전체. 여기서 책장 노출(숨기기/보이기)과 영구 삭제를 관리한다.
   const [myBooks, setMyBooks] = useState<Book[]>([]);
+  // 계정(베타) — 로그인한 아이디·토큰. 마스터면 회원 목록도.
+  const [acctId, setAcctId] = useState<string | null>(null);
+  const [acctTokens, setAcctTokens] = useState(0);
+  const [master, setMaster] = useState(false);
+  const [members, setMembers] = useState<BetaUser[]>([]);
+  const [openMember, setOpenMember] = useState<string | null>(null);
 
   // localStorage 값들은 클라 전용이라 마운트 후에 반영한다(hydration 안전).
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
+    // 로그인 게이트 — 로그인 안 했으면 로그인 화면으로.
+    if (!currentUserId()) {
+      router.replace("/login");
+      return;
+    }
     const stored = loadChild();
     if (stored) {
       setName(stored.name);
@@ -90,8 +112,27 @@ export default function SettingsPage() {
     setTextPos(loadTextPos());
     setCustomVoices(loadCustomVoices());
     setMyBooks(loadMyBooks());
-  }, []);
+    const u = currentUser();
+    setAcctId(u?.id ?? null);
+    setAcctTokens(u?.tokens ?? 0);
+    if (isMaster()) {
+      setMaster(true);
+      setMembers(loadAllUsers());
+    }
+  }, [router]);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  // 토큰 충전(베타) — 결제 붙기 전 임시. 30개씩 넣어 테스트.
+  function topUp() {
+    addTokens(30);
+    setAcctTokens((t) => t + 30);
+    flashSaved();
+  }
+  // 로그아웃 → 로그인 화면.
+  function doLogout() {
+    logOut();
+    router.replace("/login");
+  }
 
   // 책장 노출 토글(숨기기/보이기) — 숨기면 책장에서 내려가고, 보이면 다시 뜬다.
   function toggleHide(id: string, hidden: boolean) {
@@ -262,6 +303,43 @@ export default function SettingsPage() {
               <span className="text-neutral-400">바꾸는 대로 자동 저장돼요</span>
             )}
           </p>
+
+          {/* ── 계정 (베타) ── 로그인한 아이디·토큰·로그아웃. 실제 로그인 상태를 반영한다.
+              추후 카카오·네이버 로그인이 붙으면 이 섹션에 연동 계정 표시가 더해진다. */}
+          <section className="flex flex-col gap-3">
+            <h2 className="text-sm font-extrabold text-neutral-400">계정</h2>
+            <div className="flex items-center gap-3 rounded-2xl bg-neutral-100 px-4 py-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lg shadow-sm">
+                {master ? "👑" : "🙂"}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-base font-extrabold text-neutral-800">
+                  {acctId ?? "…"} {master && <span className="text-amber-600">· 마스터</span>}
+                </p>
+                <p className="text-xs font-bold text-neutral-500">
+                  🪙 토큰 {acctTokens}개 <span className="text-neutral-400">(1개 ≈ ₩{TOKEN_PRICE_KRW})</span>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={topUp}
+                style={{ background: accent }}
+                className="shrink-0 rounded-full px-3 py-1.5 text-xs font-extrabold text-white"
+              >
+                +30 충전
+              </button>
+              <button
+                type="button"
+                onClick={doLogout}
+                className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-extrabold text-neutral-600 shadow-sm"
+              >
+                로그아웃
+              </button>
+            </div>
+            <p className="-mt-1 text-[11px] font-medium text-neutral-400">
+              베타: 계정은 이 기기에 저장돼요. 충전은 결제 연동 전 임시 기능이에요.
+            </p>
+          </section>
 
           {/* ── 아이 정보 ── */}
           <section className="flex flex-col gap-3">
@@ -577,6 +655,71 @@ export default function SettingsPage() {
                   </li>
                 ))}
               </ul>
+            </section>
+          )}
+
+          {/* ── 관리자(마스터) ── 회원 목록과 각 회원이 만든 책장을 열람한다.
+              베타에선 이 기기에 저장된 회원만 보인다. Supabase가 붙으면 전체 회원이 뜬다. */}
+          {master && (
+            <section className="flex flex-col gap-2.5">
+              <h2 className="text-sm font-extrabold text-amber-600">👑 관리자 · 회원 ({members.length})</h2>
+              <p className="-mt-1 text-xs font-medium text-neutral-400">
+                가입한 회원과 각자 만든 동화를 볼 수 있어요. 회원을 누르면 그 사람의 책장이 펼쳐져요.
+              </p>
+              {members.length === 0 ? (
+                <p className="rounded-2xl bg-neutral-100 px-4 py-3 text-sm font-bold text-neutral-500">
+                  아직 가입한 회원이 없어요.
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {members.map((m) => {
+                    const books = loadUserBooks(m.id);
+                    const open = openMember === m.id;
+                    return (
+                      <li key={m.id} className="overflow-hidden rounded-2xl bg-neutral-100">
+                        <button
+                          type="button"
+                          onClick={() => setOpenMember(open ? null : m.id)}
+                          className="flex w-full items-center gap-2 px-4 py-3 text-left"
+                        >
+                          <span className="flex-1 truncate text-sm font-extrabold text-neutral-800">
+                            {m.id}
+                          </span>
+                          <span className="shrink-0 text-xs font-bold text-neutral-500">
+                            🪙{m.tokens} · 동화 {books.length}권
+                          </span>
+                          <span className="shrink-0 text-neutral-400">{open ? "▲" : "▼"}</span>
+                        </button>
+                        {open && (
+                          <div className="border-t border-neutral-200 bg-white px-4 py-2">
+                            {books.length === 0 ? (
+                              <p className="py-1 text-xs font-medium text-neutral-400">만든 동화가 없어요.</p>
+                            ) : (
+                              <ul className="flex flex-col divide-y divide-neutral-100">
+                                {books.map((b) => (
+                                  <li key={b.id} className="flex items-center gap-2 py-2">
+                                    <span className="flex-1 truncate text-sm font-bold text-neutral-700">
+                                      {b.title}
+                                      {b.hidden && <span className="ml-1 text-[10px] text-neutral-400">(숨김)</span>}
+                                    </span>
+                                    <Link
+                                      href={`/book/${b.id}`}
+                                      className="shrink-0 rounded-full px-3 py-1 text-xs font-extrabold text-white"
+                                      style={{ background: accent }}
+                                    >
+                                      열기
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </section>
           )}
 
