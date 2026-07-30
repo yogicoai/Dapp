@@ -112,6 +112,16 @@ export async function logOut(): Promise<void> {
   await getSupabase()?.auth.signOut();
 }
 
+/** 비밀번호 변경 — 로그인한 본인. 4자 이상. */
+export async function changePassword(newPw: string): Promise<{ ok: boolean; error?: string }> {
+  const sb = getSupabase();
+  if (!sb) return { ok: false, error: "서버가 설정되지 않았어요." };
+  if (newPw.length < 4) return { ok: false, error: "비밀번호는 4자 이상으로 적어주세요." };
+  const { error } = await sb.auth.updateUser({ password: newPw });
+  if (error) return { ok: false, error: friendly(error.message) };
+  return { ok: true };
+}
+
 /** 토큰 차감 — 잔액이 충분하면 깎고 true, 부족/실패면 false. (베타: 조회 후 갱신) */
 export async function spendTokens(n: number): Promise<boolean> {
   const sb = getSupabase();

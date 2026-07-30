@@ -9,7 +9,7 @@ import { VoiceInput } from "@/components/VoiceInput";
 import { ART_STYLES } from "@/lib/art-styles";
 import { loadSession, spendTokens } from "@/lib/auth";
 import { loadChild, loadMyBooks, saveChild, saveMyBook } from "@/lib/prefs";
-import { COST_ILLUSTRATED_BOOK, COST_TEXT_BOOK, MAX_BOOKS_PER_USER } from "@/lib/tokens";
+import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
 import {
@@ -99,6 +99,8 @@ const THEME_GROUPS = [
 const WHO_OPTIONS = [
   { t: "혼자서", e: "🧒" },
   { t: "친구랑", e: "👫" },
+  { t: "엄마랑", e: "👩" },
+  { t: "아빠랑", e: "👨" },
   { t: "엄마 아빠랑", e: "👨‍👩‍👧" },
   { t: "동물 친구랑", e: "🐶" },
   { t: "형·누나·동생이랑", e: "👦" },
@@ -131,6 +133,8 @@ const TODAY_PLACES = [
 const TODAY_WHO = [
   { t: "친구랑", e: "👫" },
   { t: "선생님이랑", e: "👩‍🏫" },
+  { t: "엄마랑", e: "👩" },
+  { t: "아빠랑", e: "👨" },
   { t: "엄마 아빠랑", e: "👨‍👩‍👧" },
   { t: "동생이랑", e: "👶" },
   { t: "혼자서", e: "🧒" },
@@ -224,7 +228,7 @@ function WhoNameInput({
         onChange={(e) => onChange(e.target.value.slice(0, 20))}
         maxLength={20}
         placeholder="이름만 적어요 (예: 토토, 민지)"
-        className="w-full rounded-2xl border-2 border-dashed border-neutral-200 px-4 py-2.5 text-sm font-bold outline-none focus:border-neutral-400"
+        className="w-full rounded-2xl border-2 border-dashed border-neutral-200 bg-white px-4 py-2.5 text-sm font-bold outline-none focus:border-neutral-400"
       />
     </div>
   );
@@ -290,8 +294,6 @@ export default function CreatePage() {
       alive = false;
     };
   }, [router]);
-  // 이번에 만들 동화의 토큰 값 (그림 켜짐=그림동화, 아니면 글동화).
-  const bookCost = IMAGES_ENABLED ? COST_ILLUSTRATED_BOOK : COST_TEXT_BOOK;
   // 베타 권수 제한(마스터 제외).
   const bookLimitReached = !master && bookCount >= MAX_BOOKS_PER_USER;
 
@@ -356,8 +358,24 @@ export default function CreatePage() {
   const [mood, setMood] = useState(MOODS[0]);
   // 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로 읽는다.
   const [narratorVoice, setNarratorVoice] = useState(TYPECAST_VOICES[0].id);
+  // 성우를 고르면 미리 구운 샘플(static mp3)을 들려준다 — 크레딧 0.
+  const narratorPreviewRef = useRef<HTMLAudioElement | null>(null);
+  function pickNarrator(id: string) {
+    setNarratorVoice(id);
+    try {
+      const el = narratorPreviewRef.current ?? new Audio();
+      narratorPreviewRef.current = el;
+      el.src = `/casting/preview-${id}.mp3`;
+      el.currentTime = 0;
+      void el.play().catch(() => {});
+    } catch {
+      /* 무시 */
+    }
+  }
   // 장면(쪽) 수 3~8. 나이에 맞는 추천값으로 시작한다(부모가 바꿀 수 있다).
   const [pageCount, setPageCount] = useState(() => recommendedPages(null));
+  // 이번에 만들 동화의 토큰 값 — 장면 수 × 쪽당 단가 (몇 장이냐로 달라진다).
+  const bookCost = bookTokenCost(pageCount, IMAGES_ENABLED);
 
   // 생성 결과
   const [outline, setOutline] = useState<Outline | null>(null);
@@ -552,9 +570,9 @@ export default function CreatePage() {
    */
   async function finish(images: (string | null)[], s: Story | null = story) {
     if (!s) return;
-    // 완성 시 토큰 차감 — 그림이 들어갔으면 그림동화 값, 아니면 글동화 값.
+    // 완성 시 토큰 차감 — 실제 쪽 수 × 쪽당 단가 (그림 있으면 그림 단가).
     const illustrated = images.some(Boolean);
-    const cost = illustrated ? COST_ILLUSTRATED_BOOK : COST_TEXT_BOOK;
+    const cost = bookTokenCost(s.pages.length, illustrated);
     await spendTokens(cost);
     setTokens((t) => Math.max(0, t - cost));
     const book: Book = {
@@ -647,7 +665,7 @@ export default function CreatePage() {
                   onChange={(e) => setName(e.target.value)}
                   maxLength={20}
                   placeholder="아이 이름"
-                  className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-lg font-bold outline-none focus:border-neutral-400"
+                  className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-lg font-bold outline-none focus:border-neutral-400"
                 />
               </div>
 
@@ -826,7 +844,7 @@ export default function CreatePage() {
                       onChange={(e) => setTodayEvent(e.target.value.slice(0, 200))}
                       rows={2}
                       placeholder="예: 그네를 타다가 넘어졌는데 친구가 일으켜 줬어요"
-                      className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
                     />
                   </div>
 
@@ -905,7 +923,7 @@ export default function CreatePage() {
                       onChange={(e) => setSituation(e.target.value.slice(0, 200))}
                       rows={2}
                       placeholder="예: 동생이 내 장난감을 가져갔을 때"
-                      className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
                     />
                   </div>
 
@@ -1064,7 +1082,7 @@ export default function CreatePage() {
                         THEME_GROUPS.find((g) => g.label === themeGroup)?.example ??
                         "예: 마법 숲에서 반짝이는 보물을 찾아요"
                       ).replace("OO", name.trim() || "우리 아이")}
-                      className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
                     />
                   </div>
 
@@ -1193,17 +1211,18 @@ export default function CreatePage() {
                   })}
                 </div>
                 <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
-                  ⭐ {age ?? "우리 아이"}세에게 알맞은 길이예요
-                  {IMAGES_ENABLED
-                    ? ` · 그림은 장면당 약 55원 (${pageCount}장 ≈ ${pageCount * 55}원)`
-                    : " · 지금은 글만 만들어 장면 수와 상관없이 무료예요"}
+                  ⭐ {age ?? "우리 아이"}세에게 알맞은 길이예요 · 이 장수면{" "}
+                  <b className="text-neutral-600">토큰 {bookCost}개</b>
+                  {IMAGES_ENABLED ? " (그림 2토큰/장)" : " (글 1토큰/장)"}
                 </p>
               </div>
 
               {/* 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로
                   읽어준다. 실시간 합성이 켜지면 만들 때 한 번 구워 재생은 늘 무료가 된다. */}
               <div>
-                <p className="mb-1.5 text-xs font-bold text-neutral-400">읽어줄 성우</p>
+                <p className="mb-1.5 text-xs font-bold text-neutral-400">
+                  읽어줄 성우 <span className="font-medium">(누르면 목소리를 들려줘요)</span>
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {TYPECAST_VOICES.map((v) => {
                     const active = narratorVoice === v.id;
@@ -1211,7 +1230,7 @@ export default function CreatePage() {
                       <button
                         key={v.id}
                         type="button"
-                        onClick={() => setNarratorVoice(v.id)}
+                        onClick={() => pickNarrator(v.id)}
                         aria-pressed={active}
                         style={active ? { background: accent } : undefined}
                         className={`flex items-center gap-1.5 rounded-full py-1.5 pl-2.5 pr-3.5 text-sm font-bold transition ${
@@ -1324,8 +1343,8 @@ export default function CreatePage() {
                     </p>
                     <p className="flex items-center justify-center gap-1 text-[11px] font-medium text-neutral-400">
                       <span aria-hidden className="inline-block rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
-                      토큰 {bookCost}개 사용 (내 잔액 {tokens}개)
-                      {IMAGES_ENABLED && ` · 그림 ${outline.scenes.length}쪽 포함 · 약 1~2분`}
+                      {outline.scenes.length}장 · 토큰 {bookCost}개 사용 (내 잔액 {tokens}개)
+                      {IMAGES_ENABLED && " · 그림 포함 · 약 1~2분"}
                     </p>
                     {bookLimitReached ? (
                       <p className="text-center text-xs font-bold text-red-600">

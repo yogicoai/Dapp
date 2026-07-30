@@ -544,7 +544,7 @@ export default function SettingsPage() {
 
             {/* 엄마·아빠 추가 */}
             {!recording && (
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {[
                   { label: "엄마", emoji: "👩" },
                   { label: "아빠", emoji: "👨" },
@@ -626,7 +626,7 @@ export default function SettingsPage() {
           {/* ── 언어 ── 지금은 한국어만 서비스. 영어·일본어는 준비 중이라 못 고른다. */}
           <section className="flex flex-col gap-2.5">
             <h2 className="text-sm font-extrabold text-neutral-400">동화 언어</h2>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               {FLAGS.map((f) => {
                 const active = f.lang === lang;
                 const ready = f.lang === "ko"; // 한국어만 서비스 중
