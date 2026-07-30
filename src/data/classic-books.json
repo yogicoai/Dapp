@@ -81,6 +81,7 @@
   },
   {
     "id": "classic-threepigs",
+    "narrators": ["tc-jungsoon", "tc-gunseok", "tc-miso"],
     "lang": "ko",
     "title": "돼지 삼형제",
     "summary": "지푸라기 집, 나무 집, 벽돌 집 — 부지런한 막내 돼지가 늑대를 물리치는 이야기",
@@ -468,6 +469,7 @@
   },
   {
     "id": "classic-uglyduckling",
+    "narrators": ["tc-jungsoon", "tc-gunseok", "tc-miso"],
     "lang": "ko",
     "title": "미운오리새끼",
     "summary": "남들과 다르다고 놀림받던 아기 오리가 아름다운 백조로 자라나는 이야기",
@@ -672,6 +674,7 @@
   },
   {
     "id": "classic-redridinghood",
+    "narrators": ["tc-jungsoon", "tc-gunseok", "tc-miso"],
     "lang": "ko",
     "title": "빨간 모자",
     "summary": "숲속에서 만난 수상한 늑대와 씩씩한 빨간 모자 이야기",
@@ -922,6 +925,7 @@
   },
   {
     "id": "classic-bremen",
+    "narrators": ["tc-jungsoon", "tc-gunseok", "tc-miso"],
     "lang": "ko",
     "title": "브레멘 음악대",
     "summary": "늙었다고 쫓겨난 네 동물 친구가 힘을 합쳐 도둑을 물리치는 유쾌한 이야기",
@@ -1126,6 +1130,7 @@
   },
   {
     "id": "classic-antgrasshopper",
+    "narrators": ["tc-jungsoon", "tc-gunseok", "tc-miso"],
     "lang": "ko",
     "title": "개미와 베짱이",
     "summary": "여름 내내 일한 개미와 노래한 베짱이가 함께 겨울을 나는 이야기",
@@ -1312,6 +1317,7 @@
   },
   {
     "id": "classic-twomice",
+    "narrators": ["tc-jungsoon", "tc-gunseok", "tc-miso"],
     "lang": "ko",
     "title": "시골 쥐와 도시 쥐",
     "summary": "화려한 도시와 포근한 시골 — 서로 다른 두 쥐의 즐거운 초대 이야기",

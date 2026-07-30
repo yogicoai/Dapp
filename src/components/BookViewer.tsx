@@ -164,13 +164,20 @@ export function BookViewer({ book }: { book: Book }) {
   const voiceIdRef = useRef<string>("basic");
   const overriddenRef = useRef(false);
   const [voiceMenu, setVoiceMenu] = useState(false);
+  // 성우 선택지 — 추천 성우가 있는 책(전래·세계명작)은 그 목록만 보여준다(전부 미리
+  // 구운 파일이라 무료 전환). 없으면(만든 동화 등) 전체 성우.
+  const voiceChoices = book.narrators
+    ? (book.narrators
+        .map((id) => TYPECAST_VOICES.find((v) => v.id === id))
+        .filter(Boolean) as typeof TYPECAST_VOICES)
+    : TYPECAST_VOICES;
   useEffect(() => {
-    // 만든 동화는 만들 때 고른 성우(book.narrator)로 읽는다(방법 B). 없으면 설정값.
-    const v = book.narrator ?? loadSelectedVoiceId();
+    // 추천 성우가 있으면 그 첫 번째, 아니면 만든 동화의 성우(book.narrator), 아니면 설정값.
+    const v = book.narrators?.[0] ?? book.narrator ?? loadSelectedVoiceId();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 저장된 성우를 마운트 후 반영
     setVoiceId(v);
     voiceIdRef.current = v;
-  }, [book.narrator]);
+  }, [book.narrators, book.narrator]);
 
   // 캐릭터 클릭 반응 — 정지 그림이라 캐릭터 자체는 못 움직이지만, 누른 자리에서
   // 반짝이가 통통 튀어올라 "반응하는" 느낌을 준다. key로 매 클릭마다 다시 튼다.
@@ -302,6 +309,13 @@ export function BookViewer({ book }: { book: Book }) {
     const bundled = page.audio ?? page.legacyAudio ?? null;
     const selectedId = voiceIdRef.current;
     const tc = findTypecast(selectedId);
+
+    // 이 책의 추천 성우(narrators) 중 하나를 골랐으면, 그 성우로 미리 구운 파일을
+    // 재생한다 — 파일 재생이라 크레딧 0·즉시. (narr-pN.mp3 → narr-{성우}-pN.mp3)
+    if (book.narrators?.includes(selectedId) && page.audio) {
+      playViaAudio(page.audio.replace("narr-", `narr-${selectedId}-`));
+      return;
+    }
 
     // 성우 음성 — 지문/대사 조각을 이어서 재생한다. 대사에는 감정 연기가 실려
     // 있고, 색칠은 조각의 글자 범위를 따라가서 통짜 비례보다 정확하다.
@@ -739,9 +753,9 @@ export function BookViewer({ book }: { book: Book }) {
       {voiceMenu && (
         <div className="absolute right-4 top-[3.75rem] z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur">
           <p className="px-2 py-1 text-[11px] font-bold text-neutral-400">
-            읽어주는 성우를 골라요
+            {book.narrators ? "이 동화 추천 성우 (무료로 바꿔 들어요)" : "읽어주는 성우를 골라요"}
           </p>
-          {TYPECAST_VOICES.map((v) => {
+          {voiceChoices.map((v) => {
             const active = voiceId === v.id;
             return (
               <button

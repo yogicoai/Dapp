@@ -48,6 +48,12 @@ export type Book = {
    * 내장 mp3를 그대로 써서 크레딧을 아낀다.
    */
   narrator?: string;
+  /**
+   * 이 책의 추천 성우 목록(성우 id 2~3개). 첫 번째가 기본.
+   * 각 성우 낭독은 미리 구워 public에 있어(narr-{성우id}-pN.mp3), 뷰어에서 이 목록
+   * 안에서만 고르게 하면 전환이 무료(파일 재생)다. 없으면 단일 narrator만 쓴다.
+   */
+  narrators?: string[];
   /** 책장 표지 원 안에 넣을 그림. 없으면 그림이 있는 첫 쪽을 쓴다. */
   coverImage?: string | null;
   /** 책장에서 숨김 (주소로는 열림). 다듬는 중인 책을 서가에서 내릴 때 쓴다 — DB의 hidden_at 전신. */
