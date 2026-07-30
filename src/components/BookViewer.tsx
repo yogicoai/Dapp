@@ -566,7 +566,46 @@ export function BookViewer({ book }: { book: Book }) {
       {/* relative z-0 — 쪽들의 zIndex 경쟁을 이 안에 가둔다. 쪽수가 아무리
           늘어도(전래동화 16쪽) 버튼·링크가 항상 위에 남는다. */}
       <div className="relative z-0 h-full w-full">
-        {book.pages.map((page, i) => (
+        {book.pages.map((page, i) => {
+          // 낭독 글자를 노래방처럼 색칠해 보여준다 — 가로 오버레이·세로 패널 두 곳에서 같은 내용을 쓴다.
+          const renderRuns = () =>
+            i === index && reading ? (
+              page.text.split("").map((ch, k) => (
+                <span key={k} className={k < highlight ? "text-amber-300" : "text-white"}>
+                  {ch}
+                </span>
+              ))
+            ) : (
+              <span className="text-white">{page.text}</span>
+            );
+
+          // 그림 위에 얹는 오버레이 — '가로로 보기'처럼 그림이 화면을 꽉 채울 때 쓴다.
+          // (세로에선 그림을 가리지 않게, 그림 아래 전용 자리에 따로 글을 놓는다.)
+          const overlayText = (extra: string) => (
+            <div
+              className={`absolute ${
+                {
+                  bottom:
+                    "inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[6%] pt-[14%]",
+                  top: "inset-x-0 top-0 bg-gradient-to-b from-black/85 via-black/55 to-transparent px-[6%] pt-[6%] pb-[14%]",
+                  center: "inset-0 flex items-center justify-center p-[6%]",
+                  left: "inset-y-0 left-0 flex w-[46%] items-center pl-[5%] pr-[2%]",
+                  right: "inset-y-0 right-0 flex w-[46%] items-center pr-[5%] pl-[2%]",
+                }[textPos]
+              } ${extra}`}
+            >
+              <p
+                className={`font-story whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.7rem,3.6vw,2.15rem)] font-semibold leading-[1.3] drop-shadow-md ${
+                  textPos === "bottom" || textPos === "top"
+                    ? "mx-auto w-full max-w-[max(20rem,60vw)]"
+                    : "w-full rounded-3xl bg-black/55 p-5 backdrop-blur-[2px] sm:p-6"
+                } ${textPos === "center" ? "max-w-[max(20rem,55vw)]" : ""}`}
+              >
+                {renderRuns()}
+              </p>
+            </div>
+          );
+          return (
           <section
             key={i}
             // bg 불투명 필수 — 블러 배경이 반투명(70%)이라 바탕이 비치면
@@ -586,11 +625,7 @@ export function BookViewer({ book }: { book: Book }) {
           >
             {page.image ? (
               <>
-                {/*
-                  비율이 화면과 다른 그림(기존 샘플은 3:4 세로)도 잘리지 않게:
-                  뒤에 블러로 꽉 채우고, 앞에 원본을 그대로 담는다.
-                  4:3 가로 그림이면 앞 레이어가 화면을 거의 꽉 채워 블러는 안 보인다.
-                */}
+                {/* 뒤 블러로 화면을 꽉 채워 letterbox 빈 자리를 메운다(그림 잘림 없음). */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={page.image}
@@ -598,97 +633,62 @@ export function BookViewer({ book }: { book: Book }) {
                   aria-hidden
                   className="absolute inset-0 h-full w-full scale-110 object-cover opacity-70 blur-2xl"
                 />
-                {/* 움직이는 삽화가 있으면 영상을, 없으면 정지 이미지를 담는다.
-                    정지 이미지는 poster로 깔아 로딩 지연 없이 이어진다. 현재 쪽만
-                    재생하고(다른 쪽은 poster) 넘겨서 이 쪽이 되면 자동 재생된다. */}
-                {page.video ? (
-                  <video
-                    key={i === index ? `on-${i}` : `off-${i}`}
-                    src={i === index ? page.video : undefined}
-                    poster={page.image}
-                    autoPlay={i === index}
-                    muted
-                    playsInline
-                    // 무한 반복 대신 '딱 2번'만 재생하고 멈춘다(마지막 프레임에서 정지).
-                    // 끝날 때마다 재생 횟수를 데이터 속성에 세어, 2번째까지만 다시 튼다.
-                    onEnded={(e) => {
-                      const el = e.currentTarget;
-                      const plays = Number(el.dataset.plays || "0") + 1;
-                      el.dataset.plays = String(plays);
-                      if (plays < 2) {
-                        el.currentTime = 0;
-                        el.play().catch(() => {});
-                      }
-                    }}
-                    className="relative h-full w-full object-contain"
-                  />
-                ) : (
-                  // 읽는 동안 그림이 천천히 숨 쉰다 — 정지 삽화에 주는 최소한의 생기.
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={page.image}
-                    alt=""
-                    className={`relative h-full w-full object-contain ${
-                      i === index && reading ? "animate-[breathe_10s_ease-in-out_infinite]" : ""
-                    }`}
-                  />
-                )}
+                {/* 이미지+글자를 같은 4:3 박스에 담는다 — 글이 화면이 아니라 '그림' 기준으로
+                    앉아, 모바일 세로에서도 그림 하단 안쪽에 자연스럽게 붙는다. */}
+                <div className="absolute inset-0 flex items-center justify-center portrait:items-start portrait:pt-[3.5rem]">
+                  <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)] overflow-hidden">
+                    {page.video ? (
+                      <video
+                        key={i === index ? `on-${i}` : `off-${i}`}
+                        src={i === index ? page.video : undefined}
+                        poster={page.image}
+                        autoPlay={i === index}
+                        muted
+                        playsInline
+                        onEnded={(e) => {
+                          const el = e.currentTarget;
+                          const plays = Number(el.dataset.plays || "0") + 1;
+                          el.dataset.plays = String(plays);
+                          if (plays < 2) {
+                            el.currentTime = 0;
+                            el.play().catch(() => {});
+                          }
+                        }}
+                        className="h-full w-full object-contain"
+                      />
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={page.image}
+                        alt=""
+                        className={`h-full w-full object-contain ${
+                          i === index && reading ? "animate-[breathe_10s_ease-in-out_infinite]" : ""
+                        }`}
+                      />
+                    )}
+                    {/* 가로 보기: 그림 위 오버레이. 세로에선 아래 전용 자리를 쓰므로 숨긴다. */}
+                    {overlayText("portrait:hidden")}
+                  </div>
+                </div>
+                {/* 세로 보기 전용: 그림 바로 아래 글자 자리 — 그림도, 아래 버튼도 안 가린다. */}
+                <div className="absolute inset-x-0 top-[calc(3.5rem_+_75vw)] bottom-0 flex items-center justify-center px-[7%] pt-3 pb-24 bg-gradient-to-b from-transparent via-black/45 to-black/70 landscape:hidden">
+                  <p className="font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.2rem,4.6vw,1.9rem)] font-semibold leading-[1.5] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+                    {renderRuns()}
+                  </p>
+                </div>
               </>
             ) : (
-              // 그림 없는 쪽(글 동화)은 테마 배경을 깐다 — 게시판이 아니라
-              // "동화나라 안에서 읽는" 느낌을 그대로 가져간다.
-              // 원색이 너무 세면 글이 묻혀서 흰 베일을 살짝 얹는다.
+              // 그림 없는 쪽(글 동화)은 테마 배경 위에 글을 얹는다.
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={ui.background} alt="" className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-white/20" />
+                {overlayText("")}
               </>
             )}
-
-            {/* 삽화 위에 글이 얹히므로 글 뒤를 어둡게 깔아 가독성을 확보한다.
-                위치는 설정에서 고른다(아래·위·가운데·왼쪽·오른쪽) — 늘 하단이면
-                발밑 장면이 계속 가려진다. 아래·위는 가장자리 그라데이션, 나머지는
-                반투명 판. 글 덩어리는 화면의 60%를 넘지 않게 모은다 — 문장이
-                화면 끝까지 퍼지면 눈이 줄을 잃는다. 폰에서는 최소 폭을 지킨다. */}
-            <div
-              className={`absolute ${
-                {
-                  bottom:
-                    "inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[6%] pt-[14%]",
-                  top: "inset-x-0 top-0 bg-gradient-to-b from-black/85 via-black/55 to-transparent px-[6%] pt-[6%] pb-[14%]",
-                  center: "inset-0 flex items-center justify-center p-[6%]",
-                  left: "inset-y-0 left-0 flex w-[46%] items-center pl-[5%] pr-[2%]",
-                  right: "inset-y-0 right-0 flex w-[46%] items-center pr-[5%] pl-[2%]",
-                }[textPos]
-              }`}
-            >
-              {/* break-keep: 한국어를 단어 단위로만 줄바꿈 ("물고서 / 요." 방지),
-                  text-pretty: 마지막 줄에 글자 몇 개만 남는 외톨이 줄을 피한다. */}
-              <p
-                className={`font-story whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.7rem,3.6vw,2.15rem)] font-semibold leading-[1.3] drop-shadow-md ${
-                  textPos === "bottom" || textPos === "top"
-                    ? "mx-auto w-full max-w-[max(20rem,60vw)]"
-                    : // 떠 있는 판 — 그라데이션이 없으니 판 자체가 가독성을 만든다.
-                      "w-full rounded-3xl bg-black/55 p-5 backdrop-blur-[2px] sm:p-6"
-                } ${textPos === "center" ? "max-w-[max(20rem,55vw)]" : ""}`}
-              >
-                {i === index && reading
-                  ? // 읽는 중 — 읽힌 글자는 노란색, 아직인 글자는 흰색 (노래방 방식)
-                    page.text.split("").map((ch, k) => (
-                      <span
-                        key={k}
-                        className={
-                          k < highlight ? "text-amber-300" : "text-white"
-                        }
-                      >
-                        {ch}
-                      </span>
-                    ))
-                  : <span className="text-white">{page.text}</span>}
-              </p>
-            </div>
           </section>
-        ))}
+          );
+        })}
       </div>
 
       {/* 넘김은 우측 상단 전용 버튼(◀ ▶) — 화면 절반 탭 방식은 캐릭터 클릭
@@ -778,7 +778,7 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 움직이는 캐릭터(배우) 레이어 — 캐릭터 없는 배경 위에 투명 스티커를
           겹치고, 낭독 중에는 뒤뚱뒤뚱 움직인다. 클릭은 통과시켜 핫스팟이 받는다. */}
       {(book.pages[index].actors?.length ?? 0) > 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center portrait:items-start portrait:pt-[3.5rem]">
           {/* w-[min(100%,133.333dvh)] — 어떤 창 비율에서도 object-contain된
               4:3 그림과 정확히 같은 크기를 유지한다 (h-full은 세로 창에서 틀이 늘어남). */}
           <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)]">
@@ -808,7 +808,7 @@ export function BookViewer({ book }: { book: Book }) {
           그림(4:3, contain)과 같은 규칙의 4:3 틀을 겹쳐 좌표를 맞춘다.
           넘김 영역보다 위(z-[5]), 읽어주기 버튼(z-10)보다는 아래. */}
       {book.pages[index].image && (book.pages[index].hotspots?.length ?? 0) > 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center portrait:items-start portrait:pt-[3.5rem]">
           <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)]">
             {book.pages[index].hotspots!.map((h, hi) => {
               return (
