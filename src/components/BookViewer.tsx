@@ -22,6 +22,7 @@ import {
   GOOGLE_TTS_ENABLED,
   loadSelectedVoiceId,
   loadVoiceRate,
+  RECOMMENDED_VOICES,
   saveSelectedVoiceId,
   saveVoiceRate,
   TYPECAST_VOICES,
@@ -168,11 +169,16 @@ export function BookViewer({ book }: { book: Book }) {
   const [voiceMenu, setVoiceMenu] = useState(false);
   // 성우 선택지 — 추천 성우가 있는 책(전래·세계명작)은 그 목록만 보여준다(전부 미리
   // 구운 파일이라 무료 전환). 없으면(만든 동화 등) 전체 성우.
-  const voiceChoices = book.narrators
-    ? (book.narrators
-        .map((id) => TYPECAST_VOICES.find((v) => v.id === id))
-        .filter(Boolean) as typeof TYPECAST_VOICES)
-    : TYPECAST_VOICES;
+  // '내가 만든 동화'(id가 my-)는 추천 성우(여성·남성)만, 제공 동화는 그 책의 추천 성우
+  // (narrators)만 보여준다 — 창작 동화에서 성우가 16명씩 뜨던 걸 줄인다.
+  const isCreated = book.id.startsWith("my-");
+  const voiceChoices: readonly { id: string; label: string; emoji: string }[] = isCreated
+    ? RECOMMENDED_VOICES
+    : book.narrators
+      ? (book.narrators
+          .map((id) => TYPECAST_VOICES.find((v) => v.id === id))
+          .filter(Boolean) as typeof TYPECAST_VOICES)
+      : TYPECAST_VOICES;
   useEffect(() => {
     // 추천 성우가 있으면 그 첫 번째, 아니면 만든 동화의 성우(book.narrator), 아니면 설정값.
     const v = book.narrators?.[0] ?? book.narrator ?? loadSelectedVoiceId();

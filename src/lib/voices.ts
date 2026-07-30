@@ -90,6 +90,15 @@ export function findTypecast(id: string): TypecastPreset | null {
   return TYPECAST_VOICES.find((v) => v.id === id) ?? null;
 }
 
+/**
+ * 창작 동화(내가 만든 동화) 추천 성우 — 딱 3개(여성·남성·어린이). 만들기·뷰어 공용.
+ * id는 위 성우와 같아 구글 음성 매핑·미리듣기·재생이 그대로 동작한다.
+ */
+export const RECOMMENDED_VOICES = [
+  { id: "tc-miso", label: "여성", emoji: "👩", desc: "다정한 여성 목소리" },
+  { id: "tc-gunseok", label: "남성", emoji: "👨", desc: "듬직한 남성 목소리" },
+] as const;
+
 /** 녹음할 지정 문장. 개인정보가 전혀 없는 동화 문장이라 유출돼도 무해하다. */
 export const RECORDING_SCRIPT =
   "옛날 옛적, 깊은 숲속에 작은 집이 한 채 있었어요. " +

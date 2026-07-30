@@ -12,18 +12,7 @@ import { loadChild, loadMyBooks, saveChild, saveMyBook } from "@/lib/prefs";
 import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
-import { fetchGoogleAudio, TYPECAST_VOICES } from "@/lib/voices";
-
-/**
- * 창작 동화 추천 성우 — 딱 3개(여성·남성·어린이)만 노출한다(과금·복잡도 최소화).
- * id는 기존 성우와 같아 구글 음성 매핑·미리듣기가 그대로 동작한다.
- */
-const RECOMMENDED_VOICES = [
-  { id: "tc-miso", label: "여성", emoji: "👩", desc: "다정한 여성 목소리" },
-  { id: "tc-gunseok", label: "남성", emoji: "👨", desc: "듬직한 남성 목소리" },
-  { id: "tc-booqoo", label: "어린이", emoji: "🧒", desc: "밝은 어린이 목소리" },
-] as const;
-const RECOMMENDED_IDS: string[] = RECOMMENDED_VOICES.map((v) => v.id);
+import { fetchGoogleAudio, RECOMMENDED_VOICES, TYPECAST_VOICES } from "@/lib/voices";
 
 type Gender = "girl" | "boy" | "unspecified";
 type Scene = { sceneNo: number; text: string };
@@ -605,8 +594,6 @@ export default function CreatePage() {
       summary: s.summary,
       // 고른 성우를 책에 박는다 — 뷰어가 이 성우로 읽어준다(방법 B).
       narrator: narratorVoice,
-      // 뷰어 성우 선택지도 이 3개(여성·남성·어린이)로 제한한다. 고른 성우가 맨 앞(기본).
-      narrators: [narratorVoice, ...RECOMMENDED_IDS.filter((id) => id !== narratorVoice)],
       pages: s.pages.map((p, i) => ({ text: p.text, image: images[i] ?? null })),
     };
     await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
@@ -1224,7 +1211,7 @@ export default function CreatePage() {
                   읽어준다. 실시간 합성이 켜지면 만들 때 한 번 구워 재생은 늘 무료가 된다. */}
               <div>
                 <p className="mb-1.5 text-xs font-bold text-neutral-400">
-                  읽어줄 성우 <span className="font-medium">(여성·남성·어린이 — 누르면 들려줘요)</span>
+                  읽어줄 성우 <span className="font-medium">(베타 — 눌러서 들어보고 골라요)</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {RECOMMENDED_VOICES.map((v) => {

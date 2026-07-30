@@ -22,6 +22,9 @@ export default function Home() {
   const [master, setMaster] = useState(false);
   const [tokens, setTokens] = useState(0);
   const [myBooks, setMyBooks] = useState<Book[]>([]);
+  // 내 책을 다 불러왔는지 — 불러오는 중엔 '동화가 없어요'를 띄우지 않아, 책이 있는데도
+  // 잠깐 '없어요'가 깜빡이던 문제를 막는다.
+  const [booksLoaded, setBooksLoaded] = useState(false);
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -38,8 +41,11 @@ export default function Home() {
       if (s.uid) {
         // 옛 기기 저장 책(지안이 동화 등)이 남아 있으면 이 계정으로 한 번 가져온다.
         await migrateLegacyBooks();
+        if (!alive) return;
         setMyBooks(await loadMyBooks());
+        if (!alive) return;
       }
+      setBooksLoaded(true);
     })();
     return () => {
       alive = false;
@@ -269,7 +275,13 @@ export default function Home() {
         </div>
 
         {/* 빈 책장 — 서가마다 다음 행동을 알려준다 (만들기 유도 / 준비 중 안내). */}
-        {shown.length === 0 ? (
+        {shown.length === 0 && shelf === "mine" && !guest && !booksLoaded ? (
+          // 로그인 회원의 '우리 가족 책장'은 책을 불러오는 중엔 '없어요' 대신 로딩을 보여준다.
+          <div className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-[28px] bg-white/85 px-8 py-10 text-center shadow-xl backdrop-blur">
+            <div className="h-20 w-20 animate-pulse rounded-full border-4 border-white bg-white/60 shadow" />
+            <p className="text-sm font-bold text-neutral-400">동화를 불러오는 중이에요…</p>
+          </div>
+        ) : shown.length === 0 ? (
           <div className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-[28px] bg-white/85 px-8 py-10 text-center shadow-xl backdrop-blur">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
