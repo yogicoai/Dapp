@@ -13,10 +13,9 @@ import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
 import {
-  CLIENT_TTS_ENABLED,
+  fetchGoogleAudio,
+  GOOGLE_TTS_ENABLED,
   TYPECAST_VOICES,
-  fetchTypecastPageAudio,
-  findTypecast,
 } from "@/lib/voices";
 
 type Gender = "girl" | "boy" | "unspecified";
@@ -362,18 +361,31 @@ export default function CreatePage() {
   const [mood, setMood] = useState(MOODS[0]);
   // 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로 읽는다.
   const [narratorVoice, setNarratorVoice] = useState(TYPECAST_VOICES[0].id);
-  // 성우를 고르면 미리 구운 샘플(static mp3)을 들려준다 — 크레딧 0.
+  // 성우를 고르면 그 목소리(Google)로 인사말을 실제로 들려준다 — "고른 목소리 = 읽는
+  // 목소리"가 보장된다. 같은 (성우, 문장)은 기기에 캐시돼 두 번째부턴 0원.
   const narratorPreviewRef = useRef<HTMLAudioElement | null>(null);
-  function pickNarrator(id: string) {
+  async function pickNarrator(id: string) {
     setNarratorVoice(id);
+    const v = TYPECAST_VOICES.find((x) => x.id === id);
+    const sample = v?.sample ?? "안녕하세요, 오늘은 어떤 이야기를 들려줄까요?";
     try {
+      const blob = await fetchGoogleAudio(id, sample);
       const el = narratorPreviewRef.current ?? new Audio();
       narratorPreviewRef.current = el;
-      el.src = `/casting/preview-${id}.mp3`;
+      el.src = URL.createObjectURL(blob);
       el.currentTime = 0;
       void el.play().catch(() => {});
     } catch {
-      /* 무시 */
+      // 구글 실패(키 없음·오프라인 등) — 미리 구운 static 샘플이 있으면 그걸로 대체.
+      try {
+        const el = narratorPreviewRef.current ?? new Audio();
+        narratorPreviewRef.current = el;
+        el.src = `/casting/preview-${id}.mp3`;
+        el.currentTime = 0;
+        void el.play().catch(() => {});
+      } catch {
+        /* 무시 */
+      }
     }
   }
   // 장면(쪽) 수 3~8. 나이에 맞는 추천값으로 시작한다(부모가 바꿀 수 있다).
@@ -595,19 +607,17 @@ export default function CreatePage() {
   }
 
   /**
-   * 나레이션 미리 굽기 — 만들 때 고른 성우로 각 쪽을 합성해 기기 캐시를 데운다.
-   * 그럼 아이가 재생할 때 즉시·무료로 나온다(전래동화처럼). 실시간 합성이 잠겨 있으면
-   * (CLIENT_TTS_ENABLED=false) 아무것도 안 해 크레딧이 0이다 — 잠금 풀면 자동 작동.
+   * 나레이션 미리 굽기 — 만들 때 고른 성우(Google)로 각 쪽을 합성해 기기 캐시를 데운다.
+   * 그럼 아이가 재생할 때 즉시 나온다(전래동화처럼). 한 번 구우면 그 쪽은 캐시돼 다시
+   * 들을 땐 0원. 실패는 무시 — 재생 시점에 다시 합성한다. 화면은 막지 않는다(백그라운드).
    */
   function prewarmNarration(s: Story) {
-    if (!CLIENT_TTS_ENABLED) return;
-    const tc = findTypecast(narratorVoice);
-    if (!tc) return;
+    if (!GOOGLE_TTS_ENABLED) return;
     // 순차로 캐시를 데운다. 실패는 무시(재생 때 다시 시도한다). 화면은 안 막는다.
     void (async () => {
       for (const p of s.pages) {
         try {
-          await fetchTypecastPageAudio(tc, p.text);
+          await fetchGoogleAudio(narratorVoice, p.text);
         } catch {
           /* 무시 — 재생 시점에 다시 합성한다 */
         }

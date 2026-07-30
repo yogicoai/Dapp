@@ -334,6 +334,30 @@ export async function fetchTypecastAudio(
   return blob;
 }
 
+/**
+ * '내가 만든 동화'용 성우 음성 — Google Cloud TTS(무료 티어 월 100만 자).
+ * 같은 (성우, 문장)은 IndexedDB에 캐시해 두 번째부터는 크레딧이 안 나간다.
+ * 실패(키 없음·한도 초과·오프라인)는 그대로 던진다 — 부른 쪽이 브라우저 기계음으로 물러난다.
+ */
+export async function fetchGoogleAudio(voiceId: string, text: string): Promise<Blob> {
+  const cacheId = `gtts:${voiceId}:${hashText(text)}`;
+  const cached = await loadVoiceAudio(cacheId).catch(() => null);
+  if (cached) return cached;
+
+  const r = await fetch("/api/tts/google", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, voiceId }),
+  });
+  if (!r.ok) {
+    const data = (await r.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(data?.error ?? `구글 음성 실패 (HTTP ${r.status})`);
+  }
+  const blob = await r.blob();
+  saveVoiceAudio(cacheId, blob).catch(() => {});
+  return blob;
+}
+
 /* ── 대사 연기 — 쪽 텍스트를 지문/대사로 나눠 감정을 입힌다 ── */
 
 export type PageAudioSegment = {
@@ -393,6 +417,14 @@ export function guessEmotion(line: string): string {
  * 실서비스에서 '내가 만든 동화'를 진짜 성우로 읽어주려면 이 값을 true로 바꾼다.
  */
 export const CLIENT_TTS_ENABLED = false;
+
+/**
+ * '내가 만든 동화'를 Google Cloud TTS로 실시간 낭독할지. 사장님이 Google TTS로
+ * 가기로 정해서 켠다(true). 키(GOOGLE_TTS_API_KEY)가 없거나 한도를 넘으면 자동으로
+ * 브라우저 기계음으로 물러나므로, 켜 둬도 크레딧이 새지 않는다(키 없으면 호출 실패 → 폴백).
+ * 제공 동화(전래·세계명작)는 미리 구운 파일을 쓰므로 이 스위치와 무관하다.
+ */
+export const GOOGLE_TTS_ENABLED = true;
 
 /**
  * 한 쪽을 지문/대사 조각으로 나눠 합성한다. 대사에는 감정 연기가 실린다.

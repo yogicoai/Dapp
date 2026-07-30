@@ -15,9 +15,11 @@ import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import {
   buildPresetUtterance,
+  fetchGoogleAudio,
   fetchTypecastPageAudio,
   findPreset,
   findTypecast,
+  GOOGLE_TTS_ENABLED,
   loadSelectedVoiceId,
   loadVoiceRate,
   saveSelectedVoiceId,
@@ -258,6 +260,20 @@ export function BookViewer({ book }: { book: Book }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 캐릭터 대사(핫스팟) 정지 — 쪽을 넘기거나 화면을 떠날 때 목소리가 남지 않게.
+  // 낭독(haltPlayback)과 별개 채널이라 따로 멈춰줘야 한다. onended/onerror도 떼서
+  // '대사 끝나면 낭독 재개' 콜백이 뒤늦게 안 튀게 한다.
+  const stopSay = useCallback(() => {
+    narrPausedRef.current = false;
+    const el = sayRef.current;
+    if (el) {
+      el.onended = null;
+      el.onerror = null;
+      el.pause();
+    }
+    setSpeaking(null);
+  }, []);
+
   // 이어 읽기를 위해 자기 자신을 다시 부르는 재귀 함수라 훅으로 감싸지 않는다.
   // 이벤트 핸들러에서만 호출되므로 메모이제이션이 필요 없다.
   function readPage(i: number) {
@@ -362,9 +378,26 @@ export function BookViewer({ book }: { book: Book }) {
       return;
     }
 
+    // 여기까지 왔으면 딸린 음성이 없는 책 = 내가 만든 동화. 고른 성우로 실시간 합성한다
+    // (한 번 만들면 기기에 캐시되어 다시 들을 땐 무료).
+    if (tc && GOOGLE_TTS_ENABLED) {
+      // 기본 엔진: Google Cloud TTS(무료 티어). 실패(키 없음·한도·오프라인)하면
+      // 딸린 파일이 있으면 그걸, 없으면 브라우저 기계음으로 물러난다 — 크레딧 안 나감.
+      fetchGoogleAudio(selectedId, page.text)
+        .then((blob) => {
+          if (run !== runIdRef.current || !readingRef.current) return;
+          playViaAudio(URL.createObjectURL(blob));
+        })
+        .catch(() => {
+          if (run !== runIdRef.current || !readingRef.current) return;
+          if (bundled) playViaAudio(bundled);
+          else speakWithBrowser();
+        });
+      return;
+    }
+
     if (tc) {
-      // 여기까지 왔으면 딸린 음성이 없는 책 = 내가 만든 동화. 고른 성우로 합성한다
-      // (한 번 만들면 기기에 캐시되어 다시 들을 땐 무료).
+      // (Typecast 유료 전환 시의 경로 — 지금은 CLIENT_TTS_ENABLED=false라 바로 폴백.)
       fetchTypecastPageAudio(tc, page.text)
         .then((segments) => {
           // 받는 사이 정지했거나 다른 쪽으로 넘어갔으면 재생하지 않는다.
@@ -467,7 +500,10 @@ export function BookViewer({ book }: { book: Book }) {
   const go = useCallback(
     (next: number) => {
       const clamped = Math.min(lastIndex, Math.max(0, next));
-      if (clamped !== index) setEnded(false); // 넘기면 "다시 듣기" 안내는 닫는다
+      if (clamped !== index) {
+        setEnded(false); // 넘기면 "다시 듣기" 안내는 닫는다
+        stopSay(); // 넘김과 동시에 캐릭터 대사 음성을 끊는다(다음 쪽까지 새어 나가지 않게)
+      }
       // 책장 넘김 효과음 — 실제로 쪽이 바뀔 때만. 설정에서 끌 수 있다.
       if (clamped !== index && loadSfxOn()) {
         const el = sfxRef.current ?? new Audio("/sfx/page-turn.mp3");
@@ -490,6 +526,8 @@ export function BookViewer({ book }: { book: Book }) {
 
   // 뷰어를 떠날 때 소리를 끄고, 전체화면·가로 고정도 되돌린다.
   useEffect(() => stopReading, [stopReading]);
+  // 화면을 떠날 때(서재로 나가기·주소 이동 등) 캐릭터 대사 음성도 확실히 끊는다.
+  useEffect(() => () => stopSay(), [stopSay]);
   useEffect(() => () => exitStoryMode(), []);
 
   // 배경음 — 켜면 잔잔히 반복, 끄면 멈춘다. 낭독을 덮지 않게 볼륨을 아주 낮게.
