@@ -677,10 +677,9 @@ export function BookViewer({ book }: { book: Book }) {
                   aria-hidden
                   className="absolute inset-0 h-full w-full scale-110 object-cover opacity-70 blur-2xl"
                 />
-                {/* 무대 — 세로: 그림 위 + 글자 아래(겹침 없음, flex로 자연스럽게 쌓음).
-                    가로: 그림이 화면을 채우고 글자는 그림 위 하단 밴드. 핫스팟 무대도 같은
-                    규칙(portrait:items-start·pt-[3.5rem])이라 대사 좌표가 그림과 정확히 맞는다. */}
-                <div className="absolute inset-0 flex items-center justify-center portrait:flex-col portrait:justify-start portrait:pt-[3.5rem]">
+                {/* 무대 — 가로: 그림이 화면을 채운다. 세로: [그림+글자]를 한 덩어리로 화면
+                    가운데 정렬하고, 아래 버튼 자리(6rem)는 비운다(겹침 방지). */}
+                <div className="absolute inset-0 flex items-center justify-center portrait:flex-col portrait:bottom-24">
                   <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)] shrink-0 overflow-hidden">
                     {page.video ? (
                       <video
@@ -720,7 +719,7 @@ export function BookViewer({ book }: { book: Book }) {
                   </div>
                   {/* 세로 보기 전용: 그림 바로 아래 글자 칸(flex 형제라 그림에 딱 붙는다).
                       아래 버튼(재생·배속)을 안 가리게 pb를 넉넉히 둔다. */}
-                  <div className="flex min-h-0 w-full flex-1 items-center justify-center bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-28 pt-3 landscape:hidden">
+                  <div className="flex max-h-[42dvh] w-full shrink-0 items-center justify-center overflow-y-auto bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:hidden">
                     <p className="font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.15rem,4.4vw,1.85rem)] font-semibold leading-[1.5] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
                       {renderRuns()}
                     </p>
@@ -743,13 +742,13 @@ export function BookViewer({ book }: { book: Book }) {
 
       {/* 넘김은 우측 상단 전용 버튼(◀ ▶) — 화면 절반 탭 방식은 캐릭터 클릭
           대사와 겹쳐 오작동해서 걷어냈다. 스와이프와 키보드 ←→는 그대로 산다. */}
-      <div className="absolute right-4 top-4 z-10 flex gap-2">
+      <div className="absolute right-3 top-4 z-10 flex gap-1.5 sm:right-4 sm:gap-2">
         <button
           type="button"
           aria-label="이전 쪽"
           onClick={() => go(index - 1)}
           disabled={index === 0}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none sm:h-11 sm:w-11"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden>
             <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="#404040" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -760,7 +759,7 @@ export function BookViewer({ book }: { book: Book }) {
           aria-label="다음 쪽"
           onClick={() => go(index + 1)}
           disabled={index === lastIndex}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none sm:h-11 sm:w-11"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden>
             <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="#404040" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -775,7 +774,7 @@ export function BookViewer({ book }: { book: Book }) {
             setBgmOn(next);
             saveBgmOn(next);
           }}
-          className={`flex h-11 w-11 items-center justify-center rounded-full shadow-md backdrop-blur transition outline-none focus:outline-none ${
+          className={`flex h-9 w-9 items-center justify-center rounded-full shadow-md backdrop-blur transition outline-none focus:outline-none sm:h-11 sm:w-11 ${
             bgmOn ? "bg-amber-400 text-white" : "bg-white/85 text-neutral-400 hover:bg-white"
           }`}
         >
@@ -788,14 +787,14 @@ export function BookViewer({ book }: { book: Book }) {
           type="button"
           aria-label="읽어주는 성우 바꾸기"
           onClick={() => setVoiceMenu((v) => !v)}
-          className={`flex h-11 items-center justify-center gap-1 rounded-full px-3 shadow-md backdrop-blur transition outline-none focus:outline-none ${
+          className={`flex h-9 items-center justify-center gap-1 rounded-full px-2.5 shadow-md backdrop-blur transition outline-none focus:outline-none sm:h-11 sm:px-3 ${
             voiceMenu ? "bg-amber-400 text-white" : "bg-white/85 text-neutral-600 hover:bg-white"
           }`}
         >
           <span className="text-base leading-none" aria-hidden>
             {TYPECAST_VOICES.find((v) => v.id === voiceId)?.emoji ?? "🎙️"}
           </span>
-          <span className="text-xs font-extrabold">성우</span>
+          <span className="hidden text-xs font-extrabold sm:inline">성우</span>
         </button>
       </div>
 
@@ -828,7 +827,7 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 움직이는 캐릭터(배우) 레이어 — 캐릭터 없는 배경 위에 투명 스티커를
           겹치고, 낭독 중에는 뒤뚱뒤뚱 움직인다. 클릭은 통과시켜 핫스팟이 받는다. */}
       {(book.pages[index].actors?.length ?? 0) > 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center portrait:items-start portrait:pt-[3.5rem]">
+        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center portrait:bottom-24">
           {/* w-[min(100%,133.333dvh)] — 어떤 창 비율에서도 object-contain된
               4:3 그림과 정확히 같은 크기를 유지한다 (h-full은 세로 창에서 틀이 늘어남). */}
           <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)]">
@@ -858,7 +857,7 @@ export function BookViewer({ book }: { book: Book }) {
           그림(4:3, contain)과 같은 규칙의 4:3 틀을 겹쳐 좌표를 맞춘다.
           넘김 영역보다 위(z-[5]), 읽어주기 버튼(z-10)보다는 아래. */}
       {book.pages[index].image && (book.pages[index].hotspots?.length ?? 0) > 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center portrait:items-start portrait:pt-[3.5rem]">
+        <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center portrait:bottom-24">
           <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)]">
             {book.pages[index].hotspots!.map((h, hi) => {
               return (
@@ -939,21 +938,24 @@ export function BookViewer({ book }: { book: Book }) {
         </div>
       )}
 
-      <div className="absolute left-4 top-4 z-10 flex gap-2">
+      <div className="absolute left-3 top-4 z-10 flex gap-1.5 sm:left-4 sm:gap-2">
         <Link
           href="/"
-          className="rounded-full bg-black/40 px-4 py-2 text-sm text-white/90 backdrop-blur transition hover:bg-black/60"
+          className="rounded-full bg-black/40 px-3 py-2 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 sm:px-4"
         >
           ← 서재
         </Link>
         {/* 가로로 보기 — 클릭(제스처) 안에서 전체화면 + 가로 고정을 요청한다.
-            미지원 기기는 조용히 무시되고 회전 안내 힌트가 대신한다. */}
+            미지원 기기는 조용히 무시되고 회전 안내 힌트가 대신한다.
+            좁은 폰에선 아이콘만(글자 숨김) 보여 좌우 버튼 겹침을 막는다. */}
         <button
           type="button"
           onClick={() => (storyMode ? exitStoryMode() : enterStoryMode())}
-          className="rounded-full bg-black/40 px-4 py-2 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none"
+          aria-label={storyMode ? "원래대로" : "가로로 보기"}
+          className="rounded-full bg-black/40 px-3 py-2 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none sm:px-4"
         >
-          {storyMode ? "원래대로" : "⛶ 가로로 보기"}
+          <span className="sm:hidden">{storyMode ? "↩" : "⛶"}</span>
+          <span className="hidden sm:inline">{storyMode ? "원래대로" : "⛶ 가로로 보기"}</span>
         </button>
       </div>
 
