@@ -10,7 +10,7 @@ import { loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
-import { loadLang, loadMyBooks } from "@/lib/prefs";
+import { loadLang, loadMyBooks, migrateLegacyBooks } from "@/lib/prefs";
 import type { Book } from "@/lib/types";
 
 export default function Home() {
@@ -35,7 +35,11 @@ export default function Home() {
       setGuest(s.guest);
       setMaster(s.isMaster);
       setTokens(s.profile?.tokens ?? 0);
-      if (s.uid) setMyBooks(await loadMyBooks());
+      if (s.uid) {
+        // 옛 기기 저장 책(지안이 동화 등)이 남아 있으면 이 계정으로 한 번 가져온다.
+        await migrateLegacyBooks();
+        setMyBooks(await loadMyBooks());
+      }
     })();
     return () => {
       alive = false;

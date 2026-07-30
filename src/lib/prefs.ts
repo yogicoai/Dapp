@@ -195,6 +195,58 @@ export async function saveMyBook(book: Book): Promise<void> {
   });
 }
 
+/**
+ * 옛 기기 저장(localStorage) 책을 현재 로그인 계정의 Supabase로 한 번 가져온다.
+ * Supabase 전환 전에 만든 책(예: 지안이 동화)이 브라우저에 남아 있으면 되살린다.
+ * 가져온 뒤 옛 키를 지워 중복 이관을 막는다. 가져온 권수를 돌려준다.
+ */
+const LEGACY_BOOKS_KEY = "voice-storybook:mybooks";
+export async function migrateLegacyBooks(): Promise<number> {
+  if (typeof window === "undefined") return 0;
+  const sb = getSupabase();
+  if (!sb) return 0;
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return 0;
+  let raw: string | null;
+  try {
+    raw = window.localStorage.getItem(LEGACY_BOOKS_KEY);
+  } catch {
+    return 0;
+  }
+  if (!raw) return 0;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return 0;
+  }
+  // 옛 포맷: { 회원id: Book[] } 또는 아주 옛 Book[] 배열.
+  let books: Book[] = [];
+  if (Array.isArray(parsed)) books = parsed as Book[];
+  else if (parsed && typeof parsed === "object")
+    books = Object.values(parsed as Record<string, Book[]>).flat();
+  books = books.filter((b) => b && b.id && Array.isArray(b.pages));
+  let n = 0;
+  let anyFail = false;
+  for (const b of books) {
+    const { error } = await sb
+      .from("books")
+      .upsert({ id: b.id, owner: user.id, title: b.title, data: b, hidden: !!b.hidden });
+    if (error) anyFail = true;
+    else n++;
+  }
+  // 데이터 유실 방지: 가져올 게 없었거나(=0권) 전부 성공했을 때만 옛 키를 지운다.
+  // 하나라도 실패하면 키를 남겨 다음에 다시 시도할 수 있게 한다.
+  if (!anyFail) {
+    try {
+      window.localStorage.removeItem(LEGACY_BOOKS_KEY);
+    } catch {
+      /* 무시 */
+    }
+  }
+  return n;
+}
+
 /** 숨김/복원 — hidden 책은 책장에서 내려가고 주소로는 열린다. */
 export async function setMyBookHidden(id: string, hidden: boolean): Promise<void> {
   const sb = getSupabase();
