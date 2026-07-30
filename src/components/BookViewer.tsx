@@ -671,10 +671,11 @@ export function BookViewer({ book }: { book: Book }) {
                   aria-hidden
                   className="absolute inset-0 h-full w-full scale-110 object-cover opacity-70 blur-2xl"
                 />
-                {/* 이미지+글자를 같은 4:3 박스에 담는다 — 글이 화면이 아니라 '그림' 기준으로
-                    앉아, 모바일 세로에서도 그림 하단 안쪽에 자연스럽게 붙는다. */}
-                <div className="absolute inset-0 flex items-center justify-center portrait:items-start portrait:pt-[3.5rem]">
-                  <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)] overflow-hidden">
+                {/* 무대 — 세로: 그림 위 + 글자 아래(겹침 없음, flex로 자연스럽게 쌓음).
+                    가로: 그림이 화면을 채우고 글자는 그림 위 하단 밴드. 핫스팟 무대도 같은
+                    규칙(portrait:items-start·pt-[3.5rem])이라 대사 좌표가 그림과 정확히 맞는다. */}
+                <div className="absolute inset-0 flex items-center justify-center portrait:flex-col portrait:justify-start portrait:pt-[3.5rem]">
+                  <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)] shrink-0 overflow-hidden">
                     {page.video ? (
                       <video
                         key={i === index ? `on-${i}` : `off-${i}`}
