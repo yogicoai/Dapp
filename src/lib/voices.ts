@@ -367,6 +367,29 @@ export async function fetchGoogleAudio(voiceId: string, text: string): Promise<B
   return blob;
 }
 
+/**
+ * 부모 목소리(ElevenLabs)로 낭독. 같은 (목소리, 문장)은 IndexedDB에 캐시해 두 번째부턴 0원.
+ * 실패(키 없음·크레딧 소진·오프라인)는 그대로 던진다 — 부른 쪽이 기본 목소리로 물러난다.
+ */
+export async function fetchElevenAudio(voiceId: string, text: string): Promise<Blob> {
+  const cacheId = `eleven:${voiceId}:${hashText(text)}`;
+  const cached = await loadVoiceAudio(cacheId).catch(() => null);
+  if (cached) return cached;
+
+  const r = await fetch("/api/tts/eleven", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, voiceId }),
+  });
+  if (!r.ok) {
+    const d = (await r.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(d?.error ?? `부모 목소리 실패 (HTTP ${r.status})`);
+  }
+  const blob = await r.blob();
+  saveVoiceAudio(cacheId, blob).catch(() => {});
+  return blob;
+}
+
 /* ── 대사 연기 — 쪽 텍스트를 지문/대사로 나눠 감정을 입힌다 ── */
 
 export type PageAudioSegment = {

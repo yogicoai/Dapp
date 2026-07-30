@@ -15,6 +15,7 @@ import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import {
   buildPresetUtterance,
+  fetchElevenAudio,
   fetchGoogleAudio,
   fetchTypecastPageAudio,
   findPreset,
@@ -29,6 +30,7 @@ import {
   warmUpVoices,
   type PageAudioSegment,
 } from "@/lib/voices";
+import { loadParentVoices, type ParentVoice } from "@/lib/parent-voice";
 import { OrientationHint } from "./OrientationHint";
 import { useTheme } from "./ThemeProvider";
 
@@ -167,13 +169,21 @@ export function BookViewer({ book }: { book: Book }) {
   const voiceIdRef = useRef<string>("basic");
   const overriddenRef = useRef(false);
   const [voiceMenu, setVoiceMenu] = useState(false);
-  // 성우 선택지 — 추천 성우가 있는 책(전래·세계명작)은 그 목록만 보여준다(전부 미리
-  // 구운 파일이라 무료 전환). 없으면(만든 동화 등) 전체 성우.
-  // '내가 만든 동화'(id가 my-)는 추천 성우(여성·남성)만, 제공 동화는 그 책의 추천 성우
-  // (narrators)만 보여준다 — 창작 동화에서 성우가 16명씩 뜨던 걸 줄인다.
+  // 이 회원의 복제된 부모 목소리(엄마·아빠) — 창작 동화 성우 선택지 맨 앞에 얹는다.
+  const [parentVoices, setParentVoices] = useState<ParentVoice[]>([]);
+  useEffect(() => {
+    loadParentVoices().then(setParentVoices).catch(() => {});
+  }, []);
+  // 성우 선택지 — 제공 동화(전래·세계명작)는 그 책의 추천 성우(narrators)만.
+  // '내가 만든 동화'(id가 my-)는 [부모 목소리 + 추천(여성·남성)]만 보여준다.
   const isCreated = book.id.startsWith("my-");
+  const parentChoices = parentVoices.map((p) => ({
+    id: `parent:${p.role}`,
+    label: `${p.label} 목소리`,
+    emoji: p.emoji,
+  }));
   const voiceChoices: readonly { id: string; label: string; emoji: string }[] = isCreated
-    ? RECOMMENDED_VOICES
+    ? [...parentChoices, ...RECOMMENDED_VOICES]
     : book.narrators
       ? (book.narrators
           .map((id) => TYPECAST_VOICES.find((v) => v.id === id))
@@ -331,6 +341,27 @@ export function BookViewer({ book }: { book: Book }) {
     const bundled = page.audio ?? page.legacyAudio ?? null;
     const selectedId = voiceIdRef.current;
     const tc = findTypecast(selectedId);
+
+    // 부모 목소리(복제) — 회원이 엄마·아빠를 골랐으면 ElevenLabs로 합성한다.
+    // 한 번 만들면 기기에 캐시되어 다시 들을 땐 0원. 실패(키 없음·크레딧 소진)하면
+    // 딸린 파일이 있으면 그걸, 없으면 브라우저 기계음으로 물러난다.
+    if (selectedId.startsWith("parent:")) {
+      const role = selectedId.slice("parent:".length);
+      const pv = parentVoices.find((p) => p.role === role);
+      if (pv) {
+        fetchElevenAudio(pv.voiceId, page.text)
+          .then((blob) => {
+            if (run !== runIdRef.current || !readingRef.current) return;
+            playViaAudio(URL.createObjectURL(blob));
+          })
+          .catch(() => {
+            if (run !== runIdRef.current || !readingRef.current) return;
+            if (bundled) playViaAudio(bundled);
+            else speakWithBrowser();
+          });
+        return;
+      }
+    }
 
     // 이 책의 추천 성우(narrators) 중 하나를 골랐으면, 그 성우로 미리 구운 파일을
     // 재생한다 — 파일 재생이라 크레딧 0·즉시. (narr-pN.mp3 → narr-{성우}-pN.mp3)

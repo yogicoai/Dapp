@@ -48,6 +48,13 @@ import {
   type PresetVoice,
   type TypecastPreset,
 } from "@/lib/voices";
+import {
+  cloneParentVoice,
+  deleteParentVoice,
+  loadParentVoices,
+  roleFromLabel,
+  type ParentVoice,
+} from "@/lib/parent-voice";
 
 const AGES = [3, 4, 5, 6, 7, 8];
 const GENDERS: { value: Gender; label: string; icon: string }[] = [
@@ -81,6 +88,10 @@ export default function SettingsPage() {
   const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
   const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
+  // 부모 목소리(복제됨) — 계정별로 Supabase에서 불러온다. cloningRole = 지금 복제 중인 역할.
+  const [parentVoices, setParentVoices] = useState<ParentVoice[]>([]);
+  const [cloningRole, setCloningRole] = useState<string | null>(null);
+  const [cloneErr, setCloneErr] = useState("");
   // 내 동화 — 만든 책 전체. 여기서 책장 노출(숨기기/보이기)과 영구 삭제를 관리한다.
   const [myBooks, setMyBooks] = useState<Book[]>([]);
   // 계정 — 로그인한 아이디·토큰. 게스트면 스킨(테마)만 보인다. 마스터면 회원 목록도.
@@ -91,6 +102,11 @@ export default function SettingsPage() {
   const [members, setMembers] = useState<Profile[]>([]);
   const [openMember, setOpenMember] = useState<string | null>(null);
   const [openMemberBooks, setOpenMemberBooks] = useState<Book[]>([]);
+
+  // 부모 목소리(복제됨) 목록을 계정에서 불러온다(로그인 안 됐으면 빈 목록).
+  useEffect(() => {
+    loadParentVoices().then(setParentVoices).catch(() => {});
+  }, []);
 
   // localStorage 값들은 클라 전용이라 마운트 후에 반영한다(hydration 안전).
   /* eslint-disable react-hooks/set-state-in-effect */
@@ -278,8 +294,31 @@ export default function SettingsPage() {
     el.play().catch(() => {});
   };
 
+  /** 이 녹음(엄마/아빠)이 이미 복제(목소리 만들기)됐는지. */
+  const isCloned = (v: CustomVoice) => parentVoices.some((p) => p.role === roleFromLabel(v.label));
+
+  /** 녹음 → 복제(목소리 만들기). 성공하면 계정에 저장되고 동화에서 그 목소리로 읽을 수 있다. */
+  const makeParentVoice = async (v: CustomVoice) => {
+    setCloneErr("");
+    setCloningRole(roleFromLabel(v.label));
+    try {
+      const blob = await loadVoiceAudio(v.id);
+      if (!blob) throw new Error("녹음을 찾지 못했어요. 다시 녹음해 주세요.");
+      await cloneParentVoice(roleFromLabel(v.label), v.label, blob);
+      setParentVoices(await loadParentVoices());
+      flashSaved();
+    } catch (e) {
+      setCloneErr(e instanceof Error ? e.message : "목소리 만들기에 실패했어요.");
+    } finally {
+      setCloningRole(null);
+    }
+  };
+
   const removeCustom = async (v: CustomVoice) => {
     await deleteVoiceAudio(v.id).catch(() => {});
+    // 복제된 목소리도 함께 삭제한다 — 우리 DB + ElevenLabs 서버 양쪽에서(개인정보 미보존).
+    await deleteParentVoice(roleFromLabel(v.label)).catch(() => {});
+    setParentVoices((prev) => prev.filter((p) => p.role !== roleFromLabel(v.label)));
     const next = customVoices.filter((x) => x.id !== v.id);
     setCustomVoices(next);
     saveCustomVoices(next);
@@ -359,14 +398,15 @@ export default function SettingsPage() {
                   )}
                 </p>
               </div>
+              {/* 베타: 토큰 충전 잠금. 결제 연동 후 disabled만 빼면 다시 열린다. */}
               {!master && (
                 <button
                   type="button"
                   onClick={topUp}
-                  style={{ background: accent }}
-                  className="shrink-0 rounded-full px-3 py-1.5 text-xs font-extrabold text-white"
+                  disabled
+                  className="shrink-0 cursor-not-allowed rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-extrabold text-neutral-400"
                 >
-                  +30 충전
+                  🔒 충전 준비중
                 </button>
               )}
               <button
@@ -378,7 +418,7 @@ export default function SettingsPage() {
               </button>
             </div>
             <p className="-mt-1 text-[11px] font-medium text-neutral-400">
-              베타: 계정은 이 기기에 저장돼요. 충전은 결제 연동 전 임시 기능이에요.
+              베타 기간에는 토큰 충전이 잠겨 있어요. 결제 연동 후에 열려요.
             </p>
           </section>
 
@@ -486,8 +526,9 @@ export default function SettingsPage() {
               })}
             </div>
             {ttsError && <p className="text-[11px] font-bold text-rose-500">{ttsError}</p>}
+            {cloneErr && <p className="text-[11px] font-bold text-rose-500">{cloneErr}</p>}
 
-            {/* 녹음한 엄마·아빠 목소리 (클로닝 붙기 전까지 준비 중) */}
+            {/* 녹음한 엄마·아빠 목소리 — "목소리 만들기"로 복제하면 동화에서 그 목소리로 읽힌다 */}
             {customVoices.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {customVoices.map((v) => (
@@ -504,7 +545,20 @@ export default function SettingsPage() {
                       <span className="text-lg leading-none">{v.emoji}</span>
                       {v.label} 🔊
                     </button>
-                    <span className="rounded-full bg-white/70 px-1.5 text-[10px]">녹음 완료 · 준비 중</span>
+                    {isCloned(v) ? (
+                      <span className="rounded-full bg-emerald-100 px-2 text-[10px] font-bold text-emerald-700">
+                        ✅ 완성
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => makeParentVoice(v)}
+                        disabled={cloningRole !== null}
+                        className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-amber-700 shadow-sm transition hover:bg-amber-50 disabled:opacity-50"
+                      >
+                        {cloningRole === roleFromLabel(v.label) ? "만드는 중…" : "🎙️ 목소리 만들기"}
+                      </button>
+                    )}
                     <button
                       type="button"
                       aria-label={`${v.label} 목소리 삭제`}
@@ -578,8 +632,8 @@ export default function SettingsPage() {
             )}
 
             <p className="text-[11px] font-medium text-neutral-400">
-              엄마·아빠 목소리는 녹음해두면, 목소리 낭독 기능이 열릴 때 자동으로
-              연결돼요. 캐릭터 목소리는 지금 바로 쓸 수 있어요.
+              엄마·아빠를 녹음한 뒤 <b>🎙️ 목소리 만들기</b>를 누르면 그 목소리로 복제돼요.
+              그다음 동화에서 <b>엄마·아빠 목소리</b>로 읽어줄 수 있어요. (✕로 지우면 서버에서도 완전히 삭제)
             </p>
           </section>
 
