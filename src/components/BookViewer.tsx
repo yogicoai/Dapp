@@ -705,15 +705,20 @@ export function BookViewer({ book }: { book: Book }) {
                         }`}
                       />
                     )}
-                    {/* 가로 보기: 그림 위 오버레이. 세로에선 아래 전용 자리를 쓰므로 숨긴다. */}
-                    {overlayText("portrait:hidden")}
+                    {/* 가로 보기 전용: 그림 위 하단 밴드. 아래 버튼(재생·배속)을 안 가리게 여백을 넉넉히. */}
+                    <div className="absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-24 pt-[12%] landscape:block">
+                      <p className="font-story mx-auto max-w-[46rem] whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.35rem,2.9vw,2.05rem)] font-semibold leading-[1.35] text-white drop-shadow-md">
+                        {renderRuns()}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                {/* 세로 보기 전용: 그림 바로 아래 글자 자리 — 그림도, 아래 버튼도 안 가린다. */}
-                <div className="absolute inset-x-0 top-[calc(3.5rem_+_75vw)] bottom-0 flex items-center justify-center px-[7%] pt-3 pb-24 bg-gradient-to-b from-transparent via-black/45 to-black/70 landscape:hidden">
-                  <p className="font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.2rem,4.6vw,1.9rem)] font-semibold leading-[1.5] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
-                    {renderRuns()}
-                  </p>
+                  {/* 세로 보기 전용: 그림 바로 아래 글자 칸(flex 형제라 그림에 딱 붙는다).
+                      아래 버튼(재생·배속)을 안 가리게 pb를 넉넉히 둔다. */}
+                  <div className="flex min-h-0 w-full flex-1 items-center justify-center bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-28 pt-3 landscape:hidden">
+                    <p className="font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.15rem,4.4vw,1.85rem)] font-semibold leading-[1.5] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+                      {renderRuns()}
+                    </p>
+                  </div>
                 </div>
               </>
             ) : (
@@ -895,10 +900,10 @@ export function BookViewer({ book }: { book: Book }) {
                   // 바깥 = 위치(translate 앵커), 안쪽 = 통통 팝(scale). transform이
                   // 하나뿐이라 둘을 겹치면 서로 덮어써서 위치가 틀어진다 → 겹을 나눈다.
                   <div
-                    className="absolute z-[6] max-w-[52%]"
+                    className="absolute z-[6] w-max max-w-[min(78vw,26rem)]"
                     style={{ left: x.left, top: y.top, transform: `translate(${x.tx}, ${y.ty})` }}
                   >
-                    <div className="font-story relative animate-[bubble-pop_0.35s_cubic-bezier(0.34,1.56,0.64,1)] rounded-[1.4rem] bg-white px-6 py-3.5 text-center text-[clamp(1.35rem,3vw,2.1rem)] font-bold leading-snug text-neutral-800 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
+                    <div className="font-story relative animate-[bubble-pop_0.35s_cubic-bezier(0.34,1.56,0.64,1)] whitespace-normal break-keep rounded-[1.4rem] bg-white px-6 py-3.5 text-center text-[clamp(1.35rem,3vw,2.1rem)] font-bold leading-snug text-neutral-800 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
                       {speaking.line}
                       {/* 꼬리 — 캐릭터를 가리킨다. 말풍선이 위에 있으면 아래로, 아래면 위로.
                           말풍선과 같은 순백이라 테두리 없이도 이어져 보인다. */}

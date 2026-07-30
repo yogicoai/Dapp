@@ -12,11 +12,18 @@ import { loadChild, loadMyBooks, saveChild, saveMyBook } from "@/lib/prefs";
 import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
-import {
-  fetchGoogleAudio,
-  GOOGLE_TTS_ENABLED,
-  TYPECAST_VOICES,
-} from "@/lib/voices";
+import { fetchGoogleAudio, TYPECAST_VOICES } from "@/lib/voices";
+
+/**
+ * 창작 동화 추천 성우 — 딱 3개(여성·남성·어린이)만 노출한다(과금·복잡도 최소화).
+ * id는 기존 성우와 같아 구글 음성 매핑·미리듣기가 그대로 동작한다.
+ */
+const RECOMMENDED_VOICES = [
+  { id: "tc-miso", label: "여성", emoji: "👩", desc: "다정한 여성 목소리" },
+  { id: "tc-gunseok", label: "남성", emoji: "👨", desc: "듬직한 남성 목소리" },
+  { id: "tc-booqoo", label: "어린이", emoji: "🧒", desc: "밝은 어린이 목소리" },
+] as const;
+const RECOMMENDED_IDS: string[] = RECOMMENDED_VOICES.map((v) => v.id);
 
 type Gender = "girl" | "boy" | "unspecified";
 type Scene = { sceneNo: number; text: string };
@@ -360,7 +367,7 @@ export default function CreatePage() {
   const [artStyle, setArtStyle] = useState(ART_STYLES[0].id);
   const [mood, setMood] = useState(MOODS[0]);
   // 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로 읽는다.
-  const [narratorVoice, setNarratorVoice] = useState(TYPECAST_VOICES[0].id);
+  const [narratorVoice, setNarratorVoice] = useState<string>(RECOMMENDED_VOICES[0].id);
   // 성우를 고르면 그 목소리(Google)로 인사말을 실제로 들려준다 — "고른 목소리 = 읽는
   // 목소리"가 보장된다. 같은 (성우, 문장)은 기기에 캐시돼 두 번째부턴 0원.
   const narratorPreviewRef = useRef<HTMLAudioElement | null>(null);
@@ -598,31 +605,13 @@ export default function CreatePage() {
       summary: s.summary,
       // 고른 성우를 책에 박는다 — 뷰어가 이 성우로 읽어준다(방법 B).
       narrator: narratorVoice,
+      // 뷰어 성우 선택지도 이 3개(여성·남성·어린이)로 제한한다. 고른 성우가 맨 앞(기본).
+      narrators: [narratorVoice, ...RECOMMENDED_IDS.filter((id) => id !== narratorVoice)],
       pages: s.pages.map((p, i) => ({ text: p.text, image: images[i] ?? null })),
     };
     await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
-    prewarmNarration(s);
     setFinalBook(book);
     setStep("done");
-  }
-
-  /**
-   * 나레이션 미리 굽기 — 만들 때 고른 성우(Google)로 각 쪽을 합성해 기기 캐시를 데운다.
-   * 그럼 아이가 재생할 때 즉시 나온다(전래동화처럼). 한 번 구우면 그 쪽은 캐시돼 다시
-   * 들을 땐 0원. 실패는 무시 — 재생 시점에 다시 합성한다. 화면은 막지 않는다(백그라운드).
-   */
-  function prewarmNarration(s: Story) {
-    if (!GOOGLE_TTS_ENABLED) return;
-    // 순차로 캐시를 데운다. 실패는 무시(재생 때 다시 시도한다). 화면은 안 막는다.
-    void (async () => {
-      for (const p of s.pages) {
-        try {
-          await fetchGoogleAudio(narratorVoice, p.text);
-        } catch {
-          /* 무시 — 재생 시점에 다시 합성한다 */
-        }
-      }
-    })();
   }
 
   // 완성 → 저장해 둔 책을 뷰어로 보여준다.
@@ -1235,10 +1224,10 @@ export default function CreatePage() {
                   읽어준다. 실시간 합성이 켜지면 만들 때 한 번 구워 재생은 늘 무료가 된다. */}
               <div>
                 <p className="mb-1.5 text-xs font-bold text-neutral-400">
-                  읽어줄 성우 <span className="font-medium">(누르면 목소리를 들려줘요)</span>
+                  읽어줄 성우 <span className="font-medium">(여성·남성·어린이 — 누르면 들려줘요)</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {TYPECAST_VOICES.map((v) => {
+                  {RECOMMENDED_VOICES.map((v) => {
                     const active = narratorVoice === v.id;
                     return (
                       <button
@@ -1260,7 +1249,7 @@ export default function CreatePage() {
                   })}
                 </div>
                 <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
-                  {TYPECAST_VOICES.find((v) => v.id === narratorVoice)?.desc}
+                  {RECOMMENDED_VOICES.find((v) => v.id === narratorVoice)?.desc}
                 </p>
               </div>
 
