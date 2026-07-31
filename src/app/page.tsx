@@ -241,38 +241,41 @@ export default function Home() {
 
         {/* 책장 탭 — 아이 책장이 비어 있어도 전래동화가 있어 첫 화면이 허전하지 않다.
             아이콘은 힉스필드 스티커(책더미·청사초롱·동화성) — 이모지 졸업. */}
-        {/* flex-wrap+폰 축소 — 360px 폰에서 탭 세 개가 잘리는 대신 줄바꿈되거나 한 줄에 들어간다. */}
-        <div className="mb-6 flex flex-wrap justify-center gap-1.5 sm:gap-2">
-          {(
-            [
-              { key: "mine", label: "우리 가족 책장", icon: "/icons/tab-mine.webp" },
-              { key: "folk", label: "전래동화", icon: "/icons/tab-folk.webp" },
-              { key: "classic", label: "세계명작", icon: "/icons/tab-classic.webp" },
-            ] as const
-          ).map((t) => {
-            const active = shelf === t.key;
-            return (
-              <button
-                key={t.key}
-                type="button"
-                onClick={() => setShelf(t.key)}
-                aria-pressed={active}
-                style={active ? { color: theme.colors.accentDark } : undefined}
-                // 폰에서는 작게(줄바꿈 금지), sm부터 원래 크기 — 탭 세 개가 한 줄에 서게.
-                className={`flex items-center gap-1 whitespace-nowrap rounded-full py-1.5 pl-1.5 pr-2.5 text-xs font-extrabold shadow-md backdrop-blur transition sm:py-2 sm:pr-5 sm:text-base ${
-                  active
-                    ? "scale-105 bg-white"
-                    : // 흰 글자는 공주나라 같은 파스텔 배경에서 통째로 묻힌다 —
-                      // 반투명 흰 알약 + 짙은 글자는 어느 테마에서든 보인다.
-                      "bg-white/70 text-neutral-500 hover:bg-white/90"
-                }`}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={t.icon} alt="" className="h-6 w-6 object-contain sm:h-8 sm:w-8" />
-                {t.label}
-              </button>
-            );
-          })}
+        {/* 세그먼트 컨트롤 — 알약 3개가 따로 떠 있으면 폰에서 높이·간격이 들쭉나고
+            선택 확대(scale) 때 옆 탭과 붙어 보였다. 한 통(흰 반투명) 안에 넣어 정돈:
+            높이가 통일되고, 선택은 흰 배경+그림자로만 표시해 좁은 폰에서도 한 줄이다. */}
+        <div className="mb-6 flex justify-center">
+          <div className="flex max-w-full items-center gap-1 rounded-full bg-white/60 p-1 shadow-md backdrop-blur sm:gap-1.5 sm:p-1.5">
+            {(
+              [
+                { key: "mine", label: "우리 가족 책장", icon: "/icons/tab-mine.webp" },
+                { key: "folk", label: "전래동화", icon: "/icons/tab-folk.webp" },
+                { key: "classic", label: "세계명작", icon: "/icons/tab-classic.webp" },
+              ] as const
+            ).map((t) => {
+              const active = shelf === t.key;
+              return (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={() => setShelf(t.key)}
+                  aria-pressed={active}
+                  style={active ? { color: theme.colors.accentDark } : undefined}
+                  className={`flex items-center gap-1 whitespace-nowrap rounded-full py-1.5 pl-2 pr-2.5 text-xs font-extrabold transition sm:py-2 sm:pl-3 sm:pr-5 sm:text-base ${
+                    active
+                      ? "bg-white shadow-sm"
+                      : // 흰 글자는 공주나라 같은 파스텔 배경에서 통째로 묻힌다 —
+                        // 통 안 비선택 탭은 옅은 회색 글자, 호버에만 살짝 흰 배경.
+                        "text-neutral-500 hover:bg-white/70"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={t.icon} alt="" className="h-5 w-5 object-contain sm:h-8 sm:w-8" />
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* 빈 책장 — 서가마다 다음 행동을 알려준다 (만들기 유도 / 준비 중 안내). */}

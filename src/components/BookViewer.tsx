@@ -189,8 +189,16 @@ export function BookViewer({ book }: { book: Book }) {
     label: `${p.label} 목소리`,
     emoji: p.emoji,
   }));
+  // 창작 동화는 성우 전체(16명)를 열지 않는다(2026-07-31 사장님 지시) — 바꿔 들을 때마다
+  // 실시간 합성 크레딧이 나가서다. 만들 때 고른 성우 1명 + 부끄(기본) + 부모 목소리까지만.
+  const bookNarr = book.narrator ? TYPECAST_VOICES.find((v) => v.id === book.narrator) : null;
+  const booqoo = TYPECAST_VOICES.find((v) => v.id === "tc-booqoo");
   const voiceChoices: readonly { id: string; label: string; emoji: string }[] = isCreated
-    ? [...parentChoices, ...TYPECAST_VOICES]
+    ? [
+        ...parentChoices,
+        ...(bookNarr ? [bookNarr] : []),
+        ...(booqoo && booqoo.id !== bookNarr?.id ? [booqoo] : []),
+      ]
     : book.narrators
       ? (book.narrators
           .map((id) => TYPECAST_VOICES.find((v) => v.id === id))

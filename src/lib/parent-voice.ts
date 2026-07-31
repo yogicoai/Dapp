@@ -207,20 +207,45 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   return voiceId;
 }
 
-/** 이 회원(이 기기)의 '준비된' 부모 목소리 목록. Supabase가 있으면 그 값이 우선. */
+/** 이 회원(이 기기)의 '준비된' 부모 목소리 목록. Supabase가 있으면 그 값이 정본. */
 export async function loadParentVoices(): Promise<ParentVoice[]> {
-  const byRole: Record<string, string> = { ...loadLocal() };
+  const local = loadLocal();
+  const byRole: Record<string, string> = { ...local };
   try {
     const sb = getSupabase();
     const uid = await currentUserId();
     if (sb && uid) {
-      const { data } = await sb
+      // status 필터 없이 읽는다 — '행이 없음'(동기화 안 됨)과 '삭제됨'을 구분해야 해서.
+      const { data, error } = await sb
         .from("voice_clones")
         .select("role, provider_voice_id, status")
-        .eq("owner", uid)
-        .eq("status", "ready");
-      for (const row of (data ?? []) as { role: string; provider_voice_id: string }[]) {
-        if (row.provider_voice_id) byRole[row.role] = row.provider_voice_id;
+        .eq("owner", uid);
+      if (!error && data) {
+        if (data.length > 0) {
+          // 계정(Supabase)이 정본 — 다른 기기에서 지웠으면 이 기기에서도 내린다.
+          for (const k of Object.keys(byRole)) delete byRole[k];
+          for (const row of data as { role: string; provider_voice_id: string | null; status: string }[]) {
+            if (row.status === "ready" && row.provider_voice_id) byRole[row.role] = row.provider_voice_id;
+          }
+          saveLocal({ ...byRole });
+        } else {
+          // 테이블은 있는데 이 계정 행이 없다 — SQL 실행 '전'에 이 기기에서 만든 클론이다.
+          // 자가복구: 기기 저장분을 계정에 올린다 → 다른 기기(PC 등)에서도 보이게 된다.
+          const role = Object.keys(local).find((r) => local[r]);
+          if (role) {
+            await sb.from("voice_clones").upsert(
+              {
+                owner: uid,
+                role,
+                provider: "typecast",
+                provider_voice_id: local[role],
+                status: "ready",
+                attempts: Math.max(1, localAttempts()),
+              },
+              { onConflict: "owner" },
+            );
+          }
+        }
       }
     }
   } catch {

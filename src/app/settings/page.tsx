@@ -550,13 +550,14 @@ export default function SettingsPage() {
           <section className="flex flex-col gap-2.5">
             <h2 className="text-sm font-extrabold text-neutral-400">읽어주는 목소리</h2>
 
-            {/* 성우 목소리 (Typecast) — 진짜 성우가 읽어준다. 브라우저 기계음 프리셋은
-                UI에서 뺐다 (성우를 못 받는 오프라인 등에서만 뒤에서 대체로 쓰인다). */}
+            {/* 성우 목소리 (Typecast) — 기본 성우 '부끄'만 노출한다(2026-07-31 사장님 지시).
+                전체 성우를 열어두면 바꿔 들을 때마다 실시간 합성 크레딧이 나가서다.
+                책 성우는 만들 때 고르고(그 성우까지만 제공), 여기는 기본값만. */}
             <p className="text-[11px] font-medium text-neutral-400">
-              진짜 성우가 감정을 담아 읽어줘요 (인터넷 필요)
+              진짜 성우가 감정을 담아 읽어줘요 (인터넷 필요) · 동화별 성우는 만들 때 골라요
             </p>
             <div className="flex flex-wrap gap-2">
-              {TYPECAST_VOICES.map((v) => {
+              {TYPECAST_VOICES.filter((v) => v.id === "tc-booqoo").map((v) => {
                 const active = voiceId === v.id;
                 return (
                   <button

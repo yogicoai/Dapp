@@ -636,10 +636,11 @@ export default function CreatePage() {
       <div className="fixed inset-0 -z-10 bg-white/25" />
 
       <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col justify-center px-6 py-8">
-        {/* 뒤로 / 홈 */}
+        {/* 뒤로 / 홈 — absolute면 스크롤 때 위로 밀려 나가고 카드가 덮어버린다(폰 실측).
+            fixed+z-10으로 항상 보이게 (busy 오버레이 z-20보다는 아래라 로딩 중엔 가려진다). */}
         <Link
           href="/"
-          className="absolute left-4 top-4 rounded-full bg-white/70 px-4 py-2 text-sm font-bold text-neutral-700 backdrop-blur"
+          className="fixed left-4 top-4 z-10 rounded-full bg-white/70 px-4 py-2 text-sm font-bold text-neutral-700 shadow-md backdrop-blur"
         >
           ← 서재
         </Link>
