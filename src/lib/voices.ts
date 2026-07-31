@@ -104,11 +104,20 @@ export const RECOMMENDED_VOICES = [
   { id: "tc-gunseok", label: "남성", emoji: "👨", desc: "듬직한 남성 목소리" },
 ] as const;
 
-/** 녹음할 지정 문장. 개인정보가 전혀 없는 동화 문장이라 유출돼도 무해하다. */
+/**
+ * 녹음할 지정 문장. 개인정보가 전혀 없는 동화 문장이라 유출돼도 무해하다.
+ * 분량을 40초 낭독 수준(약 230자)으로 늘렸다(2026-07-31) — 클론 분석 재료는
+ * 30초→40초 구간에서 닮음 개선이 가장 크다. 의성어·질문·감탄을 섞어
+ * 억양·발음 특징이 골고루 담기게 했다.
+ */
 export const RECORDING_SCRIPT =
   "옛날 옛적, 깊은 숲속에 작은 집이 한 채 있었어요. " +
   "반짝이는 별들이 지붕 위에서 춤을 추고, 달님이 창문을 살며시 비추었지요. " +
-  "오늘 밤에도 재미있는 이야기가 시작된답니다.";
+  "아침이 되자 파랑새가 포르르 날아와 노래하고, 시냇물은 졸졸졸 즐겁게 흘러갔어요. " +
+  "오늘은 어떤 신나는 일이 생길까? " +
+  "아이는 두근두근 설레는 마음으로 문을 활짝 열었답니다. " +
+  "향긋한 꽃향기가 솔솔 불어오고, 하늘엔 뭉게구름이 두둥실 떠 있었지요. " +
+  "자, 이제 우리 함께 재미있는 이야기 속으로 떠나 볼까요?";
 
 const SELECTED_KEY = "voice-storybook:voice";
 const CUSTOM_KEY = "voice-storybook:custom-voices";
@@ -148,19 +157,26 @@ export function saveSelectedVoiceId(id: string): void {
   window.localStorage.setItem(SELECTED_KEY, id);
 }
 
-export function loadCustomVoices(): CustomVoice[] {
-  if (typeof window === "undefined") return [];
+/**
+ * 엄마·아빠 녹음 목록 — 계정(owner=uid)별로 분리 저장한다(2026-07-31 버그 수정).
+ * 이전엔 기기 공용 키라 같은 기기에서 다른 아이디(마스터 등)로 로그인하면 남의
+ * 녹음이 그대로 보였다. 옛 공용 키는 소유자를 알 수 없어 이관하지 않고 지운다 —
+ * 완성된 클론은 계정(Supabase voice_clones)에 있어 로그인만 하면 되살아난다.
+ */
+export function loadCustomVoices(owner: string | null): CustomVoice[] {
+  if (typeof window === "undefined" || !owner) return [];
+  window.localStorage.removeItem(CUSTOM_KEY); // 옛 기기 공용 키 정리
   try {
-    const raw = window.localStorage.getItem(CUSTOM_KEY);
+    const raw = window.localStorage.getItem(`${CUSTOM_KEY}:${owner}`);
     return raw ? (JSON.parse(raw) as CustomVoice[]) : [];
   } catch {
     return [];
   }
 }
 
-export function saveCustomVoices(voices: CustomVoice[]): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(CUSTOM_KEY, JSON.stringify(voices));
+export function saveCustomVoices(voices: CustomVoice[], owner: string | null): void {
+  if (typeof window === "undefined" || !owner) return;
+  window.localStorage.setItem(`${CUSTOM_KEY}:${owner}`, JSON.stringify(voices));
 }
 
 export function findPreset(id: string): PresetVoice | null {

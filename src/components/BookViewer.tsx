@@ -209,14 +209,21 @@ export function BookViewer({ book }: { book: Book }) {
     // 추천 성우가 있으면 그 첫 번째, 아니면 만든 동화의 성우(book.narrator), 아니면 설정값.
     // 단, 저장된 설정값이 부모 목소리(parent:)면 '내가 만든 동화'에서만 잇는다 —
     // 제공·샘플 책이 부모 클론 목소리(유료 합성)를 몰래 상속하는 걸 막는다.
+    // '내가 만든 동화'는 부모 목소리(엄마·아빠)가 있으면 그게 기본으로 먼저 나온다
+    // (2026-07-31 사장님 지시). 부모 목소리는 마운트 후 비동기로 도착하므로 이 효과가
+    // 다시 돌며 얹는다 — 단, 사용자가 이 책에서 성우를 직접 바꿨으면 그 뜻을 지킨다.
+    const isMine = book.id.startsWith("my-");
     const stored = loadSelectedVoiceId();
-    const safeStored =
-      stored.startsWith("parent:") && !book.id.startsWith("my-") ? "tc-booqoo" : stored;
-    const v = book.narrators?.[0] ?? book.narrator ?? safeStored;
+    const safeStored = stored.startsWith("parent:") && !isMine ? "tc-booqoo" : stored;
+    if (overriddenRef.current) return; // 직접 고른 성우를 뒤늦게 덮지 않는다
+    const v =
+      isMine && parentVoices.length > 0
+        ? `parent:${parentVoices[0].role}`
+        : book.narrators?.[0] ?? book.narrator ?? safeStored;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 저장된 성우를 마운트 후 반영
     setVoiceId(v);
     voiceIdRef.current = v;
-  }, [book.narrators, book.narrator, book.id]);
+  }, [book.narrators, book.narrator, book.id, parentVoices]);
 
   // 캐릭터 클릭 반응 — 정지 그림이라 캐릭터 자체는 못 움직이지만, 누른 자리에서
   // 반짝이가 통통 튀어올라 "반응하는" 느낌을 준다. key로 매 클릭마다 다시 튼다.

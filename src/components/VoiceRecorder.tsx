@@ -24,12 +24,15 @@ export function VoiceRecorder({
   label,
   emoji,
   accent,
+  owner,
   onDone,
   onCancel,
 }: {
   label: string; // "엄마" | "아빠"
   emoji: string;
   accent: string;
+  /** 로그인한 계정 uid — 녹음 목록이 계정별로 저장되게 (같은 기기의 다른 아이디에 안 보이게). */
+  owner: string | null;
   onDone: (voice: CustomVoice) => void;
   onCancel: () => void;
 }) {
@@ -102,7 +105,7 @@ export function VoiceRecorder({
     };
     try {
       await saveVoiceAudio(id, blobRef.current);
-      saveCustomVoices([...loadCustomVoices(), voice]);
+      saveCustomVoices([...loadCustomVoices(owner), voice], owner);
       onDone(voice);
     } catch {
       setError("저장에 실패했어요. 다시 시도해주세요.");

@@ -27,41 +27,55 @@ export function metaForRole(role: string): { label: string; emoji: string } {
   return ROLE_META[role] ?? { label: role, emoji: "🎙️" };
 }
 
-/* ── 이 기기 저장(localStorage) — role → voice_id ── */
+/* ── 이 기기 저장(localStorage) — 계정(uid)별로 분리: `키:uid` → { role → voice_id } ──
+ * 같은 기기에서 다른 아이디(마스터 등)로 로그인해도 남의 목소리가 보이면 안 된다
+ * (2026-07-31 버그 수정 — 이전엔 계정 구분 없이 기기 공용이라 새 계정에 그대로 노출됐다).
+ * 옛(계정 구분 없는) 키는 소유자를 알 수 없어 이관하지 않고 지운다 — 정본은
+ * Supabase(voice_clones)라 실제 클론은 계정 로그인만 하면 되살아난다. */
 const LS_KEY = "voice-storybook:parent-voices";
-function loadLocal(): Record<string, string> {
+const LS_ATTEMPTS = "voice-storybook:parent-voice-attempts";
+function dropLegacyDeviceKeys(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(LS_KEY);
+  window.localStorage.removeItem(LS_ATTEMPTS);
+}
+function loadLocal(uid: string): Record<string, string> {
   if (typeof window === "undefined") return {};
+  dropLegacyDeviceKeys();
   try {
-    return JSON.parse(window.localStorage.getItem(LS_KEY) || "{}") as Record<string, string>;
+    return JSON.parse(window.localStorage.getItem(`${LS_KEY}:${uid}`) || "{}") as Record<
+      string,
+      string
+    >;
   } catch {
     return {};
   }
 }
-function saveLocal(map: Record<string, string>): void {
+function saveLocal(uid: string, map: Record<string, string>): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(LS_KEY, JSON.stringify(map));
+  window.localStorage.setItem(`${LS_KEY}:${uid}`, JSON.stringify(map));
 }
 
 /* ── 만들기 횟수 — 계정당 목소리 1명, 만들기는 총 2회(처음 1 + 수정 1)만. ──
  * 삭제해도 횟수는 남는다(기회를 다시 주지 않음). 기기 저장 + Supabase(attempts) 중 큰 값. */
 export const MAX_CLONE_ATTEMPTS = 2;
-const LS_ATTEMPTS = "voice-storybook:parent-voice-attempts";
-function localAttempts(): number {
+function localAttempts(uid: string): number {
   if (typeof window === "undefined") return 0;
-  const n = Number(window.localStorage.getItem(LS_ATTEMPTS));
+  const n = Number(window.localStorage.getItem(`${LS_ATTEMPTS}:${uid}`));
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
-function saveAttempts(n: number): void {
+function saveAttempts(uid: string, n: number): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(LS_ATTEMPTS, String(n));
+  window.localStorage.setItem(`${LS_ATTEMPTS}:${uid}`, String(n));
 }
 
 async function attemptsUsed(): Promise<number> {
-  let used = localAttempts();
+  const uid = await currentUserId();
+  if (!uid) return 0; // 부모 목소리는 회원 전용 — 로그인 전엔 셈할 것도 없다
+  let used = localAttempts(uid);
   try {
     const sb = getSupabase();
-    const uid = await currentUserId();
-    if (sb && uid) {
+    if (sb) {
       const { data } = await sb
         .from("voice_clones")
         .select("attempts")
@@ -153,6 +167,8 @@ function encodeWav(buffer: AudioBuffer): Blob {
  * 규칙: 계정당 목소리 1명, 만들기는 총 2회(처음 1 + 수정 1)만.
  */
 export async function cloneParentVoice(role: string, name: string, audio: Blob): Promise<string> {
+  const uid = await currentUserId();
+  if (!uid) throw new Error("로그인한 계정에서만 목소리를 만들 수 있어요.");
   // 만들기 기회 총 2회(처음 1 + 수정 1)를 '먼저' 검사한다 — 기회를 다 쓴 사람에게
   // "지우고 다시 만들라"는 잘못된 안내(지우면 영영 못 만듦)가 나가지 않게.
   const used = await attemptsUsed();
@@ -178,17 +194,16 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   }
   const { voiceId } = (await r.json()) as { voiceId: string };
 
-  // ① 기기에 항상 저장 — SQL 없이도 바로 테스트되게. 만들기 횟수도 함께 올린다.
-  const local = loadLocal();
+  // ① 기기에 항상 저장(계정별 키) — SQL 없이도 바로 테스트되게. 만들기 횟수도 함께 올린다.
+  const local = loadLocal(uid);
   local[role] = voiceId;
-  saveLocal(local);
-  saveAttempts(used + 1);
+  saveLocal(uid, local);
+  saveAttempts(uid, used + 1);
 
   // ② Supabase에도 저장 시도(테이블 있으면). 없거나 오프라인이면 무시 — 기기 저장으로 동작.
   try {
     const sb = getSupabase();
-    const uid = await currentUserId();
-    if (sb && uid) {
+    if (sb) {
       await sb.from("voice_clones").upsert(
         {
           owner: uid,
@@ -207,14 +222,15 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   return voiceId;
 }
 
-/** 이 회원(이 기기)의 '준비된' 부모 목소리 목록. Supabase가 있으면 그 값이 정본. */
+/** 이 회원의 '준비된' 부모 목소리 목록 — 로그인한 계정 것만. Supabase가 있으면 그 값이 정본. */
 export async function loadParentVoices(): Promise<ParentVoice[]> {
-  const local = loadLocal();
+  const uid = await currentUserId();
+  if (!uid) return []; // 회원 전용 — 게스트/로그아웃 상태에선 아무것도 안 보인다
+  const local = loadLocal(uid);
   const byRole: Record<string, string> = { ...local };
   try {
     const sb = getSupabase();
-    const uid = await currentUserId();
-    if (sb && uid) {
+    if (sb) {
       // status 필터 없이 읽는다 — '행이 없음'(동기화 안 됨)과 '삭제됨'을 구분해야 해서.
       const { data, error } = await sb
         .from("voice_clones")
@@ -227,7 +243,7 @@ export async function loadParentVoices(): Promise<ParentVoice[]> {
           for (const row of data as { role: string; provider_voice_id: string | null; status: string }[]) {
             if (row.status === "ready" && row.provider_voice_id) byRole[row.role] = row.provider_voice_id;
           }
-          saveLocal({ ...byRole });
+          saveLocal(uid, { ...byRole });
         } else {
           // 테이블은 있는데 이 계정 행이 없다 — SQL 실행 '전'에 이 기기에서 만든 클론이다.
           // 자가복구: 기기 저장분을 계정에 올린다 → 다른 기기(PC 등)에서도 보이게 된다.
@@ -240,7 +256,7 @@ export async function loadParentVoices(): Promise<ParentVoice[]> {
                 provider: "typecast",
                 provider_voice_id: local[role],
                 status: "ready",
-                attempts: Math.max(1, localAttempts()),
+                attempts: Math.max(1, localAttempts(uid)),
               },
               { onConflict: "owner" },
             );
@@ -261,13 +277,14 @@ export async function loadParentVoices(): Promise<ParentVoice[]> {
  * (개인정보를 어디에도 남기지 않는다.) 단, 만들기 횟수(attempts)는 남겨 수정 기회는 안 돌려준다.
  */
 export async function deleteParentVoice(role: string): Promise<void> {
-  const local = loadLocal();
+  const uid = await currentUserId();
+  if (!uid) return; // 회원 전용 — 로그인 없이 지울 것도 없다
+  const local = loadLocal(uid);
   let voiceId = local[role];
 
   // Supabase에 있으면 그 voice_id도 확인해 함께 지운다.
   const sb = getSupabase();
-  const uid = await currentUserId();
-  if (sb && uid) {
+  if (sb) {
     try {
       const { data } = await sb
         .from("voice_clones")
@@ -292,10 +309,10 @@ export async function deleteParentVoice(role: string): Promise<void> {
 
   // 기기 저장에서 제거 (만들기 횟수는 남긴다 — 수정 기회는 안 돌아온다).
   delete local[role];
-  saveLocal(local);
+  saveLocal(uid, local);
 
   // Supabase — 행을 지우지 않고 '삭제됨'으로 바꿔 attempts(만들기 횟수)를 보존한다.
-  if (sb && uid) {
+  if (sb) {
     try {
       await sb
         .from("voice_clones")

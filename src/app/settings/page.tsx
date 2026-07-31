@@ -103,6 +103,8 @@ export default function SettingsPage() {
   // 계정 — 로그인한 아이디·토큰. 게스트면 스킨(테마)만 보인다. 마스터면 회원 목록도.
   const [guest, setGuest] = useState(false);
   const [acctId, setAcctId] = useState<string | null>(null);
+  // 계정 uid — 녹음(customVoices) 계정별 저장 키에 쓴다.
+  const [uid, setUid] = useState<string | null>(null);
   const [acctTokens, setAcctTokens] = useState(0);
   const [master, setMaster] = useState(false);
   const [members, setMembers] = useState<Profile[]>([]);
@@ -130,7 +132,7 @@ export default function SettingsPage() {
     setVoiceId(loadSelectedVoiceId());
     setVoiceRate(loadVoiceRate());
     setTextPos(loadTextPos());
-    setCustomVoices(loadCustomVoices());
+    // (녹음 목록은 계정별 저장이라 세션 effect에서 uid를 안 뒤에 불러온다.)
   }, []);
 
   // 세션(로그인/게스트)·계정·책 등 네트워크가 필요한 것만 여기서 불러온다.
@@ -151,6 +153,9 @@ export default function SettingsPage() {
       }
       setAcctId(s.profile?.username ?? null);
       setAcctTokens(s.profile?.tokens ?? 0);
+      // 녹음 목록은 계정(uid)별 저장 — 같은 기기의 다른 아이디 녹음이 안 보이게.
+      setUid(s.uid ?? null);
+      setCustomVoices(loadCustomVoices(s.uid ?? null));
       setMyBooks(await loadMyBooks());
       if (s.isMaster) {
         setMaster(true);
@@ -371,7 +376,7 @@ export default function SettingsPage() {
     setCloneChances(await remainingCloneChances());
     const next = customVoices.filter((x) => x.id !== v.id);
     setCustomVoices(next);
-    saveCustomVoices(next);
+    saveCustomVoices(next, uid);
     flashSaved();
     if (voiceId === v.id) pickVoice("basic");
   };
@@ -564,14 +569,14 @@ export default function SettingsPage() {
           <section className="flex flex-col gap-2.5">
             <h2 className="text-sm font-extrabold text-neutral-400">읽어주는 목소리</h2>
 
-            {/* 성우 목소리 (Typecast) — 기본 성우 '부끄'만 노출한다(2026-07-31 사장님 지시).
-                전체 성우를 열어두면 바꿔 들을 때마다 실시간 합성 크레딧이 나가서다.
-                책 성우는 만들 때 고르고(그 성우까지만 제공), 여기는 기본값만. */}
+            {/* 성우 목소리 (Typecast) 16명 전체 — 여기는 '시청 코너'다: 누르면 미리 구운
+                샘플 파일만 재생되므로(pickTypecast) 아무리 눌러도 크레딧 0. 동화 낭독에
+                쓰이는 성우는 만들 때 고른 1명+부끄뿐이라 비용 문은 뷰어 쪽에서 잠겨 있다. */}
             <p className="text-[11px] font-medium text-neutral-400">
-              진짜 성우가 감정을 담아 읽어줘요 (인터넷 필요) · 동화별 성우는 만들 때 골라요
+              눌러서 들어보고 마음에 드는 성우를 골라요 (들어보기는 무료) · 동화별 성우는 만들 때 골라요
             </p>
             <div className="flex flex-wrap gap-2">
-              {TYPECAST_VOICES.filter((v) => v.id === "tc-booqoo").map((v) => {
+              {TYPECAST_VOICES.map((v) => {
                 const active = voiceId === v.id;
                 return (
                   <button
@@ -726,6 +731,7 @@ export default function SettingsPage() {
                 label={recording.label}
                 emoji={recording.emoji}
                 accent={accent}
+                owner={uid}
                 onDone={(v) => {
                   setCustomVoices([...customVoices, v]);
                   setRecording(null);
