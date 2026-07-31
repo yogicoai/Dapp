@@ -108,8 +108,25 @@ export default function SettingsPage() {
     loadParentVoices().then(setParentVoices).catch(() => {});
   }, []);
 
-  // localStorage 값들은 클라 전용이라 마운트 후에 반영한다(hydration 안전).
+  // 아이 정보·언어·목소리 등 '로컬 저장값'은 세션(네트워크)과 무관하게 즉시 반영한다.
+  // 예전엔 이 로딩이 await loadSession() 뒤에 묶여 있어, 세션이 느리거나 실패하면
+  // 아이 이름·나이가 잠깐 비고 그 사이 만지면 기본값으로 덮여 "가끔 초기화"됐다.
   /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    const stored = loadChild();
+    if (stored) {
+      setName(stored.name);
+      setAge(stored.age);
+      setGender(stored.gender);
+    }
+    setLang(loadLang());
+    setVoiceId(loadSelectedVoiceId());
+    setVoiceRate(loadVoiceRate());
+    setTextPos(loadTextPos());
+    setCustomVoices(loadCustomVoices());
+  }, []);
+
+  // 세션(로그인/게스트)·계정·책 등 네트워크가 필요한 것만 여기서 불러온다.
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -120,18 +137,7 @@ export default function SettingsPage() {
         router.replace("/login");
         return;
       }
-      // 스킨(테마)은 useTheme로 항상 동작. 아래 값들은 표시용.
-      const stored = loadChild();
-      if (stored) {
-        setName(stored.name);
-        setAge(stored.age);
-        setGender(stored.gender);
-      }
-      setLang(loadLang());
-      setVoiceId(loadSelectedVoiceId());
-      setVoiceRate(loadVoiceRate());
-      setTextPos(loadTextPos());
-      setCustomVoices(loadCustomVoices());
+      // (아이 정보·언어·목소리 등 로컬값은 위의 동기 effect에서 세션과 무관하게 즉시 반영했다.)
       if (s.guest) {
         setGuest(true);
         return; // 게스트는 스킨만 — 아래 계정/책/회원 정보는 안 불러온다.
