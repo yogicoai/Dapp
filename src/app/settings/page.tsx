@@ -376,6 +376,20 @@ export default function SettingsPage() {
     if (voiceId === v.id) pickVoice("basic");
   };
 
+  /** 이 기기에 녹음이 없는(다른 기기에서 만든) 완성 목소리 삭제 — 계정·Typecast 서버에서 제거. */
+  const removeParentOnly = async (p: ParentVoice) => {
+    const left = cloneChances ?? 0;
+    const warn =
+      left > 0
+        ? `${p.label} 목소리를 지울까요?\n\n지우고 새로 만들면 남은 수정 기회(${left}번)를 사용해요.`
+        : `${p.label} 목소리를 지울까요?\n\n⚠️ 남은 수정 기회가 없어, 지우면 다시 만들 수 없어요.`;
+    if (!window.confirm(warn)) return;
+    await deleteParentVoice(p.role).catch(() => {});
+    setParentVoices((prev) => prev.filter((x) => x.role !== p.role));
+    setCloneChances(await remainingCloneChances());
+    flashSaved();
+  };
+
   const persistChild = (next: { name?: string; age?: number | null; gender?: Gender }) => {
     const merged = {
       name: next.name ?? name,
@@ -628,6 +642,35 @@ export default function SettingsPage() {
               </div>
             )}
 
+            {/* 다른 기기에서 만든 완성 목소리 — 이 기기엔 녹음이 없어도 계정에 있으면
+                보여주고 지울 수 있게 한다 (PC 등 두 번째 기기에서 안 보이던 구멍, 2026-07-31). */}
+            {parentVoices.some((p) => !customVoices.some((v) => roleFromLabel(v.label) === p.role)) && (
+              <div className="flex flex-wrap gap-2">
+                {parentVoices
+                  .filter((p) => !customVoices.some((v) => roleFromLabel(v.label) === p.role))
+                  .map((p) => (
+                    <span
+                      key={p.role}
+                      className="flex flex-wrap items-center gap-1.5 rounded-full bg-amber-100 px-3.5 py-2 text-sm font-bold text-amber-800"
+                    >
+                      <span className="text-lg leading-none">{p.emoji}</span>
+                      {p.label} 목소리
+                      <span className="rounded-full bg-emerald-100 px-2 text-[10px] font-bold text-emerald-700">
+                        ✅ 완성
+                      </span>
+                      <button
+                        type="button"
+                        aria-label={`${p.label} 목소리 삭제`}
+                        onClick={() => removeParentOnly(p)}
+                        className="text-amber-600"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+              </div>
+            )}
+
             {/* 읽기 속도 — 느리다고 느끼는 집을 위해. 누르면 그 속도로 바로 들린다. */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-bold text-neutral-400">읽기 속도</span>
@@ -652,8 +695,9 @@ export default function SettingsPage() {
               })}
             </div>
 
-            {/* 엄마·아빠 추가 — 계정당 한 명만(둘 중 하나). 만들기 기회를 다 썼으면 안내만. */}
-            {!recording && customVoices.length === 0 && (
+            {/* 엄마·아빠 추가 — 계정당 한 명만(둘 중 하나). 만들기 기회를 다 썼으면 안내만.
+                계정에 이미 완성 목소리가 있으면(다른 기기 포함) 추가 버튼을 숨긴다. */}
+            {!recording && customVoices.length === 0 && parentVoices.length === 0 && (
               cloneChances === 0 ? (
                 <p className="text-[11px] font-bold text-neutral-400">
                   목소리 만들기 기회(처음 1번 + 수정 1번)를 모두 사용했어요.

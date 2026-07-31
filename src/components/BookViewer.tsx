@@ -17,6 +17,7 @@ import {
   buildPresetUtterance,
   fetchGoogleAudio,
   fetchTypecastPageAudio,
+  fetchTypecastVoiceAudio,
   findPreset,
   findTypecast,
   CLIENT_TTS_ENABLED,
@@ -433,28 +434,19 @@ export function BookViewer({ book }: { book: Book }) {
       return;
     }
 
-    // 부모 목소리(복제) — 엄마·아빠 클론(uc_ id)도 성우처럼 지문/대사를 나눠 감정
-    // 연기를 입힌다(클론 음성에도 감정 프리셋이 먹는 것 실측 확인, 2026-07-31).
-    // 같은 (목소리, 문장, 감정)은 기기에 캐시되어 다시 들을 땐 0원. 실패(키 없음·
-    // 크레딧 소진)하면 딸린 파일이 있으면 그걸, 없으면 브라우저 기계음으로 물러난다.
+    // 부모 목소리(복제) — 감정 프리셋 없이 '본연의 목소리 그대로' 읽는다.
+    // (감정 연기를 입혀봤더니 클론 음색이 변형돼 "아빠 같지 않다"는 실청 피드백으로 뺌,
+    //  2026-07-31 사장님 결정. 연기는 성우 몫, 부모 목소리는 똑같음이 가치.)
+    // 같은 (목소리, 문장)은 기기에 캐시되어 다시 들을 땐 0원. 실패(키 없음·크레딧
+    // 소진)하면 딸린 파일이 있으면 그걸, 없으면 브라우저 기계음으로 물러난다.
     if (selectedId.startsWith("parent:")) {
       const role = selectedId.slice("parent:".length);
       const pv = parentVoices.find((p) => p.role === role);
       if (pv) {
-        const preset = {
-          kind: "tc" as const,
-          id: selectedId,
-          label: pv.label,
-          emoji: pv.emoji,
-          voiceId: pv.voiceId,
-          model: "ssfm-v30",
-          desc: "",
-          sample: "",
-        };
-        fetchTypecastPageAudio(preset, page.text)
-          .then((segments) => {
+        fetchTypecastVoiceAudio(pv.voiceId, page.text)
+          .then((blob) => {
             if (run !== runIdRef.current || !readingRef.current) return;
-            playSegments(segments);
+            playViaAudio(URL.createObjectURL(blob));
           })
           .catch(() => {
             if (run !== runIdRef.current || !readingRef.current) return;
