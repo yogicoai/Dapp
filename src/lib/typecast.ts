@@ -125,3 +125,50 @@ export async function synthesize(input: {
     contentType: res.headers.get("content-type") ?? "audio/wav",
   };
 }
+
+/**
+ * 퀵 클로닝 — 녹음 오디오 → 커스텀 음성 id(uc_...). 이 id는 /v1/text-to-speech에
+ * 그대로 넣어 그 사람 목소리로 합성한다(감정도 됨). 라이트 플랜은 슬롯 50개.
+ * (multipart: name, model, file · file 최대 25MB)
+ */
+export async function cloneVoiceTypecast(input: {
+  name: string;
+  audio: Blob;
+  filename?: string;
+  model?: string;
+}): Promise<string> {
+  const form = new FormData();
+  form.append("name", input.name);
+  form.append("model", input.model || "ssfm-v30");
+  form.append("file", input.audio, input.filename ?? "voice.webm");
+
+  // Content-Type은 붙이지 않는다 — fetch가 multipart 경계를 자동 설정한다.
+  const res = await fetch(`${BASE}/v1/voices/clone`, {
+    method: "POST",
+    headers: { "X-API-KEY": apiKey() },
+    body: form,
+  });
+  if (!res.ok) {
+    const body = (await res.text()).slice(0, 400);
+    if (res.status === 402 || body.includes("CREDIT")) {
+      throw new TypecastError("크레딧이 부족하거나 클로닝 슬롯이 가득 찼어요.", 402);
+    }
+    throw new TypecastError(`목소리 복제 실패 (${res.status}): ${body}`, res.status === 401 ? 401 : 502);
+  }
+  const data = (await res.json()) as { voice_id?: string };
+  if (!data.voice_id) throw new TypecastError("복제 응답에 voice_id가 없습니다.", 502);
+  return data.voice_id;
+}
+
+/** 커스텀 음성(uc_...) 삭제 — 부모가 본인 목소리를 지울 때 서버에서도 완전 제거. */
+export async function deleteVoiceTypecast(voiceId: string): Promise<void> {
+  const res = await fetch(`${BASE}/v1/voices/${encodeURIComponent(voiceId)}`, {
+    method: "DELETE",
+    headers: { "X-API-KEY": apiKey() },
+  });
+  // 이미 없으면(404) 지워진 것으로 본다.
+  if (!res.ok && res.status !== 404) {
+    const body = (await res.text()).slice(0, 300);
+    throw new TypecastError(`목소리 삭제 실패 (${res.status}): ${body}`, res.status === 401 ? 401 : 502);
+  }
+}

@@ -15,11 +15,12 @@ import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import {
   buildPresetUtterance,
-  fetchElevenAudio,
   fetchGoogleAudio,
   fetchTypecastPageAudio,
+  fetchTypecastVoiceAudio,
   findPreset,
   findTypecast,
+  CLIENT_TTS_ENABLED,
   GOOGLE_TTS_ENABLED,
   loadSelectedVoiceId,
   loadVoiceRate,
@@ -174,8 +175,10 @@ export function BookViewer({ book }: { book: Book }) {
   useEffect(() => {
     loadParentVoices().then(setParentVoices).catch(() => {});
   }, []);
-  // 성우 선택지 — 제공 동화(전래·세계명작)는 그 책의 추천 성우(narrators)만.
-  // '내가 만든 동화'(id가 my-)는 [부모 목소리 + 추천(여성·남성)]만 보여준다.
+  // 성우 선택지 —
+  // · 제공 동화(전래·세계명작): 성우 전체(원래 그대로). 미리 구운 3명(narrators)은 즉시·무료,
+  //   나머지도 구글로 무료 합성돼 다 무료로 바꿔 들린다.
+  // · '내가 만든 동화'(id가 my-): [부모 목소리 + 추천(여성·남성)]만.
   const isCreated = book.id.startsWith("my-");
   const parentChoices = parentVoices.map((p) => ({
     id: `parent:${p.role}`,
@@ -184,11 +187,7 @@ export function BookViewer({ book }: { book: Book }) {
   }));
   const voiceChoices: readonly { id: string; label: string; emoji: string }[] = isCreated
     ? [...parentChoices, ...RECOMMENDED_VOICES]
-    : book.narrators
-      ? (book.narrators
-          .map((id) => TYPECAST_VOICES.find((v) => v.id === id))
-          .filter(Boolean) as typeof TYPECAST_VOICES)
-      : TYPECAST_VOICES;
+    : TYPECAST_VOICES;
   useEffect(() => {
     // 추천 성우가 있으면 그 첫 번째, 아니면 만든 동화의 성우(book.narrator), 아니면 설정값.
     const v = book.narrators?.[0] ?? book.narrator ?? loadSelectedVoiceId();
@@ -349,7 +348,7 @@ export function BookViewer({ book }: { book: Book }) {
       const role = selectedId.slice("parent:".length);
       const pv = parentVoices.find((p) => p.role === role);
       if (pv) {
-        fetchElevenAudio(pv.voiceId, page.text)
+        fetchTypecastVoiceAudio(pv.voiceId, page.text)
           .then((blob) => {
             if (run !== runIdRef.current || !readingRef.current) return;
             playViaAudio(URL.createObjectURL(blob));
@@ -417,7 +416,8 @@ export function BookViewer({ book }: { book: Book }) {
 
     // 여기까지 왔으면 딸린 음성이 없는 책 = 내가 만든 동화. 고른 성우로 실시간 합성한다
     // (한 번 만들면 기기에 캐시되어 다시 들을 땐 무료).
-    if (tc && GOOGLE_TTS_ENABLED) {
+    // Typecast(연기톤)가 켜져 있으면 그쪽을 먼저 쓴다. 아니면 구글(무료).
+    if (tc && GOOGLE_TTS_ENABLED && !CLIENT_TTS_ENABLED) {
       // 기본 엔진: Google Cloud TTS(무료 티어). 실패(키 없음·한도·오프라인)하면
       // 딸린 파일이 있으면 그걸, 없으면 브라우저 기계음으로 물러난다 — 크레딧 안 나감.
       fetchGoogleAudio(selectedId, page.text)
@@ -833,7 +833,7 @@ export function BookViewer({ book }: { book: Book }) {
       {voiceMenu && (
         <div className="absolute right-4 top-[3.75rem] z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur">
           <p className="px-2 py-1 text-[11px] font-bold text-neutral-400">
-            {book.narrators ? "이 동화 추천 성우 (무료로 바꿔 들어요)" : "읽어주는 성우를 골라요"}
+            {isCreated ? "읽어주는 성우를 골라요" : "성우를 골라요 (무료로 바꿔 들어요)"}
           </p>
           {voiceChoices.map((v) => {
             const active = voiceId === v.id;

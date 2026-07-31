@@ -390,6 +390,29 @@ export async function fetchElevenAudio(voiceId: string, text: string): Promise<B
   return blob;
 }
 
+/**
+ * 부모/커스텀 목소리(Typecast 퀵 클론 uc_ id)로 낭독. /api/tts(Typecast)로 그 목소리 합성.
+ * 같은 (목소리, 문장)은 IndexedDB에 캐시해 두 번째부턴 크레딧이 안 나간다.
+ */
+export async function fetchTypecastVoiceAudio(voiceId: string, text: string): Promise<Blob> {
+  const cacheId = `tcvoice:${voiceId}:${hashText(text)}`;
+  const cached = await loadVoiceAudio(cacheId).catch(() => null);
+  if (cached) return cached;
+
+  const r = await fetch("/api/tts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, voiceId, model: "ssfm-v30" }),
+  });
+  if (!r.ok) {
+    const d = (await r.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(d?.error ?? `부모 목소리 실패 (HTTP ${r.status})`);
+  }
+  const blob = await r.blob();
+  saveVoiceAudio(cacheId, blob).catch(() => {});
+  return blob;
+}
+
 /* ── 대사 연기 — 쪽 텍스트를 지문/대사로 나눠 감정을 입힌다 ── */
 
 export type PageAudioSegment = {
@@ -448,7 +471,7 @@ export function guessEmotion(line: string): string {
  * 미리 굽는 스크립트(서버의 /api/tts 직접 호출)는 이 스위치와 무관하게 동작한다.
  * 실서비스에서 '내가 만든 동화'를 진짜 성우로 읽어주려면 이 값을 true로 바꾼다.
  */
-export const CLIENT_TTS_ENABLED = false;
+export const CLIENT_TTS_ENABLED = true;
 
 /**
  * '내가 만든 동화'를 Google Cloud TTS로 실시간 낭독할지. 사장님이 Google TTS로

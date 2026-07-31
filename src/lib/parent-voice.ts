@@ -53,11 +53,68 @@ async function currentUserId(): Promise<string | null> {
   }
 }
 
-/** 녹음 오디오 → ElevenLabs 복제 → (기기 + 가능하면 Supabase) 저장 → voice_id 반환. */
+/**
+ * 녹음 오디오(webm 등)를 16-bit 모노 WAV로 변환한다 — Typecast 클로닝은 wav/mp3만 받는다.
+ * 브라우저 MediaRecorder는 보통 webm/opus라 그대로는 거부돼서, 재생기(Web Audio)로 디코드 후 WAV로 굽는다.
+ */
+async function audioToWav(blob: Blob): Promise<Blob> {
+  const arrayBuf = await blob.arrayBuffer();
+  const AC =
+    window.AudioContext ??
+    (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+  const ctx = new AC();
+  try {
+    const audio = await ctx.decodeAudioData(arrayBuf);
+    return encodeWav(audio);
+  } finally {
+    void ctx.close();
+  }
+}
+
+function encodeWav(buffer: AudioBuffer): Blob {
+  const len = buffer.length;
+  const sampleRate = buffer.sampleRate;
+  const numCh = buffer.numberOfChannels;
+  // 모노로 다운믹스 (클로닝엔 충분하고 파일이 작다).
+  const mono = new Float32Array(len);
+  for (let ch = 0; ch < numCh; ch++) {
+    const data = buffer.getChannelData(ch);
+    for (let i = 0; i < len; i++) mono[i] += data[i] / numCh;
+  }
+  const dataSize = len * 2;
+  const buf = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buf);
+  const writeStr = (off: number, s: string) => {
+    for (let i = 0; i < s.length; i++) view.setUint8(off + i, s.charCodeAt(i));
+  };
+  writeStr(0, "RIFF");
+  view.setUint32(4, 36 + dataSize, true);
+  writeStr(8, "WAVE");
+  writeStr(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true); // PCM
+  view.setUint16(22, 1, true); // mono
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  writeStr(36, "data");
+  view.setUint32(40, dataSize, true);
+  let off = 44;
+  for (let i = 0; i < len; i++) {
+    const s = Math.max(-1, Math.min(1, mono[i]));
+    view.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+    off += 2;
+  }
+  return new Blob([buf], { type: "audio/wav" });
+}
+
+/** 녹음 오디오 → Typecast 퀵 클론 → (기기 + 가능하면 Supabase) 저장 → voice_id 반환. */
 export async function cloneParentVoice(role: string, name: string, audio: Blob): Promise<string> {
+  const wav = await audioToWav(audio); // Typecast는 wav/mp3만 받으므로 변환
   const form = new FormData();
   form.append("name", name);
-  form.append("audio", audio, "voice.webm");
+  form.append("audio", wav, "voice.wav");
   const r = await fetch("/api/voice/clone", { method: "POST", body: form });
   if (!r.ok) {
     const d = (await r.json().catch(() => null)) as { error?: string } | null;
@@ -76,7 +133,7 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
     const uid = await currentUserId();
     if (sb && uid) {
       await sb.from("voice_clones").upsert(
-        { owner: uid, role, provider: "elevenlabs", provider_voice_id: voiceId, status: "ready" },
+        { owner: uid, role, provider: "typecast", provider_voice_id: voiceId, status: "ready" },
         { onConflict: "owner,role" },
       );
     }
