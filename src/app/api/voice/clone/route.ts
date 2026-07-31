@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const voiceId = await cloneVoiceTypecast({ name, audio: file, filename: "voice.webm" });
+    const voiceId = await cloneVoiceTypecast({ name, audio: file, filename: "voice.wav" });
     return NextResponse.json({ voiceId });
   } catch (e) {
     if (e instanceof TypecastError) {

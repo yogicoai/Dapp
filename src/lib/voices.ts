@@ -78,6 +78,11 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-jiyoon", label: "지윤", emoji: "☁️", voiceId: "tc_62296627a4ff5d1ee6bf4ecc", model: "ssfm-v30", desc: "여자 · 차분한 목소리", sample: "차분하게 읽어줄게." },
   { kind: "tc", id: "tc-jungsoon", label: "정순", emoji: "👵", voiceId: "tc_5ebea242728f5b00075e6211", model: "ssfm-v30", desc: "여자 · 정겨운 할머니", sample: "옛날 옛적에, 얘야." },
   { kind: "tc", id: "tc-jiyoung", label: "지영", emoji: "🌷", voiceId: "tc_5c789c34dabcfa0008b0a390", model: "ssfm-v30", desc: "여자 · 밝은 선생님", sample: "친구들, 이야기 들을 준비 됐나요?" },
+  // 사장님 지정 추가 캐릭터(2026-07-31) — 세계명작 대표 성우용
+  { kind: "tc", id: "tc-mongsil", label: "뭉실이", emoji: "🐑", voiceId: "tc_699d27e0e061695d6ed39bc6", model: "ssfm-v30", desc: "여자 청소년 · 몽실몽실 다정한 목소리", sample: "뭉실뭉실 포근한 이야기 들려줄게!" },
+  { kind: "tc", id: "tc-hamchu", label: "햄쭈", emoji: "🐹", voiceId: "tc_632293ed2f894f2211e8c597", model: "ssfm-v30", desc: "여자 · 톡톡 튀는 귀여운 목소리", sample: "햄쭈랑 신나는 동화 여행 가자!" },
+  { kind: "tc", id: "tc-arin", label: "아린이", emoji: "🧸", voiceId: "tc_67513c3cf30802da48949a14", model: "ssfm-v30", desc: "여자 · 밝고 사랑스러운 목소리", sample: "아린이가 재미있게 읽어줄게!" },
+  { kind: "tc", id: "tc-gaeul", label: "가을", emoji: "🍂", voiceId: "tc_60f7a217279ffba711ce2958", model: "ssfm-v30", desc: "여자 · 차분하고 포근한 목소리", sample: "가을처럼 포근하게 들려줄게요." },
   { kind: "tc", id: "tc-gunseok", label: "건석", emoji: "🧔", voiceId: "tc_6731b2e0855f351b98d30c48", model: "ssfm-v30", desc: "남자 · 듬직한 아빠", sample: "아빠가 재미있게 읽어줄게." },
   { kind: "tc", id: "tc-changsu", label: "창수", emoji: "⚡", voiceId: "tc_6059dad0b83880769a50502f", model: "ssfm-v30", desc: "남자 · 활기찬 형아", sample: "형아랑 신나는 이야기 가자!" },
   { kind: "tc", id: "tc-siwoo", label: "시우", emoji: "🧒", voiceId: "tc_6699eb3849dfac016c29444c", model: "ssfm-v30", desc: "남자 어린이 · 씩씩한 친구", sample: "나랑 같이 모험 떠나자!" },
@@ -466,18 +471,18 @@ export function guessEmotion(line: string): string {
 /**
  * 앱 안에서의 '실시간 성우 합성'을 켜고 끄는 스위치.
  *
- * false면 앱에서 책을 읽거나 성우를 바꿔도 Typecast를 호출하지 않는다 → 크레딧 0.
- * (딸린 나레이션 파일이나 브라우저 기계음으로 자동 대체된다.) 테스트 기간엔 꺼 둔다.
- * 미리 굽는 스크립트(서버의 /api/tts 직접 호출)는 이 스위치와 무관하게 동작한다.
- * 실서비스에서 '내가 만든 동화'를 진짜 성우로 읽어주려면 이 값을 true로 바꾼다.
+ * true(현재, 2026-07-31 Typecast API 라이트 결제 후 켬)면 실시간 낭독이 전부
+ * Typecast(감정 연기)로 간다 — 글자 수만큼 크레딧이 나가고, 같은 문장은 기기 캐시로 0원.
+ * 과금 폭주는 서버(typecast.ts)의 월 19만 자 자동 잠금이 막는다.
+ * false로 내리면 Typecast 호출이 전부 멈추고 구글(GOOGLE_TTS_ENABLED)·딸린 파일·
+ * 브라우저 기계음 순으로 물러난다 → 크레딧 0.
  */
 export const CLIENT_TTS_ENABLED = true;
 
 /**
- * '내가 만든 동화'를 Google Cloud TTS로 실시간 낭독할지. 사장님이 Google TTS로
- * 가기로 정해서 켠다(true). 키(GOOGLE_TTS_API_KEY)가 없거나 한도를 넘으면 자동으로
- * 브라우저 기계음으로 물러나므로, 켜 둬도 크레딧이 새지 않는다(키 없으면 호출 실패 → 폴백).
- * 제공 동화(전래·세계명작)는 미리 구운 파일을 쓰므로 이 스위치와 무관하다.
+ * 구글 TTS '폴백' 스위치 — CLIENT_TTS_ENABLED(Typecast)가 꺼져 있을 때만 실제로 쓰인다.
+ * 지금은 Typecast가 기본 엔진이라 이 분기는 죽어 있고(감정 없음·무료), Typecast를 끄면
+ * 창작 동화 낭독이 이쪽(무료 월 100만 자)으로 내려온다. 키 없으면 브라우저 기계음으로 폴백.
  */
 export const GOOGLE_TTS_ENABLED = true;
 

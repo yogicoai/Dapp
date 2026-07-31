@@ -48,6 +48,7 @@ export function parseMaterial(value: unknown): StoryMaterial {
     happening: pick(v?.happening),
     place: pick(v?.place),
     feeling: pick(v?.feeling),
+    ending: pick(v?.ending),
     emotion: pick(v?.emotion),
     situation: pick(v?.situation),
     extra: pick(v?.extra),

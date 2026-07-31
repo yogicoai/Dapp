@@ -82,6 +82,37 @@ export async function listTypecastVoices(): Promise<TypecastVoice[]> {
     .filter((v) => v.id);
 }
 
+/* ── 과금 자동 차단 ──
+ * 라이트 플랜은 20만 크레딧을 넘기면 자동으로 추가 결제($9/10만 자)가 붙는다.
+ * 그래서 합성 전에 이번 달 사용량을 확인해, 안전선(19만)에 닿으면 합성을 거부한다
+ * → 앱은 무료 브라우저 음성으로 자동 폴백되고, 요금은 절대 초과되지 않는다.
+ * 사용량 조회는 5분 캐시(+로컬 누적)로 매 요청 API를 두 번 때리지 않게 한다.
+ */
+const CREDIT_SAFE_LIMIT = 190_000;
+const SUB_CACHE_MS = 5 * 60 * 1000;
+let subCache: { at: number; used: number } | null = null;
+let localUsedSinceRefresh = 0;
+
+async function usedCreditsThisMonth(): Promise<number | null> {
+  const now = Date.now();
+  if (subCache && now - subCache.at < SUB_CACHE_MS) {
+    return subCache.used + localUsedSinceRefresh;
+  }
+  try {
+    const res = await fetch(`${BASE}/v1/users/me/subscription`, {
+      headers: { "X-API-KEY": apiKey() },
+    });
+    if (!res.ok) return null; // 조회 실패 — 가드는 통과(합성은 되게), 다음 요청에 재시도
+    const data = (await res.json()) as { credits?: { used_credits?: number } };
+    const used = Number(data.credits?.used_credits ?? 0);
+    subCache = { at: now, used };
+    localUsedSinceRefresh = 0;
+    return used;
+  } catch {
+    return null;
+  }
+}
+
 /** 문장 하나를 음성(wav 등)으로 만든다. 글자 수만큼 크레딧이 나간다. */
 export async function synthesize(input: {
   text: string;
@@ -90,6 +121,15 @@ export async function synthesize(input: {
   /** 감정 프리셋(happy·sad·angry·toneup 등) — 대사 연기용. 음성이 지원할 때만 먹는다. */
   emotion?: string;
 }): Promise<{ audio: ArrayBuffer; contentType: string }> {
+  // 과금 자동 차단 — 안전선(19만 자)에 닿으면 합성하지 않는다(무료 음성으로 폴백).
+  const used = await usedCreditsThisMonth();
+  if (used !== null && used + input.text.length > CREDIT_SAFE_LIMIT) {
+    throw new TypecastError(
+      "이번 달 성우 크레딧을 거의 다 써서 추가 요금이 나가기 전에 잠갔어요. 다음 달에 다시 열려요.",
+      429,
+    );
+  }
+
   const body: Record<string, unknown> = {
     voice_id: input.voiceId,
     text: input.text,
@@ -120,6 +160,8 @@ export async function synthesize(input: {
       res.status === 401 ? 401 : 502,
     );
   }
+  // 성공 — 로컬 누적(다음 캐시 갱신 전까지의 사용량 추정)에 더한다.
+  localUsedSinceRefresh += input.text.length;
   return {
     audio: await res.arrayBuffer(),
     contentType: res.headers.get("content-type") ?? "audio/wav",

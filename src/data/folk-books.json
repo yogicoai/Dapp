@@ -1,7 +1,13 @@
 [
   {
     "id": "folk-heungbu",
-    "narrators": ["tc-jungsoon", "tc-gunseok", "tc-miso"],
+    "narrators": [
+      "tc-kwonil",
+      "tc-booqoo",
+      "tc-jungsoon",
+      "tc-gunseok",
+      "tc-miso"
+    ],
     "lang": "ko",
     "title": "흥부와 놀부",
     "summary": "다친 제비를 정성껏 돌본 흥부가 박씨 하나로 복을 받는 이야기",
@@ -586,11 +592,16 @@
   },
   {
     "id": "folk-tortoise",
-    "narrators": ["tc-jungsoon", "tc-gunseok", "tc-miso"],
+    "narrators": [
+      "tc-dabin",
+      "tc-jungsoon",
+      "tc-gunseok",
+      "tc-miso"
+    ],
     "lang": "ko",
     "title": "토끼와 거북이",
     "summary": "느려도 한 번도 멈추지 않은 거북이가 달리기 시합에서 이기는 이야기",
-    "narrator": "tc-mongsil",
+    "narrator": "tc-dabin",
     "pages": [
       {
         "text": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요.\n\"이 숲에서 나보다 빠른 동물은 아무도 없지!\"\n토끼는 만나는 친구마다 자랑을 늘어놓았지요.",
@@ -959,11 +970,15 @@
   },
   {
     "id": "folk-kongjwi",
-    "narrators": ["tc-jungsoon", "tc-gunseok", "tc-miso"],
+    "narrators": [
+      "tc-jungsoon",
+      "tc-gunseok",
+      "tc-miso"
+    ],
     "lang": "ko",
     "title": "콩쥐 팥쥐",
     "summary": "동물 친구들과 선녀님의 도움으로 잔치에 간 콩쥐와 꽃신 이야기",
-    "narrator": "tc-jungsook",
+    "narrator": "tc-jungsoon",
     "pages": [
       {
         "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n콩쥐는 일찍 어머니를 여의고,\n아버지가 새로 맞이한 새어머니, 동생 팥쥐와 함께 살게 되었지요.",
@@ -1364,11 +1379,16 @@
   },
   {
     "id": "folk-haedal",
-    "narrators": ["tc-jungsoon", "tc-gunseok", "tc-miso"],
+    "narrators": [
+      "tc-sua",
+      "tc-jungsoon",
+      "tc-gunseok",
+      "tc-miso"
+    ],
     "lang": "ko",
     "title": "해님 달님",
     "summary": "호랑이를 피해 하늘로 올라간 오누이가 해님과 달님이 된 이야기",
-    "narrator": "tc-seohyeon",
+    "narrator": "tc-sua",
     "pages": [
       {
         "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다.",
@@ -1799,128 +1819,135 @@
     "lang": "ko",
     "title": "팥죽 할머니와 호랑이",
     "summary": "호랑이를 물리치려는 할머니를 알밤·자라·똥·멍석·지게가 힘을 모아 돕는 이야기",
-    "narrator": "tc-jungsook",
+    "narrator": "tc-jiyoung",
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p07.png",
     "pages": [
       {
         "text": "옛날 어느 산골에, 팥 농사를 짓는 할머니가 살았어요.\n어느 날 밭을 매는데, 커다란 호랑이가 어흥! 하고 나타났지요.\n\"할멈, 널 잡아먹어야겠다!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p01.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p1.mp3"
       },
       {
         "text": "할머니는 깜짝 놀랐지만 꾀를 냈어요.\n\"호랑이야, 가을에 팥이 익으면 팥죽을 쒀 줄게.\n그때 배불리 먹고 나서 나를 잡아먹으렴.\"\n\"좋아! 그럼 그때 다시 오마.\" 호랑이는 어슬렁어슬렁 돌아갔어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p02.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p2.mp3"
       },
       {
         "text": "가을이 되어 팥이 빨갛게 익었어요.\n할머니는 솥 가득 팥죽을 쒔지요.\n하지만 호랑이가 올 생각을 하니 눈물이 주르륵.\n\"흑흑, 이제 나는 잡아먹히고 마는구나.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p03.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p3.mp3"
       },
       {
         "text": "그때 부엌 아궁이에서 알밤이 톡 튀어나왔어요.\n\"할머니, 왜 울어요?\"\n\"호랑이가 날 잡아먹으러 온단다.\"\n\"팥죽 한 그릇 주시면 제가 도와드릴게요!\"\n알밤은 냠냠 팥죽을 먹고 아궁이 속에 쏙 숨었어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p04.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p4.mp3"
       },
       {
         "text": "이번엔 물동이에서 자라가 엉금엉금 기어 나왔어요.\n\"할머니, 저도 팥죽 주시면 도와드릴게요!\"\n자라는 팥죽을 먹고 물동이 속에 풍덩 숨었지요.\n뒤이어 쇠똥도, 멍석도, 지게도 하나씩 나타났어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p05.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p5.mp3"
       },
       {
         "text": "\"저희도 팥죽 주시면 힘을 보탤게요!\"\n다들 팥죽을 배불리 먹고 저마다 자리를 잡았어요.\n쇠똥은 마당 한가운데, 멍석은 마루에,\n지게는 문 뒤에 살그머니 숨었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p06.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p6.mp3"
       },
       {
         "text": "깜깜한 밤, 드디어 호랑이가 어슬렁 찾아왔어요.\n\"할멈, 팥죽 잘 익었느냐? 어디 있느냐?\"\n\"부엌 아궁이에 있으니 직접 꺼내 먹으렴.\"\n호랑이는 어슬렁어슬렁 부엌으로 갔지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p07.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p7.mp3"
       },
       {
         "text": "호랑이가 아궁이를 들여다보는 순간 —\n뜨겁게 달궈진 알밤이 탁! 튀어 호랑이 눈을 때렸어요.\n\"아야! 내 눈!\"\n호랑이가 물동이로 눈을 씻으러 달려갔지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p08.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p8.mp3"
       },
       {
         "text": "물동이에 손을 넣자, 자라가 콱! 손을 물었어요.\n\"아이고 아파!\"\n놀란 호랑이가 뒷걸음질 치다가 —\n마당의 쇠똥을 밟고 주르륵 미끄러졌지요. 쿵!",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p09.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p9.mp3"
       },
       {
         "text": "넘어진 호랑이 위로 마루의 멍석이 데굴데굴 굴러와\n호랑이를 둘둘 말아 버렸어요.\n그러자 문 뒤의 지게가 성큼 다가와\n멍석에 싸인 호랑이를 번쩍 짊어졌답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p10.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p10.mp3"
       },
       {
         "text": "지게는 멍석에 싸인 호랑이를 등에 짊어지고 강가로 갔어요.\n호랑이는 물에 풍덩 빠졌다가 고개를 내밀었지요.\n\"어푸어푸! 다시는 마을에 오지 않을게!\"\n호랑이는 강 건너 산 너머로 서둘러 도망쳤답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p11.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p11.mp3"
       },
       {
         "text": "호랑이가 떠나자, 할머니는 친구들을 마당에 불러 모았어요.\n그리고 따끈한 팥죽을 한 그릇씩 나누어 주었지요.\n\"정말 고맙구나. 너희가 곁에 있어 주어서 하나도 무섭지 않았단다.\"\n친구들은 팥죽을 호호 불어 먹으며 빙그레 웃었어요.\n그날 밤, 산골 오두막에는 따뜻한 웃음소리가 오래오래 이어졌답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p12.png",
-        "audio": null
+        "audio": "/folk/patjuk/narr-p12.mp3"
       }
+    ],
+    "narrators": [
+      "tc-jiyoung"
     ]
   },
   {
     "id": "folk-hokburi",
     "lang": "ko",
     "title": "혹부리 영감",
-    "summary": "노래로 도깨비를 홀려 혹을 뗀 착한 영감과, 욕심부리다 혹을 하나 더 붙인 영감 이야기",
+    "summary": "고운 노래로 도깨비에게 혹을 판 착한 영감과, 욕심을 부리다 혹을 하나 더 붙인 영감 이야기",
     "narrator": "tc-kwonil",
     "pages": [
       {
-        "text": "옛날 어느 마을에, 턱에 커다란 혹이 달린 마음씨 고운 영감이 살았어요.\n영감은 혹이 달렸어도 늘 흥얼흥얼 노래를 잘 불렀지요.\n\"라라라~ 오늘도 좋은 날이로구나!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p1.webp",
-        "audio": null
+        "text": "옛날 옛날 어느 산골 마을에, 볼에 커다란 혹이 달린 할아버지가 살았어요.\n사람들은 '혹부리 영감'이라고 불렀지요.\n할아버지는 놀림을 받아도 씩 웃으며 노래를 불렀어요.\n\"라라라~ 노래하면 기분이 좋아진다네!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p1.webp?v=2",
+        "audio": "/folk/hokburi/narr-p1.mp3"
       },
       {
-        "text": "어느 날, 산에 나무를 하러 갔다가 그만 날이 저물었어요.\n영감은 빈 오두막에 들어가 하룻밤 묵기로 했지요.\n무서운 마음을 달래려고 고운 목소리로 노래를 불렀어요.\n\"라라라~ 달빛도 곱구나~\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p2.webp",
-        "audio": null
+        "text": "어느 날 할아버지는 산에 나무를 하러 갔다가 그만 날이 저물고 말았어요.\n깜깜한 밤, 바람은 쌩쌩!\n할아버지는 낡은 빈 오두막을 찾아 들어갔지요.\n\"오늘 밤은 여기서 자야겠구나.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p2.webp?v=2",
+        "audio": "/folk/hokburi/narr-p2.mp3"
       },
       {
-        "text": "그때 쿵쿵쿵, 도깨비들이 우르르 몰려왔어요!\n영감은 깜짝 놀랐지만 노래를 멈추지 않았지요.\n도깨비 대장이 눈을 반짝이며 물었어요.\n\"영감, 그 고운 노래는 대체 어디서 나오는 게냐?\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p3.webp",
-        "audio": null
+        "text": "캄캄한 오두막은 조금 무서웠어요. 가슴이 콩닥콩닥.\n그럴 때마다 할아버지는 노래를 불렀어요.\n\"라라라~ 달님도 별님도 내 친구~\"\n고운 노랫소리가 밤하늘에 울려 퍼졌지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p3.webp?v=2",
+        "audio": "/folk/hokburi/narr-p3.mp3"
       },
       {
-        "text": "영감은 얼떨결에 턱의 혹을 가리켰어요.\n\"이 혹에서 노래가 술술 나온다오.\"\n\"오, 그 혹을 나에게 팔아라! 보물을 주마!\"\n도깨비는 영감의 혹을 쏙 떼어 가고, 금은보화를 잔뜩 주었지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p4.webp",
-        "audio": null
+        "text": "그때였어요! 쿵! 쿵! 쿵!\n문이 벌컥 열리더니 도깨비들이 우르르 몰려왔어요.\n할아버지는 깜짝 놀랐지만, 용기를 내어 노래를 멈추지 않았어요.\n도깨비 대장이 눈을 반짝이며 물었지요.\n\"영감! 그 고운 노래는 어디서 나오는 거냐?\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p4.webp?v=2",
+        "audio": "/folk/hokburi/narr-p4.mp3"
       },
       {
-        "text": "혹을 떼고 보물까지 얻은 영감은 덩실덩실 춤을 추며 집에 왔어요.\n소문은 온 마을에 쫙 퍼졌지요.\n이웃 마을에는 심술궂고 욕심 많은 혹부리 영감이 또 있었는데,\n그 소문을 듣고 두 눈이 번쩍 뜨였답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p5.webp",
-        "audio": null
+        "text": "할아버지는 얼떨결에 볼에 달린 혹을 가리켰어요.\n\"이... 이 혹에서 노래가 술술 나온다오.\"\n\"오오! 그 노래 주머니를 나에게 팔아라!\"\n도깨비들은 혹을 쏙 떼어 가고, 반짝반짝 금은보화를 잔뜩 안겨 주었어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p5.webp?v=2",
+        "audio": "/folk/hokburi/narr-p5.mp3"
       },
       {
-        "text": "\"옳지! 나도 도깨비한테 혹을 팔면 부자가 되겠구나!\"\n욕심쟁이 영감은 부랴부랴 그 오두막을 찾아갔어요.\n그리고 도깨비들이 오기만을 기다리며\n억지로 목청을 높여 노래를 불렀지요. \"애앰~ 애앰~\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p6.webp",
-        "audio": null
+        "text": "혹도 떼고 보물도 얻은 할아버지!\n덩실덩실 춤을 추며 집으로 돌아왔어요.\n이 소문은 바람처럼 온 마을에 쫙 퍼졌답니다.\n이웃 마을의 욕심쟁이 영감도 소문을 들었지요.\n욕심쟁이 영감의 볼에도 큰 혹이 달려 있었거든요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p6.webp?v=2",
+        "audio": "/folk/hokburi/narr-p6.mp3"
       },
       {
-        "text": "과연 밤이 되자 도깨비들이 다시 몰려왔어요.\n\"어? 저번 그 노래 혹이 또 왔네?\"\n욕심쟁이 영감이 냉큼 외쳤어요.\n\"이 혹에서 노래가 나온다오! 보물을 주고 사 가시오!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p7.webp",
-        "audio": null
+        "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야지!\"\n욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자 억지로 목청을 높였지요.\n\"애앰~ 애앰~ 노래야 나와라~\"\n듣기 싫은 노랫소리가 삐걱삐걱 울렸어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p7.webp?v=2",
+        "audio": "/folk/hokburi/narr-p7.mp3"
       },
       {
-        "text": "그러자 도깨비 대장이 껄껄 웃었어요.\n\"이런, 지난번 그 혹은 노래가 안 나오는 가짜였다!\n너한테 도로 붙여 주마!\"\n도깨비는 가져갔던 혹을 욕심쟁이 영감 턱에 척 붙여 버렸지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p8.webp",
-        "audio": null
+        "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n\"이 혹에서 고운 노래가 나온다오! 어서 보물을 주고 사 가시오!\"\n욕심쟁이 영감이 냉큼 소리쳤지요.\n그러자 도깨비 대장이 버럭 화를 냈어요.\n\"거짓말! 지난번 혹에서도 노래는 나오지 않았다!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p8.webp?v=3",
+        "audio": "/folk/hokburi/narr-p8.mp3"
       },
       {
-        "text": "욕심쟁이 영감은 혹이 둘이나 달린 채\n울상이 되어 터덜터덜 집으로 돌아갔어요.\n혹을 떼려다 오히려 하나를 더 붙이고 만 거예요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p9.webp",
-        "audio": null
+        "text": "\"너도 거짓말쟁이구나! 이 혹, 도로 가져가라!\"\n도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은 엉엉 울며 집으로 돌아갔지요.\n\"아이고, 욕심을 부리다가 혹만 하나 더 붙였구나...\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p9.webp?v=3",
+        "audio": "/folk/hokburi/narr-p9.mp3"
       },
       {
-        "text": "착한 혹부리 영감은 도깨비에게 받은 보물을\n가난한 이웃들과 아낌없이 나누었어요.\n\"혼자 잘 살면 무슨 재미가 있겠소. 같이 나눠야지요!\"\n마을 사람들은 영감의 노래를 들으며 오래오래 사이좋게 살았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p10.webp",
-        "audio": null
+        "text": "착한 할아버지는 보물을 혼자 갖지 않고 이웃들과 사이좋게 나누었어요.\n\"같이 나누면 기쁨이 두 배가 된다오! 라라라~\"\n그날부터 마을엔 할아버지의 고운 노랫소리와 웃음소리가 가득했답니다.\n정직한 마음과 나누는 마음이 가장 큰 보물이에요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p10.webp?v=2",
+        "audio": "/folk/hokburi/narr-p10.mp3"
       }
+    ],
+    "narrators": [
+      "tc-kwonil",
+      "tc-siwoo"
     ]
   }
 ]

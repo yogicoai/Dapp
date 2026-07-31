@@ -26,3 +26,11 @@ export function bookTokenCost(pages: number, illustrated: boolean): number {
 
 /** 베타 한정 — 아이디당 만들 수 있는 동화 최대 권수. (마스터는 제외) */
 export const MAX_BOOKS_PER_USER = 5;
+
+/**
+ * 부모 목소리 만들기(복제) 1회 비용 — 실측 원가 기준(2026-07-31, Typecast Lite $15/20만자):
+ *   클로닝 슬롯 ₩420(= ₩21,000÷50) + 예상 낭독 크레딧 ₩1,000쯤(책 ~10편 × 첫 1회 합성,
+ *   창작 ~₩53/편·전래 ~₩137/편, 이후엔 기기 캐시라 0원) ≈ 총 ₩1,400~1,500.
+ * → 15토큰(₩1,500)으로 원가를 덮는다. 수정(2번째 만들기)도 같은 값. 듣기 자체는 무과금.
+ */
+export const COST_PARENT_VOICE = 15;

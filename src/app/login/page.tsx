@@ -130,7 +130,7 @@ export default function LoginPage() {
               enterGuest();
               router.push("/");
             }}
-            className="mt-3 w-full rounded-full bg-neutral-100 py-3 text-sm font-extrabold text-neutral-600 transition hover:bg-neutral-200"
+            className="mt-3 w-full break-keep rounded-full bg-neutral-100 px-4 py-3 text-sm font-extrabold text-neutral-600 transition hover:bg-neutral-200"
           >
             비회원으로 둘러보기 (전래동화·세계명작)
           </button>

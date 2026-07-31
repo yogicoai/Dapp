@@ -17,14 +17,12 @@ import {
   buildPresetUtterance,
   fetchGoogleAudio,
   fetchTypecastPageAudio,
-  fetchTypecastVoiceAudio,
   findPreset,
   findTypecast,
   CLIENT_TTS_ENABLED,
   GOOGLE_TTS_ENABLED,
   loadSelectedVoiceId,
   loadVoiceRate,
-  RECOMMENDED_VOICES,
   saveSelectedVoiceId,
   saveVoiceRate,
   TYPECAST_VOICES,
@@ -98,6 +96,11 @@ export function BookViewer({ book }: { book: Book }) {
   useEffect(() => setTextPos(loadTextPos()), []);
   const [index, setIndex] = useState(0);
   const lastIndex = book.pages.length - 1;
+
+  // 쪽별 그림의 실제 비율(가로÷세로) — 그림이 로드되면 잰다. 책마다 그림 비율이 달라서
+  // (흥부 4:3, 해님달님 2.36:1 등) 4:3 고정 틀은 와이드 그림에서 위아래가 뜨고 '짤린'
+  // 것처럼 보였다. 실측 비율로 무대 틀을 맞추면 어떤 그림이든 꽉 찬다. 기본값 4:3.
+  const [imgRatios, setImgRatios] = useState<Record<number, number>>({});
 
   // 이어보기 — 서재로 나갔다 다시 들어오면 읽던 쪽부터 보인다.
   // animate=false로 시작해, 마운트 직후의 "읽던 쪽으로 점프"는 애니메이션 없이
@@ -176,9 +179,10 @@ export function BookViewer({ book }: { book: Book }) {
     loadParentVoices().then(setParentVoices).catch(() => {});
   }, []);
   // 성우 선택지 —
-  // · 제공 동화(전래·세계명작): 성우 전체(원래 그대로). 미리 구운 3명(narrators)은 즉시·무료,
-  //   나머지도 구글로 무료 합성돼 다 무료로 바꿔 들린다.
-  // · '내가 만든 동화'(id가 my-): [부모 목소리 + 추천(여성·남성)]만.
+  // · 제공 동화(전래·세계명작): 그 책에 설정한 성우(narrators = 대표·서브·기존 구운)만.
+  //   전부 미리 구운 파일이라 아무리 바꿔 들어도 크레딧 0. (전체 성우를 열면 안 구운
+  //   성우의 첫 재생마다 크레딧이 나가서 사장님 지시로 뺐다 — 2026-07-31)
+  // · '내가 만든 동화'(id가 my-): 부모 목소리(복제) + 성우 전체(만들 때 고른 성우로 낭독).
   const isCreated = book.id.startsWith("my-");
   const parentChoices = parentVoices.map((p) => ({
     id: `parent:${p.role}`,
@@ -186,15 +190,24 @@ export function BookViewer({ book }: { book: Book }) {
     emoji: p.emoji,
   }));
   const voiceChoices: readonly { id: string; label: string; emoji: string }[] = isCreated
-    ? [...parentChoices, ...RECOMMENDED_VOICES]
-    : TYPECAST_VOICES;
+    ? [...parentChoices, ...TYPECAST_VOICES]
+    : book.narrators
+      ? (book.narrators
+          .map((id) => TYPECAST_VOICES.find((v) => v.id === id))
+          .filter(Boolean) as typeof TYPECAST_VOICES)
+      : TYPECAST_VOICES;
   useEffect(() => {
     // 추천 성우가 있으면 그 첫 번째, 아니면 만든 동화의 성우(book.narrator), 아니면 설정값.
-    const v = book.narrators?.[0] ?? book.narrator ?? loadSelectedVoiceId();
+    // 단, 저장된 설정값이 부모 목소리(parent:)면 '내가 만든 동화'에서만 잇는다 —
+    // 제공·샘플 책이 부모 클론 목소리(유료 합성)를 몰래 상속하는 걸 막는다.
+    const stored = loadSelectedVoiceId();
+    const safeStored =
+      stored.startsWith("parent:") && !book.id.startsWith("my-") ? "tc-booqoo" : stored;
+    const v = book.narrators?.[0] ?? book.narrator ?? safeStored;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 저장된 성우를 마운트 후 반영
     setVoiceId(v);
     voiceIdRef.current = v;
-  }, [book.narrators, book.narrator]);
+  }, [book.narrators, book.narrator, book.id]);
 
   // 캐릭터 클릭 반응 — 정지 그림이라 캐릭터 자체는 못 움직이지만, 누른 자리에서
   // 반짝이가 통통 튀어올라 "반응하는" 느낌을 준다. key로 매 클릭마다 다시 튼다.
@@ -341,27 +354,6 @@ export function BookViewer({ book }: { book: Book }) {
     const selectedId = voiceIdRef.current;
     const tc = findTypecast(selectedId);
 
-    // 부모 목소리(복제) — 회원이 엄마·아빠를 골랐으면 ElevenLabs로 합성한다.
-    // 한 번 만들면 기기에 캐시되어 다시 들을 땐 0원. 실패(키 없음·크레딧 소진)하면
-    // 딸린 파일이 있으면 그걸, 없으면 브라우저 기계음으로 물러난다.
-    if (selectedId.startsWith("parent:")) {
-      const role = selectedId.slice("parent:".length);
-      const pv = parentVoices.find((p) => p.role === role);
-      if (pv) {
-        fetchTypecastVoiceAudio(pv.voiceId, page.text)
-          .then((blob) => {
-            if (run !== runIdRef.current || !readingRef.current) return;
-            playViaAudio(URL.createObjectURL(blob));
-          })
-          .catch(() => {
-            if (run !== runIdRef.current || !readingRef.current) return;
-            if (bundled) playViaAudio(bundled);
-            else speakWithBrowser();
-          });
-        return;
-      }
-    }
-
     // 이 책의 추천 성우(narrators) 중 하나를 골랐으면, 그 성우로 미리 구운 파일을
     // 재생한다 — 파일 재생이라 크레딧 0·즉시. (narr-pN.mp3 → narr-{성우}-pN.mp3)
     if (book.narrators?.includes(selectedId) && page.audio) {
@@ -414,11 +406,11 @@ export function BookViewer({ book }: { book: Book }) {
       return;
     }
 
-    // 여기까지 왔으면 딸린 음성이 없는 책 = 내가 만든 동화. 고른 성우로 실시간 합성한다
-    // (한 번 만들면 기기에 캐시되어 다시 들을 땐 무료).
-    // Typecast(연기톤)가 켜져 있으면 그쪽을 먼저 쓴다. 아니면 구글(무료).
+    // 여기까지 왔으면 실시간 합성 차례 — 지금은 CLIENT_TTS_ENABLED=true라 아래 구글 분기는
+    // 죽어 있고(조건 항상 false) 모든 실시간 낭독이 그다음 Typecast(연기톤) 분기로 간다.
+    // 구글은 Typecast를 끄면(CLIENT_TTS_ENABLED=false) 살아나는 무료 폴백 엔진이다.
     if (tc && GOOGLE_TTS_ENABLED && !CLIENT_TTS_ENABLED) {
-      // 기본 엔진: Google Cloud TTS(무료 티어). 실패(키 없음·한도·오프라인)하면
+      // 폴백 엔진: Google Cloud TTS(무료 티어·감정 없음). 실패(키 없음·한도·오프라인)하면
       // 딸린 파일이 있으면 그걸, 없으면 브라우저 기계음으로 물러난다 — 크레딧 안 나감.
       fetchGoogleAudio(selectedId, page.text)
         .then((blob) => {
@@ -433,8 +425,41 @@ export function BookViewer({ book }: { book: Book }) {
       return;
     }
 
+    // 부모 목소리(복제) — 엄마·아빠 클론(uc_ id)도 성우처럼 지문/대사를 나눠 감정
+    // 연기를 입힌다(클론 음성에도 감정 프리셋이 먹는 것 실측 확인, 2026-07-31).
+    // 같은 (목소리, 문장, 감정)은 기기에 캐시되어 다시 들을 땐 0원. 실패(키 없음·
+    // 크레딧 소진)하면 딸린 파일이 있으면 그걸, 없으면 브라우저 기계음으로 물러난다.
+    if (selectedId.startsWith("parent:")) {
+      const role = selectedId.slice("parent:".length);
+      const pv = parentVoices.find((p) => p.role === role);
+      if (pv) {
+        const preset = {
+          kind: "tc" as const,
+          id: selectedId,
+          label: pv.label,
+          emoji: pv.emoji,
+          voiceId: pv.voiceId,
+          model: "ssfm-v30",
+          desc: "",
+          sample: "",
+        };
+        fetchTypecastPageAudio(preset, page.text)
+          .then((segments) => {
+            if (run !== runIdRef.current || !readingRef.current) return;
+            playSegments(segments);
+          })
+          .catch(() => {
+            if (run !== runIdRef.current || !readingRef.current) return;
+            if (bundled) playViaAudio(bundled);
+            else speakWithBrowser();
+          });
+        return;
+      }
+    }
+
     if (tc) {
-      // (Typecast 유료 전환 시의 경로 — 지금은 CLIENT_TTS_ENABLED=false라 바로 폴백.)
+      // 기본 경로(현재 활성) — Typecast 감정 연기 합성. CLIENT_TTS_ENABLED=true라
+      // 창작 동화·제공 동화(비번들 성우) 모두 여기로 온다. 실패하면 아래 catch가 폴백.
       fetchTypecastPageAudio(tc, page.text)
         .then((segments) => {
           // 받는 사이 정지했거나 다른 쪽으로 넘어갔으면 재생하지 않는다.
@@ -524,7 +549,9 @@ export function BookViewer({ book }: { book: Book }) {
     setVoiceId(id);
     voiceIdRef.current = id;
     overriddenRef.current = true;
-    saveSelectedVoiceId(id);
+    // 부모 목소리(parent:)는 전역 기본값으론 저장하지 않는다 — 제공 책까지
+    // 유료 클론 합성으로 끌려가는 걸 막는다(이 책 안에서만 적용).
+    if (!id.startsWith("parent:")) saveSelectedVoiceId(id);
     setVoiceMenu(false);
     if (readingRef.current) {
       haltPlayback();
@@ -534,9 +561,17 @@ export function BookViewer({ book }: { book: Book }) {
 
   // 사용자가 직접 넘기면: 읽는 중이 아니면 그냥 이동, 읽는 중이면 멈추지 않고
   // 넘어간 쪽을 바로 이어서 읽는다 — 아이가 넘겨도 이야기가 계속 따라온다.
+  // 넘김 연타 잠금 — 넘김 애니메이션이 도는 짧은 사이에 또 누르면(연타) 여러 장이
+  // 한꺼번에 넘어가 버린다. 한 번 넘기면 450ms 동안 추가 넘김을 무시한다.
+  const lastTurnAtRef = useRef(0);
   const go = useCallback(
     (next: number) => {
       const clamped = Math.min(lastIndex, Math.max(0, next));
+      if (clamped !== index) {
+        const now = Date.now();
+        if (now - lastTurnAtRef.current < 450) return; // 연타 무시
+        lastTurnAtRef.current = now;
+      }
       if (clamped !== index) {
         setEnded(false); // 넘기면 "다시 듣기" 안내는 닫는다
         stopSay(); // 넘김과 동시에 캐릭터 대사 음성을 끊는다(다음 쪽까지 새어 나가지 않게)
@@ -690,9 +725,9 @@ export function BookViewer({ book }: { book: Book }) {
               transformOrigin: "left bottom",
               transform:
                 i < index ? "translateX(-118%) rotate(-7deg)" : "translateX(0) rotate(0deg)",
-              // 넘김이 너무 빨라 툭 끊기던 걸 완만하게 — 820ms + 부드러운 감속 곡선.
-              // 마운트 직후 '이어보기' 점프는 animate=false라 애니 없이 즉시 이동한다.
-              transition: animate ? "transform 820ms cubic-bezier(0.22, 0.61, 0.36, 1)" : "none",
+              // 520ms — 0.82초는 "안 눌렸나?" 싶어 연타를 부르던 길이라 한 김 줄였다.
+              // (연타 잠금 450ms와 짝) 마운트 직후 '이어보기' 점프는 animate=false라 즉시 이동.
+              transition: animate ? "transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1)" : "none",
               // 안 넘긴 쪽은 현재 쪽이 맨 위, 넘긴 쪽은 넘어가는 동안 그 위에 뜬다
               zIndex: i < index ? book.pages.length + i : book.pages.length - i,
               boxShadow: "0 0 44px rgba(0,0,0,0.45)",
@@ -709,9 +744,13 @@ export function BookViewer({ book }: { book: Book }) {
                   className="absolute inset-0 h-full w-full scale-110 object-cover opacity-70 blur-2xl"
                 />
                 {/* 무대 — 가로: 그림이 화면을 채운다. 세로: [그림+글자]를 한 덩어리로 화면
-                    가운데 정렬하고, 아래 버튼 자리(6rem)는 비운다(겹침 방지). */}
+                    가운데 정렬하고, 아래 버튼 자리(6rem)는 비운다(겹침 방지).
+                    틀 비율은 그림 실측(--ar) — 4:3 고정이면 와이드 그림이 '짤려' 보인다. */}
                 <div className="absolute inset-0 flex items-center justify-center portrait:flex-col portrait:bottom-24">
-                  <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)] shrink-0 overflow-hidden">
+                  <div
+                    className="relative shrink-0 overflow-hidden [aspect-ratio:var(--ar)] portrait:w-full landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
+                    style={{ "--ar": String(imgRatios[i] ?? 4 / 3) } as React.CSSProperties}
+                  >
                     {page.video ? (
                       <video
                         key={i === index ? `on-${i}` : `off-${i}`}
@@ -736,13 +775,22 @@ export function BookViewer({ book }: { book: Book }) {
                       <img
                         src={page.image}
                         alt=""
+                        onLoad={(e) => {
+                          // 그림 실측 비율을 기록 — 무대 틀·핫스팟 틀이 이 비율로 맞춰진다.
+                          const el = e.currentTarget;
+                          if (!el.naturalWidth || !el.naturalHeight) return;
+                          const r = el.naturalWidth / el.naturalHeight;
+                          setImgRatios((prev) =>
+                            Math.abs((prev[i] ?? 0) - r) < 0.001 ? prev : { ...prev, [i]: r },
+                          );
+                        }}
                         className={`h-full w-full object-contain ${
                           i === index && reading ? "animate-[breathe_10s_ease-in-out_infinite]" : ""
                         }`}
                       />
                     )}
-                    {/* 가로 보기 전용: 그림 위 하단 밴드. 아래 버튼(재생·배속)을 안 가리게 여백을 넉넉히. */}
-                    <div className="absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-24 pt-[12%] landscape:block">
+                    {/* 가로 보기 전용: 그림 위 하단 밴드 — 이제 틀이 그림에 딱 맞아 밴드도 그림 하단에 붙는다. */}
+                    <div className="absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[7%] pt-[12%] landscape:block">
                       <p className="font-story mx-auto max-w-[46rem] whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.35rem,2.9vw,2.05rem)] font-semibold leading-[1.35] text-white drop-shadow-md">
                         {renderRuns()}
                       </p>
@@ -823,7 +871,9 @@ export function BookViewer({ book }: { book: Book }) {
           }`}
         >
           <span className="text-base leading-none" aria-hidden>
-            {TYPECAST_VOICES.find((v) => v.id === voiceId)?.emoji ?? "🎙️"}
+            {voiceChoices.find((v) => v.id === voiceId)?.emoji ??
+              TYPECAST_VOICES.find((v) => v.id === voiceId)?.emoji ??
+              "🎙️"}
           </span>
           <span className="hidden text-xs font-extrabold sm:inline">성우</span>
         </button>
@@ -833,7 +883,7 @@ export function BookViewer({ book }: { book: Book }) {
       {voiceMenu && (
         <div className="absolute right-4 top-[3.75rem] z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur">
           <p className="px-2 py-1 text-[11px] font-bold text-neutral-400">
-            {isCreated ? "읽어주는 성우를 골라요" : "성우를 골라요 (무료로 바꿔 들어요)"}
+            {isCreated ? "읽어주는 성우를 골라요" : "이 동화 추천 성우 (무료로 바꿔 들어요)"}
           </p>
           {voiceChoices.map((v) => {
             const active = voiceId === v.id;
@@ -859,9 +909,11 @@ export function BookViewer({ book }: { book: Book }) {
           겹치고, 낭독 중에는 뒤뚱뒤뚱 움직인다. 클릭은 통과시켜 핫스팟이 받는다. */}
       {(book.pages[index].actors?.length ?? 0) > 0 && (
         <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center portrait:bottom-24">
-          {/* w-[min(100%,133.333dvh)] — 어떤 창 비율에서도 object-contain된
-              4:3 그림과 정확히 같은 크기를 유지한다 (h-full은 세로 창에서 틀이 늘어남). */}
-          <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)]">
+          {/* 그림 실측 비율(--ar)로 무대와 같은 크기를 유지한다 — 좌표가 그림과 맞아떨어진다. */}
+          <div
+            className="relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))]"
+            style={{ "--ar": String(imgRatios[index] ?? 4 / 3) } as React.CSSProperties}
+          >
             {book.pages[index].actors!.map((a, ai) => (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -889,7 +941,10 @@ export function BookViewer({ book }: { book: Book }) {
           넘김 영역보다 위(z-[5]), 읽어주기 버튼(z-10)보다는 아래. */}
       {book.pages[index].image && (book.pages[index].hotspots?.length ?? 0) > 0 && (
         <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center portrait:bottom-24">
-          <div className="relative aspect-[4/3] w-[min(100%,133.333dvh)]">
+          <div
+            className="relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))]"
+            style={{ "--ar": String(imgRatios[index] ?? 4 / 3) } as React.CSSProperties}
+          >
             {book.pages[index].hotspots!.map((h, hi) => {
               return (
                 <button

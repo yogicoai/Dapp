@@ -12,6 +12,7 @@ import {
   loadAllUsers,
   loadSession,
   logOut,
+  spendTokens,
   type Profile,
 } from "@/lib/auth";
 import {
@@ -27,7 +28,7 @@ import {
   setMyBookHidden,
   type Gender,
 } from "@/lib/prefs";
-import { TOKEN_PRICE_KRW } from "@/lib/tokens";
+import { COST_PARENT_VOICE, TOKEN_PRICE_KRW } from "@/lib/tokens";
 import type { Book } from "@/lib/types";
 import { useEscClose } from "@/lib/use-esc-close";
 import {
@@ -52,6 +53,7 @@ import {
   cloneParentVoice,
   deleteParentVoice,
   loadParentVoices,
+  remainingCloneChances,
   roleFromLabel,
   type ParentVoice,
 } from "@/lib/parent-voice";
@@ -92,6 +94,10 @@ export default function SettingsPage() {
   const [parentVoices, setParentVoices] = useState<ParentVoice[]>([]);
   const [cloningRole, setCloningRole] = useState<string | null>(null);
   const [cloneErr, setCloneErr] = useState("");
+  // 남은 만들기 기회 (처음 1 + 수정 1 = 총 2회). null = 아직 확인 전.
+  const [cloneChances, setCloneChances] = useState<number | null>(null);
+  // 만들기 연타 방지 잠금 — state가 아닌 ref라 클릭 즉시 걸린다.
+  const cloneBusyRef = useRef(false);
   // 내 동화 — 만든 책 전체. 여기서 책장 노출(숨기기/보이기)과 영구 삭제를 관리한다.
   const [myBooks, setMyBooks] = useState<Book[]>([]);
   // 계정 — 로그인한 아이디·토큰. 게스트면 스킨(테마)만 보인다. 마스터면 회원 목록도.
@@ -103,9 +109,10 @@ export default function SettingsPage() {
   const [openMember, setOpenMember] = useState<string | null>(null);
   const [openMemberBooks, setOpenMemberBooks] = useState<Book[]>([]);
 
-  // 부모 목소리(복제됨) 목록을 계정에서 불러온다(로그인 안 됐으면 빈 목록).
+  // 부모 목소리(복제됨) 목록·남은 만들기 기회를 계정에서 불러온다(로그인 안 됐으면 빈 목록).
   useEffect(() => {
     loadParentVoices().then(setParentVoices).catch(() => {});
+    remainingCloneChances().then(setCloneChances).catch(() => {});
   }, []);
 
   // 아이 정보·언어·목소리 등 '로컬 저장값'은 세션(네트워크)과 무관하게 즉시 반영한다.
@@ -303,28 +310,65 @@ export default function SettingsPage() {
   /** 이 녹음(엄마/아빠)이 이미 복제(목소리 만들기)됐는지. */
   const isCloned = (v: CustomVoice) => parentVoices.some((p) => p.role === roleFromLabel(v.label));
 
-  /** 녹음 → 복제(목소리 만들기). 성공하면 계정에 저장되고 동화에서 그 목소리로 읽을 수 있다. */
+  /**
+   * 녹음 → 복제(목소리 만들기). 성공하면 계정에 저장되고 동화에서 그 목소리로 읽을 수 있다.
+   * 만들기 1회 = COST_PARENT_VOICE 토큰(실측 원가 기반, 마스터 면제).
+   * 과금은 '선차감 → 복제 실패 시 환불' — 차감이 서버 잔액 기준이라(다른 탭에서 잔액이
+   * 바뀌어도) 무과금 복제가 생기지 않고, 복제가 실패하면 토큰이 돌아온다.
+   */
   const makeParentVoice = async (v: CustomVoice) => {
+    // 연타 방지 — state(cloningRole)는 재렌더 전까지 버튼을 못 잠그므로 ref로 즉시 잠근다.
+    if (cloneBusyRef.current) return;
+    cloneBusyRef.current = true;
     setCloneErr("");
     setCloningRole(roleFromLabel(v.label));
+    let charged = false;
     try {
       const blob = await loadVoiceAudio(v.id);
       if (!blob) throw new Error("녹음을 찾지 못했어요. 다시 녹음해 주세요.");
+      // 선차감 — 서버 잔액 기준. 부족하면 여기서 끝(복제 호출 자체를 안 한다).
+      if (!master) {
+        const ok = await spendTokens(COST_PARENT_VOICE);
+        if (!ok) {
+          throw new Error(
+            `토큰이 부족해요. 목소리 만들기에는 ${COST_PARENT_VOICE}토큰이 필요해요.`,
+          );
+        }
+        charged = true;
+        setAcctTokens((t) => Math.max(0, t - COST_PARENT_VOICE));
+      }
       await cloneParentVoice(roleFromLabel(v.label), v.label, blob);
       setParentVoices(await loadParentVoices());
+      setCloneChances(await remainingCloneChances());
       flashSaved();
     } catch (e) {
+      // 복제 실패 — 선차감했던 토큰을 돌려준다.
+      if (charged) {
+        await addTokens(COST_PARENT_VOICE).catch(() => {});
+        setAcctTokens((t) => t + COST_PARENT_VOICE);
+      }
       setCloneErr(e instanceof Error ? e.message : "목소리 만들기에 실패했어요.");
     } finally {
+      cloneBusyRef.current = false;
       setCloningRole(null);
     }
   };
 
   const removeCustom = async (v: CustomVoice) => {
+    // 복제까지 된 목소리면 — 지워도 만들기 기회는 안 돌아온다는 걸 확인받는다.
+    if (isCloned(v)) {
+      const left = cloneChances ?? 0;
+      const warn =
+        left > 0
+          ? `${v.label} 목소리를 지울까요?\n\n지우고 새로 만들면 남은 수정 기회(${left}번)를 사용해요.`
+          : `${v.label} 목소리를 지울까요?\n\n⚠️ 남은 수정 기회가 없어, 지우면 다시 만들 수 없어요.`;
+      if (!window.confirm(warn)) return;
+    }
     await deleteVoiceAudio(v.id).catch(() => {});
-    // 복제된 목소리도 함께 삭제한다 — 우리 DB + ElevenLabs 서버 양쪽에서(개인정보 미보존).
+    // 복제된 목소리도 함께 삭제한다 — 우리 DB + Typecast 서버 양쪽에서(개인정보 미보존).
     await deleteParentVoice(roleFromLabel(v.label)).catch(() => {});
     setParentVoices((prev) => prev.filter((p) => p.role !== roleFromLabel(v.label)));
+    setCloneChances(await remainingCloneChances());
     const next = customVoices.filter((x) => x.id !== v.id);
     setCustomVoices(next);
     saveCustomVoices(next);
@@ -385,15 +429,18 @@ export default function SettingsPage() {
               추후 카카오·네이버 로그인이 붙으면 이 섹션에 연동 계정 표시가 더해진다. */}
           <section className="flex flex-col gap-3">
             <h2 className="text-sm font-extrabold text-neutral-400">계정</h2>
-            <div className="flex items-center gap-3 rounded-2xl bg-neutral-100 px-4 py-3">
+            {/* flex-wrap+basis — 좁은 폰(360px)에서 버튼들이 둘째 줄로 내려가고 아이디는 항상 보인다. */}
+            <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-neutral-100 px-4 py-3">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lg shadow-sm">
                 {master ? "👑" : "🙂"}
               </span>
-              <div className="min-w-0 flex-1">
+              {/* min-w-36 — min-w-0면 좁은 폰에서 버튼들에 밀려 폭 0까지 눌리며 글자가
+                  세로로 쌓인다(376px 실측). 최소 폭을 지키면 버튼이 둘째 줄로 내려간다. */}
+              <div className="min-w-36 flex-1 basis-36">
                 <p className="truncate text-base font-extrabold text-neutral-800">
                   {acctId ?? "…"} {master && <span className="text-amber-600">· 마스터</span>}
                 </p>
-                <p className="text-xs font-bold text-neutral-500">
+                <p className="break-keep text-xs font-bold text-neutral-500">
                   {master ? (
                     <span className="text-amber-600">👑 관리자 · 토큰 무제한</span>
                   ) : (
@@ -410,7 +457,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={topUp}
                   disabled
-                  className="shrink-0 cursor-not-allowed rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-extrabold text-neutral-400"
+                  className="shrink-0 cursor-not-allowed whitespace-nowrap rounded-full bg-neutral-200 px-3 py-1.5 text-xs font-extrabold text-neutral-400"
                 >
                   🔒 충전 준비중
                 </button>
@@ -418,7 +465,7 @@ export default function SettingsPage() {
               <button
                 type="button"
                 onClick={doLogout}
-                className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-extrabold text-neutral-600 shadow-sm"
+                className="shrink-0 whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-xs font-extrabold text-neutral-600 shadow-sm"
               >
                 로그아웃
               </button>
@@ -540,7 +587,7 @@ export default function SettingsPage() {
                 {customVoices.map((v) => (
                   <span
                     key={v.id}
-                    className="flex items-center gap-1.5 rounded-full bg-amber-100 px-3.5 py-2 text-sm font-bold text-amber-800"
+                    className="flex flex-wrap items-center gap-1.5 rounded-full bg-amber-100 px-3.5 py-2 text-sm font-bold text-amber-800"
                   >
                     <button
                       type="button"
@@ -560,9 +607,11 @@ export default function SettingsPage() {
                         type="button"
                         onClick={() => makeParentVoice(v)}
                         disabled={cloningRole !== null}
-                        className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-amber-700 shadow-sm transition hover:bg-amber-50 disabled:opacity-50"
+                        className="whitespace-nowrap rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-amber-700 shadow-sm transition hover:bg-amber-50 disabled:opacity-50"
                       >
-                        {cloningRole === roleFromLabel(v.label) ? "만드는 중…" : "🎙️ 목소리 만들기"}
+                        {cloningRole === roleFromLabel(v.label)
+                          ? "만드는 중…"
+                          : `🎙️ 목소리 만들기${master ? "" : ` (${COST_PARENT_VOICE}토큰)`}`}
                       </button>
                     )}
                     <button
@@ -602,15 +651,18 @@ export default function SettingsPage() {
               })}
             </div>
 
-            {/* 엄마·아빠 추가 */}
-            {!recording && (
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { label: "엄마", emoji: "👩" },
-                  { label: "아빠", emoji: "👨" },
-                ]
-                  .filter((o) => !customVoices.some((v) => v.label === o.label))
-                  .map((o) => (
+            {/* 엄마·아빠 추가 — 계정당 한 명만(둘 중 하나). 만들기 기회를 다 썼으면 안내만. */}
+            {!recording && customVoices.length === 0 && (
+              cloneChances === 0 ? (
+                <p className="text-[11px] font-bold text-neutral-400">
+                  목소리 만들기 기회(처음 1번 + 수정 1번)를 모두 사용했어요.
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: "엄마", emoji: "👩" },
+                    { label: "아빠", emoji: "👨" },
+                  ].map((o) => (
                     <button
                       key={o.label}
                       type="button"
@@ -620,7 +672,8 @@ export default function SettingsPage() {
                       + {o.emoji} {o.label} 목소리 추가
                     </button>
                   ))}
-              </div>
+                </div>
+              )
             )}
 
             {recording && (
@@ -638,8 +691,10 @@ export default function SettingsPage() {
             )}
 
             <p className="text-[11px] font-medium text-neutral-400">
-              엄마·아빠를 녹음한 뒤 <b>🎙️ 목소리 만들기</b>를 누르면 그 목소리로 복제돼요.
-              그다음 동화에서 <b>엄마·아빠 목소리</b>로 읽어줄 수 있어요. (✕로 지우면 서버에서도 완전히 삭제)
+              엄마 또는 아빠 <b>한 명</b>을 녹음한 뒤 <b>🎙️ 목소리 만들기</b>({COST_PARENT_VOICE}토큰)를
+              누르면 그 목소리로 복제돼요. 그다음 동화에서 <b>엄마·아빠 목소리</b>로 읽는 건 무료예요.
+              수정(다시 만들기)은 <b>1번만</b>, 만들 때마다 {COST_PARENT_VOICE}토큰이에요.
+              (✕로 지우면 서버에서도 완전히 삭제{cloneChances !== null ? ` · 남은 만들기 기회 ${cloneChances}번` : ""})
             </p>
           </section>
 

@@ -207,7 +207,7 @@ export default function Home() {
             우리 가족 보이스 동화
           </h1>
           {/* 밝은 하늘 배경 위라 흰 글자는 묻힌다 — 불투명 흰 알약 + 짙은 글자로 */}
-          <p className="mt-1.5 rounded-full bg-white/95 px-4 py-1.5 text-sm font-extrabold text-neutral-700 shadow-md">
+          <p className="mt-1.5 max-w-full break-keep rounded-2xl bg-white/95 px-4 py-1.5 text-center text-sm font-extrabold text-neutral-700 shadow-md sm:rounded-full">
             내가 주인공인 동화, 엄마·아빠 목소리로 들어요
           </p>
 
@@ -241,7 +241,8 @@ export default function Home() {
 
         {/* 책장 탭 — 아이 책장이 비어 있어도 전래동화가 있어 첫 화면이 허전하지 않다.
             아이콘은 힉스필드 스티커(책더미·청사초롱·동화성) — 이모지 졸업. */}
-        <div className="mb-6 flex justify-center gap-2">
+        {/* flex-wrap+폰 축소 — 360px 폰에서 탭 세 개가 잘리는 대신 줄바꿈되거나 한 줄에 들어간다. */}
+        <div className="mb-6 flex flex-wrap justify-center gap-1.5 sm:gap-2">
           {(
             [
               { key: "mine", label: "우리 가족 책장", icon: "/icons/tab-mine.webp" },
@@ -258,7 +259,7 @@ export default function Home() {
                 aria-pressed={active}
                 style={active ? { color: theme.colors.accentDark } : undefined}
                 // 폰에서는 작게(줄바꿈 금지), sm부터 원래 크기 — 탭 세 개가 한 줄에 서게.
-                className={`flex items-center gap-1 whitespace-nowrap rounded-full py-1.5 pl-1.5 pr-3.5 text-sm font-extrabold shadow-md backdrop-blur transition sm:py-2 sm:pr-5 sm:text-base ${
+                className={`flex items-center gap-1 whitespace-nowrap rounded-full py-1.5 pl-1.5 pr-2.5 text-xs font-extrabold shadow-md backdrop-blur transition sm:py-2 sm:pr-5 sm:text-base ${
                   active
                     ? "scale-105 bg-white"
                     : // 흰 글자는 공주나라 같은 파스텔 배경에서 통째로 묻힌다 —
@@ -267,7 +268,7 @@ export default function Home() {
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={t.icon} alt="" className="h-7 w-7 object-contain sm:h-8 sm:w-8" />
+                <img src={t.icon} alt="" className="h-6 w-6 object-contain sm:h-8 sm:w-8" />
                 {t.label}
               </button>
             );
@@ -292,7 +293,7 @@ export default function Home() {
             {shelf === "mine" && guest ? (
               <>
                 <p className="text-lg font-extrabold text-neutral-700">로그인하면 나만의 동화를 만들어요</p>
-                <p className="text-sm font-bold leading-relaxed text-neutral-400">
+                <p className="break-keep text-sm font-bold leading-relaxed text-neutral-400">
                   우리 아이가 주인공인 동화를 만들려면 로그인이 필요해요.
                   <br />
                   지금은{" "}
@@ -311,7 +312,7 @@ export default function Home() {
             ) : shelf === "mine" ? (
               <>
                 <p className="text-lg font-extrabold text-neutral-700">아직 만든 동화가 없어요</p>
-                <p className="text-sm font-bold leading-relaxed text-neutral-400">
+                <p className="break-keep text-sm font-bold leading-relaxed text-neutral-400">
                   우리 아이가 주인공인 첫 동화를 만들어 보세요!
                   <br />
                   기다리는 동안{" "}
@@ -323,7 +324,7 @@ export default function Home() {
             ) : (
               <>
                 <p className="text-lg font-extrabold text-neutral-700">열심히 준비하고 있어요!</p>
-                <p className="text-sm font-bold leading-relaxed text-neutral-400">
+                <p className="break-keep text-sm font-bold leading-relaxed text-neutral-400">
                   {shelf === "classic"
                     ? "신데렐라, 미운오리새끼 같은 세계명작 동화들이 곧 도착해요."
                     : "재미있는 이야기들이 곧 도착해요."}

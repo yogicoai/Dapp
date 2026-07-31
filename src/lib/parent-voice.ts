@@ -42,6 +42,45 @@ function saveLocal(map: Record<string, string>): void {
   window.localStorage.setItem(LS_KEY, JSON.stringify(map));
 }
 
+/* ── 만들기 횟수 — 계정당 목소리 1명, 만들기는 총 2회(처음 1 + 수정 1)만. ──
+ * 삭제해도 횟수는 남는다(기회를 다시 주지 않음). 기기 저장 + Supabase(attempts) 중 큰 값. */
+export const MAX_CLONE_ATTEMPTS = 2;
+const LS_ATTEMPTS = "voice-storybook:parent-voice-attempts";
+function localAttempts(): number {
+  if (typeof window === "undefined") return 0;
+  const n = Number(window.localStorage.getItem(LS_ATTEMPTS));
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+function saveAttempts(n: number): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(LS_ATTEMPTS, String(n));
+}
+
+async function attemptsUsed(): Promise<number> {
+  let used = localAttempts();
+  try {
+    const sb = getSupabase();
+    const uid = await currentUserId();
+    if (sb && uid) {
+      const { data } = await sb
+        .from("voice_clones")
+        .select("attempts")
+        .eq("owner", uid)
+        .maybeSingle();
+      const a = Number((data as { attempts?: number } | null)?.attempts ?? 0);
+      if (a > used) used = a;
+    }
+  } catch {
+    /* 테이블 없음 등 — 기기 값만 사용 */
+  }
+  return used;
+}
+
+/** 남은 만들기 기회 (처음 포함 총 2회). 0이면 더는 만들 수 없다. */
+export async function remainingCloneChances(): Promise<number> {
+  return Math.max(0, MAX_CLONE_ATTEMPTS - (await attemptsUsed()));
+}
+
 async function currentUserId(): Promise<string | null> {
   const sb = getSupabase();
   if (!sb) return null;
@@ -109,8 +148,25 @@ function encodeWav(buffer: AudioBuffer): Blob {
   return new Blob([buf], { type: "audio/wav" });
 }
 
-/** 녹음 오디오 → Typecast 퀵 클론 → (기기 + 가능하면 Supabase) 저장 → voice_id 반환. */
+/**
+ * 녹음 오디오 → Typecast 퀵 클론 → (기기 + 가능하면 Supabase) 저장 → voice_id 반환.
+ * 규칙: 계정당 목소리 1명, 만들기는 총 2회(처음 1 + 수정 1)만.
+ */
 export async function cloneParentVoice(role: string, name: string, audio: Blob): Promise<string> {
+  // 만들기 기회 총 2회(처음 1 + 수정 1)를 '먼저' 검사한다 — 기회를 다 쓴 사람에게
+  // "지우고 다시 만들라"는 잘못된 안내(지우면 영영 못 만듦)가 나가지 않게.
+  const used = await attemptsUsed();
+  if (used >= MAX_CLONE_ATTEMPTS) {
+    throw new Error("목소리 만들기 기회(처음 1번 + 수정 1번)를 모두 사용했어요.");
+  }
+  // 계정당 1명 — 이미 만든 목소리가 있으면 먼저 지우고 다시 만들게 한다.
+  const existing = await loadParentVoices();
+  if (existing.length > 0) {
+    throw new Error(
+      `부모 목소리는 계정당 한 명만 만들 수 있어요. 기존 목소리를 지운 뒤 다시 만들어 주세요. (남은 만들기 기회 ${MAX_CLONE_ATTEMPTS - used}번)`,
+    );
+  }
+
   const wav = await audioToWav(audio); // Typecast는 wav/mp3만 받으므로 변환
   const form = new FormData();
   form.append("name", name);
@@ -122,10 +178,11 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   }
   const { voiceId } = (await r.json()) as { voiceId: string };
 
-  // ① 기기에 항상 저장 — SQL 없이도 바로 테스트되게.
+  // ① 기기에 항상 저장 — SQL 없이도 바로 테스트되게. 만들기 횟수도 함께 올린다.
   const local = loadLocal();
   local[role] = voiceId;
   saveLocal(local);
+  saveAttempts(used + 1);
 
   // ② Supabase에도 저장 시도(테이블 있으면). 없거나 오프라인이면 무시 — 기기 저장으로 동작.
   try {
@@ -133,8 +190,15 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
     const uid = await currentUserId();
     if (sb && uid) {
       await sb.from("voice_clones").upsert(
-        { owner: uid, role, provider: "typecast", provider_voice_id: voiceId, status: "ready" },
-        { onConflict: "owner,role" },
+        {
+          owner: uid,
+          role,
+          provider: "typecast",
+          provider_voice_id: voiceId,
+          status: "ready",
+          attempts: used + 1,
+        },
+        { onConflict: "owner" },
       );
     }
   } catch {
@@ -168,8 +232,8 @@ export async function loadParentVoices(): Promise<ParentVoice[]> {
 }
 
 /**
- * 부모가 본인 목소리를 삭제한다 — 기기·Supabase에서 지우고 ElevenLabs 서버에서도 완전 제거.
- * (개인정보를 어디에도 남기지 않는다.)
+ * 부모가 본인 목소리를 삭제한다 — 기기·Supabase에서 지우고 Typecast 서버에서도 완전 제거.
+ * (개인정보를 어디에도 남기지 않는다.) 단, 만들기 횟수(attempts)는 남겨 수정 기회는 안 돌려준다.
  */
 export async function deleteParentVoice(role: string): Promise<void> {
   const local = loadLocal();
@@ -192,7 +256,7 @@ export async function deleteParentVoice(role: string): Promise<void> {
     }
   }
 
-  // ElevenLabs 서버에서 완전 삭제.
+  // Typecast 서버에서 완전 삭제.
   if (voiceId) {
     await fetch("/api/voice/clone", {
       method: "DELETE",
@@ -201,14 +265,17 @@ export async function deleteParentVoice(role: string): Promise<void> {
     }).catch(() => {});
   }
 
-  // 기기 저장에서 제거.
+  // 기기 저장에서 제거 (만들기 횟수는 남긴다 — 수정 기회는 안 돌아온다).
   delete local[role];
   saveLocal(local);
 
-  // Supabase에서 제거.
+  // Supabase — 행을 지우지 않고 '삭제됨'으로 바꿔 attempts(만들기 횟수)를 보존한다.
   if (sb && uid) {
     try {
-      await sb.from("voice_clones").delete().eq("owner", uid).eq("role", role);
+      await sb
+        .from("voice_clones")
+        .update({ provider_voice_id: null, status: "deleted" })
+        .eq("owner", uid);
     } catch {
       /* 무시 */
     }

@@ -85,13 +85,18 @@ function lengthGuide(age: number): string {
 function describeChild(child: ChildProfile): string {
   const gender =
     child.gender === "girl" ? "여자아이" : child.gender === "boy" ? "남자아이" : "아이";
-  return `${child.name} (${child.age}세, ${gender})`;
+  // 이름 표기 강조 — 모델이 흔한 이름으로 바꿔치기하는 사고(하온→하윤)를 막는다.
+  // 시스템 규칙만으론 부족해서, 쓰는 지점에서 한 번 더 못박는다.
+  return `${child.name} (${child.age}세, ${gender}) — 주인공 이름은 정확히 "${child.name}"로만 표기한다. "${child.name}" 외의 어떤 이름·비슷한 이름도 금지.`;
 }
 
 const VOICE = `너는 한국 유아·아동용 그림동화 작가다. 아이가 주인공인 동화를 짓는다.
 
 지켜야 할 것:
+- 아이 이름은 준 그대로 쓴다 — 한 글자도 바꾸거나(하온→하윤 금지) 비슷한 이름으로 만들지 않는다.
 - 결말에는 아이가 스스로 해낸 것이 남는다. 어른이 대신 해결해주지 않는다.
+  단, '실제 결말'이 재료로 주어지면 그 사실이 우선이다 — 실제로 일어난 일(혼남 등)을
+  지우거나 미화하지 않고 그대로 담은 뒤, 그 안에서 아이가 배우고 회복하게 한다.
 - 교훈은 설교하지 않는다(어른이 "이럴 땐 이렇게 해야 해" 하고 가르치지 않는다).
   대신 마지막 쪽에서 아이가 '배운 것'이 한 문장으로 또렷이 남게 한다 —
   아이 스스로 깨달아 말하는 형태가 가장 좋다("화가 날 땐 후우 하고 숨을 쉬면 돼!").
@@ -146,6 +151,7 @@ export type StoryMaterial = {
   happening: string; // 무슨 일 (오늘=자유 서술, 상상=사건 칩)
   place: string; // 오늘: 어디서
   feeling: string; // 오늘: 그때 기분
+  ending: string; // 오늘: 일이 어떻게 끝났나(잘 해결·혼남·아직 속상 등) — 각색 정확도의 핵심
   emotion: string; // 감정: 어떤 마음(화가 나요 등)
   situation: string; // 감정: 그런 마음이 든 상황
   extra: string; // 상상: 아이가 자유롭게 더한 이야기
@@ -178,6 +184,9 @@ function materialLines(m: StoryMaterial): string[] {
       whoLine("- 누구랑", m.who, m.whoName),
       m.happening ? `- 무슨 일이 있었나: ${m.happening}` : "",
       m.feeling ? `- 그때 아이 기분: ${m.feeling}` : "",
+      m.ending
+        ? `- 실제 결말(반드시 지킬 사실): "${m.ending}". 이 일은 이야기 안에서 실제로 일어나야 한다 — 지우거나 다른 결말로 미화하면 안 된다. 그 사실을 담은 뒤에, 마지막 쪽에서 아이가 배우거나 마음이 다독여지게 마무리한다.`
+        : "",
     ];
   }
   if (m.kind === "emotion") {
@@ -201,6 +210,15 @@ function materialLines(m: StoryMaterial): string[] {
   ];
 }
 
+/**
+ * 이름 가드 — 생성 결과에 주인공 이름이 정확히 들어있는지. 모델이 흔한 이름으로
+ * 바꿔치기하는 사고(하온→하윤)를 프롬프트로 막아도 확률적으로 재발할 수 있어,
+ * 서버가 최종 검사하고 틀리면 한 번 다시 짓는다. (아이 이름은 이 앱의 핵심 가치)
+ */
+function nameOk(name: string, text: string): boolean {
+  return text.includes(name);
+}
+
 export async function generateOutline(input: {
   child: ChildProfile;
   material: StoryMaterial;
@@ -214,39 +232,53 @@ export async function generateOutline(input: {
   // 넘어온 쪽수를 3~8로 가둔다 — 클라이언트 값은 믿지 않는다.
   const pageCount = clampPageCount(input.pageCount);
 
-  const message = await client.messages.create({
-    model: MODEL,
-    max_tokens: 2000,
-    system: OUTLINE_SYSTEM,
-    thinking: { type: "adaptive" },
-    output_config: { effort: "medium" },
-    messages: [
-      {
-        role: "user",
-        content: [
-          `아이: ${describeChild(input.child)}`,
-          `장면 수: ${pageCount}장면 — ${pageGuide(pageCount)}`,
-          ...materialLines(input.material),
-          input.occasion
-            ? `특별한 날: ${input.occasion} — 이 날을 축하하는 이야기로 지어라. 축하가 결말에 자연스럽게 스며들게 한다.`
-            : "",
-          input.mood ? `분위기: ${input.mood} — 이야기 전체 톤에 반영한다.` : "",
-        ]
-          .filter(Boolean)
-          .join("\n"),
-      },
-    ],
-  });
+  // 이름 가드 — 최대 2회. 1회차에 이름이 틀리면 경고를 덧붙여 한 번만 다시 짓는다.
+  let outline: ParsedOutline | null = null;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const message = await client.messages.create({
+      model: MODEL,
+      max_tokens: 2000,
+      system: OUTLINE_SYSTEM,
+      thinking: { type: "adaptive" },
+      output_config: { effort: "medium" },
+      messages: [
+        {
+          role: "user",
+          content: [
+            `아이: ${describeChild(input.child)}`,
+            `장면 수: ${pageCount}장면 — ${pageGuide(pageCount)}`,
+            ...materialLines(input.material),
+            input.occasion
+              ? `특별한 날: ${input.occasion} — 이 날을 축하하는 이야기로 지어라. 축하가 결말에 자연스럽게 스며들게 한다.`
+              : "",
+            input.mood ? `분위기: ${input.mood} — 이야기 전체 톤에 반영한다.` : "",
+            attempt > 1
+              ? `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 정확히 "${input.child.name}"로만 쓴다 — 비슷한 다른 이름 절대 금지.`
+              : "",
+          ]
+            .filter(Boolean)
+            .join("\n"),
+        },
+      ],
+    });
 
-  const outline = parseOutline(textOf(message));
+    outline = parseOutline(textOf(message));
 
-  if (outline.scenes.length !== pageCount) {
-    throw new Error(
-      `${pageCount}장면이어야 하는데 ${outline.scenes.length}장면이 나왔습니다.`,
-    );
+    if (outline.scenes.length !== pageCount) {
+      throw new Error(
+        `${pageCount}장면이어야 하는데 ${outline.scenes.length}장면이 나왔습니다.`,
+      );
+    }
+
+    const joined = outline.title + " " + outline.scenes.map((s) => s.text).join(" ");
+    if (nameOk(input.child.name, joined)) break;
+    if (attempt === 2) {
+      // 두 번 다 틀리면 그대로 내보내되 로그를 남긴다 — 부모가 줄거리에서 보고 다시 지을 수 있다.
+      console.warn(`[outline] 이름 불일치 2회: "${input.child.name}"`);
+    }
   }
 
-  return outline;
+  return outline!;
 }
 
 const STORY_SYSTEM = `${VOICE}
@@ -283,41 +315,56 @@ export async function generateStory(input: {
     .map((s) => `${s.sceneNo}장면: ${s.text}`)
     .join("\n");
 
-  const message = await client.messages.create({
-    model: MODEL,
-    max_tokens: 8000,
-    system: STORY_SYSTEM,
-    thinking: { type: "adaptive" },
-    output_config: { effort: "medium" },
-    messages: [
-      {
-        role: "user",
-        content: [
-          `아이: ${describeChild(input.child)}`,
-          `장면 수: ${pageCount}장면 (이 개수만큼, 장면 하나당 한 쪽씩 낸다)`,
-          `쪽당 분량: ${lengthGuide(input.child.age)}`,
-          ...(input.occasion
-            ? [`특별한 날: ${input.occasion} — 축하가 이야기에 자연스럽게 스며들게.`]
-            : []),
-          ...(input.mood ? [`분위기: ${input.mood}`] : []),
-          "",
-          `제목: ${input.outline.title}`,
-          "장면별 줄거리:",
-          outlineText,
-        ].join("\n"),
-      },
-    ],
-  });
+  // 이름 가드 — 줄거리와 같은 방식. 본문에서 이름이 틀리면 한 번 다시 짓는다.
+  let story: ParsedStory | null = null;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const message = await client.messages.create({
+      model: MODEL,
+      max_tokens: 8000,
+      system: STORY_SYSTEM,
+      thinking: { type: "adaptive" },
+      output_config: { effort: "medium" },
+      messages: [
+        {
+          role: "user",
+          content: [
+            `아이: ${describeChild(input.child)}`,
+            `장면 수: ${pageCount}장면 (이 개수만큼, 장면 하나당 한 쪽씩 낸다)`,
+            `쪽당 분량: ${lengthGuide(input.child.age)}`,
+            ...(input.occasion
+              ? [`특별한 날: ${input.occasion} — 축하가 이야기에 자연스럽게 스며들게.`]
+              : []),
+            ...(input.mood ? [`분위기: ${input.mood}`] : []),
+            ...(attempt > 1
+              ? [
+                  `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 정확히 "${input.child.name}"로만 쓴다 — 비슷한 다른 이름 절대 금지.`,
+                ]
+              : []),
+            "",
+            `제목: ${input.outline.title}`,
+            "장면별 줄거리:",
+            outlineText,
+          ].join("\n"),
+        },
+      ],
+    });
 
-  const story = parseStory(textOf(message));
+    story = parseStory(textOf(message));
 
-  if (story.pages.length !== pageCount) {
-    throw new Error(
-      `${pageCount}쪽이어야 하는데 ${story.pages.length}쪽이 나왔습니다.`,
-    );
+    if (story.pages.length !== pageCount) {
+      throw new Error(
+        `${pageCount}쪽이어야 하는데 ${story.pages.length}쪽이 나왔습니다.`,
+      );
+    }
+
+    const joined = story.title + " " + story.pages.map((p) => p.text).join(" ");
+    if (nameOk(input.child.name, joined)) break;
+    if (attempt === 2) {
+      console.warn(`[story] 이름 불일치 2회: "${input.child.name}"`);
+    }
   }
 
-  return story;
+  return story!;
 }
 
 function textOf(message: Anthropic.Message): string {

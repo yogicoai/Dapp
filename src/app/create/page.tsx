@@ -12,7 +12,7 @@ import { loadChild, loadMyBooks, saveChild, saveMyBook } from "@/lib/prefs";
 import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
-import { fetchGoogleAudio, RECOMMENDED_VOICES, TYPECAST_VOICES } from "@/lib/voices";
+import { TYPECAST_VOICES } from "@/lib/voices";
 
 type Gender = "girl" | "boy" | "unspecified";
 type Scene = { sceneNo: number; text: string };
@@ -144,6 +144,33 @@ const FEELINGS = [
   { t: "무서웠어요", e: "😨" },
   { t: "뿌듯했어요", e: "😊" },
   { t: "화났어요", e: "😠" },
+  { t: "긴장했어요", e: "😬" },
+  { t: "서운했어요", e: "🙁" },
+];
+
+/**
+ * 「오늘의 이야기」 — 일이 어떻게 끝났는지. 이게 없으면 AI가 결말을 지어내서
+ * 실제와 다른 각색이 나온다(예: 혼난 일을 칭찬으로 끝냄). 각색 정확도의 핵심 재료.
+ */
+const TODAY_ENDINGS = [
+  { t: "잘 해결됐어요", e: "😊" },
+  { t: "칭찬받았어요", e: "🌟" },
+  { t: "혼났어요", e: "😅" },
+  { t: "아직 속상해요", e: "😢" },
+];
+
+/**
+ * 「감정 동화」 — 그런 마음이 든 흔한 상황 칩. 자유입력의 백지 공포를 없애고,
+ * 상황이 구체적일수록 감정동화의 위로가 정확해진다. 누르면 입력칸에 채워져 고칠 수 있다.
+ */
+const EMOTION_TIMES = [
+  { t: "동생이 장난감을 뺏었을 때", e: "🧸" },
+  { t: "친구가 같이 안 놀아줘서", e: "😞" },
+  { t: "엄마 아빠한테 혼나서", e: "😢" },
+  { t: "깜깜한 밤이 무서워서", e: "🌙" },
+  { t: "유치원에 처음 가는 날", e: "🏫" },
+  { t: "동생만 예뻐하는 것 같아서", e: "👶" },
+  { t: "잘하고 싶은데 잘 안 돼서", e: "💦" },
 ];
 
 /**
@@ -259,7 +286,9 @@ function BigButton({
       onClick={onClick}
       disabled={disabled}
       style={style}
-      className="rounded-full px-8 py-3.5 text-lg font-extrabold transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40"
+      // break-keep — 좁은 폰에서 "네, 만들게\n요"처럼 음절 중간에 꺾이는 걸 막는다(어절 단위로만
+      // 줄바꿈). max-w-full로 긴 라벨도 카드 밖으로 안 삐져나간다. 폰에선 패딩·글자 한 단계 작게.
+      className="max-w-full break-keep rounded-full px-6 py-3 text-base font-extrabold transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 sm:px-8 sm:py-3.5 sm:text-lg"
     >
       {children}
     </button>
@@ -331,6 +360,8 @@ export default function CreatePage() {
   const [place, setPlace] = useState("");
   const [todayEvent, setTodayEvent] = useState("");
   const [feeling, setFeeling] = useState("");
+  // 「오늘의 이야기」 — 일이 어떻게 끝났나 (각색 정확도의 핵심 재료)
+  const [ending, setEnding] = useState("");
   // 「감정 동화」 전용 — 어떤 마음·그런 마음이 든 상황. 누구랑(who)은 공유한다.
   const [emotion, setEmotion] = useState("");
   const [situation, setSituation] = useState("");
@@ -356,32 +387,19 @@ export default function CreatePage() {
   const [artStyle, setArtStyle] = useState(ART_STYLES[0].id);
   const [mood, setMood] = useState(MOODS[0]);
   // 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로 읽는다.
-  const [narratorVoice, setNarratorVoice] = useState<string>(RECOMMENDED_VOICES[0].id);
-  // 성우를 고르면 그 목소리(Google)로 인사말을 실제로 들려준다 — "고른 목소리 = 읽는
-  // 목소리"가 보장된다. 같은 (성우, 문장)은 기기에 캐시돼 두 번째부턴 0원.
+  const [narratorVoice, setNarratorVoice] = useState<string>(TYPECAST_VOICES[0].id);
+  // 성우를 고르면 미리 구운 샘플(진짜 그 성우 목소리, static mp3)을 들려준다 — 크레딧 0.
   const narratorPreviewRef = useRef<HTMLAudioElement | null>(null);
-  async function pickNarrator(id: string) {
+  function pickNarrator(id: string) {
     setNarratorVoice(id);
-    const v = TYPECAST_VOICES.find((x) => x.id === id);
-    const sample = v?.sample ?? "안녕하세요, 오늘은 어떤 이야기를 들려줄까요?";
     try {
-      const blob = await fetchGoogleAudio(id, sample);
       const el = narratorPreviewRef.current ?? new Audio();
       narratorPreviewRef.current = el;
-      el.src = URL.createObjectURL(blob);
+      el.src = `/casting/preview-${id}.mp3`;
       el.currentTime = 0;
       void el.play().catch(() => {});
     } catch {
-      // 구글 실패(키 없음·오프라인 등) — 미리 구운 static 샘플이 있으면 그걸로 대체.
-      try {
-        const el = narratorPreviewRef.current ?? new Audio();
-        narratorPreviewRef.current = el;
-        el.src = `/casting/preview-${id}.mp3`;
-        el.currentTime = 0;
-        void el.play().catch(() => {});
-      } catch {
-        /* 무시 */
-      }
+      /* 무시 */
     }
   }
   // 장면(쪽) 수 3~8. 나이에 맞는 추천값으로 시작한다(부모가 바꿀 수 있다).
@@ -436,6 +454,7 @@ export default function CreatePage() {
                   happening: todayEvent.trim(),
                   place,
                   feeling,
+                  ending,
                   emotion: "",
                   situation: "",
                   extra: "",
@@ -644,7 +663,7 @@ export default function CreatePage() {
           {/* ── 1. 아이 정보 ── */}
           {step === "child" && (
             <section className="flex flex-col gap-5">
-              <h1 className="text-center text-2xl font-extrabold text-neutral-800">
+              <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 누구의 동화를 만들까요?
               </h1>
 
@@ -721,7 +740,7 @@ export default function CreatePage() {
           {/* ── 2. 주제 ── */}
           {step === "theme" && (
             <section className="flex flex-col gap-5">
-              <h1 className="text-center text-2xl font-extrabold text-neutral-800">
+              <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 {storyMode === "today"
                   ? `${name}에게 오늘 무슨 일이 있었어요?`
                   : storyMode === "imagine"
@@ -860,13 +879,36 @@ export default function CreatePage() {
                     </div>
                   </div>
 
+                  {/* 어떻게 끝났나 — 이게 있어야 실제와 다른 결말(혼난 일을 칭찬으로 등)이 안 나온다. */}
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs font-bold text-neutral-400">
+                      일이 어떻게 끝났어요? <span className="font-medium">(선택)</span>
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {TODAY_ENDINGS.map((it) => (
+                        <button
+                          key={it.t}
+                          type="button"
+                          onClick={() => setEnding(ending === it.t ? "" : it.t)}
+                          style={ending === it.t ? { background: accent } : undefined}
+                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                            ending === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          }`}
+                        >
+                          <span className="text-base leading-none">{it.e}</span>
+                          {it.t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {seed && (
                     <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-center text-sm font-bold text-neutral-500">
                       🌱 {name.trim() || "우리 아이"}의 오늘 이야기 — <span className="text-neutral-800">{seed}</span>
                     </p>
                   )}
 
-                  <div className="mt-2 flex justify-center gap-3">
+                  <div className="mt-2 flex flex-wrap justify-center gap-3">
                     <BigButton tone="white" onClick={() => setStoryMode(null)}>
                       ← 뒤로
                     </BigButton>
@@ -905,6 +947,23 @@ export default function CreatePage() {
                     <p className="text-xs font-bold text-neutral-400">
                       언제 그런 마음이 들었어요? <span className="font-medium">(선택, 말로도 돼요)</span>
                     </p>
+                    {/* 흔한 상황 칩 — 누르면 아래 칸에 채워지고, 그대로 쓰거나 고쳐도 된다(백지 공포 제거). */}
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {EMOTION_TIMES.map((it) => (
+                        <button
+                          key={it.t}
+                          type="button"
+                          onClick={() => setSituation(situation === it.t ? "" : it.t)}
+                          style={situation === it.t ? { background: accent } : undefined}
+                          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition ${
+                            situation === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          }`}
+                        >
+                          <span className="text-sm leading-none">{it.e}</span>
+                          {it.t}
+                        </button>
+                      ))}
+                    </div>
                     <div className="flex justify-center py-1">
                       <VoiceInput onResult={(t) => setSituation(t)} />
                     </div>
@@ -947,7 +1006,7 @@ export default function CreatePage() {
                     </p>
                   )}
 
-                  <div className="mt-2 flex justify-center gap-3">
+                  <div className="mt-2 flex flex-wrap justify-center gap-3">
                     <BigButton tone="white" onClick={() => setStoryMode(null)}>
                       ← 뒤로
                     </BigButton>
@@ -981,7 +1040,7 @@ export default function CreatePage() {
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={group.icon} alt="" className="h-14 w-14 object-contain" />
                           </span>
-                          <span className="text-[13px] leading-tight">{group.label}</span>
+                          <span className="break-keep text-center text-[13px] leading-tight">{group.label}</span>
                         </button>
                       );
                     })}
@@ -1082,7 +1141,7 @@ export default function CreatePage() {
                     </p>
                   )}
 
-                  <div className="mt-2 flex justify-center gap-3">
+                  <div className="mt-2 flex flex-wrap justify-center gap-3">
                     <BigButton tone="white" onClick={() => setStoryMode(null)}>
                       ← 뒤로
                     </BigButton>
@@ -1098,7 +1157,7 @@ export default function CreatePage() {
           {/* ── 3. 그림체 + 분위기 + 특별한 날 ── */}
           {step === "style" && (
             <section className="flex flex-col gap-5">
-              <h1 className="text-center text-2xl font-extrabold text-neutral-800">
+              <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 어떤 그림으로 그릴까요?
               </h1>
 
@@ -1130,7 +1189,7 @@ export default function CreatePage() {
                           {s.emoji}
                         </span>
                       )}
-                      <span className="text-[11px] font-bold leading-tight text-neutral-700">
+                      <span className="break-keep text-center text-[11px] font-bold leading-tight text-neutral-700">
                         {s.label}
                       </span>
                     </button>
@@ -1211,10 +1270,10 @@ export default function CreatePage() {
                   읽어준다. 실시간 합성이 켜지면 만들 때 한 번 구워 재생은 늘 무료가 된다. */}
               <div>
                 <p className="mb-1.5 text-xs font-bold text-neutral-400">
-                  읽어줄 성우 <span className="font-medium">(베타 — 눌러서 들어보고 골라요)</span>
+                  읽어줄 성우 <span className="font-medium">(눌러서 들어보고 골라요)</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {RECOMMENDED_VOICES.map((v) => {
+                  {TYPECAST_VOICES.map((v) => {
                     const active = narratorVoice === v.id;
                     return (
                       <button
@@ -1236,13 +1295,13 @@ export default function CreatePage() {
                   })}
                 </div>
                 <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
-                  {RECOMMENDED_VOICES.find((v) => v.id === narratorVoice)?.desc}
+                  {TYPECAST_VOICES.find((v) => v.id === narratorVoice)?.desc}
                 </p>
               </div>
 
               {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
 
-              <div className="mt-2 flex justify-center gap-3">
+              <div className="mt-2 flex flex-wrap justify-center gap-3">
                 <BigButton tone="white" onClick={() => setStep("theme")}>
                   ← 뒤로
                 </BigButton>
@@ -1262,7 +1321,7 @@ export default function CreatePage() {
                 alt=""
                 className="h-24 w-24 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white shadow-lg"
               />
-              <h1 className="text-center text-2xl font-extrabold text-neutral-800">
+              <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 동화를 그리고 있어요…
               </h1>
               <p className="text-sm font-bold text-neutral-500">
@@ -1299,7 +1358,7 @@ export default function CreatePage() {
           {/* ── 4. 줄거리 확인 ── */}
           {step === "outline" && outline && (
             <section className="flex flex-col gap-4">
-              <h1 className="text-center text-2xl font-extrabold text-neutral-800">
+              <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 이 이야기로 만들까요?
               </h1>
               <div className="rounded-2xl p-5" style={{ background: accentSoft }}>
@@ -1346,7 +1405,7 @@ export default function CreatePage() {
                         토큰이 부족해요. 설정에서 충전할 수 있어요.
                       </p>
                     ) : null}
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap justify-center gap-3">
                       <BigButton
                         accent={accent}
                         accentDark={accentDark}
@@ -1390,7 +1449,7 @@ export default function CreatePage() {
               들었을 때만 만든다. 아니면 테마 배경 위 글 동화로 바로 본다. ── */}
           {step === "story" && story && (
             <section className="flex flex-col gap-4">
-              <h1 className="text-center text-2xl font-extrabold text-neutral-800">
+              <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 이야기가 완성됐어요!
               </h1>
               <div className="rounded-2xl p-5" style={{ background: accentSoft }}>
