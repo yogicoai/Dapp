@@ -8,6 +8,8 @@
  *   지정 문장만 녹음하는 이유: 유출돼도 무해한 내용이라 부모 불안을 구조로 푼다.
  */
 
+import { acctKey } from "@/lib/supabase";
+
 export type PresetVoice = {
   kind: "preset";
   id: string;
@@ -144,13 +146,13 @@ export const DEFAULT_VOICE_RATE = 0.9;
 
 export function loadVoiceRate(): number {
   if (typeof window === "undefined") return DEFAULT_VOICE_RATE;
-  const v = Number(window.localStorage.getItem(RATE_KEY));
+  const v = Number(window.localStorage.getItem(acctKey(RATE_KEY)));
   return Number.isFinite(v) && v >= 0.5 && v <= 2 ? v : DEFAULT_VOICE_RATE;
 }
 
 export function saveVoiceRate(rate: number): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(RATE_KEY, String(rate));
+  window.localStorage.setItem(acctKey(RATE_KEY), String(rate));
 }
 
 /**
@@ -173,12 +175,12 @@ export function applyPlaybackRate(el: HTMLMediaElement, rate: number): void {
 const DEFAULT_VOICE_ID = "tc-booqoo";
 export function loadSelectedVoiceId(): string {
   if (typeof window === "undefined") return DEFAULT_VOICE_ID;
-  return window.localStorage.getItem(SELECTED_KEY) ?? DEFAULT_VOICE_ID;
+  return window.localStorage.getItem(acctKey(SELECTED_KEY)) ?? DEFAULT_VOICE_ID;
 }
 
 export function saveSelectedVoiceId(id: string): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(SELECTED_KEY, id);
+  window.localStorage.setItem(acctKey(SELECTED_KEY), id);
 }
 
 /**

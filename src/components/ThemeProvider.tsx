@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useSyncExternalStore } from "react";
+import { acctKey } from "@/lib/supabase";
 import {
   DEFAULT_THEME,
   READY_THEME_IDS,
@@ -28,7 +29,8 @@ const listeners = new Set<() => void>();
 function subscribe(cb: () => void): () => void {
   listeners.add(cb);
   const onStorage = (e: StorageEvent) => {
-    if (e.key === STORE_KEY) cb();
+    // 키가 계정별(`...:회원id`)로 나뉘어 있어 접두사로 본다.
+    if (e.key && e.key.startsWith(STORE_KEY)) cb();
   };
   window.addEventListener("storage", onStorage);
   return () => {
@@ -46,7 +48,8 @@ function emit(): void {
  * 기본으로 되돌린다.
  */
 function readStored(): ThemeId {
-  const v = window.localStorage.getItem(STORE_KEY) as ThemeId | null;
+  // 나라(테마)도 계정별로 남는다 — 같은 기기에서 다른 아이디로 들어가면 그 계정의 나라로.
+  const v = window.localStorage.getItem(acctKey(STORE_KEY)) as ThemeId | null;
   return v && READY_THEME_IDS.includes(v) ? v : DEFAULT_THEME;
 }
 
@@ -54,7 +57,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const id = useSyncExternalStore(subscribe, readStored, () => DEFAULT_THEME);
 
   const setThemeId = (next: ThemeId) => {
-    window.localStorage.setItem(STORE_KEY, next);
+    window.localStorage.setItem(acctKey(STORE_KEY), next);
     emit();
   };
 

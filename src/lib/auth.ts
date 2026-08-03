@@ -7,8 +7,13 @@
  *
  * 게스트(비회원 둘러보기)는 서버 계정이 아니라 이 기기의 플래그다.
  */
-import { backupChildBeforeLogout, clearChild, loadChildRemote } from "@/lib/prefs";
-import { currentUid, getSupabase } from "@/lib/supabase";
+import {
+  backupChildBeforeLogout,
+  clearChild,
+  loadChildRemote,
+  migrateDevicePrefs,
+} from "@/lib/prefs";
+import { currentUid, getSupabase, rememberUid } from "@/lib/supabase";
 
 // 아이디를 이메일로 합성할 때 쓰는 도메인. Supabase가 .local 같은 비표준 TLD는
 // "유효하지 않은 이메일"로 거부하므로, 형식상 유효한 .com을 쓴다(메일은 안 보냄).
@@ -67,6 +72,8 @@ export async function loadSession(): Promise<SessionState> {
   if (!sb) return { uid: null, profile: null, guest, isMaster: false };
   const uid = await currentUid();
   if (!uid) return { uid: null, profile: null, guest, isMaster: false };
+  // 계정별 설정으로 넘어가기 전 기기에 있던 설정을 이 계정에 한 번 물려준다(첫 로그인 1회).
+  migrateDevicePrefs(uid);
   // uid를 넘겨 프로필 조회가 회원 확인을 또 하지 않게 한다(왕복 한 번 절약).
   const profile = await fetchProfile(uid);
   return { uid, profile, guest: false, isMaster: !!profile?.is_master };
@@ -115,6 +122,7 @@ export async function logOut(): Promise<void> {
   await backupChildBeforeLogout().catch(() => {});
   clearGuest();
   clearChild(); // '현재' 캐시만 지운다 — 계정별 백업은 남아 재로그인하면 복구된다.
+  rememberUid(null); // 로그아웃 후 읽는 설정이 앞 계정 것으로 가지 않게
   await getSupabase()?.auth.signOut();
 }
 

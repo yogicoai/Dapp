@@ -41,8 +41,47 @@ export async function currentUid(): Promise<string | null> {
   if (!sb) return null;
   try {
     const { data } = await sb.auth.getSession();
-    return data.session?.user?.id ?? null;
+    const uid = data.session?.user?.id ?? null;
+    rememberUid(uid);
+    return uid;
   } catch {
     return null;
   }
+}
+
+/* ── 계정별 설정 저장 ──
+ * 아이 정보·나라·성우·글자 위치 같은 설정은 계정마다 따로 남아야 한다(사장님 지시).
+ * 그런데 이 값들은 화면이 뜰 때 '동기적으로' 읽히고, 회원 id는 비동기로만 알 수 있다.
+ * 그래서 마지막으로 확인한 id를 기기에 적어 두고, 동기 읽기는 그 값을 쓴다.
+ * (로그인 상태는 기기에 남으므로 새로고침 시점엔 항상 값이 있다.)
+ */
+const UID_KEY = "voice-storybook:uid";
+
+export function rememberUid(uid: string | null): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (uid) window.localStorage.setItem(UID_KEY, uid);
+    else window.localStorage.removeItem(UID_KEY);
+  } catch {
+    /* 무시 */
+  }
+}
+
+/** 마지막으로 확인한 회원 id (동기). 비회원·로그아웃 상태면 null. */
+export function currentUidSync(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(UID_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 설정 저장 키를 계정별로 나눈다. 로그인 상태면 `키:회원id`, 비회원이면 기기 공용 키.
+ * 같은 기기에서 다른 아이디로 들어가도 앞 계정의 설정이 보이지 않는다.
+ */
+export function acctKey(base: string): string {
+  const uid = currentUidSync();
+  return uid ? `${base}:${uid}` : base;
 }

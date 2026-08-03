@@ -4,7 +4,7 @@
  * Supabase가 붙으면 이 파일의 저장처만 DB로 바뀐다.
  */
 
-import { currentUid, getSupabase } from "@/lib/supabase";
+import { acctKey, currentUid, getSupabase } from "@/lib/supabase";
 import type { Book } from "@/lib/types";
 
 export type Gender = "girl" | "boy" | "unspecified";
@@ -41,7 +41,7 @@ function normalizeChild(raw: unknown): ChildPrefs | null {
 
 export function loadChild(): ChildPrefs | null {
   if (typeof window === "undefined") return null;
-  return normalizeChild(window.localStorage.getItem(CHILD_KEY));
+  return normalizeChild(window.localStorage.getItem(acctKey(CHILD_KEY)));
 }
 
 /** 계정별 로컬 백업 키 — 로그아웃해도 지우지 않는다(SQL 없이도 재로그인 복구). */
@@ -52,7 +52,7 @@ let childRemoteTimer: ReturnType<typeof setTimeout> | null = null;
 
 export function saveChild(child: ChildPrefs): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(CHILD_KEY, JSON.stringify(child));
+  window.localStorage.setItem(acctKey(CHILD_KEY), JSON.stringify(child));
   // 계정별 로컬 백업 + Supabase 저장 — 로그아웃/재로그인/기기 변경에도 유지된다.
   // 연타를 800ms로 묶어 네트워크를 아낀다.
   if (childRemoteTimer) clearTimeout(childRemoteTimer);
@@ -103,7 +103,8 @@ export async function loadChildRemote(): Promise<ChildPrefs | null> {
       if (remote) child = remote;
     }
     if (child && typeof window !== "undefined") {
-      window.localStorage.setItem(CHILD_KEY, JSON.stringify(child)); // 동기 loadChild()가 바로 쓰게
+      // 계정별 키에만 쓴다 — loadChild()가 읽는 자리가 바로 여기다(acctKey(CHILD_KEY)와 같은 키).
+      // 기기 공용 키에는 쓰지 않는다: 나중에 다른 계정·비회원이 이 값을 물려받으면 안 된다.
       window.localStorage.setItem(acctChildKey(uid), JSON.stringify(child));
     }
     return child;
@@ -118,7 +119,8 @@ export async function loadChildRemote(): Promise<ChildPrefs | null> {
  */
 export async function backupChildBeforeLogout(): Promise<void> {
   if (typeof window === "undefined") return;
-  const raw = window.localStorage.getItem(CHILD_KEY);
+  // 로그아웃 전이라 아직 이 계정 키로 읽힌다(acctKey).
+  const raw = window.localStorage.getItem(acctKey(CHILD_KEY));
   if (!raw) return;
   const sb = getSupabase();
   if (!sb) return;
@@ -133,19 +135,23 @@ export async function backupChildBeforeLogout(): Promise<void> {
 }
 
 /** 아이 정보 비우기 — 로그아웃/계정전환 시 '현재' 캐시만 지운다. 계정별 백업은 남겨 재로그인 복구. */
+/**
+ * '현재 화면에 뜬' 아이 정보만 비운다 — 계정 전환 시 앞 계정 아이가 남지 않게.
+ * 계정별 저장분(키:회원id)은 건드리지 않는다. 그 계정으로 다시 들어오면 그대로 복구된다.
+ */
 export function clearChild(): void {
   if (typeof window === "undefined") return;
-  window.localStorage.removeItem(CHILD_KEY);
+  window.localStorage.removeItem(CHILD_KEY); // 비회원(기기 공용) 값만 제거
 }
 
 export function loadLang(): string {
   if (typeof window === "undefined") return "ko";
-  return window.localStorage.getItem(LANG_KEY) ?? "ko";
+  return window.localStorage.getItem(acctKey(LANG_KEY)) ?? "ko";
 }
 
 export function saveLang(lang: string): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(LANG_KEY, lang);
+  window.localStorage.setItem(acctKey(LANG_KEY), lang);
 }
 
 /**
@@ -160,13 +166,13 @@ const TEXT_POSITIONS: TextPos[] = ["bottom", "top", "center", "left", "right"];
 
 export function loadTextPos(): TextPos {
   if (typeof window === "undefined") return "bottom";
-  const v = window.localStorage.getItem(TEXT_POS_KEY) as TextPos | null;
+  const v = window.localStorage.getItem(acctKey(TEXT_POS_KEY)) as TextPos | null;
   return v && TEXT_POSITIONS.includes(v) ? v : "bottom";
 }
 
 export function saveTextPos(pos: TextPos): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(TEXT_POS_KEY, pos);
+  window.localStorage.setItem(acctKey(TEXT_POS_KEY), pos);
 }
 
 /**
@@ -179,19 +185,19 @@ const BGM_KEY = "voice-storybook:bgm";
 
 export function loadSfxOn(): boolean {
   if (typeof window === "undefined") return true;
-  return window.localStorage.getItem(SFX_KEY) !== "off";
+  return window.localStorage.getItem(acctKey(SFX_KEY)) !== "off";
 }
 export function saveSfxOn(on: boolean): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(SFX_KEY, on ? "on" : "off");
+  window.localStorage.setItem(acctKey(SFX_KEY), on ? "on" : "off");
 }
 export function loadBgmOn(): boolean {
   if (typeof window === "undefined") return false;
-  return window.localStorage.getItem(BGM_KEY) === "on";
+  return window.localStorage.getItem(acctKey(BGM_KEY)) === "on";
 }
 export function saveBgmOn(on: boolean): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(BGM_KEY, on ? "on" : "off");
+  window.localStorage.setItem(acctKey(BGM_KEY), on ? "on" : "off");
 }
 
 /**
@@ -204,7 +210,7 @@ const PROGRESS_KEY = "voice-storybook:progress";
 export function loadBookProgress(id: string): number {
   if (typeof window === "undefined" || !id || id === "new") return 0;
   try {
-    const raw = window.localStorage.getItem(PROGRESS_KEY);
+    const raw = window.localStorage.getItem(acctKey(PROGRESS_KEY));
     const map = raw ? (JSON.parse(raw) as Record<string, number>) : {};
     const v = map[id];
     return typeof v === "number" && v >= 0 ? v : 0;
@@ -216,10 +222,10 @@ export function loadBookProgress(id: string): number {
 export function saveBookProgress(id: string, page: number): void {
   if (typeof window === "undefined" || !id || id === "new") return;
   try {
-    const raw = window.localStorage.getItem(PROGRESS_KEY);
+    const raw = window.localStorage.getItem(acctKey(PROGRESS_KEY));
     const map = raw ? (JSON.parse(raw) as Record<string, number>) : {};
     map[id] = page;
-    window.localStorage.setItem(PROGRESS_KEY, JSON.stringify(map));
+    window.localStorage.setItem(acctKey(PROGRESS_KEY), JSON.stringify(map));
   } catch {
     // 저장 실패는 조용히 넘긴다 — 이어보기는 편의 기능이라 막으면 안 된다.
   }
@@ -310,6 +316,46 @@ export async function loadMyBooksBrief(): Promise<ShelfBook[]> {
     for (const b of list) if (!b.coverImage) b.coverImage = byId.get(b.id) ?? null;
   }
   return list;
+}
+
+/* ── 기기 설정 → 계정 설정 이관 (한 번만) ──
+ * 설정을 계정별로 나누기 전에는 모두 기기 공용 키에 저장돼 있었다. 그대로 두면
+ * 쓰던 사람이 로그인했을 때 아이 정보·나라·성우가 전부 초기화된 것처럼 보인다.
+ * 그래서 이 기기에서 '처음 로그인한 계정' 한 명에게만 기존 값을 물려주고,
+ * 물려준 뒤에는 기기 공용 값을 지운다 — 다음 계정이 앞사람 설정을 물려받지 않게.
+ */
+const MOVED_KEY = "voice-storybook:prefs-moved";
+const DEVICE_PREF_KEYS = [
+  CHILD_KEY,
+  LANG_KEY,
+  TEXT_POS_KEY,
+  SFX_KEY,
+  BGM_KEY,
+  PROGRESS_KEY,
+  "voice-storybook:voice",
+  "voice-storybook:voice-rate",
+  "voice-storybook:theme",
+];
+
+export function migrateDevicePrefs(uid: string): void {
+  if (typeof window === "undefined" || !uid) return;
+  try {
+    if (window.localStorage.getItem(`${MOVED_KEY}:${uid}`)) return; // 이 계정은 이미 처리됨
+    // 이 기기에서 아직 아무도 물려받지 않았을 때만 물려준다.
+    if (!window.localStorage.getItem(MOVED_KEY)) {
+      for (const base of DEVICE_PREF_KEYS) {
+        const v = window.localStorage.getItem(base);
+        if (v !== null && window.localStorage.getItem(`${base}:${uid}`) === null) {
+          window.localStorage.setItem(`${base}:${uid}`, v);
+        }
+      }
+      for (const base of DEVICE_PREF_KEYS) window.localStorage.removeItem(base);
+      window.localStorage.setItem(MOVED_KEY, uid);
+    }
+    window.localStorage.setItem(`${MOVED_KEY}:${uid}`, "1");
+  } catch {
+    /* 저장 공간 문제 등 — 이관은 편의 기능이라 실패해도 앱은 그대로 동작한다 */
+  }
 }
 
 /* ── 책장 캐시 ──
