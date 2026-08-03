@@ -1,11 +1,19 @@
-import { notFound } from "next/navigation";
 import { BookViewer } from "@/components/BookViewer";
+import classicBooks from "@/data/classic-books.json";
+import folkBooks from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
 import type { Book } from "@/lib/types";
+import { SavedBook } from "./SavedBook";
+
+// 샘플(추후 회원 책) + 제공 서가(전래동화·세계명작).
+const ALL = [...(books as Book[]), ...(folkBooks as Book[]), ...(classicBooks as Book[])];
 
 export function generateStaticParams() {
-  return (books as Book[]).map((book) => ({ id: book.id }));
+  return ALL.map((book) => ({ id: book.id }));
 }
+
+// JSON에 없는 id(내가 만든 책)도 열 수 있어야 하므로, 미리 만든 경로 밖도 허용한다.
+export const dynamicParams = true;
 
 export default async function BookPage({
   params,
@@ -13,8 +21,9 @@ export default async function BookPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const book = (books as Book[]).find((b) => b.id === id);
-  if (!book) notFound();
+  const book = ALL.find((b) => b.id === id);
+  // JSON에 없으면 내가 만든 책(localStorage)일 수 있다 — 클라이언트에서 찾는다.
+  if (!book) return <SavedBook id={id} />;
 
   return <BookViewer book={book} />;
 }

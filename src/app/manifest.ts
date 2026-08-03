@@ -7,7 +7,7 @@ import type { MetadataRoute } from "next";
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "우리 아이 보이스 동화",
+    name: "우리 가족 보이스 동화",
     short_name: "보이스 동화",
     description: "아이가 주인공인 그림동화를 엄마·아빠 목소리로 읽어줍니다.",
     start_url: "/",

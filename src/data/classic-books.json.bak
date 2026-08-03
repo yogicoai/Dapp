@@ -1,0 +1,1641 @@
+[
+  {
+    "id": "classic-cinderella",
+    "lang": "ko",
+    "title": "신데렐라",
+    "summary": "유리구두를 남기고 사라진 신데렐라와 왕자님의 이야기",
+    "narrator": "tc-hyoeun",
+    "pages": [
+      {
+        "text": "옛날 어느 왕국에 마음씨 고운 신데렐라가 살았어요.\n새어머니와 두 언니는 신데렐라에게\n온종일 힘든 집안일만 시켰지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "부엌 아궁이 옆에서 재를 뒤집어써도\n신데렐라는 늘 노래를 흥얼거렸어요.\n\"언젠가 좋은 일이 생길 거야!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "어느 날, 왕궁에서 초대장이 도착했어요.\n\"왕자님의 무도회에 온 나라 아가씨를 초대합니다!\"\n언니들은 신이 나서 예쁜 드레스를 골랐지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "\"저도 무도회에 가고 싶어요!\"\n\"흥, 넌 할 일이 산더미잖니!\"\n새어머니와 언니들은 신데렐라만 두고 떠나 버렸어요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "혼자 남은 신데렐라의 눈에서 눈물이 뚝뚝 떨어졌어요.\n그때, 반짝이는 빛과 함께 요정 대모님이 나타났지요.\n\"울지 마렴, 신데렐라야. 너도 무도회에 갈 수 있단다!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "요정 대모님이 요술봉을 휘두르자 — 얍!\n호박은 황금 마차로, 생쥐들은 늠름한 말로 변했어요!\n신데렐라의 낡은 옷도 눈부신 드레스가 되었지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "마지막으로 반짝이는 유리구두가 나타났어요.\n\"기억하렴! 밤 12시가 되면 마법이 풀린단다.\"\n\"네, 대모님! 고맙습니다!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "무도회장에 들어선 신데렐라를 보고 모두 숨을 멈췄어요.\n왕자님이 다가와 정중히 손을 내밀었지요.\n\"저와 춤을 추시겠어요?\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "둘은 밤새 빙글빙글 춤을 추었어요.\n별빛처럼 반짝이는 시간이었지요.\n그때 — 댕! 댕! 시계가 12시를 알렸어요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "\"앗, 이제 가야 해요!\"\n신데렐라는 계단을 급히 뛰어 내려갔어요.\n그만 유리구두 한 짝이 벗겨진 줄도 모르고요!",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "왕자님은 남겨진 유리구두를 소중히 주웠어요.\n\"이 구두의 주인을 꼭 찾겠어!\"\n신하들이 유리구두를 들고 온 나라를 돌았지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "언니들도 서둘러 발을 넣어 봤지만\n아무리 애써도 구두는 맞지 않았어요.\n\"저… 저도 신어 봐도 될까요?\" 신데렐라가 조용히 말했지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "유리구두는 신데렐라의 발에 사르르 — 꼭 맞았어요!\n\"드디어 찾았다!\" 왕자님이 기뻐하며 달려왔지요.\n언니들도 그동안 못되게 군 것을 사과했답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "신데렐라는 왕자님과 결혼해 왕궁으로 갔어요.\n착한 마음은 반드시 빛나는 법이지요.\n두 사람은 오래오래 행복하게 살았답니다.",
+        "image": null,
+        "audio": null
+      }
+    ],
+    "hidden": true
+  },
+  {
+    "id": "classic-threepigs",
+    "lang": "ko",
+    "title": "돼지 삼형제",
+    "summary": "지푸라기 집, 나무 집, 벽돌 집 — 부지런한 막내 돼지가 늑대를 물리치는 이야기",
+    "narrator": "tc-woony",
+    "pages": [
+      {
+        "text": "옛날 옛적, 아기 돼지 삼형제가 살았어요.\n어느 날 엄마 돼지가 말했지요.\n\"이제 너희도 다 컸으니, 각자 집을 짓고 살아 보렴!\"",
+        "image": "/classic/threepigs/p1.webp",
+        "audio": "/classic/threepigs/narr-p1.mp3",
+        "hotspots": [
+          {
+            "label": "mompig",
+            "box": [
+              300,
+              150,
+              850,
+              500
+            ],
+            "audio": "/classic/threepigs/say-p1-mompig.wav",
+            "line": "이제 너희도 다 컸으니, 각자 집을 짓고 살아 보렴!"
+          }
+        ]
+      },
+      {
+        "text": "첫째 돼지는 놀고 싶은 마음에\n지푸라기를 슥슥 쌓아 금세 집을 지었어요.\n\"히히, 벌써 다 지었다! 이제 신나게 놀아야지!\"",
+        "image": "/classic/threepigs/p2.webp",
+        "audio": "/classic/threepigs/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "pig1",
+            "box": [
+              330,
+              230,
+              780,
+              490
+            ],
+            "audio": "/classic/threepigs/say-p2-pig1.wav",
+            "line": "히히, 벌써 다 지었다! 이제 신나게 놀아야지!"
+          }
+        ]
+      },
+      {
+        "text": "둘째 돼지는 나뭇가지를 뚝딱뚝딱 엮어 집을 지었어요.\n\"이 정도면 튼튼하지 뭐!\n형아, 나도 다 지었어! 같이 놀자!\"",
+        "image": "/classic/threepigs/p3.webp",
+        "audio": "/classic/threepigs/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "pig2",
+            "box": [
+              380,
+              470,
+              790,
+              700
+            ],
+            "audio": "/classic/threepigs/say-p3-pig2.wav",
+            "line": "이 정도면 튼튼하지 뭐! 나도 다 지었다!"
+          }
+        ]
+      },
+      {
+        "text": "막내 돼지는 벽돌을 한 장 한 장 정성껏 쌓았어요.\n형들이 지나가다 킥킥 놀렸지요.\n\"야, 뭐하러 그렇게 힘들게 짓는 거야?\"\n\"우리처럼 뚝딱 짓고 노는 게 최고라구! 히히!\"\n\"난 놀기 전에 튼튼한 집부터 지을 거야.\"\n막내는 땀을 뻘뻘 흘리며 꿋꿋이 벽돌을 쌓았답니다.",
+        "image": "/classic/threepigs/p4.webp",
+        "audio": "/classic/threepigs/narr-p4.mp3",
+        "hotspots": [
+          {
+            "label": "pig1",
+            "box": [
+              330,
+              430,
+              780,
+              640
+            ],
+            "audio": "/classic/threepigs/say-p4-pig1.wav",
+            "line": "야, 뭐하러 그렇게 힘들게 짓는 거야?"
+          },
+          {
+            "label": "pig3",
+            "box": [
+              400,
+              150,
+              830,
+              430
+            ],
+            "audio": "/classic/threepigs/say-p4-pig3.wav",
+            "line": "난 놀기 전에 튼튼한 집부터 지을 거야."
+          }
+        ]
+      },
+      {
+        "text": "그러던 어느 날, 배고픈 늑대가 나타났어요!\n늑대는 첫째네 지푸라기 집 앞에서 소리쳤지요.\n\"아기 돼지야, 문 열어라! 안 열면 집을 날려 버리겠다!\"",
+        "image": "/classic/threepigs/p5.webp",
+        "audio": "/classic/threepigs/narr-p5.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              280,
+              600,
+              860,
+              950
+            ],
+            "audio": "/classic/threepigs/say-p5-wolf.wav",
+            "line": "아기 돼지야, 문 열어라! 안 열면 집을 날려 버리겠다!"
+          },
+          {
+            "label": "pig1",
+            "box": [
+              290,
+              110,
+              560,
+              340
+            ],
+            "audio": "/classic/threepigs/say-p5-pig1.wav",
+            "line": "싫어! 절대 안 열어 줄 거야!"
+          }
+        ]
+      },
+      {
+        "text": "\"싫어! 절대 안 열어 줄 거야!\"\n그러자 늑대가 숨을 크게 들이마시고 — 후우우욱!\n지푸라기 집이 폭삭 날아가 버렸어요!",
+        "image": "/classic/threepigs/p6.webp",
+        "audio": "/classic/threepigs/narr-p6.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              300,
+              610,
+              840,
+              960
+            ],
+            "audio": "/classic/threepigs/say-p6-wolf.wav",
+            "line": "후우우우욱! 집아, 날아가 버려라!"
+          },
+          {
+            "label": "pig1",
+            "box": [
+              360,
+              260,
+              660,
+              530
+            ],
+            "audio": "/classic/threepigs/say-p6-pig1.wav",
+            "line": "으악! 살려 줘! 내 집이 날아갔어!"
+          }
+        ]
+      },
+      {
+        "text": "\"으악! 살려 줘!\"\n첫째 돼지는 둘째네 나무 집으로 쌩 도망쳤어요.\n하지만 늑대도 성큼성큼 쫓아왔지요.",
+        "image": "/classic/threepigs/p7.webp",
+        "audio": "/classic/threepigs/narr-p7.mp3",
+        "hotspots": [
+          {
+            "label": "pig1",
+            "box": [
+              420,
+              330,
+              810,
+              610
+            ],
+            "audio": "/classic/threepigs/say-p7-pig1.wav",
+            "line": "둘째야, 나 좀 살려 줘! 늑대가 쫓아와!"
+          },
+          {
+            "label": "pig2",
+            "box": [
+              420,
+              580,
+              760,
+              790
+            ],
+            "audio": "/classic/threepigs/say-p7-pig2.wav",
+            "line": "형아, 빨리 이리 들어와!"
+          }
+        ]
+      },
+      {
+        "text": "\"아기 돼지들아, 문 열어라!\"\n\"싫어, 싫어! 절대 안 돼!\"\n늑대가 다시 숨을 들이마시고 — 후우우우욱!\n우지끈! 나무 집도 와르르 무너졌어요.",
+        "image": "/classic/threepigs/p8.webp",
+        "audio": "/classic/threepigs/narr-p8.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              270,
+              630,
+              860,
+              960
+            ],
+            "audio": "/classic/threepigs/say-p8-wolf.wav",
+            "line": "아기 돼지들아, 문 열어라!"
+          },
+          {
+            "label": "pig2",
+            "box": [
+              470,
+              200,
+              870,
+              410
+            ],
+            "audio": "/classic/threepigs/say-p8-pig2.wav",
+            "line": "싫어, 싫어! 절대 안 돼!"
+          },
+          {
+            "label": "pig1",
+            "box": [
+              450,
+              30,
+              860,
+              240
+            ],
+            "audio": "/classic/threepigs/say-p8-pig1.wav",
+            "line": "우리 집이 무너진다! 도망가자!"
+          }
+        ]
+      },
+      {
+        "text": "첫째와 둘째는 막내네 벽돌 집으로 달려갔어요.\n\"막내야, 살려 줘! 늑대가 와!\"\n막내는 얼른 문을 열어 형들을 숨겨 주었지요.",
+        "image": "/classic/threepigs/p9.webp",
+        "audio": "/classic/threepigs/narr-p9.mp3",
+        "hotspots": [
+          {
+            "label": "pig1",
+            "box": [
+              470,
+              290,
+              840,
+              520
+            ],
+            "audio": "/classic/threepigs/say-p9-pig1.wav",
+            "line": "막내야, 살려 줘! 늑대가 와!"
+          },
+          {
+            "label": "pig3",
+            "box": [
+              420,
+              680,
+              790,
+              850
+            ],
+            "audio": "/classic/threepigs/say-p9-pig3.wav",
+            "line": "형들아, 얼른 들어와!"
+          }
+        ]
+      },
+      {
+        "text": "늑대는 벽돌 집 앞에서 있는 힘껏 바람을 불었어요.\n후욱! 후우욱! 후우우우욱!\n하지만 벽돌 집은 꿈쩍도 하지 않았답니다.\n\"아니, 이 집은 왜 안 무너지는 거야?!\"",
+        "image": "/classic/threepigs/p10-bg.webp",
+        "audio": "/classic/threepigs/narr-p10.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              360,
+              120,
+              840,
+              430
+            ],
+            "audio": "/classic/threepigs/say-p10-wolf.wav",
+            "line": "아니, 이 집은 왜 안 무너지는 거야?!"
+          },
+          {
+            "label": "pigs",
+            "box": [
+              420,
+              460,
+              670,
+              710
+            ],
+            "audio": "/classic/threepigs/say-p10-pigs.wav",
+            "line": "우리 막내 집은 끄떡없지롱!"
+          }
+        ],
+        "actors": [
+          {
+            "src": "/classic/threepigs/actor-wolf.webp",
+            "box": [
+              520,
+              140,
+              820,
+              509
+            ],
+            "anim": "waddle"
+          }
+        ]
+      },
+      {
+        "text": "약이 오른 늑대는 지붕 위로 기어올라갔어요.\n\"흥, 굴뚝으로 들어가면 되지!\"\n그 소리를 들은 막내 돼지는 얼른 벽난로에\n커다란 솥을 걸고 물을 펄펄 끓였지요.",
+        "image": "/classic/threepigs/p11.webp",
+        "audio": "/classic/threepigs/narr-p11.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              80,
+              320,
+              430,
+              600
+            ],
+            "audio": "/classic/threepigs/say-p11-wolf.wav",
+            "line": "흥, 굴뚝으로 들어가면 되지!"
+          },
+          {
+            "label": "pig3",
+            "box": [
+              520,
+              130,
+              780,
+              370
+            ],
+            "audio": "/classic/threepigs/say-p11-pig3.wav",
+            "line": "어디 한번 들어와 보시지!"
+          }
+        ]
+      },
+      {
+        "text": "늑대가 굴뚝으로 미끄러져 내려온 순간 —\n풍덩! 뜨거운 솥 속에 빠지고 말았어요!\n\"앗, 뜨거뜨거뜨거!\"\n늑대는 꽁지가 빠지게 산 너머로 도망쳤답니다.",
+        "image": "/classic/threepigs/p12.webp",
+        "audio": "/classic/threepigs/narr-p12.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              110,
+              280,
+              620,
+              650
+            ],
+            "audio": "/classic/threepigs/say-p12-wolf.wav",
+            "line": "앗, 뜨거뜨거뜨거! 나 살려라!"
+          },
+          {
+            "label": "pig1",
+            "box": [
+              350,
+              30,
+              840,
+              260
+            ],
+            "audio": "/classic/threepigs/say-p12-pig1.wav",
+            "line": "늑대가 도망간다! 신난다!"
+          },
+          {
+            "label": "pigs",
+            "box": [
+              390,
+              580,
+              860,
+              970
+            ],
+            "audio": "/classic/threepigs/say-p12-pigs.wav",
+            "line": "만세! 우리가 이겼다!"
+          }
+        ]
+      },
+      {
+        "text": "\"막내야, 고마워. 우리가 게을렀어.\"\n형들은 막내에게 벽돌 쌓는 법을 배워\n튼튼한 벽돌 집을 나란히 지었어요.\n돼지 삼형제는 오래오래 사이좋게 살았답니다.",
+        "image": "/classic/threepigs/p13.webp",
+        "audio": "/classic/threepigs/narr-p13.mp3",
+        "hotspots": [
+          {
+            "label": "pig1",
+            "box": [
+              480,
+              190,
+              840,
+              360
+            ],
+            "audio": "/classic/threepigs/say-p13-pig1.wav",
+            "line": "막내야, 고마워. 우리가 게을렀어."
+          },
+          {
+            "label": "pig3",
+            "box": [
+              520,
+              590,
+              860,
+              780
+            ],
+            "audio": "/classic/threepigs/say-p13-pig3.wav",
+            "line": "이제 다 같이 튼튼한 집에서 살자!"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "classic-uglyduckling",
+    "lang": "ko",
+    "title": "미운오리새끼",
+    "summary": "남들과 다르다고 놀림받던 아기 오리가 아름다운 백조로 자라나는 이야기",
+    "narrator": "tc-jungsook",
+    "pages": [
+      {
+        "text": "따뜻한 봄날, 연못가 둥지에서\n엄마 오리가 알을 품고 있었어요.\n그중에 유난히 크고 회색빛인 알이 하나 있었지요.",
+        "image": "/classic/uglyduckling/p1.webp",
+        "audio": "/classic/uglyduckling/narr-p1.mp3"
+      },
+      {
+        "text": "톡, 토독! 알들이 하나씩 깨어났어요.\n노랗고 보송보송한 아기 오리들 사이에서\n마지막 큰 알에서는 잿빛 아기가 나왔답니다.",
+        "image": "/classic/uglyduckling/p2.webp",
+        "audio": "/classic/uglyduckling/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "duckmom",
+            "box": [
+              150,
+              300,
+              650,
+              700
+            ],
+            "audio": "/classic/uglyduckling/say-p2-duckmom.wav",
+            "line": "어서 오렴, 우리 아가들!"
+          }
+        ]
+      },
+      {
+        "text": "\"쟤는 왜 우리랑 다르게 생겼지?\"\n\"회색이잖아. 미운 오리 새끼야!\"\n형제들은 잿빛 아기 오리를 자꾸만 놀렸어요.",
+        "image": "/classic/uglyduckling/p3.webp",
+        "audio": "/classic/uglyduckling/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "duckling",
+            "box": [
+              300,
+              350,
+              800,
+              650
+            ],
+            "audio": "/classic/uglyduckling/say-p3-duckling.wav",
+            "line": "왜 다들 나를 미워할까…"
+          }
+        ]
+      },
+      {
+        "text": "연못의 다른 오리들도 수군수군,\n닭들도 꼬꼬댁 흉을 봤어요.\n아기 오리는 너무너무 슬펐지요.\n\"아무도 나를 좋아하지 않아…\"",
+        "image": "/classic/uglyduckling/p4.webp",
+        "audio": "/classic/uglyduckling/narr-p4.mp3",
+        "hotspots": [
+          {
+            "label": "duckling",
+            "box": [
+              400,
+              550,
+              850,
+              850
+            ],
+            "audio": "/classic/uglyduckling/say-p4-duckling.wav",
+            "line": "아무도 나를 좋아하지 않아…"
+          }
+        ]
+      },
+      {
+        "text": "어느 날 밤, 아기 오리는 조용히 둥지를 떠났어요.\n\"내가 없어지면 다들 편해질 거야.\"\n달빛 아래 홀로 뒤뚱뒤뚱 걸어갔답니다.",
+        "image": "/classic/uglyduckling/p5.webp",
+        "audio": "/classic/uglyduckling/narr-p5.mp3",
+        "hotspots": [
+          {
+            "label": "duckling",
+            "box": [
+              300,
+              300,
+              800,
+              700
+            ],
+            "audio": "/classic/uglyduckling/say-p5-duckling.wav",
+            "line": "내가 없어지면 다들 편해질 거야…"
+          }
+        ]
+      },
+      {
+        "text": "넓은 늪에 도착했지만\n그곳의 새들도 아기 오리를 반겨 주지 않았어요.\n\"넌 참 이상하게 생겼구나.\"\n아기 오리는 갈대숲에 혼자 숨어 지냈지요.",
+        "image": "/classic/uglyduckling/p6.webp",
+        "audio": "/classic/uglyduckling/narr-p6.mp3"
+      },
+      {
+        "text": "가을이 되던 어느 날, 하늘 위로\n눈처럼 하얗고 커다란 새들이 날아갔어요.\n\"우와… 정말 아름다운 새들이다.\"\n아기 오리는 한참 동안 하늘만 바라보았답니다.",
+        "image": "/classic/uglyduckling/p7.webp",
+        "audio": "/classic/uglyduckling/narr-p7.mp3",
+        "hotspots": [
+          {
+            "label": "duckling",
+            "box": [
+              550,
+              300,
+              900,
+              700
+            ],
+            "audio": "/classic/uglyduckling/say-p7-duckling.wav",
+            "line": "우와… 정말 아름다운 새들이다."
+          }
+        ]
+      },
+      {
+        "text": "곧 차가운 겨울이 왔어요.\n호수가 꽁꽁 얼고 눈보라가 몰아쳤지요.\n아기 오리는 갈대숲에서 몸을 웅크리고\n춥고 긴 겨울을 꿋꿋이 견뎠어요.",
+        "image": "/classic/uglyduckling/p8.webp",
+        "audio": "/classic/uglyduckling/narr-p8.mp3",
+        "hotspots": [
+          {
+            "label": "duckling",
+            "box": [
+              400,
+              300,
+              850,
+              700
+            ],
+            "audio": "/classic/uglyduckling/say-p8-duckling.wav",
+            "line": "춥지만 꾹 참을 수 있어!"
+          }
+        ]
+      },
+      {
+        "text": "드디어 얼음이 녹고 봄이 왔어요!\n따뜻한 햇살에 아기 오리는 기지개를 켰지요.\n날개를 펼치자 — 어라?\n몸이 가뿐하게 하늘로 떠올랐어요!",
+        "image": "/classic/uglyduckling/p9.webp",
+        "audio": "/classic/uglyduckling/narr-p9.mp3",
+        "hotspots": [
+          {
+            "label": "duckling",
+            "box": [
+              300,
+              300,
+              800,
+              700
+            ],
+            "audio": "/classic/uglyduckling/say-p9-duckling.wav",
+            "line": "어라? 몸이 두둥실 떠올라!"
+          }
+        ]
+      },
+      {
+        "text": "호수에 내려앉으니, 저 멀리서\n그 아름다운 하얀 새들이 헤엄쳐 왔어요.\n\"나 같은 미운 오리를 쫓아내면 어떡하지…\"\n그래도 용기를 내어 천천히 다가갔지요.",
+        "image": "/classic/uglyduckling/p10.webp",
+        "audio": "/classic/uglyduckling/narr-p10.mp3"
+      },
+      {
+        "text": "그때, 맑은 물에 비친 자기 모습을 본 순간 —\n\"이게… 나라고?\"\n물속에는 눈처럼 하얗고 우아한\n백조 한 마리가 있었답니다!",
+        "image": "/classic/uglyduckling/p11.webp",
+        "audio": "/classic/uglyduckling/narr-p11.mp3",
+        "hotspots": [
+          {
+            "label": "duckling",
+            "box": [
+              250,
+              300,
+              800,
+              700
+            ],
+            "audio": "/classic/uglyduckling/say-p11-duckling.wav",
+            "line": "이게 나라고? 내가 백조였어!"
+          }
+        ]
+      },
+      {
+        "text": "\"어서 와, 우리랑 똑같은 백조구나!\"\n백조들이 다정하게 아기 백조를 감쌌어요.\n호숫가 아이들도 소리쳤지요.\n\"저기 새로 온 백조가 제일 예쁘다!\"",
+        "image": "/classic/uglyduckling/p12.webp",
+        "audio": "/classic/uglyduckling/narr-p12.mp3",
+        "hotspots": [
+          {
+            "label": "swan",
+            "box": [
+              300,
+              250,
+              750,
+              650
+            ],
+            "audio": "/classic/uglyduckling/say-p12-swan.wav",
+            "line": "어서 와, 우리랑 똑같은 백조구나!"
+          }
+        ]
+      },
+      {
+        "text": "미운 오리 새끼는 이제 알았어요.\n다르게 생긴 게 아니라, 특별하게 태어난 거였다는 걸요.\n아기 백조는 눈부신 날개를 활짝 펴고\n파란 하늘을 훨훨 날았답니다.",
+        "image": "/classic/uglyduckling/p13.webp",
+        "audio": "/classic/uglyduckling/narr-p13.mp3",
+        "hotspots": [
+          {
+            "label": "duckling",
+            "box": [
+              250,
+              300,
+              750,
+              700
+            ],
+            "audio": "/classic/uglyduckling/say-p13-duckling.wav",
+            "line": "나는 특별하게 태어난 거였어!"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "classic-redridinghood",
+    "lang": "ko",
+    "title": "빨간 모자",
+    "summary": "숲속에서 만난 수상한 늑대와 씩씩한 빨간 모자 이야기",
+    "narrator": "tc-seohyeon",
+    "pages": [
+      {
+        "text": "옛날 어느 마을에 귀여운 여자아이가 살았어요.\n할머니가 만들어 주신 빨간 모자를 늘 쓰고 다녀서\n다들 '빨간 모자'라고 불렀답니다.",
+        "image": "/classic/redridinghood/p1.webp",
+        "audio": "/classic/redridinghood/narr-p1.mp3",
+        "hotspots": [
+          {
+            "label": "redhood",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/classic/redridinghood/say-p1-redhood.wav",
+            "line": "안녕! 나는 빨간 모자야!"
+          }
+        ]
+      },
+      {
+        "text": "어느 날 엄마가 바구니를 건네며 말했어요.\n\"숲 건너 할머니 댁에 이 빵과 수프를 갖다 드리렴.\n길에서 한눈팔지 말고, 곧장 가야 한다!\"\n\"네, 엄마! 다녀올게요!\"",
+        "image": "/classic/redridinghood/p2.webp",
+        "audio": "/classic/redridinghood/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "mother",
+            "box": [
+              250,
+              150,
+              800,
+              520
+            ],
+            "audio": "/classic/redridinghood/say-p2-mother.wav",
+            "line": "길에서 한눈팔면 안 된다!"
+          }
+        ]
+      },
+      {
+        "text": "숲길을 걷던 빨간 모자 앞에\n커다란 늑대가 스윽 나타났어요.\n\"안녕, 꼬마야. 어디 가는 길이니?\"\n\"숲 건너 할머니 댁에 가요.\"",
+        "image": "/classic/redridinghood/p3.webp",
+        "audio": "/classic/redridinghood/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              250,
+              500,
+              850,
+              900
+            ],
+            "audio": "/classic/redridinghood/say-p3-wolf.wav",
+            "line": "안녕, 꼬마야. 어디 가는 길이니?"
+          },
+          {
+            "label": "redhood",
+            "box": [
+              350,
+              100,
+              850,
+              450
+            ],
+            "audio": "/classic/redridinghood/say-p3-redhood.wav",
+            "line": "숲 건너 할머니 댁에 가요!"
+          }
+        ]
+      },
+      {
+        "text": "늑대는 음흉하게 씩 웃으며 말했지요.\n\"저기 예쁜 꽃이 많던데,\n할머니께 꽃다발도 만들어 가면 어떠니?\"\n\"어머, 좋은 생각이에요!\"",
+        "image": "/classic/redridinghood/p4.webp",
+        "audio": "/classic/redridinghood/narr-p4.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              250,
+              500,
+              850,
+              900
+            ],
+            "audio": "/classic/redridinghood/say-p4-wolf.wav",
+            "line": "예쁜 꽃도 꺾어 가면 어떠니?"
+          }
+        ]
+      },
+      {
+        "text": "빨간 모자가 꽃을 꺾는 사이,\n늑대는 지름길로 쌩 달려가\n할머니 집 문을 똑똑 두드렸어요.",
+        "image": "/classic/redridinghood/p5.webp",
+        "audio": "/classic/redridinghood/narr-p5.mp3"
+      },
+      {
+        "text": "\"할머니, 저예요. 빨간 모자예요.\"\n늑대가 가는 목소리를 흉내 내자 문이 열렸지요.\n늑대는 할머니를 한입에 꿀꺽 삼키고는\n할머니 옷을 입고 침대에 쏙 누웠답니다.",
+        "image": "/classic/redridinghood/p6.webp",
+        "audio": "/classic/redridinghood/narr-p6.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              250,
+              350,
+              850,
+              750
+            ],
+            "audio": "/classic/redridinghood/say-p6-wolf.wav",
+            "line": "할머니, 저예요. 빨간 모자예요~"
+          }
+        ]
+      },
+      {
+        "text": "잠시 후, 빨간 모자가 도착했어요.\n\"할머니, 저 왔어요!\"\n침대에 누운 할머니가 어쩐지 이상해 보였지요.\n빨간 모자는 고개를 갸웃갸웃했어요.",
+        "image": "/classic/redridinghood/p7.webp",
+        "audio": "/classic/redridinghood/narr-p7.mp3"
+      },
+      {
+        "text": "\"할머니, 귀가 왜 이렇게 커요?\"\n\"네 말을 잘 들으려고 그렇지.\"\n\"할머니, 눈은 왜 이렇게 커요?\"\n\"너를 잘 보려고 그렇지.\"",
+        "image": "/classic/redridinghood/p8.webp",
+        "audio": "/classic/redridinghood/narr-p8.mp3",
+        "hotspots": [
+          {
+            "label": "redhood",
+            "box": [
+              300,
+              100,
+              850,
+              450
+            ],
+            "audio": "/classic/redridinghood/say-p8-redhood.wav",
+            "line": "할머니, 귀가 왜 이렇게 커요?"
+          },
+          {
+            "label": "wolf",
+            "box": [
+              200,
+              550,
+              750,
+              950
+            ],
+            "audio": "/classic/redridinghood/say-p8-wolf.wav",
+            "line": "네 말을 잘 들으려고 그렇지."
+          }
+        ]
+      },
+      {
+        "text": "\"그런데… 입은 왜 이렇게 커요?\"\n\"그야 너를 꿀꺽 삼키려고 그렇지!\"\n늑대가 벌떡 일어나 빨간 모자도\n한입에 꿀꺽 삼켜 버렸어요!",
+        "image": "/classic/redridinghood/p9.webp",
+        "audio": "/classic/redridinghood/narr-p9.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              200,
+              400,
+              850,
+              900
+            ],
+            "audio": "/classic/redridinghood/say-p9-wolf.wav",
+            "line": "너를 꿀꺽 삼키려고 그렇지!"
+          }
+        ]
+      },
+      {
+        "text": "배가 빵빵해진 늑대는\n침대에 벌렁 누워 드르렁드르렁 잠이 들었어요.\n마침 숲을 지나던 사냥꾼 아저씨가\n요란한 코골이 소리를 듣고 집 안을 들여다봤지요.",
+        "image": "/classic/redridinghood/p10.webp",
+        "audio": "/classic/redridinghood/narr-p10.mp3",
+        "hotspots": [
+          {
+            "label": "hunter",
+            "box": [
+              200,
+              600,
+              800,
+              950
+            ],
+            "audio": "/classic/redridinghood/say-p10-hunter.wav",
+            "line": "아니, 배가 저렇게 빵빵한 늑대라니!"
+          }
+        ]
+      },
+      {
+        "text": "\"아니, 배가 저렇게 빵빵한 늑대라니!\"\n사냥꾼 아저씨가 늑대의 배를 살살 열어 보니 —\n할머니와 빨간 모자가 폴짝 뛰어나왔어요!\n\"아이고, 살았다! 고맙습니다!\"",
+        "image": "/classic/redridinghood/p11.webp",
+        "audio": "/classic/redridinghood/narr-p11.mp3",
+        "hotspots": [
+          {
+            "label": "grandma",
+            "box": [
+              300,
+              350,
+              850,
+              700
+            ],
+            "audio": "/classic/redridinghood/say-p11-grandma.wav",
+            "line": "아이고, 고마워요. 사냥꾼 양반!"
+          }
+        ]
+      },
+      {
+        "text": "잠에서 깬 늑대는 사냥꾼 아저씨의 호통에\n걸음아 나 살려라 하고 숲 저 멀리 도망쳤어요.\n그 뒤로 다시는 마을 근처에 얼씬도 못 했답니다.",
+        "image": "/classic/redridinghood/p12.webp",
+        "audio": "/classic/redridinghood/narr-p12.mp3",
+        "hotspots": [
+          {
+            "label": "wolf",
+            "box": [
+              250,
+              100,
+              700,
+              500
+            ],
+            "audio": "/classic/redridinghood/say-p12-wolf.wav",
+            "line": "걸음아 나 살려라!"
+          }
+        ]
+      },
+      {
+        "text": "빨간 모자는 할머니와 따뜻한 수프를 나눠 먹으며 약속했어요.\n\"이제 길에서 한눈팔지 않을게요.\n모르는 사람 말도 함부로 믿지 않을 거예요!\"\n할머니는 빨간 모자를 꼭 안아 주었답니다.",
+        "image": "/classic/redridinghood/p13.webp",
+        "audio": "/classic/redridinghood/narr-p13.mp3",
+        "hotspots": [
+          {
+            "label": "grandma",
+            "box": [
+              250,
+              500,
+              850,
+              850
+            ],
+            "audio": "/classic/redridinghood/say-p13-grandma.wav",
+            "line": "우리 강아지, 이제 안심이구나."
+          },
+          {
+            "label": "redhood",
+            "box": [
+              300,
+              100,
+              850,
+              500
+            ],
+            "audio": "/classic/redridinghood/say-p13-redhood.wav",
+            "line": "모르는 사람 말은 함부로 믿지 않을 거예요!"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "classic-bremen",
+    "lang": "ko",
+    "title": "브레멘 음악대",
+    "summary": "늙었다고 쫓겨난 네 동물 친구가 힘을 합쳐 도둑을 물리치는 유쾌한 이야기",
+    "narrator": "tc-mongsil",
+    "pages": [
+      {
+        "text": "옛날 어느 마을에 늙은 당나귀가 살았어요.\n오랫동안 열심히 일했지만, 주인은 이제 늙었다며\n당나귀를 내쫓으려 했지요.\n\"흥, 그렇다면 브레멘에 가서 음악가가 될 테야!\"",
+        "image": "/classic/bremen/p1.webp",
+        "audio": "/classic/bremen/narr-p1.mp3",
+        "hotspots": [
+          {
+            "label": "donkey",
+            "box": [
+              300,
+              150,
+              850,
+              600
+            ],
+            "audio": "/classic/bremen/say-p1-donkey.wav",
+            "line": "브레멘에 가서 음악가가 될 테야!"
+          }
+        ]
+      },
+      {
+        "text": "길을 가던 당나귀는 축 처진 사냥개를 만났어요.\n\"나는 늙어서 사냥을 못 한다고 쫓겨났어…\"\n\"잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!\" \"멍멍! 좋아!\"",
+        "image": "/classic/bremen/p2.webp",
+        "audio": "/classic/bremen/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "dog",
+            "box": [
+              400,
+              550,
+              850,
+              900
+            ],
+            "audio": "/classic/bremen/say-p2-dog.wav",
+            "line": "나는 늙어서 쫓겨났어… 멍멍."
+          }
+        ]
+      },
+      {
+        "text": "조금 더 가니 담벼락 위에 시무룩한 고양이가 있었어요.\n\"쥐를 못 잡는다고 집에서 쫓겨났다냥…\"\n\"우리랑 같이 가자! 너는 노래를 하면 되겠어!\"\n\"야옹~ 나 노래 잘한다냥!\"",
+        "image": "/classic/bremen/p3.webp",
+        "audio": "/classic/bremen/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "cat",
+            "box": [
+              250,
+              500,
+              700,
+              900
+            ],
+            "audio": "/classic/bremen/say-p3-cat.wav",
+            "line": "야옹~ 나 노래 잘한다냥!"
+          }
+        ]
+      },
+      {
+        "text": "농장 앞을 지나는데 수탉이 목청껏 울고 있었어요.\n\"꼬끼오! 나는 내일 국거리가 될 신세라고!\"\n\"그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 악단의 나팔이야!\"",
+        "image": "/classic/bremen/p4.webp",
+        "audio": "/classic/bremen/narr-p4.mp3",
+        "hotspots": [
+          {
+            "label": "rooster",
+            "box": [
+              200,
+              450,
+              700,
+              850
+            ],
+            "audio": "/classic/bremen/say-p4-rooster.wav",
+            "line": "꼬끼오! 나도 데려가 줘!"
+          }
+        ]
+      },
+      {
+        "text": "당나귀, 개, 고양이, 수탉.\n넷은 신이 나서 숲길을 걸었어요.\n하지만 날이 저물고 배가 고파졌지요.\n그때 멀리서 반짝, 불빛이 보였어요.",
+        "image": "/classic/bremen/p5.webp",
+        "audio": "/classic/bremen/narr-p5.mp3"
+      },
+      {
+        "text": "불빛을 따라가니 작은 오두막이 나왔어요.\n창문 안을 들여다보니 — 세상에!\n식탁 가득 맛있는 음식이 차려져 있고,\n무섭게 생긴 도둑들이 둘러앉아 있었지요.",
+        "image": "/classic/bremen/p6.webp",
+        "audio": "/classic/bremen/narr-p6.mp3"
+      },
+      {
+        "text": "\"저 음식을 어떻게 먹지?\"\n당나귀가 꾀를 냈어요.\n\"우리 다 같이 무대에 서는 거야!\"\n당나귀 위에 개가, 개 위에 고양이가,\n고양이 위에 수탉이 차곡차곡 올라탔지요.",
+        "image": "/classic/bremen/p7.webp",
+        "audio": "/classic/bremen/narr-p7.mp3",
+        "hotspots": [
+          {
+            "label": "donkey",
+            "box": [
+              450,
+              300,
+              900,
+              700
+            ],
+            "audio": "/classic/bremen/say-p7-donkey.wav",
+            "line": "자, 내 등 위로 올라와!"
+          }
+        ]
+      },
+      {
+        "text": "\"자, 브레멘 음악대 첫 공연이다! 하나, 둘, 셋!\"\n히호! 멍멍! 야옹! 꼬끼오오!\n넷이 한꺼번에 목청껏 노래하며\n창문을 와장창 뚫고 뛰어들었어요!",
+        "image": "/classic/bremen/p8.webp",
+        "audio": "/classic/bremen/narr-p8.mp3",
+        "hotspots": [
+          {
+            "label": "donkey",
+            "box": [
+              250,
+              250,
+              850,
+              750
+            ],
+            "audio": "/classic/bremen/say-p8-donkey.wav",
+            "line": "히호! 멍멍! 야옹! 꼬끼오!"
+          }
+        ]
+      },
+      {
+        "text": "\"으악! 괴물이다!\"\n\"도깨비가 나타났다아!\"\n도둑들은 혼비백산해서\n신발도 못 신고 숲으로 도망쳤답니다.",
+        "image": "/classic/bremen/p9.webp",
+        "audio": "/classic/bremen/narr-p9.mp3",
+        "hotspots": [
+          {
+            "label": "robber",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/classic/bremen/say-p9-robber.wav",
+            "line": "으악! 괴물이다! 도망쳐!"
+          }
+        ]
+      },
+      {
+        "text": "\"공연 대성공!\"\n네 친구는 식탁에 둘러앉아\n배가 빵빵해지도록 맛있게 먹었어요.\n그리고 각자 편한 자리에서 쿨쿨 잠이 들었지요.",
+        "image": "/classic/bremen/p10.webp",
+        "audio": "/classic/bremen/narr-p10.mp3"
+      },
+      {
+        "text": "한밤중, 도둑 하나가 살금살금 돌아왔어요.\n어둠 속에서 고양이 눈이 반짝!\n\"할퀴어라!\" \"물어라!\" \"뒷발질!\"\n\"꼬끼오오오!\" 수탉의 나팔 소리까지!",
+        "image": "/classic/bremen/p11.webp",
+        "audio": "/classic/bremen/narr-p11.mp3",
+        "hotspots": [
+          {
+            "label": "cat",
+            "box": [
+              250,
+              300,
+              800,
+              700
+            ],
+            "audio": "/classic/bremen/say-p11-cat.wav",
+            "line": "감히 우리 집에 들어와? 냐아옹!"
+          }
+        ]
+      },
+      {
+        "text": "도둑은 걸음아 나 살려라 도망치며 외쳤어요.\n\"저 집엔 무서운 괴물이 산다!\n손톱으로 할퀴고, 이빨로 물고, 방망이로 때리고,\n지붕에서 소리까지 질러!\" 도둑들은 다시는 오지 않았답니다.",
+        "image": "/classic/bremen/p12.webp",
+        "audio": "/classic/bremen/narr-p12.mp3",
+        "hotspots": [
+          {
+            "label": "robber",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/classic/bremen/say-p12-robber.wav",
+            "line": "저 집엔 무서운 괴물이 산다!"
+          }
+        ]
+      },
+      {
+        "text": "네 친구는 그 오두막이 아주 마음에 들었어요.\n브레멘까지 갈 필요도 없어졌지요.\n낮에는 햇볕을 쬐고, 저녁이면 다 같이 —\n히호! 멍멍! 야옹! 꼬끼오!\n숲속 음악회를 열며 오래오래 행복하게 살았답니다.",
+        "image": "/classic/bremen/p13.webp",
+        "audio": "/classic/bremen/narr-p13.mp3",
+        "hotspots": [
+          {
+            "label": "rooster",
+            "box": [
+              200,
+              300,
+              750,
+              750
+            ],
+            "audio": "/classic/bremen/say-p13-rooster.wav",
+            "line": "브레멘 음악대, 오늘도 공연 시작!"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "classic-antgrasshopper",
+    "lang": "ko",
+    "title": "개미와 베짱이",
+    "summary": "여름 내내 일한 개미와 노래한 베짱이가 함께 겨울을 나는 이야기",
+    "narrator": "tc-kwonil",
+    "pages": [
+      {
+        "text": "쨍쨍한 여름날, 개미들은 부지런히 일했어요.\n영차, 영차. 줄지어 낟알을 나르고\n땀을 뻘뻘 흘리며 곳간을 채웠지요.",
+        "image": "/classic/antgrasshopper/p1.webp",
+        "audio": "/classic/antgrasshopper/narr-p1.mp3",
+        "hotspots": [
+          {
+            "label": "ant",
+            "box": [
+              400,
+              200,
+              850,
+              600
+            ],
+            "audio": "/classic/antgrasshopper/say-p1-ant.wav",
+            "line": "영차, 영차! 겨울을 준비하자!"
+          }
+        ]
+      },
+      {
+        "text": "풀잎 위에서는 베짱이가 바이올린을 켜고 있었어요.\n\"찌르르 찌르르~ 개미야, 이 좋은 여름에 왜 일만 하니?\"\n\"겨울이 오면 먹을 게 없어지거든.\n미리미리 모아 두는 거야.\"",
+        "image": "/classic/antgrasshopper/p2.webp",
+        "audio": "/classic/antgrasshopper/narr-p2.mp3",
+        "hotspots": [
+          {
+            "label": "grasshopper",
+            "box": [
+              200,
+              400,
+              700,
+              850
+            ],
+            "audio": "/classic/antgrasshopper/say-p2-grasshopper.wav",
+            "line": "이 좋은 여름에 왜 일만 하니?"
+          }
+        ]
+      },
+      {
+        "text": "\"에이, 겨울은 아직 멀었는걸!\"\n베짱이는 시원한 그늘에서 신나게 연주했어요.\n찌르르 찌르르~ 숲 친구들이 모여들어\n베짱이의 노래를 듣고 어깨를 들썩였지요.",
+        "image": "/classic/antgrasshopper/p3.webp",
+        "audio": "/classic/antgrasshopper/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "grasshopper",
+            "box": [
+              250,
+              300,
+              800,
+              700
+            ],
+            "audio": "/classic/antgrasshopper/say-p3-grasshopper.wav",
+            "line": "찌르르 찌르르~ 랄랄라~"
+          }
+        ]
+      },
+      {
+        "text": "어느새 가을이 왔어요.\n개미들의 곳간은 낟알로 가득 찼지요.\n베짱이는 문득 서늘한 바람에 몸을 떨었지만,\n\"아직 괜찮아!\" 하고 또 노래를 불렀답니다.",
+        "image": "/classic/antgrasshopper/p4.webp",
+        "audio": "/classic/antgrasshopper/narr-p4.mp3"
+      },
+      {
+        "text": "드디어 하얀 겨울이 왔어요.\n쌩쌩 눈보라가 몰아치고 온 세상이 꽁꽁 얼었지요.\n먹을 것도, 따뜻한 집도 없는 베짱이는\n바이올린을 안고 덜덜 떨었어요.",
+        "image": "/classic/antgrasshopper/p5.webp",
+        "audio": "/classic/antgrasshopper/narr-p5.mp3",
+        "hotspots": [
+          {
+            "label": "grasshopper",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/classic/antgrasshopper/say-p5-grasshopper.wav",
+            "line": "너무 춥고 배가 고파…"
+          }
+        ]
+      },
+      {
+        "text": "베짱이는 눈길을 헤치고 개미집을 찾아갔어요.\n똑, 똑, 똑.\n\"개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?\"",
+        "image": "/classic/antgrasshopper/p6.webp",
+        "audio": "/classic/antgrasshopper/narr-p6.mp3",
+        "hotspots": [
+          {
+            "label": "grasshopper",
+            "box": [
+              300,
+              400,
+              850,
+              800
+            ],
+            "audio": "/classic/antgrasshopper/say-p6-grasshopper.wav",
+            "line": "개미야, 하룻밤만 재워 줄 수 있니?"
+          }
+        ]
+      },
+      {
+        "text": "문이 활짝 열렸어요.\n\"어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!\"\n개미들은 따뜻한 수프를 내어 주고\n난롯가 제일 좋은 자리를 내주었지요.",
+        "image": "/classic/antgrasshopper/p7.webp",
+        "audio": "/classic/antgrasshopper/narr-p7.mp3",
+        "hotspots": [
+          {
+            "label": "ant",
+            "box": [
+              300,
+              150,
+              800,
+              550
+            ],
+            "audio": "/classic/antgrasshopper/say-p7-ant.wav",
+            "line": "어서 들어와! 몸이 꽁꽁 얼었네!"
+          }
+        ]
+      },
+      {
+        "text": "베짱이는 고개를 푹 숙였어요.\n\"너희가 일할 때 나는 놀기만 했는걸…\n이 수프를 얻어먹을 자격이 없어.\"",
+        "image": "/classic/antgrasshopper/p8.webp",
+        "audio": "/classic/antgrasshopper/narr-p8.mp3"
+      },
+      {
+        "text": "그러자 꼬마 개미가 말했어요.\n\"무슨 소리야! 여름에 낟알을 나를 때\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?\"",
+        "image": "/classic/antgrasshopper/p9.webp",
+        "audio": "/classic/antgrasshopper/narr-p9.mp3",
+        "hotspots": [
+          {
+            "label": "littleant",
+            "box": [
+              400,
+              200,
+              850,
+              550
+            ],
+            "audio": "/classic/antgrasshopper/say-p9-littleant.wav",
+            "line": "베짱이 아저씨, 연주해 줄래요?"
+          }
+        ]
+      },
+      {
+        "text": "베짱이는 눈물을 닦고 바이올린을 들었어요.\n찌르르 찌르르~ 랄랄라~\n개미집에서 겨울 음악회가 열렸지요.\n개미들은 밤늦도록 덩실덩실 춤을 추었답니다.",
+        "image": "/classic/antgrasshopper/p10.webp",
+        "audio": "/classic/antgrasshopper/narr-p10.mp3",
+        "hotspots": [
+          {
+            "label": "grasshopper",
+            "box": [
+              250,
+              300,
+              800,
+              700
+            ],
+            "audio": "/classic/antgrasshopper/say-p10-grasshopper.wav",
+            "line": "자, 겨울 음악회를 시작할게!"
+          }
+        ]
+      },
+      {
+        "text": "봄이 오자 베짱이가 말했어요.\n\"올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘.\"\n개미들과 베짱이는 함께 낟알을 나르고,\n쉬는 시간이면 다 같이 노래를 불렀지요.",
+        "image": "/classic/antgrasshopper/p11.webp",
+        "audio": "/classic/antgrasshopper/narr-p11.mp3",
+        "hotspots": [
+          {
+            "label": "grasshopper",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/classic/antgrasshopper/say-p11-grasshopper.wav",
+            "line": "일하는 것도 신나는걸!"
+          }
+        ]
+      },
+      {
+        "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 음악이 흘러나왔답니다.\n찌르르 찌르르~ 랄랄라~",
+        "image": "/classic/antgrasshopper/p12.webp",
+        "audio": "/classic/antgrasshopper/narr-p12.mp3"
+      }
+    ]
+  },
+  {
+    "id": "classic-twomice",
+    "lang": "ko",
+    "title": "시골 쥐와 도시 쥐",
+    "summary": "화려한 도시와 포근한 시골 — 서로 다른 두 쥐의 즐거운 초대 이야기",
+    "narrator": "tc-sanghyun",
+    "pages": [
+      {
+        "text": "보리밭 옆 아늑한 굴속에 시골 쥐가 살았어요.\n어느 날 도시에 사는 사촌에게 편지를 썼지요.\n\"사촌아, 놀러 오렴! 맛있는 저녁을 대접할게.\"",
+        "image": "/classic/twomice/p1.webp",
+        "audio": "/classic/twomice/narr-p1.mp3",
+        "hotspots": [
+          {
+            "label": "countrymouse",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/classic/twomice/say-p1-countrymouse.wav",
+            "line": "사촌아, 놀러 오렴!"
+          }
+        ]
+      },
+      {
+        "text": "도시 쥐가 시골에 도착했어요.\n시골 쥐는 정성껏 밥상을 차렸지요.\n고소한 도토리, 따끈한 보리죽, 달콤한 산딸기.\n\"차린 건 없지만 많이 먹으렴!\"",
+        "image": "/classic/twomice/p2.webp",
+        "audio": "/classic/twomice/narr-p2.mp3"
+      },
+      {
+        "text": "도시 쥐는 깨작깨작 먹더니 한숨을 쉬었어요.\n\"넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 진수성찬이 가득한데!\n나랑 같이 가 보자!\"",
+        "image": "/classic/twomice/p3.webp",
+        "audio": "/classic/twomice/narr-p3.mp3",
+        "hotspots": [
+          {
+            "label": "citymouse",
+            "box": [
+              300,
+              150,
+              800,
+              550
+            ],
+            "audio": "/classic/twomice/say-p3-citymouse.wav",
+            "line": "도시에 가면 진수성찬이 가득해!"
+          }
+        ]
+      },
+      {
+        "text": "둘은 함께 도시로 갔어요.\n\"우와아…\"\n반짝반짝 불빛이 가득한 커다란 저택!\n시골 쥐의 눈이 휘둥그레졌지요.",
+        "image": "/classic/twomice/p4.webp",
+        "audio": "/classic/twomice/narr-p4.mp3"
+      },
+      {
+        "text": "식탁 위에는 정말 잔칫상이 차려져 있었어요.\n폭신한 케이크, 노란 치즈, 보랏빛 포도!\n\"자, 마음껏 먹으렴!\"\n시골 쥐는 침이 꼴깍 넘어갔답니다.",
+        "image": "/classic/twomice/p5.webp",
+        "audio": "/classic/twomice/narr-p5.mp3",
+        "hotspots": [
+          {
+            "label": "countrymouse",
+            "box": [
+              400,
+              150,
+              900,
+              500
+            ],
+            "audio": "/classic/twomice/say-p5-countrymouse.wav",
+            "line": "우와, 정말 굉장한 잔칫상이다!"
+          }
+        ]
+      },
+      {
+        "text": "그런데 케이크를 한 입 베어 물려는 순간 —\n쿵! 쿵! 문소리와 함께 사람이 들어왔어요!\n\"숨어!\"\n둘은 후다닥 식탁 밑으로 뛰어내렸지요.",
+        "image": "/classic/twomice/p6.webp",
+        "audio": "/classic/twomice/narr-p6.mp3",
+        "hotspots": [
+          {
+            "label": "citymouse",
+            "box": [
+              300,
+              500,
+              850,
+              850
+            ],
+            "audio": "/classic/twomice/say-p6-citymouse.wav",
+            "line": "숨어! 사람이 왔어!"
+          }
+        ]
+      },
+      {
+        "text": "사람이 나가고, 살금살금 다시 식탁 위로.\n치즈를 막 집었는데 이번에는 —\n\"야아옹!\"\n번쩍이는 눈의 고양이가 나타났어요!",
+        "image": "/classic/twomice/p7.webp",
+        "audio": "/classic/twomice/narr-p7.mp3",
+        "hotspots": [
+          {
+            "label": "countrymouse",
+            "box": [
+              400,
+              500,
+              900,
+              850
+            ],
+            "audio": "/classic/twomice/say-p7-countrymouse.wav",
+            "line": "으악! 고양이다!"
+          }
+        ]
+      },
+      {
+        "text": "둘은 쥐구멍으로 쏙 숨었어요.\n시골 쥐의 가슴이 콩닥콩닥 뛰었지요.\n\"괜찮아, 늘 있는 일이야. 금방 익숙해져.\"\n도시 쥐는 아무렇지 않게 수염을 다듬었답니다.",
+        "image": "/classic/twomice/p8.webp",
+        "audio": "/classic/twomice/narr-p8.mp3",
+        "hotspots": [
+          {
+            "label": "citymouse",
+            "box": [
+              350,
+              500,
+              850,
+              850
+            ],
+            "audio": "/classic/twomice/say-p8-citymouse.wav",
+            "line": "괜찮아, 금방 익숙해져."
+          }
+        ]
+      },
+      {
+        "text": "시골 쥐는 곰곰이 생각했어요.\n'케이크는 정말 달콤해.\n하지만 한 입 먹을 때마다 가슴이 조마조마한걸…'",
+        "image": "/classic/twomice/p9.webp",
+        "audio": "/classic/twomice/narr-p9.mp3"
+      },
+      {
+        "text": "\"사촌아, 초대해 줘서 정말 고마워.\n그런데 나는 마음 편히 먹는 보리죽이 더 좋아.\n우리 집 별빛이 그리워졌어.\"\n시골 쥐는 도시 쥐를 꼭 안아 주었어요.",
+        "image": "/classic/twomice/p10.webp",
+        "audio": "/classic/twomice/narr-p10.mp3",
+        "hotspots": [
+          {
+            "label": "countrymouse",
+            "box": [
+              300,
+              150,
+              850,
+              550
+            ],
+            "audio": "/classic/twomice/say-p10-countrymouse.wav",
+            "line": "나는 마음 편한 우리 집이 좋아."
+          }
+        ]
+      },
+      {
+        "text": "시골로 돌아온 시골 쥐는\n보리죽을 한 그릇 가득 끓였어요.\n풀벌레 소리, 반짝이는 별빛.\n\"아아, 역시 우리 집이 최고야.\"",
+        "image": "/classic/twomice/p11.webp",
+        "audio": "/classic/twomice/narr-p11.mp3",
+        "hotspots": [
+          {
+            "label": "countrymouse",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/classic/twomice/say-p11-countrymouse.wav",
+            "line": "역시 우리 집이 최고야!"
+          }
+        ]
+      },
+      {
+        "text": "그 뒤로 두 쥐는 자주 편지를 주고받았어요.\n\"여름엔 시골로 산딸기 먹으러 오렴!\"\n\"겨울엔 도시 구경 시켜 줄게!\"\n서로 다른 집에서, 둘은 각자 행복했답니다.",
+        "image": "/classic/twomice/p12.webp",
+        "audio": "/classic/twomice/narr-p12.mp3"
+      }
+    ]
+  },
+  {
+    "id": "classic-turnip",
+    "hidden": true,
+    "lang": "ko",
+    "title": "커다란 순무",
+    "summary": "쑥 안 뽑히는 커다란 순무를 온 식구와 동물들이 힘을 합쳐 뽑는 이야기",
+    "narrator": "tc-woony",
+    "pages": [
+      {
+        "text": "옛날 어느 밭에, 할아버지가 순무 씨앗을 심었어요.\n\"쑥쑥 자라라, 크고 달콤한 순무야!\"\n순무는 무럭무럭 자라 어마어마하게 커졌지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "드디어 순무를 뽑는 날.\n할아버지가 순무를 잡고 힘껏 당겼어요.\n\"영차! 영차!\"\n그런데 순무는 꿈쩍도 하지 않았어요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "할아버지가 할머니를 불렀어요.\n할머니가 할아버지를 잡고, 할아버지가 순무를 잡고 —\n\"영차! 영차!\"\n그래도 순무는 쑥— 안 뽑혔지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "할머니가 손녀를 불렀어요.\n손녀가 할머니를, 할머니가 할아버지를, 할아버지가 순무를 —\n\"영차! 영차!\"\n그래도 순무는 꼼짝도 안 했어요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "손녀가 강아지를 불렀어요.\n강아지가 손녀를, 손녀가 할머니를, 할머니가 할아버지를,\n할아버지가 순무를 잡고 — \"영차! 영차!\"\n그래도 순무는 쑥— 안 뽑혔답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "강아지가 고양이를 불렀어요.\n고양이가 강아지를, 강아지가 손녀를, 손녀가 할머니를,\n할머니가 할아버지를, 할아버지가 순무를 — \"영차! 영차!\"\n그래도 순무는 그대로였지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "고양이가 조그만 생쥐를 불렀어요.\n\"우리를 도와줄래?\" \"찍찍! 좋아요!\"\n생쥐가 고양이를, 고양이가 강아지를, 강아지가 손녀를,\n손녀가 할머니를, 할머니가 할아버지를, 할아버지가 순무를 잡았어요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "모두 함께 있는 힘껏 — \"영차! 영차! 영—차!\"\n그러자 쑤욱! 커다란 순무가 뽑혔어요!\n다들 뒤로 벌러덩 넘어지며 까르르 웃었지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "작은 생쥐 한 마리까지 힘을 보태자 드디어 뽑힌 거예요.\n그날 저녁, 온 식구와 동물들은 둘러앉아\n커다랗고 달콤한 순무로 따끈한 순무 수프를 끓여\n배부르게 나눠 먹으며 오래오래 행복하게 살았답니다.",
+        "image": null,
+        "audio": null
+      }
+    ]
+  },
+  {
+    "id": "classic-goldilocks",
+    "hidden": true,
+    "lang": "ko",
+    "title": "골디락스와 곰 세 마리",
+    "summary": "곰 세 마리의 집에 들어간 골디락스가 딱 맞는 것을 찾아가는 이야기",
+    "narrator": "tc-sua",
+    "pages": [
+      {
+        "text": "옛날 숲속 집에 곰 세 마리가 살았어요.\n커다란 아빠 곰, 중간 엄마 곰, 조그만 아기 곰.\n어느 아침, 곰들은 뜨거운 죽을 식히려고\n숲으로 잠깐 산책을 나갔지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "그때 금발 머리 여자아이 골디락스가 그 집을 발견했어요.\n\"어머, 아무도 없네? 잠깐만 구경해야지.\"\n골디락스는 살금살금 안으로 들어갔어요.\n식탁에는 죽 세 그릇이 놓여 있었지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "골디락스는 큰 그릇의 죽을 한 입 먹었어요.\n\"앗, 너무 뜨거워!\"\n중간 그릇을 먹어 보았어요.\n\"으, 너무 차가워!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "마지막으로 제일 작은 그릇을 먹어 보았어요.\n\"음, 이건 딱 좋아!\"\n골디락스는 아기 곰의 죽을 몽땅 다 먹어 버렸지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "배가 부른 골디락스는 의자에 앉아 쉬려고 했어요.\n큰 의자는 너무 딱딱하고, 중간 의자는 너무 푹신했지요.\n작은 의자에 앉으니 딱 좋았어요.\n그런데 그만 — 우지끈! 의자가 부서지고 말았답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "졸음이 몰려온 골디락스는 침실로 올라갔어요.\n큰 침대는 너무 높고, 중간 침대는 너무 물렁했지요.\n작은 침대에 누우니 딱 좋았어요.\n골디락스는 새근새근 잠이 들고 말았답니다.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "그때 곰 세 마리가 산책에서 돌아왔어요.\n\"누가 내 죽을 먹었지?\" 아빠 곰이 말했어요.\n\"누가 내 죽을 먹었어요?\" 엄마 곰도 말했어요.\n\"누가 내 죽을 몽땅 먹고, 의자도 부쉈어!\" 아기 곰이 울먹였지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "곰들이 침실로 올라가 보니,\n작은 침대에 낯선 아이가 쿨쿨 자고 있었어요.\n\"누가 내 침대에서 자고 있어!\"\n아기 곰의 목소리에 골디락스가 눈을 번쩍 떴지요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "골디락스는 곰 세 마리를 보고 깜짝 놀랐어요.\n\"어멋, 미안해요! 허락도 없이 들어와서…\"\n골디락스는 창문을 넘어 후다닥 집으로 달려갔어요.\n그 뒤로는 남의 집에 함부로 들어가지 않았답니다.",
+        "image": null,
+        "audio": null
+      }
+    ]
+  },
+  {
+    "id": "classic-lionmouse",
+    "hidden": true,
+    "lang": "ko",
+    "title": "사자와 생쥐",
+    "summary": "작은 생쥐를 살려 준 사자가, 그 생쥐 덕분에 그물에서 풀려나는 이야기",
+    "narrator": "tc-kwonil",
+    "pages": [
+      {
+        "text": "어느 더운 날, 커다란 사자가 나무 그늘에서 낮잠을 자고 있었어요.\n그때 조그만 생쥐가 사자 몸 위를 폴짝폴짝 뛰어다녔지요.\n그만 사자가 잠에서 깨고 말았어요.\n\"어흥! 누가 내 잠을 깨웠느냐!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "사자는 앞발로 생쥐를 콱 붙잡았어요.\n\"감히 내 몸 위에서 뛰어다니다니, 널 잡아먹어야겠다!\"\n생쥐는 부들부들 떨며 빌었어요.\n\"사자님, 한 번만 살려 주세요! 언젠가 꼭 은혜를 갚을게요!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "사자는 껄껄 웃었어요.\n\"이 조그만 생쥐가 나를 돕는다고? 하하, 우습구나!\"\n하지만 사자는 마음이 넉넉해서\n생쥐를 놓아주었어요. \"그래, 가거라.\"\n\"고맙습니다! 이 은혜 잊지 않을게요!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "며칠 뒤, 숲에 사냥꾼들이 다녀갔어요.\n사자는 그만 커다란 밧줄 그물에 걸리고 말았지요.\n\"으르렁! 아무리 힘을 써도 빠져나갈 수가 없구나!\"\n사자는 크게 울부짖었어요.",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "그 소리를 들은 생쥐가 한달음에 달려왔어요.\n\"사자님! 제가 도와드릴게요!\"\n생쥐는 날카로운 이빨로 밧줄을 갉기 시작했어요.\n\"사각사각, 사각사각.\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "생쥐가 밧줄을 하나둘 끊어 내자,\n마침내 그물이 툭 풀렸어요!\n사자는 그물에서 쑥 빠져나왔지요.\n\"오, 정말 네가 나를 구해 주었구나!\"",
+        "image": null,
+        "audio": null
+      },
+      {
+        "text": "사자는 조그만 생쥐에게 고개를 숙였어요.\n\"작다고 우습게 본 걸 미안하구나. 정말 고맙다.\"\n\"작은 친구도 큰 도움이 될 수 있는걸요!\"\n그 뒤로 사자와 생쥐는 둘도 없는 친구가 되어\n숲속에서 오래오래 사이좋게 지냈답니다.",
+        "image": null,
+        "audio": null
+      }
+    ]
+  }
+]

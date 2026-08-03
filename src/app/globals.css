@@ -1,3 +1,12 @@
+/*
+  폰트 — 동화책 본문은 아이용이라 둥글고 '얇은' 동글체(Dongle)를 쓴다(무료·오픈소스, OFL).
+  주아체는 둥글지만 획이 두꺼워 본문이 답답했다. 동글체는 같은 둥근 결에 획이 가벼워
+  긴 본문도 부드럽다. Pretendard는 없는 글자·굵기를 받쳐주는 대비용으로 뒤에 둔다.
+  @import는 다른 규칙보다 앞서야 한다. Tailwind v4의 @import "tailwindcss"가 수천 줄로
+  펼쳐지므로, 폰트 import를 그 앞(맨 위)에 둬야 CSS 파싱 에러가 안 난다.
+*/
+@import url("https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&display=swap");
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/variable/pretendardvariable-dynamic-subset.css");
 @import "tailwindcss";
 
 :root {
@@ -8,7 +17,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-noto-sans-kr);
+  --font-sans: "Pretendard Variable", Pretendard;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,6 +31,101 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/*
+  동화책 '안'의 글자 전용 폰트 — 둥근 주아체. UI(버튼·설정 등)는 Pretendard로 두고,
+  책 본문·제목·대사처럼 아이가 읽는 글에만 이 클래스를 붙인다.
+*/
+.font-story {
+  font-family: "Dongle", "Pretendard Variable", Pretendard, system-ui, sans-serif;
+  /* 동글체는 자간이 좁고 글자가 작게 잡혀, 살짝 벌리고 키워야 본문이 편하다. */
+  letter-spacing: 0.01em;
+}
+
+/* 마스코트가 살짝 둥둥 떠다니는 느낌. */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* 컷아웃 배우가 발끝을 축으로 좌우로 기우뚱기우뚱 — 뒤뚱뒤뚱 걷는 느낌. */
+@keyframes waddle {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg) translateY(-1.5%);
+  }
+}
+
+/* 읽어주기 중 삽화가 아주 천천히 숨 쉬듯 커졌다 작아진다 — 정지 그림에
+   생기를 주는 가장 싼 방법. 멀미를 피하려 아주 미세하게(1.015배)만 움직인다. */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.015) translateY(-0.2%);
+  }
+}
+
+/* 말풍선 등장 — 작게 시작해 살짝 넘치게 커졌다 제자리로 (통통 튀는 팝).
+   위치는 바깥 wrapper가 잡으므로 여기선 scale·opacity만 다룬다. */
+@keyframes bubble-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 캐릭터 클릭 반짝이 — 위로 뜨며 커지다 사라진다. */
+@keyframes sparkle-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3) rotate(-15deg);
+    opacity: 0;
+  }
+  35% {
+    transform: translate(-50%, -80%) scale(1.2) rotate(8deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -140%) scale(0.8) rotate(-6deg);
+    opacity: 0;
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: rotate(16deg) translateX(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.95;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  22%,
+  100% {
+    transform: rotate(16deg) translateX(-135vmax);
+    opacity: 0;
+  }
 }
 
 /* 가로 안내 힌트: 잠깐 떠 있다가 스스로 사라진다. OrientationHint에서 쓴다. */

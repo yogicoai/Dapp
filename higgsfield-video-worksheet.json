@@ -1,0 +1,1601 @@
+{
+  "info": "힉스필드 이미지→영상 작업표. 각 항목의 image를 업로드하고 motion_prompt를 넣어 무제한 모드로 생성.",
+  "settings": {
+    "model": "Seedance 2.0 (Unlimited mode ON)",
+    "duration": "5s",
+    "resolution": "720p",
+    "aspect": "이미지 원본 비율에 맞춤",
+    "note": "무제한 모드 ON = 무료(느림). 빠른 모드로 두면 크레딧 차감."
+  },
+  "total_scenes": 198,
+  "folk_count": 97,
+  "classic_count": 101,
+  "folk": [
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 1,
+      "image": "/folk/heungbu/p1.webp",
+      "scene_ko": "옛날 옛적, 어느 산골 마을에 형제가 살았어요. 형 놀부는 커다란 기와집에서 배불리 지냈지만, 동생 흥부는 다 쓰러져 가는 초가집에서 아이들과 가난하게 살았지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 2,
+      "image": "/folk/heungbu/p2.webp",
+      "scene_ko": "그래도 흥부네 집에는 웃음이 끊이지 않았어요. \"아버지, 오늘은 무슨 이야기 들려주실 거예요?\" 아이들이 조르면, 흥부는 허허 웃으며 재미난 이야기를 들려주었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: fabric and thread move with tiny gentle motion."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 3,
+      "image": "/folk/heungbu/p3.webp",
+      "scene_ko": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요. \"어서 오렴, 제비들아. 우리 집이 좁아도 함께 지내자꾸나.\" 흥부네 가족은 제비 가족을 반갑게 맞아 주었어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: light rain falls gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 4,
+      "image": "/folk/heungbu/p4.webp",
+      "scene_ko": "알에서 깬 아기 제비들은 짹짹짹 노래하며 무럭무럭 자랐어요. 아이들은 날마다 둥지를 올려다보며 인사했지요. \"안녕, 아기 제비야! 오늘도 잘 잤니?\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: light rain falls gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 5,
+      "image": "/folk/heungbu/p5.webp",
+      "scene_ko": "그러던 어느 날, 커다란 구렁이가 스르륵 둥지로 다가왔어요. 화들짝 놀란 아기 제비 한 마리가 그만 둥지 밖으로 뚝 떨어지고 말았지요. \"짹짹! 아파요, 아파!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: light rain falls gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 6,
+      "image": "/folk/heungbu/p6.webp",
+      "scene_ko": "\"저런, 다리가 부러졌구나!\" 흥부는 아기 제비를 두 손으로 고이 감싸 안고, 명주실로 다친 다리를 정성껏 싸매 주었답니다. \"곧 나을 거야. 걱정하지 마렴.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: light rain falls gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 7,
+      "image": "/folk/heungbu/p7.webp",
+      "scene_ko": "흥부네 가족의 보살핌 덕분에 아기 제비는 씩씩하게 나았어요. 가을이 되자 제비는 흥부네 마당을 빙글빙글 돌며 인사했지요. \"고마웠어요! 내년 봄에 꼭 다시 올게요!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: light rain falls gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 8,
+      "image": "/folk/heungbu/p8.webp",
+      "scene_ko": "이듬해 봄, 그 제비가 정말 돌아왔어요! 입에는 조그만 박씨 하나를 물고 있었지요. \"이게 웬 박씨일까?\" 흥부는 박씨를 마당 한켠에 심고 물을 듬뿍 주었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 9,
+      "image": "/folk/heungbu/p9.webp",
+      "scene_ko": "박씨는 무럭무럭 자라 지붕 위까지 덩굴을 뻗었어요. 가을이 되자 집채만 한 박이 주렁주렁 열렸지요. \"우아! 이 박으로 박죽이라도 끓여 먹자꾸나.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: vines and leaves sway gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 10,
+      "image": "/folk/heungbu/p10.webp",
+      "scene_ko": "\"슬근슬근 톱질하세, 영차영차 톱질하세!\" 온 가족이 노래하며 박을 갈랐어요. 그런데 이게 웬일이에요? 박 속에서 하얀 쌀이 산처럼 쏟아져 나왔어요!",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: vines and leaves sway gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 11,
+      "image": "/folk/heungbu/p11.webp",
+      "scene_ko": "두 번째 박에서는 금은보화가 와르르, 세 번째 박에서는 고운 비단과 번쩍번쩍한 새 기와집까지 나왔답니다. \"제비야, 고맙다!\" 흥부네 가족은 얼싸안고 덩실덩실 춤을 추었어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: light rain falls gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 12,
+      "image": "/folk/heungbu/p12.webp",
+      "scene_ko": "이 소식을 들은 놀부는 배가 아팠어요. \"흥, 나도 제비 다리를 고쳐 주면 부자가 되겠지?\" 놀부는 일부러 아기 제비의 다리를 부러뜨리고는 대충 싸매 주었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: light rain falls gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 13,
+      "image": "/folk/heungbu/p13.webp",
+      "scene_ko": "이듬해 봄, 놀부네 제비도 박씨를 물어다 주었어요. \"옳지! 이제 나도 보물 부자다!\" 놀부는 신이 나서 박씨를 심고, 박이 열리기만 밤낮으로 기다렸답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 14,
+      "image": "/folk/heungbu/p14.webp",
+      "scene_ko": "\"슬근슬근 톱질하세!\" 놀부가 첫 박을 가르자, 무시무시한 도깨비들이 우르르 쏟아져 나왔어요. \"심술쟁이 놀부야! 네 욕심을 벌하러 왔다!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: light rain falls gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 15,
+      "image": "/folk/heungbu/p15.webp",
+      "scene_ko": "도깨비들은 놀부네 곳간을 탈탈 털고 기와집까지 몽땅 가져가 버렸어요. 빈털터리가 된 놀부는 그제야 엉엉 울며 뉘우쳤지요. \"내가 잘못했어. 욕심을 부려서 미안해…\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: light rain falls gently."
+    },
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "page": 16,
+      "image": "/folk/heungbu/p16.webp",
+      "scene_ko": "마음 착한 흥부는 형의 손을 꼭 잡았어요. \"형님, 우리 집에서 함께 살아요.\" 그날부터 흥부와 놀부는 서로 도우며 사이좋게, 오래오래 행복하게 살았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 1,
+      "image": "/folk/tortoise/p1.webp",
+      "scene_ko": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요. \"이 숲에서 나보다 빠른 동물은 아무도 없지!\" 토끼는 만나는 친구마다 자랑을 늘어놓았지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 2,
+      "image": "/folk/tortoise/p2.webp",
+      "scene_ko": "그 숲에는 느릿느릿 거북이도 살고 있었어요. 거북이는 걸음은 느렸지만, 무슨 일이든 끝까지 해내는 성실한 친구였답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 3,
+      "image": "/folk/tortoise/p3.webp",
+      "scene_ko": "어느 날, 토끼가 거북이를 보고 깔깔 웃었어요. \"거북아, 너는 세상에서 제일가는 느림보야! 그 걸음으로 어디를 간다는 거니?\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 4,
+      "image": "/folk/tortoise/p4.webp",
+      "scene_ko": "거북이는 잠시 생각하더니 조용히 말했어요. \"토끼야, 그럼 나랑 달리기 시합을 해 볼래? 저기 언덕 꼭대기의 큰 소나무까지 말이야.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 5,
+      "image": "/folk/tortoise/p5.webp",
+      "scene_ko": "\"뭐라고? 네가 나랑 시합을?\" 토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요. 소문을 들은 숲속 친구들이 구름처럼 모여들었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 6,
+      "image": "/folk/tortoise/p6.webp",
+      "scene_ko": "부엉이 할아버지가 심판을 맡았어요. \"자, 준비… 시작!\" 외침과 함께 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 7,
+      "image": "/folk/tortoise/p7.webp",
+      "scene_ko": "거북이는 한 걸음, 또 한 걸음. 엉금엉금 천천히 걸었어요. \"괜찮아. 나는 나의 걸음으로 가면 돼.\" 거북이는 씩씩하게 앞만 보았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 8,
+      "image": "/folk/tortoise/p8.webp",
+      "scene_ko": "한참을 달린 토끼가 뒤를 돌아보았어요. 거북이는 점처럼 조그맣게 보였지요. \"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 9,
+      "image": "/folk/tortoise/p9.webp",
+      "scene_ko": "토끼는 시원한 나무 그늘에 벌렁 누웠어요. 솔솔 부는 바람이 어찌나 시원한지, 토끼는 금세 쿨쿨 잠이 들고 말았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 10,
+      "image": "/folk/tortoise/p10.webp",
+      "scene_ko": "그동안에도 거북이는 멈추지 않았어요. 뜨거운 햇살 아래에서도, 가파른 오르막에서도, 딱 한 번도 쉬지 않고 엉금엉금 걸어갔지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 11,
+      "image": "/folk/tortoise/p11.webp",
+      "scene_ko": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요. 살금살금, 아주 조용히. 거북이는 토끼를 깨우지 않고 묵묵히 언덕을 올라갔답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 12,
+      "image": "/folk/tortoise/p12.webp",
+      "scene_ko": "\"드르렁… 푸우…\" 한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가 소스라치게 놀랐어요. 거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 13,
+      "image": "/folk/tortoise/p13.webp",
+      "scene_ko": "\"안 돼!\" 토끼는 있는 힘껏 달렸지만 이미 늦었어요. 거북이가 한 발 먼저 큰 소나무를 짚었답니다. \"거북이 승리!\" 부엉이 할아버지가 크게 외쳤어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "page": 14,
+      "image": "/folk/tortoise/p14.webp",
+      "scene_ko": "숲속 친구들이 우레 같은 박수를 보냈어요. \"거북아, 잘난 척해서 미안해.\" \"괜찮아, 우리 좋은 친구가 되자!\" 느려도 포기하지 않는 마음이 결국 해낸답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 1,
+      "image": "/folk/kongjwi/p1.webp",
+      "scene_ko": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요. 콩쥐는 일찍 어머니를 여의고, 아버지가 새로 맞이한 새어머니, 동생 팥쥐와 함께 살게 되었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: a small bird or butterfly flutters softly in the background."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 2,
+      "image": "/folk/kongjwi/p2.webp",
+      "scene_ko": "그런데 새어머니는 콩쥐에게만 힘든 일을 잔뜩 시켰어요. \"콩쥐야! 밭을 매고, 물도 길어 오너라!\" 팥쥐는 그늘에서 놀기만 하는데 말이에요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 3,
+      "image": "/folk/kongjwi/p3.webp",
+      "scene_ko": "그래도 콩쥐는 불평 한마디 없이 일했어요. 나무 호미가 뚝 부러져 눈물이 날 때면, 어디선가 검은 소가 나타나 밭을 갈아 주었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 4,
+      "image": "/folk/kongjwi/p4.webp",
+      "scene_ko": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요. \"저도 잔치에 가고 싶어요!\" \"흥! 그럼 이 항아리에 물을 가득 채워 놓고 오너라!\" 새어머니는 팥쥐만 데리고 고운 옷을 입고 먼저 떠나 버렸지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 5,
+      "image": "/folk/kongjwi/p5.webp",
+      "scene_ko": "콩쥐는 부지런히 물을 길어다 부었어요. 그런데 아무리 부어도 물이 차지 않는 거예요. 알고 보니 새어머니가 준 항아리는 밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 6,
+      "image": "/folk/kongjwi/p6.webp",
+      "scene_ko": "그때 두꺼비가 엉금엉금 기어 나왔어요. \"콩쥐야, 울지 마. 내가 구멍을 막아 줄게!\" 두꺼비가 구멍을 막자 항아리에 금세 물이 가득 찼답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 7,
+      "image": "/folk/kongjwi/p7.webp",
+      "scene_ko": "항아리를 다 채우고 나니, 이번에는 마당 가득 쌓인 벼가 보였어요. \"이 벼까지 다 찧어 놓으라고 하셨는데…\" 그러자 참새 떼가 포르르 날아왔지요. \"짹짹! 우리가 도와줄게!\" 참새들은 순식간에 벼를 다듬어 주었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: a small bird or butterfly flutters softly in the background."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 8,
+      "image": "/folk/kongjwi/p8.webp",
+      "scene_ko": "\"착한 콩쥐야, 이제 잔치에 갈 시간이야.\" 하늘에서 선녀님이 사뿐히 내려와 고운 비단 치마와 반짝이는 꽃신 한 켤레를 주었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 9,
+      "image": "/folk/kongjwi/p9-feast.webp",
+      "scene_ko": "잔치 마당은 노랫소리와 웃음소리로 가득했어요. 콩쥐도 오랜만에 마음껏 웃으며 즐거웠지요. 그때, 잔치를 연 젊은 원님이 환하게 웃는 콩쥐를 보고 한눈에 반하고 말았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: soft snow drifts down slowly."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 10,
+      "image": "/folk/kongjwi/p10.webp",
+      "scene_ko": "'새어머니가 보시기 전에 얼른 집에 가야 해!' 콩쥐는 서둘러 개울을 폴짝 건너다가 그만 — 꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 11,
+      "image": "/folk/kongjwi/p11.webp",
+      "scene_ko": "콩쥐를 뒤따라 나온 원님은 개울가에서 반짝이는 꽃신 한 짝을 발견했어요. \"이 신의 주인이 아까 그 아가씨로구나! 온 마을을 뒤져서라도 꼭 찾아내야겠다.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: flowers sway and a few petals drift by."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 12,
+      "image": "/folk/kongjwi/p12.webp",
+      "scene_ko": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요. 콩쥐네 집에서는 팥쥐가 냉큼 발을 들이밀었지요. 하지만 아무리 용을 써도 발이 들어가지 않았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: flowers sway and a few petals drift by."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 13,
+      "image": "/folk/kongjwi/p13.webp",
+      "scene_ko": "\"저… 저도 신어 봐도 될까요?\" 콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요! \"아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!\" 원님의 얼굴에 환한 웃음이 번졌지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: flowers sway and a few petals drift by."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "page": 14,
+      "image": "/folk/kongjwi/p14.webp",
+      "scene_ko": "얼마 뒤, 원님과 콩쥐는 온 마을의 축복 속에 혼례를 올렸어요. 새어머니와 팥쥐도 그동안의 잘못을 뉘우치고 사과했지요. \"콩쥐야, 미안했다.\" 콩쥐는 활짝 웃으며 모두를 안아 주었고, 오래오래 행복하게 살았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: a small bird or butterfly flutters softly in the background."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 1,
+      "image": "/folk/haedal/p1.webp",
+      "scene_ko": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요. 어머니는 고개 너머 마을에서 떡을 팔아 두 아이를 정성껏 키웠답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 2,
+      "image": "/folk/haedal/p2.webp",
+      "scene_ko": "\"엄마 금방 다녀올게. 문 꼭 잠그고, 엄마 목소리가 아니면 절대 열어 주면 안 된다!\" 어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 3,
+      "image": "/folk/haedal/p3.webp",
+      "scene_ko": "해가 뉘엿뉘엿 지는 고갯길, 커다란 호랑이가 어흥! 하고 나타났어요. \"떡 하나 주면 안 잡아먹지!\" 어머니는 얼른 떡을 하나 던져 주고 달아났지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 4,
+      "image": "/folk/haedal/p4.webp",
+      "scene_ko": "그런데 고개를 넘을 때마다 호랑이가 또 나타났어요. \"떡 하나 주면 안 잡아먹지!\" 마지막 고개에서 떡이 다 떨어지자, 심술 난 호랑이는 어머니의 옷과 광주리를 빼앗고 어머니를 깊은 굴에 가둬 버렸답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 5,
+      "image": "/folk/haedal/p5.webp",
+      "scene_ko": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요. 똑똑똑. \"얘들아, 엄마 왔단다. 문 열어 주렴.\" \"어? 우리 엄마 목소리가 아닌데?\" 오누이는 고개를 갸웃했지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 6,
+      "image": "/folk/haedal/p6.webp",
+      "scene_ko": "\"그럼 문틈으로 손을 보여 주세요.\" 문틈으로 쑥 들어온 손은 털이 북슬북슬! \"호, 호랑이다!\" 오누이는 살그머니 뒷문으로 빠져나가 우물가 큰 나무 위로 올라갔어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 7,
+      "image": "/folk/haedal/p7.webp",
+      "scene_ko": "집 안을 다 뒤진 호랑이가 우물가로 어슬렁어슬렁 왔어요. 우물 속에 비친 오누이를 보고 소리쳤지요. \"옳지, 너희 우물 속에 숨었구나!\" 그 모습이 우스워서 동생이 그만 킥킥 웃고 말았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 8,
+      "image": "/folk/haedal/p8.webp",
+      "scene_ko": "웃음소리에 위를 올려다본 호랑이가 물었어요. \"얘들아, 거기는 어떻게 올라갔니?\" 오빠가 꾀를 내어 대답했지요. \"손에 참기름을 바르고 올라왔지요!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 9,
+      "image": "/folk/haedal/p9.webp",
+      "scene_ko": "호랑이는 참기름을 바르고 나무에 매달렸지만 미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요. 그때 동생이 그만 깜빡 말해 버렸지요. \"바보 호랑이! 도끼로 찍으면서 올라와야지!\" \"앗, 안 돼!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 10,
+      "image": "/folk/haedal/p10.webp",
+      "scene_ko": "호랑이가 도끼로 쿵! 쿵! 나무를 찍으며 올라오기 시작했어요. 오누이는 두 손을 꼭 모으고 하늘에 빌었답니다. \"하느님, 저희를 살려 주시려거든 튼튼한 동아줄을 내려 주세요!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 11,
+      "image": "/folk/haedal/p11.webp",
+      "scene_ko": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요. 오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요. 호랑이도 얼른 따라 빌었어요. \"나도 동아줄을 내려 다오!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 12,
+      "image": "/folk/haedal/p12.webp",
+      "scene_ko": "하늘은 호랑이에게 썩은 동아줄을 내려 주었어요. 신이 나서 올라가던 호랑이는 — 뚝! 줄이 끊어져 수숫대 밭에 쿵 떨어지고 말았지요. \"아이고 엉덩이야!\" 그래서 수숫대가 빨갛게 물들었다지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 13,
+      "image": "/folk/haedal/p13.webp",
+      "scene_ko": "하늘나라 임금님이 오누이를 반겨 주었어요. \"착하고 지혜로운 아이들아, 소원이 있느냐?\" \"굴에 갇힌 우리 엄마를 구해 주세요!\" 임금님은 어머니도 하늘로 데려와 셋을 꼭 안아 주었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 14,
+      "image": "/folk/haedal/p14.webp",
+      "scene_ko": "임금님이 말했어요. \"너희가 세상을 밝혀 주겠니?\" 처음엔 오빠가 해님, 동생이 달님이 되기로 했어요. 그런데 동생이 소곤소곤. \"오빠… 나 깜깜한 밤은 무서워.\" \"그럼 우리 바꾸자!\" 오빠는 웃으며 달님이 되어 주었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "page": 15,
+      "image": "/folk/haedal/p15.webp",
+      "scene_ko": "그 뒤로 낮에는 동생 해님이 세상을 따뜻하게 비추고, 밤에는 오빠 달님이 어두운 길을 밝혀 주어요. 어머니는 포근한 저녁노을이 되어 두 아이를 지켜본답니다. 오늘 밤 달님을 보면 손을 흔들어 주세요. 오빠가 웃고 있을 거예요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 1,
+      "image": "/folk/goldaxe/p1.webp",
+      "scene_ko": "옛날 어느 산골에 부지런한 나무꾼이 살았어요. 나무꾼은 홀어머니를 모시고 날마다 산에 올라 열심히 나무를 했답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 2,
+      "image": "/folk/goldaxe/p2.webp",
+      "scene_ko": "\"오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!\" 나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만, 나무꾼은 도끼를 보물처럼 아꼈어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 3,
+      "image": "/folk/goldaxe/p3.webp",
+      "scene_ko": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요. 쿵! 쿵! 힘차게 도끼질을 하다가 그만 손이 미끄러지고 말았지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 4,
+      "image": "/folk/goldaxe/p4.webp",
+      "scene_ko": "풍덩! 도끼가 깊은 연못 속으로 가라앉고 말았어요. \"아이고, 내 도끼! 하나뿐인 내 도끼!\" 나무꾼은 연못가에 주저앉아 엉엉 울었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 5,
+      "image": "/folk/goldaxe/p5.webp",
+      "scene_ko": "그때였어요. 연못 물이 반짝반짝 빛나더니 하얀 수염을 길게 늘어뜨린 산신령님이 스르르 나타났어요. \"나무꾼아, 왜 그리 슬피 우느냐?\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 6,
+      "image": "/folk/goldaxe/p6.webp",
+      "scene_ko": "\"도끼를 연못에 빠뜨렸습니다. 그 도끼가 없으면 나무를 할 수가 없어요.\" 산신령님은 고개를 끄덕이더니 연못 속으로 사라졌지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 7,
+      "image": "/folk/goldaxe/p7.webp",
+      "scene_ko": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요. \"이 금도끼가 네 도끼냐?\" \"아니요, 제 도끼가 아닙니다.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 8,
+      "image": "/folk/goldaxe/p8.webp",
+      "scene_ko": "산신령님이 이번에는 은도끼를 들고 나왔어요. \"그럼 이 은도끼가 네 도끼냐?\" \"아니요, 그것도 제 것이 아닙니다.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 9,
+      "image": "/folk/goldaxe/p9.webp",
+      "scene_ko": "마지막으로 낡은 쇠도끼를 들고 나오자 나무꾼의 얼굴이 환해졌어요. \"맞아요! 그게 바로 제 도끼입니다!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 10,
+      "image": "/folk/goldaxe/p10.webp",
+      "scene_ko": "산신령님이 껄껄 웃으며 말했어요. \"참으로 정직하구나. 네 정직한 마음에 감동했으니 금도끼와 은도끼도 모두 너에게 주마!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 11,
+      "image": "/folk/goldaxe/p11.webp",
+      "scene_ko": "나무꾼은 도끼 세 자루를 안고 한달음에 집으로 갔어요. \"어머니! 산신령님이 이런 선물을 주셨어요!\" 금도끼를 판 돈으로 어머니 약을 짓고, 남은 것은 마을 사람들과 아낌없이 나누었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 12,
+      "image": "/folk/goldaxe/p12.webp",
+      "scene_ko": "이 소식을 들은 이웃 마을 욕심쟁이가 무릎을 탁 쳤어요. \"옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!\" 욕심쟁이는 연못으로 달려가 멀쩡한 제 도끼를 일부러 풍덩! 던지고는 거짓 울음을 울었지요. \"아이고, 내 도끼야! 엉엉!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 13,
+      "image": "/folk/goldaxe/p13.webp",
+      "scene_ko": "연못이 반짝이더니 산신령님이 금도끼를 들고 나타났어요. \"이 금도끼가 네 도끼냐?\" \"맞아요, 맞아! 그 금도끼가 제 것입니다!\" 욕심쟁이는 손을 뻗으며 냉큼 외쳤지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 14,
+      "image": "/folk/goldaxe/p14.webp",
+      "scene_ko": "산신령님의 얼굴이 무섭게 굳어졌어요. \"네 도끼는 낡은 쇠도끼가 아니더냐. 거짓말을 하는구나!\" 산신령님은 연못 속으로 스르르 사라져 버렸지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 15,
+      "image": "/folk/goldaxe/p15.webp",
+      "scene_ko": "욕심쟁이는 해가 지도록 연못가에서 기다렸지만 산신령님은 다시 나오지 않았어요. 금도끼는커녕 제 쇠도끼까지 잃고 터덜터덜 빈손으로 돌아갔답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "page": 16,
+      "image": "/folk/goldaxe/p16.webp",
+      "scene_ko": "그날 저녁, 나무꾼네 마당에서는 잔치가 열렸어요. 나무꾼은 풀 죽은 욕심쟁이에게도 떡을 건넸지요. \"자, 같이 들어요!\" 욕심쟁이는 얼굴이 홍당무처럼 빨개져 고개를 숙였고, 그 뒤로는 남의 것을 탐내지 않게 되었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 1,
+      "image": null,
+      "scene_ko": "옛날 어느 산골에, 팥 농사를 짓는 할머니가 살았어요. 어느 날 밭을 매는데, 커다란 호랑이가 어흥! 하고 나타났지요. \"할멈, 널 잡아먹어야겠다!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 2,
+      "image": null,
+      "scene_ko": "할머니는 깜짝 놀랐지만 꾀를 냈어요. \"호랑이야, 가을에 팥이 익으면 팥죽을 쒀 줄게. 그때 배불리 먹고 나서 나를 잡아먹으렴.\" \"좋아! 그럼 그때 다시 오마.\" 호랑이는 어슬렁어슬렁 돌아갔어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 3,
+      "image": null,
+      "scene_ko": "가을이 되어 팥이 빨갛게 익었어요. 할머니는 솥 가득 팥죽을 쒔지요. 하지만 호랑이가 올 생각을 하니 눈물이 주르륵. \"흑흑, 이제 나는 잡아먹히고 마는구나.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 4,
+      "image": null,
+      "scene_ko": "그때 부엌 아궁이에서 알밤이 톡 튀어나왔어요. \"할머니, 왜 울어요?\" \"호랑이가 날 잡아먹으러 온단다.\" \"팥죽 한 그릇 주시면 제가 도와드릴게요!\" 알밤은 냠냠 팥죽을 먹고 아궁이 속에 쏙 숨었어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 5,
+      "image": null,
+      "scene_ko": "이번엔 물동이에서 자라가 엉금엉금 기어 나왔어요. \"할머니, 저도 팥죽 주시면 도와드릴게요!\" 자라는 팥죽을 먹고 물동이 속에 풍덩 숨었지요. 뒤이어 쇠똥도, 멍석도, 지게도 하나씩 나타났어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 6,
+      "image": null,
+      "scene_ko": "\"저희도 팥죽 주시면 힘을 보탤게요!\" 다들 팥죽을 배불리 먹고 저마다 자리를 잡았어요. 쇠똥은 마당 한가운데, 멍석은 마루에, 지게는 문 뒤에 살그머니 숨었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 7,
+      "image": null,
+      "scene_ko": "깜깜한 밤, 드디어 호랑이가 어슬렁 찾아왔어요. \"할멈, 팥죽 잘 익었느냐? 어디 있느냐?\" \"부엌 아궁이에 있으니 직접 꺼내 먹으렴.\" 호랑이는 어슬렁어슬렁 부엌으로 갔지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 8,
+      "image": null,
+      "scene_ko": "호랑이가 아궁이를 들여다보는 순간 — 뜨겁게 달궈진 알밤이 탁! 튀어 호랑이 눈을 때렸어요. \"아야! 내 눈!\" 호랑이가 물동이로 눈을 씻으러 달려갔지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 9,
+      "image": null,
+      "scene_ko": "물동이에 손을 넣자, 자라가 콱! 손을 물었어요. \"아이고 아파!\" 놀란 호랑이가 뒷걸음질 치다가 — 마당의 쇠똥을 밟고 주르륵 미끄러졌지요. 쿵!",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 10,
+      "image": null,
+      "scene_ko": "넘어진 호랑이 위로 마루의 멍석이 데굴데굴 굴러와 호랑이를 둘둘 말아 버렸어요. 그러자 문 뒤의 지게가 성큼 다가와 멍석에 싸인 호랑이를 번쩍 짊어졌답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 11,
+      "image": null,
+      "scene_ko": "지게는 호랑이를 짊어지고 깊은 강물에 풍덩 던졌어요. \"어푸어푸! 다시는 안 올게!\" 호랑이는 겨우 헤엄쳐 나와 산 너머로 도망쳤지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "page": 12,
+      "image": null,
+      "scene_ko": "할머니는 도와준 친구들을 빙 둘러 앉히고 따끈한 팥죽을 한 그릇씩 더 나눠 주었어요. \"모두 고맙구나. 다 같이 있으니 하나도 안 무섭구나!\" 그날 밤, 산골 오두막에는 웃음소리가 가득했답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "page": 1,
+      "image": null,
+      "scene_ko": "옛날 어느 마을에, 턱에 커다란 혹이 달린 마음씨 고운 영감이 살았어요. 영감은 혹이 달렸어도 늘 흥얼흥얼 노래를 잘 불렀지요. \"라라라~ 오늘도 좋은 날이로구나!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "page": 2,
+      "image": null,
+      "scene_ko": "어느 날, 산에 나무를 하러 갔다가 그만 날이 저물었어요. 영감은 빈 오두막에 들어가 하룻밤 묵기로 했지요. 무서운 마음을 달래려고 고운 목소리로 노래를 불렀어요. \"라라라~ 달빛도 곱구나~\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "page": 3,
+      "image": null,
+      "scene_ko": "그때 쿵쿵쿵, 도깨비들이 우르르 몰려왔어요! 영감은 깜짝 놀랐지만 노래를 멈추지 않았지요. 도깨비 대장이 눈을 반짝이며 물었어요. \"영감, 그 고운 노래는 대체 어디서 나오는 게냐?\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "page": 4,
+      "image": null,
+      "scene_ko": "영감은 얼떨결에 턱의 혹을 가리켰어요. \"이 혹에서 노래가 술술 나온다오.\" \"오, 그 혹을 나에게 팔아라! 보물을 주마!\" 도깨비는 영감의 혹을 쏙 떼어 가고, 금은보화를 잔뜩 주었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "page": 5,
+      "image": null,
+      "scene_ko": "혹을 떼고 보물까지 얻은 영감은 덩실덩실 춤을 추며 집에 왔어요. 소문은 온 마을에 쫙 퍼졌지요. 이웃 마을에는 심술궂고 욕심 많은 혹부리 영감이 또 있었는데, 그 소문을 듣고 두 눈이 번쩍 뜨였답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "page": 6,
+      "image": null,
+      "scene_ko": "\"옳지! 나도 도깨비한테 혹을 팔면 부자가 되겠구나!\" 욕심쟁이 영감은 부랴부랴 그 오두막을 찾아갔어요. 그리고 도깨비들이 오기만을 기다리며 억지로 목청을 높여 노래를 불렀지요. \"애앰~ 애앰~\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "page": 7,
+      "image": null,
+      "scene_ko": "과연 밤이 되자 도깨비들이 다시 몰려왔어요. \"어? 저번 그 노래 혹이 또 왔네?\" 욕심쟁이 영감이 냉큼 외쳤어요. \"이 혹에서 노래가 나온다오! 보물을 주고 사 가시오!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "page": 8,
+      "image": null,
+      "scene_ko": "그러자 도깨비 대장이 껄껄 웃었어요. \"이런, 지난번 그 혹은 노래가 안 나오는 가짜였다! 너한테 도로 붙여 주마!\" 도깨비는 가져갔던 혹을 욕심쟁이 영감 턱에 척 붙여 버렸지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: light rain falls gently."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "page": 9,
+      "image": null,
+      "scene_ko": "욕심쟁이 영감은 혹이 둘이나 달린 채 울상이 되어 터덜터덜 집으로 돌아갔어요. 혹을 떼려다 오히려 하나를 더 붙이고 만 거예요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "page": 10,
+      "image": null,
+      "scene_ko": "착한 혹부리 영감은 도깨비에게 받은 보물을 가난한 이웃들과 아낌없이 나누었어요. \"혼자 잘 살면 무슨 재미가 있겠소. 같이 나눠야지요!\" 마을 사람들은 영감의 노래를 들으며 오래오래 사이좋게 살았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    }
+  ],
+  "classic": [
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 1,
+      "image": "/classic/threepigs/p1.webp",
+      "scene_ko": "옛날 옛적, 아기 돼지 삼형제가 살았어요. 어느 날 엄마 돼지가 말했지요. \"이제 너희도 다 컸으니, 각자 집을 짓고 살아 보렴!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 2,
+      "image": "/classic/threepigs/p2.webp",
+      "scene_ko": "첫째 돼지는 놀고 싶은 마음에 지푸라기를 슥슥 쌓아 금세 집을 지었어요. \"히히, 벌써 다 지었다! 이제 신나게 놀아야지!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: a small bird or butterfly flutters softly in the background."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 3,
+      "image": "/classic/threepigs/p3.webp",
+      "scene_ko": "둘째 돼지는 나뭇가지를 뚝딱뚝딱 엮어 집을 지었어요. \"이 정도면 튼튼하지 뭐! 형아, 나도 다 지었어! 같이 놀자!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 4,
+      "image": "/classic/threepigs/p4.webp",
+      "scene_ko": "막내 돼지는 벽돌을 한 장 한 장 정성껏 쌓았어요. 형들이 지나가다 킥킥 놀렸지요. \"야, 뭐하러 그렇게 힘들게 짓는 거야?\" \"우리처럼 뚝딱 짓고 노는 게 최고라구! 히히!\" \"난 놀기 전에 튼튼한 집부터 지을 거야.\" 막내는 땀을 뻘뻘 흘리며 꿋꿋이 벽돌을 쌓았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 5,
+      "image": "/classic/threepigs/p5.webp",
+      "scene_ko": "그러던 어느 날, 배고픈 늑대가 나타났어요! 늑대는 첫째네 지푸라기 집 앞에서 소리쳤지요. \"아기 돼지야, 문 열어라! 안 열면 집을 날려 버리겠다!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 6,
+      "image": "/classic/threepigs/p6.webp",
+      "scene_ko": "\"싫어! 절대 안 열어 줄 거야!\" 그러자 늑대가 숨을 크게 들이마시고 — 후우우욱! 지푸라기 집이 폭삭 날아가 버렸어요!",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 7,
+      "image": "/classic/threepigs/p7.webp",
+      "scene_ko": "\"으악! 살려 줘!\" 첫째 돼지는 둘째네 나무 집으로 쌩 도망쳤어요. 하지만 늑대도 성큼성큼 쫓아왔지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 8,
+      "image": "/classic/threepigs/p8.webp",
+      "scene_ko": "\"아기 돼지들아, 문 열어라!\" \"싫어, 싫어! 절대 안 돼!\" 늑대가 다시 숨을 들이마시고 — 후우우우욱! 우지끈! 나무 집도 와르르 무너졌어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 9,
+      "image": "/classic/threepigs/p9.webp",
+      "scene_ko": "첫째와 둘째는 막내네 벽돌 집으로 달려갔어요. \"막내야, 살려 줘! 늑대가 와!\" 막내는 얼른 문을 열어 형들을 숨겨 주었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 10,
+      "image": "/classic/threepigs/p10-bg.webp",
+      "scene_ko": "늑대는 벽돌 집 앞에서 있는 힘껏 바람을 불었어요. 후욱! 후우욱! 후우우우욱! 하지만 벽돌 집은 꿈쩍도 하지 않았답니다. \"아니, 이 집은 왜 안 무너지는 거야?!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 11,
+      "image": "/classic/threepigs/p11.webp",
+      "scene_ko": "약이 오른 늑대는 지붕 위로 기어올라갔어요. \"흥, 굴뚝으로 들어가면 되지!\" 그 소리를 들은 막내 돼지는 얼른 벽난로에 커다란 솥을 걸고 물을 펄펄 끓였지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 12,
+      "image": "/classic/threepigs/p12.webp",
+      "scene_ko": "늑대가 굴뚝으로 미끄러져 내려온 순간 — 풍덩! 뜨거운 솥 속에 빠지고 말았어요! \"앗, 뜨거뜨거뜨거!\" 늑대는 꽁지가 빠지게 산 너머로 도망쳤답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "page": 13,
+      "image": "/classic/threepigs/p13.webp",
+      "scene_ko": "\"막내야, 고마워. 우리가 게을렀어.\" 형들은 막내에게 벽돌 쌓는 법을 배워 튼튼한 벽돌 집을 나란히 지었어요. 돼지 삼형제는 오래오래 사이좋게 살았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 1,
+      "image": "/classic/uglyduckling/p1.webp",
+      "scene_ko": "따뜻한 봄날, 연못가 둥지에서 엄마 오리가 알을 품고 있었어요. 그중에 유난히 크고 회색빛인 알이 하나 있었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 2,
+      "image": "/classic/uglyduckling/p2.webp",
+      "scene_ko": "톡, 토독! 알들이 하나씩 깨어났어요. 노랗고 보송보송한 아기 오리들 사이에서 마지막 큰 알에서는 잿빛 아기가 나왔답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 3,
+      "image": "/classic/uglyduckling/p3.webp",
+      "scene_ko": "\"쟤는 왜 우리랑 다르게 생겼지?\" \"회색이잖아. 미운 오리 새끼야!\" 형제들은 잿빛 아기 오리를 자꾸만 놀렸어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: a small bird or butterfly flutters softly in the background."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 4,
+      "image": "/classic/uglyduckling/p4.webp",
+      "scene_ko": "연못의 다른 오리들도 수군수군, 닭들도 꼬꼬댁 흉을 봤어요. 아기 오리는 너무너무 슬펐지요. \"아무도 나를 좋아하지 않아…\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 5,
+      "image": "/classic/uglyduckling/p5.webp",
+      "scene_ko": "어느 날 밤, 아기 오리는 조용히 둥지를 떠났어요. \"내가 없어지면 다들 편해질 거야.\" 달빛 아래 홀로 뒤뚱뒤뚱 걸어갔답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 6,
+      "image": "/classic/uglyduckling/p6.webp",
+      "scene_ko": "넓은 늪에 도착했지만 그곳의 새들도 아기 오리를 반겨 주지 않았어요. \"넌 참 이상하게 생겼구나.\" 아기 오리는 갈대숲에 혼자 숨어 지냈지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 7,
+      "image": "/classic/uglyduckling/p7.webp",
+      "scene_ko": "가을이 되던 어느 날, 하늘 위로 눈처럼 하얗고 커다란 새들이 날아갔어요. \"우와… 정말 아름다운 새들이다.\" 아기 오리는 한참 동안 하늘만 바라보았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 8,
+      "image": "/classic/uglyduckling/p8.webp",
+      "scene_ko": "곧 차가운 겨울이 왔어요. 호수가 꽁꽁 얼고 눈보라가 몰아쳤지요. 아기 오리는 갈대숲에서 몸을 웅크리고 춥고 긴 겨울을 꿋꿋이 견뎠어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 9,
+      "image": "/classic/uglyduckling/p9.webp",
+      "scene_ko": "드디어 얼음이 녹고 봄이 왔어요! 따뜻한 햇살에 아기 오리는 기지개를 켰지요. 날개를 펼치자 — 어라? 몸이 가뿐하게 하늘로 떠올랐어요!",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 10,
+      "image": "/classic/uglyduckling/p10.webp",
+      "scene_ko": "호수에 내려앉으니, 저 멀리서 그 아름다운 하얀 새들이 헤엄쳐 왔어요. \"나 같은 미운 오리를 쫓아내면 어떡하지…\" 그래도 용기를 내어 천천히 다가갔지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 11,
+      "image": "/classic/uglyduckling/p11.webp",
+      "scene_ko": "그때, 맑은 물에 비친 자기 모습을 본 순간 — \"이게… 나라고?\" 물속에는 눈처럼 하얗고 우아한 백조 한 마리가 있었답니다!",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 12,
+      "image": "/classic/uglyduckling/p12.webp",
+      "scene_ko": "\"어서 와, 우리랑 똑같은 백조구나!\" 백조들이 다정하게 아기 백조를 감쌌어요. 호숫가 아이들도 소리쳤지요. \"저기 새로 온 백조가 제일 예쁘다!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: a small bird or butterfly flutters softly in the background."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "page": 13,
+      "image": "/classic/uglyduckling/p13.webp",
+      "scene_ko": "미운 오리 새끼는 이제 알았어요. 다르게 생긴 게 아니라, 특별하게 태어난 거였다는 걸요. 아기 백조는 눈부신 날개를 활짝 펴고 파란 하늘을 훨훨 날았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 1,
+      "image": "/classic/redridinghood/p1.webp",
+      "scene_ko": "옛날 어느 마을에 귀여운 여자아이가 살았어요. 할머니가 만들어 주신 빨간 모자를 늘 쓰고 다녀서 다들 '빨간 모자'라고 불렀답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 2,
+      "image": "/classic/redridinghood/p2.webp",
+      "scene_ko": "어느 날 엄마가 바구니를 건네며 말했어요. \"숲 건너 할머니 댁에 이 빵과 수프를 갖다 드리렴. 길에서 한눈팔지 말고, 곧장 가야 한다!\" \"네, 엄마! 다녀올게요!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 3,
+      "image": "/classic/redridinghood/p3.webp",
+      "scene_ko": "숲길을 걷던 빨간 모자 앞에 커다란 늑대가 스윽 나타났어요. \"안녕, 꼬마야. 어디 가는 길이니?\" \"숲 건너 할머니 댁에 가요.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 4,
+      "image": "/classic/redridinghood/p4.webp",
+      "scene_ko": "늑대는 음흉하게 씩 웃으며 말했지요. \"저기 예쁜 꽃이 많던데, 할머니께 꽃다발도 만들어 가면 어떠니?\" \"어머, 좋은 생각이에요!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: flowers sway and a few petals drift by."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 5,
+      "image": "/classic/redridinghood/p5.webp",
+      "scene_ko": "빨간 모자가 꽃을 꺾는 사이, 늑대는 지름길로 쌩 달려가 할머니 집 문을 똑똑 두드렸어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 6,
+      "image": "/classic/redridinghood/p6.webp",
+      "scene_ko": "\"할머니, 저예요. 빨간 모자예요.\" 늑대가 가는 목소리를 흉내 내자 문이 열렸지요. 늑대는 할머니를 한입에 꿀꺽 삼키고는 할머니 옷을 입고 침대에 쏙 누웠답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 7,
+      "image": "/classic/redridinghood/p7.webp",
+      "scene_ko": "잠시 후, 빨간 모자가 도착했어요. \"할머니, 저 왔어요!\" 침대에 누운 할머니가 어쩐지 이상해 보였지요. 빨간 모자는 고개를 갸웃갸웃했어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 8,
+      "image": "/classic/redridinghood/p8.webp",
+      "scene_ko": "\"할머니, 귀가 왜 이렇게 커요?\" \"네 말을 잘 들으려고 그렇지.\" \"할머니, 눈은 왜 이렇게 커요?\" \"너를 잘 보려고 그렇지.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: soft snow drifts down slowly."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 9,
+      "image": "/classic/redridinghood/p9.webp",
+      "scene_ko": "\"그런데… 입은 왜 이렇게 커요?\" \"그야 너를 꿀꺽 삼키려고 그렇지!\" 늑대가 벌떡 일어나 빨간 모자도 한입에 꿀꺽 삼켜 버렸어요!",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: a small bird or butterfly flutters softly in the background."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 10,
+      "image": "/classic/redridinghood/p10.webp",
+      "scene_ko": "배가 빵빵해진 늑대는 침대에 벌렁 누워 드르렁드르렁 잠이 들었어요. 마침 숲을 지나던 사냥꾼 아저씨가 요란한 코골이 소리를 듣고 집 안을 들여다봤지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 11,
+      "image": "/classic/redridinghood/p11.webp",
+      "scene_ko": "\"아니, 배가 저렇게 빵빵한 늑대라니!\" 사냥꾼 아저씨가 늑대의 배를 살살 열어 보니 — 할머니와 빨간 모자가 폴짝 뛰어나왔어요! \"아이고, 살았다! 고맙습니다!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 12,
+      "image": "/classic/redridinghood/p12.webp",
+      "scene_ko": "잠에서 깬 늑대는 사냥꾼 아저씨의 호통에 걸음아 나 살려라 하고 숲 저 멀리 도망쳤어요. 그 뒤로 다시는 마을 근처에 얼씬도 못 했답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "page": 13,
+      "image": "/classic/redridinghood/p13.webp",
+      "scene_ko": "빨간 모자는 할머니와 따뜻한 수프를 나눠 먹으며 약속했어요. \"이제 길에서 한눈팔지 않을게요. 모르는 사람 말도 함부로 믿지 않을 거예요!\" 할머니는 빨간 모자를 꼭 안아 주었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: soft snow drifts down slowly."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 1,
+      "image": "/classic/bremen/p1.webp",
+      "scene_ko": "옛날 어느 마을에 늙은 당나귀가 살았어요. 오랫동안 열심히 일했지만, 주인은 이제 늙었다며 당나귀를 내쫓으려 했지요. \"흥, 그렇다면 브레멘에 가서 음악가가 될 테야!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 2,
+      "image": "/classic/bremen/p2.webp",
+      "scene_ko": "길을 가던 당나귀는 축 처진 사냥개를 만났어요. \"나는 늙어서 사냥을 못 한다고 쫓겨났어…\" \"잘됐다! 나랑 브레멘 가서 음악 하자. 너는 북을 치면 되겠어!\" \"멍멍! 좋아!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 3,
+      "image": "/classic/bremen/p3.webp",
+      "scene_ko": "조금 더 가니 담벼락 위에 시무룩한 고양이가 있었어요. \"쥐를 못 잡는다고 집에서 쫓겨났다냥…\" \"우리랑 같이 가자! 너는 노래를 하면 되겠어!\" \"야옹~ 나 노래 잘한다냥!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 4,
+      "image": "/classic/bremen/p4.webp",
+      "scene_ko": "농장 앞을 지나는데 수탉이 목청껏 울고 있었어요. \"꼬끼오! 나는 내일 국거리가 될 신세라고!\" \"그럴 순 없지! 우리랑 브레멘 가자. 네 목소리는 우리 악단의 나팔이야!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 5,
+      "image": "/classic/bremen/p5.webp",
+      "scene_ko": "당나귀, 개, 고양이, 수탉. 넷은 신이 나서 숲길을 걸었어요. 하지만 날이 저물고 배가 고파졌지요. 그때 멀리서 반짝, 불빛이 보였어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 6,
+      "image": "/classic/bremen/p6.webp",
+      "scene_ko": "불빛을 따라가니 작은 오두막이 나왔어요. 창문 안을 들여다보니 — 세상에! 식탁 가득 맛있는 음식이 차려져 있고, 무섭게 생긴 도둑들이 둘러앉아 있었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 7,
+      "image": "/classic/bremen/p7.webp",
+      "scene_ko": "\"저 음식을 어떻게 먹지?\" 당나귀가 꾀를 냈어요. \"우리 다 같이 무대에 서는 거야!\" 당나귀 위에 개가, 개 위에 고양이가, 고양이 위에 수탉이 차곡차곡 올라탔지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 8,
+      "image": "/classic/bremen/p8.webp",
+      "scene_ko": "\"자, 브레멘 음악대 첫 공연이다! 하나, 둘, 셋!\" 히호! 멍멍! 야옹! 꼬끼오오! 넷이 한꺼번에 목청껏 노래하며 창문을 와장창 뚫고 뛰어들었어요!",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 9,
+      "image": "/classic/bremen/p9.webp",
+      "scene_ko": "\"으악! 괴물이다!\" \"도깨비가 나타났다아!\" 도둑들은 혼비백산해서 신발도 못 신고 숲으로 도망쳤답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 10,
+      "image": "/classic/bremen/p10.webp",
+      "scene_ko": "\"공연 대성공!\" 네 친구는 식탁에 둘러앉아 배가 빵빵해지도록 맛있게 먹었어요. 그리고 각자 편한 자리에서 쿨쿨 잠이 들었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 11,
+      "image": "/classic/bremen/p11.webp",
+      "scene_ko": "한밤중, 도둑 하나가 살금살금 돌아왔어요. 어둠 속에서 고양이 눈이 반짝! \"할퀴어라!\" \"물어라!\" \"뒷발질!\" \"꼬끼오오오!\" 수탉의 나팔 소리까지!",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 12,
+      "image": "/classic/bremen/p12.webp",
+      "scene_ko": "도둑은 걸음아 나 살려라 도망치며 외쳤어요. \"저 집엔 무서운 괴물이 산다! 손톱으로 할퀴고, 이빨로 물고, 방망이로 때리고, 지붕에서 소리까지 질러!\" 도둑들은 다시는 오지 않았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "page": 13,
+      "image": "/classic/bremen/p13.webp",
+      "scene_ko": "네 친구는 그 오두막이 아주 마음에 들었어요. 브레멘까지 갈 필요도 없어졌지요. 낮에는 햇볕을 쬐고, 저녁이면 다 같이 — 히호! 멍멍! 야옹! 꼬끼오! 숲속 음악회를 열며 오래오래 행복하게 살았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 1,
+      "image": "/classic/antgrasshopper/p1.webp",
+      "scene_ko": "쨍쨍한 여름날, 개미들은 부지런히 일했어요. 영차, 영차. 줄지어 낟알을 나르고 땀을 뻘뻘 흘리며 곳간을 채웠지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 2,
+      "image": "/classic/antgrasshopper/p2.webp",
+      "scene_ko": "풀잎 위에서는 베짱이가 바이올린을 켜고 있었어요. \"찌르르 찌르르~ 개미야, 이 좋은 여름에 왜 일만 하니?\" \"겨울이 오면 먹을 게 없어지거든. 미리미리 모아 두는 거야.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 3,
+      "image": "/classic/antgrasshopper/p3.webp",
+      "scene_ko": "\"에이, 겨울은 아직 멀었는걸!\" 베짱이는 시원한 그늘에서 신나게 연주했어요. 찌르르 찌르르~ 숲 친구들이 모여들어 베짱이의 노래를 듣고 어깨를 들썩였지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 4,
+      "image": "/classic/antgrasshopper/p4.webp",
+      "scene_ko": "어느새 가을이 왔어요. 개미들의 곳간은 낟알로 가득 찼지요. 베짱이는 문득 서늘한 바람에 몸을 떨었지만, \"아직 괜찮아!\" 하고 또 노래를 불렀답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 5,
+      "image": "/classic/antgrasshopper/p5.webp",
+      "scene_ko": "드디어 하얀 겨울이 왔어요. 쌩쌩 눈보라가 몰아치고 온 세상이 꽁꽁 얼었지요. 먹을 것도, 따뜻한 집도 없는 베짱이는 바이올린을 안고 덜덜 떨었어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: soft snow drifts down slowly."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 6,
+      "image": "/classic/antgrasshopper/p6.webp",
+      "scene_ko": "베짱이는 눈길을 헤치고 개미집을 찾아갔어요. 똑, 똑, 똑. \"개미야… 너무 춥고 배가 고파. 하룻밤만 재워 줄 수 있니?\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 7,
+      "image": "/classic/antgrasshopper/p7.webp",
+      "scene_ko": "문이 활짝 열렸어요. \"어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!\" 개미들은 따뜻한 수프를 내어 주고 난롯가 제일 좋은 자리를 내주었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: fabric and thread move with tiny gentle motion."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 8,
+      "image": "/classic/antgrasshopper/p8.webp",
+      "scene_ko": "베짱이는 고개를 푹 숙였어요. \"너희가 일할 때 나는 놀기만 했는걸… 이 수프를 얻어먹을 자격이 없어.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: fabric and thread move with tiny gentle motion."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 9,
+      "image": "/classic/antgrasshopper/p9.webp",
+      "scene_ko": "그러자 꼬마 개미가 말했어요. \"무슨 소리야! 여름에 낟알을 나를 때 네 노래 덕분에 힘이 났는걸? 우리를 위해 연주해 줄래?\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 10,
+      "image": "/classic/antgrasshopper/p10.webp",
+      "scene_ko": "베짱이는 눈물을 닦고 바이올린을 들었어요. 찌르르 찌르르~ 랄랄라~ 개미집에서 겨울 음악회가 열렸지요. 개미들은 밤늦도록 덩실덩실 춤을 추었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 11,
+      "image": "/classic/antgrasshopper/p11.webp",
+      "scene_ko": "봄이 오자 베짱이가 말했어요. \"올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘.\" 개미들과 베짱이는 함께 낟알을 나르고, 쉬는 시간이면 다 같이 노래를 불렀지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "page": 12,
+      "image": "/classic/antgrasshopper/p12.webp",
+      "scene_ko": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요. 그리고 개미집에서는 밤마다 따뜻한 수프와 즐거운 음악이 흘러나왔답니다. 찌르르 찌르르~ 랄랄라~",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 1,
+      "image": "/classic/twomice/p1.webp",
+      "scene_ko": "보리밭 옆 아늑한 굴속에 시골 쥐가 살았어요. 어느 날 도시에 사는 사촌에게 편지를 썼지요. \"사촌아, 놀러 오렴! 맛있는 저녁을 대접할게.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 2,
+      "image": "/classic/twomice/p2.webp",
+      "scene_ko": "도시 쥐가 시골에 도착했어요. 시골 쥐는 정성껏 밥상을 차렸지요. 고소한 도토리, 따끈한 보리죽, 달콤한 산딸기. \"차린 건 없지만 많이 먹으렴!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 3,
+      "image": "/classic/twomice/p3.webp",
+      "scene_ko": "도시 쥐는 깨작깨작 먹더니 한숨을 쉬었어요. \"넌 매일 이런 심심한 음식만 먹니? 도시에 가면 케이크에 치즈에, 진수성찬이 가득한데! 나랑 같이 가 보자!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 4,
+      "image": "/classic/twomice/p4.webp",
+      "scene_ko": "둘은 함께 도시로 갔어요. \"우와아…\" 반짝반짝 불빛이 가득한 커다란 저택! 시골 쥐의 눈이 휘둥그레졌지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 5,
+      "image": "/classic/twomice/p5.webp",
+      "scene_ko": "식탁 위에는 정말 잔칫상이 차려져 있었어요. 폭신한 케이크, 노란 치즈, 보랏빛 포도! \"자, 마음껏 먹으렴!\" 시골 쥐는 침이 꼴깍 넘어갔답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 6,
+      "image": "/classic/twomice/p6.webp",
+      "scene_ko": "그런데 케이크를 한 입 베어 물려는 순간 — 쿵! 쿵! 문소리와 함께 사람이 들어왔어요! \"숨어!\" 둘은 후다닥 식탁 밑으로 뛰어내렸지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 7,
+      "image": "/classic/twomice/p7.webp",
+      "scene_ko": "사람이 나가고, 살금살금 다시 식탁 위로. 치즈를 막 집었는데 이번에는 — \"야아옹!\" 번쩍이는 눈의 고양이가 나타났어요!",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: soft snow drifts down slowly."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 8,
+      "image": "/classic/twomice/p8.webp",
+      "scene_ko": "둘은 쥐구멍으로 쏙 숨었어요. 시골 쥐의 가슴이 콩닥콩닥 뛰었지요. \"괜찮아, 늘 있는 일이야. 금방 익숙해져.\" 도시 쥐는 아무렇지 않게 수염을 다듬었답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 9,
+      "image": "/classic/twomice/p9.webp",
+      "scene_ko": "시골 쥐는 곰곰이 생각했어요. '케이크는 정말 달콤해. 하지만 한 입 먹을 때마다 가슴이 조마조마한걸…'",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 10,
+      "image": "/classic/twomice/p10.webp",
+      "scene_ko": "\"사촌아, 초대해 줘서 정말 고마워. 그런데 나는 마음 편히 먹는 보리죽이 더 좋아. 우리 집 별빛이 그리워졌어.\" 시골 쥐는 도시 쥐를 꼭 안아 주었어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 11,
+      "image": "/classic/twomice/p11.webp",
+      "scene_ko": "시골로 돌아온 시골 쥐는 보리죽을 한 그릇 가득 끓였어요. 풀벌레 소리, 반짝이는 별빛. \"아아, 역시 우리 집이 최고야.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "page": 12,
+      "image": "/classic/twomice/p12.webp",
+      "scene_ko": "그 뒤로 두 쥐는 자주 편지를 주고받았어요. \"여름엔 시골로 산딸기 먹으러 오렴!\" \"겨울엔 도시 구경 시켜 줄게!\" 서로 다른 집에서, 둘은 각자 행복했답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: soft snow drifts down slowly."
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "page": 1,
+      "image": null,
+      "scene_ko": "옛날 어느 밭에, 할아버지가 순무 씨앗을 심었어요. \"쑥쑥 자라라, 크고 달콤한 순무야!\" 순무는 무럭무럭 자라 어마어마하게 커졌지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "page": 2,
+      "image": null,
+      "scene_ko": "드디어 순무를 뽑는 날. 할아버지가 순무를 잡고 힘껏 당겼어요. \"영차! 영차!\" 그런데 순무는 꿈쩍도 하지 않았어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "page": 3,
+      "image": null,
+      "scene_ko": "할아버지가 할머니를 불렀어요. 할머니가 할아버지를 잡고, 할아버지가 순무를 잡고 — \"영차! 영차!\" 그래도 순무는 쑥— 안 뽑혔지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "page": 4,
+      "image": null,
+      "scene_ko": "할머니가 손녀를 불렀어요. 손녀가 할머니를, 할머니가 할아버지를, 할아버지가 순무를 — \"영차! 영차!\" 그래도 순무는 꼼짝도 안 했어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: warm firelight flickers gently."
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "page": 5,
+      "image": null,
+      "scene_ko": "손녀가 강아지를 불렀어요. 강아지가 손녀를, 손녀가 할머니를, 할머니가 할아버지를, 할아버지가 순무를 잡고 — \"영차! 영차!\" 그래도 순무는 쑥— 안 뽑혔답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "page": 6,
+      "image": null,
+      "scene_ko": "강아지가 고양이를 불렀어요. 고양이가 강아지를, 강아지가 손녀를, 손녀가 할머니를, 할머니가 할아버지를, 할아버지가 순무를 — \"영차! 영차!\" 그래도 순무는 그대로였지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "page": 7,
+      "image": null,
+      "scene_ko": "고양이가 조그만 생쥐를 불렀어요. \"우리를 도와줄래?\" \"찍찍! 좋아요!\" 생쥐가 고양이를, 고양이가 강아지를, 강아지가 손녀를, 손녀가 할머니를, 할머니가 할아버지를, 할아버지가 순무를 잡았어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "page": 8,
+      "image": null,
+      "scene_ko": "모두 함께 있는 힘껏 — \"영차! 영차! 영—차!\" 그러자 쑤욱! 커다란 순무가 뽑혔어요! 다들 뒤로 벌러덩 넘어지며 까르르 웃었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: a small bird or butterfly flutters softly in the background."
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "page": 9,
+      "image": null,
+      "scene_ko": "작은 생쥐 한 마리까지 힘을 보태자 드디어 뽑힌 거예요. 그날 저녁, 온 식구와 동물들은 둘러앉아 커다랗고 달콤한 순무로 따끈한 순무 수프를 끓여 배부르게 나눠 먹으며 오래오래 행복하게 살았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "page": 1,
+      "image": null,
+      "scene_ko": "옛날 숲속 집에 곰 세 마리가 살았어요. 커다란 아빠 곰, 중간 엄마 곰, 조그만 아기 곰. 어느 아침, 곰들은 뜨거운 죽을 식히려고 숲으로 잠깐 산책을 나갔지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "page": 2,
+      "image": null,
+      "scene_ko": "그때 금발 머리 여자아이 골디락스가 그 집을 발견했어요. \"어머, 아무도 없네? 잠깐만 구경해야지.\" 골디락스는 살금살금 안으로 들어갔어요. 식탁에는 죽 세 그릇이 놓여 있었지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "page": 3,
+      "image": null,
+      "scene_ko": "골디락스는 큰 그릇의 죽을 한 입 먹었어요. \"앗, 너무 뜨거워!\" 중간 그릇을 먹어 보았어요. \"으, 너무 차가워!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "page": 4,
+      "image": null,
+      "scene_ko": "마지막으로 제일 작은 그릇을 먹어 보았어요. \"음, 이건 딱 좋아!\" 골디락스는 아기 곰의 죽을 몽땅 다 먹어 버렸지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "page": 5,
+      "image": null,
+      "scene_ko": "배가 부른 골디락스는 의자에 앉아 쉬려고 했어요. 큰 의자는 너무 딱딱하고, 중간 의자는 너무 푹신했지요. 작은 의자에 앉으니 딱 좋았어요. 그런데 그만 — 우지끈! 의자가 부서지고 말았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "page": 6,
+      "image": null,
+      "scene_ko": "졸음이 몰려온 골디락스는 침실로 올라갔어요. 큰 침대는 너무 높고, 중간 침대는 너무 물렁했지요. 작은 침대에 누우니 딱 좋았어요. 골디락스는 새근새근 잠이 들고 말았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "page": 7,
+      "image": null,
+      "scene_ko": "그때 곰 세 마리가 산책에서 돌아왔어요. \"누가 내 죽을 먹었지?\" 아빠 곰이 말했어요. \"누가 내 죽을 먹었어요?\" 엄마 곰도 말했어요. \"누가 내 죽을 몽땅 먹고, 의자도 부쉈어!\" 아기 곰이 울먹였지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "page": 8,
+      "image": null,
+      "scene_ko": "곰들이 침실로 올라가 보니, 작은 침대에 낯선 아이가 쿨쿨 자고 있었어요. \"누가 내 침대에서 자고 있어!\" 아기 곰의 목소리에 골디락스가 눈을 번쩍 떴지요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: soft snow drifts down slowly."
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "page": 9,
+      "image": null,
+      "scene_ko": "골디락스는 곰 세 마리를 보고 깜짝 놀랐어요. \"어멋, 미안해요! 허락도 없이 들어와서…\" 골디락스는 창문을 넘어 후다닥 집으로 달려갔어요. 그 뒤로는 남의 집에 함부로 들어가지 않았답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-lionmouse",
+      "book_title": "사자와 생쥐",
+      "page": 1,
+      "image": null,
+      "scene_ko": "어느 더운 날, 커다란 사자가 나무 그늘에서 낮잠을 자고 있었어요. 그때 조그만 생쥐가 사자 몸 위를 폴짝폴짝 뛰어다녔지요. 그만 사자가 잠에서 깨고 말았어요. \"어흥! 누가 내 잠을 깨웠느냐!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    },
+    {
+      "book_id": "classic-lionmouse",
+      "book_title": "사자와 생쥐",
+      "page": 2,
+      "image": null,
+      "scene_ko": "사자는 앞발로 생쥐를 콱 붙잡았어요. \"감히 내 몸 위에서 뛰어다니다니, 널 잡아먹어야겠다!\" 생쥐는 부들부들 떨며 빌었어요. \"사자님, 한 번만 살려 주세요! 언젠가 꼭 은혜를 갚을게요!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-lionmouse",
+      "book_title": "사자와 생쥐",
+      "page": 3,
+      "image": null,
+      "scene_ko": "사자는 껄껄 웃었어요. \"이 조그만 생쥐가 나를 돕는다고? 하하, 우습구나!\" 하지만 사자는 마음이 넉넉해서 생쥐를 놓아주었어요. \"그래, 가거라.\" \"고맙습니다! 이 은혜 잊지 않을게요!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop."
+    },
+    {
+      "book_id": "classic-lionmouse",
+      "book_title": "사자와 생쥐",
+      "page": 4,
+      "image": null,
+      "scene_ko": "며칠 뒤, 숲에 사냥꾼들이 다녀갔어요. 사자는 그만 커다란 밧줄 그물에 걸리고 말았지요. \"으르렁! 아무리 힘을 써도 빠져나갈 수가 없구나!\" 사자는 크게 울부짖었어요.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-lionmouse",
+      "book_title": "사자와 생쥐",
+      "page": 5,
+      "image": null,
+      "scene_ko": "그 소리를 들은 생쥐가 한달음에 달려왔어요. \"사자님! 제가 도와드릴게요!\" 생쥐는 날카로운 이빨로 밧줄을 갉기 시작했어요. \"사각사각, 사각사각.\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: stars twinkle and a soft night glow shimmers."
+    },
+    {
+      "book_id": "classic-lionmouse",
+      "book_title": "사자와 생쥐",
+      "page": 6,
+      "image": null,
+      "scene_ko": "생쥐가 밧줄을 하나둘 끊어 내자, 마침내 그물이 툭 풀렸어요! 사자는 그물에서 쑥 빠져나왔지요. \"오, 정말 네가 나를 구해 주었구나!\"",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: water surface gently ripples and reflects light."
+    },
+    {
+      "book_id": "classic-lionmouse",
+      "book_title": "사자와 생쥐",
+      "page": 7,
+      "image": null,
+      "scene_ko": "사자는 조그만 생쥐에게 고개를 숙였어요. \"작다고 우습게 본 걸 미안하구나. 정말 고맙다.\" \"작은 친구도 큰 도움이 될 수 있는걸요!\" 그 뒤로 사자와 생쥐는 둘도 없는 친구가 되어 숲속에서 오래오래 사이좋게 지냈답니다.",
+      "motion_prompt": "Bring this children's storybook illustration gently to life. Subtle ambient motion only: soft character breathing, gentle sway of hair, clothes and plants, slow drifting light and tiny floating particles. Keep the original art style, colors and composition EXACTLY the same. No new objects, no scene change, very slow and minimal camera drift. Warm, cozy, calm mood for young children. Seamless loop. Scene motion: leaves and grass sway softly in a light breeze."
+    }
+  ]
+}

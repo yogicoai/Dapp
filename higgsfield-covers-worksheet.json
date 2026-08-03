@@ -1,0 +1,120 @@
+{
+  "info": "표지 영상용 작업표 — cover_image 업로드 + motion_prompt 입력, Seedance 2.0 Unlimited ON, 5s, 720p",
+  "count": 16,
+  "folk": [
+    {
+      "book_id": "folk-heungbu",
+      "book_title": "흥부와 놀부",
+      "cover_image": "/folk/heungbu/p16.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "folk-tortoise",
+      "book_title": "토끼와 거북이",
+      "cover_image": "/folk/tortoise/p1.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "folk-kongjwi",
+      "book_title": "콩쥐 팥쥐",
+      "cover_image": "/folk/kongjwi/p1.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "folk-haedal",
+      "book_title": "해님 달님",
+      "cover_image": "/folk/haedal/p1.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "folk-goldaxe",
+      "book_title": "금도끼 은도끼",
+      "cover_image": "/folk/goldaxe/p1.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "folk-patjuk",
+      "book_title": "팥죽 할머니와 호랑이",
+      "cover_image": null,
+      "exists": false,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "folk-hokburi",
+      "book_title": "혹부리 영감",
+      "cover_image": null,
+      "exists": false,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    }
+  ],
+  "classic": [
+    {
+      "book_id": "classic-threepigs",
+      "book_title": "돼지 삼형제",
+      "cover_image": "/classic/threepigs/p1.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "classic-uglyduckling",
+      "book_title": "미운오리새끼",
+      "cover_image": "/classic/uglyduckling/p1.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "classic-redridinghood",
+      "book_title": "빨간 모자",
+      "cover_image": "/classic/redridinghood/p1.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "classic-bremen",
+      "book_title": "브레멘 음악대",
+      "cover_image": "/classic/bremen/p1.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "classic-antgrasshopper",
+      "book_title": "개미와 베짱이",
+      "cover_image": "/classic/antgrasshopper/p1.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "classic-twomice",
+      "book_title": "시골 쥐와 도시 쥐",
+      "cover_image": "/classic/twomice/p1.webp",
+      "exists": true,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "classic-turnip",
+      "book_title": "커다란 순무",
+      "cover_image": null,
+      "exists": false,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "classic-goldilocks",
+      "book_title": "골디락스와 곰 세 마리",
+      "cover_image": null,
+      "exists": false,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    },
+    {
+      "book_id": "classic-lionmouse",
+      "book_title": "사자와 생쥐",
+      "cover_image": null,
+      "exists": false,
+      "motion_prompt": "Bring this children's storybook cover illustration gently to life for a bookshelf. Subtle ambient motion only: soft character breathing and blinking, gentle sway of hair, clothes and plants, slow drifting light and a few tiny floating sparkles. Keep the original art style, colors and composition EXACTLY the same, character stays centered. No new objects, no scene change, almost no camera movement. Warm, cozy, inviting. Seamless loop."
+    }
+  ]
+}

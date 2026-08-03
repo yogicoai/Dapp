@@ -1,0 +1,978 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { FLAGS } from "@/components/FlagFilter";
+import { ThemePicker } from "@/components/ThemePicker";
+import { useTheme } from "@/components/ThemeProvider";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
+import {
+  addTokens,
+  loadAllUsers,
+  loadSession,
+  logOut,
+  spendTokens,
+  type Profile,
+} from "@/lib/auth";
+import {
+  deleteMyBook,
+  loadAllBooksBrief,
+  loadChild,
+  loadChildRemote,
+  loadLang,
+  loadMyBooks,
+  loadTextPos,
+  saveChild,
+  saveLang,
+  saveTextPos,
+  setMyBookHidden,
+  type BookBrief,
+  type Gender,
+} from "@/lib/prefs";
+import { COST_PARENT_VOICE, TOKEN_PRICE_KRW } from "@/lib/tokens";
+import type { Book } from "@/lib/types";
+import { useEscClose } from "@/lib/use-esc-close";
+import {
+  PRESET_VOICES,
+  TYPECAST_VOICES,
+  VOICE_RATES,
+  applyPlaybackRate,
+  buildPresetUtterance,
+  deleteVoiceAudio,
+  findTypecast,
+  loadCustomVoices,
+  loadSelectedVoiceId,
+  loadVoiceAudio,
+  loadVoiceRate,
+  saveCustomVoices,
+  saveSelectedVoiceId,
+  saveVoiceRate,
+  type CustomVoice,
+  type PresetVoice,
+  type TypecastPreset,
+} from "@/lib/voices";
+import {
+  cloneParentVoice,
+  deleteParentVoice,
+  loadParentVoices,
+  remainingCloneChances,
+  roleFromLabel,
+  type ParentVoice,
+} from "@/lib/parent-voice";
+
+const AGES = [3, 4, 5, 6, 7, 8];
+const GENDERS: { value: Gender; label: string; icon: string }[] = [
+  { value: "girl", label: "여자", icon: "/icons/gender-girl.webp" },
+  { value: "boy", label: "남자", icon: "/icons/gender-boy.webp" },
+];
+
+/**
+ * 옵션(⚙️) — 부모가 만지는 화면.
+ *
+ * 아이 정보·나라(테마)·언어를 여기 모은다. 메인은 아이가 보는 화면이라
+ * 컨트롤을 걷어내고, 바뀌는 값은 저장해서 만들기 위저드가 미리 채운다.
+ * 모든 변경은 즉시 저장된다 (저장 버튼 없음 — 부모 조작을 최소로).
+ */
+export default function SettingsPage() {
+  const router = useRouter();
+  const { theme } = useTheme();
+  const { accent } = theme.colors;
+
+  // 설정값은 서버 렌더 중 localStorage에서 읽지 않는다. 마운트 후 불러와야
+  // 저장된 값이 있는 브라우저에서도 서버 HTML과 첫 클라이언트 렌더가 같다.
+  const [name, setName] = useState("");
+  const [age, setAge] = useState<number | null>(null);
+  const [gender, setGender] = useState<Gender>("girl");
+  const [lang, setLang] = useState("ko");
+
+  // 목소리 — 프리셋 선택 + 엄마·아빠 녹음 관리
+  const [voiceId, setVoiceId] = useState("basic");
+  const [voiceRate, setVoiceRate] = useState(1);
+  // 책 화면 — 글자 위치(위/아래)
+  const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
+  const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
+  const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
+  // 부모 목소리(복제됨) — 계정별로 Supabase에서 불러온다. cloningRole = 지금 복제 중인 역할.
+  const [parentVoices, setParentVoices] = useState<ParentVoice[]>([]);
+  const [cloningRole, setCloningRole] = useState<string | null>(null);
+  const [cloneErr, setCloneErr] = useState("");
+  // 남은 만들기 기회 (처음 1 + 수정 1 = 총 2회). null = 아직 확인 전.
+  const [cloneChances, setCloneChances] = useState<number | null>(null);
+  // 만들기 연타 방지 잠금 — state가 아닌 ref라 클릭 즉시 걸린다.
+  const cloneBusyRef = useRef(false);
+  // 내 동화 — 만든 책 전체. 여기서 책장 노출(숨기기/보이기)과 영구 삭제를 관리한다.
+  const [myBooks, setMyBooks] = useState<Book[]>([]);
+  // 계정 — 로그인한 아이디·토큰. 게스트면 스킨(테마)만 보인다. 마스터면 회원 목록도.
+  const [guest, setGuest] = useState(false);
+  const [acctId, setAcctId] = useState<string | null>(null);
+  // 계정 uid — 녹음(customVoices) 계정별 저장 키에 쓴다.
+  const [uid, setUid] = useState<string | null>(null);
+  const [acctTokens, setAcctTokens] = useState(0);
+  const [master, setMaster] = useState(false);
+  const [members, setMembers] = useState<Profile[]>([]);
+  const [openMember, setOpenMember] = useState<string | null>(null);
+  // 회원(owner) → 그 회원이 만든 책들. 마스터 진입 시 한 번에 불러와 개수·목록에 쓴다.
+  const [memberBooks, setMemberBooks] = useState<Record<string, BookBrief[]>>({});
+
+  // 부모 목소리(복제됨) 목록·남은 만들기 기회를 계정에서 불러온다(로그인 안 됐으면 빈 목록).
+  useEffect(() => {
+    loadParentVoices().then(setParentVoices).catch(() => {});
+    remainingCloneChances().then(setCloneChances).catch(() => {});
+  }, []);
+
+  // 아이 정보·언어·목소리 등 '로컬 저장값'은 세션(네트워크)과 무관하게 즉시 반영한다.
+  // 예전엔 이 로딩이 await loadSession() 뒤에 묶여 있어, 세션이 느리거나 실패하면
+  // 아이 이름·나이가 잠깐 비고 그 사이 만지면 기본값으로 덮여 "가끔 초기화"됐다.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    const stored = loadChild();
+    if (stored) {
+      setName(stored.name);
+      setAge(stored.age);
+      setGender(stored.gender);
+    }
+    setLang(loadLang());
+    setVoiceId(loadSelectedVoiceId());
+    setVoiceRate(loadVoiceRate());
+    setTextPos(loadTextPos());
+    // (녹음 목록은 계정별 저장이라 세션 effect에서 uid를 안 뒤에 불러온다.)
+  }, []);
+
+  // 세션(로그인/게스트)·계정·책 등 네트워크가 필요한 것만 여기서 불러온다.
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const s = await loadSession();
+      if (!alive) return;
+      // 로그인·게스트 둘 다 아니면 로그인 화면으로.
+      if (!s.uid && !s.guest) {
+        router.replace("/login");
+        return;
+      }
+      // (아이 정보·언어·목소리 등 로컬값은 위의 동기 effect에서 세션과 무관하게 즉시 반영했다.)
+      if (s.guest) {
+        setGuest(true);
+        return; // 게스트는 스킨만 — 아래 계정/책/회원 정보는 안 불러온다.
+      }
+      setAcctId(s.profile?.username ?? null);
+      setAcctTokens(s.profile?.tokens ?? 0);
+      // 녹음 목록은 계정(uid)별 저장 — 같은 기기의 다른 아이디 녹음이 안 보이게.
+      setUid(s.uid ?? null);
+      setCustomVoices(loadCustomVoices(s.uid ?? null));
+      // 계정에 저장된 아이 정보를 서버에서 되살린다 (로컬 캐시가 비어 있어도 복구).
+      const remoteChild = await loadChildRemote();
+      if (alive && remoteChild) {
+        setName(remoteChild.name);
+        setAge(remoteChild.age);
+        setGender(remoteChild.gender);
+      }
+      setMyBooks(await loadMyBooks());
+      if (s.isMaster) {
+        setMaster(true);
+        const [users, allBooks] = await Promise.all([loadAllUsers(), loadAllBooksBrief()]);
+        setMembers(users);
+        // owner별로 묶어 회원마다 만든 동화 개수·목록을 바로 보여준다.
+        const grouped: Record<string, BookBrief[]> = {};
+        for (const b of allBooks) (grouped[b.owner] ??= []).push(b);
+        setMemberBooks(grouped);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [router]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // 회원 펼치기/접기 — 책은 이미 memberBooks에 다 불러와 있어 즉시 보인다.
+  function toggleMember(id: string) {
+    setOpenMember((cur) => (cur === id ? null : id));
+  }
+
+  // 토큰 충전(베타) — 결제 붙기 전 임시. 30개씩 넣어 테스트.
+  async function topUp() {
+    await addTokens(30);
+    setAcctTokens((t) => t + 30);
+    flashSaved();
+  }
+  // 로그아웃 → 로그인 화면.
+  async function doLogout() {
+    await logOut();
+    router.replace("/login");
+  }
+
+  // 책장 노출 토글(숨기기/보이기) — 숨기면 책장에서 내려가고, 보이면 다시 뜬다.
+  async function toggleHide(id: string, hidden: boolean) {
+    await setMyBookHidden(id, hidden);
+    setMyBooks((prev) => prev.map((b) => (b.id === id ? { ...b, hidden } : b)));
+    flashSaved();
+  }
+  // 영구 삭제 — 복원 불가라 경고를 띄우고 한 번 더 확인받는다.
+  async function purgeBook(id: string, title: string) {
+    if (!window.confirm(`⚠️ "${title}"을(를) 영구 삭제할까요?\n\n완전히 지워지며 복원할 수 없어요.`)) return;
+    await deleteMyBook(id);
+    setMyBooks((prev) => prev.filter((b) => b.id !== id));
+    flashSaved();
+  }
+
+  // ESC로 설정을 닫는다(홈으로). 녹음 팝업이 열려 있으면 팝업이 먼저 닫히고,
+  // 한 번 더 누르면 설정이 닫힌다.
+  useEscClose(() => router.push("/"), !recording);
+
+  // 저장 버튼이 없는 대신, 바뀔 때마다 "저장됐어요"를 잠깐 보여줘 안심시킨다.
+  const [savedTick, setSavedTick] = useState(false);
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashSaved = () => {
+    setSavedTick(true);
+    if (savedTimer.current) clearTimeout(savedTimer.current);
+    savedTimer.current = setTimeout(() => setSavedTick(false), 1500);
+  };
+  useEffect(() => () => {
+    if (savedTimer.current) clearTimeout(savedTimer.current);
+  }, []);
+
+  // 나라(테마) 변경은 ThemePicker 안에서 저장된다 — 바뀐 것만 감지해 표시한다.
+  const firstTheme = useRef(true);
+  useEffect(() => {
+    if (firstTheme.current) {
+      firstTheme.current = false;
+      return;
+    }
+    flashSaved();
+  }, [theme.id]);
+
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  /** 미리듣기를 멈춘다 (TTS·오디오 둘 다). */
+  const stopPreview = () => {
+    window.speechSynthesis?.cancel();
+    previewAudioRef.current?.pause();
+  };
+
+  /** 칩을 누르면 선택 + 그 목소리로 인사말이 바로 들린다. */
+  const pickVoice = (id: string, preset?: PresetVoice) => {
+    setVoiceId(id);
+    saveSelectedVoiceId(id);
+    flashSaved();
+    stopPreview();
+    if (preset && "speechSynthesis" in window) {
+      // 책 읽어주기와 같은 로직(음성 배정·높낮이·속도 과장) — 미리 들은 대로 읽힌다.
+      window.speechSynthesis.speak(buildPresetUtterance(preset.sample, preset, voiceRate));
+    }
+  };
+
+  // 성우 칩 — 누르면 선택 + 인사말을 그 성우 목소리로 받아 들려준다.
+  // 같은 인사말은 기기에 캐시되므로 크레딧은 처음 한 번만 나간다.
+  const [previewingId, setPreviewingId] = useState<string | null>(null);
+  const [ttsError, setTtsError] = useState<string | null>(null);
+  const pickTypecast = (tc: TypecastPreset) => {
+    setVoiceId(tc.id);
+    saveSelectedVoiceId(tc.id);
+    flashSaved();
+    stopPreview();
+    setTtsError(null);
+    // 미리듣기는 '미리 구운 샘플 파일'만 재생한다 → 크레딧 0. 실시간 합성은 안 한다.
+    // 아직 샘플이 없는 성우는 소리 없이 선택만 된다(크레딧 안 씀).
+    const el = previewAudioRef.current ?? new Audio();
+    previewAudioRef.current = el;
+    el.src = `/casting/preview-${tc.id}.mp3`;
+    applyPlaybackRate(el, voiceRate); // 속도가 음높이를 바꾸지 않게
+    setPreviewingId(tc.id);
+    el.onended = () => setPreviewingId(null);
+    el.onerror = () => setPreviewingId(null); // 샘플 파일 없음 — 조용히 넘긴다
+    el.play().catch(() => setPreviewingId(null));
+  };
+
+  /** 읽기 속도 — 고르면 지금 목소리로 그 속도를 바로 들려준다. */
+  const pickRate = (rate: number) => {
+    setVoiceRate(rate);
+    saveVoiceRate(rate);
+    flashSaved();
+    stopPreview();
+    // 성우를 골라둔 상태면 그 성우 목소리로 들려준다 — 인사말은 캐시라 무료다.
+    const tc = findTypecast(voiceId);
+    if (tc) {
+      // 속도 미리듣기도 구운 샘플 파일로만 — 크레딧 0.
+      const el = previewAudioRef.current ?? new Audio();
+      previewAudioRef.current = el;
+      el.src = `/casting/preview-${tc.id}.mp3`;
+      applyPlaybackRate(el, rate);
+      setPreviewingId(tc.id);
+      el.onended = () => setPreviewingId(null);
+      el.onerror = () => setPreviewingId(null);
+      el.play().catch(() => setPreviewingId(null));
+      return;
+    }
+    const preset = PRESET_VOICES.find((v) => v.id === voiceId) ?? PRESET_VOICES[0];
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.speak(buildPresetUtterance(preset.sample, preset, rate));
+    }
+  };
+
+  /** 엄마·아빠 칩 — 녹음해둔 실제 목소리가 재생된다. */
+  const previewCustom = async (v: CustomVoice) => {
+    stopPreview();
+    const blob = await loadVoiceAudio(v.id).catch(() => null);
+    if (!blob) return;
+    const el = previewAudioRef.current ?? new Audio();
+    previewAudioRef.current = el;
+    el.src = URL.createObjectURL(blob);
+    applyPlaybackRate(el, voiceRate);
+    el.play().catch(() => {});
+  };
+
+  /** 이 녹음(엄마/아빠)이 이미 복제(목소리 만들기)됐는지. */
+  const isCloned = (v: CustomVoice) => parentVoices.some((p) => p.role === roleFromLabel(v.label));
+
+  /**
+   * 녹음 → 복제(목소리 만들기). 성공하면 계정에 저장되고 동화에서 그 목소리로 읽을 수 있다.
+   * 만들기 1회 = COST_PARENT_VOICE 토큰(실측 원가 기반, 마스터 면제).
+   * 과금은 '선차감 → 복제 실패 시 환불' — 차감이 서버 잔액 기준이라(다른 탭에서 잔액이
+   * 바뀌어도) 무과금 복제가 생기지 않고, 복제가 실패하면 토큰이 돌아온다.
+   */
+  const makeParentVoice = async (v: CustomVoice) => {
+    // 연타 방지 — state(cloningRole)는 재렌더 전까지 버튼을 못 잠그므로 ref로 즉시 잠근다.
+    if (cloneBusyRef.current) return;
+    cloneBusyRef.current = true;
+    setCloneErr("");
+    setCloningRole(roleFromLabel(v.label));
+    let charged = false;
+    try {
+      const blob = await loadVoiceAudio(v.id);
+      if (!blob) throw new Error("녹음을 찾지 못했어요. 다시 녹음해 주세요.");
+      // 선차감 — 서버 잔액 기준. 부족하면 여기서 끝(복제 호출 자체를 안 한다).
+      if (!master) {
+        const ok = await spendTokens(COST_PARENT_VOICE);
+        if (!ok) {
+          throw new Error(
+            `토큰이 부족해요. 목소리 만들기에는 ${COST_PARENT_VOICE}토큰이 필요해요.`,
+          );
+        }
+        charged = true;
+        setAcctTokens((t) => Math.max(0, t - COST_PARENT_VOICE));
+      }
+      await cloneParentVoice(roleFromLabel(v.label), v.label, blob);
+      setParentVoices(await loadParentVoices());
+      setCloneChances(await remainingCloneChances());
+      flashSaved();
+    } catch (e) {
+      // 복제 실패 — 선차감했던 토큰을 돌려준다.
+      if (charged) {
+        await addTokens(COST_PARENT_VOICE).catch(() => {});
+        setAcctTokens((t) => t + COST_PARENT_VOICE);
+      }
+      setCloneErr(e instanceof Error ? e.message : "목소리 만들기에 실패했어요.");
+    } finally {
+      cloneBusyRef.current = false;
+      setCloningRole(null);
+    }
+  };
+
+  const removeCustom = async (v: CustomVoice) => {
+    // 복제까지 된 목소리면 — 지워도 만들기 기회는 안 돌아온다는 걸 확인받는다.
+    if (isCloned(v)) {
+      const left = cloneChances ?? 0;
+      const warn =
+        left > 0
+          ? `${v.label} 목소리를 지울까요?\n\n지우고 새로 만들면 남은 수정 기회(${left}번)를 사용해요.`
+          : `${v.label} 목소리를 지울까요?\n\n⚠️ 남은 수정 기회가 없어, 지우면 다시 만들 수 없어요.`;
+      if (!window.confirm(warn)) return;
+    }
+    await deleteVoiceAudio(v.id).catch(() => {});
+    // 복제된 목소리도 함께 삭제한다 — 우리 DB + Typecast 서버 양쪽에서(개인정보 미보존).
+    await deleteParentVoice(roleFromLabel(v.label)).catch(() => {});
+    setParentVoices((prev) => prev.filter((p) => p.role !== roleFromLabel(v.label)));
+    setCloneChances(await remainingCloneChances());
+    const next = customVoices.filter((x) => x.id !== v.id);
+    setCustomVoices(next);
+    saveCustomVoices(next, uid);
+    flashSaved();
+    if (voiceId === v.id) pickVoice("basic");
+  };
+
+  /** 이 기기에 녹음이 없는(다른 기기에서 만든) 완성 목소리 삭제 — 계정·Typecast 서버에서 제거. */
+  const removeParentOnly = async (p: ParentVoice) => {
+    const left = cloneChances ?? 0;
+    const warn =
+      left > 0
+        ? `${p.label} 목소리를 지울까요?\n\n지우고 새로 만들면 남은 수정 기회(${left}번)를 사용해요.`
+        : `${p.label} 목소리를 지울까요?\n\n⚠️ 남은 수정 기회가 없어, 지우면 다시 만들 수 없어요.`;
+    if (!window.confirm(warn)) return;
+    await deleteParentVoice(p.role).catch(() => {});
+    setParentVoices((prev) => prev.filter((x) => x.role !== p.role));
+    setCloneChances(await remainingCloneChances());
+    flashSaved();
+  };
+
+  const persistChild = (next: { name?: string; age?: number | null; gender?: Gender }) => {
+    const merged = {
+      name: next.name ?? name,
+      age: next.age !== undefined ? next.age : age,
+      gender: next.gender ?? gender,
+    };
+    saveChild(merged);
+    flashSaved();
+  };
+
+  return (
+    <div className="relative min-h-dvh w-full overflow-hidden">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={theme.background}
+        alt=""
+        className="fixed inset-0 -z-10 h-full w-full object-cover"
+      />
+      <div className="fixed inset-0 -z-10 bg-white/30" />
+
+      <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col justify-center px-6 pb-10 pt-20">
+        <Link
+          href="/"
+          className="absolute left-4 top-4 rounded-full bg-white/70 px-4 py-2 text-sm font-bold text-neutral-700 backdrop-blur"
+        >
+          ← 돌아가기
+        </Link>
+
+        {/* 설정 항목이 많아 화면보다 길어질 수 있다 — 카드에 최대 높이를 주고
+            안에서 스크롤되게 해 위아래가 짤리지 않게 한다. */}
+        <div className="flex max-h-[calc(100dvh-7rem)] flex-col gap-5 overflow-y-auto rounded-[28px] bg-white/90 p-7 shadow-xl backdrop-blur">
+          <h1 className="text-center text-2xl font-extrabold text-neutral-800">⚙️ 설정</h1>
+          {/* 저장 버튼이 없는 이유를 화면이 직접 말해준다 + 바뀔 때마다 확인 표시 */}
+          <p className="-mt-4 text-center text-xs font-bold" aria-live="polite">
+            {savedTick ? (
+              <span className="text-emerald-600">✓ 저장됐어요</span>
+            ) : (
+              <span className="text-neutral-400">바꾸는 대로 자동 저장돼요</span>
+            )}
+          </p>
+
+          {guest && (
+            <p className="rounded-2xl bg-neutral-100 px-4 py-3 text-center text-xs font-bold text-neutral-500">
+              비회원은 <b>스킨(나라)</b>만 바꿀 수 있어요. 로그인하면 아이 정보·목소리·내 동화까지 설정할 수 있어요.
+            </p>
+          )}
+
+          {/* 계정·아이정보 등 회원 전용 설정 — 게스트에겐 숨긴다(스킨만 허용). */}
+          {!guest && (<>
+          {/* ── 계정 (베타) ── 로그인한 아이디·토큰·로그아웃. 실제 로그인 상태를 반영한다.
+              추후 카카오·네이버 로그인이 붙으면 이 섹션에 연동 계정 표시가 더해진다. */}
+          <section className="flex flex-col gap-3">
+            <h2 className="text-sm font-extrabold text-neutral-400">계정</h2>
+            {/* flex-wrap+basis — 좁은 폰(360px)에서 버튼들이 둘째 줄로 내려가고 아이디는 항상 보인다. */}
+            <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-neutral-100 px-4 py-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lg shadow-sm">
+                {master ? "👑" : "🙂"}
+              </span>
+              {/* min-w-36 — min-w-0면 좁은 폰에서 버튼들에 밀려 폭 0까지 눌리며 글자가
+                  세로로 쌓인다(376px 실측). 최소 폭을 지키면 버튼이 둘째 줄로 내려간다. */}
+              <div className="min-w-36 flex-1 basis-36">
+                <p className="truncate text-base font-extrabold text-neutral-800">
+                  {acctId ?? "…"} {master && <span className="text-amber-600">· 마스터</span>}
+                </p>
+                <p className="break-keep text-xs font-bold text-neutral-500">
+                  {master ? (
+                    <span className="text-amber-600">👑 관리자 · 토큰 무제한</span>
+                  ) : (
+                    <>
+                      <span aria-hidden className="mr-0.5 inline-block rounded-full align-[-0.1em]" style={{ width: 13, height: 13, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
+                      토큰 {acctTokens}개 <span className="text-neutral-400">(1개 ≈ ₩{TOKEN_PRICE_KRW})</span>
+                    </>
+                  )}
+                </p>
+              </div>
+              {/* 베타: 토큰 충전 잠금. 결제 연동 후 disabled만 빼면 다시 열린다. */}
+              {!master && (
+                <button
+                  type="button"
+                  onClick={topUp}
+                  disabled
+                  className="shrink-0 cursor-not-allowed whitespace-nowrap rounded-full bg-neutral-200 px-3 py-1.5 text-xs font-extrabold text-neutral-400"
+                >
+                  🔒 충전 준비중
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={doLogout}
+                className="shrink-0 whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-xs font-extrabold text-neutral-600 shadow-sm"
+              >
+                로그아웃
+              </button>
+            </div>
+            <p className="-mt-1 text-[11px] font-medium text-neutral-400">
+              베타 기간에는 토큰 충전이 잠겨 있어요. 결제 연동 후에 열려요.
+            </p>
+          </section>
+
+          {/* ── 아이 정보 ── */}
+          <section className="flex flex-col gap-3">
+            <h2 className="text-sm font-extrabold text-neutral-400">아이 정보</h2>
+
+            <input
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                persistChild({ name: e.target.value });
+              }}
+              maxLength={20}
+              placeholder="아이 이름"
+              className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-lg font-bold outline-none focus:border-neutral-400"
+            />
+
+            <div className="flex flex-wrap gap-2">
+              {AGES.map((a) => (
+                <button
+                  key={a}
+                  type="button"
+                  onClick={() => {
+                    setAge(a);
+                    persistChild({ age: a });
+                  }}
+                  style={age === a ? { background: accent } : undefined}
+                  className={`h-11 w-11 rounded-full text-base font-extrabold transition ${
+                    age === a
+                      ? "scale-110 text-white shadow"
+                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                  }`}
+                >
+                  {a}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-2">
+              {GENDERS.map((g) => (
+                <button
+                  key={g.value}
+                  type="button"
+                  onClick={() => {
+                    setGender(g.value);
+                    persistChild({ gender: g.value });
+                  }}
+                  style={gender === g.value ? { background: accent } : undefined}
+                  className={`flex flex-1 flex-col items-center gap-0.5 rounded-2xl py-2.5 font-bold transition ${
+                    gender === g.value
+                      ? "text-white shadow"
+                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                  }`}
+                >
+                  <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={g.icon} alt="" className="h-8 w-8 object-contain" />
+                  </span>
+                  <span className="text-xs">{g.label}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+          </>)}
+
+          {/* ── 나라(테마) ── 게스트도 바꿀 수 있는 유일한 설정(스킨). */}
+          <section className="flex flex-col gap-2.5">
+            <h2 className="text-sm font-extrabold text-neutral-400">나라 고르기</h2>
+            <ThemePicker />
+          </section>
+
+          {/* 아래는 전부 회원 전용 — 게스트에겐 숨긴다. */}
+          {!guest && (<>
+          {/* ── 목소리 (성우 전용) ── */}
+          <section className="flex flex-col gap-2.5">
+            <h2 className="text-sm font-extrabold text-neutral-400">읽어주는 목소리</h2>
+
+            {/* 성우 목소리 (Typecast) 16명 전체 — 여기는 '시청 코너'다: 누르면 미리 구운
+                샘플 파일만 재생되므로(pickTypecast) 아무리 눌러도 크레딧 0. 동화 낭독에
+                쓰이는 성우는 만들 때 고른 1명+부끄뿐이라 비용 문은 뷰어 쪽에서 잠겨 있다. */}
+            <p className="text-[11px] font-medium text-neutral-400">
+              눌러서 들어보고 마음에 드는 성우를 골라요 (들어보기는 무료) · 동화별 성우는 만들 때 골라요
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {TYPECAST_VOICES.map((v) => {
+                const active = voiceId === v.id;
+                return (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() => pickTypecast(v)}
+                    aria-pressed={active}
+                    title={v.desc}
+                    style={active ? { background: accent } : undefined}
+                    className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                      active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                    }`}
+                  >
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-base leading-none">
+                      {previewingId === v.id ? "⏳" : v.emoji}
+                    </span>
+                    {v.label}
+                  </button>
+                );
+              })}
+            </div>
+            {ttsError && <p className="text-[11px] font-bold text-rose-500">{ttsError}</p>}
+            {cloneErr && <p className="text-[11px] font-bold text-rose-500">{cloneErr}</p>}
+
+            {/* 녹음한 엄마·아빠 목소리 — "목소리 만들기"로 복제하면 동화에서 그 목소리로 읽힌다 */}
+            {customVoices.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {customVoices.map((v) => (
+                  <span
+                    key={v.id}
+                    className="flex flex-wrap items-center gap-1.5 rounded-full bg-amber-100 px-3.5 py-2 text-sm font-bold text-amber-800"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => previewCustom(v)}
+                      aria-label={`${v.label} 목소리 들어보기`}
+                      className="flex items-center gap-1.5"
+                    >
+                      <span className="text-lg leading-none">{v.emoji}</span>
+                      {v.label} 🔊
+                    </button>
+                    {isCloned(v) ? (
+                      <span className="rounded-full bg-emerald-100 px-2 text-[10px] font-bold text-emerald-700">
+                        ✅ 완성
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => makeParentVoice(v)}
+                        disabled={cloningRole !== null}
+                        className="whitespace-nowrap rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-amber-700 shadow-sm transition hover:bg-amber-50 disabled:opacity-50"
+                      >
+                        {cloningRole === roleFromLabel(v.label)
+                          ? "만드는 중…"
+                          : `🎙️ 목소리 만들기${master ? "" : ` (${COST_PARENT_VOICE}토큰)`}`}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      aria-label={`${v.label} 목소리 삭제`}
+                      onClick={() => removeCustom(v)}
+                      className="text-amber-600"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* 다른 기기에서 만든 완성 목소리 — 이 기기엔 녹음이 없어도 계정에 있으면
+                보여주고 지울 수 있게 한다 (PC 등 두 번째 기기에서 안 보이던 구멍, 2026-07-31). */}
+            {parentVoices.some((p) => !customVoices.some((v) => roleFromLabel(v.label) === p.role)) && (
+              <div className="flex flex-wrap gap-2">
+                {parentVoices
+                  .filter((p) => !customVoices.some((v) => roleFromLabel(v.label) === p.role))
+                  .map((p) => (
+                    <span
+                      key={p.role}
+                      className="flex flex-wrap items-center gap-1.5 rounded-full bg-amber-100 px-3.5 py-2 text-sm font-bold text-amber-800"
+                    >
+                      <span className="text-lg leading-none">{p.emoji}</span>
+                      {p.label} 목소리
+                      <span className="rounded-full bg-emerald-100 px-2 text-[10px] font-bold text-emerald-700">
+                        ✅ 완성
+                      </span>
+                      <button
+                        type="button"
+                        aria-label={`${p.label} 목소리 삭제`}
+                        onClick={() => removeParentOnly(p)}
+                        className="text-amber-600"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+              </div>
+            )}
+
+            {/* 읽기 속도 — 느리다고 느끼는 집을 위해. 누르면 그 속도로 바로 들린다. */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-bold text-neutral-400">읽기 속도</span>
+              {VOICE_RATES.map((r) => {
+                const active = voiceRate === r.value;
+                return (
+                  <button
+                    key={r.value}
+                    type="button"
+                    onClick={() => pickRate(r.value)}
+                    aria-pressed={active}
+                    style={active ? { background: accent } : undefined}
+                    className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
+                      active
+                        ? "text-white shadow"
+                        : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                    }`}
+                  >
+                    {r.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 엄마·아빠 추가 — 계정당 한 명만(둘 중 하나). 만들기 기회를 다 썼으면 안내만.
+                계정에 이미 완성 목소리가 있으면(다른 기기 포함) 추가 버튼을 숨긴다. */}
+            {!recording && customVoices.length === 0 && parentVoices.length === 0 && (
+              cloneChances === 0 ? (
+                <p className="text-[11px] font-bold text-neutral-400">
+                  목소리 만들기 기회(처음 1번 + 수정 1번)를 모두 사용했어요.
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: "엄마", emoji: "👩" },
+                    { label: "아빠", emoji: "👨" },
+                  ].map((o) => (
+                    <button
+                      key={o.label}
+                      type="button"
+                      onClick={() => setRecording(o)}
+                      className="rounded-full border-2 border-dashed border-neutral-300 px-4 py-2 text-sm font-bold text-neutral-500 hover:border-neutral-400"
+                    >
+                      + {o.emoji} {o.label} 목소리 추가
+                    </button>
+                  ))}
+                </div>
+              )
+            )}
+
+            {recording && (
+              <VoiceRecorder
+                label={recording.label}
+                emoji={recording.emoji}
+                accent={accent}
+                owner={uid}
+                onDone={(v) => {
+                  setCustomVoices([...customVoices, v]);
+                  setRecording(null);
+                  flashSaved();
+                }}
+                onCancel={() => setRecording(null)}
+              />
+            )}
+
+            <p className="text-[11px] font-medium text-neutral-400">
+              엄마 또는 아빠 <b>한 명</b>을 녹음한 뒤 <b>🎙️ 목소리 만들기</b>({COST_PARENT_VOICE}토큰)를
+              누르면 그 목소리로 복제돼요. 그다음 동화에서 <b>엄마·아빠 목소리</b>로 읽는 건 무료예요.
+              수정(다시 만들기)은 <b>1번만</b>, 만들 때마다 {COST_PARENT_VOICE}토큰이에요.
+              (✕로 지우면 서버에서도 완전히 삭제{cloneChances !== null ? ` · 남은 만들기 기회 ${cloneChances}번` : ""})
+            </p>
+          </section>
+
+          {/* ── 책 화면 ── */}
+          <section className="flex flex-col gap-2.5">
+            <h2 className="text-sm font-extrabold text-neutral-400">책 글자 위치</h2>
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  { value: "bottom", label: "아래쪽", icon: "⬇️" },
+                  { value: "top", label: "위쪽", icon: "⬆️" },
+                  { value: "center", label: "가운데", icon: "🎯" },
+                  { value: "left", label: "왼쪽 가운데", icon: "⬅️" },
+                  { value: "right", label: "오른쪽 가운데", icon: "➡️" },
+                ] as const
+              ).map((p) => {
+                const active = textPos === p.value;
+                return (
+                  <button
+                    key={p.value}
+                    type="button"
+                    onClick={() => {
+                      setTextPos(p.value);
+                      saveTextPos(p.value);
+                      flashSaved();
+                    }}
+                    aria-pressed={active}
+                    style={active ? { background: accent } : undefined}
+                    className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold transition ${
+                      active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                    }`}
+                  >
+                    <span aria-hidden>{p.icon}</span>
+                    {p.label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] font-medium text-neutral-400">
+              동화책에서 글이 그림의 어느 쪽에 얹힐지 골라요.
+            </p>
+          </section>
+
+          {/* ── 언어 ── 지금은 한국어만 서비스. 영어·일본어는 준비 중이라 못 고른다. */}
+          <section className="flex flex-col gap-2.5">
+            <h2 className="text-sm font-extrabold text-neutral-400">동화 언어</h2>
+            <div className="flex flex-wrap items-center gap-2">
+              {FLAGS.map((f) => {
+                const active = f.lang === lang;
+                const ready = f.lang === "ko"; // 한국어만 서비스 중
+                return (
+                  <button
+                    key={f.lang}
+                    type="button"
+                    disabled={!ready}
+                    onClick={() => {
+                      if (!ready) return;
+                      setLang(f.lang);
+                      saveLang(f.lang);
+                      flashSaved();
+                    }}
+                    aria-pressed={active}
+                    title={ready ? undefined : "아직 서비스 준비 전이에요"}
+                    className={`relative flex items-center gap-2 rounded-full border-2 py-1.5 pl-1.5 pr-3.5 font-bold transition ${
+                      !ready
+                        ? "cursor-not-allowed border-transparent bg-neutral-100 opacity-40"
+                        : active
+                          ? "border-neutral-300 bg-white shadow"
+                          : "border-transparent bg-neutral-100 opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <span className="block h-7 w-7 overflow-hidden rounded-full border border-black/10">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={f.src} alt="" className="h-full w-full object-cover" />
+                    </span>
+                    <span className="text-sm text-neutral-700">{f.label}</span>
+                    {!ready && (
+                      <span className="ml-0.5 rounded-full bg-neutral-300 px-1.5 py-0.5 text-[9px] font-extrabold text-neutral-600">
+                        준비중
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] font-medium text-neutral-400">
+              지금은 <b>한국어</b>만 서비스해요. 영어·일본어는 아직 준비 전이에요.
+            </p>
+          </section>
+
+          {/* ── 내 동화 관리 ── 만든 책 전체. 책장 노출(숨기기/보이기)과 영구 삭제를
+              여기서만 한다(책장에는 관리 버튼을 두지 않는다). 하나도 없으면 칸을 감춘다. */}
+          {myBooks.length > 0 && (
+            <section className="flex flex-col gap-2.5">
+              <h2 className="text-sm font-extrabold text-neutral-400">
+                내 동화 ({myBooks.length})
+              </h2>
+              <p className="-mt-1 text-xs font-medium text-neutral-400">
+                만든 동화 목록이에요. 책장에서 숨기거나, 영구 삭제할 수 있어요.
+              </p>
+              <ul className="flex flex-col gap-2">
+                {myBooks.map((b) => (
+                  <li
+                    key={b.id}
+                    className="flex items-center gap-2 rounded-2xl bg-neutral-100 px-3 py-2"
+                  >
+                    <span className="flex flex-1 items-center gap-1.5 truncate">
+                      <span className="truncate text-sm font-bold text-neutral-700">
+                        {b.title}
+                      </span>
+                      {b.hidden && (
+                        <span className="shrink-0 rounded-full bg-neutral-300 px-1.5 py-0.5 text-[10px] font-extrabold text-neutral-600">
+                          숨김
+                        </span>
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleHide(b.id, !b.hidden)}
+                      className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow-sm"
+                    >
+                      {b.hidden ? "보이기" : "숨기기"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => purgeBook(b.id, b.title)}
+                      className="shrink-0 rounded-full bg-red-500 px-3 py-1.5 text-xs font-extrabold text-white"
+                    >
+                      영구 삭제
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* ── 관리자(마스터) ── 회원 목록과 각 회원이 만든 책장을 열람한다.
+              베타에선 이 기기에 저장된 회원만 보인다. Supabase가 붙으면 전체 회원이 뜬다. */}
+          {master && (
+            <section className="flex flex-col gap-2.5">
+              <h2 className="text-sm font-extrabold text-amber-600">👑 관리자 · 회원 ({members.length})</h2>
+              <p className="-mt-1 text-xs font-medium text-neutral-400">
+                가입한 회원과 각자 만든 동화를 볼 수 있어요. 회원을 누르면 그 사람의 책장이 펼쳐져요.
+              </p>
+              {members.length === 0 ? (
+                <p className="rounded-2xl bg-neutral-100 px-4 py-3 text-sm font-bold text-neutral-500">
+                  아직 가입한 회원이 없어요.
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {members.map((m) => {
+                    const open = openMember === m.id;
+                    const books = memberBooks[m.id] ?? [];
+                    return (
+                      <li key={m.id} className="overflow-hidden rounded-2xl bg-neutral-100">
+                        <button
+                          type="button"
+                          onClick={() => toggleMember(m.id)}
+                          className="flex w-full items-center gap-2 px-4 py-3 text-left"
+                        >
+                          <span className="flex-1 truncate text-sm font-extrabold text-neutral-800">
+                            {m.username}
+                          </span>
+                          {/* 만든 동화 개수 — 한눈에 누가 얼마나 만들었는지 보인다. */}
+                          <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-bold text-neutral-500">
+                            동화 {books.length}
+                          </span>
+                          <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-neutral-500">
+                            <span aria-hidden className="inline-block rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
+                            {m.tokens}
+                          </span>
+                          <span className="shrink-0 text-neutral-400">{open ? "▲" : "▼"}</span>
+                        </button>
+                        {open && (
+                          <div className="border-t border-neutral-200 bg-white px-4 py-2">
+                            {books.length === 0 ? (
+                              <p className="py-1 text-xs font-medium text-neutral-400">만든 동화가 없어요.</p>
+                            ) : (
+                              <ul className="flex flex-col divide-y divide-neutral-100">
+                                {books.map((b) => (
+                                  <li key={b.id} className="flex items-center gap-2 py-2">
+                                    <span className="flex-1 truncate text-sm font-bold text-neutral-700">
+                                      {b.title}
+                                      {b.hidden && <span className="ml-1 text-[10px] text-neutral-400">(숨김)</span>}
+                                    </span>
+                                    <Link
+                                      href={`/book/${b.id}`}
+                                      className="shrink-0 rounded-full px-3 py-1 text-xs font-extrabold text-white"
+                                      style={{ background: accent }}
+                                    >
+                                      열기
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </section>
+          )}
+          </>)}
+
+          {/* 모두 자동 저장이라 이 버튼은 "닫기"일 뿐이지만, 마무리 버튼이 있어야 안심한다. */}
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            style={{ background: accent }}
+            className="mt-1 rounded-full py-3 text-lg font-extrabold text-white transition-transform hover:-translate-y-0.5 active:translate-y-0"
+          >
+            확인
+          </button>
+        </div>
+      </main>
+    </div>
+  );
+}

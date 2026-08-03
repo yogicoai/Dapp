@@ -21,19 +21,22 @@
  *   ...
  */
 
-/** 기승전결. 줄거리 단계의 출력이자 본문 단계의 입력. */
-export const ACTS = ["기", "승", "전", "결"] as const;
-export type ActName = (typeof ACTS)[number];
-
-export type OutlineAct = {
-  act: ActName;
+/**
+ * 줄거리는 **장면 단위**다. 기승전결 4막이 아니라 "1장면·2장면…" 리스트로,
+ * 부모가 고른 장면 수(pageCount)만큼 나온다. 기승전결은 사라진 게 아니라 이
+ * 장면들이 전체적으로 시작→사건→해결을 이루도록 배열되는 것으로 녹아든다.
+ *
+ * 이렇게 하면 줄거리의 각 장면이 본문의 각 쪽, 나아가 삽화 한 장과 1:1로 맞는다.
+ */
+export type OutlineScene = {
+  sceneNo: number;
   text: string;
 };
 
 export type ParsedOutline = {
   title: string;
   summary: string;
-  acts: OutlineAct[];
+  scenes: OutlineScene[];
 };
 
 export type StoryCharacter = {
@@ -93,7 +96,9 @@ function joinBody(block: Block): string {
  *
  * 본문을 바로 뽑지 않고 줄거리를 먼저 받는 이유는 원가다. 삽화 8장이 ₩440인데
  * 줄거리는 ₩22라, 부모가 마음에 들 때까지 굴려도 부담이 없다. 확정된 뒤에야
- * 비싼 단계로 넘어간다. 덤으로 출력이 짧아 기승전결 구조가 덜 흔들린다.
+ * 비싼 단계로 넘어간다. 덤으로 출력이 짧아 이야기 구조가 덜 흔들린다.
+ *
+ * 장면 단위(@@SCENE@@ 1 / @@TEXT@@ …)로 받는다. 본문 파싱(@@PAGE@@)과 같은 얼개다.
  */
 export function parseOutline(raw: string): ParsedOutline {
   const blocks = toBlocks(raw);
@@ -103,11 +108,11 @@ export function parseOutline(raw: string): ParsedOutline {
 
   let title = "";
   let summary = "";
-  const acts: OutlineAct[] = [];
-  let current: OutlineAct | null = null;
+  const scenes: OutlineScene[] = [];
+  let current: OutlineScene | null = null;
 
   const flush = () => {
-    if (current) acts.push(current);
+    if (current) scenes.push(current);
     current = null;
   };
 
@@ -123,18 +128,18 @@ export function parseOutline(raw: string): ParsedOutline {
         summary = inlineOrBody;
         break;
 
-      case "ACT": {
+      case "SCENE": {
         flush();
-        const act = ACTS.find((a) => a === block.inline);
-        if (!act) {
-          throw new StoryParseError(`@@ACT@@가 기·승·전·결이 아닙니다: "${block.inline}"`);
+        const sceneNo = Number.parseInt(block.inline, 10);
+        if (!Number.isFinite(sceneNo)) {
+          throw new StoryParseError(`@@SCENE@@ 번호를 읽을 수 없습니다: "${block.inline}"`);
         }
-        current = { act, text: "" };
+        current = { sceneNo, text: "" };
         break;
       }
 
       case "TEXT":
-        if (!current) throw new StoryParseError("@@ACT@@ 없이 @@TEXT@@가 먼저 나왔습니다.");
+        if (!current) throw new StoryParseError("@@SCENE@@ 없이 @@TEXT@@가 먼저 나왔습니다.");
         current.text = inlineOrBody;
         break;
 
@@ -145,17 +150,18 @@ export function parseOutline(raw: string): ParsedOutline {
   flush();
 
   if (!title) throw new StoryParseError("@@TITLE@@이 없습니다.");
+  if (scenes.length === 0) throw new StoryParseError("장면을 하나도 찾지 못했습니다.");
 
-  // 4막이 전부 있어야 한다. 하나라도 빠지면 본문 단계에서 구조가 무너진다.
-  const missing = ACTS.filter((a) => !acts.some((x) => x.act === a && x.text));
-  if (missing.length > 0) {
-    throw new StoryParseError(`${missing.join("·")} 막이 비어 있습니다.`);
-  }
+  const empty = scenes.find((s) => !s.text);
+  if (empty) throw new StoryParseError(`${empty.sceneNo}장면 줄거리가 비어 있습니다.`);
 
-  // 모델이 순서를 바꿔 내놔도 기승전결로 세운다.
-  acts.sort((a, b) => ACTS.indexOf(a.act) - ACTS.indexOf(b.act));
+  // 모델이 번호를 건너뛰거나 순서를 바꿔도 1,2,3…으로 다시 세운다.
+  scenes.sort((a, b) => a.sceneNo - b.sceneNo);
+  scenes.forEach((s, i) => {
+    s.sceneNo = i + 1;
+  });
 
-  return { title, summary, acts };
+  return { title, summary, scenes };
 }
 
 export function parseStory(raw: string): ParsedStory {

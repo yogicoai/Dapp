@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>우리 가족 보이스 동화 — 보고 자료</title>
+<style>
+  :root {
+    --bg: #f7f3ec; --bg-soft: #efe8dc; --card: #fffdf9; --ink: #372e27;
+    --ink-soft: #6a5d51; --ink-faint: #9a8d7e; --line: #e4daca;
+    --amber: #b9680b; --amber-soft: #f6e8d2; --sage: #5f7050; --sage-soft: #e4ead9;
+    --rust: #a8481f; --gold: #9a7a1e; --gold-soft: #f2ead1;
+    --shadow: 0 1px 2px rgba(55,46,39,.06), 0 8px 24px rgba(55,46,39,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #191512; --bg-soft: #211b16; --card: #241d18; --ink: #ece3d8;
+      --ink-soft: #b6a897; --ink-faint: #837567; --line: #38302a;
+      --amber: #e0983a; --amber-soft: #3a2c18; --sage: #9fb187; --sage-soft: #29301f;
+      --rust: #d98457; --gold: #cdb15e; --gold-soft: #322a15;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 36px 24px 80px; }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); margin: 0 0 10px; }
+  h1 { font-size: clamp(25px, 5vw, 36px); font-weight: 800; line-height: 1.2; letter-spacing: -.01em; margin: 0 0 12px; }
+  .lede { font-size: 16px; color: var(--ink-soft); margin: 0; max-width: 62ch; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 18px; font-size: 13px; color: var(--ink-faint); }
+  .meta b { color: var(--ink-soft); font-weight: 700; }
+
+  nav.jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  nav.jump a { font-size: 13px; font-weight: 700; text-decoration: none; color: var(--ink-soft); background: var(--card); border: 1px solid var(--line); padding: 7px 13px; border-radius: 999px; box-shadow: var(--shadow); }
+  nav.jump a:hover { color: var(--amber); border-color: var(--amber); }
+
+  hr.rule { border: none; border-top: 1px solid var(--line); margin: 34px 0; }
+  .section-head { display: flex; align-items: baseline; gap: 12px; margin: 0 0 6px; }
+  .section-num { font-size: 13px; font-weight: 800; color: var(--amber); font-variant-numeric: tabular-nums; }
+  h2 { font-size: 21px; font-weight: 800; letter-spacing: -.01em; margin: 0; scroll-margin-top: 20px; }
+  .section-note { font-size: 13.5px; color: var(--ink-faint); margin: 0 0 18px; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 24px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
+  .stat .k { font-size: 12px; font-weight: 700; color: var(--ink-faint); margin: 0 0 6px; }
+  .stat .v { font-size: 22px; font-weight: 800; margin: 0; font-variant-numeric: tabular-nums; }
+  .stat .v small { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+
+  ul.clean { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  ul.clean li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px; display: flex; gap: 12px; align-items: flex-start; box-shadow: var(--shadow); }
+  .tag { flex: 0 0 auto; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; white-space: nowrap; margin-top: 2px; }
+  .tag.done { background: var(--sage-soft); color: var(--sage); }
+  .tag.todo { background: var(--amber-soft); color: var(--amber); }
+  .li-body { min-width: 0; }
+  .li-body b { font-weight: 700; }
+  .li-body p { margin: 3px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+
+  .costwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+  table { width: 100%; border-collapse: collapse; min-width: 480px; background: var(--card); }
+  caption { text-align: left; padding: 14px 16px 0; font-size: 13px; color: var(--ink-faint); }
+  th, td { padding: 11px 16px; text-align: right; font-variant-numeric: tabular-nums; font-size: 14px; }
+  th:first-child, td:first-child { text-align: left; font-variant-numeric: normal; }
+  thead th { font-size: 12px; font-weight: 700; color: var(--ink-faint); border-bottom: 1px solid var(--line); }
+  tbody td { border-bottom: 1px solid var(--line); }
+  tbody tr:last-child td { border-bottom: none; }
+  tr.group td { background: var(--bg-soft); font-weight: 700; font-size: 12px; color: var(--ink-soft); }
+  tr.total td { font-weight: 800; }
+  tr.total.opus td { color: var(--rust); }
+  tr.total.sonnet td { color: var(--sage); }
+  tr.hi td { background: var(--gold-soft); font-weight: 800; }
+  .rowlabel small { display: block; font-size: 11px; color: var(--ink-faint); font-weight: 400; }
+  .pos { color: var(--sage); font-weight: 700; }
+
+  .detailgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  .detail { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: var(--card); box-shadow: var(--shadow); }
+  .detail h4 { margin: 0 0 6px; font-size: 13.5px; font-weight: 800; }
+  .detail .unit { margin: 0 0 8px; font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .detail .unit span { font-size: 12px; font-weight: 600; color: var(--ink-faint); }
+  .detail p.d { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; }
+  .detail table.mini { min-width: 0; margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .detail table.mini td { padding: 6px 10px; font-size: 12px; border-bottom: 1px solid var(--line); }
+  .detail table.mini tr:last-child td { border-bottom: none; }
+
+  .models { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 4px; }
+  .model { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: var(--card); box-shadow: var(--shadow); display: flex; flex-direction: column; }
+  .model.feature { border: 1.5px solid var(--amber); }
+  .model .badge { align-self: flex-start; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: var(--amber-soft); color: var(--amber); margin-bottom: 12px; }
+  .model h3 { margin: 0 0 4px; font-size: 17px; font-weight: 800; }
+  .model .desc { margin: 0 0 14px; font-size: 12.5px; color: var(--ink-soft); min-height: 34px; }
+  .model .price { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .model .price small { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .model ul { list-style: none; margin: 14px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: var(--ink-soft); }
+  .model ul li { display: flex; gap: 8px; }
+  .model ul li::before { content: "·"; color: var(--amber); font-weight: 800; }
+
+  .callout { border-radius: 14px; padding: 15px 18px; margin-top: 18px; }
+  .callout.amber { background: var(--amber-soft); border: 1px solid var(--amber); }
+  .callout.sage { background: var(--sage-soft); border: 1px solid var(--sage); }
+  .callout p { margin: 0; font-size: 13.5px; color: var(--ink); }
+  .callout p + p { margin-top: 8px; }
+  .callout b.amber { color: var(--amber); }
+  .callout b.sage { color: var(--sage); }
+
+  .cards2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  .pricecard { border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; background: var(--card); box-shadow: var(--shadow); }
+  .pricecard.opus { border-top: 3px solid var(--rust); }
+  .pricecard.sonnet { border-top: 3px solid var(--sage); }
+  .pricecard h3 { margin: 0 0 2px; font-size: 15px; font-weight: 800; }
+  .pricecard .sub { margin: 0 0 14px; font-size: 12px; color: var(--ink-faint); }
+  .pricecard .big { font-size: 30px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .pricecard .big small { font-size: 14px; font-weight: 700; color: var(--ink-soft); }
+  .pricecard .range { margin: 8px 0 0; font-size: 12.5px; color: var(--ink-soft); }
+
+  .storycard { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: var(--card); box-shadow: var(--shadow); }
+  .storycard.opus { border-top: 3px solid var(--rust); }
+  .storycard.sonnet { border-top: 3px solid var(--sage); }
+  .storycard .m { font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+  .storycard.opus .m { color: var(--rust); }
+  .storycard.sonnet .m { color: var(--sage); }
+  .storycard h4 { margin: 4px 0 12px; font-size: 15px; font-weight: 800; }
+  .storycard ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 7px; }
+  .storycard ol li { font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; }
+  h3.mini-h { margin: 24px 0 2px; font-size: 16px; font-weight: 800; scroll-margin-top: 20px; }
+
+  .agenda { display: flex; flex-direction: column; gap: 10px; }
+  .agenda .q { display: flex; gap: 13px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: var(--shadow); }
+  .agenda .qn { flex: 0 0 auto; width: 24px; height: 24px; border-radius: 8px; background: var(--sage-soft); color: var(--sage); font-weight: 800; font-size: 13px; display: grid; place-items: center; margin-top: 1px; }
+  .agenda .qt b { font-weight: 700; }
+  .agenda .qt p { margin: 3px 0 0; font-size: 13px; color: var(--ink-soft); }
+  .fill { color: var(--amber); font-weight: 700; background: var(--amber-soft); padding: 0 6px; border-radius: 5px; }
+
+  .disclaimer { margin-top: 28px; font-size: 12px; color: var(--ink-faint); line-height: 1.7; }
+  .disclaimer b { color: var(--ink-soft); }
+  .foothint { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-faint); }
+
+  @media (max-width: 620px) { .stats, .models, .detailgrid, .cards2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">개발 현황 · 가격 정책 보고 · 내부용</p>
+    <h1>우리 가족 보이스 동화 — 진행 현황과 가격·크레딧 정책</h1>
+    <p class="lede">아이가 주인공인 AI 그림동화 앱. 이야기 생성·음성·콘텐츠·테마까지 완성했고, 남은 것은 회원가입·저장·결제와 배포입니다. 아래는 <b>개발 현황</b>과 <b>동화 1권 원가 → 판매가·크레딧 정책</b>을 정리한 회의 자료입니다.</p>
+    <div class="meta">
+      <span><b>작성일</b> 2026-07-22</span>
+      <span><b>갱신</b> 2026-07-29</span>
+      <span><b>기준 원가</b> 1권 ₩615(Sonnet)~₩1,085(Opus)</span>
+      <span><b>용도</b> 결제·크레딧 회의</span>
+    </div>
+    <nav class="jump">
+      <a href="#done">개발 현황</a>
+      <a href="#todo">남은 작업</a>
+      <a href="#cost">1권 원가</a>
+      <a href="#compare">품질 비교</a>
+      <a href="#sale">판매가</a>
+      <a href="#models">요금 모델</a>
+      <a href="#agenda">회의 안건</a>
+      <a href="#extra">부가 비용</a>
+      <a href="#update">최근 업데이트</a>
+    </nav>
+    <div style="background:var(--sage-soft);border:1px solid var(--sage);border-radius:14px;padding:14px 18px;margin-top:18px;font-size:13.5px;color:var(--ink);">
+      <b style="color:var(--sage);">7/29 업데이트.</b> 만든 동화 저장·관리, 삽화(Gemini) 연결, 성우를 만들 때 고르는 구조(방법 B), 이야기 품질 강화, 엄마·아빠 목소리 클로닝 벤더 조사를 진행했습니다 — <b>맨 아래 08번 섹션</b> 참고.
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><p class="k">테마(나라)</p><p class="v">7<small> 종</small></p></div>
+    <div class="stat"><p class="k">동화 만드는 방식</p><p class="v">3<small> 가지</small></p></div>
+    <div class="stat"><p class="k">1권 원가(8장)</p><p class="v">₩615<small>~1,085</small></p></div>
+  </div>
+
+  <hr class="rule" />
+
+  <section id="done">
+    <div class="section-head"><span class="section-num">01</span><h2>지금까지 완성한 것</h2></div>
+    <p class="section-note">앱의 핵심 — “이야기를 만들어 목소리로 들려준다”는 이미 작동합니다.</p>
+    <ul class="clean">
+      <li><span class="tag done">완료</span><div class="li-body"><b>이야기 생성 엔진 (앱의 심장)</b><p>세 가지 방식 — 오늘 있었던 일 / 상상 이야기 / 감정 동화. 나이(3~8세)별로 글 수준이 자동으로 달라지고, 장면 수(3~8장)를 고르면 장면별 줄거리 → 본문으로 만들어집니다. 친구·형제는 이름을 넣으면 그대로 등장합니다.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>음성 낭독</b><p>진짜 성우 16명(감정 연기), 캐릭터별 목소리, 읽기 속도 조절. 엄마·아빠 목소리 녹음 자리 마련.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>기본 콘텐츠 — 전래동화 · 세계명작</b><p>빈 책장이 허전하지 않도록 제공하는 서가. 삽화·나레이션·캐릭터 음성 완비.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>테마(나라) 7종 · 그림책나라 신규</b><p>우주·동화·공룡·자동차·공주·바다에 더해, 이사님 컨셉을 <b>그림책나라</b> 테마로 추가(배경·마스코트 여우 “토리”·전용 표지 틀·배경 영상 완비).</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>책 뷰어 · 만들기 화면</b><p>페이지 넘김·자동 낭독·클릭 반짝임·배경음, 그림 속 캐릭터 클릭 시 대사. 만들기 위저드·스티커 아이콘 정비.</p></div></li>
+    </ul>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="todo">
+    <div class="section-head"><span class="section-num">02</span><h2>남은 작업 (상용화까지)</h2></div>
+    <ul class="clean">
+      <li><span class="tag todo">필요</span><div class="li-body"><b>회원가입 · 데이터 저장 (Supabase)</b><p>아이 정보·만든 동화를 계정에 저장. 현재는 기기에만 임시 저장.</p></div></li>
+      <li><span class="tag todo">필요</span><div class="li-body"><b>아이 사진 → 주인공 얼굴 반영</b><p>업로드 사진을 삽화 주인공에 반영. 개인정보라 안전한 전용 저장소 필요.</p></div></li>
+      <li><span class="tag done">가동됨</span><div class="li-body"><b>삽화 생성 정식 가동</b><p>Gemini 이미지 AI 연결 완료(7/29). 만들 때 “그림까지 그리기”로 삽화 생성(장당 약 ₩55). 후불 결제·지출한도 세팅으로 <b>테스트 가동 중</b>.</p></div></li>
+      <li><span class="tag todo">필요</span><div class="li-body"><b>결제 · 크레딧 시스템 (수익 모델)</b><p>1권당 얼마·무료 몇 권. 오늘 회의의 핵심.</p></div></li>
+      <li><span class="tag todo">필요</span><div class="li-body"><b>배포 · 이미지 호스팅 연결</b><p>앱은 Vercel + 회사 도메인. 전래·세계명작 같은 <b>고정 이미지·음성은 카페24 이미지 호스팅</b>, 사용자 사진은 전용 저장소.</p></div></li>
+    </ul>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="cost">
+    <div class="section-head"><span class="section-num">03</span><h2>동화 1권 원가</h2></div>
+    <p class="section-note"><b>글(AI 작가) + 삽화(그림 AI) + 음성</b> 세 조각. 판매가의 바닥선입니다.</p>
+    <div class="costwrap">
+      <table>
+        <caption>동화 1권 원가 (원, 부가세 별도) — 장면 수 × 구성 요소</caption>
+        <thead><tr><th>구성 요소</th><th>3장면</th><th>6장면</th><th>8장면</th></tr></thead>
+        <tbody>
+          <tr class="group"><td colspan="4">글 — 이야기 생성 (모델 선택)</td></tr>
+          <tr><td class="rowlabel">가성비 Sonnet<small>품질 양호 · 대량 서비스</small></td><td>70</td><td>95</td><td>120</td></tr>
+          <tr><td class="rowlabel">고성능 Opus<small>최고 품질</small></td><td>360</td><td>480</td><td>590</td></tr>
+          <tr class="group"><td colspan="4">삽화 — Gemini 2.5 Flash Image (장당 ₩55)</td></tr>
+          <tr><td class="rowlabel">삽화 (본문 장수 + 캐릭터 1장)</td><td>220</td><td>385</td><td>495</td></tr>
+          <tr class="group"><td colspan="4">음성 — Typecast API (무료 월 3만 자 ≈ 35권)</td></tr>
+          <tr><td class="rowlabel">음성 (무료 범위 0 · 초과 시 +₩100/권)</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr class="total sonnet"><td>합계 — Sonnet 기준</td><td>290</td><td>480</td><td>615</td></tr>
+          <tr class="total opus"><td>합계 — Opus 기준</td><td>580</td><td>865</td><td>1,085</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="detailgrid">
+      <div class="detail">
+        <h4>🎨 삽화 — Gemini 2.5 Flash Image (사용 확정)</h4>
+        <p class="unit">장당 ₩55 <span>($0.039 · 이미지 1장)</span></p>
+        <p class="d">1권 그림 = <b>본문 장수 + 캐릭터 기준 그림 1장</b>. 캐릭터 그림을 먼저 만들어 모든 장면의 주인공 얼굴을 똑같이 맞춥니다.</p>
+        <table class="mini"><tbody>
+          <tr><td>3장 동화</td><td style="text-align:right">4장 × ₩55 = <b>₩220</b></td></tr>
+          <tr><td>6장 동화</td><td style="text-align:right">7장 × ₩55 = <b>₩385</b></td></tr>
+          <tr><td>8장 동화</td><td style="text-align:right">9장 × ₩55 = <b>₩495</b></td></tr>
+        </tbody></table>
+      </div>
+      <div class="detail">
+        <h4>🔊 음성 — Typecast API (성우 낭독)</h4>
+        <p class="unit">월 30,000자 무료 <span>(크레딧 = 글자수)</span></p>
+        <p class="d">1권 낭독 ≈ <b>840자</b> → 무료로 <b>월 약 35권</b>. 넘으면 크레딧당 자동 과금이라 <b>1권 약 ₩100</b>. <b>성우 개수·종류는 요금과 무관</b>(총 글자수 기준).</p>
+        <table class="mini"><tbody>
+          <tr><td>무료</td><td style="text-align:right">월 30,000자(≈35권) · <b>₩0</b></td></tr>
+          <tr><td>라이트 $15/월</td><td style="text-align:right">20만 자(≈238권)</td></tr>
+          <tr><td>초과 1권</td><td style="text-align:right">약 ₩100 ($0.09/1,000자)</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="cards2">
+      <div class="pricecard sonnet"><h3>가성비 Sonnet 기준</h3><p class="sub">품질 양호 · 원가 약 1/5</p><p class="big">₩615<small> / 8장 1권</small></p><p class="range">3장 ₩290 · 6장 ₩480 · 8장 ₩615</p></div>
+      <div class="pricecard opus"><h3>고성능 Opus 기준</h3><p class="sub">최고 이야기 품질</p><p class="big">₩1,085<small> / 8장 1권</small></p><p class="range">3장 ₩580 · 6장 ₩865 · 8장 ₩1,085</p></div>
+    </div>
+
+    <div class="callout sage">
+      <p><b class="sage">핵심.</b> 원가의 약 절반은 삽화(장당 ₩55 고정), 나머지가 글입니다. 음성은 <b class="sage">월 35권까지 무료</b>(넘으면 1권 약 ₩100). <b class="sage">글을 Sonnet으로 쓰면 원가가 1/5</b>로 내려가 1권이 ₩600대가 됩니다.</p>
+    </div>
+
+    <h3 class="mini-h" id="compare">글 모델 실제 품질 비교 (같은 재료로 생성)</h3>
+    <p class="section-note">아이 <b>요기코(6세)</b> · 우주 로켓 · 친구 <b>토토</b> · 6장면 — 같은 재료를 <b>두 모델에 실제로 돌린</b> 결과입니다.</p>
+    <div class="cards2">
+      <div class="storycard opus">
+        <span class="m">Opus · 고성능</span>
+        <h4>슝! 우주 로켓 타고 새 친구를 만나요</h4>
+        <ol>
+          <li>요기코와 토토는 상자로 멋진 우주 로켓을 만들었어요. “별나라까지 신나게 날아가 보자!” 요기코가 외치자 로켓이 슝 하늘로 솟았어요.</li>
+          <li>반짝이는 별들 사이를 날던 로켓에 갑자기 삐뽀삐뽀 신호가 울렸어요. “저기 봐, 작은 우주선이 빙글빙글 돌고 있어!” 토토가 창밖을 가리켰어요.</li>
+          <li>요기코가 다가가 보니, 초록빛 아기 외계인이 울고 있었어요. “나는 삐용이야. 집으로 가는 길을 잃어버렸어.” 친구의 눈에서 별방울이 뚝뚝 떨어졌어요.</li>
+          <li>그런데 삐용이의 우주선은 날개가 부러져 꼼짝도 못 했어요. 깜깜한 우주에 셋만 둥둥, 요기코의 가슴도 두근두근 뛰었어요. “어떻게 집을 찾아 주지?”</li>
+          <li>요기코는 반짝이는 별들을 이어 길을 그렸어요. “삐용아, 저 노란 별을 따라가면 네 별이 나와!” 요기코가 로켓으로 앞장서서 길을 안내했어요.</li>
+          <li>드디어 삐용이의 초록 별에 무사히 도착했어요! “고마워, 요기코! 우리 이제 우주 친구야.” 셋은 별빛 아래에서 손을 마주 잡고 활짝 웃었어요.</li>
+        </ol>
+      </div>
+      <div class="storycard sonnet">
+        <span class="m">Sonnet · 가성비</span>
+        <h4>요기코의 우주 로켓과 별별 친구</h4>
+        <ol>
+          <li>요기코와 토토는 마당에서 커다란 종이상자로 우주 로켓을 뚝딱뚝딱 만들었어요. 오늘은 진짜 우주로 떠나는 아주 특별한 날이랍니다.</li>
+          <li>버튼을 힘차게 누르자 로켓이 붕 떠올라 반짝이는 별빛 사이로 신나게 날아갔어요. 요기코와 토토는 손을 맞잡고 함성을 질렀어요.</li>
+          <li>저 멀리 반짝이는 초록별에서 이상한 빛이 깜빡깜빡 신호를 보내왔어요. 궁금해진 두 친구는 로켓을 그 별 쪽으로 살짝 돌려 다가갔어요.</li>
+          <li>쿵! 로켓이 초록별에 사뿐히 내려앉자 커다란 그림자가 쓱 하고 나타났어요. 요기코와 토토는 깜짝 놀라서 서로 손을 꼭 붙잡았어요.</li>
+          <li>요기코는 두근거리는 마음을 꾹 누르고 먼저 손을 흔들며 씩씩하게 인사했어요. 그러자 외계 친구도 활짝 웃으며 반갑게 손을 흔들어 주었어요.</li>
+          <li>셋은 반짝이는 별사탕을 나눠 먹으며 함께 깔깔 웃었고, 요기코는 새 친구와 손을 꼭 잡고 씩씩하게 지구로 무사히 돌아왔답니다.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="callout amber">
+      <p><b class="amber">편집자 비교.</b> 두 버전 모두 6세 눈높이의 의성어·의태어와 밝은 결말을 갖췄지만, 차이는 ‘감정의 밀도’와 ‘갈등’에 있습니다. <b>Opus</b>는 길 잃은 삐용이의 ‘별방울’, 부러진 날개, ‘별을 이어 길 그리기’ 같은 구체적 위기·해결로 뚜렷한 서사 아치를 만듭니다. <b>Sonnet</b>은 문장이 매끄럽고 리듬이 좋으나 갈등이 ‘그림자에 놀람’ 정도로 약하고 마무리가 다소 빠릅니다.</p>
+      <p><b class="amber">판단.</b> 감정 깊이·서사 완성도가 중요한 <b>대표 콘텐츠는 Opus</b>, 매끄러운 문장이면 충분한 <b>대량 생성은 Sonnet</b>이 비용 대비 합리적입니다.</p>
+    </div>
+
+    <p class="section-note" style="margin-top:26px"><b>추가 예제 — 감정 동화 · 4세</b> · 동생에게 샘나는 마음(엄마가 동생만 안아줄 때) · 4장면</p>
+    <div class="cards2">
+      <div class="storycard opus">
+        <span class="m">Opus · 고성능</span>
+        <h4>샘이 나는 콩닥콩닥 마음</h4>
+        <ol>
+          <li>엄마가 동생을 꼭 안아 주었어요. 요기코는 가슴이 콩닥콩닥, 무언가 이상했어요.</li>
+          <li>“왜 동생만 안아줘?” 얼굴이 뜨끈뜨끈, 눈물이 찔끔 나왔어요.</li>
+          <li>“아, 이건 샘이 나는 마음이구나.” 요기코는 콩닥콩닥한 가슴을 살살 쓰다듬었어요.</li>
+          <li>요기코가 동생 손을 콕 잡아 주자 동생이 방긋 웃었어요. 마음이 포근해졌어요.</li>
+        </ol>
+      </div>
+      <div class="storycard sonnet">
+        <span class="m">Sonnet · 가성비</span>
+        <h4>샘이 나는 마음이 콩닥콩닥</h4>
+        <ol>
+          <li>동생이 태어난 날, 엄마 품엔 언제나 동생만 안겨 있어요. 요기코는 옆에 가만히 서 있어요.</li>
+          <li>요기코 가슴이 콩닥콩닥, 얼굴이 뜨끈뜨끈해졌어요. 샘이 나는 마음이 콕 찾아왔어요.</li>
+          <li>요기코는 눈물이 핑 돌아 그림책을 콱 덮었어요. 그래도 콩닥거리는 마음은 가라앉지 않았어요.</li>
+          <li>요기코는 숨을 크게 쉬고 동생 옆에 살짝 앉았어요. 그러자 콩닥거리던 마음이 스르르 풀렸어요.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="callout amber">
+      <p><b class="amber">편집자 비교.</b> 감정에 이름 붙이는 방식이 다릅니다. <b>Opus</b>는 “아, 이건 샘이 나는 마음이구나”로 아이가 <b>스스로 감정을 알아차리게(자기 명명)</b> 하고 가슴을 살살 쓰다듬어 즉각 위로해 4세에 편안합니다. <b>Sonnet</b>은 감정을 ‘콕 찾아온 손님’으로 그리고, 그림책을 덮는 행동 → “숨을 크게 쉬고”라는 <b>실제 호흡 진정</b>까지 밟는 정직한 2단계 전개라 감정 코칭 깊이가 큽니다.</p>
+      <p><b class="amber">판단.</b> 4세엔 Opus가 더 편안하고, 감정 코칭의 깊이(호흡·감정 지속 표현)는 Sonnet이 인상적 — 대상·목적에 따라 갈립니다.</p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="sale">
+    <div class="section-head"><span class="section-num">04</span><h2>판매가 시나리오 (원가 × 마진)</h2></div>
+    <p class="section-note">그림책 1권의 체감가(₩2,000~5,000)와 견줘 보세요.</p>
+    <div class="costwrap">
+      <table>
+        <thead><tr><th>마진 배수</th><th>Sonnet 기준가</th><th>Opus 기준가</th><th>남는 돈(개략)</th></tr></thead>
+        <tbody>
+          <tr><td class="rowlabel">×3 (박리다매)</td><td>₩1,900</td><td>₩3,300</td><td class="pos">약 원가의 2배</td></tr>
+          <tr class="hi"><td class="rowlabel">×5 (표준)</td><td>₩3,100</td><td>₩5,400</td><td class="pos">약 원가의 4배</td></tr>
+          <tr><td class="rowlabel">×8 (프리미엄)</td><td>₩4,900</td><td>₩8,700</td><td class="pos">약 원가의 7배</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout amber">
+      <p><b class="amber">결제 수수료를 꼭 감안하세요.</b> 앱스토어 인앱결제는 <b class="amber">약 30%</b>, 웹(카드·간편결제)은 <b class="amber">약 3~4%</b>만 뗍니다. ₩3,100에 팔아도 앱스토어면 실수령 ₩2,170 수준. <b class="amber">웹 결제 중심이면 마진이 훨씬 좋습니다.</b></p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="models">
+    <div class="section-head"><span class="section-num">05</span><h2>요금 모델 3가지 안</h2></div>
+    <p class="section-note">하나만 고를 필요 없이 섞어도 됩니다(예: 무료 1권 + 크레딧 팩).</p>
+    <div class="models">
+      <div class="model"><span class="badge">A안</span><h3>단건 구매</h3><p class="desc">한 권 만들 때마다 결제. 가장 단순.</p><p class="price">₩3,100<small> / 권</small></p><ul><li>진입장벽 낮음</li><li>가끔 쓰는 이용자에 적합</li><li>재구매 유도가 과제</li></ul></div>
+      <div class="model feature"><span class="badge">B안 · 추천</span><h3>크레딧 팩</h3><p class="desc">동화코인 충전 → 1권당 차감. 묶음 할인.</p><p class="price">₩12,900<small> / 10코인</small></p><ul><li>1권 = 1코인(길면 2코인)</li><li>많이 살수록 권당 단가↓</li><li>선결제라 현금흐름 유리</li></ul></div>
+      <div class="model"><span class="badge">C안</span><h3>월 구독</h3><p class="desc">매달 정액, 월 N권 제공.</p><p class="price">₩9,900<small> / 월</small></p><ul><li>월 10권(예시)</li><li>안정적 반복 매출</li><li>원가 관리 위해 상한 필요</li></ul></div>
+    </div>
+    <div class="callout sage">
+      <p><b class="sage">추천 조합.</b> 가입 시 <b class="sage">무료 1권</b> → 평소 <b class="sage">크레딧 팩(B안)</b> → 헤비 유저 <b class="sage">구독(C안)</b>의 3단 구조가 가장 흔하고 안전합니다.</p>
+    </div>
+    <div class="callout amber">
+      <p><b class="amber">동화코인 예시.</b> 짧은 동화(3~4장)=1코인 · 기본(5~6장)=2코인 · 긴 동화(7~8장)=3코인. 팩: 3코인 ₩4,900 · 10코인 ₩12,900 · 30코인 ₩29,900 (많이 살수록 코인당 ₩1,290→₩997).</p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="agenda">
+    <div class="section-head"><span class="section-num">06</span><h2>오늘 정할 것 (회의에서 채울 빈칸)</h2></div>
+    <div class="agenda">
+      <div class="q"><span class="qn">1</span><div class="qt"><b>이야기 글 모델</b><p>고성능 Opus(품질) vs 가성비 Sonnet(원가 1/5) → <span class="fill">선택: ______</span></p></div></div>
+      <div class="q"><span class="qn">2</span><div class="qt"><b>1권 판매 기준가</b><p>×3 / ×5 / ×8 → <span class="fill">기준가: ₩______</span></p></div></div>
+      <div class="q"><span class="qn">3</span><div class="qt"><b>요금 모델</b><p>단건 / 크레딧 팩 / 구독 / 조합 → <span class="fill">선택: ______</span></p></div></div>
+      <div class="q"><span class="qn">4</span><div class="qt"><b>무료 제공</b><p>가입 시 무료 권수 → <span class="fill">______ 권</span></p></div></div>
+      <div class="q"><span class="qn">5</span><div class="qt"><b>결제 채널</b><p>웹 결제(수수료↓) 중심 vs 앱스토어 → <span class="fill">선택: ______</span></p></div></div>
+      <div class="q"><span class="qn">6</span><div class="qt"><b>음성 유료 전환</b><p>무료 3만 자 초과 시점의 요금제 → <span class="fill">확정: ______</span></p></div></div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="extra">
+    <div class="section-head"><span class="section-num">07</span><h2>그 밖의 운영·출시 비용</h2></div>
+    <p class="section-note">동화 1권 원가(만들 때마다 드는 변동비) 외에, 서비스를 <b>출시·운영</b>하는 데 드는 비용입니다.</p>
+    <div class="costwrap">
+      <table>
+        <thead><tr><th>항목</th><th>비용</th><th>성격</th></tr></thead>
+        <tbody>
+          <tr class="group"><td colspan="3">앱 출시 — 스토어 등록</td></tr>
+          <tr><td class="rowlabel">구글플레이(안드로이드) 개발자 등록</td><td>$25 (약 ₩35,000)</td><td>1회 · 평생</td></tr>
+          <tr><td class="rowlabel">애플 앱스토어(iOS) 등록</td><td>$99/년 (약 ₩139,000)</td><td>매년</td></tr>
+          <tr class="group"><td colspan="3">결제 수수료 — 매출에 비례</td></tr>
+          <tr><td class="rowlabel">앱 인앱결제 (구글·애플)</td><td>매출의 15~30%</td><td>건별</td></tr>
+          <tr><td class="rowlabel">웹 결제 (카드·간편결제 PG)</td><td>매출의 약 3~4%</td><td>건별</td></tr>
+          <tr class="group"><td colspan="3">호스팅·인프라 — 월 고정</td></tr>
+          <tr><td class="rowlabel">앱 서버 (Vercel)</td><td>무료 ~ $20/월</td><td>이용 늘면 유료</td></tr>
+          <tr><td class="rowlabel">DB·사용자 저장소 (Supabase)</td><td>무료 ~ $25/월</td><td>이용 늘면 유료</td></tr>
+          <tr><td class="rowlabel">고정 이미지 호스팅 (카페24)</td><td>기결제 보유</td><td>이미 있음</td></tr>
+          <tr><td class="rowlabel">도메인 연결</td><td>연 약 ₩20,000</td><td>매년</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout amber">
+      <p><b class="amber">핵심.</b> 시작 비용은 <b>구글플레이 $25(평생 1회) + 도메인</b> 정도로 가볍습니다. 인프라(Vercel·Supabase)는 <b>무료 구간</b>에서 출발해 이용자가 늘면 월 $20~45 수준으로 올라갑니다.</p>
+      <p><b class="amber">주의.</b> 매출이 생기면 <b>결제 수수료가 가장 큰 비율</b>입니다 — <b>앱 인앱결제는 15~30%</b>를 떼는 반면 <b>웹 결제는 3~4%</b>뿐이라, 웹 결제(웹앱/PWA)를 주 채널로 두면 같은 판매가에서도 남는 돈이 크게 차이납니다.</p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="update">
+    <div class="section-head"><span class="section-num">08</span><h2>최근 업데이트 (2026-07-29)</h2></div>
+    <p class="section-note">7/22 보고 이후 진행한 것 — 만들기 흐름과 음성·삽화·콘텐츠 관리를 상용화에 가깝게 다듬었습니다.</p>
+    <ul class="clean">
+      <li><span class="tag done">완료</span><div class="li-body"><b>만든 동화 저장 · 관리</b><p>만든 동화가 “우리 가족 책장”에 저장됩니다(현재 기기 단위). 관리는 책장이 아니라 <b>설정 › 내 동화</b>에서 — <b>숨기기/보이기</b>와 경고 후 <b>영구 삭제</b>. 실수로 지워도 되살릴 수 있게 숨김과 삭제를 분리했습니다.</p></div></li>
+      <li><span class="tag done">신규</span><div class="li-body"><b>삽화(Gemini) 연결 · 가동 준비</b><p>Gemini 이미지 AI(2.5 Flash Image)를 붙였습니다. <b>“그림까지 그리기”</b>를 누르면 캐릭터 얼굴을 먼저 잡고 그 얼굴로 각 쪽을 그려 <b>인물 일관성</b>을 유지합니다(장당 약 ₩55). 후불 결제·월 지출한도로 테스트 가동 중.</p></div></li>
+      <li><span class="tag done">신규</span><div class="li-body"><b>성우를 “만들 때” 고르는 구조 (방법 B)</b><p>만들기 화면에서 <b>읽어줄 성우</b>를 골라 동화에 박아 저장합니다. 뷰어는 그 성우로 낭독하고, 합성 결과는 <b>기기에 캐시</b>되어 반복 재생은 무료입니다(전래동화와 같은 원리). 지금은 크레딧 보호로 잠가 둔 상태 — 스위치만 켜면 “만들 때 한 번 굽고 이후 무료”로 작동합니다.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>이야기 품질 강화</b><p>감정 동화에 <b>“감정 터뜨림 → 가장 힘든 바닥 → 스스로 깨달아 해결 → 또렷한 교훈”</b> 굴곡을 규칙으로 넣었습니다. 읽어주는 책 기준으로 <b>나이별 낭독 분량 상향</b>(4세 40~55자 → 90~120자 등), 줄거리 미리보기도 부드러운 동화체로 변경.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>만들기 흐름 간소화</b><p>줄거리(상황설명) 확인 → 한 번만 확정 → <b>본문 + 그림 한 번에</b> → 곧바로 완성 동화로. 중간 군더더기 검토 화면을 없앴습니다.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>기본 콘텐츠 정리</b><p>세계명작 중 아직 삽화가 없는 4권(신데렐라·커다란 순무·골디락스·사자와 생쥐)을 서가에서 <b>임시 숨김</b> — 이미지 완성 후 다시 노출. 전래동화 7권은 모두 삽화 완비.</p></div></li>
+      <li><span class="tag todo">조사완료</span><div class="li-body"><b>엄마·아빠 목소리 클로닝 — 벤더 조사</b><p>부모가 짧게 녹음(30초~1분)한 목소리로 동화를 읽어주는 기능. <b>Typecast vs ElevenLabs</b> 비교 결과 <b>Typecast 유지</b> 추천 — 한국어 강점(한국 회사), 지금 성우와 같은 벤더/청구, <b>클론 슬롯 경제성</b>(API Lite 월 $15에 50슬롯). 실제 원가 축은 글자수가 아니라 <b>“부모 1명 = 클론 1슬롯”</b>. 녹음·동의 화면은 이미 있고 클로닝 연결만 남았습니다.</p></div></li>
+    </ul>
+  </section>
+
+  <p class="disclaimer">
+    <b>산정 기준 및 주의.</b> 원가는 환율 ₩1,400/$ 가정과 사용량 실측 추정치, 부가세 별도 기준입니다. <b>삽화는 Gemini 2.5 Flash Image(장당 ₩55, $0.039)</b>, <b>음성은 Typecast API(무료 월 3만 자·약 35권, 초과 시 1권 약 ₩100 = $0.09/1,000자)</b>로 단가가 확인됐습니다. 남은 변수는 <b>글 모델 최종 선택(Opus/Sonnet)</b>과 결제 수수료 정도입니다. 판매가·팩 가격·코인 매칭은 <b>의사결정용 예시</b>로, 실제 청구액과 오차가 있을 수 있습니다.
+  </p>
+  <p class="foothint">우리 가족 보이스 동화 · 개발 현황 · 가격 정책 보고 · 2026-07-22 작성 · 2026-07-29 갱신 · 내부 회의용 (임시 파일: public/report.html)</p>
+</div>
+</body>
+</html>
