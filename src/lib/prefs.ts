@@ -312,6 +312,41 @@ export async function loadMyBooksBrief(): Promise<ShelfBook[]> {
   return list;
 }
 
+/* ── 책장 캐시 ──
+ * 새로고침할 때마다 서버 응답을 기다리느라 책장이 잠깐 비어 보였다. 책은 자주
+ * 바뀌지 않으니, 마지막으로 본 목록을 기기에 남겨 두고 즉시 그린 뒤 뒤에서 새로
+ * 받아 갱신한다. 계정(uid)별로 저장해 다른 아이디의 책장이 보이지 않게 한다.
+ */
+const SHELF_CACHE_KEY = "voice-storybook:shelf";
+/** localStorage 한도를 넘지 않게 — 옛 책 표지는 base64라 한 장이 1MB쯤 된다. */
+const SHELF_CACHE_MAX = 1_500_000;
+
+export function loadShelfCache(uid: string): ShelfBook[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(`${SHELF_CACHE_KEY}:${uid}`);
+    if (!raw) return null;
+    const v = JSON.parse(raw) as ShelfBook[];
+    return Array.isArray(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveShelfCache(uid: string, books: ShelfBook[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    let payload = JSON.stringify(books);
+    // 너무 크면 표지를 빼고 제목만 남긴다 — 표지 없는 책장이라도 즉시 뜨는 게 낫다.
+    if (payload.length > SHELF_CACHE_MAX) {
+      payload = JSON.stringify(books.map((b) => ({ ...b, coverImage: null })));
+    }
+    window.localStorage.setItem(`${SHELF_CACHE_KEY}:${uid}`, payload);
+  } catch {
+    /* 용량 초과 등 — 캐시는 편의 기능이라 실패해도 그냥 넘어간다 */
+  }
+}
+
 /** 이미 받아 둔 Book을 책장용 가벼운 형태로. */
 export function toShelfBook(b: Book): ShelfBook {
   return {

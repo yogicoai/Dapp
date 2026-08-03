@@ -10,7 +10,16 @@ import { loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
-import { loadLang, loadMyBooksBrief, migrateLegacyBooks, toShelfBook, type ShelfBook } from "@/lib/prefs";
+import {
+  loadLang,
+  loadMyBooksBrief,
+  loadShelfCache,
+  migrateLegacyBooks,
+  saveShelfCache,
+  toShelfBook,
+  type ShelfBook,
+} from "@/lib/prefs";
+import { currentUid } from "@/lib/supabase";
 import type { Book } from "@/lib/types";
 
 export default function Home() {
@@ -29,6 +38,20 @@ export default function Home() {
   useEffect(() => {
     let alive = true;
     (async () => {
+      // 마지막으로 본 책장을 먼저 그린다 — 새로고침할 때마다 서버 응답을 기다리며
+      // 빈 책장을 보고 있지 않게. 아래에서 새로 받아 곧바로 갱신한다.
+      // (기기에 세션이 있어야 uid가 나오므로, 로그인 상태일 때만 그려진다.)
+      const cachedUid = await currentUid();
+      if (!alive) return;
+      if (cachedUid) {
+        const cached = loadShelfCache(cachedUid);
+        if (cached && cached.length > 0) {
+          setAuthed(true);
+          setMyBooks(cached);
+          setBooksLoaded(true);
+        }
+      }
+
       // 회원 확인(프로필)과 책 불러오기를 동시에 시작한다 — 줄 세우면 책장이 그만큼
       // 늦게 뜬다(피드백 5번). 둘 다 로컬 세션의 id만 있으면 되는 질의라 순서가 필요 없다.
       // 옛 기기 책 이관은 남아 있을 때만 네트워크를 쓰므로 같이 걸어도 공짜다.
@@ -43,8 +66,10 @@ export default function Home() {
       setMaster(s.isMaster);
       setTokens(s.profile?.tokens ?? 0);
       if (s.uid) {
-        setMyBooks(await loadMyBooksBrief());
+        const fresh = await loadMyBooksBrief();
         if (!alive) return;
+        setMyBooks(fresh);
+        saveShelfCache(s.uid, fresh); // 다음 새로고침 때 즉시 그리도록 남겨 둔다
       }
       setBooksLoaded(true);
     })();
@@ -93,8 +118,28 @@ export default function Home() {
   const classics = (classicBooksJson as Book[]).filter((b) => !b.hidden);
   const shown = shelf === "mine" ? mine : shelf === "folk" ? folk : classics;
 
-  // 로그인 확인 전에는 빈 화면 — 로그인 화면으로 리다이렉트되는 동안 깜빡임 방지.
-  if (authed === null) return null;
+  // 로그인 확인 중 — 예전엔 아무것도 안 그려서 잠깐 흰 화면이었다("앱이 멈췄나?").
+  // 배경과 안내를 먼저 띄워, 확인이 끝나기 전에도 앱이 살아 있는 게 보이게 한다.
+  if (authed === null) {
+    return (
+      <div className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={theme.background} alt="" className="fixed inset-0 -z-10 h-full w-full object-cover" />
+        <div className="fixed inset-0 -z-10 bg-white/35" />
+        <div className="flex flex-col items-center gap-4 rounded-[28px] bg-white/85 px-10 py-9 shadow-xl backdrop-blur">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={theme.mascot}
+            alt=""
+            className="h-20 w-20 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white object-cover shadow"
+          />
+          <p className="break-keep text-center text-sm font-extrabold text-neutral-500">
+            로그인 정보를 확인하고 있어요…
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-dvh w-full overflow-hidden">
