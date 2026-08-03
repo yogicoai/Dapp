@@ -690,8 +690,10 @@ export default function CreatePage() {
                 characterSheet: sheet,
                 mood: mood.en,
                 shape: screenShape,
-                // 등장인물 명단 — "이 사람들만, 각자 한 번씩" 규칙으로 캐릭터 복제를 막는다.
-                cast: s.characters.map((c) => c.name),
+                // 등장인물 — 이름과 생김새 설명을 함께 보낸다. 이름은 "이 사람들만,
+                // 각자 한 번씩"(복제 방지)에, 설명은 쪽마다 얼굴·옷이 흔들리지 않게
+                // 그림 시트와 겹쳐 붙잡는 데 쓰인다.
+                cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
               }),
               signal: ac.signal,
             });

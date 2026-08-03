@@ -44,13 +44,23 @@ export async function POST(request: Request) {
 
   const mood = typeof input.mood === "string" ? input.mood.trim().slice(0, 80) : "";
 
-  // 등장인물 이름 — "이 사람들만, 각자 한 번씩"을 못박아 복제를 막는 데 쓴다.
-  const cast = Array.isArray(input.cast)
-    ? (input.cast as unknown[])
-        .map((n) => (typeof n === "string" ? n.trim() : ""))
-        .filter(Boolean)
-        .slice(0, 6)
-    : [];
+  /**
+   * 등장인물 — 이름만이 아니라 생김새 설명까지 받는다.
+   * 그림(캐릭터 시트) 하나만으로는 쪽마다 얼굴·옷이 조금씩 흔들린다. 같은 내용을
+   * 글로도 함께 주면 두 갈래로 붙잡혀 훨씬 덜 흔들린다.
+   */
+  const castRaw = Array.isArray(input.cast) ? (input.cast as unknown[]) : [];
+  const cast = castRaw
+    .map((c) => {
+      if (typeof c === "string") return { name: c.trim(), description: "" };
+      const o = c as { name?: unknown; description?: unknown };
+      return {
+        name: typeof o?.name === "string" ? o.name.trim() : "",
+        description: typeof o?.description === "string" ? o.description.trim().slice(0, 300) : "",
+      };
+    })
+    .filter((c) => c.name)
+    .slice(0, 6);
 
   const prompt = [
     `Children's picture book illustration, ${style.prompt}.`,
@@ -64,10 +74,30 @@ export async function POST(request: Request) {
           "The attached image is a CHARACTER REFERENCE SHEET. Use it ONLY to know what each character looks like — face, hair, clothing, colors.",
           "Do NOT copy the sheet's layout. The sheet lines characters up side by side on a blank background; this page is a real scene with its own composition.",
           "Each character exists exactly ONCE in this world. NEVER draw the same character twice in one picture — no twins, no repeated faces, no duplicated family members, no mirrored copies.",
+          // 시트의 '정면 차렷 자세'까지 베껴 와서, 장면 한가운데 인물만 오려 붙인 것처럼
+          // 뻣뻣하게 서 있는 그림이 나왔다(실제 발생). 자세는 장면이 정하게 못박는다.
+          "CRITICAL — do NOT copy the sheet's POSE. The sheet shows a neutral standing front view; that is a catalogue pose, not a scene pose.",
+          "Draw each character in the middle of the action this scene describes: crouching, reaching, running, leaning, turning, looking at what they are looking at.",
+          "Use a natural storytelling camera angle — three-quarter view, profile, from behind, from above or below as the moment needs.",
+          "Avoid a symmetrical front-facing full-body figure standing in the centre with arms hanging down and a blank expression. That looks pasted in, not part of the picture.",
+          "Characters must physically belong to the scene: touching, holding, standing on, or reacting to what is around them, with an expression that matches the moment.",
         ].join("\n")
       : "",
     cast.length > 0
-      ? `The only people who may appear are: ${cast.join(", ")}. Draw each of them at most once, and only if this scene actually needs them.`
+      ? [
+          `The only people who may appear are: ${cast.map((c) => c.name).join(", ")}. Draw each of them at most once, and only if this scene actually needs them.`,
+          ...cast.filter((c) => c.description).map((c) => `- ${c.name}: ${c.description}`),
+        ].join("\n")
+      : "",
+    // 일관성 — 이 앱의 핵심 약속이다. 쪽마다 얼굴이나 옷이 바뀌면 "내 동화"가 아니게 된다.
+    sheet
+      ? [
+          "ABSOLUTE RULE — CHARACTER CONSISTENCY.",
+          "These characters appear on every page of one book. They must look like the SAME person on page 1 and page 8.",
+          "Copy from the reference sheet without any change: face shape and features, eye shape and colour, eyebrows, hairstyle, hair colour and hair length, skin tone, body proportions and apparent age, EVERY garment with its exact colour and pattern, shoes, and every accessory.",
+          "Do NOT restyle, do NOT age the character up or down, do NOT change the haircut, do NOT swap or recolour the outfit, do NOT add or remove accessories, do NOT 'improve' the design.",
+          "Only the pose, the expression and the camera angle may change — never the character's appearance.",
+        ].join("\n")
       : "",
     "Keep the bottom quarter of the image simple and uncluttered (plain ground, sky, or soft color) so text can be placed there.",
     "Wholesome, innocent, fully clothed, child-friendly.",
