@@ -4,7 +4,7 @@
  * Supabase가 붙으면 이 파일의 저장처만 DB로 바뀐다.
  */
 
-import { getSupabase } from "@/lib/supabase";
+import { currentUid, getSupabase } from "@/lib/supabase";
 import type { Book } from "@/lib/types";
 
 export type Gender = "girl" | "boy" | "unspecified";
@@ -68,15 +68,13 @@ export function saveChild(child: ChildPrefs): void {
 export async function saveChildRemote(child: ChildPrefs): Promise<void> {
   const sb = getSupabase();
   if (!sb) return;
-  const {
-    data: { user },
-  } = await sb.auth.getUser();
-  if (!user) return;
+  const uid = await currentUid();
+  if (!uid) return;
   if (typeof window !== "undefined") {
-    window.localStorage.setItem(acctChildKey(user.id), JSON.stringify(child)); // ① 계정 로컬 백업
+    window.localStorage.setItem(acctChildKey(uid), JSON.stringify(child)); // ① 계정 로컬 백업
   }
   try {
-    await sb.from("profiles").update({ child }).eq("id", user.id); // ② Supabase (컬럼 없으면 무시)
+    await sb.from("profiles").update({ child }).eq("id", uid); // ② Supabase (컬럼 없으면 무시)
   } catch {
     /* child 컬럼 전(마이그레이션 안 함) 등 — 로컬 백업만으로 동작 */
   }
@@ -90,17 +88,15 @@ export async function loadChildRemote(): Promise<ChildPrefs | null> {
   const sb = getSupabase();
   if (!sb) return null;
   try {
-    const {
-      data: { user },
-    } = await sb.auth.getUser();
-    if (!user) return null;
+    const uid = await currentUid();
+    if (!uid) return null;
     // ① 계정별 로컬 백업 (SQL 없이도 같은 기기 재로그인 복구)
-    let child = normalizeChild(window.localStorage.getItem(acctChildKey(user.id)));
+    let child = normalizeChild(window.localStorage.getItem(acctChildKey(uid)));
     // ② Supabase에 값이 있으면 우선 (다른 기기·재설치 복구)
     const { data, error } = await sb
       .from("profiles")
       .select("child")
-      .eq("id", user.id)
+      .eq("id", uid)
       .maybeSingle();
     if (!error) {
       const remote = normalizeChild((data as { child?: unknown } | null)?.child);
@@ -108,7 +104,7 @@ export async function loadChildRemote(): Promise<ChildPrefs | null> {
     }
     if (child && typeof window !== "undefined") {
       window.localStorage.setItem(CHILD_KEY, JSON.stringify(child)); // 동기 loadChild()가 바로 쓰게
-      window.localStorage.setItem(acctChildKey(user.id), JSON.stringify(child));
+      window.localStorage.setItem(acctChildKey(uid), JSON.stringify(child));
     }
     return child;
   } catch {
@@ -127,12 +123,10 @@ export async function backupChildBeforeLogout(): Promise<void> {
   const sb = getSupabase();
   if (!sb) return;
   try {
-    const {
-      data: { user },
-    } = await sb.auth.getUser();
-    if (!user) return;
-    window.localStorage.setItem(acctChildKey(user.id), raw);
-    await sb.from("profiles").update({ child: normalizeChild(raw) }).eq("id", user.id);
+    const uid = await currentUid();
+    if (!uid) return;
+    window.localStorage.setItem(acctChildKey(uid), raw);
+    await sb.from("profiles").update({ child: normalizeChild(raw) }).eq("id", uid);
   } catch {
     /* 컬럼 전(마이그레이션 안 함) 등 — 로컬 백업만으로도 복구된다 */
   }
@@ -247,12 +241,12 @@ function rowToBook(r: BookRow): Book {
 export async function loadMyBooks(): Promise<Book[]> {
   const sb = getSupabase();
   if (!sb) return [];
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) return [];
+  const uid = await currentUid();
+  if (!uid) return [];
   const { data } = await sb
     .from("books")
     .select("id,owner,title,data,hidden")
-    .eq("owner", user.id)
+    .eq("owner", uid)
     .order("created_at", { ascending: false });
   return ((data as BookRow[]) ?? []).map(rowToBook);
 }
@@ -298,11 +292,11 @@ export async function loadMyBook(id: string): Promise<Book | null> {
 export async function saveMyBook(book: Book): Promise<void> {
   const sb = getSupabase();
   if (!sb) return;
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) return;
+  const uid = await currentUid();
+  if (!uid) return;
   await sb.from("books").upsert({
     id: book.id,
-    owner: user.id,
+    owner: uid,
     title: book.title,
     data: book,
     hidden: !!book.hidden,
@@ -317,10 +311,8 @@ export async function saveMyBook(book: Book): Promise<void> {
 const LEGACY_BOOKS_KEY = "voice-storybook:mybooks";
 export async function migrateLegacyBooks(): Promise<number> {
   if (typeof window === "undefined") return 0;
-  const sb = getSupabase();
-  if (!sb) return 0;
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) return 0;
+  // 옮길 게 있는지부터 본다 — 옛 책이 없는 대부분의 사용자가 홈을 열 때마다
+  // 서버 왕복을 한 번씩 헛되이 하고 있었다(책장이 늦게 뜨는 원인 중 하나).
   let raw: string | null;
   try {
     raw = window.localStorage.getItem(LEGACY_BOOKS_KEY);
@@ -328,6 +320,10 @@ export async function migrateLegacyBooks(): Promise<number> {
     return 0;
   }
   if (!raw) return 0;
+  const sb = getSupabase();
+  if (!sb) return 0;
+  const uid = await currentUid();
+  if (!uid) return 0;
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
@@ -345,7 +341,7 @@ export async function migrateLegacyBooks(): Promise<number> {
   for (const b of books) {
     const { error } = await sb
       .from("books")
-      .upsert({ id: b.id, owner: user.id, title: b.title, data: b, hidden: !!b.hidden });
+      .upsert({ id: b.id, owner: uid, title: b.title, data: b, hidden: !!b.hidden });
     if (error) anyFail = true;
     else n++;
   }

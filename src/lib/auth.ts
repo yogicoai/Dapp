@@ -8,7 +8,7 @@
  * 게스트(비회원 둘러보기)는 서버 계정이 아니라 이 기기의 플래그다.
  */
 import { backupChildBeforeLogout, clearChild, loadChildRemote } from "@/lib/prefs";
-import { getSupabase } from "@/lib/supabase";
+import { currentUid, getSupabase } from "@/lib/supabase";
 
 // 아이디를 이메일로 합성할 때 쓰는 도메인. Supabase가 .local 같은 비표준 TLD는
 // "유효하지 않은 이메일"로 거부하므로, 형식상 유효한 .com을 쓴다(메일은 안 보냄).
@@ -51,12 +51,12 @@ function friendly(msg: string): string {
 export type AuthResult = { ok: true; profile: Profile } | { ok: false; error: string };
 
 /** 현재 로그인 회원의 프로필을 서버에서 읽는다. 로그인 안 했으면 null. */
-export async function fetchProfile(): Promise<Profile | null> {
+export async function fetchProfile(uid?: string | null): Promise<Profile | null> {
   const sb = getSupabase();
   if (!sb) return null;
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) return null;
-  const { data } = await sb.from("profiles").select("id,username,tokens,is_master").eq("id", user.id).maybeSingle();
+  const id = uid ?? (await currentUid());
+  if (!id) return null;
+  const { data } = await sb.from("profiles").select("id,username,tokens,is_master").eq("id", id).maybeSingle();
   return (data as Profile) ?? null;
 }
 
@@ -65,10 +65,11 @@ export async function loadSession(): Promise<SessionState> {
   const guest = isGuest();
   const sb = getSupabase();
   if (!sb) return { uid: null, profile: null, guest, isMaster: false };
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) return { uid: null, profile: null, guest, isMaster: false };
-  const profile = await fetchProfile();
-  return { uid: user.id, profile, guest: false, isMaster: !!profile?.is_master };
+  const uid = await currentUid();
+  if (!uid) return { uid: null, profile: null, guest, isMaster: false };
+  // uid를 넘겨 프로필 조회가 회원 확인을 또 하지 않게 한다(왕복 한 번 절약).
+  const profile = await fetchProfile(uid);
+  return { uid, profile, guest: false, isMaster: !!profile?.is_master };
 }
 
 export async function signUp(idRaw: string, password: string): Promise<AuthResult> {

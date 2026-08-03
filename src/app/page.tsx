@@ -28,7 +28,10 @@ export default function Home() {
   useEffect(() => {
     let alive = true;
     (async () => {
-      const s = await loadSession();
+      // 회원 확인(프로필)과 책 불러오기를 동시에 시작한다 — 줄 세우면 책장이 그만큼
+      // 늦게 뜬다(피드백 5번). 둘 다 로컬 세션의 id만 있으면 되는 질의라 순서가 필요 없다.
+      // 옛 기기 책 이관은 남아 있을 때만 네트워크를 쓰므로 같이 걸어도 공짜다.
+      const [s] = await Promise.all([loadSession(), migrateLegacyBooks()]);
       if (!alive) return;
       if (!s.uid && !s.guest) {
         router.replace("/login");
@@ -39,9 +42,6 @@ export default function Home() {
       setMaster(s.isMaster);
       setTokens(s.profile?.tokens ?? 0);
       if (s.uid) {
-        // 옛 기기 저장 책(지안이 동화 등)이 남아 있으면 이 계정으로 한 번 가져온다.
-        await migrateLegacyBooks();
-        if (!alive) return;
         setMyBooks(await loadMyBooks());
         if (!alive) return;
       }

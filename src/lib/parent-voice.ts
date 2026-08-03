@@ -6,7 +6,7 @@
  * 저장은 2단: ① 이 기기(localStorage) — 키만 넣으면 바로 테스트되게. ② Supabase(voice_clones)
  * — 여러 기기·재설치에도 남는 '정식' 저장(테이블 SQL을 돌리면 자동 사용, 없으면 로컬만).
  */
-import { getSupabase } from "@/lib/supabase";
+import { currentUid, getSupabase } from "@/lib/supabase";
 
 export type ParentVoice = {
   role: string; // 'mom' | 'dad'
@@ -95,15 +95,9 @@ export async function remainingCloneChances(): Promise<number> {
   return Math.max(0, MAX_CLONE_ATTEMPTS - (await attemptsUsed()));
 }
 
+/** 로그인 회원 id — 로컬 세션에서 읽는다(서버 왕복 없음). @see supabase.currentUid */
 async function currentUserId(): Promise<string | null> {
-  const sb = getSupabase();
-  if (!sb) return null;
-  try {
-    const { data } = await sb.auth.getUser();
-    return data.user?.id ?? null;
-  } catch {
-    return null;
-  }
+  return currentUid();
 }
 
 /**
