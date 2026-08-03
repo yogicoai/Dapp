@@ -22,7 +22,13 @@ export async function POST(request: Request) {
     artStyleId?: unknown;
     characterSheet?: unknown;
     mood?: unknown;
+    shape?: unknown;
   };
+
+  // 어느 화면에서 볼 동화인가 — 핸드폰은 세로(3:4), 태블릿은 가로(4:3)로 그린다.
+  // 기기에 맞는 비율로 그려야 위아래(또는 좌우) 빈 띠 없이 그림이 꽉 찬다.
+  const phone = input.shape === "phone";
+  const aspectRatio = phone ? ("3:4" as const) : ("4:3" as const);
 
   const scene = typeof input.scene === "string" ? input.scene.trim() : "";
   if (!scene || scene.length > 500) {
@@ -47,7 +53,9 @@ export async function POST(request: Request) {
     "Keep the bottom quarter of the image simple and uncluttered (plain ground, sky, or soft color) so text can be placed there.",
     "Wholesome, innocent, fully clothed, child-friendly.",
     "NO text, no letters, no words in the image.",
-    "Wide 4:3 landscape composition.",
+    phone
+      ? "Tall 3:4 portrait composition, framed for a phone screen held upright."
+      : "Wide 4:3 landscape composition.",
   ]
     .filter(Boolean)
     .join("\n");
@@ -56,7 +64,7 @@ export async function POST(request: Request) {
     const image = await generateImage({
       prompt,
       references: sheet ? [sheet] : undefined,
-      aspectRatio: "4:3",
+      aspectRatio,
     });
     return NextResponse.json({ image: toDataUrl(image) });
   } catch (e) {

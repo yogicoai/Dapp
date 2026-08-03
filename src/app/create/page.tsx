@@ -395,6 +395,16 @@ export default function CreatePage() {
         : [theme, who, happening, extra.trim()].filter(Boolean).join(", ");
   // 그림체 — 지금은 저장만 한다. Gemini 삽화가 붙으면 이 스타일의 prompt가 쓰인다.
   const [artStyle, setArtStyle] = useState(ART_STYLES[0].id);
+  /**
+   * 어느 화면에서 볼 동화인가 — 삽화를 그 비율로 그린다.
+   * 태블릿=가로 4:3, 핸드폰=세로 3:4. 지금 쓰는 기기를 기본으로 잡아두고 바꿀 수 있게 한다
+   * (뷰어는 그림 실제 비율을 읽어 무대를 맞추므로, 어느 쪽을 골라도 잘림 없이 나온다).
+   */
+  const [screenShape, setScreenShape] = useState<"tablet" | "phone">("tablet");
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 화면 크기는 클라 전용, 마운트 후 판별
+    setScreenShape(window.innerWidth < 700 ? "phone" : "tablet");
+  }, []);
   const [mood, setMood] = useState(MOODS[0]);
   // 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로 읽는다.
   // 기본 선택을 두지 않는다("") — 부모가 직접 골라 들어보고 정하게 유도한다.
@@ -426,6 +436,15 @@ export default function CreatePage() {
   // 쪽별 삽화(data URL). 실패한 쪽은 null → 뷰어가 플레이스홀더를 그린다.
   const [pageImages, setPageImages] = useState<(string | null)[]>([]);
   const [drawn, setDrawn] = useState(0);
+  // 그리기 시작 시각 — 지금까지 걸린 시간으로 남은 시간을 어림한다.
+  const drawStartRef = useRef(0);
+  // 기다리는 동안 1초마다 다시 그려 남은 시간·미리보기가 살아 움직이게 한다.
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    if (step !== "illustrate") return;
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(id);
+  }, [step]);
   // 완성해 책장에 저장한 책 — done 화면은 이걸 뷰어로 보여준다(id="new" 대신 진짜 id).
   const [finalBook, setFinalBook] = useState<Book | null>(null);
   // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
@@ -563,6 +582,7 @@ export default function CreatePage() {
   async function illustrate(s: Story) {
     setStep("illustrate");
     setDrawn(0);
+    drawStartRef.current = Date.now();
     // 삽화는 쪽당 과금이라 취소가 중요하다 — ESC나 화면 이탈 시 남은 쪽을 그리지 않는다.
     const ac = new AbortController();
     abortRef.current = ac;
@@ -578,24 +598,47 @@ export default function CreatePage() {
       if (!sheetRes.ok) throw new Error(sheetData.error ?? "캐릭터 생성 실패");
       const sheet = sheetData.image as string;
 
-      for (let i = 0; i < s.pages.length; i++) {
-        if (ac.signal.aborted) break;
-        const r = await fetch("/api/illustrate-page", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            scene: s.pages[i].imagePrompt,
-            artStyleId: artStyle,
-            characterSheet: sheet,
-            mood: mood.en,
-          }),
-          signal: ac.signal,
-        });
-        const d = await r.json();
-        images.push(r.ok ? (d.image as string) : null);
-        setDrawn(i + 1);
-        setPageImages([...images]);
-      }
+      // 삽화는 쪽마다 독립이다(캐릭터 일관성은 위에서 만든 캐릭터 시트가 잡아준다).
+      // 예전엔 한 장씩 줄 세워 그려서 8쪽이면 '한 장 시간 × 8'을 기다려야 했다 —
+      // 만들기가 느리다는 피드백(2번)의 가장 큰 원인이었다. 이제 여러 장을 동시에 그린다.
+      // 동시 3장: 더 늘리면 Gemini 쪽에서 몰아친다고 막을 수 있어 안전선을 둔다.
+      const CONCURRENT_IMAGES = 3;
+      images.length = s.pages.length;
+      images.fill(null);
+      let done = 0;
+      let cursor = 0;
+      const drawWorker = async (): Promise<void> => {
+        for (;;) {
+          const i = cursor++;
+          if (i >= s.pages.length || ac.signal.aborted) return;
+          try {
+            const r = await fetch("/api/illustrate-page", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({
+                scene: s.pages[i].imagePrompt,
+                artStyleId: artStyle,
+                characterSheet: sheet,
+                mood: mood.en,
+                shape: screenShape,
+              }),
+              signal: ac.signal,
+            });
+            const d = await r.json();
+            images[i] = r.ok ? (d.image as string) : null;
+          } catch (e) {
+            if ((e as Error).name === "AbortError") return;
+            // 한 장이 실패해도 나머지는 계속 그린다 — 그 쪽만 플레이스홀더가 된다.
+            images[i] = null;
+          }
+          done++;
+          setDrawn(done);
+          setPageImages([...images]);
+        }
+      };
+      await Promise.all(
+        Array.from({ length: Math.min(CONCURRENT_IMAGES, s.pages.length) }, drawWorker),
+      );
     } catch (e) {
       // 취소는 정상 경로 — 그때까지 그린 쪽으로 조용히 마무리한다.
       // 그 외(키·결제·안전필터 등)는 조용히 넘기지 말고 이유를 보여주고 검토 화면으로
@@ -1225,6 +1268,48 @@ export default function CreatePage() {
                 })}
               </div>
 
+              {/* 어느 화면에서 볼지 — 삽화를 그 비율로 그린다. 핸드폰은 세로,
+                  태블릿은 가로. 기기에 맞춰 그려야 그림이 화면을 꽉 채운다. */}
+              <div className="flex flex-col gap-2">
+                <p className="break-keep text-center text-sm font-bold text-neutral-500">
+                  어디에서 볼 동화인가요?
+                </p>
+                <div className="flex flex-wrap justify-center gap-2.5">
+                  {(
+                    [
+                      { id: "phone", label: "핸드폰", hint: "세로 그림", icon: "📱" },
+                      { id: "tablet", label: "태블릿·PC", hint: "가로 그림", icon: "🖥️" },
+                    ] as const
+                  ).map((o) => {
+                    const active = screenShape === o.id;
+                    return (
+                      <button
+                        key={o.id}
+                        type="button"
+                        onClick={() => setScreenShape(o.id)}
+                        aria-pressed={active}
+                        style={active ? { borderColor: accent, background: accentSoft } : undefined}
+                        className={`flex items-center gap-2 rounded-2xl border-[3px] px-4 py-2.5 transition ${
+                          active ? "shadow" : "border-transparent bg-neutral-100 hover:bg-neutral-200"
+                        }`}
+                      >
+                        <span className="text-xl leading-none" aria-hidden>
+                          {o.icon}
+                        </span>
+                        <span className="flex flex-col items-start leading-tight">
+                          <span className="break-keep text-sm font-extrabold text-neutral-700">
+                            {o.label}
+                          </span>
+                          <span className="break-keep text-[11px] font-bold text-neutral-400">
+                            {o.hint}
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* 분위기 — 이야기 톤과 그림 조명에 함께 반영된다.
                   감정동화에선 감정 자체가 톤을 정하고 마무리는 늘 따뜻해서, 분위기를
                   또 고르면 톤이 충돌한다. 그래서 감정동화 모드에선 숨긴다. */}
@@ -1407,8 +1492,17 @@ export default function CreatePage() {
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 동화를 그리고 있어요…
               </h1>
-              <p className="text-sm font-bold text-neutral-500">
+              {/* 남은 시간 어림 — 지금까지 그린 속도로 계산한다. 언제 끝날지 알면
+                  같은 시간도 훨씬 짧게 느껴진다(피드백 2번). */}
+              <p className="break-keep text-center text-sm font-bold text-neutral-500">
                 {drawn} / {story.pages.length} 쪽
+                {(() => {
+                  void tick; // 1초마다 다시 계산되게 하는 의존값
+                  if (drawn === 0 || drawn >= story.pages.length) return "";
+                  const perPage = (Date.now() - drawStartRef.current) / drawn;
+                  const left = Math.ceil((perPage * (story.pages.length - drawn)) / 1000);
+                  return left > 0 ? ` · 약 ${left}초 남았어요` : "";
+                })()}
               </p>
               <div className="h-3 w-full overflow-hidden rounded-full bg-neutral-100">
                 <div
@@ -1419,6 +1513,17 @@ export default function CreatePage() {
                   }}
                 />
               </div>
+              {/* 기다리는 동안 이야기를 먼저 읽는다 — 글은 이미 다 나와 있으니
+                  그림을 기다리며 한 쪽씩 보여준다. 빈 화면을 보며 기다리지 않게. */}
+              <div className="w-full rounded-3xl bg-white/80 px-5 py-4 shadow-inner">
+                <p className="mb-1.5 break-keep text-center text-[11px] font-extrabold tracking-wide text-neutral-400">
+                  📖 그림을 기다리는 동안 먼저 읽어보세요
+                </p>
+                <p className="break-keep text-center text-base font-bold leading-relaxed text-neutral-700">
+                  {story.pages[Math.floor(tick / 6) % story.pages.length]?.text}
+                </p>
+              </div>
+
               {/* 그려진 쪽 미리보기 — 기다림이 설렘이 되게 */}
               {pageImages.filter(Boolean).length > 0 && (
                 <div className="flex flex-wrap justify-center gap-1.5">

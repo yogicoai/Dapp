@@ -34,7 +34,8 @@ export async function generateImage(input: {
   prompt: string;
   /** 참조 이미지(캐릭터 시트 등). 인물 일관성의 핵심이라 매 쪽 재주입한다. */
   references?: GeneratedImage[];
-  aspectRatio: "4:3" | "1:1";
+  /** 4:3=태블릿(가로), 3:4=핸드폰(세로), 1:1=캐릭터 시트. Gemini가 네이티브로 지원하는 비율. */
+  aspectRatio: "4:3" | "3:4" | "1:1";
 }): Promise<GeneratedImage> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) {
