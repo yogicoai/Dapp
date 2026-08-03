@@ -290,14 +290,55 @@ export function VoiceRecorder({
       </ul>
 
       {phase === "idle" && (
-        <button
-          type="button"
-          onClick={startRecording}
-          className="rounded-full py-3 text-base font-extrabold text-white"
-          style={{ background: accent }}
-        >
-          🎙️ 녹음 시작
-        </button>
+        <div className="flex flex-col gap-3">
+          {/* 녹음 전 안내 — 실패하는 이유는 늘 같다(작은 소리·시끄러운 방·중간에 끊김).
+              글로 적어두면 안 읽으니 그림으로 한눈에 보여준다. */}
+          <p className="text-center text-[13px] font-extrabold text-neutral-700">
+            이렇게 하면 목소리를 더 잘 닮아요
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              {
+                img: "/guide/rec-distance.webp",
+                title: "한 뼘 거리",
+                tip: "폰을 입에서 한 뼘쯤 두고",
+              },
+              {
+                img: "/guide/rec-quiet.webp",
+                title: "조용한 방",
+                tip: "TV·에어컨은 잠깐 꺼요",
+              },
+              {
+                img: "/guide/rec-read.webp",
+                title: "동화 읽듯이",
+                tip: "쉬지 말고 끝까지",
+              },
+            ].map((g) => (
+              <div key={g.title} className="flex flex-col items-center gap-1 rounded-2xl bg-white p-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={g.img} alt="" className="aspect-square w-full rounded-xl object-cover" />
+                <p className="break-keep text-center text-[11px] font-extrabold leading-tight text-neutral-700">
+                  {g.title}
+                </p>
+                <p className="break-keep text-center text-[10px] font-medium leading-tight text-neutral-400">
+                  {g.tip}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={startRecording}
+            className="rounded-full py-3 text-base font-extrabold text-white"
+            style={{ background: accent }}
+          >
+            🎙️ 녹음 시작
+          </button>
+          <p className="text-center text-[11px] font-medium text-neutral-400">
+            문장을 끝까지 읽으면 약 {TARGET_SEC}초예요 · 다시 녹음은 몇 번이든 무료예요
+          </p>
+        </div>
       )}
 
       {phase === "recording" && (
