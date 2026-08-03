@@ -13,6 +13,29 @@ import {
 type Phase = "idle" | "recording" | "preview" | "saving";
 
 /**
+ * 녹음 길이 기준.
+ *
+ * Typecast 퀵 클로닝은 짧은 녹음을 아예 거부한다(실측: 3초 거부, 15초 통과).
+ * 게다가 목소리 만들기는 계정당 2번뿐이라, 짧게 녹음해 놓고 토큰까지 쓴 뒤에
+ * 실패를 알게 되면 안 된다. 그래서 최소 길이 전에는 끝내기 버튼을 잠근다.
+ * 지정 문장(RECORDING_SCRIPT)을 자연스럽게 읽으면 40초쯤 나온다 — 그게 목표선이다.
+ */
+const MIN_SEC = 30;
+const TARGET_SEC = 40;
+
+/**
+ * 마이크 입력 크기 기준.
+ * 실제 낭독 파일로 재보니 알맞게 녹음된 목소리는 RMS 0.07~0.08이었다.
+ * 막대는 그 값이 절반쯤 차 보이도록 눈금을 잡는다 — 막대를 끝까지 채우려고
+ * 소리를 지르면 오히려 깨져서 클론이 나빠진다.
+ */
+const LEVEL_QUIET = 0.015; // 이 아래면 너무 작다
+const LEVEL_LOUD = 0.3; // 이 위면 너무 크다
+const LEVEL_FULL = 0.15; // 막대가 가득 차는 기준값
+
+type Verdict = { ok: boolean; title: string; detail: string };
+
+/**
  * 엄마·아빠 목소리 녹음.
  *
  * 화면에 띄운 지정 문장만 읽게 한다 — 이름도 개인정보도 없는 동화 구절이라
@@ -48,6 +71,24 @@ export function VoiceRecorder({
   const closedRef = useRef(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  // 녹음 중 상태 — 지금 소리 크기(0~1)와 흘러간 초. 말하면서 바로 보여 준다.
+  const [level, setLevel] = useState(0);
+  const [zone, setZone] = useState<"quiet" | "good" | "loud">("quiet");
+  const [secs, setSecs] = useState(0);
+  // 끝난 녹음의 품질 판정. null이면 아직 검사 중.
+  const [verdict, setVerdict] = useState<Verdict | null>(null);
+  // 마이크 분석에 쓴 것들 — 녹음이 끝나면 반드시 정리한다.
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const meterTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const stopMeter = () => {
+    if (meterTimerRef.current) clearInterval(meterTimerRef.current);
+    meterTimerRef.current = null;
+    void audioCtxRef.current?.close().catch(() => {});
+    audioCtxRef.current = null;
+  };
+  useEffect(() => stopMeter, []);
+
   useEffect(
     () => () => {
       closedRef.current = true;
@@ -66,6 +107,10 @@ export function VoiceRecorder({
 
   async function startRecording() {
     setError("");
+    setVerdict(null);
+    setLevel(0);
+    setZone("quiet");
+    setSecs(0);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       // 기다리는 동안 팝업이 닫혔으면(ESC·닫기) 마이크를 켜두지 않는다.
@@ -77,16 +122,124 @@ export function VoiceRecorder({
       chunksRef.current = [];
       rec.ondataavailable = (e) => chunksRef.current.push(e.data);
       rec.onstop = () => {
+        stopMeter();
         blobRef.current = new Blob(chunksRef.current, { type: rec.mimeType });
         setPreviewUrl(URL.createObjectURL(blobRef.current));
         stream.getTracks().forEach((t) => t.stop());
         setPhase("preview");
+        void checkQuality(blobRef.current);
       };
       recorderRef.current = rec;
       rec.start();
       setPhase("recording");
+
+      // 소리 크기 막대 — 말하는 동안 바로 보이게. 너무 작거나 깨지는 걸
+      // 녹음이 끝난 뒤에야 알면 늦다(클론 실패의 가장 흔한 원인).
+      try {
+        const AC =
+          window.AudioContext ??
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        const ctx = new AC();
+        audioCtxRef.current = ctx;
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 1024;
+        ctx.createMediaStreamSource(stream).connect(analyser);
+        const buf = new Float32Array(analyser.fftSize);
+        const startedAt = Date.now();
+        meterTimerRef.current = setInterval(() => {
+          analyser.getFloatTimeDomainData(buf);
+          let sum = 0;
+          let peak = 0;
+          for (const s of buf) {
+            sum += s * s;
+            const a = Math.abs(s);
+            if (a > peak) peak = a;
+          }
+          const rms = Math.sqrt(sum / buf.length);
+          setLevel(Math.min(1, rms / LEVEL_FULL));
+          // 판정은 막대 길이가 아니라 실제 값으로 한다 — 막대를 채우려고 소리치게 만들지 않는다.
+          setZone(peak > 0.98 || rms >= LEVEL_LOUD ? "loud" : rms < LEVEL_QUIET ? "quiet" : "good");
+          setSecs(Math.floor((Date.now() - startedAt) / 1000));
+        }, 100);
+      } catch {
+        /* 소리 막대는 보조 장치다 — 안 되면 녹음만 계속한다 */
+      }
     } catch {
       setError("마이크를 사용할 수 없어요. 브라우저 권한을 확인해주세요.");
+    }
+  }
+
+  /**
+   * 녹음이 끝나면 파일을 열어 품질을 본다 — 길이·평균 크기·깨진 구간·무음 비율.
+   * 다시 녹음은 몇 번이든 공짜이므로, 여기서 걸러야 진짜 기회(계정당 2번)를 지킨다.
+   */
+  async function checkQuality(blob: Blob): Promise<void> {
+    setVerdict(null);
+    try {
+      const AC =
+        window.AudioContext ??
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const ctx = new AC();
+      const audio = await ctx.decodeAudioData(await blob.arrayBuffer());
+      void ctx.close().catch(() => {});
+      const data = audio.getChannelData(0);
+      const dur = audio.duration;
+
+      let sum = 0;
+      let clipped = 0;
+      for (let i = 0; i < data.length; i++) {
+        sum += data[i] * data[i];
+        if (Math.abs(data[i]) > 0.99) clipped++;
+      }
+      const rms = Math.sqrt(sum / data.length);
+      const clipRatio = clipped / data.length;
+
+      // 0.2초 창으로 훑어 '거의 소리가 없는' 구간의 비율을 센다.
+      const win = Math.floor(audio.sampleRate * 0.2);
+      let quietWins = 0;
+      let wins = 0;
+      for (let i = 0; i + win <= data.length; i += win) {
+        let s = 0;
+        for (let j = i; j < i + win; j++) s += data[j] * data[j];
+        if (Math.sqrt(s / win) < 0.01) quietWins++;
+        wins++;
+      }
+      const silence = wins > 0 ? quietWins / wins : 0;
+
+      if (dur < MIN_SEC) {
+        setVerdict({
+          ok: false,
+          title: "조금 더 길게 읽어주세요",
+          detail: `${Math.round(dur)}초 녹음됐어요. 문장을 끝까지 읽으면 ${TARGET_SEC}초쯤 돼요.`,
+        });
+      } else if (clipRatio > 0.01) {
+        setVerdict({
+          ok: false,
+          title: "소리가 깨졌어요",
+          detail: "너무 크게 들어갔어요. 폰을 조금 멀리 두고 편하게 읽어주세요.",
+        });
+      } else if (rms < 0.02) {
+        setVerdict({
+          ok: false,
+          title: "소리가 너무 작아요",
+          detail: "폰을 입에서 한 뼘 거리에 두고, 평소 동화 읽어주듯 또렷하게 읽어주세요.",
+        });
+      } else if (silence > 0.45) {
+        setVerdict({
+          ok: false,
+          title: "조용한 구간이 많아요",
+          detail: "중간에 오래 쉬지 말고 이어서 읽어주시면 목소리를 더 잘 배워요.",
+        });
+      } else {
+        setVerdict({
+          ok: true,
+          title: "좋은 녹음이에요!",
+          detail: `${Math.round(dur)}초 · 소리 크기도 알맞아요. 들어보고 저장해 주세요.`,
+        });
+      }
+    } catch {
+      // 분석 실패는 막지 않는다 — 판정은 도우미일 뿐, 저장 자체는 되게 한다.
+      setVerdict({ ok: true, title: "녹음 완료", detail: "들어보고 저장해 주세요." });
     }
   }
 
@@ -148,17 +301,90 @@ export function VoiceRecorder({
       )}
 
       {phase === "recording" && (
-        <button
-          type="button"
-          onClick={() => recorderRef.current?.stop()}
-          className="animate-pulse rounded-full bg-red-500 py-3 text-base font-extrabold text-white"
-        >
-          ⏹ 녹음 끝내기 (읽기가 끝나면 눌러주세요)
-        </button>
+        <div className="flex flex-col gap-3">
+          {/* 소리 크기 막대 — 말하는 동안 실시간으로 찬다. 색으로 상태를 알려준다. */}
+          {(() => {
+            const color = zone === "quiet" ? "#c7c7c7" : zone === "loud" ? "#ef4444" : "#22c55e";
+            const hint =
+              zone === "quiet"
+                ? "소리가 작아요 — 폰을 가까이 두고 말해주세요"
+                : zone === "loud"
+                  ? "소리가 너무 커요 — 조금 떨어져서 말해주세요"
+                  : "좋아요! 그대로 읽어주세요";
+            return (
+              <div className="flex flex-col gap-1.5">
+                <div className="h-4 w-full overflow-hidden rounded-full bg-neutral-200">
+                  <div
+                    className="h-full rounded-full transition-[width] duration-100"
+                    style={{ width: `${Math.round(level * 100)}%`, background: color }}
+                  />
+                </div>
+                <p className="text-center text-[12px] font-extrabold" style={{ color }}>
+                  {hint}
+                </p>
+              </div>
+            );
+          })()}
+
+          {/* 시간 — 최소치를 채워야 끝낼 수 있다. 목표선(40초)도 함께 보여준다. */}
+          <div className="flex flex-col gap-1.5">
+            <div className="relative h-2 w-full overflow-hidden rounded-full bg-neutral-200">
+              <div
+                className="h-full rounded-full bg-neutral-400 transition-[width] duration-300"
+                style={{ width: `${Math.min(100, (secs / TARGET_SEC) * 100)}%` }}
+              />
+              {/* 최소 길이 눈금 */}
+              <div
+                className="absolute top-0 h-full w-0.5 bg-neutral-500/70"
+                style={{ left: `${(MIN_SEC / TARGET_SEC) * 100}%` }}
+              />
+            </div>
+            <p className="text-center text-[12px] font-bold text-neutral-500">
+              {Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}
+              {secs < MIN_SEC
+                ? ` · ${MIN_SEC - secs}초만 더 읽어주세요`
+                : ` · 목표 ${TARGET_SEC}초 (지금 끝내도 좋아요)`}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => recorderRef.current?.stop()}
+            disabled={secs < MIN_SEC}
+            className={`rounded-full py-3 text-base font-extrabold text-white disabled:cursor-not-allowed disabled:bg-neutral-300 ${
+              secs < MIN_SEC ? "" : "animate-pulse bg-red-500"
+            }`}
+          >
+            {secs < MIN_SEC ? "읽는 중… (조금만 더!)" : "⏹ 녹음 끝내기"}
+          </button>
+        </div>
       )}
 
       {(phase === "preview" || phase === "saving") && (
         <div className="flex flex-col gap-3">
+          {/* 품질 판정 — 문제가 있으면 이유를 콕 집어 다시 권한다.
+              다시 녹음은 공짜지만 '목소리 만들기'는 계정당 2번뿐이라, 여기서 걸러야 한다. */}
+          {verdict === null ? (
+            <p className="rounded-xl bg-white px-4 py-3 text-center text-[13px] font-bold text-neutral-400">
+              녹음을 확인하고 있어요…
+            </p>
+          ) : (
+            <div
+              className={`rounded-xl px-4 py-3 ${verdict.ok ? "bg-emerald-50" : "bg-amber-50"}`}
+            >
+              <p
+                className={`text-[13px] font-extrabold ${
+                  verdict.ok ? "text-emerald-700" : "text-amber-700"
+                }`}
+              >
+                {verdict.ok ? "✅" : "⚠️"} {verdict.title}
+              </p>
+              <p className="mt-0.5 break-keep text-[12px] font-medium leading-relaxed text-neutral-600">
+                {verdict.detail}
+              </p>
+            </div>
+          )}
+
           {previewUrl && <audio controls src={previewUrl} className="w-full" />}
 
           <label className="flex items-start gap-2 text-[13px] font-medium text-neutral-700">
@@ -175,17 +401,20 @@ export function VoiceRecorder({
           </label>
 
           <div className="flex gap-2">
+            {/* 판정이 나쁘면 '다시 녹음'을 눈에 띄게 — 다시 하는 건 공짜다. */}
             <button
               type="button"
               onClick={startRecording}
-              className="flex-1 rounded-full bg-white py-2.5 text-sm font-extrabold text-neutral-600 shadow"
+              className={`flex-1 rounded-full py-2.5 text-sm font-extrabold shadow ${
+                verdict && !verdict.ok ? "bg-amber-400 text-white" : "bg-white text-neutral-600"
+              }`}
             >
               🔄 다시 녹음
             </button>
             <button
               type="button"
               onClick={save}
-              disabled={!consent || phase === "saving"}
+              disabled={!consent || phase === "saving" || verdict === null}
               className="flex-1 rounded-full py-2.5 text-sm font-extrabold text-white disabled:opacity-40"
               style={{ background: accent }}
             >
