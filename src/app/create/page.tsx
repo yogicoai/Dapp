@@ -690,6 +690,8 @@ export default function CreatePage() {
                 characterSheet: sheet,
                 mood: mood.en,
                 shape: screenShape,
+                // 등장인물 명단 — "이 사람들만, 각자 한 번씩" 규칙으로 캐릭터 복제를 막는다.
+                cast: s.characters.map((c) => c.name),
               }),
               signal: ac.signal,
             });

@@ -23,6 +23,7 @@ export async function POST(request: Request) {
     characterSheet?: unknown;
     mood?: unknown;
     shape?: unknown;
+    cast?: unknown;
   };
 
   // 어느 화면에서 볼 동화인가 — 핸드폰은 세로(3:4), 태블릿은 가로(4:3)로 그린다.
@@ -43,12 +44,30 @@ export async function POST(request: Request) {
 
   const mood = typeof input.mood === "string" ? input.mood.trim().slice(0, 80) : "";
 
+  // 등장인물 이름 — "이 사람들만, 각자 한 번씩"을 못박아 복제를 막는 데 쓴다.
+  const cast = Array.isArray(input.cast)
+    ? (input.cast as unknown[])
+        .map((n) => (typeof n === "string" ? n.trim() : ""))
+        .filter(Boolean)
+        .slice(0, 6)
+    : [];
+
   const prompt = [
     `Children's picture book illustration, ${style.prompt}.`,
     `Scene: ${scene}`,
     mood ? `Mood: ${mood}.` : "",
+    // 캐릭터 시트를 참조로 넣으면 모델이 '생김새'뿐 아니라 시트의 '나란히 선 배치'까지
+    // 따라 그려서, 같은 인물이 두 명씩 나오는 일이 생긴다(실제 발생). 그래서
+    // "생김새만 참고, 배치는 베끼지 말 것 + 같은 인물 두 번 금지"를 분명히 못박는다.
     sheet
-      ? "Draw the characters EXACTLY as shown in the attached character reference sheet — same face, hair, clothes, colors."
+      ? [
+          "The attached image is a CHARACTER REFERENCE SHEET. Use it ONLY to know what each character looks like — face, hair, clothing, colors.",
+          "Do NOT copy the sheet's layout. The sheet lines characters up side by side on a blank background; this page is a real scene with its own composition.",
+          "Each character exists exactly ONCE in this world. NEVER draw the same character twice in one picture — no twins, no repeated faces, no duplicated family members, no mirrored copies.",
+        ].join("\n")
+      : "",
+    cast.length > 0
+      ? `The only people who may appear are: ${cast.join(", ")}. Draw each of them at most once, and only if this scene actually needs them.`
       : "",
     "Keep the bottom quarter of the image simple and uncluttered (plain ground, sky, or soft color) so text can be placed there.",
     "Wholesome, innocent, fully clothed, child-friendly.",
