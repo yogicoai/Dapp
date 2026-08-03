@@ -36,6 +36,7 @@ import { useEscClose } from "@/lib/use-esc-close";
 import {
   PRESET_VOICES,
   TYPECAST_VOICES,
+  DEFAULT_VOICE_RATE,
   VOICE_RATES,
   applyPlaybackRate,
   buildPresetUtterance,
@@ -88,7 +89,7 @@ export default function SettingsPage() {
 
   // 목소리 — 프리셋 선택 + 엄마·아빠 녹음 관리
   const [voiceId, setVoiceId] = useState("basic");
-  const [voiceRate, setVoiceRate] = useState(1);
+  const [voiceRate, setVoiceRate] = useState(DEFAULT_VOICE_RATE);
   // 책 화면 — 글자 위치(위/아래)
   const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
   const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);

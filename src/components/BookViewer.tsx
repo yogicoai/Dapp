@@ -22,6 +22,7 @@ import {
   findPreset,
   findTypecast,
   CLIENT_TTS_ENABLED,
+  DEFAULT_VOICE_RATE,
   GOOGLE_TTS_ENABLED,
   loadSelectedVoiceId,
   loadVoiceRate,
@@ -156,8 +157,8 @@ export function BookViewer({ book }: { book: Book }) {
 
   // 재생 속도 — 뷰어 안에서 바로 바꾼다(유튜브식). 설정값을 초기값으로.
   // rateRef는 readPage가 매번 최신 속도를 읽게 하고, 재생 중이면 즉시 반영한다.
-  const [rate, setRate] = useState(1);
-  const rateRef = useRef(1);
+  const [rate, setRate] = useState(DEFAULT_VOICE_RATE);
+  const rateRef = useRef(DEFAULT_VOICE_RATE);
   const [speedMenu, setSpeedMenu] = useState(false);
   useEffect(() => {
     const r = loadVoiceRate();
@@ -167,6 +168,11 @@ export function BookViewer({ book }: { book: Book }) {
   }, []);
   // 이야기 끝남 — 마지막 쪽 낭독이 끝나면 "다시 듣기"를 띄운다.
   const [ended, setEnded] = useState(false);
+
+  // 이어듣기 — 정지한 자리를 기억한다. readPage가 시작한 쪽(currentPageRef)과 그때의
+  // 순번(run)을 함께 담아, 다시 누를 때 "같은 쪽·같은 재생"일 때만 이어서 튼다.
+  const currentPageRef = useRef(0);
+  const pausedRef = useRef<{ run: number; page: number } | null>(null);
 
   // 나레이션 성우 — 책 안에서 바로 바꾼다("읽다가 마음에 안 들면"). 초기값은 설정값.
   // voiceIdRef는 readPage가 최신 성우를 읽게 하고, overriddenRef는 "사용자가 이 책에서
@@ -288,6 +294,7 @@ export function BookViewer({ book }: { book: Book }) {
     narrPausedRef.current = false;
     setHighlight(0);
     clearFallback();
+    pausedRef.current = null; // 핸들러를 떼므로 여기서 멈춘 건 이어들을 수 없다
     if (typeof window !== "undefined") window.speechSynthesis?.cancel();
     const el = audioRef.current;
     if (el) {
@@ -297,12 +304,30 @@ export function BookViewer({ book }: { book: Book }) {
     }
   };
 
+  /**
+   * 정지 버튼 — '일시정지'다. haltPlayback과 달리 순번(runId)도 핸들러도 건드리지 않아
+   * 오디오가 멈춘 자리를 그대로 들고 있다가, 다시 누르면 그 지점부터 이어서 재생된다.
+   * (예전엔 정지 후 다시 누르면 그 쪽을 처음부터 다시 읽었다 — 베타 피드백 6번.)
+   * 브라우저 기계음(speechSynthesis)은 중간 재개가 브라우저마다 제멋대로라 이어듣기
+   * 대상에서 빼고 취소한다 — 그 경로는 성우를 못 받을 때만 쓰는 폴백이다.
+   */
+  const pausePlayback = useCallback(() => {
+    narrPausedRef.current = false;
+    clearFallback();
+    if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+    const el = audioRef.current;
+    // 지금 실제로 소리가 나던 중이어야 '이어들을 자리'가 의미가 있다.
+    const resumable = !!el && !el.paused && el.currentTime > 0;
+    pausedRef.current = resumable ? { run: runIdRef.current, page: currentPageRef.current } : null;
+    el?.pause();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const stopReading = useCallback(() => {
     readingRef.current = false;
     setReading(false);
-    haltPlayback();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    pausePlayback();
+  }, [pausePlayback]);
 
   // 캐릭터 대사(핫스팟) 정지 — 쪽을 넘기거나 화면을 떠날 때 목소리가 남지 않게.
   // 낭독(haltPlayback)과 별개 채널이라 따로 멈춰줘야 한다. onended/onerror도 떼서
@@ -325,6 +350,9 @@ export function BookViewer({ book }: { book: Book }) {
     // 이 재생의 순번. 넘김으로 갈아타면 순번이 앞서 나가고, 이 재생의 콜백은
     // 전부 무효가 된다.
     const run = ++runIdRef.current;
+    // 처음부터 새로 읽는 것이므로 이어들을 자리는 버린다.
+    currentPageRef.current = i;
+    pausedRef.current = null;
     setHighlight(0);
     const total = page.text.length;
 
@@ -526,6 +554,18 @@ export function BookViewer({ book }: { book: Book }) {
 
   const startReading = () => {
     setEnded(false);
+    // 정지했던 자리가 살아 있으면(같은 쪽·같은 재생) 처음부터가 아니라 그 지점부터 잇는다.
+    // 오디오 엘리먼트가 멈춘 위치와 핸들러를 그대로 들고 있어서 play()만 하면 이어진다.
+    const p = pausedRef.current;
+    const el = audioRef.current;
+    if (p && p.run === runIdRef.current && p.page === index && el && !el.ended) {
+      pausedRef.current = null;
+      readingRef.current = true;
+      setReading(true);
+      applyPlaybackRate(el, rateRef.current);
+      el.play().catch(() => stopReading());
+      return;
+    }
     readingRef.current = true;
     setReading(true);
     readPage(index);
@@ -564,6 +604,10 @@ export function BookViewer({ book }: { book: Book }) {
     if (readingRef.current) {
       haltPlayback();
       readPage(index);
+    } else {
+      // 멈춘 상태에서 성우를 바꿨다면 이어들을 자리는 버린다 — 안 그러면 다시 눌렀을 때
+      // 남아 있던 옛 목소리 오디오가 이어서 나온다.
+      pausedRef.current = null;
     }
   };
 
