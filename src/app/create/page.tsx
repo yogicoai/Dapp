@@ -400,6 +400,41 @@ export default function CreatePage() {
    * 태블릿=가로 4:3, 핸드폰=세로 3:4. 지금 쓰는 기기를 기본으로 잡아두고 바꿀 수 있게 한다
    * (뷰어는 그림 실제 비율을 읽어 무대를 맞추므로, 어느 쪽을 골라도 잘림 없이 나온다).
    */
+  /**
+   * 아이가 그린 주인공 그림(선택) — 캐릭터 시트를 이 그림에서 따온다.
+   * 시트 한 장이 모든 쪽 삽화의 기준이라, 여기만 넣으면 8쪽 내내 그 캐릭터가 나온다.
+   * 사진이 아니라 '그림'을 받는다: 얼굴 데이터를 다루지 않아 안전하고,
+   * "내가 그린 애가 주인공"이라는 몰입이 훨씬 크다(피드백 7번).
+   */
+  const [drawing, setDrawing] = useState<string | null>(null);
+  const [drawingBusy, setDrawingBusy] = useState(false);
+
+  /** 올린 그림을 캔버스로 줄여 data URL로 만든다 — 원본 사진은 몇 MB라 그대로 보내면 느리다. */
+  async function pickDrawing(file: File) {
+    setDrawingBusy(true);
+    try {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error("그림을 읽지 못했어요."));
+        img.src = url;
+      });
+      const MAX = 768;
+      const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      setDrawing(canvas.toDataURL("image/jpeg", 0.85));
+    } catch (e) {
+      setError((e as Error).message || "그림을 읽지 못했어요.");
+    } finally {
+      setDrawingBusy(false);
+    }
+  }
+
   const [screenShape, setScreenShape] = useState<"tablet" | "phone">("tablet");
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 화면 크기는 클라 전용, 마운트 후 판별
@@ -591,7 +626,11 @@ export default function CreatePage() {
       const sheetRes = await fetch("/api/character-sheet", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ characters: s.characters, artStyleId: artStyle }),
+        body: JSON.stringify({
+          characters: s.characters,
+          artStyleId: artStyle,
+          drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
+        }),
         signal: ac.signal,
       });
       const sheetData = await sheetRes.json();
@@ -1266,6 +1305,49 @@ export default function CreatePage() {
                     </button>
                   );
                 })}
+              </div>
+
+              {/* 아이가 그린 그림으로 주인공 만들기 — 이 그림이 캐릭터 시트의 원본이 되고,
+                  시트가 모든 쪽 삽화의 기준이라 8쪽 내내 그 캐릭터가 나온다. */}
+              <div className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 px-5 py-4">
+                <p className="break-keep text-center text-sm font-extrabold text-neutral-700">
+                  🖍️ 아이가 그린 그림으로 주인공을 만들까요? <span className="font-bold text-neutral-400">(선택)</span>
+                </p>
+                {drawing ? (
+                  <div className="flex flex-col items-center gap-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={drawing}
+                      alt="아이가 그린 주인공"
+                      className="h-28 w-28 rounded-2xl border-4 border-white object-cover shadow"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setDrawing(null)}
+                      className="rounded-full bg-white px-4 py-1.5 text-xs font-extrabold text-neutral-500 shadow-sm transition hover:bg-neutral-50"
+                    >
+                      ✕ 이 그림 빼기
+                    </button>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer rounded-full bg-white px-5 py-2.5 text-sm font-extrabold text-neutral-700 shadow-sm transition hover:bg-neutral-50">
+                    {drawingBusy ? "읽는 중…" : "📷 그림 사진 올리기"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) void pickDrawing(f);
+                        e.target.value = ""; // 같은 파일을 다시 골라도 반응하게
+                      }}
+                    />
+                  </label>
+                )}
+                <p className="break-keep text-center text-[11px] font-medium leading-relaxed text-neutral-400">
+                  아이가 그린 주인공을 사진으로 찍어 올리면, 그 그림을 살려 동화 주인공으로
+                  그려줘요. 올린 그림은 캐릭터를 만드는 데만 쓰고 저장하지 않아요.
+                </p>
               </div>
 
               {/* 어느 화면에서 볼지 — 삽화를 그 비율로 그린다. 핸드폰은 세로,
