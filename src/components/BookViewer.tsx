@@ -17,7 +17,6 @@ import {
   applyPlaybackRate,
   buildPresetUtterance,
   fetchGoogleAudio,
-  fetchTypecastPageAudio,
   fetchTypecastVoiceAudio,
   findPreset,
   findTypecast,
@@ -26,11 +25,13 @@ import {
   GOOGLE_TTS_ENABLED,
   loadSelectedVoiceId,
   loadVoiceRate,
+  prefetchTypecastPageAudio,
   saveSelectedVoiceId,
   saveVoiceRate,
+  startTypecastPageAudio,
   TYPECAST_VOICES,
   warmUpVoices,
-  type PageAudioSegment,
+  type PendingSegment,
 } from "@/lib/voices";
 import { loadParentVoices, type ParentVoice } from "@/lib/parent-voice";
 import { OrientationHint } from "./OrientationHint";
@@ -174,6 +175,23 @@ export function BookViewer({ book }: { book: Book }) {
   const currentPageRef = useRef(0);
   const pausedRef = useRef<{ run: number; page: number } | null>(null);
 
+  // 성우 음성을 만드는 중 — 눌렀는데 소리가 안 나면 고장으로 오해하니(베타 피드백 4번)
+  // 버튼과 안내로 "준비 중"을 보여준다. 첫 소리가 나면 내린다.
+  const [preparing, setPreparing] = useState(false);
+  // 준비에 걸린 초 — 숫자가 올라가는 걸 보면 멈춘 게 아니라 되는 중임을 안다.
+  const [prepSecs, setPrepSecs] = useState(0);
+  useEffect(() => {
+    if (!preparing) {
+      setPrepSecs(0);
+      return;
+    }
+    const startedAt = Date.now();
+    const id = setInterval(() => setPrepSecs(Math.round((Date.now() - startedAt) / 1000)), 1000);
+    return () => clearInterval(id);
+  }, [preparing]);
+  // 미리받아 둔 다음 쪽 번호 — 같은 쪽을 두 번 미리받지 않게.
+  const prefetchedRef = useRef(-1);
+
   // 나레이션 성우 — 책 안에서 바로 바꾼다("읽다가 마음에 안 들면"). 초기값은 설정값.
   // voiceIdRef는 readPage가 최신 성우를 읽게 하고, overriddenRef는 "사용자가 이 책에서
   // 성우를 직접 바꿨다"는 표시다 — 이 경우엔 완성작이라도 고른 성우로 합성한다(의도적).
@@ -313,6 +331,7 @@ export function BookViewer({ book }: { book: Book }) {
    */
   const pausePlayback = useCallback(() => {
     narrPausedRef.current = false;
+    setPreparing(false);
     clearFallback();
     if (typeof window !== "undefined") window.speechSynthesis?.cancel();
     const el = audioRef.current;
@@ -388,11 +407,14 @@ export function BookViewer({ book }: { book: Book }) {
         }
       };
       el.onended = finishThen;
-      el.play().catch(() => {
-        // 자동재생 차단 등 — 읽기 중단으로 처리. 단, 넘김으로 갈아타며 생긴
-        // 중단 오류(pause에 의한 취소)는 새 재생을 건드리면 안 된다.
-        if (run === runIdRef.current) stopReading();
-      });
+      el.play()
+        .then(() => setPreparing(false))
+        .catch(() => {
+          // 자동재생 차단 등 — 읽기 중단으로 처리. 단, 넘김으로 갈아타며 생긴
+          // 중단 오류(pause에 의한 취소)는 새 재생을 건드리면 안 된다.
+          setPreparing(false);
+          if (run === runIdRef.current) stopReading();
+        });
     };
 
     const bundled = page.audio ?? page.legacyAudio ?? null;
@@ -406,22 +428,35 @@ export function BookViewer({ book }: { book: Book }) {
       return;
     }
 
-    // 성우 음성 — 지문/대사 조각을 이어서 재생한다. 대사에는 감정 연기가 실려
-    // 있고, 색칠은 조각의 글자 범위를 따라가서 통짜 비례보다 정확하다.
-    const playSegments = (segments: PageAudioSegment[]) => {
+    // 성우 음성 — 조각을 '오는 대로' 이어서 재생한다. 조각들은 이미 동시에 합성이
+    // 걸려 있어서, 첫 조각만 도착하면 소리가 나기 시작하고 나머지는 듣는 동안 채워진다.
+    // 색칠은 조각의 글자 범위를 따라가서 통짜 비례보다 정확하다.
+    const playPending = (segments: PendingSegment[]) => {
       const el = audioRef.current ?? new Audio();
       audioRef.current = el;
-      const urls = segments.map((s) => URL.createObjectURL(s.blob));
       let si = 0;
-      const playNext = () => {
-        if (run !== runIdRef.current || !readingRef.current || si >= segments.length) {
-          urls.forEach((u) => URL.revokeObjectURL(u));
-          if (run === runIdRef.current && readingRef.current) finishThen();
+      const playNext = async () => {
+        if (run !== runIdRef.current || !readingRef.current) return;
+        if (si >= segments.length) {
+          finishThen();
           return;
         }
         const seg = segments[si];
-        el.src = urls[si];
         si += 1;
+        let blob: Blob;
+        try {
+          blob = await seg.audio;
+        } catch {
+          // 합성 실패(크레딧 잠금·오프라인 등) — 딸린 파일이나 기계음으로 물러난다.
+          if (run !== runIdRef.current || !readingRef.current) return;
+          setPreparing(false);
+          if (bundled) playViaAudio(bundled);
+          else speakWithBrowser();
+          return;
+        }
+        if (run !== runIdRef.current || !readingRef.current) return;
+        const url = URL.createObjectURL(blob);
+        el.src = url;
         applyPlaybackRate(el, rateBoost);
         el.ontimeupdate = () => {
           if (el.duration > 0) {
@@ -433,12 +468,39 @@ export function BookViewer({ book }: { book: Book }) {
             );
           }
         };
-        el.onended = playNext;
-        el.play().catch(() => {
-          if (run === runIdRef.current) stopReading();
-        });
+        el.onended = () => {
+          URL.revokeObjectURL(url);
+          void playNext();
+        };
+        el.play()
+          .then(() => {
+            // 첫 소리가 났으니 '준비 중' 표시를 내린다.
+            setPreparing(false);
+            prefetchNext();
+          })
+          .catch(() => {
+            URL.revokeObjectURL(url);
+            if (run === runIdRef.current) stopReading();
+          });
       };
-      playNext();
+      void playNext();
+    };
+
+    /**
+     * 다음 쪽을 미리 합성해둔다 — 넘어가는 순간 기다림 없이 소리가 나게.
+     * 실시간 합성 성우일 때만(구운 파일은 원래 즉시), 딱 한 쪽만 앞서 받는다.
+     */
+    const prefetchNext = () => {
+      if (prefetchedRef.current === i + 1) return;
+      const next = book.pages[i + 1];
+      if (!next) return;
+      const nextBundled = next.audio ?? next.legacyAudio ?? null;
+      // 다음 쪽이 구운 파일로 재생될 상황이면 미리받을 게 없다(크레딧도 안 쓴다).
+      if (book.narrators?.includes(selectedId) && next.audio) return;
+      if (nextBundled && (!overriddenRef.current || (tc !== null && book.narrator === tc.id))) return;
+      if (!tc) return;
+      prefetchedRef.current = i + 1;
+      prefetchTypecastPageAudio(tc, next.text);
     };
 
     // 완성작(전래·세계명작)은 기본적으로 딸린 나레이션을 쓴다 — 파일 재생이라 무료이고,
@@ -479,6 +541,7 @@ export function BookViewer({ book }: { book: Book }) {
       const role = selectedId.slice("parent:".length);
       const pv = parentVoices.find((p) => p.role === role);
       if (pv) {
+        setPreparing(true);
         fetchTypecastVoiceAudio(pv.voiceId, page.text)
           .then((blob) => {
             if (run !== runIdRef.current || !readingRef.current) return;
@@ -486,6 +549,7 @@ export function BookViewer({ book }: { book: Book }) {
           })
           .catch(() => {
             if (run !== runIdRef.current || !readingRef.current) return;
+            setPreparing(false);
             if (bundled) playViaAudio(bundled);
             else speakWithBrowser();
           });
@@ -495,26 +559,25 @@ export function BookViewer({ book }: { book: Book }) {
 
     if (tc) {
       // 기본 경로(현재 활성) — Typecast 감정 연기 합성. CLIENT_TTS_ENABLED=true라
-      // 창작 동화·제공 동화(비번들 성우) 모두 여기로 온다. 실패하면 아래 catch가 폴백.
-      fetchTypecastPageAudio(tc, page.text)
-        .then((segments) => {
-          // 받는 사이 정지했거나 다른 쪽으로 넘어갔으면 재생하지 않는다.
-          if (run !== runIdRef.current || !readingRef.current) return;
-          playSegments(segments);
-        })
-        .catch(() => {
-          // 합성 실패·실시간 합성 꺼짐(client-tts-disabled) — 딸린 파일이 있으면
-          // 그걸(무료) 쓰고, 없으면 브라우저 기계음으로 대체한다. 크레딧은 안 나간다.
-          if (run !== runIdRef.current || !readingRef.current) return;
-          if (bundled) playViaAudio(bundled);
-          else speakWithBrowser();
-        });
+      // 창작 동화·제공 동화(비번들 성우) 모두 여기로 온다.
+      // 조각 합성을 한꺼번에 걸어두고(startTypecast…) 첫 조각이 오는 대로 재생한다.
+      try {
+        setPreparing(true);
+        playPending(startTypecastPageAudio(tc, page.text));
+      } catch {
+        // 실시간 합성 꺼짐(client-tts-disabled) — 딸린 파일이 있으면 그걸(무료),
+        // 없으면 브라우저 기계음으로 대체한다. 크레딧은 안 나간다.
+        setPreparing(false);
+        if (bundled) playViaAudio(bundled);
+        else speakWithBrowser();
+      }
       return;
     }
 
     speakWithBrowser();
 
     function speakWithBrowser() {
+      setPreparing(false);
       if (typeof window === "undefined" || !("speechSynthesis" in window)) {
         // 읽어줄 수단이 없음
         stopReading();
@@ -1133,7 +1196,18 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 읽어주기 — 재생 버튼임이 한눈에 보이게 ①색이 도는 원 ②흰 재생 세모(▶)
           ③평소엔 "읽어주기" 라벨을 위에 띄운다. 읽는 중엔 정지(⏸) 막대로 바뀐다. */}
       <div className="absolute bottom-5 right-5 z-10 flex flex-col items-center gap-2">
-        {!reading && !ended && (
+        {/* 성우 목소리를 만드는 동안 — 눌렀는데 조용하면 고장으로 오해한다(피드백 4번).
+            몇 초 걸리는지까지 보여줘서 "기다리면 되는구나"를 알게 한다. */}
+        {preparing && (
+          <span className="flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 animate-spin" aria-hidden>
+              <circle cx="12" cy="12" r="9" fill="none" stroke="#ffffff55" strokeWidth="3" />
+              <path d="M21 12a9 9 0 0 0-9-9" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+            성우가 목소리를 만들고 있어요{prepSecs > 0 ? ` (${prepSecs}초)` : ""}
+          </span>
+        )}
+        {!reading && !ended && !preparing && (
           <span className="animate-pulse rounded-full bg-black/55 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
             ▶ 눌러서 읽어주기
           </span>
@@ -1142,12 +1216,18 @@ export function BookViewer({ book }: { book: Book }) {
           type="button"
           aria-label={reading ? "그만 읽기" : "읽어주기"}
           onClick={reading ? stopReading : startReading}
-          style={reading ? undefined : { background: ui.colors.accent }}
+          style={reading || preparing ? undefined : { background: ui.colors.accent }}
           className={`flex h-16 w-16 items-center justify-center rounded-full text-white shadow-[0_6px_16px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 ${
-            reading ? "animate-pulse bg-amber-400" : ""
+            preparing ? "bg-amber-400" : reading ? "animate-pulse bg-amber-400" : ""
           }`}
         >
-          {reading ? (
+          {preparing ? (
+            // 준비 중 — 도는 고리. 누르면 정지되므로 버튼 자체는 그대로 살려둔다.
+            <svg viewBox="0 0 24 24" className="h-8 w-8 animate-spin drop-shadow-[0_2px_2px_rgba(0,0,0,0.25)]" aria-hidden>
+              <circle cx="12" cy="12" r="8.5" fill="none" stroke="#ffffff66" strokeWidth="3" />
+              <path d="M20.5 12a8.5 8.5 0 0 0-8.5-8.5" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+          ) : reading ? (
             // 정지(⏸) — 둥근 막대 두 개. 이모지는 윈도우에서 칙칙해 직접 그린다.
             <svg viewBox="0 0 24 24" className="h-8 w-8 drop-shadow-[0_2px_2px_rgba(0,0,0,0.25)]" aria-hidden>
               <rect x="4.5" y="4" width="5.5" height="16" rx="2.75" fill="#fff" />

@@ -526,44 +526,84 @@ export const CLIENT_TTS_ENABLED = true;
  */
 export const GOOGLE_TTS_ENABLED = true;
 
-/**
- * 한 쪽을 지문/대사 조각으로 나눠 합성한다. 대사에는 감정 연기가 실린다.
- * 감정을 지원하지 않는 음성이면 그 조각만 기본톤으로 물러난다 — 재생은 끊기지 않는다.
- * 글자 수 총합은 통짜 합성과 같아 크레딧 비용도 같다.
+/* ── 동시 합성 제한 ──
+ * Typecast 라이트 플랜은 동시 요청 5개까지다(구독 응답 concurrency_limit=5).
+ * 한 쪽을 조각내 병렬로 합성하면서 다음 쪽 미리받기까지 겹치면 그 한도를 넘겨
+ * 실패한다. 그래서 앱 전체에서 동시에 4개까지만 나가도록 줄을 세운다.
  */
-export async function fetchTypecastPageAudio(
-  tc: TypecastPreset,
-  text: string,
-): Promise<PageAudioSegment[]> {
+const MAX_CONCURRENT_TTS = 4;
+let ttsRunning = 0;
+const ttsWaiting: (() => void)[] = [];
+async function withTtsSlot<T>(fn: () => Promise<T>): Promise<T> {
+  if (ttsRunning >= MAX_CONCURRENT_TTS) {
+    await new Promise<void>((resolve) => ttsWaiting.push(resolve));
+  }
+  ttsRunning++;
+  try {
+    return await fn();
+  } finally {
+    ttsRunning--;
+    ttsWaiting.shift()?.();
+  }
+}
+
+/** 아직 합성이 안 끝난 조각. 부른 쪽이 오는 순서대로 기다렸다 재생한다. */
+export type PendingSegment = { from: number; to: number; audio: Promise<Blob> };
+
+/**
+ * 한 쪽을 지문/대사 조각으로 나눠 **동시에** 합성을 걸고, 기다리지 않고 바로 돌려준다.
+ * 부른 쪽은 첫 조각이 오는 즉시 재생을 시작하고, 나머지는 재생하는 동안 채워진다.
+ *
+ * 예전엔 조각을 하나씩 차례로 await 해서 '조각 수 × 합성시간'만큼 침묵이 흘렀다
+ * (베타 피드백 1·4번: 눌러도 한참 소리가 안 나 오류인 줄 안다). 지금은 첫 조각
+ * 하나만 기다리면 소리가 난다.
+ *
+ * 대사에는 감정 연기가 실리고, 감정을 거부하는 음성이면 그 조각만 기본톤으로 물러난다.
+ * 글자 수 총합은 통짜 합성과 같아 크레딧 비용은 그대로다.
+ */
+export function startTypecastPageAudio(tc: TypecastPreset, text: string): PendingSegment[] {
   // 실시간 합성이 꺼져 있으면 호출 자체를 막는다 → 호출한 쪽이 딸린 파일/기계음으로 대체.
   if (!CLIENT_TTS_ENABLED) throw new Error("client-tts-disabled");
   const segs = splitDialogue(text);
 
-  // 감정을 입혀 합성하되, 그 음성이 감정을 거부하면 기본톤으로 한 번 더(재생은 안 끊김).
-  const synthEmo = async (t: string, emotion: string): Promise<Blob> => {
-    try {
-      return await fetchTypecastAudio(tc, t, emotion);
-    } catch {
-      return await fetchTypecastAudio(tc, t);
-    }
+  const synthEmo = (t: string, emotion: string): Promise<Blob> => {
+    const p = withTtsSlot(() => fetchTypecastAudio(tc, t, emotion)).catch(() =>
+      withTtsSlot(() => fetchTypecastAudio(tc, t)),
+    );
+    // 재생이 중간에 멈춰 아무도 이 조각을 기다리지 않게 되면 '처리 안 된 거부'
+    // 경고가 뜬다 — 파생 프라미스로 받아둔다(원본은 부른 쪽에 그대로 넘어간다).
+    p.catch(() => {});
+    return p;
   };
 
   // 대사가 없어도 지문에 어울리는 감정을 살짝 입혀 밋밋하지 않게 한다.
-  // (예전엔 감정 없이 통짜라, 대사 없는 쪽이 갑자기 무미건조하게 들렸다.)
   if (segs.length <= 1 || !segs.some((s) => s.dialogue)) {
-    const blob = await synthEmo(text, guessEmotion(text));
-    return [{ blob, from: 0, to: text.length }];
+    return [{ from: 0, to: text.length, audio: synthEmo(text, guessEmotion(text)) }];
   }
 
-  const out: PageAudioSegment[] = [];
+  const out: PendingSegment[] = [];
   let pos = 0;
   for (const s of segs) {
     const from = pos;
     pos += s.text.length;
     // 대사든 지문이든 내용에 맞는 감정을 입힌다 — 지문은 대개 toneup(생기 있는 낭독),
     // 대사는 놀람·화남·기쁨 등. 이렇게 해야 페이지마다 톤이 끊기지 않는다.
-    const blob = await synthEmo(s.text, guessEmotion(s.text));
-    out.push({ blob, from, to: pos });
+    out.push({ from, to: pos, audio: synthEmo(s.text, guessEmotion(s.text)) });
   }
   return out;
+}
+
+/**
+ * 다음 쪽을 미리 합성해 캐시에 채워둔다 — 넘어가는 순간 소리가 바로 나게.
+ * 결과는 쓰지 않는다(캐시에만 남긴다). 실패는 조용히 무시 — 미리받기일 뿐이다.
+ * 한 쪽만 앞서 받는다: 아이가 자동으로 다음 쪽까지 듣기 때문에 낭비가 거의 없고,
+ * 같은 문장은 캐시되어 실제 재생 때 크레딧이 또 나가지 않는다.
+ */
+export function prefetchTypecastPageAudio(tc: TypecastPreset, text: string): void {
+  if (!CLIENT_TTS_ENABLED || !text) return;
+  try {
+    startTypecastPageAudio(tc, text);
+  } catch {
+    /* 무시 */
+  }
 }
