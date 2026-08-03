@@ -1,8 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import type { Book } from "@/lib/types";
 import { useTheme } from "./ThemeProvider";
+
+/**
+ * 책장에 필요한 최소 정보.
+ *
+ * 전체 Book(본문·삽화 포함)을 받지 않는다 — 만든 동화는 삽화가 들어 있어 한 권이
+ * 수 MB라, 책장이 그걸 통째로 받으면 느리다. 제공 책(전래·명작 JSON)은 Book 그대로
+ * 넘겨도 이 모양에 맞는다(pages로 표지·쪽수를 구한다).
+ */
+export type ShelfItem = {
+  id: string;
+  title: string;
+  coverImage?: string | null;
+  pageCount?: number | null;
+  pages?: { image?: string | null }[];
+};
 
 /** 살짝 삐뚤빼뚤 — 장난감처럼 놓인 느낌. 잡으면(hover) 똑바로 선다. */
 const TILTS = ["-rotate-2", "rotate-1", "rotate-2", "-rotate-1", "rotate-1", "-rotate-2"];
@@ -15,14 +29,15 @@ const FALLBACK_EMOJI = ["🌈", "🍀", "⭐", "🎈"];
  * 제목(리본 안)·그림(원 창)·쪽수만 얹는다. 틀과 좌표는 테마가 들고 있어서
  * 공룡나라로 넘어가면 표지도 정글 틀로 바뀐다.
  */
-export function Bookshelf({ books }: { books: Book[] }) {
+export function Bookshelf({ books }: { books: ShelfItem[] }) {
   const { theme } = useTheme();
   const cover = theme.cover;
 
   return (
     <div className="flex flex-wrap items-end justify-center gap-6 sm:gap-7">
       {books.map((book, i) => {
-        const art = book.coverImage ?? book.pages.find((p) => p.image)?.image ?? null;
+        const art = book.coverImage ?? book.pages?.find((p) => p.image)?.image ?? null;
+        const pageCount = book.pageCount ?? book.pages?.length ?? null;
         const tilt = TILTS[i % TILTS.length];
         const emoji = FALLBACK_EMOJI[i % FALLBACK_EMOJI.length];
 
@@ -85,13 +100,15 @@ export function Bookshelf({ books }: { books: Book[] }) {
                   )}
                 </div>
 
-                {/* 쪽수 — 아래 여백 */}
-                <p
-                  className="absolute bottom-[4.5%] left-1/2 -translate-x-1/2 rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-extrabold"
-                  style={{ color: cover.ink }}
-                >
-                  {book.pages.length}쪽
-                </p>
+                {/* 쪽수 — 아래 여백. 가벼운 목록엔 쪽수가 없을 수 있어 그때는 숨긴다. */}
+                {pageCount !== null && (
+                  <p
+                    className="absolute bottom-[4.5%] left-1/2 -translate-x-1/2 rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-extrabold"
+                    style={{ color: cover.ink }}
+                  >
+                    {pageCount}쪽
+                  </p>
+                )}
               </div>
 
               {/* 바닥 그림자 — 잔디밭에 서 있는 느낌 */}

@@ -10,7 +10,7 @@ import { loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
-import { loadLang, loadMyBooks, migrateLegacyBooks } from "@/lib/prefs";
+import { loadLang, loadMyBooksBrief, migrateLegacyBooks, toShelfBook, type ShelfBook } from "@/lib/prefs";
 import type { Book } from "@/lib/types";
 
 export default function Home() {
@@ -21,7 +21,8 @@ export default function Home() {
   const [guest, setGuest] = useState(false);
   const [master, setMaster] = useState(false);
   const [tokens, setTokens] = useState(0);
-  const [myBooks, setMyBooks] = useState<Book[]>([]);
+  // 책장에는 제목·표지·쪽수만 있으면 된다 — 본문·삽화까지 받으면 책 한 권이 수 MB다.
+  const [myBooks, setMyBooks] = useState<ShelfBook[]>([]);
   // 내 책을 다 불러왔는지 — 불러오는 중엔 '동화가 없어요'를 띄우지 않아, 책이 있는데도
   // 잠깐 '없어요'가 깜빡이던 문제를 막는다.
   const [booksLoaded, setBooksLoaded] = useState(false);
@@ -42,7 +43,7 @@ export default function Home() {
       setMaster(s.isMaster);
       setTokens(s.profile?.tokens ?? 0);
       if (s.uid) {
-        setMyBooks(await loadMyBooks());
+        setMyBooks(await loadMyBooksBrief());
         if (!alive) return;
       }
       setBooksLoaded(true);
@@ -65,7 +66,9 @@ export default function Home() {
   // "우리 가족 책장" = 내가 만든 책(최신 먼저, 숨긴 건 제외).
   // 샘플 3권(sample-books.json)은 마스터가 만든 데모라 마스터에게만 보인다 — 일반 회원엔
   // 안 보인다(빈 책장부터 시작). 책 관리는 설정(⚙️) › "내 동화"에서 한다.
-  const mine = [...myBooks, ...(master ? all : [])].filter((b) => b.lang === lang && !b.hidden);
+  const mine = [...myBooks, ...(master ? all.map(toShelfBook) : [])].filter(
+    (b) => b.lang === lang && !b.hidden,
+  );
 
   // 은은하게 움직이는 배경 영상(/themes/<id>/bg-video.mp4)이 있는 테마.
   // 파일을 넣고 여기 id만 추가하면 그 테마 홈이 살아 움직인다.

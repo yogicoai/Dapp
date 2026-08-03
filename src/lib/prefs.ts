@@ -251,6 +251,79 @@ export async function loadMyBooks(): Promise<Book[]> {
   return ((data as BookRow[]) ?? []).map(rowToBook);
 }
 
+/**
+ * 책장에 뿌릴 가벼운 책 정보 — 제목·표지·쪽수만. 본문(pages)과 삽화는 안 받는다.
+ *
+ * 만든 동화는 삽화가 데이터 안에 들어 있어 한 권이 수 MB다. 책장이 그걸 통째로
+ * 내려받느라 느렸다(피드백 5번). 여기서는 작은 표지(coverImage)만 읽어 수십 KB로 끝낸다.
+ * 옛 책은 작은 표지가 없어서, 그 책들만 골라 첫 쪽 그림을 한 번 더 가져온다.
+ */
+export type ShelfBook = {
+  id: string;
+  lang: string;
+  title: string;
+  coverImage: string | null;
+  pageCount: number | null;
+  hidden: boolean;
+};
+
+export async function loadMyBooksBrief(): Promise<ShelfBook[]> {
+  const sb = getSupabase();
+  if (!sb) return [];
+  const uid = await currentUid();
+  if (!uid) return [];
+  const { data, error } = await sb
+    .from("books")
+    .select("id,title,hidden,lang:data->>lang,cover:data->>coverImage,n:data->>pageCount")
+    .eq("owner", uid)
+    .order("created_at", { ascending: false });
+  // 가벼운 조회가 막히면(구버전 PostgREST 등) 예전 방식으로 물러난다 — 느려도 보이게.
+  if (error) return (await loadMyBooks()).map(toShelfBook);
+
+  const rows = (data ?? []) as {
+    id: string;
+    title: string | null;
+    hidden: boolean;
+    lang: string | null;
+    cover: string | null;
+    n: string | null;
+  }[];
+  const list: ShelfBook[] = rows.map((r) => ({
+    id: r.id,
+    lang: r.lang ?? "ko",
+    title: r.title ?? "제목 없음",
+    coverImage: r.cover,
+    pageCount: r.n ? Number(r.n) : null,
+    hidden: !!r.hidden,
+  }));
+
+  // 작은 표지가 없는 옛 책만 첫 쪽 그림을 따로 채운다(그래도 본문 전체보단 훨씬 가볍다).
+  const legacy = list.filter((b) => !b.coverImage).map((b) => b.id);
+  if (legacy.length > 0) {
+    const { data: old } = await sb
+      .from("books")
+      .select("id,cover:data->pages->0->>image")
+      .in("id", legacy);
+    const byId = new Map(
+      ((old ?? []) as { id: string; cover: string | null }[]).map((r) => [r.id, r.cover]),
+    );
+    for (const b of list) if (!b.coverImage) b.coverImage = byId.get(b.id) ?? null;
+  }
+  return list;
+}
+
+/** 이미 받아 둔 Book을 책장용 가벼운 형태로. */
+export function toShelfBook(b: Book): ShelfBook {
+  return {
+    id: b.id,
+    lang: b.lang,
+    title: b.title,
+    coverImage: b.coverImage ?? b.pages.find((p) => p.image)?.image ?? null,
+    pageCount: b.pageCount ?? b.pages.length,
+    hidden: !!b.hidden,
+  };
+}
+
 /** 특정 회원의 책 (마스터 열람용 — RLS가 마스터만 허용). */
 export async function loadUserBooks(userId: string): Promise<Book[]> {
   const sb = getSupabase();

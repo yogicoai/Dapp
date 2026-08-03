@@ -409,6 +409,36 @@ export default function CreatePage() {
   const [drawing, setDrawing] = useState<string | null>(null);
   const [drawingBusy, setDrawingBusy] = useState(false);
 
+  /**
+   * data URL 이미지를 줄여 다시 data URL로 만든다.
+   *
+   * Gemini가 준 삽화는 장당 약 1MB(base64)라, 그대로 저장하면 책 한 권이 8MB가 되고
+   * 책장을 열 때 그걸 전부 내려받아 느려진다(피드백 5번의 진짜 원인).
+   * 화면에 필요한 크기로 줄이고 WebP로 다시 구우면 8분의 1로 준다.
+   * 변환이 안 되는 브라우저면 원본을 그대로 쓴다 — 저장 자체는 절대 막지 않는다.
+   */
+  async function shrinkDataUrl(dataUrl: string, maxSide: number, quality: number): Promise<string> {
+    try {
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error("이미지 변환 실패"));
+        img.src = dataUrl;
+      });
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(img.width * scale));
+      canvas.height = Math.max(1, Math.round(img.height * scale));
+      canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
+      let out = canvas.toDataURL("image/webp", quality);
+      // 사파리 등 WebP 인코딩을 못 하는 브라우저는 png를 돌려준다 — 그땐 jpeg로.
+      if (!out.startsWith("data:image/webp")) out = canvas.toDataURL("image/jpeg", quality);
+      return out.length < dataUrl.length ? out : dataUrl;
+    } catch {
+      return dataUrl;
+    }
+  }
+
   /** 올린 그림을 캔버스로 줄여 data URL로 만든다 — 원본 사진은 몇 MB라 그대로 보내면 느리다. */
   async function pickDrawing(file: File) {
     setDrawingBusy(true);
@@ -715,6 +745,14 @@ export default function CreatePage() {
       return;
     }
     setTokens((t) => Math.max(0, t - cost));
+    // 저장 전에 삽화를 화면 크기로 줄인다 — 원본(장당 약 1MB)을 그대로 넣으면 책이
+    // 8MB가 되어 책장·책 열기가 둘 다 느려진다. 표지는 더 작게 따로 만들어 두어
+    // 책장이 본문을 안 받고도 표지를 보여줄 수 있게 한다.
+    const slim = await Promise.all(
+      images.map((im) => (im ? shrinkDataUrl(im, 1280, 0.82) : Promise.resolve(null))),
+    );
+    const firstArt = images.find(Boolean) ?? null;
+    const cover = firstArt ? await shrinkDataUrl(firstArt, 420, 0.8) : null;
     const book: Book = {
       id: `my-${Date.now().toString(36)}`,
       lang: "ko",
@@ -722,7 +760,9 @@ export default function CreatePage() {
       summary: s.summary,
       // 고른 성우를 책에 박는다 — 뷰어가 이 성우로 읽어준다(방법 B).
       narrator: narratorVoice,
-      pages: s.pages.map((p, i) => ({ text: p.text, image: images[i] ?? null })),
+      coverImage: cover,
+      pageCount: s.pages.length,
+      pages: s.pages.map((p, i) => ({ text: p.text, image: slim[i] ?? null })),
     };
     await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
     setFinalBook(book);
