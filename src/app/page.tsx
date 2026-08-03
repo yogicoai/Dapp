@@ -32,8 +32,8 @@ export default function Home() {
   const [tokens, setTokens] = useState(0);
   // 책장에는 제목·표지·쪽수만 있으면 된다 — 본문·삽화까지 받으면 책 한 권이 수 MB다.
   const [myBooks, setMyBooks] = useState<ShelfBook[]>([]);
-  // 내 책을 다 불러왔는지 — 불러오는 중엔 '동화가 없어요'를 띄우지 않아, 책이 있는데도
-  // 잠깐 '없어요'가 깜빡이던 문제를 막는다.
+  // 내 책을 다 불러왔는지 — 이게 true가 되기 전엔 홈을 아예 열지 않는다.
+  // 책장이 빈 채로 먼저 뜨고 나중에 채워지면 어수선해서, 준비가 끝난 뒤 한 번에 보여준다.
   const [booksLoaded, setBooksLoaded] = useState(false);
   useEffect(() => {
     let alive = true;
@@ -65,13 +65,17 @@ export default function Home() {
       setGuest(s.guest);
       setMaster(s.isMaster);
       setTokens(s.profile?.tokens ?? 0);
-      if (s.uid) {
-        const fresh = await loadMyBooksBrief();
-        if (!alive) return;
-        setMyBooks(fresh);
-        saveShelfCache(s.uid, fresh); // 다음 새로고침 때 즉시 그리도록 남겨 둔다
+      try {
+        if (s.uid) {
+          const fresh = await loadMyBooksBrief();
+          if (!alive) return;
+          setMyBooks(fresh);
+          saveShelfCache(s.uid, fresh); // 다음 새로고침 때 즉시 그리도록 남겨 둔다
+        }
+      } finally {
+        // 책을 못 불러와도(오프라인 등) 화면은 반드시 열어준다 — 준비 화면에 갇히지 않게.
+        if (alive) setBooksLoaded(true);
       }
-      setBooksLoaded(true);
     })();
     return () => {
       alive = false;
@@ -118,9 +122,10 @@ export default function Home() {
   const classics = (classicBooksJson as Book[]).filter((b) => !b.hidden);
   const shown = shelf === "mine" ? mine : shelf === "folk" ? folk : classics;
 
-  // 로그인 확인 중 — 예전엔 아무것도 안 그려서 잠깐 흰 화면이었다("앱이 멈췄나?").
-  // 배경과 안내를 먼저 띄워, 확인이 끝나기 전에도 앱이 살아 있는 게 보이게 한다.
-  if (authed === null) {
+  // 준비 화면 — 로그인 확인과 책장 데이터가 '둘 다' 끝날 때까지 붙잡아 둔다.
+  // 중간에 화면을 열면 빈 책장이 잠깐 보였다가 책이 채워져 어수선하다(사장님 지적).
+  // 캐시가 있으면 이 조건이 즉시 풀려 새로고침해도 곧바로 책장이 뜬다.
+  if (authed === null || !booksLoaded) {
     return (
       <div className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -134,7 +139,9 @@ export default function Home() {
             className="h-20 w-20 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white object-cover shadow"
           />
           <p className="break-keep text-center text-sm font-extrabold text-neutral-500">
-            로그인 정보를 확인하고 있어요…
+            {authed === null
+              ? "로그인 정보를 확인하고 있어요…"
+              : "우리 가족 책장을 불러오고 있어요…"}
           </p>
         </div>
       </div>
@@ -329,13 +336,9 @@ export default function Home() {
         </div>
 
         {/* 빈 책장 — 서가마다 다음 행동을 알려준다 (만들기 유도 / 준비 중 안내). */}
-        {shown.length === 0 && shelf === "mine" && !guest && !booksLoaded ? (
-          // 로그인 회원의 '우리 가족 책장'은 책을 불러오는 중엔 '없어요' 대신 로딩을 보여준다.
-          <div className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-[28px] bg-white/85 px-8 py-10 text-center shadow-xl backdrop-blur">
-            <div className="h-20 w-20 animate-pulse rounded-full border-4 border-white bg-white/60 shadow" />
-            <p className="text-sm font-bold text-neutral-400">동화를 불러오는 중이에요…</p>
-          </div>
-        ) : shown.length === 0 ? (
+        {/* 여기까지 왔으면 책장 데이터는 이미 준비돼 있다(위 준비 화면이 붙잡아 둔다).
+            그래서 '불러오는 중' 카드는 두지 않는다 — 빈 책장은 진짜로 책이 없을 때만. */}
+        {shown.length === 0 ? (
           <div className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-[28px] bg-white/85 px-8 py-10 text-center shadow-xl backdrop-blur">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
