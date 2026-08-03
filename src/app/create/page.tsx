@@ -100,7 +100,6 @@ const WHO_OPTIONS = [
   { t: "할머니랑", e: "👵" },
   { t: "할아버지랑", e: "👴" },
   { t: "동물 친구랑", e: "🐶" },
-  { t: "형·누나·동생이랑", e: "👦" },
 ];
 const HAPPENING_OPTIONS = [
   { t: "신나는 모험을 떠나요", e: "🗺️" },
@@ -135,9 +134,31 @@ const TODAY_WHO = [
   { t: "엄마 아빠랑", e: "👨‍👩‍👧" },
   { t: "할머니랑", e: "👵" },
   { t: "할아버지랑", e: "👴" },
-  { t: "동생이랑", e: "👶" },
   { t: "혼자서", e: "🧒" },
 ];
+
+/**
+ * 형제 호칭은 '말하는 아이'의 성별로 정해진다 — 여자아이는 오빠·언니,
+ * 남자아이는 형·누나. 아이 성별을 이미 받아 두었으니 묻지 않고 맞는 말만 보여준다.
+ * ("형/오빠" 같은 병기는 어른의 사정이고, 아이는 자기 말이 그대로 나와야 자기 이야기가 된다.)
+ * 동생도 남/여로 나눈다 — 그래야 이야기의 호칭도, 삽화 속 아기 모습도 맞는다.
+ */
+function siblingOptions(gender: Gender): { t: string; e: string }[] {
+  return [
+    { t: gender === "boy" ? "형이랑" : "오빠랑", e: "👦" },
+    { t: gender === "boy" ? "누나랑" : "언니랑", e: "👧" },
+    { t: "남동생이랑", e: "👶" },
+    { t: "여동생이랑", e: "👶" },
+  ];
+}
+
+/** 성별을 바꾸면 이미 고른 손위 형제 호칭도 새 성별에 맞게 바꿔 준다. */
+const SIBLING_SWAP: Record<string, { boy: string; girl: string }> = {
+  형이랑: { boy: "형이랑", girl: "오빠랑" },
+  오빠랑: { boy: "형이랑", girl: "오빠랑" },
+  누나랑: { boy: "누나랑", girl: "언니랑" },
+  언니랑: { boy: "누나랑", girl: "언니랑" },
+};
 const FEELINGS = [
   { t: "신났어요", e: "😄" },
   { t: "속상했어요", e: "😢" },
@@ -517,8 +538,22 @@ export default function CreatePage() {
 
   const child = { name: name.trim(), age: age ?? 0, gender };
 
+  // '누구랑' 칩 — 아이 성별에 맞는 형제 호칭을 끼워 만든다.
+  // 오늘의 이야기는 '혼자서'를 맨 끝에 두는 순서를 지킨다.
+  const todayWho = [...TODAY_WHO.slice(0, -1), ...siblingOptions(gender), TODAY_WHO[TODAY_WHO.length - 1]];
+  const imagineWho = [...WHO_OPTIONS, ...siblingOptions(gender)];
+
   // 동행 칩을 누르면(또는 껐다 켜면) 이름은 초기화한다 — "친구랑"에 넣은 이름이
   // "동생이랑"으로 바꿔도 남아 엉키는 걸 막는다.
+  /** 성별 바꾸기 — 이미 고른 손위 형제 호칭(형/오빠·누나/언니)도 함께 맞춰 준다. */
+  function chooseGender(g: Gender) {
+    setGender(g);
+    setWho((prev) => {
+      const swap = SIBLING_SWAP[prev];
+      return swap ? (g === "boy" ? swap.boy : swap.girl) : prev;
+    });
+  }
+
   function chooseWho(t: string) {
     setWho((prev) => (prev === t ? "" : t));
     setWhoName("");
@@ -860,7 +895,7 @@ export default function CreatePage() {
                     <button
                       key={g.value}
                       type="button"
-                      onClick={() => setGender(g.value)}
+                      onClick={() => chooseGender(g.value)}
                       style={gender === g.value ? { background: accent } : undefined}
                       className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-3 font-bold transition ${
                         gender === g.value
@@ -977,7 +1012,7 @@ export default function CreatePage() {
                   <div className="flex flex-col gap-2">
                     <p className="text-xs font-bold text-neutral-400">누구랑 있었어요?</p>
                     <div className="flex flex-wrap justify-center gap-2">
-                      {TODAY_WHO.map((it) => (
+                      {todayWho.map((it) => (
                         <button
                           key={it.t}
                           type="button"
@@ -1135,7 +1170,7 @@ export default function CreatePage() {
                       누구랑 있었어요? <span className="font-medium">(선택)</span>
                     </p>
                     <div className="flex flex-wrap justify-center gap-2">
-                      {TODAY_WHO.map((it) => (
+                      {todayWho.map((it) => (
                         <button
                           key={it.t}
                           type="button"
@@ -1234,7 +1269,7 @@ export default function CreatePage() {
                   <div className="flex flex-col gap-2">
                     <p className="text-xs font-bold text-neutral-400">누구랑 함께할까요?</p>
                     <div className="flex flex-wrap justify-center gap-2">
-                      {WHO_OPTIONS.map((it) => (
+                      {imagineWho.map((it) => (
                         <button
                           key={it.t}
                           type="button"
