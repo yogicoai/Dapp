@@ -8,8 +8,11 @@ import {
   loadBookProgress,
   loadSfxOn,
   loadTextPos,
+  loadTextScale,
   saveBgmOn,
   saveBookProgress,
+  saveTextScale,
+  TEXT_SCALES,
 } from "@/lib/prefs";
 import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
@@ -98,6 +101,18 @@ export function BookViewer({ book }: { book: Book }) {
   const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영(hydration 안전)
   useEffect(() => setTextPos(loadTextPos()), []);
+  // 글자 크기 배율 — 책 안에서 바로 바꾼다("보다가 작네" 싶을 때). 계정별로 저장된다.
+  const [textScale, setTextScale] = useState(1);
+  const [sizeMenu, setSizeMenu] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영
+  useEffect(() => setTextScale(loadTextScale()), []);
+  /** 기본 크기(화면 따라 자동)에 배율을 곱한다 — 인라인이라 세 군데 본문에 똑같이 먹는다. */
+  const scaled = (base: string) => ({ fontSize: `calc(${base} * ${textScale})` });
+  const applyTextScale = (s: number) => {
+    setTextScale(s);
+    saveTextScale(s);
+    setSizeMenu(false);
+  };
   const [index, setIndex] = useState(0);
   const lastIndex = book.pages.length - 1;
 
@@ -821,7 +836,8 @@ export function BookViewer({ book }: { book: Book }) {
               } ${extra}`}
             >
               <p
-                className={`font-story whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.7rem,3.6vw,2.15rem)] font-semibold leading-[1.3] drop-shadow-md ${
+                style={scaled("clamp(1.7rem,3.6vw,2.15rem)")}
+                className={`font-story whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.3] drop-shadow-md ${
                   textPos === "bottom" || textPos === "top"
                     ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : "w-full rounded-3xl bg-black/55 p-5 backdrop-blur-[2px] sm:p-6"
@@ -907,7 +923,10 @@ export function BookViewer({ book }: { book: Book }) {
                     )}
                     {/* 가로 보기 전용: 그림 위 하단 밴드 — 이제 틀이 그림에 딱 맞아 밴드도 그림 하단에 붙는다. */}
                     <div className="absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[7%] pt-[12%] landscape:block">
-                      <p className="font-story mx-auto max-w-[46rem] whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.35rem,2.9vw,2.05rem)] font-semibold leading-[1.35] text-white drop-shadow-md">
+                      <p
+                        style={scaled("clamp(1.35rem,2.9vw,2.05rem)")}
+                        className="font-story mx-auto max-w-[46rem] whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.35] text-white drop-shadow-md"
+                      >
                         {renderRuns()}
                       </p>
                     </div>
@@ -915,7 +934,10 @@ export function BookViewer({ book }: { book: Book }) {
                   {/* 세로 보기 전용: 그림 바로 아래 글자 칸(flex 형제라 그림에 딱 붙는다).
                       아래 버튼(재생·배속)을 안 가리게 pb를 넉넉히 둔다. */}
                   <div className="flex max-h-[42dvh] w-full shrink-0 items-center justify-center overflow-y-auto bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:hidden">
-                    <p className="font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center text-[clamp(1.15rem,4.4vw,1.85rem)] font-semibold leading-[1.5] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+                    <p
+                      style={scaled("clamp(1.15rem,4.4vw,1.85rem)")}
+                      className="font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.5] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
+                    >
                       {renderRuns()}
                     </p>
                   </div>
@@ -1161,6 +1183,43 @@ export function BookViewer({ book }: { book: Book }) {
         </button>
       </div>
 
+      {/* 글자 크기 — 배속 버튼 위. "보다가 작네" 싶을 때 책 안에서 바로 키운다.
+          기본값(화면 크기 따라 자동)에 배율을 곱하는 방식이라 어느 기기에서도 자연스럽다. */}
+      <div className="absolute bottom-[4.75rem] left-5 z-10">
+        {sizeMenu && (
+          <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
+            {TEXT_SCALES.map((s) => (
+              <button
+                key={s.value}
+                type="button"
+                onClick={() => applyTextScale(s.value)}
+                className={`px-5 py-2.5 text-left font-bold outline-none transition ${
+                  textScale === s.value ? "bg-amber-400 text-white" : "text-white/90 hover:bg-white/15"
+                }`}
+                style={{ fontSize: `${0.8 + (s.value - 0.85) * 0.5}rem` }}
+              >
+                {s.label} {textScale === s.value ? "✓" : ""}
+              </button>
+            ))}
+          </div>
+        )}
+        <button
+          type="button"
+          aria-label="글자 크기"
+          onClick={() => {
+            setSpeedMenu(false); // 두 메뉴가 겹쳐 뜨지 않게
+            setSizeMenu((v) => !v);
+          }}
+          className="flex items-center gap-1.5 rounded-full bg-black/45 px-4 py-2.5 text-sm font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none"
+        >
+          <span aria-hidden className="leading-none">
+            <span className="text-[0.7em]">가</span>
+            <span className="text-[1.05em]">가</span>
+          </span>
+          글자 크기
+        </button>
+      </div>
+
       {/* 재생 속도 (유튜브식) — 왼쪽 아래. 눌러서 배속을 고른다. 재생 중이면 즉시 반영. */}
       <div className="absolute bottom-5 left-5 z-10">
         {speedMenu && (
@@ -1182,7 +1241,10 @@ export function BookViewer({ book }: { book: Book }) {
         <button
           type="button"
           aria-label="재생 속도"
-          onClick={() => setSpeedMenu((v) => !v)}
+          onClick={() => {
+            setSizeMenu(false); // 두 메뉴가 겹쳐 뜨지 않게
+            setSpeedMenu((v) => !v);
+          }}
           className="flex items-center gap-1.5 rounded-full bg-black/45 px-4 py-2.5 text-sm font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>

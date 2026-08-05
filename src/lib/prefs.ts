@@ -176,6 +176,30 @@ export function saveTextPos(pos: TextPos): void {
 }
 
 /**
+ * 동화 글자 크기 배율 — 기본을 정해 두었지만 "작네" 싶을 때 책 안에서 바로 키운다.
+ * 화면 크기에 따라 자동으로 커지는 기본값(clamp)에 이 배율을 곱한다.
+ * 부모마다 눈이 다르고, 아이와 나란히 앉는 거리도 달라서 취향 문제다.
+ */
+const TEXT_SCALE_KEY = "voice-storybook:text-scale";
+export const TEXT_SCALES = [
+  { value: 0.85, label: "작게" },
+  { value: 1, label: "보통" },
+  { value: 1.2, label: "크게" },
+  { value: 1.45, label: "아주 크게" },
+] as const;
+
+export function loadTextScale(): number {
+  if (typeof window === "undefined") return 1;
+  const v = Number(window.localStorage.getItem(acctKey(TEXT_SCALE_KEY)));
+  return Number.isFinite(v) && v >= 0.6 && v <= 2 ? v : 1;
+}
+
+export function saveTextScale(scale: number): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(acctKey(TEXT_SCALE_KEY), String(scale));
+}
+
+/**
  * 소리 설정 — 책장 넘김 효과음과 배경음.
  * 효과음은 짧아 나레이션과 안 겹치니 기본 켬. 배경음은 낭독을 덮을 수 있어
  * 기본 끔 — 뷰어의 ♪ 버튼으로 켠다.
@@ -332,6 +356,7 @@ const DEVICE_PREF_KEYS = [
   SFX_KEY,
   BGM_KEY,
   PROGRESS_KEY,
+  TEXT_SCALE_KEY,
   "voice-storybook:voice",
   "voice-storybook:voice-rate",
   "voice-storybook:theme",
