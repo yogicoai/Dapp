@@ -9,6 +9,7 @@ import {
   loadCustomVoices,
   type CustomVoice,
 } from "@/lib/voices";
+import { prepareVoiceWav } from "@/lib/parent-voice";
 
 type Phase = "idle" | "recording" | "preview" | "saving";
 
@@ -67,6 +68,12 @@ export function VoiceRecorder({
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const blobRef = useRef<Blob | null>(null);
+  /**
+   * 지금까지 완성한 녹음들. 같은 문장을 두 번 읽으면 재료가 두 배가 되어 훨씬 더 닮는다
+   * (퀵 클로닝은 재료 길이에 민감하다). 저장할 때 하나로 이어 붙인다.
+   */
+  const takesRef = useRef<Blob[]>([]);
+  const [takes, setTakes] = useState(0);
   // 마이크 권한을 기다리는 사이 닫히면, 뒤늦게 온 스트림을 바로 꺼야 한다.
   const closedRef = useRef(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -105,12 +112,20 @@ export function VoiceRecorder({
     [previewUrl],
   );
 
-  async function startRecording() {
+  /**
+   * @param fresh true면 지금까지 읽은 것을 버리고 처음부터(= '다시 녹음').
+   *              false면 이어서 한 번 더 읽는다(= '한 번 더 읽기', 재료가 쌓인다).
+   */
+  async function startRecording(fresh = true) {
     setError("");
     setVerdict(null);
     setLevel(0);
     setZone("quiet");
     setSecs(0);
+    if (fresh) {
+      takesRef.current = [];
+      setTakes(0);
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       // 기다리는 동안 팝업이 닫혔으면(ESC·닫기) 마이크를 켜두지 않는다.
@@ -124,6 +139,8 @@ export function VoiceRecorder({
       rec.onstop = () => {
         stopMeter();
         blobRef.current = new Blob(chunksRef.current, { type: rec.mimeType });
+        takesRef.current = [...takesRef.current, blobRef.current];
+        setTakes(takesRef.current.length);
         setPreviewUrl(URL.createObjectURL(blobRef.current));
         stream.getTracks().forEach((t) => t.stop());
         setPhase("preview");
@@ -246,6 +263,14 @@ export function VoiceRecorder({
   async function save() {
     if (!blobRef.current || !consent) return;
     setPhase("saving");
+    // 읽은 것들을 하나로 이어 붙이고, 소리 크기·침묵·저주파 잡음까지 다듬어 저장한다.
+    // 여기서 잘 다듬을수록 복제된 목소리가 더 닮는다.
+    let audio: Blob;
+    try {
+      audio = await prepareVoiceWav(takesRef.current.length > 0 ? takesRef.current : [blobRef.current]);
+    } catch {
+      audio = blobRef.current; // 다듬기 실패해도 저장은 되게 — 원본 그대로 쓴다
+    }
     const id = `custom-${Date.now()}`;
     const voice: CustomVoice = {
       kind: "custom",
@@ -257,7 +282,7 @@ export function VoiceRecorder({
       status: "recorded",
     };
     try {
-      await saveVoiceAudio(id, blobRef.current);
+      await saveVoiceAudio(id, audio);
       saveCustomVoices([...loadCustomVoices(owner), voice], owner);
       onDone(voice);
     } catch {
@@ -329,7 +354,7 @@ export function VoiceRecorder({
 
           <button
             type="button"
-            onClick={startRecording}
+            onClick={() => startRecording(true)}
             className="rounded-full py-3 text-base font-extrabold text-white"
             style={{ background: accent }}
           >
@@ -428,6 +453,29 @@ export function VoiceRecorder({
 
           {previewUrl && <audio controls src={previewUrl} className="w-full" />}
 
+          {/* 한 번 더 읽기 — 퀵 클로닝은 재료가 길수록 잘 닮는다. 같은 문장을 한 번 더
+              읽으면 재료가 두 배가 되고, 두 번은 이어 붙여 하나로 저장된다.
+              강요하지 않는다: 이대로 저장해도 된다. */}
+          {takes < 2 ? (
+            <button
+              type="button"
+              onClick={() => startRecording(false)}
+              className="rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50 px-4 py-3 text-left"
+            >
+              <span className="block text-[13px] font-extrabold text-amber-800">
+                🔁 한 번 더 읽으면 훨씬 더 닮아요
+              </span>
+              <span className="mt-0.5 block break-keep text-[11px] font-medium leading-relaxed text-amber-700">
+                같은 문장을 한 번 더 읽어주세요. 두 번 읽은 것을 이어 붙여 더 정확한
+                목소리를 만들어요. (건너뛰고 이대로 저장해도 괜찮아요)
+              </span>
+            </button>
+          ) : (
+            <p className="break-keep rounded-2xl bg-emerald-50 px-4 py-2.5 text-[12px] font-extrabold text-emerald-700">
+              ✅ 두 번 읽었어요 — 이어 붙여서 더 정확한 목소리를 만들어요
+            </p>
+          )}
+
           <label className="flex items-start gap-2 text-[13px] font-medium text-neutral-700">
             <input
               type="checkbox"
@@ -445,12 +493,12 @@ export function VoiceRecorder({
             {/* 판정이 나쁘면 '다시 녹음'을 눈에 띄게 — 다시 하는 건 공짜다. */}
             <button
               type="button"
-              onClick={startRecording}
+              onClick={() => startRecording(true)}
               className={`flex-1 rounded-full py-2.5 text-sm font-extrabold shadow ${
                 verdict && !verdict.ok ? "bg-amber-400 text-white" : "bg-white text-neutral-600"
               }`}
             >
-              🔄 다시 녹음
+              🔄 처음부터 다시
             </button>
             <button
               type="button"

@@ -98,8 +98,17 @@ export default function SettingsPage() {
   const [parentVoices, setParentVoices] = useState<ParentVoice[]>([]);
   const [cloningRole, setCloningRole] = useState<string | null>(null);
   const [cloneErr, setCloneErr] = useState("");
-  // 남은 만들기 기회 (처음 1 + 수정 1 = 총 2회). null = 아직 확인 전.
-  const [cloneChances, setCloneChances] = useState<number | null>(null);
+  // 역할별 남은 만들기 기회 — 엄마·아빠가 서로 독립이다(각각 처음 1 + 수정 1).
+  // null = 아직 확인 전.
+  const [chances, setChances] = useState<{ mom: number; dad: number } | null>(null);
+  const chancesFor = (role: string) => (chances ? (role === "dad" ? chances.dad : chances.mom) : null);
+  const refreshChances = async () => {
+    const [mom, dad] = await Promise.all([
+      remainingCloneChances("mom"),
+      remainingCloneChances("dad"),
+    ]);
+    setChances({ mom, dad });
+  };
   // 만들기 연타 방지 잠금 — state가 아닌 ref라 클릭 즉시 걸린다.
   const cloneBusyRef = useRef(false);
   // 내 동화 — 만든 책 전체. 여기서 책장 노출(숨기기/보이기)과 영구 삭제를 관리한다.
@@ -119,7 +128,8 @@ export default function SettingsPage() {
   // 부모 목소리(복제됨) 목록·남은 만들기 기회를 계정에서 불러온다(로그인 안 됐으면 빈 목록).
   useEffect(() => {
     loadParentVoices().then(setParentVoices).catch(() => {});
-    remainingCloneChances().then(setCloneChances).catch(() => {});
+    void refreshChances().catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 마운트 때 한 번만 불러온다
   }, []);
 
   // 아이 정보·언어·목소리 등 '로컬 저장값'은 세션(네트워크)과 무관하게 즉시 반영한다.
@@ -354,7 +364,7 @@ export default function SettingsPage() {
       }
       await cloneParentVoice(roleFromLabel(v.label), v.label, blob);
       setParentVoices(await loadParentVoices());
-      setCloneChances(await remainingCloneChances());
+      await refreshChances();
       flashSaved();
     } catch (e) {
       // 복제 실패 — 선차감했던 토큰을 돌려준다.
@@ -372,18 +382,18 @@ export default function SettingsPage() {
   const removeCustom = async (v: CustomVoice) => {
     // 복제까지 된 목소리면 — 지워도 만들기 기회는 안 돌아온다는 걸 확인받는다.
     if (isCloned(v)) {
-      const left = cloneChances ?? 0;
+      const left = chancesFor(roleFromLabel(v.label)) ?? 0;
       const warn =
         left > 0
-          ? `${v.label} 목소리를 지울까요?\n\n지우고 새로 만들면 남은 수정 기회(${left}번)를 사용해요.`
-          : `${v.label} 목소리를 지울까요?\n\n⚠️ 남은 수정 기회가 없어, 지우면 다시 만들 수 없어요.`;
+          ? `${v.label} 목소리를 지울까요?\n\n지우고 새로 만들면 남은 ${v.label} 수정 기회(${left}번)를 사용해요.`
+          : `${v.label} 목소리를 지울까요?\n\n⚠️ 남은 ${v.label} 수정 기회가 없어, 지우면 다시 만들 수 없어요.`;
       if (!window.confirm(warn)) return;
     }
     await deleteVoiceAudio(v.id).catch(() => {});
     // 복제된 목소리도 함께 삭제한다 — 우리 DB + Typecast 서버 양쪽에서(개인정보 미보존).
     await deleteParentVoice(roleFromLabel(v.label)).catch(() => {});
     setParentVoices((prev) => prev.filter((p) => p.role !== roleFromLabel(v.label)));
-    setCloneChances(await remainingCloneChances());
+    await refreshChances();
     const next = customVoices.filter((x) => x.id !== v.id);
     setCustomVoices(next);
     saveCustomVoices(next, uid);
@@ -393,15 +403,15 @@ export default function SettingsPage() {
 
   /** 이 기기에 녹음이 없는(다른 기기에서 만든) 완성 목소리 삭제 — 계정·Typecast 서버에서 제거. */
   const removeParentOnly = async (p: ParentVoice) => {
-    const left = cloneChances ?? 0;
+    const left = chancesFor(p.role) ?? 0;
     const warn =
       left > 0
-        ? `${p.label} 목소리를 지울까요?\n\n지우고 새로 만들면 남은 수정 기회(${left}번)를 사용해요.`
-        : `${p.label} 목소리를 지울까요?\n\n⚠️ 남은 수정 기회가 없어, 지우면 다시 만들 수 없어요.`;
+        ? `${p.label} 목소리를 지울까요?\n\n지우고 새로 만들면 남은 ${p.label} 수정 기회(${left}번)를 사용해요.`
+        : `${p.label} 목소리를 지울까요?\n\n⚠️ 남은 ${p.label} 수정 기회가 없어, 지우면 다시 만들 수 없어요.`;
     if (!window.confirm(warn)) return;
     await deleteParentVoice(p.role).catch(() => {});
     setParentVoices((prev) => prev.filter((x) => x.role !== p.role));
-    setCloneChances(await remainingCloneChances());
+    await refreshChances();
     flashSaved();
   };
 
@@ -710,30 +720,38 @@ export default function SettingsPage() {
               })}
             </div>
 
-            {/* 엄마·아빠 추가 — 계정당 한 명만(둘 중 하나). 만들기 기회를 다 썼으면 안내만.
-                계정에 이미 완성 목소리가 있으면(다른 기기 포함) 추가 버튼을 숨긴다. */}
-            {!recording && customVoices.length === 0 && parentVoices.length === 0 && (
-              cloneChances === 0 ? (
-                <p className="text-[11px] font-bold text-neutral-400">
-                  목소리 만들기 기회(처음 1번 + 수정 1번)를 모두 사용했어요.
-                </p>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { label: "엄마", emoji: "👩" },
-                    { label: "아빠", emoji: "👨" },
-                  ].map((o) => (
+            {/* 엄마·아빠 추가 — 이제 둘을 각각 만들 수 있다(2026-08-05).
+                역할마다 따로 판단한다: 이미 만들었거나 녹음이 있으면 그 역할 버튼은 숨기고,
+                그 역할의 기회를 다 썼으면 그 역할만 안내로 바꾼다. */}
+            {!recording && (
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { role: "mom", label: "엄마", emoji: "👩" },
+                  { role: "dad", label: "아빠", emoji: "👨" },
+                ].map((o) => {
+                  const hasVoice = parentVoices.some((p) => p.role === o.role);
+                  const hasRecording = customVoices.some((v) => roleFromLabel(v.label) === o.role);
+                  if (hasVoice || hasRecording) return null; // 이미 있으면 위쪽 칩으로 관리한다
+                  const left = chancesFor(o.role);
+                  if (left === 0) {
+                    return (
+                      <p key={o.role} className="text-[11px] font-bold text-neutral-400">
+                        {o.emoji} {o.label} 목소리는 만들기 기회를 모두 사용했어요.
+                      </p>
+                    );
+                  }
+                  return (
                     <button
-                      key={o.label}
+                      key={o.role}
                       type="button"
-                      onClick={() => setRecording(o)}
+                      onClick={() => setRecording({ label: o.label, emoji: o.emoji })}
                       className="rounded-full border-2 border-dashed border-neutral-300 px-4 py-2 text-sm font-bold text-neutral-500 hover:border-neutral-400"
                     >
                       + {o.emoji} {o.label} 목소리 추가
                     </button>
-                  ))}
-                </div>
-              )
+                  );
+                })}
+              </div>
             )}
 
             {recording && (
@@ -751,11 +769,13 @@ export default function SettingsPage() {
               />
             )}
 
-            <p className="text-[11px] font-medium text-neutral-400">
-              엄마 또는 아빠 <b>한 명</b>을 녹음한 뒤 <b>🎙️ 목소리 만들기</b>({COST_PARENT_VOICE}토큰)를
-              누르면 그 목소리로 복제돼요. 그다음 동화에서 <b>엄마·아빠 목소리</b>로 읽는 건 무료예요.
-              수정(다시 만들기)은 <b>1번만</b>, 만들 때마다 {COST_PARENT_VOICE}토큰이에요.
-              (✕로 지우면 서버에서도 완전히 삭제{cloneChances !== null ? ` · 남은 만들기 기회 ${cloneChances}번` : ""})
+            <p className="break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
+              <b>엄마와 아빠를 각각</b> 만들 수 있어요. 녹음한 뒤 <b>🎙️ 목소리 만들기</b>를
+              누르면 그 목소리로 복제돼요(한 명당 {COST_PARENT_VOICE}토큰).
+              그다음 동화에서 <b>엄마·아빠 목소리</b>로 읽는 건 무료예요.
+              수정(다시 만들기)은 <b>각각 1번씩</b>이고, 만들 때마다 {COST_PARENT_VOICE}토큰이에요.
+              (✕로 지우면 서버에서도 완전히 삭제
+              {chances ? ` · 남은 기회 — 엄마 ${chances.mom}번, 아빠 ${chances.dad}번` : ""})
             </p>
           </section>
 
