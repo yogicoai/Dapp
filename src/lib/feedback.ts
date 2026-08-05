@@ -106,15 +106,25 @@ export async function submitFeedback(
   return { bonus: Number(d.bonus ?? 0), tokens: Number(d.tokens ?? 0) };
 }
 
-/** 글 지우기 — 본인 글이거나 관리자만. 권한은 서버(RLS)가 판단한다. */
+/**
+ * 글 지우기 — 본인 글이거나 관리자만. 권한은 서버(RLS)가 판단한다.
+ *
+ * 주의: 권한이 없으면 오류가 나는 게 아니라 '0줄 삭제'로 조용히 끝난다. 그걸 성공으로
+ * 보면 화면에서만 글이 사라져 지운 것처럼 보인다(실제로는 남아 있다 — 실제 발생).
+ * 그래서 지워진 줄을 돌려받아, 정말 지워졌을 때만 성공으로 친다.
+ */
 export async function deleteFeedback(id: string): Promise<void> {
   const sb = getSupabase();
   if (!sb) return;
-  const { error } = await sb.from("feedback").delete().eq("id", id);
-  if (error) throw new Error("지우지 못했어요. 권한을 확인해주세요.");
+  const { data, error } = await sb.from("feedback").delete().eq("id", id).select("id");
+  if (error) throw new Error("지우지 못했어요. 잠시 뒤 다시 시도해주세요.");
+  if (!data || data.length === 0) throw new Error("이 글을 지울 권한이 없어요.");
 }
 
-/** 글 고치기 — 본인 글이거나 관리자만. 보상은 이미 준 것이라 다시 주지 않는다. */
+/**
+ * 글 고치기 — 본인 글이거나 관리자만. 보상은 이미 준 것이라 다시 주지 않는다.
+ * 삭제와 같은 이유로, 실제로 고쳐진 줄을 돌려받아 확인한다.
+ */
 export async function updateFeedback(
   id: string,
   category: string,
@@ -124,9 +134,11 @@ export async function updateFeedback(
   if (!sb) return;
   const text = content.trim();
   if (text.length < 10) throw new Error("내용을 10자 이상 적어주세요.");
-  const { error } = await sb
+  const { data, error } = await sb
     .from("feedback")
     .update({ category, content: text.slice(0, 2000) })
-    .eq("id", id);
-  if (error) throw new Error("고치지 못했어요. 권한을 확인해주세요.");
+    .eq("id", id)
+    .select("id");
+  if (error) throw new Error("고치지 못했어요. 잠시 뒤 다시 시도해주세요.");
+  if (!data || data.length === 0) throw new Error("이 글을 고칠 권한이 없어요.");
 }

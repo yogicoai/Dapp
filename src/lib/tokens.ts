@@ -8,8 +8,13 @@
 /** 1토큰의 가상 가격(원). 충전·표시용. */
 export const TOKEN_PRICE_KRW = 100;
 
-/** 신규 가입 시 무료로 주는 토큰. 그림동화 3권 체험 분량. */
-export const SIGNUP_BONUS_TOKENS = 30;
+/**
+ * 신규 가입 시 무료로 주는 토큰.
+ * 베타는 "최소 10권은 만들어 보게 하자"가 약속이라 200으로 맞춘다
+ * (8쪽 그림동화 = 16토큰이므로 200이면 12권치, 권수 상한 10권을 채우고도 남는다).
+ * 나중에 이 값을 바꾸면 supabase-schema.sql의 가입 트리거 숫자도 함께 바꿔야 한다.
+ */
+export const SIGNUP_BONUS_TOKENS = 200;
 
 /**
  * 장면(쪽)당 토큰 단가 — 비용은 "몇 장짜리냐"에 따라 달라진다.
@@ -31,7 +36,7 @@ export function bookTokenCost(pages: number, illustrated: boolean): number {
  * 토큰만 올려서는 지킬 수 없어 함께 올린다(2026-08-05). 토큰과 권수 두 개가 모두
  * 넉넉해야 실제로 10권을 만들 수 있다.
  */
-export const MAX_BOOKS_PER_USER = 12;
+export const MAX_BOOKS_PER_USER = 10;
 
 /**
  * 부모 목소리 만들기(복제) 1회 비용 — 실측 원가 기준(2026-07-31, Typecast Lite $15/20만자):

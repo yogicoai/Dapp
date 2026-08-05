@@ -132,9 +132,11 @@ export default function FeedbackPage() {
     setError("");
     try {
       await deleteFeedback(id);
-      setPosts((prev) => prev.filter((p) => p.id !== id));
+      // 지운 뒤에는 서버에서 다시 받아 온다 — 화면에서만 사라지는 착시를 막는다.
+      setPosts(await loadFeedback());
     } catch (e) {
       setError((e as Error).message);
+      setPosts(await loadFeedback()); // 실패했으면 원래 글이 그대로 보이게 되돌린다
     }
   }
 

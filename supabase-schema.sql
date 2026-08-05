@@ -56,7 +56,7 @@ begin
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'username', split_part(new.email,'@',1)),
-    30,
+    200,  -- 가입 축하 토큰. 앱의 SIGNUP_BONUS_TOKENS와 같은 값이어야 한다(8쪽 그림동화 12권치).
     coalesce(new.raw_user_meta_data->>'username','') = 'yogico'   -- 마스터 아이디
   );
   return new;
