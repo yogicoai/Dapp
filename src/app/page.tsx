@@ -231,6 +231,18 @@ export default function Home() {
           </Link>
         )}
 
+        {/* 베타 의견 쪽지 — 회원에게만. 불편한 걸 말할 곳이 없어 그냥 안 쓰게 되는 게
+            베타에서 가장 아쉬운 일이라, 토큰(아이디) 옆에 늘 보이게 둔다. */}
+        {!guest && (
+          <Link
+            href="/feedback"
+            aria-label="베타 의견 남기기"
+            className="fixed left-[7.5rem] top-4 z-10 flex items-center gap-1 rounded-full bg-white/85 px-3.5 py-2 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+          >
+            📝 <span className="hidden sm:inline">의견 남기기</span>
+          </Link>
+        )}
+
         {/* 설정(⚙️) — 회원은 전체 설정, 게스트는 스킨(나라)만 바꿀 수 있다. */}
         <Link
           href="/settings"
