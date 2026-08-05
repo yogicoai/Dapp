@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 import { loadSession } from "@/lib/auth";
+import { acctKey } from "@/lib/supabase";
 import {
   deleteFeedback,
   FEEDBACK_BONUS,
@@ -54,6 +55,30 @@ export default function FeedbackPage() {
   const busyRef = useRef(false); // 연타로 두 번 올라가는 것을 즉시 막는다
   const [error, setError] = useState("");
   const [done, setDone] = useState<{ bonus: number } | null>(null);
+
+  // 공지 접기 — 읽고 나면 닫을 수 있게. 계정별로 기억하고, 언제든 다시 펼 수 있다.
+  const NOTICE_KEY = "voice-storybook:feedback-notice-closed";
+  const [noticeOpen, setNoticeOpen] = useState(true);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영
+    setNoticeOpen(window.localStorage.getItem(acctKey(NOTICE_KEY)) !== "1");
+  }, []);
+  function closeNotice() {
+    setNoticeOpen(false);
+    try {
+      window.localStorage.setItem(acctKey(NOTICE_KEY), "1");
+    } catch {
+      /* 무시 */
+    }
+  }
+  function openNotice() {
+    setNoticeOpen(true);
+    try {
+      window.localStorage.removeItem(acctKey(NOTICE_KEY));
+    } catch {
+      /* 무시 */
+    }
+  }
 
   // 고치는 중인 글 — 관리자(모든 글)와 글쓴이(자기 글)가 쓴다.
   const [editId, setEditId] = useState<string | null>(null);
@@ -243,6 +268,55 @@ export default function FeedbackPage() {
             붙은 쪽지 {posts.length > 0 && `${posts.length}장`}
             {master && <span className="ml-1 text-amber-600">· 👑 관리자는 모두 고치고 뗄 수 있어요</span>}
           </h2>
+
+          {/* 관리자 공지 — 늘 맨 위에 붙어 있는 쪽지. DB 글이 아니라 화면에 박아 두었다:
+              실수로 지워질 일이 없고, 게시판이 비어 있어도 "여기가 뭐 하는 곳인지"가 먼저 보인다. */}
+          {!noticeOpen ? (
+            <button
+              type="button"
+              onClick={openNotice}
+              className="self-start rounded-full bg-white/85 px-4 py-2 text-xs font-extrabold text-amber-700 shadow backdrop-blur transition hover:bg-white"
+            >
+              📌 관리자 공지 보기
+            </button>
+          ) : (
+          <article className="relative rotate-[0.3deg] rounded-2xl bg-gradient-to-b from-[#fff6df] to-[#ffeec7] px-5 pb-5 pt-7 shadow-[0_10px_22px_rgba(0,0,0,0.16)] ring-2 ring-amber-200">
+            <span
+              aria-hidden
+              className="absolute -top-2.5 left-1/2 h-6 w-6 -translate-x-1/2 rounded-full border-2 border-white bg-amber-400 shadow"
+            />
+            <button
+              type="button"
+              onClick={closeNotice}
+              aria-label="공지 닫기"
+              className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white/70 text-sm font-extrabold text-amber-700 shadow-sm transition hover:bg-white"
+            >
+              ✕
+            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-sm">
+                📌 공지
+              </span>
+              <span className="text-[11px] font-extrabold text-amber-700">👑 관리자</span>
+            </div>
+            <p className="mt-2 break-keep text-[15px] font-extrabold leading-relaxed text-neutral-800">
+              함께 만들어 주셔서 고맙습니다 🌱
+            </p>
+            <p className="mt-1.5 whitespace-pre-line break-keep text-[14px] font-medium leading-relaxed text-neutral-700">
+              {[
+                "우리 가족 보이스 동화는 지금 베타 테스트 중이에요.",
+                "쓰시다가 불편했던 점, 잘 안 되는 것, 이런 게 있으면 좋겠다 싶은 것을",
+                "편하게 쪽지로 남겨주세요.",
+                "",
+                "남겨주신 이야기는 하나하나 읽고 서비스에 반영하겠습니다.",
+                "작은 의견도 아이들이 볼 동화를 더 좋게 만듭니다.",
+              ].join("\n")}
+            </p>
+            <p className="mt-2.5 break-keep rounded-xl bg-white/70 px-3 py-2 text-[13px] font-extrabold text-amber-800">
+              🎁 처음 쪽지를 남겨주시는 분께 {FEEDBACK_BONUS}토큰을 드려요
+            </p>
+          </article>
+          )}
 
           {!ready ? (
             <p className="rounded-3xl bg-white/85 px-4 py-8 text-center text-sm font-bold text-neutral-400">
