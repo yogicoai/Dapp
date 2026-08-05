@@ -24,8 +24,14 @@ export function bookTokenCost(pages: number, illustrated: boolean): number {
   return Math.max(1, Math.round(pages)) * per;
 }
 
-/** 베타 한정 — 아이디당 만들 수 있는 동화 최대 권수. (마스터는 제외) */
-export const MAX_BOOKS_PER_USER = 5;
+/**
+ * 베타 한정 — 아이디당 만들 수 있는 동화 최대 권수. (마스터는 제외)
+ *
+ * 5권이면 토큰을 넉넉히 드려도 5권에서 막혀 버린다. 클라이언트와 약속한 "최소 10권"을
+ * 토큰만 올려서는 지킬 수 없어 함께 올린다(2026-08-05). 토큰과 권수 두 개가 모두
+ * 넉넉해야 실제로 10권을 만들 수 있다.
+ */
+export const MAX_BOOKS_PER_USER = 12;
 
 /**
  * 부모 목소리 만들기(복제) 1회 비용 — 실측 원가 기준(2026-07-31, Typecast Lite $15/20만자):

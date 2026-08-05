@@ -28,29 +28,19 @@ drop policy if exists "feedback insert own" on public.feedback;
 create policy "feedback insert own" on public.feedback
   for insert with check (auth.uid() = owner);
 
--- 관리자(마스터)인지 판별 — 아래 정책들이 함께 쓴다.
-create or replace function public.is_master()
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
-as $$
-  select coalesce((select is_master from public.profiles where id = auth.uid()), false);
-$$;
-grant execute on function public.is_master() to authenticated;
-
 -- 수정·삭제: 본인 글이거나, 관리자면 모든 글.
 --   관리자가 부적절한 글을 정리하거나 오탈자를 고칠 수 있어야 게시판이 굴러간다.
+--   마스터 판별은 supabase-schema.sql이 이미 만들어 둔 is_master_user()를 그대로 쓴다
+--   (같은 일을 하는 함수를 하나 더 만들면 나중에 둘 중 뭐가 진짜인지 헷갈린다).
 drop policy if exists "feedback update own or master" on public.feedback;
 create policy "feedback update own or master" on public.feedback
-  for update using (auth.uid() = owner or public.is_master())
-  with check (auth.uid() = owner or public.is_master());
+  for update using (auth.uid() = owner or public.is_master_user())
+  with check (auth.uid() = owner or public.is_master_user());
 
 drop policy if exists "feedback delete own" on public.feedback;
 drop policy if exists "feedback delete own or master" on public.feedback;
 create policy "feedback delete own or master" on public.feedback
-  for delete using (auth.uid() = owner or public.is_master());
+  for delete using (auth.uid() = owner or public.is_master_user());
 
 -- ② 보상 지급 여부 — 계정당 한 번만 주려고 시각을 남긴다.
 alter table public.profiles
