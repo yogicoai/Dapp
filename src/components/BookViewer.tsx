@@ -272,15 +272,14 @@ export function BookViewer({ book }: { book: Book }) {
     emoji: p.emoji,
   }));
   // 창작 동화는 성우 전체(16명)를 열지 않는다(2026-07-31 사장님 지시) — 바꿔 들을 때마다
-  // 실시간 합성 크레딧이 나가서다. 만들 때 고른 성우 1명 + 부끄(기본) + 부모 목소리까지만.
+  // 실시간 합성 크레딧이 나가서다.
+  // "성우를 고른 책은 그 성우까지만" (2026-08-05): 만들 때 가을이를 골랐으면 가을이만
+  // 보여 준다. 부끄(기본)는 아무도 안 고른 옛 책에서만 대신 나온다.
+  // 부모 목소리(엄마·아빠)는 이 규칙과 별개로 늘 함께 보여 준다 — 무료이고 이 앱의 핵심이다.
   const bookNarr = book.narrator ? TYPECAST_VOICES.find((v) => v.id === book.narrator) : null;
   const booqoo = TYPECAST_VOICES.find((v) => v.id === "tc-booqoo");
   const voiceChoices: readonly { id: string; label: string; emoji: string }[] = isCreated
-    ? [
-        ...parentChoices,
-        ...(bookNarr ? [bookNarr] : []),
-        ...(booqoo && booqoo.id !== bookNarr?.id ? [booqoo] : []),
-      ]
+    ? [...parentChoices, ...(bookNarr ? [bookNarr] : booqoo ? [booqoo] : [])]
     : book.narrators
       ? (book.narrators
           .map((id) => TYPECAST_VOICES.find((v) => v.id === id))
