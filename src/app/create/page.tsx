@@ -390,6 +390,8 @@ export default function CreatePage() {
       }
       setTokens(s.profile?.tokens ?? 0);
       setMaster(s.isMaster);
+      // 삽화를 cafe24에 올릴 때 회원별 폴더 이름으로 쓴다.
+      setAcctId(s.profile?.username ?? null);
       // 권수 상한 확인용 — 숫자만 센다. 예전엔 책을 통째로 받아 세느라(삽화 포함)
       // 만들기 화면을 열 때마다 수십 MB가 오갔다.
       setBookCount(await countMyBooks());
@@ -425,6 +427,9 @@ export default function CreatePage() {
   useEscClose(() => abortRef.current?.abort(), busy || step === "illustrate");
   // 화면을 떠나면 진행 중인 요청도 끊는다 — 아무도 안 볼 삽화에 비용을 쓰지 않는다.
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  // 로그인한 아이디 — 삽화를 올릴 cafe24 폴더 이름(books/<아이디>/…)으로 쓴다.
+  const [acctId, setAcctId] = useState<string | null>(null);
 
   // 입력값
   const [name, setName] = useState("");
@@ -517,6 +522,56 @@ export default function CreatePage() {
     }
   }
 
+  /**
+   * 삽화를 cafe24로 옮기고 URL로 바꿔 돌려준다 (표지 + 각 쪽).
+   *
+   * 왜: 그림을 base64로 책 데이터에 넣으면 책을 열 때마다 그림 전체가 Supabase에서
+   * 빠져나간다. 회원 4명으로도 한 달 전송량이 무료 한도의 두 배를 넘겼다(2026-08-06).
+   * cafe24는 이미 결제해 둔 파일 창고라 추가 비용이 없다.
+   *
+   * 한 장씩 따로 올린다 — 한 번에 다 보내면 서버 요청 한도(4.5MB)에 걸린다.
+   * 실패한 장은 원래 base64를 그대로 쓴다. 그림도 다 그렸고 토큰도 이미 냈는데
+   * 파일 올리기가 안 됐다고 동화를 통째로 잃게 할 수는 없다.
+   */
+  async function hostArtwork(
+    bookId: string,
+    pageArt: (string | null)[],
+    cover: string | null,
+  ): Promise<{ images: (string | null)[]; cover: string | null }> {
+    const jobs: { name: string; dataUrl: string; put: (url: string) => void }[] = [];
+    const images = [...pageArt];
+    let coverOut = cover;
+
+    if (cover) jobs.push({ name: "cover", dataUrl: cover, put: (u) => (coverOut = u) });
+    pageArt.forEach((im, i) => {
+      if (im) jobs.push({ name: `p${i + 1}`, dataUrl: im, put: (u) => (images[i] = u) });
+    });
+    if (jobs.length === 0) return { images, cover: coverOut };
+
+    setUploading({ done: 0, total: jobs.length });
+    // 회원 아이디로 폴더를 나눈다 — 나중에 사람이 직접 찾아보거나 지울 수 있게.
+    const owner = acctId ?? "guest";
+    for (let i = 0; i < jobs.length; i++) {
+      const job = jobs[i];
+      try {
+        const res = await fetch("/api/upload-art", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ owner, bookId, name: job.name, image: job.dataUrl }),
+        });
+        if (res.ok) {
+          const { url } = (await res.json()) as { url?: string };
+          if (url) job.put(url);
+        }
+      } catch {
+        /* 이 장만 base64로 남는다 — 다음 장을 계속 올린다 */
+      }
+      setUploading({ done: i + 1, total: jobs.length });
+    }
+    setUploading(null);
+    return { images, cover: coverOut };
+  }
+
   /** 올린 그림을 캔버스로 줄여 data URL로 만든다 — 원본 사진은 몇 MB라 그대로 보내면 느리다. */
   async function pickDrawing(file: File) {
     setDrawingBusy(true);
@@ -579,6 +634,11 @@ export default function CreatePage() {
   // 쪽별 삽화(data URL). 실패한 쪽은 null → 뷰어가 플레이스홀더를 그린다.
   const [pageImages, setPageImages] = useState<(string | null)[]>([]);
   const [drawn, setDrawn] = useState(0);
+  /**
+   * 다 그린 그림을 cafe24로 올리는 단계(저장 직전). null이면 아직 그 단계가 아니다.
+   * 한 장씩 순서대로 올리느라 몇 초 걸려서, 화면이 멈춘 것처럼 보이지 않게 진행을 보여준다.
+   */
+  const [uploading, setUploading] = useState<{ done: number; total: number } | null>(null);
   // 그리기 시작 시각 — 지금까지 걸린 시간으로 남은 시간을 어림한다.
   const drawStartRef = useRef(0);
   // 기다리는 동안 1초마다 다시 그려 남은 시간·미리보기가 살아 움직이게 한다.
@@ -855,16 +915,31 @@ export default function CreatePage() {
     );
     const firstArt = images.find(Boolean) ?? null;
     const cover = firstArt ? await shrinkDataUrl(firstArt, 420, 0.8) : null;
+
+    /*
+     * 삽화를 cafe24로 옮기고 DB에는 URL만 남긴다.
+     *
+     * 예전엔 그림을 base64로 책 데이터 안에 넣었는데, 그러면 책을 열 때마다 그림
+     * 전체가 Supabase에서 빠져나간다 — 회원 4명으로도 한 달 전송량이 무료 한도의
+     * 두 배를 넘겼다(2026-08-06 실측). cafe24는 이미 결제해 둔 파일 창고라 추가
+     * 비용이 없고, 책 여는 속도도 빨라진다.
+     *
+     * 올리기가 실패하면 그 장만 base64로 그대로 둔다 — 여기서 막으면 애써 만든
+     * 동화가 통째로 날아간다. 그림은 이미 다 그려졌고 토큰도 이미 냈다.
+     */
+    const bookId = `my-${Date.now().toString(36)}`;
+    const hosted = await hostArtwork(bookId, slim, cover);
+
     const book: Book = {
-      id: `my-${Date.now().toString(36)}`,
+      id: bookId,
       lang: "ko",
       title: s.title,
       summary: s.summary,
       // 고른 성우를 책에 박는다 — 뷰어가 이 성우로 읽어준다(방법 B).
       narrator: narratorVoice,
-      coverImage: cover,
+      coverImage: hosted.cover,
       pageCount: s.pages.length,
-      pages: s.pages.map((p, i) => ({ text: p.text, image: slim[i] ?? null })),
+      pages: s.pages.map((p, i) => ({ text: p.text, image: hosted.images[i] ?? null })),
     };
     await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
     setFinalBook(book);
@@ -1735,25 +1810,33 @@ export default function CreatePage() {
                 className="h-24 w-24 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white shadow-lg"
               />
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
-                동화를 그리고 있어요…
+                {uploading ? "동화를 책장에 넣고 있어요…" : "동화를 그리고 있어요…"}
               </h1>
               {/* 남은 시간 어림 — 지금까지 그린 속도로 계산한다. 언제 끝날지 알면
                   같은 시간도 훨씬 짧게 느껴진다(피드백 2번). */}
               <p className="break-keep text-center text-sm font-bold text-neutral-500">
-                {drawn} / {story.pages.length} 쪽
-                {(() => {
-                  void tick; // 1초마다 다시 계산되게 하는 의존값
-                  if (drawn === 0 || drawn >= story.pages.length) return "";
-                  const perPage = (Date.now() - drawStartRef.current) / drawn;
-                  const left = Math.ceil((perPage * (story.pages.length - drawn)) / 1000);
-                  return left > 0 ? ` · 약 ${left}초 남았어요` : "";
-                })()}
+                {uploading ? (
+                  `그림 ${uploading.done} / ${uploading.total} 장 저장했어요`
+                ) : (
+                  <>
+                    {drawn} / {story.pages.length} 쪽
+                    {(() => {
+                      void tick; // 1초마다 다시 계산되게 하는 의존값
+                      if (drawn === 0 || drawn >= story.pages.length) return "";
+                      const perPage = (Date.now() - drawStartRef.current) / drawn;
+                      const left = Math.ceil((perPage * (story.pages.length - drawn)) / 1000);
+                      return left > 0 ? ` · 약 ${left}초 남았어요` : "";
+                    })()}
+                  </>
+                )}
               </p>
               <div className="h-3 w-full overflow-hidden rounded-full bg-neutral-100">
                 <div
                   className="h-full rounded-full transition-all duration-500"
                   style={{
-                    width: `${(drawn / story.pages.length) * 100}%`,
+                    width: uploading
+                      ? `${(uploading.done / uploading.total) * 100}%`
+                      : `${(drawn / story.pages.length) * 100}%`,
                     background: accent,
                   }}
                 />
