@@ -21,7 +21,7 @@ import {
   loadChild,
   loadChildRemote,
   loadLang,
-  loadMyBooks,
+  loadMyBookBriefs,
   loadBookLayout,
   loadTextPos,
   looksToPrompt,
@@ -36,7 +36,6 @@ import {
   type Gender,
 } from "@/lib/prefs";
 import { COST_PARENT_VOICE, TOKEN_PRICE_KRW } from "@/lib/tokens";
-import type { Book } from "@/lib/types";
 import { useEscClose } from "@/lib/use-esc-close";
 import {
   PRESET_VOICES,
@@ -61,6 +60,7 @@ import {
 import {
   cloneParentVoice,
   deleteParentVoice,
+  loadAllParentVoiceRoles,
   loadParentVoices,
   remainingCloneChances,
   roleFromLabel,
@@ -203,7 +203,8 @@ export default function SettingsPage() {
   // 만들기 연타 방지 잠금 — state가 아닌 ref라 클릭 즉시 걸린다.
   const cloneBusyRef = useRef(false);
   // 내 동화 — 만든 책 전체. 여기서 책장 노출(숨기기/보이기)과 영구 삭제를 관리한다.
-  const [myBooks, setMyBooks] = useState<Book[]>([]);
+  // 목록에 쓰는 건 제목·숨김뿐이라 가벼운 형태로 받는다(본문·삽화 제외).
+  const [myBooks, setMyBooks] = useState<BookBrief[]>([]);
   // 계정 — 로그인한 아이디·토큰. 게스트면 스킨(테마)만 보인다. 마스터면 회원 목록도.
   const [guest, setGuest] = useState(false);
   const [acctId, setAcctId] = useState<string | null>(null);
@@ -215,6 +216,8 @@ export default function SettingsPage() {
   const [openMember, setOpenMember] = useState<string | null>(null);
   // 회원(owner) → 그 회원이 만든 책들. 마스터 진입 시 한 번에 불러와 개수·목록에 쓴다.
   const [memberBooks, setMemberBooks] = useState<Record<string, BookBrief[]>>({});
+  // 회원(owner) → 등록한 부모 목소리 역할들(["mom","dad"]). 등록 여부 확인용.
+  const [memberVoices, setMemberVoices] = useState<Record<string, string[]>>({});
 
   // 부모 목소리(복제됨) 목록·남은 만들기 기회를 계정에서 불러온다(로그인 안 됐으면 빈 목록).
   useEffect(() => {
@@ -264,25 +267,49 @@ export default function SettingsPage() {
       // 녹음 목록은 계정(uid)별 저장 — 같은 기기의 다른 아이디 녹음이 안 보이게.
       setUid(s.uid ?? null);
       setCustomVoices(loadCustomVoices(s.uid ?? null));
+      if (s.isMaster) setMaster(true);
+
+      /*
+       * 여기부터는 서로 기다릴 이유가 없는 조회들이다. 예전엔 한 줄씩 await로
+       * 늘어놔서, 아이 정보 → 내 동화 → 회원 목록이 줄을 서느라 마스터 화면이
+       * 특히 느렸다(회원 목록이 맨 뒤라 제일 늦게 떴다).
+       * 이제 한꺼번에 띄우고 각자 끝나는 대로 화면에 올린다 — 하나가 느려도
+       * 나머지는 그걸 기다리지 않는다.
+       */
+
       // 계정에 저장된 아이 정보를 서버에서 되살린다 (로컬 캐시가 비어 있어도 복구).
-      // 단, 이게 돌아오는 데 1~2초 걸리는 동안 부모가 이미 만졌다면 덮지 않는다.
-      // 안 그러면 방금 고른 특징이 서버의 옛 값으로 되돌아가 "저장이 안 된다"가 된다.
-      const remoteChild = await loadChildRemote();
-      if (alive && remoteChild && !childTouched.current) {
-        setName(remoteChild.name);
-        setAge(remoteChild.age);
-        setGender(remoteChild.gender);
-        setLooks(remoteChild.looks ?? {});
-      }
-      setMyBooks(await loadMyBooks());
+      // 단, 이게 돌아오는 동안 부모가 이미 만졌다면 덮지 않는다 — 안 그러면 방금
+      // 고른 특징이 서버의 옛 값으로 되돌아가 "저장이 안 된다"가 된다.
+      void loadChildRemote()
+        .then((c) => {
+          if (!alive || !c || childTouched.current) return;
+          setName(c.name);
+          setAge(c.age);
+          setGender(c.gender);
+          setLooks(c.looks ?? {});
+        })
+        .catch(() => {});
+
+      void loadMyBookBriefs()
+        .then((b) => alive && setMyBooks(b))
+        .catch(() => {});
+
       if (s.isMaster) {
-        setMaster(true);
-        const [users, allBooks] = await Promise.all([loadAllUsers(), loadAllBooksBrief()]);
-        setMembers(users);
-        // owner별로 묶어 회원마다 만든 동화 개수·목록을 바로 보여준다.
-        const grouped: Record<string, BookBrief[]> = {};
-        for (const b of allBooks) (grouped[b.owner] ??= []).push(b);
-        setMemberBooks(grouped);
+        void loadAllUsers()
+          .then((users) => alive && setMembers(users))
+          .catch(() => {});
+        void loadAllBooksBrief()
+          .then((allBooks) => {
+            if (!alive) return;
+            // owner별로 묶어 회원마다 만든 동화 개수·목록을 바로 보여준다.
+            const grouped: Record<string, BookBrief[]> = {};
+            for (const b of allBooks) (grouped[b.owner] ??= []).push(b);
+            setMemberBooks(grouped);
+          })
+          .catch(() => {});
+        void loadAllParentVoiceRoles()
+          .then((v) => alive && setMemberVoices(v))
+          .catch(() => {});
       }
     })();
     return () => {
@@ -1222,7 +1249,7 @@ export default function SettingsPage() {
             <section className="flex flex-col gap-2.5">
               <h2 className="text-sm font-extrabold text-amber-600">👑 관리자 · 회원 ({members.length})</h2>
               <p className="-mt-1 text-xs font-medium text-neutral-400">
-                가입한 회원과 각자 만든 동화를 볼 수 있어요. 회원을 누르면 그 사람의 책장이 펼쳐져요.
+                가입한 회원과 각자 만든 동화·부모 목소리 등록 여부를 볼 수 있어요. 회원을 누르면 그 사람의 책장이 펼쳐져요.
               </p>
               {members.length === 0 ? (
                 <p className="rounded-2xl bg-neutral-100 px-4 py-3 text-sm font-bold text-neutral-500">
@@ -1233,6 +1260,10 @@ export default function SettingsPage() {
                   {members.map((m) => {
                     const open = openMember === m.id;
                     const books = memberBooks[m.id] ?? [];
+                    // 부모 목소리 등록 여부 — 등록했으면 또렷하게, 아니면 흐리게.
+                    const voices = memberVoices[m.id] ?? [];
+                    const hasMom = voices.includes("mom");
+                    const hasDad = voices.includes("dad");
                     return (
                       <li key={m.id} className="overflow-hidden rounded-2xl bg-neutral-100">
                         <button
@@ -1247,6 +1278,14 @@ export default function SettingsPage() {
                           <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-bold text-neutral-500">
                             동화 {books.length}
                           </span>
+                          {/* 엄마·아빠 목소리 등록 여부. 흐린 쪽이 아직 안 만든 것. */}
+                          <span
+                            className="flex shrink-0 items-center gap-0.5 text-sm leading-none"
+                            title={`부모 목소리 — 엄마 ${hasMom ? "등록" : "없음"} · 아빠 ${hasDad ? "등록" : "없음"}`}
+                          >
+                            <span className={hasMom ? "" : "opacity-25 grayscale"}>👩</span>
+                            <span className={hasDad ? "" : "opacity-25 grayscale"}>👨</span>
+                          </span>
                           <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-neutral-500">
                             <span aria-hidden className="inline-block rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
                             {m.tokens}
@@ -1255,6 +1294,16 @@ export default function SettingsPage() {
                         </button>
                         {open && (
                           <div className="border-t border-neutral-200 bg-white px-4 py-2">
+                            <p className="py-1 text-xs font-bold text-neutral-500">
+                              부모 목소리 —{" "}
+                              {hasMom || hasDad ? (
+                                <span className="text-neutral-700">
+                                  {[hasMom && "👩 엄마", hasDad && "👨 아빠"].filter(Boolean).join(" · ")} 등록됨
+                                </span>
+                              ) : (
+                                <span className="font-medium text-neutral-400">아직 안 만들었어요</span>
+                              )}
+                            </p>
                             {books.length === 0 ? (
                               <p className="py-1 text-xs font-medium text-neutral-400">만든 동화가 없어요.</p>
                             ) : (

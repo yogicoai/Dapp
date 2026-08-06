@@ -557,6 +557,27 @@ export async function loadUserBooks(userId: string): Promise<Book[]> {
 export type BookBrief = { id: string; owner: string; title: string; hidden: boolean; createdAt: string };
 
 /**
+ * 설정 '내 동화' 목록용 — 제목·숨김 여부만. 본문(data)은 받지 않는다.
+ *
+ * 예전엔 loadMyBooks()를 썼는데 그건 삽화까지 들어 있는 data 컬럼을 통째로
+ * 내려받는다(한 권이 수 MB). 목록에 쓰는 건 제목·숨김뿐인데 10권이면 수십 MB를
+ * 기다리게 되어, 설정 화면 전체가 그만큼 늦게 떴다.
+ */
+export async function loadMyBookBriefs(): Promise<BookBrief[]> {
+  const sb = getSupabase();
+  if (!sb) return [];
+  const uid = await currentUid();
+  if (!uid) return [];
+  const { data } = await sb
+    .from("books")
+    .select("id,owner,title,hidden,created_at")
+    .eq("owner", uid)
+    .order("created_at", { ascending: false });
+  return ((data as { id: string; owner: string; title: string | null; hidden: boolean; created_at: string }[]) ?? [])
+    .map((r) => ({ id: r.id, owner: r.owner, title: r.title ?? "제목 없음", hidden: r.hidden, createdAt: r.created_at }));
+}
+
+/**
  * 전 회원의 책을 한 번에 가벼운 형태로 (마스터 열람용 — RLS가 마스터만 허용).
  * 회원별 개수·목록을 회원 관리 화면에서 한눈에 보여주려고 owner로 묶어 쓴다.
  */

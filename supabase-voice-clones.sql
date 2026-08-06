@@ -61,3 +61,10 @@ create policy "voice_clones own update" on public.voice_clones
 drop policy if exists "voice_clones own delete" on public.voice_clones;
 create policy "voice_clones own delete" on public.voice_clones
   for delete using (auth.uid() = owner);
+
+-- ③ 마스터는 '누가 목소리를 만들었는지'만 볼 수 있다 (회원 관리 화면의 등록 여부 표시).
+--    읽기만 허용한다 — 남의 목소리를 쓰거나 지울 일은 없다.
+--    is_master_user()는 SECURITY DEFINER라 정책 안에서 써도 무한 재귀가 나지 않는다.
+drop policy if exists "voice_clones master select" on public.voice_clones;
+create policy "voice_clones master select" on public.voice_clones
+  for select using (public.is_master_user());

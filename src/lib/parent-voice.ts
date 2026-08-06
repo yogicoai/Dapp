@@ -350,6 +350,32 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   return voiceId;
 }
 
+/**
+ * 마스터 열람용 — 회원별로 어떤 부모 목소리를 등록했는지.
+ *
+ * 등록 여부만 확인하는 용도라 목소리 id는 가져오지 않는다(남의 목소리를 쓸 일은 없다).
+ * 결과: { 회원id: ["mom", "dad"] }.
+ *
+ * voice_clones에 마스터 열람 정책이 있어야 보인다(supabase-voice-clones.sql).
+ * 정책이 없으면 RLS가 0줄을 돌려주므로 조용히 빈 값이 된다 — 오류로 막지 않는다.
+ */
+export async function loadAllParentVoiceRoles(): Promise<Record<string, string[]>> {
+  const sb = getSupabase();
+  if (!sb) return {};
+  try {
+    const { data, error } = await sb.from("voice_clones").select("owner, role, status");
+    if (error || !data) return {};
+    const byOwner: Record<string, string[]> = {};
+    for (const r of data as { owner: string; role: string; status: string }[]) {
+      if (r.status !== "ready") continue; // 지운 목소리는 등록 안 된 것으로 본다
+      (byOwner[r.owner] ??= []).push(r.role);
+    }
+    return byOwner;
+  } catch {
+    return {};
+  }
+}
+
 /** 이 회원의 '준비된' 부모 목소리 목록 — 로그인한 계정 것만. Supabase가 있으면 그 값이 정본. */
 export async function loadParentVoices(): Promise<ParentVoice[]> {
   const uid = await currentUserId();
