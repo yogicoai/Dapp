@@ -9,11 +9,47 @@ import type { Book } from "@/lib/types";
 
 export type Gender = "girl" | "boy" | "unspecified";
 
+/**
+ * 아이 생김새 — 동화 주인공을 "우리 애 같게" 만드는 재료.
+ *
+ * 사진을 받지 않는다. 아동 얼굴은 개인정보 부담이 크고, 어설프게 닮으면
+ * "우리 애 아닌데?"가 되어 안 하느니만 못하다. 대신 몇 가지 특징만 골라
+ * 캐릭터 시트에 넣으면 "어? 우리 애 같네"가 나온다 — 위험 없이 같은 목적을 이룬다.
+ * 전부 선택이라 아무것도 안 골라도 동화는 만들어진다.
+ */
+export type ChildLooks = {
+  hair?: string; // 머리 길이·모양 (짧은 머리 / 단발 / 긴 머리 …)
+  hairColor?: string; // 머리 색
+  glasses?: boolean; // 안경
+  color?: string; // 좋아하는 옷 색
+  marks?: string[]; // 특징 (주근깨·보조개·곱슬머리 …) 여러 개 가능
+};
+
 export type ChildPrefs = {
   name: string;
   age: number | null;
   gender: Gender;
+  looks?: ChildLooks;
 };
+
+/** 저장된 값에서 생김새만 안전하게 골라낸다(모르는 값·형식은 버린다). */
+function normalizeLooks(raw: unknown): ChildLooks | undefined {
+  const v = raw as Partial<ChildLooks> | null | undefined;
+  if (!v || typeof v !== "object") return undefined;
+  const str = (x: unknown) => (typeof x === "string" && x.trim() ? x.trim().slice(0, 30) : undefined);
+  const looks: ChildLooks = {
+    hair: str(v.hair),
+    hairColor: str(v.hairColor),
+    glasses: v.glasses === true ? true : undefined,
+    color: str(v.color),
+    marks: Array.isArray(v.marks)
+      ? v.marks.map(str).filter((s): s is string => Boolean(s)).slice(0, 4)
+      : undefined,
+  };
+  // 하나도 안 골랐으면 아예 없는 것으로 둔다 — 빈 껍데기를 들고 다니지 않는다.
+  const any = looks.hair || looks.hairColor || looks.glasses || looks.color || looks.marks?.length;
+  return any ? looks : undefined;
+}
 
 // 아이는 한 명만 저장한다. 형제 동화는 만들기에서 "누구랑 → 형·동생 + 이름"으로
 // 다룬다 — 데이터를 여러 벌 들고 있지 않아 관리가 단순하다.
@@ -36,7 +72,24 @@ function normalizeChild(raw: unknown): ChildPrefs | null {
     name: c.name,
     age: typeof c.age === "number" ? c.age : null,
     gender: c.gender === "girl" || c.gender === "boy" ? c.gender : "unspecified",
+    looks: normalizeLooks((c as { looks?: unknown }).looks),
   };
+}
+
+/**
+ * 생김새를 그림 프롬프트에 넣을 한 줄로 만든다(한국어). 안 고른 항목은 빠진다.
+ * 캐릭터 시트가 이 문장을 받아 주인공을 그리고, 그 시트가 모든 쪽의 기준이 된다.
+ */
+export function looksToPrompt(looks: ChildLooks | undefined): string {
+  if (!looks) return "";
+  const parts: string[] = [];
+  if (looks.hairColor || looks.hair) {
+    parts.push([looks.hairColor, looks.hair].filter(Boolean).join(" "));
+  }
+  if (looks.glasses) parts.push("안경을 썼다");
+  if (looks.color) parts.push(`${looks.color} 옷을 즐겨 입는다`);
+  if (looks.marks?.length) parts.push(looks.marks.join("·"));
+  return parts.join(", ");
 }
 
 export function loadChild(): ChildPrefs | null {

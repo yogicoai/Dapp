@@ -21,7 +21,16 @@ export async function POST(request: Request) {
     characters?: { name?: unknown; description?: unknown }[];
     artStyleId?: unknown;
     drawing?: unknown;
+    looks?: unknown;
   };
+
+  /**
+   * 아이 생김새 — 설정에서 고른 특징(머리·안경·좋아하는 옷 색·주근깨 등)을 한 줄로 받는다.
+   * 사진이 아니라 특징만 받는 이유: 아동 얼굴은 개인정보 부담이 크고, 어설프게 닮으면
+   * 오히려 실망한다. 특징만으로도 "우리 애 같네"는 충분히 나온다.
+   * 이 시트가 모든 쪽 삽화의 기준이므로, 여기 한 번만 넣으면 책 전체에 적용된다.
+   */
+  const looks = typeof input.looks === "string" ? input.looks.trim().slice(0, 200) : "";
 
   /**
    * 아이가 그린 그림(선택) — 주인공을 이 그림에서 따온다.
@@ -57,6 +66,10 @@ export async function POST(request: Request) {
   const prompt = [
     `Character reference sheet for a children's picture book, ${style.prompt}.`,
     `Characters:\n${cast}`,
+    // 주인공(첫 번째 인물)의 생김새는 부모가 고른 특징을 그대로 따른다.
+    looks
+      ? `The FIRST character is the child hero. Their appearance MUST match these traits exactly: ${looks}. Keep these traits visible and consistent — they are how the child recognizes themselves.`
+      : "",
     // 아이 그림이 있으면 그 그림이 주인공의 원본이다 — 아이가 자기 캐릭터로 알아보게
     // 눈에 띄는 특징(머리 모양·옷 색·좋아하는 물건)을 반드시 살린다.
     drawing

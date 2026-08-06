@@ -8,7 +8,14 @@ import { useTheme } from "@/components/ThemeProvider";
 import { VoiceInput } from "@/components/VoiceInput";
 import { ART_STYLES } from "@/lib/art-styles";
 import { loadSession, spendTokens } from "@/lib/auth";
-import { loadChild, loadChildRemote, loadMyBooks, saveChild, saveMyBook } from "@/lib/prefs";
+import {
+  loadChild,
+  loadChildRemote,
+  loadMyBooks,
+  looksToPrompt,
+  saveChild,
+  saveMyBook,
+} from "@/lib/prefs";
 import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
@@ -695,6 +702,8 @@ export default function CreatePage() {
           characters: s.characters,
           artStyleId: artStyle,
           drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
+          // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
+          looks: looksToPrompt(loadChild()?.looks),
         }),
         signal: ac.signal,
       });
