@@ -1267,12 +1267,23 @@ export function BookViewer({ book }: { book: Book }) {
       )}
 
       {/* 캐릭터 클릭 대사 — 그림 속 캐릭터 자리를 누르면 그 캐릭터가 말한다.
-          그림(4:3, contain)과 같은 규칙의 4:3 틀을 겹쳐 좌표를 맞춘다.
-          넘김 영역보다 위(z-[5]), 읽어주기 버튼(z-10)보다는 아래. */}
+          그림과 같은 규칙의 틀을 겹쳐 좌표를 맞춘다.
+          넘김 영역보다 위(z-[5]), 읽어주기 버튼(z-10)보다는 아래.
+          펼침면에서는 그림이 화면 가운데가 아니라 '책의 왼쪽 쪽'에 있으므로,
+          무대 크기와 정렬을 그림 쪽과 똑같이 맞춘다 — 안 맞추면 엉뚱한 자리를 누르게 된다. */}
       {book.pages[index].image && (book.pages[index].hotspots?.length ?? 0) > 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center portrait:bottom-24">
+        <div
+          className={`pointer-events-none absolute inset-0 z-[5] flex items-center justify-center portrait:bottom-24 ${
+            spread
+              ? "landscape:mx-auto landscape:my-auto landscape:w-[min(100vw,calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(100vw/(var(--ar)*2)))] landscape:justify-start"
+              : ""
+          }`}
+          style={{ "--ar": String(imgRatios[index] ?? 4 / 3) } as React.CSSProperties}
+        >
           <div
-            className="relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))]"
+            className={`relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))] ${
+              spread ? "landscape:h-full landscape:w-1/2" : ""
+            }`}
             style={{ "--ar": String(imgRatios[index] ?? 4 / 3) } as React.CSSProperties}
           >
             {book.pages[index].hotspots!.map((h, hi) => {
