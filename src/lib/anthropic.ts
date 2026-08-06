@@ -334,6 +334,17 @@ function nameOk(name: string, text: string): boolean {
 }
 
 /**
+ * 한글을 '완성형(NFC)'으로 맞춘다 — 만들어진 글이 책에 들어가기 전에 한 번.
+ *
+ * 같은 '얘'라도 한 글자로 온 것(U+C598)과 ㅇ+ㅒ로 쪼개져 온 것(U+110B U+1164)이 있는데,
+ * 동화책 글꼴에는 쪼개진 자모가 없어서 그 글자만 ◆? 로 나온다(실제 발생).
+ * 낭독 색칠도 '몇 번째 글자까지'로 도는 터라, 쪼개진 글자는 둘로 세어져 색칠이 밀린다.
+ */
+function nfc(t: string): string {
+  return typeof t === "string" ? t.normalize("NFC") : t;
+}
+
+/**
  * '이름' 칸에 들어와도 이름이 아닌 말들. 부모가 "누구랑"의 이름 칸에 "동생"처럼
  * 적는 일이 있어서, 조사 교정이 이런 낱말을 망가뜨리지 않도록 막아 둔다.
  */
@@ -436,7 +447,7 @@ export async function generateOutline(input: {
 
   // 부모가 줄거리를 먼저 보고 고르므로, 여기서부터 조사가 맞아야 한다.
   const names = [input.child.name, input.material.whoName].filter(Boolean);
-  const fix = (t: string) => names.reduce((s, n) => fixNameJosa(n, s), t);
+  const fix = (t: string) => names.reduce((s, n) => fixNameJosa(n, s), nfc(t));
   return {
     ...outline!,
     title: fix(outline!.title),
@@ -555,11 +566,17 @@ export async function generateStory(input: {
   // 아이가 보게 될 최종 본문이라 여기서 한 번 더 조사를 맞춘다.
   // 등장인물 이름은 손대지 않는다 — 모델이 "동생"처럼 보통명사를 인물 이름으로
   // 넣는 일이 있어, 확실히 사람 이름인 주인공만 고친다.
-  const fix = (t: string) => fixNameJosa(input.child.name, t);
+  const fix = (t: string) => fixNameJosa(input.child.name, nfc(t));
   return {
     ...story!,
     title: fix(story!.title),
-    pages: story!.pages.map((p) => ({ ...p, text: fix(p.text) })),
+    summary: nfc(story!.summary),
+    // 등장인물 묘사도 맞춘다 — 이 글이 그대로 그림 프롬프트로 간다.
+    characters: story!.characters.map((c) => ({
+      name: nfc(c.name),
+      description: nfc(c.description),
+    })),
+    pages: story!.pages.map((p) => ({ ...p, text: fix(p.text), imagePrompt: nfc(p.imagePrompt) })),
   };
 }
 

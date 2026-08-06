@@ -373,8 +373,31 @@ export function saveBookProgress(id: string, page: number): void {
 type BookRow = { id: string; owner: string; title: string | null; data: Book; hidden: boolean };
 
 /** DB 행 → Book 객체 (id·hidden은 컬럼 값으로 덮어써 항상 최신). */
+/**
+ * 한글을 '완성형(NFC)'으로 맞춘다 — 글자가 깨져 보이던 원인.
+ *
+ * 같은 '얘'라도 한 글자로 저장된 것(U+C598)과 ㅇ+ㅒ로 쪼개져 저장된 것(U+110B U+1164)이
+ * 있는데, 동화책 글꼴(Dongle)에는 쪼개진 자모가 없어서 그 글자만 ◆? 로 나왔다.
+ * 겉보기는 같은 글자라 눈으로는 원인을 못 찾는다.
+ *
+ * 낭독 색칠도 같이 고쳐진다 — 색칠은 '몇 번째 글자까지'로 도는데, 쪼개진 글자는
+ * 한 글자가 둘로 세어져 색칠이 밀렸다.
+ */
+function toNfc<T extends string | null | undefined>(v: T): T {
+  return (typeof v === "string" ? (v.normalize("NFC") as T) : v);
+}
+
 function rowToBook(r: BookRow): Book {
-  return { ...(r.data as Book), id: r.id, hidden: r.hidden };
+  const b = r.data as Book;
+  return {
+    ...b,
+    id: r.id,
+    hidden: r.hidden,
+    // 이미 저장된 책도 열 때 고쳐 보여 준다 — 다시 만들 필요 없이 바로 정상으로 보인다.
+    title: toNfc(b.title),
+    summary: toNfc(b.summary),
+    pages: (b.pages ?? []).map((p) => ({ ...p, text: toNfc(p.text) })),
+  };
 }
 
 /** 현재 로그인한 회원의 책 (최신 먼저). */
