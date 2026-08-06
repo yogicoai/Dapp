@@ -957,6 +957,41 @@ export function BookViewer({ book }: { book: Book }) {
         })}
       </div>
 
+      {/* 아래 가운데 넘김 바 — 우측 상단 ◀▶는 작고 눈에 잘 안 띄어서, 크고 분명한
+          '다음 장'을 아래에 하나 더 둔다. 지금 몇 쪽인지도 같이 보여 준다
+          (아이는 "얼마나 남았어?"를 자주 묻는다). 마지막 쪽에선 다음이 잠긴다. */}
+      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/45 px-2 py-1.5 backdrop-blur">
+        <button
+          type="button"
+          aria-label="이전 장"
+          onClick={() => go(index - 1)}
+          disabled={index === 0}
+          className="flex h-10 items-center gap-1 rounded-full px-3 text-sm font-extrabold text-white transition hover:bg-white/20 disabled:opacity-30 outline-none focus:outline-none"
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+            <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="hidden sm:inline">이전</span>
+        </button>
+
+        <span className="min-w-[3.5rem] text-center text-sm font-extrabold text-white/90">
+          {index + 1} / {book.pages.length}
+        </span>
+
+        <button
+          type="button"
+          aria-label="다음 장"
+          onClick={() => go(index + 1)}
+          disabled={index === lastIndex}
+          className="flex h-10 items-center gap-1 rounded-full bg-white/20 px-3 text-sm font-extrabold text-white transition hover:bg-white/30 disabled:opacity-30 outline-none focus:outline-none"
+        >
+          <span>다음 장</span>
+          <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+            <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
+
       {/* 넘김은 우측 상단 전용 버튼(◀ ▶) — 화면 절반 탭 방식은 캐릭터 클릭
           대사와 겹쳐 오작동해서 걷어냈다. 스와이프와 키보드 ←→는 그대로 산다. */}
       <div className="absolute right-3 top-4 z-10 flex gap-1.5 sm:right-4 sm:gap-2">
