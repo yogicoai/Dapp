@@ -557,6 +557,26 @@ export async function loadUserBooks(userId: string): Promise<Book[]> {
 export type BookBrief = { id: string; owner: string; title: string; hidden: boolean; createdAt: string };
 
 /**
+ * 내가 만든 동화 '권수'만 — 아무 내용도 내려받지 않는다(서버가 숫자만 센다).
+ *
+ * 만들기 화면이 권수 상한(10권)을 확인하려고 loadMyBooks()를 불렀는데, 그건 삽화가
+ * base64로 들어 있는 data 컬럼까지 통째로 받는다. 숫자 하나 때문에 화면을 열 때마다
+ * 수십 MB가 오갔고, 이게 Supabase 전송량(egress)을 태운 가장 큰 원인이었다.
+ */
+export async function countMyBooks(): Promise<number> {
+  const sb = getSupabase();
+  if (!sb) return 0;
+  const uid = await currentUid();
+  if (!uid) return 0;
+  const { count, error } = await sb
+    .from("books")
+    .select("id", { count: "exact", head: true }) // head:true — 행은 안 받고 개수만
+    .eq("owner", uid);
+  if (error) return 0;
+  return count ?? 0;
+}
+
+/**
  * 설정 '내 동화' 목록용 — 제목·숨김 여부만. 본문(data)은 받지 않는다.
  *
  * 예전엔 loadMyBooks()를 썼는데 그건 삽화까지 들어 있는 data 컬럼을 통째로

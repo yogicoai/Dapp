@@ -11,7 +11,7 @@ import { loadSession, spendTokens } from "@/lib/auth";
 import {
   loadChild,
   loadChildRemote,
-  loadMyBooks,
+  countMyBooks,
   looksToPrompt,
   saveChild,
   saveMyBook,
@@ -390,7 +390,9 @@ export default function CreatePage() {
       }
       setTokens(s.profile?.tokens ?? 0);
       setMaster(s.isMaster);
-      setBookCount((await loadMyBooks()).length);
+      // 권수 상한 확인용 — 숫자만 센다. 예전엔 책을 통째로 받아 세느라(삽화 포함)
+      // 만들기 화면을 열 때마다 수십 MB가 오갔다.
+      setBookCount(await countMyBooks());
       // 계정에 저장된 아이 정보를 서버에서 되살려 폼에 채운다 (로컬 캐시가 비어 있어도 복구).
       const remoteChild = await loadChildRemote();
       if (alive && remoteChild) {
