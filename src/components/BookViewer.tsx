@@ -897,23 +897,31 @@ export function BookViewer({ book }: { book: Book }) {
             );
           };
 
-          // 그림 위에 얹는 오버레이 — '가로로 보기'처럼 그림이 화면을 꽉 채울 때 쓴다.
-          // (세로에선 그림을 가리지 않게, 그림 아래 전용 자리에 따로 글을 놓는다.)
-          const overlayText = (extra: string) => (
+          /*
+           * 그림 위에 얹는 오버레이 — 그림이 화면을 꽉 채울 때 쓴다.
+           * (세로에선 그림을 가리지 않게, 그림 아래 전용 자리에 따로 글을 놓는다.)
+           *
+           * display를 밖에서 받는 이유: 글 없는 쪽에서는 늘 보이지만, 그림 있는 쪽에서는
+           * 가로에서만 보여야 한다("hidden landscape:…"). 그런데 가운데·좌·우 위치는
+           * flex가 필요하고 위·아래는 block이라, 한 문자열로 못 묶는다.
+           * 위치 목록에 flex를 섞어 두면 hidden과 부딪혀 어느 쪽이 이길지 불안정해진다.
+           */
+          const posNeedsFlex = textPos === "center" || textPos === "left" || textPos === "right";
+          const overlayText = (display: string, size: string) => (
             <div
               className={`absolute ${
                 {
                   bottom:
                     "inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[6%] pt-[14%]",
                   top: "inset-x-0 top-0 bg-gradient-to-b from-black/85 via-black/55 to-transparent px-[6%] pt-[6%] pb-[14%]",
-                  center: "inset-0 flex items-center justify-center p-[6%]",
-                  left: "inset-y-0 left-0 flex w-[46%] items-center pl-[5%] pr-[2%]",
-                  right: "inset-y-0 right-0 flex w-[46%] items-center pr-[5%] pl-[2%]",
+                  center: "inset-0 items-center justify-center p-[6%]",
+                  left: "inset-y-0 left-0 w-[46%] items-center pl-[5%] pr-[2%]",
+                  right: "inset-y-0 right-0 w-[46%] items-center pr-[5%] pl-[2%]",
                 }[textPos]
-              } ${extra}`}
+              } ${display}`}
             >
               <p
-                style={scaled("clamp(1.7rem,3.6vw,2.15rem)")}
+                style={scaled(size)}
                 className={`font-story whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.3] drop-shadow-md ${
                   textPos === "bottom" || textPos === "top"
                     ? "mx-auto w-full max-w-[max(20rem,60vw)]"
@@ -955,12 +963,33 @@ export function BookViewer({ book }: { book: Book }) {
                 {/* 무대 — 가로: 그림이 화면을 채운다. 세로: [그림+글자]를 한 덩어리로 화면
                     가운데 정렬하고, 아래 버튼 자리(6rem)는 비운다(겹침 방지).
                     틀 비율은 그림 실측(--ar) — 4:3 고정이면 와이드 그림이 '짤려' 보인다. */}
-                <div className="absolute inset-0 flex items-center justify-center portrait:flex-col portrait:bottom-24">
+                {/*
+                  펼침면 무대 — 그림과 종이가 '한 권의 책'으로 딱 맞아야 한다.
+                  예전엔 종이가 늘 화면 절반(50vw)이라, 그림보다 종이가 넓고 높아
+                  오른쪽에 크림빛 여백이 남았다(사장님 지적 — 책이 아니라 배경처럼 보인다).
+
+                  그래서 무대 자체를 책 크기로 잡는다. 두 쪽이 나란한 책의 가로세로비는
+                  그림 비율(--ar)의 두 배다. 화면 안에 넣으려면 가로·세로 어느 쪽이 먼저
+                  닿는지에 따라 크기가 정해지므로, 둘 다 min()으로 눌러 준다:
+                    너비 = min(화면 너비, 그림비×2 × 화면 높이)
+                    높이 = min(화면 높이, 화면 너비 ÷ (그림비×2))
+                  이렇게 잡으면 절반씩 나눈 두 쪽이 각각 정확히 그림 비율이 되어,
+                  그림과 종이의 높이·너비가 저절로 맞는다.
+                  가운데 정렬은 inset-0(좌우 0) + mx-auto로 한다.
+                */}
+                <div
+                  className={`absolute inset-0 flex items-center justify-center portrait:flex-col portrait:bottom-24 ${
+                    spread
+                      ? "landscape:mx-auto landscape:my-auto landscape:w-[min(100vw,calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(100vw/(var(--ar)*2)))]"
+                      : ""
+                  }`}
+                  style={{ "--ar": String(imgRatios[i] ?? 4 / 3) } as React.CSSProperties}
+                >
                   <div
                     className={`relative shrink-0 overflow-hidden [aspect-ratio:var(--ar)] portrait:w-full ${
                       spread
-                        ? // 펼침면 — 그림은 왼쪽 절반 안에서 최대한 크게(높이·너비 둘 다 안 넘치게).
-                          "landscape:h-full landscape:w-auto landscape:max-w-[calc(50vw-1.5rem)]"
+                        ? // 펼침면 — 왼쪽 쪽. 무대가 이미 책 크기라 절반이 곧 한 쪽이다.
+                          "landscape:h-full landscape:w-1/2"
                         : "landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
                     }`}
                     style={{ "--ar": String(imgRatios[i] ?? 4 / 3) } as React.CSSProperties}
@@ -1003,20 +1032,17 @@ export function BookViewer({ book }: { book: Book }) {
                         }`}
                       />
                     )}
-                    {/* 가로 보기 전용: 그림 위 하단 밴드 — 이제 틀이 그림에 딱 맞아 밴드도 그림 하단에 붙는다.
-                        펼침면에서는 글이 옆 종이로 빠지므로 이 밴드를 쓰지 않는다(그림이 안 가려진다). */}
-                    <div
-                      className={`absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[7%] pt-[12%] ${
-                        spread ? "" : "landscape:block"
-                      }`}
-                    >
-                      <p
-                        style={scaled("clamp(1.35rem,2.9vw,2.05rem)")}
-                        className="font-story mx-auto max-w-[46rem] whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.35] text-white drop-shadow-md"
-                      >
-                        {renderRuns()}
-                      </p>
-                    </div>
+                    {/* 가로 보기 전용: 그림 위에 얹는 글.
+                        예전엔 여기가 '하단 밴드'로 굳어 있어서, 설정에서 글자 위치를
+                        바꿔도 그림 있는 책에서는 아무 반응이 없었다(설정이 안 먹는
+                        것처럼 보이던 원인). 이제 글 없는 쪽과 같은 오버레이를 써서
+                        위·아래·가운데·좌·우가 그대로 반영된다.
+                        펼침면에서는 글이 옆 종이로 빠지므로 이 오버레이를 쓰지 않는다. */}
+                    {!spread &&
+                      overlayText(
+                        `hidden ${posNeedsFlex ? "landscape:flex" : "landscape:block"}`,
+                        "clamp(1.35rem,2.9vw,2.05rem)",
+                      )}
                   </div>
                   {/* 글자 칸.
                       · 세로(폰): 그림 바로 아래 — 원래부터 그림과 글이 나뉘어 있다.
@@ -1068,7 +1094,7 @@ export function BookViewer({ book }: { book: Book }) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={ui.background} alt="" className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-white/20" />
-                {overlayText("")}
+                {overlayText(posNeedsFlex ? "flex" : "block", "clamp(1.7rem,3.6vw,2.15rem)")}
               </>
             )}
           </section>
