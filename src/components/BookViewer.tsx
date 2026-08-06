@@ -1004,9 +1004,20 @@ export function BookViewer({ book }: { book: Book }) {
                       · 가로 + 꽉 찬 그림: 이 칸은 숨고 위의 하단 밴드가 대신한다.
                       아래 버튼(재생·배속·넘김)을 안 가리게 여백을 넉넉히 둔다. */}
                   <div
+                    style={
+                      spread
+                        ? ({
+                            // 종이 느낌 — 그림을 깔면 쪽마다 밝기가 달라 글이 묻힌다.
+                            // 결이 아주 옅은 아이보리 종이 + 왼쪽 가장자리에 책등(접힘) 그림자.
+                            // 이 그림자 하나가 '펼친 책'으로 보이게 하는 핵심이다.
+                            "--paper":
+                              "radial-gradient(circle at 20% 10%, rgba(0,0,0,0.018) 0.5px, transparent 0.6px), radial-gradient(circle at 70% 60%, rgba(0,0,0,0.015) 0.5px, transparent 0.6px), linear-gradient(180deg,#fffdf6 0%,#fdf8ea 55%,#f8f1de 100%)",
+                          } as React.CSSProperties)
+                        : undefined
+                    }
                     className={`flex shrink-0 items-center justify-center overflow-y-auto ${
                       spread
-                        ? "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:max-h-none landscape:h-full landscape:w-1/2 landscape:bg-none landscape:bg-[#fffdf5] landscape:px-[6%] landscape:pb-24 landscape:pt-8"
+                        ? "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:max-h-none landscape:h-full landscape:w-1/2 landscape:bg-[image:var(--paper)] landscape:bg-[length:14px_14px,18px_18px,100%_100%] landscape:px-[7%] landscape:pb-24 landscape:pt-8 landscape:shadow-[inset_18px_0_28px_-18px_rgba(90,60,20,0.35)]"
                         : "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:hidden"
                     }`}
                   >

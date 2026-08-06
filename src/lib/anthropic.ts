@@ -96,13 +96,40 @@ function describeChild(child: ChildProfile): string {
     child.gender === "girl" ? "여자아이" : child.gender === "boy" ? "남자아이" : "아이";
   // 이름 표기 강조 — 모델이 흔한 이름으로 바꿔치기하는 사고(하온→하윤)를 막는다.
   // 시스템 규칙만으론 부족해서, 쓰는 지점에서 한 번 더 못박는다.
-  return `${child.name} (${child.age}세, ${gender}) — 주인공 이름은 정확히 "${child.name}"로만 표기한다. "${child.name}" 외의 어떤 이름·비슷한 이름도 금지.`;
+  // 단, '이름을 바꾸지 마라'를 너무 세게 걸면 조사까지 굳어 "하온은"처럼 어색해진다.
+  // 한국어 이름은 받침이 있으면 '이'를 붙여 부르는 게 자연스럽다 — 그건 같은 이름이다.
+  return [
+    `${child.name} (${child.age}세, ${gender}) — 주인공 이름은 "${child.name}"이다.`,
+    `다른 이름이나 비슷한 이름으로 바꾸는 것은 절대 금지(예: 하온→하윤).`,
+    `다만 한국어 조사는 자연스럽게 붙인다: ${josaGuide(child.name)}`,
+  ].join(" ");
+}
+
+/**
+ * 한국어 이름 뒤 조사 안내를 이름에 맞춰 만들어 준다.
+ *
+ * 받침이 있는 이름(하온·서준)은 '이'를 붙여 "하온이는/하온이가/하온아!"로 부르는 것이
+ * 자연스럽고, 받침이 없는 이름(지우·서아)은 붙이지 않는다("지우는/지우가/지우야!").
+ * 이걸 알려주지 않으면 "하온은 웃었어요"처럼 어른 문서 같은 문장이 나온다.
+ */
+function josaGuide(name: string): string {
+  const last = name.trim().slice(-1);
+  const code = last.charCodeAt(0);
+  const isHangul = code >= 0xac00 && code <= 0xd7a3;
+  const hasBatchim = isHangul && (code - 0xac00) % 28 !== 0;
+  if (!isHangul) return `이름 뒤 조사는 한국어로 자연스럽게 쓴다.`;
+  return hasBatchim
+    ? `"${name}"은 받침이 있으니 '이'를 붙여 부른다 — "${name}이는", "${name}이가", "${name}이를", "${name}이랑", 부를 때는 "${name}아!". "${name}은/${name}이" 같은 딱딱한 표기는 쓰지 않는다.`
+    : `"${name}"은 받침이 없으니 '이'를 붙이지 않는다 — "${name}는", "${name}가", "${name}를", "${name}랑", 부를 때는 "${name}야!".`;
 }
 
 const VOICE = `너는 한국 유아·아동용 그림동화 작가다. 아이가 주인공인 동화를 짓는다.
 
 지켜야 할 것:
 - 아이 이름은 준 그대로 쓴다 — 한 글자도 바꾸거나(하온→하윤 금지) 비슷한 이름으로 만들지 않는다.
+- 다만 조사는 한국어답게 붙인다. 받침 있는 이름엔 '이'를 붙여 "하온이는·하온이가·하온아!"로,
+  받침 없는 이름은 그대로 "지우는·지우가·지우야!"로 쓴다. '이'를 붙인 건 다른 이름이 아니라
+  같은 이름을 자연스럽게 부르는 것이다 — "하온은 웃었어요" 같은 딱딱한 문장은 쓰지 않는다.
 - 결말에는 아이가 스스로 해낸 것이 남는다. 어른이 대신 해결해주지 않는다.
   단, '실제 결말'이 재료로 주어지면 그 사실이 우선이다 — 실제로 일어난 일(혼남 등)을
   지우거나 미화하지 않고 그대로 담은 뒤, 그 안에서 아이가 배우고 회복하게 한다.
@@ -273,7 +300,7 @@ export async function generateOutline(input: {
               : "",
             input.mood ? `분위기: ${input.mood} — 이야기 전체 톤에 반영한다.` : "",
             attempt > 1
-              ? `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 정확히 "${input.child.name}"로만 쓴다 — 비슷한 다른 이름 절대 금지.`
+              ? `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 "${input.child.name}"이다 — 비슷한 다른 이름 절대 금지. (조사는 자연스럽게: ${josaGuide(input.child.name)})`
               : "",
           ]
             .filter(Boolean)
@@ -359,7 +386,7 @@ export async function generateStory(input: {
             ...(input.mood ? [`분위기: ${input.mood}`] : []),
             ...(attempt > 1
               ? [
-                  `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 정확히 "${input.child.name}"로만 쓴다 — 비슷한 다른 이름 절대 금지.`,
+                  `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 "${input.child.name}"이다 — 비슷한 다른 이름 절대 금지. (조사는 자연스럽게: ${josaGuide(input.child.name)})`,
                 ]
               : []),
             "",
