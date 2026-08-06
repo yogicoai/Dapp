@@ -719,6 +719,12 @@ export default function CreatePage() {
   const [pageCount, setPageCount] = useState(() => recommendedPages(null));
   // 이번에 만들 동화의 토큰 값 — 장면 수 × 쪽당 단가 (몇 장이냐로 달라진다).
   const bookCost = bookTokenCost(pageCount, IMAGES_ENABLED);
+  /*
+   * 마스터는 토큰이 들지 않는다(auth.spendTokens에서 면제). 그런데 화면이 잔액으로
+   * 버튼을 먼저 막고 있어서, 서버만 면제해 봐야 잔액이 바닥나면 못 만들었다.
+   * 여기서도 같이 면제해야 실제로 계속 만들 수 있다.
+   */
+  const shortOnTokens = !master && tokens < bookCost;
 
   // 생성 결과
   const [outline, setOutline] = useState<Outline | null>(null);
@@ -1002,7 +1008,8 @@ export default function CreatePage() {
       setStep("story");
       return;
     }
-    setTokens((t) => Math.max(0, t - cost));
+    // 마스터는 실제로 차감되지 않으니 화면 잔액도 그대로 둔다(안 그러면 숫자만 줄어 헷갈린다).
+    if (!master) setTokens((t) => Math.max(0, t - cost));
     // 저장 전에 삽화를 화면 크기로 줄인다 — 원본(장당 약 1MB)을 그대로 넣으면 책이
     // 8MB가 되어 책장·책 열기가 둘 다 느려진다. 표지는 더 작게 따로 만들어 두어
     // 책장이 본문을 안 받고도 표지를 보여줄 수 있게 한다.
@@ -2010,7 +2017,10 @@ export default function CreatePage() {
                     </p>
                     <p className="flex items-center justify-center gap-1 text-[11px] font-medium text-neutral-400">
                       <span aria-hidden className="inline-block rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
-                      {outline.scenes.length}장 · 토큰 {bookCost}개 사용 (내 잔액 {tokens}개)
+                      {outline.scenes.length}장 ·{" "}
+                      {master
+                        ? "관리자는 토큰이 들지 않아요"
+                        : `토큰 ${bookCost}개 사용 (내 잔액 ${tokens}개)`}
                       {IMAGES_ENABLED && " · 그림 포함 · 약 1~2분"}
                     </p>
                     {bookLimitReached ? (
@@ -2018,7 +2028,7 @@ export default function CreatePage() {
                         베타에서는 아이디당 최대 {MAX_BOOKS_PER_USER}권까지 만들 수 있어요.
                         <br />설정 › 내 동화에서 지우면 다시 만들 수 있어요.
                       </p>
-                    ) : tokens < bookCost ? (
+                    ) : shortOnTokens ? (
                       <p className="text-center text-xs font-bold text-red-600">
                         토큰이 부족해요. 설정에서 충전할 수 있어요.
                       </p>
@@ -2028,7 +2038,7 @@ export default function CreatePage() {
                         accent={accent}
                         accentDark={accentDark}
                         onClick={() => {
-                          if (tokens < bookCost || bookLimitReached) return;
+                          if (shortOnTokens || bookLimitReached) return;
                           setConfirmMake(false);
                           makeStory();
                         }}

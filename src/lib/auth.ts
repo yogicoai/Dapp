@@ -141,7 +141,19 @@ export async function spendTokens(n: number): Promise<boolean> {
   const sb = getSupabase();
   if (!sb) return false;
   const profile = await fetchProfile();
-  if (!profile || profile.tokens < n) return false;
+  if (!profile) return false;
+  /*
+   * 마스터는 토큰을 쓰지 않는다.
+   *
+   * 콘텐츠를 만들고 점검하는 계정이라 잔액이 떨어져 확인이 막히면 안 된다.
+   * 권수 상한은 이미 면제였는데 토큰은 아니어서, 결국 마스터도 잔액이 바닥나면
+   * 더 만들 수 없었다 — 반쪽짜리 면제였다.
+   *
+   * 쓰는 쪽마다 조건을 다는 대신 여기 한 곳에서 막는다. 동화 만들기·부모 목소리
+   * 등 토큰을 쓰는 자리가 전부 이 함수를 지나므로, 새 기능이 생겨도 자동으로 면제된다.
+   */
+  if (profile.is_master) return true;
+  if (profile.tokens < n) return false;
   const { error } = await sb.from("profiles").update({ tokens: profile.tokens - n }).eq("id", profile.id);
   return !error;
 }
