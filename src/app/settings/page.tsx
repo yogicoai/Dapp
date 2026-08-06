@@ -1278,13 +1278,26 @@ export default function SettingsPage() {
                           <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-bold text-neutral-500">
                             동화 {books.length}
                           </span>
-                          {/* 엄마·아빠 목소리 등록 여부. 흐린 쪽이 아직 안 만든 것. */}
+                          {/* 엄마·아빠 목소리 등록 여부 — 색이 들어오면 등록된 것.
+                              회색이면 아직 안 만든 것이라, 줄을 훑기만 해도 구분된다. */}
                           <span
-                            className="flex shrink-0 items-center gap-0.5 text-sm leading-none"
+                            className="flex shrink-0 items-center gap-1"
                             title={`부모 목소리 — 엄마 ${hasMom ? "등록" : "없음"} · 아빠 ${hasDad ? "등록" : "없음"}`}
                           >
-                            <span className={hasMom ? "" : "opacity-25 grayscale"}>👩</span>
-                            <span className={hasDad ? "" : "opacity-25 grayscale"}>👨</span>
+                            <span
+                              className={`rounded-full px-1.5 py-0.5 text-[10px] font-extrabold ${
+                                hasMom ? "bg-rose-500 text-white" : "bg-neutral-200 text-neutral-400"
+                              }`}
+                            >
+                              엄마
+                            </span>
+                            <span
+                              className={`rounded-full px-1.5 py-0.5 text-[10px] font-extrabold ${
+                                hasDad ? "bg-sky-500 text-white" : "bg-neutral-200 text-neutral-400"
+                              }`}
+                            >
+                              아빠
+                            </span>
                           </span>
                           <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-neutral-500">
                             <span aria-hidden className="inline-block rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
@@ -1298,7 +1311,7 @@ export default function SettingsPage() {
                               부모 목소리 —{" "}
                               {hasMom || hasDad ? (
                                 <span className="text-neutral-700">
-                                  {[hasMom && "👩 엄마", hasDad && "👨 아빠"].filter(Boolean).join(" · ")} 등록됨
+                                  {[hasMom && "엄마", hasDad && "아빠"].filter(Boolean).join(" · ")} 등록됨
                                 </span>
                               ) : (
                                 <span className="font-medium text-neutral-400">아직 안 만들었어요</span>
