@@ -7,6 +7,7 @@ import {
   loadBgmOn,
   loadBookProgress,
   loadSfxOn,
+  loadMyBooksBrief,
   loadTextPos,
   loadTextScale,
   saveBgmOn,
@@ -14,6 +15,8 @@ import {
   saveTextScale,
   TEXT_SCALES,
 } from "@/lib/prefs";
+import classicBooksJson from "@/data/classic-books.json";
+import folkBooksJson from "@/data/folk-books.json";
 import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import {
@@ -184,6 +187,36 @@ export function BookViewer({ book }: { book: Book }) {
   }, []);
   // 이야기 끝남 — 마지막 쪽 낭독이 끝나면 "다시 듣기"를 띄운다.
   const [ended, setEnded] = useState(false);
+
+  /**
+   * 다음 동화 — 이야기가 끝나면 "다음 것도 보자"가 자연스럽다. 서재로 나갔다
+   * 다시 고르게 하지 않는다. 같은 서가(전래·명작·우리 가족) 안에서 다음 책을 찾는다.
+   * 마지막 책이면 null이라 버튼을 띄우지 않는다.
+   */
+  const [nextBook, setNextBook] = useState<{ id: string; title: string } | null>(null);
+  useEffect(() => {
+    if (!ended) return;
+    let alive = true;
+    (async () => {
+      const pickNext = (list: { id: string; title: string; hidden?: boolean }[]) => {
+        const shown = list.filter((b) => !b.hidden);
+        const at = shown.findIndex((b) => b.id === book.id);
+        return at >= 0 && at + 1 < shown.length ? shown[at + 1] : null;
+      };
+      if (book.id.startsWith("folk-")) {
+        setNextBook(pickNext(folkBooksJson as Book[]));
+      } else if (book.id.startsWith("classic-")) {
+        setNextBook(pickNext(classicBooksJson as Book[]));
+      } else if (book.id.startsWith("my-")) {
+        // 내가 만든 책은 계정에서 목록을 가져온다(제목·id만이라 가볍다).
+        const mine = await loadMyBooksBrief().catch(() => []);
+        if (alive) setNextBook(pickNext(mine));
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [ended, book.id]);
 
   // 이어듣기 — 정지한 자리를 기억한다. readPage가 시작한 쪽(currentPageRef)과 그때의
   // 순번(run)을 함께 담아, 다시 누를 때 "같은 쪽·같은 재생"일 때만 이어서 튼다.
@@ -708,12 +741,17 @@ export function BookViewer({ book }: { book: Book }) {
         stopSay(); // 넘김과 동시에 캐릭터 대사 음성을 끊는다(다음 쪽까지 새어 나가지 않게)
       }
       // 책장 넘김 효과음 — 실제로 쪽이 바뀔 때만. 설정에서 끌 수 있다.
+      // 빠르게 여러 장을 넘기면 소리가 끝나기 전에 매번 처음부터 다시 재생돼
+      // '쫙쫙쫙' 하고 끊겨 들렸다. 아직 나는 중이면 다시 틀지 않는다 —
+      // 넘김은 그대로 되고 소리만 한 번 깔끔하게 난다.
       if (clamped !== index && loadSfxOn()) {
         const el = sfxRef.current ?? new Audio("/sfx/page-turn.mp3");
         sfxRef.current = el;
-        el.currentTime = 0;
-        el.volume = 0.5;
-        el.play().catch(() => {});
+        if (el.paused || el.ended) {
+          el.currentTime = 0;
+          el.volume = 0.5;
+          el.play().catch(() => {});
+        }
       }
       setIndex(clamped);
       if (readingRef.current && clamped !== index) {
@@ -1344,12 +1382,30 @@ export function BookViewer({ book }: { book: Book }) {
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/45 p-6 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-5 rounded-[28px] bg-white/95 px-8 py-9 text-center shadow-2xl">
             <p className="text-2xl font-extrabold text-neutral-800">이야기가 끝났어요! 🎉</p>
+
+            {/* 다음 동화 — 끝나면 "다음 것도 보자"가 자연스럽다. 서재로 나갔다
+                다시 고르게 하지 않는다. 마지막 책이면 이 버튼은 안 뜬다. */}
+            {nextBook && (
+              <Link
+                href={`/book/${nextBook.id}`}
+                style={{ background: ui.colors.accent }}
+                className="flex max-w-[18rem] flex-col items-center gap-0.5 rounded-3xl px-7 py-3.5 text-white shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <span className="text-base font-extrabold">▶ 다음 동화 보기</span>
+                <span className="line-clamp-1 break-keep text-[13px] font-bold text-white/85">
+                  {nextBook.title}
+                </span>
+              </Link>
+            )}
+
             <div className="flex flex-wrap justify-center gap-3">
               <button
                 type="button"
                 onClick={replayFromStart}
-                style={{ background: ui.colors.accent }}
-                className="rounded-full px-7 py-3.5 text-base font-extrabold text-white shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0"
+                style={nextBook ? undefined : { background: ui.colors.accent }}
+                className={`rounded-full px-7 py-3.5 text-base font-extrabold shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0 ${
+                  nextBook ? "bg-neutral-100 text-neutral-600" : "text-white"
+                }`}
               >
                 🔄 처음부터 다시 듣기
               </button>
