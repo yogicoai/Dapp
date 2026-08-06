@@ -731,6 +731,47 @@ export const STORY_FONTS: StoryFont[] = [
   },
 ];
 
+/**
+ * 본문 글자 굵기.
+ *
+ * 글꼴에 따라 실제로 가진 굵기가 다르다 — 동글체는 300·400·700, 아이 손글씨는
+ * 400·700, 주아·펜글씨·돋움은 400 하나뿐이다. 없는 굵기를 고르면 브라우저가
+ * 흉내 내서 굵게 그리는데(가짜 굵기), 그게 오히려 뭉개져 보일 때가 있다.
+ * 그래서 '보통'을 기본으로 두고, 굵게는 고르고 싶은 사람만 고르게 한다.
+ * (예전엔 모든 글꼴에 600을 박아 놔서, 400뿐인 글꼴은 늘 가짜 굵기로 나왔다.)
+ */
+export const STORY_WEIGHTS = [
+  { id: "normal", label: "보통", value: 400 },
+  { id: "medium", label: "조금 굵게", value: 600 },
+  { id: "bold", label: "굵게", value: 700 },
+] as const;
+
+export type StoryWeight = (typeof STORY_WEIGHTS)[number];
+
+const STORY_WEIGHT_KEY = "voice-storybook:story-weight";
+
+export function findStoryWeight(id: string | null): StoryWeight {
+  return STORY_WEIGHTS.find((w) => w.id === id) ?? STORY_WEIGHTS[1];
+}
+
+export function loadStoryWeight(): StoryWeight {
+  if (typeof window === "undefined") return STORY_WEIGHTS[1];
+  try {
+    return findStoryWeight(window.localStorage.getItem(acctKey(STORY_WEIGHT_KEY)));
+  } catch {
+    return STORY_WEIGHTS[1];
+  }
+}
+
+export function saveStoryWeight(id: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(acctKey(STORY_WEIGHT_KEY), id);
+  } catch {
+    /* 무시 */
+  }
+}
+
 const STORY_FONT_KEY = "voice-storybook:story-font";
 
 export function findStoryFont(id: string | null): StoryFont {

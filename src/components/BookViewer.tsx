@@ -23,6 +23,9 @@ import {
   loadStoryFont,
   type StoryFont,
   STORY_FONTS,
+  loadStoryWeight,
+  type StoryWeight,
+  STORY_WEIGHTS,
 } from "@/lib/prefs";
 import { loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
@@ -170,8 +173,13 @@ export function BookViewer({ book }: { book: Book }) {
   const [font, setFont] = useState<StoryFont>(STORY_FONTS[0]);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용
   useEffect(() => setFont(loadStoryFont()), []);
+  // 글자 굵기 — 예전엔 모든 글꼴에 600이 박혀 있어, 400뿐인 글꼴은 늘 가짜 굵기였다.
+  const [weight, setWeight] = useState<StoryWeight>(STORY_WEIGHTS[1]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용
+  useEffect(() => setWeight(loadStoryWeight()), []);
   const scaled = (base: string) => ({
     fontSize: `calc(${base} * ${textScale} * ${font.scale})`,
+    fontWeight: weight.value,
   });
   const applyTextScale = (s: number) => {
     setTextScale(s);
@@ -1077,7 +1085,7 @@ export function BookViewer({ book }: { book: Book }) {
             >
               <p
                 style={scaled(size)}
-                className={`font-story whitespace-pre-line break-keep text-pretty text-center font-semibold drop-shadow-md ${
+                className={`font-story whitespace-pre-line break-keep text-pretty text-center drop-shadow-md ${
                   textPos === "bottom" || textPos === "top"
                     ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : "w-full rounded-3xl bg-black/55 p-5 backdrop-blur-[2px] sm:p-6"
@@ -1225,7 +1233,7 @@ export function BookViewer({ book }: { book: Book }) {
                     {/* 세로(어두운 배경) — 흰 글씨. 펼침면일 때도 세로에서는 이쪽을 쓴다. */}
                     <p
                       style={scaled("clamp(1.15rem,4.4vw,1.85rem)")}
-                      className={`font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
+                      className={`font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
                         spread ? "landscape:hidden" : ""
                       }`}
                     >
@@ -1239,7 +1247,7 @@ export function BookViewer({ book }: { book: Book }) {
                       // 그래도 넘치면 스크롤은 되되 막대는 감춘다.
                       <p
                         style={scaled("clamp(0.95rem,1.85vw,1.45rem)")}
-                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold [scrollbar-width:none] [&::-webkit-scrollbar]:hidden landscape:block"
+                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden landscape:block"
                       >
                         {renderRuns(true)}
                       </p>

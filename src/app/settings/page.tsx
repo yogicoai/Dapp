@@ -21,6 +21,10 @@ import {
   loadStoryFont,
   saveStoryFont,
   STORY_FONTS,
+  findStoryWeight,
+  loadStoryWeight,
+  saveStoryWeight,
+  STORY_WEIGHTS,
   countBooksWithEmbeddedArt,
   deleteMyBook,
   loadAllBooksBrief,
@@ -197,6 +201,7 @@ export default function SettingsPage() {
   const [shelfCols, setShelfCols] = useState<ShelfCols>(5);
   // 동화 본문 글꼴 — 고른 id만 들고 있는다(배율·줄 간격은 prefs의 목록이 안다).
   const [storyFont, setStoryFont] = useState("dongle");
+  const [storyWeight, setStoryWeight] = useState("medium");
   const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
   // 부모 목소리(복제됨) — 계정별로 Supabase에서 불러온다. cloningRole = 지금 복제 중인 역할.
@@ -270,6 +275,7 @@ export default function SettingsPage() {
     setBookLayout(loadBookLayout());
     setShelfCols(loadShelfCols());
     setStoryFont(loadStoryFont().id);
+    setStoryWeight(loadStoryWeight().id);
     // (녹음 목록은 계정별 저장이라 세션 effect에서 uid를 안 뒤에 불러온다.)
   }, []);
 
@@ -1264,6 +1270,7 @@ export default function SettingsPage() {
                     style={{
                       ...(active ? { borderColor: accent } : undefined),
                       fontFamily: `${f.family}, sans-serif`,
+                      fontWeight: findStoryWeight(storyWeight).value,
                     }}
                     className={`flex items-baseline justify-between gap-3 rounded-2xl border-2 px-4 py-3 text-left transition ${
                       active ? "bg-white shadow-sm" : "border-transparent bg-neutral-100"
@@ -1286,6 +1293,39 @@ export default function SettingsPage() {
                 );
               })}
             </div>
+
+            {/* 글자 굵기 — 미리보기 글씨도 고른 굵기로 바뀌게 해서 바로 비교된다. */}
+            <h2 className="mt-1 text-sm font-extrabold text-neutral-400">글자 굵기</h2>
+            <div className="flex flex-wrap gap-2">
+              {STORY_WEIGHTS.map((w) => {
+                const active = storyWeight === w.id;
+                return (
+                  <button
+                    key={w.id}
+                    type="button"
+                    onClick={() => {
+                      setStoryWeight(w.id);
+                      saveStoryWeight(w.id);
+                      flashSaved();
+                    }}
+                    aria-pressed={active}
+                    style={{
+                      fontWeight: w.value,
+                      ...(active ? { background: accent } : undefined),
+                    }}
+                    className={`rounded-full px-4 py-2 text-sm transition ${
+                      active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                    }`}
+                  >
+                    {w.label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="-mt-1 break-keep text-xs font-medium text-neutral-400">
+              글꼴에 따라 굵기가 한 가지뿐인 것도 있어요. 그럴 땐 굵게를 골라도 크게 달라지지
+              않아요.
+            </p>
 
             <h2 className="mt-1 text-sm font-extrabold text-neutral-400">책장 한 줄에</h2>
             <div className="flex flex-wrap gap-2">
