@@ -1,6 +1,5 @@
 "use client";
 
-import type React from "react";
 import Link from "next/link";
 import { useTheme } from "./ThemeProvider";
 
@@ -39,11 +38,17 @@ export function Bookshelf({ books, cols = 5 }: { books: ShelfItem[]; cols?: numb
      * 한 줄에 몇 권을 놓을지 — 책 크기는 그대로 두고 책장 폭만 좁혀서 정한다.
      * 칸에 맞춰 책을 늘리는 방식은 3권일 때 책이 우스꽝스럽게 커진다.
      * 폭 = 권수 × (책 너비 11rem + 사이 간격 1.75rem).
-     * 좁은 화면(sm 미만)에는 안 건다 — 거기선 화면 폭이 알아서 2권으로 맞춘다.
+     *
+     * 폭은 클래스가 아니라 style로 직접 준다. 값이 상황마다 달라지는 건 클래스로
+     * 만들면(=임의값 + CSS 변수) 어느 규칙이 이기는지가 불투명해진다 — 여기선
+     * 실제로 적용이 안 됐다. style은 언제나 이긴다.
+     *
+     * 좁은 화면은 따로 안 건드려도 된다. maxWidth 100%가 화면 밖으로 못 나가게
+     * 잡아 주므로, 폰에서는 예전처럼 화면 폭이 알아서 2권으로 맞춘다.
      */
     <div
-      style={{ "--cols": String(cols) } as React.CSSProperties}
-      className="mx-auto flex flex-wrap items-end justify-center gap-6 sm:w-[calc(var(--cols)*12.75rem)] sm:max-w-full sm:gap-7"
+      style={{ width: `${cols * 12.75}rem`, maxWidth: "100%" }}
+      className="mx-auto flex flex-wrap items-end justify-center gap-6 sm:gap-7"
     >
       {books.map((book, i) => {
         const art = book.coverImage ?? book.pages?.find((p) => p.image)?.image ?? null;

@@ -181,7 +181,10 @@ export default function Home() {
       <div className="fixed inset-0 -z-10 bg-white/25" />
 
       {/* 아래 여백: 폰은 버튼이 흐름 안에 있어 얕게, sm부터는 떠 있는 버튼 자리만큼. */}
-      <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center px-6 pb-10 pt-6 sm:pb-32">
+      {/* max-w-7xl(80rem) — 책장 한 줄에 6권을 고르면 76.5rem이 필요한데, 예전
+          6xl(72rem)에서는 폭이 모자라 6권을 골라도 5권으로 접혔다(설정이 안 먹는
+          것처럼 보이던 원인 중 하나). 좁은 화면에서는 어차피 화면 폭이 먼저 걸린다. */}
+      <main className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col justify-center px-6 pb-10 pt-6 sm:pb-32">
         {/* 좌상단 — 회원은 토큰 잔액(누르면 설정), 게스트는 로그인 버튼. */}
         {guest ? (
           <Link
