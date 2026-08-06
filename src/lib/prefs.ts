@@ -620,6 +620,31 @@ export async function loadMyBook(id: string): Promise<Book | null> {
   return data ? rowToBook(data as BookRow) : null;
 }
 
+/* ── 캐릭터 눌러 보기 안내 ──
+ * 전래동화·세계명작은 그림 속 인물을 누르면 그 인물이 말한다. 그런데 눌러 볼 수
+ * 있다는 걸 아무 데도 안 알려 줘서, 있는 줄 모르고 지나가는 부모가 많다.
+ * 처음 한 번만 알려 주고, 본 뒤로는 다시 띄우지 않는다(계정별로 기억).
+ */
+const HOTSPOT_HINT_KEY = "voice-storybook:hotspot-hint";
+
+export function hotspotHintSeen(): boolean {
+  if (typeof window === "undefined") return true; // 서버에서는 안 띄운다
+  try {
+    return window.localStorage.getItem(acctKey(HOTSPOT_HINT_KEY)) === "1";
+  } catch {
+    return true;
+  }
+}
+
+export function markHotspotHintSeen(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(acctKey(HOTSPOT_HINT_KEY), "1");
+  } catch {
+    /* 저장 못 해도 안내가 한 번 더 뜨는 것뿐이라 무시한다 */
+  }
+}
+
 /**
  * 아직 그림이 DB 안에 들어 있는 책이 몇 권인지 — 그림 내용은 받지 않고 개수만 센다.
  *

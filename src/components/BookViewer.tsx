@@ -17,6 +17,8 @@ import {
   saveBookProgress,
   saveTextScale,
   TEXT_SCALES,
+  hotspotHintSeen,
+  markHotspotHintSeen,
 } from "@/lib/prefs";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
@@ -307,6 +309,24 @@ export function BookViewer({ book }: { book: Book }) {
     setVoiceId(v);
     voiceIdRef.current = v;
   }, [book.narrators, book.narrator, book.id, parentVoices]);
+
+  /**
+   * "그림 속 친구를 눌러 보세요" 안내 — 처음 한 번만.
+   *
+   * 인물을 누르면 말하는 기능이 있는데 아무 표시가 없어서, 있는 줄 모르고 지나가는
+   * 부모가 많았다. 눌러 볼 곳이 실제로 있는 책에서만, 계정당 한 번만 띄운다.
+   * 화면을 어지럽히지 않게 잠깐 떴다 사라지고, 누르면 바로 닫힌다.
+   */
+  const hasHotspots = book.pages.some((p) => (p.hotspots?.length ?? 0) > 0);
+  const [tapHint, setTapHint] = useState(false);
+  useEffect(() => {
+    if (!hasHotspots || hotspotHintSeen()) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 첫 진입 안내
+    setTapHint(true);
+    markHotspotHintSeen(); // 띄운 순간 본 것으로 친다 — 두 번 보여 주지 않는다
+    const t = setTimeout(() => setTapHint(false), 6000);
+    return () => clearTimeout(t);
+  }, [hasHotspots]);
 
   // 캐릭터 클릭 반응 — 정지 그림이라 캐릭터 자체는 못 움직이지만, 누른 자리에서
   // 반짝이가 통통 튀어올라 "반응하는" 느낌을 준다. key로 매 클릭마다 다시 튼다.
@@ -1206,6 +1226,18 @@ export function BookViewer({ book }: { book: Book }) {
             ))}
           </div>
         </div>
+      )}
+
+      {/* 처음 한 번만 뜨는 안내 — 눌러 볼 수 있다는 걸 모르고 지나가지 않게.
+          잠깐 떴다 사라지고, 눌러도 닫힌다. 넘김 버튼(z-10) 위에 잠깐 얹는다. */}
+      {tapHint && (
+        <button
+          type="button"
+          onClick={() => setTapHint(false)}
+          className="absolute left-1/2 top-4 z-20 -translate-x-1/2 animate-[float_2s_ease-in-out_infinite] rounded-full bg-white/95 px-5 py-2.5 text-sm font-extrabold text-neutral-700 shadow-lg backdrop-blur"
+        >
+          👆 그림 속 친구를 눌러 보세요 — 말을 해요!
+        </button>
       )}
 
       {/* 캐릭터 클릭 대사 — 그림 속 캐릭터 자리를 누르면 그 캐릭터가 말한다.
