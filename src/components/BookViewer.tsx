@@ -1409,8 +1409,13 @@ export function BookViewer({ book }: { book: Book }) {
               <p className="text-sm font-extrabold text-neutral-800">
                 {index + 1}쪽 글 고치기
               </p>
-              <p className="mt-0.5 text-xs font-medium text-neutral-500">
-                고친 글은 바로 저장돼요. 그림과 목소리는 그대로예요.
+              {/* 글이 바뀌면 그 쪽 낭독은 캐시가 안 맞아 다시 합성된다 = 크레딧이
+                  또 나간다. 고치기 전에 알고 있어야 해서 분명히 적는다.
+                  구성이 마음에 안 들면 만들기의 줄거리 단계에서 고치는 게 공짜다. */}
+              <p className="mt-0.5 break-keep text-xs font-medium text-neutral-500">
+                그림은 그대로예요. 다만 <b className="text-amber-700">글이 바뀌면 그 쪽 낭독을
+                다시 만들어야 해서 크레딧이 한 번 더 나갑니다</b> — 오타 정정처럼 꼭 필요한
+                때만 쓰세요.
               </p>
             </div>
             <textarea

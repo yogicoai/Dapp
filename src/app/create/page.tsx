@@ -737,6 +737,31 @@ export default function CreatePage() {
 
   // 생성 결과
   const [outline, setOutline] = useState<Outline | null>(null);
+
+  /*
+   * 줄거리 고치기 — 지금 고르고 있는 자리("title" 또는 장면 번호)와 입력 중인 글.
+   *
+   * 고치는 자리를 여기로 잡은 이유: 그림도 낭독도 아직 안 만들었다. 완성된 뒤에
+   * 글을 고치면 그 쪽 낭독을 다시 합성해야 해서 크레딧이 또 나가고, 그림은 옛 글에
+   * 맞춰진 채로 남아 어긋난다. 여기서 고치면 둘 다 없어서 얼마든지 고쳐도 공짜다.
+   */
+  const [editScene, setEditScene] = useState<number | "title" | null>(null);
+  const [sceneDraft, setSceneDraft] = useState("");
+
+  function saveSceneEdit() {
+    const text = sceneDraft.trim();
+    if (!text) return;
+    setOutline((prev) => {
+      if (!prev) return prev;
+      if (editScene === "title") return { ...prev, title: text };
+      return {
+        ...prev,
+        scenes: prev.scenes.map((s) => (s.sceneNo === editScene ? { ...s, text } : s)),
+      };
+    });
+    setEditScene(null);
+  }
+
   const [story, setStory] = useState<Story | null>(null);
   // 쪽별 삽화(data URL). 실패한 쪽은 null → 뷰어가 플레이스홀더를 그린다.
   const [pageImages, setPageImages] = useState<(string | null)[]>([]);
@@ -2014,10 +2039,50 @@ export default function CreatePage() {
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 이 이야기로 만들까요?
               </h1>
+              {/* 고치는 자리는 여기다 — 그림도 크레딧도 쓰기 전이라, 마음에 안 드는
+                  장면을 지금 고치면 공짜이고 그림이 어긋날 일도 없다.
+                  완성된 뒤에 글만 고치면 그림은 그대로라 오히려 어긋난다. */}
+              <p className="-mt-2 break-keep text-center text-xs font-medium text-neutral-400">
+                고치고 싶은 곳을 눌러 보세요. 지금은 얼마든지 고칠 수 있어요.
+              </p>
               <div className="rounded-2xl p-5" style={{ background: accentSoft }}>
-                <h2 className="text-center text-xl font-extrabold text-neutral-800">
-                  {outline.title}
-                </h2>
+                {editScene === "title" ? (
+                  <div className="flex flex-col gap-2">
+                    <input
+                      value={sceneDraft}
+                      onChange={(e) => setSceneDraft(e.target.value.slice(0, 60))}
+                      autoFocus
+                      className="w-full rounded-xl border-2 border-neutral-300 bg-white px-3 py-2 text-center text-lg font-extrabold outline-none focus:border-neutral-500"
+                    />
+                    <div className="flex justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditScene(null)}
+                        className="rounded-full bg-white/70 px-4 py-1.5 text-xs font-extrabold text-neutral-600"
+                      >
+                        취소
+                      </button>
+                      <button
+                        type="button"
+                        onClick={saveSceneEdit}
+                        className="rounded-full bg-neutral-800 px-4 py-1.5 text-xs font-extrabold text-white"
+                      >
+                        확인
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSceneDraft(outline.title);
+                      setEditScene("title");
+                    }}
+                    className="w-full rounded-xl px-2 py-1 text-center text-xl font-extrabold text-neutral-800 transition hover:bg-white/50"
+                  >
+                    {outline.title}
+                  </button>
+                )}
                 <ol className="mt-3 flex flex-col gap-2.5">
                   {outline.scenes.map((s) => (
                     <li key={s.sceneNo} className="flex gap-2.5">
@@ -2025,9 +2090,45 @@ export default function CreatePage() {
                         className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white">
                         {s.sceneNo}
                       </span>
-                      <p className="text-sm font-medium leading-relaxed text-neutral-700">
-                        {s.text}
-                      </p>
+                      {editScene === s.sceneNo ? (
+                        <div className="flex min-w-0 flex-1 flex-col gap-2">
+                          <textarea
+                            value={sceneDraft}
+                            onChange={(e) => setSceneDraft(e.target.value)}
+                            rows={3}
+                            autoFocus
+                            className="w-full resize-y rounded-xl border-2 border-neutral-300 bg-white p-2.5 text-sm font-medium leading-relaxed outline-none focus:border-neutral-500"
+                          />
+                          <div className="flex justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setEditScene(null)}
+                              className="rounded-full bg-white/70 px-4 py-1.5 text-xs font-extrabold text-neutral-600"
+                            >
+                              취소
+                            </button>
+                            <button
+                              type="button"
+                              onClick={saveSceneEdit}
+                              disabled={!sceneDraft.trim()}
+                              className="rounded-full bg-neutral-800 px-4 py-1.5 text-xs font-extrabold text-white disabled:opacity-40"
+                            >
+                              확인
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSceneDraft(s.text);
+                            setEditScene(s.sceneNo);
+                          }}
+                          className="min-w-0 flex-1 rounded-xl px-2 py-1 text-left text-sm font-medium leading-relaxed text-neutral-700 transition hover:bg-white/50"
+                        >
+                          {s.text}
+                        </button>
+                      )}
                     </li>
                   ))}
                 </ol>
