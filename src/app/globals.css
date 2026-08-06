@@ -39,7 +39,10 @@ body {
 */
 .font-story {
   font-family: "Dongle", "Pretendard Variable", Pretendard, system-ui, sans-serif;
-  /* 동글체는 자간이 좁고 글자가 작게 잡혀, 살짝 벌리고 키워야 본문이 편하다. */
+  /* 동글체는 자간이 좁고 글자가 작게 잡혀, 살짝 벌리고 키워야 본문이 편하다.
+     다만 글자에 견줘 위아래 여백(em 박스)을 크게 잡는 글꼴이라, 줄 간격 숫자가
+     같아도 다른 글꼴보다 훨씬 떨어져 보인다 — 본문 줄 간격을 1.4로 두는 이유다.
+     BookViewer의 leading 값을 바꿀 일이 있으면 이 점을 같이 감안할 것. */
   letter-spacing: 0.01em;
 }
 

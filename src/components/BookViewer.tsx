@@ -956,12 +956,14 @@ export function BookViewer({ book }: { book: Book }) {
               at += sentence.length;
               return (
                 /*
-                 * 문장 사이 간격은 줄 간격(1.6)과 어울리게 잡는다.
-                 * 처음엔 0.7em을 줬는데, 한 문장이 두 줄로 넘어갈 때 '줄 사이 1.6'과
-                 * '문장 사이 2.3'이 나란히 보여 간격이 제각각으로 읽혔다(사장님 지적).
-                 * em이라 글자를 키워도 비율은 그대로 유지된다.
+                 * 문장 사이 간격 — 줄 간격(1.4)과 어울리게 아주 얕게만 준다.
+                 *
+                 * 두 번 줄였다. 0.7em은 한 문장이 두 줄로 넘어갈 때 '줄 사이'와 '문장
+                 * 사이'가 나란히 보여 간격이 제각각으로 읽혔고, 0.45em도 여전히 멀었다.
+                 * 문장마다 줄이 바뀌는 것만으로 이미 나뉘어 보이므로, 여기서 할 일은
+                 * 살짝 숨을 주는 것뿐이다. em이라 글자를 키워도 비율은 그대로다.
                  */
-                <span key={si} className="block [&+&]:mt-[0.45em]">
+                <span key={si} className="block [&+&]:mt-[0.25em]">
                   {live ? (
                     sentence
                       .split("")
@@ -1003,7 +1005,7 @@ export function BookViewer({ book }: { book: Book }) {
             >
               <p
                 style={scaled(size)}
-                className={`font-story whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.6] drop-shadow-md ${
+                className={`font-story whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.4] drop-shadow-md ${
                   textPos === "bottom" || textPos === "top"
                     ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : "w-full rounded-3xl bg-black/55 p-5 backdrop-blur-[2px] sm:p-6"
@@ -1151,7 +1153,7 @@ export function BookViewer({ book }: { book: Book }) {
                     {/* 세로(어두운 배경) — 흰 글씨. 펼침면일 때도 세로에서는 이쪽을 쓴다. */}
                     <p
                       style={scaled("clamp(1.15rem,4.4vw,1.85rem)")}
-                      className={`font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.6] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
+                      className={`font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.4] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
                         spread ? "landscape:hidden" : ""
                       }`}
                     >
@@ -1165,7 +1167,7 @@ export function BookViewer({ book }: { book: Book }) {
                       // 그래도 넘치면 스크롤은 되되 막대는 감춘다.
                       <p
                         style={scaled("clamp(0.95rem,1.85vw,1.45rem)")}
-                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.6] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden landscape:block"
+                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.4] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden landscape:block"
                       >
                         {renderRuns(true)}
                       </p>
