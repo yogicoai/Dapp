@@ -101,6 +101,7 @@ const THEME_GROUPS = [
 const WHO_OPTIONS = [
   { t: "혼자서", e: "🧒" },
   { t: "친구랑", e: "👫" },
+  { t: "친구들이랑", e: "🧑‍🤝‍🧑" },
   { t: "엄마랑", e: "👩" },
   { t: "아빠랑", e: "👨" },
   { t: "엄마 아빠랑", e: "👨‍👩‍👧" },
@@ -135,6 +136,7 @@ const TODAY_PLACES = [
 ];
 const TODAY_WHO = [
   { t: "친구랑", e: "👫" },
+  { t: "친구들이랑", e: "🧑‍🤝‍🧑" },
   { t: "선생님이랑", e: "👩‍🏫" },
   { t: "엄마랑", e: "👩" },
   { t: "아빠랑", e: "👨" },
@@ -277,12 +279,111 @@ const GENDER_KNOWN = new Set([
  * 이름으로 짐작해 남자 친구가 여자아이로 그려진다 — 실제 친구가 주인공 옆에
  * 서는 책이라 아이가 바로 알아본다.
  */
+/** 여자/남자 고르는 작은 칩 한 쌍. 같은 걸 다시 누르면 해제된다(안 고르면 모델이 정한다). */
+function GenderChips({
+  value,
+  onChange,
+  accent,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  accent: string;
+}) {
+  return (
+    <>
+      {["여자", "남자"].map((g) => {
+        const on = value === g;
+        return (
+          <button
+            key={g}
+            type="button"
+            onClick={() => onChange(on ? "" : g)}
+            aria-pressed={on}
+            style={on ? { background: accent } : undefined}
+            className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold transition ${
+              on ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+            }`}
+          >
+            {g === "여자" ? "👧 여자" : "👦 남자"}
+          </button>
+        );
+      })}
+    </>
+  );
+}
+
+export type FriendEntry = { name: string; gender: string };
+
+/** "친구들이랑"에서 친구를 몇 명까지 받을지. 주인공까지 넷이면 그림 한 장에 담기는 한계다. */
+const MAX_FRIENDS = 3;
+
+/**
+ * 친구 여러 명 입력 — 한 명씩 이름과 성별을 따로 받는다.
+ *
+ * 뭉뚱그려 "친구들"로만 넘기면 모델이 이름을 지어내고 생김새도 서로 닮게 그린다.
+ * 한 명씩 세워 두면 이야기에서도 그림에서도 각자 다른 사람으로 남는다.
+ */
+function FriendsInput({
+  friends,
+  onChange,
+  accent,
+}: {
+  friends: FriendEntry[];
+  onChange: (v: FriendEntry[]) => void;
+  accent: string;
+}) {
+  const patch = (i: number, p: Partial<FriendEntry>) =>
+    onChange(friends.map((f, idx) => (idx === i ? { ...f, ...p } : f)));
+
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-xs font-bold text-neutral-400">
+        친구들 <span className="font-medium">(선택 · 최대 {MAX_FRIENDS}명)</span>
+      </p>
+      {friends.map((f, i) => (
+        <div key={i} className="flex flex-wrap items-center gap-1.5">
+          <input
+            value={f.name}
+            onChange={(e) => patch(i, { name: e.target.value.slice(0, 20) })}
+            maxLength={20}
+            placeholder={`친구 ${i + 1} 이름`}
+            className="min-w-0 flex-1 rounded-2xl border-2 border-dashed border-neutral-200 bg-white px-3.5 py-2 text-sm font-bold outline-none focus:border-neutral-400"
+          />
+          <GenderChips value={f.gender} onChange={(g) => patch(i, { gender: g })} accent={accent} />
+          <button
+            type="button"
+            onClick={() => onChange(friends.filter((_, idx) => idx !== i))}
+            aria-label={`친구 ${i + 1} 빼기`}
+            className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-bold text-neutral-500 hover:bg-neutral-200"
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+      {friends.length < MAX_FRIENDS && (
+        <button
+          type="button"
+          onClick={() => onChange([...friends, { name: "", gender: "" }])}
+          className="self-start rounded-full bg-neutral-100 px-3.5 py-1.5 text-xs font-extrabold text-neutral-600 hover:bg-neutral-200"
+        >
+          + 친구 더하기
+        </button>
+      )}
+      <p className="text-[11px] font-medium text-neutral-400">
+        이름을 적으면 그 이름이 그대로 동화에 나와요. 안 적으면 &lsquo;친구&rsquo;라고만 나와요.
+      </p>
+    </div>
+  );
+}
+
 function WhoNameInput({
   who,
   value,
   onChange,
   gender,
   onGenderChange,
+  friends,
+  onFriendsChange,
   accent,
 }: {
   who: string;
@@ -290,9 +391,15 @@ function WhoNameInput({
   onChange: (v: string) => void;
   gender: string;
   onGenderChange: (v: string) => void;
+  friends: FriendEntry[];
+  onFriendsChange: (v: FriendEntry[]) => void;
   accent: string;
 }) {
   if (!who || who === "혼자서") return null;
+  // "친구들이랑"은 한 명씩 받는 전용 입력으로 간다.
+  if (who === "친구들이랑") {
+    return <FriendsInput friends={friends} onChange={onFriendsChange} accent={accent} />;
+  }
   const term = companionTerm(who);
   const askGender = !GENDER_KNOWN.has(term);
   return (
@@ -310,24 +417,7 @@ function WhoNameInput({
       {askGender && (
         <div className="mt-1 flex items-center gap-1.5">
           <span className="text-xs font-bold text-neutral-400">{term}는</span>
-          {["여자", "남자"].map((g) => {
-            const on = gender === g;
-            return (
-              <button
-                key={g}
-                type="button"
-                // 같은 걸 다시 누르면 해제 — 안 고르면 모델이 알아서 정한다.
-                onClick={() => onGenderChange(on ? "" : g)}
-                aria-pressed={on}
-                style={on ? { background: accent } : undefined}
-                className={`rounded-full px-3 py-1 text-xs font-bold transition ${
-                  on ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                }`}
-              >
-                {g === "여자" ? "👧 여자" : "👦 남자"}
-              </button>
-            );
-          })}
+          <GenderChips value={gender} onChange={onGenderChange} accent={accent} />
         </div>
       )}
     </div>
@@ -446,6 +536,8 @@ export default function CreatePage() {
   const [whoName, setWhoName] = useState("");
   // 동행의 성별(선택, "여자"/"남자"). 친구·선생님처럼 호칭으로 알 수 없을 때만 묻는다.
   const [whoGender, setWhoGender] = useState("");
+  // "친구들이랑"을 골랐을 때 친구 한 명 한 명(이름·성별). 최대 3명.
+  const [friends, setFriends] = useState<FriendEntry[]>([{ name: "", gender: "" }]);
   const [happening, setHappening] = useState("");
   const [extra, setExtra] = useState("");
   // 「오늘의 이야기」 전용 — 어디서·무슨 일(자유)·기분. 누구랑(who)은 공유한다.
@@ -675,6 +767,7 @@ export default function CreatePage() {
     setWho((prev) => (prev === t ? "" : t));
     setWhoName("");
     setWhoGender(""); // 이름과 같은 이유 — 다른 동행으로 바꿨는데 앞의 성별이 남으면 안 된다
+    setFriends([{ name: "", gender: "" }]);
   }
 
   async function makeOutline() {
@@ -702,6 +795,7 @@ export default function CreatePage() {
                   who,
                   whoName: whoName.trim(),
                   whoGender,
+                  friends: who === "친구들이랑" ? friends.filter((x) => x.name.trim() || x.gender) : [],
                   happening: todayEvent.trim(),
                   place,
                   feeling,
@@ -717,6 +811,7 @@ export default function CreatePage() {
                     who,
                     whoName: whoName.trim(),
                   whoGender,
+                  friends: who === "친구들이랑" ? friends.filter((x) => x.name.trim() || x.gender) : [],
                     happening: "",
                     place: "",
                     feeling: "",
@@ -730,6 +825,7 @@ export default function CreatePage() {
                     who,
                     whoName: whoName.trim(),
                   whoGender,
+                  friends: who === "친구들이랑" ? friends.filter((x) => x.name.trim() || x.gender) : [],
                     happening,
                     place: "",
                     feeling: "",
@@ -1190,6 +1286,8 @@ export default function CreatePage() {
                     onChange={setWhoName}
                     gender={whoGender}
                     onGenderChange={setWhoGender}
+                    friends={friends}
+                    onFriendsChange={setFriends}
                     accent={accent}
                   />
 
@@ -1338,6 +1436,8 @@ export default function CreatePage() {
                     onChange={setWhoName}
                     gender={whoGender}
                     onGenderChange={setWhoGender}
+                    friends={friends}
+                    onFriendsChange={setFriends}
                     accent={accent}
                   />
 
@@ -1444,6 +1544,8 @@ export default function CreatePage() {
                     onChange={setWhoName}
                     gender={whoGender}
                     onGenderChange={setWhoGender}
+                    friends={friends}
+                    onFriendsChange={setFriends}
                     accent={accent}
                   />
 

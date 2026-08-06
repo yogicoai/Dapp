@@ -47,6 +47,17 @@ export function parseMaterial(value: unknown): StoryMaterial {
     whoName: pick(v?.whoName),
     // "여자"/"남자"만 받는다 — 프롬프트에 그대로 들어가는 값이라 아무 문자열이나 통과시키지 않는다.
     whoGender: v?.whoGender === "여자" || v?.whoGender === "남자" ? v.whoGender : "",
+    // "친구들이랑" — 최대 3명. 주인공까지 넷이면 그림 한 장에 담기는 한계다.
+    friends: (Array.isArray(v?.friends) ? (v.friends as unknown[]) : [])
+      .map((f) => {
+        const o = f as { name?: unknown; gender?: unknown };
+        return {
+          name: typeof o?.name === "string" ? o.name.trim().slice(0, 20) : "",
+          gender: o?.gender === "여자" || o?.gender === "남자" ? o.gender : "",
+        };
+      })
+      .filter((f) => f.name || f.gender)
+      .slice(0, 3),
     happening: pick(v?.happening),
     place: pick(v?.place),
     feeling: pick(v?.feeling),

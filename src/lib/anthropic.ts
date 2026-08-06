@@ -221,6 +221,12 @@ export type StoryMaterial = {
    * 안 받으면 모델이 이름으로 짐작해 남자 친구가 여자로 그려지는 사고가 난다.
    */
   whoGender: string;
+  /**
+   * "친구들이랑"을 골랐을 때 친구 한 명 한 명 (이름·성별, 선택).
+   * 여럿이 나오는 이야기는 누가 누군지 흐려지기 쉬워서, 이름과 성별을 받아
+   * 인물마다 다른 사람으로 서게 한다. 그림에서 서로 닮게 그려지는 것도 막는다.
+   */
+  friends: { name: string; gender: string }[];
   happening: string; // 무슨 일 (오늘=자유 서술, 상상=사건 칩)
   place: string; // 오늘: 어디서
   feeling: string; // 오늘: 그때 기분
@@ -240,12 +246,40 @@ export type StoryMaterial = {
  * 성별도 같이 못박는다. 안 주면 모델이 이름으로 짐작해 남자 친구가 여자아이로
  * 나오는 사고가 난다 — 실제 친구가 주인공 옆에 서는 책이라 이게 바로 티가 난다.
  */
-function whoLine(label: string, who: string, whoName: string, whoGender = ""): string {
+function whoLine(
+  label: string,
+  who: string,
+  whoName: string,
+  whoGender = "",
+  friends: { name: string; gender: string }[] = [],
+): string {
   if (!who) return "";
   // "여자"/"남자" → 이야기와 삽화 양쪽에서 흔들리지 않게 한 문장으로 붙인다.
   const g = whoGender
     ? ` ${whoGender}아이다 — 이야기 내내, 그리고 그림에서도 ${whoGender}아이로 그린다. 이름으로 성별을 짐작하지 않는다.`
     : "";
+
+  /*
+   * 친구가 여럿인 경우. 한 명씩 이름·성별을 못박아야 인물이 뭉개지지 않는다.
+   * 여럿이 나오면 그림에서 서로 닮게 그려지는 사고가 특히 잘 나므로, 생김새를
+   * 서로 다르게 정하라는 말을 여기서 한 번 더 건다.
+   */
+  if (friends.length > 0) {
+    const list = friends
+      .map((f, i) => {
+        const name = f.name || `친구${i + 1}`;
+        const sex = f.gender ? `${f.gender}아이` : "성별은 이야기에 맞게";
+        return `${name}(${sex})`;
+      })
+      .join(", ");
+    return [
+      `${label}: 친구 ${friends.length}명 — ${list}.`,
+      `  적어 준 이름과 성별을 그대로 쓴다. 이름을 바꾸거나 친구를 더 만들지 않는다.`,
+      `  친구들끼리도 서로 확실히 달라 보이게 정한다 — 머리 모양·머리 색·옷 색을 각자 다르게.`,
+      `  주인공까지 ${friends.length + 1}명이라 한 장면에 다 넣으면 복잡해진다. 쪽마다 꼭 필요한 인물만 등장시킨다.`,
+    ].join("\n");
+  }
+
   if (whoName) {
     return `${label}: ${whoName} (실제 이름이다 — 이 이름을 그대로 등장인물 이름으로 쓴다.${g})`;
   }
@@ -261,7 +295,7 @@ function materialLines(m: StoryMaterial): string[] {
       "완전히 다른 이야기로 바꾸지 말고, 실제 있었던 일의 결을 지키되 아이가 주인공으로",
       "빛나게 하고, 속상한 일이면 마지막엔 마음이 풀리게 한다.",
       m.place ? `- 어디에서: ${m.place}` : "",
-      whoLine("- 누구랑", m.who, m.whoName, m.whoGender),
+      whoLine("- 누구랑", m.who, m.whoName, m.whoGender, m.friends),
       m.happening ? `- 무슨 일이 있었나: ${m.happening}` : "",
       m.feeling ? `- 그때 아이 기분: ${m.feeling}` : "",
       m.ending
@@ -278,13 +312,13 @@ function materialLines(m: StoryMaterial): string[] {
       "표현하며, 아이가 스스로 감정을 알아차리고 다독이는 과정을 이야기로 만든다.",
       "감정 자체를 나쁘다고 하지 않는다.",
       m.situation ? `- 그런 마음이 든 때: ${m.situation}` : "",
-      whoLine("- 누구랑", m.who, m.whoName, m.whoGender),
+      whoLine("- 누구랑", m.who, m.whoName, m.whoGender, m.friends),
     ];
   }
   return [
     "아래 재료를 모두 살려서 상상 이야기를 짓는다:",
     m.subject ? `- 이야기 소재: ${m.subject}` : "",
-    whoLine("- 함께하는 이", m.who, m.whoName, m.whoGender),
+    whoLine("- 함께하는 이", m.who, m.whoName, m.whoGender, m.friends),
     m.happening ? `- 중심 사건: ${m.happening}` : "",
     m.extra ? `- 아이가 더 넣고 싶은 이야기: ${m.extra}` : "",
   ];
