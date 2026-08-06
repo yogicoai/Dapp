@@ -16,6 +16,8 @@ import {
   type Profile,
 } from "@/lib/auth";
 import {
+  AGES,
+  AGE_OVER,
   countBooksWithEmbeddedArt,
   deleteMyBook,
   loadAllBooksBrief,
@@ -147,7 +149,6 @@ const LOOK_ROWS: readonly LookRow[] = [
   },
 ];
 
-const AGES = [3, 4, 5, 6, 7, 8];
 const GENDERS: { value: Gender; label: string; icon: string }[] = [
   { value: "girl", label: "여자", icon: "/icons/gender-girl.webp" },
   { value: "boy", label: "남자", icon: "/icons/gender-boy.webp" },
@@ -763,6 +764,22 @@ export default function SettingsPage() {
                   {a}
                 </button>
               ))}
+              {/* 8세 위로는 한 살 단위로 나눌 만큼 글 수준이 달라지지 않아 하나로 묶는다. */}
+              <button
+                type="button"
+                onClick={() => {
+                  setAge(AGE_OVER);
+                  persistChild({ age: AGE_OVER });
+                }}
+                style={age === AGE_OVER ? { background: accent } : undefined}
+                className={`h-11 rounded-full px-3.5 text-sm font-extrabold transition ${
+                  age === AGE_OVER
+                    ? "scale-105 text-white shadow"
+                    : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                }`}
+              >
+                8세 이상
+              </button>
             </div>
 
             <div className="flex gap-2">

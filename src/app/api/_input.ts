@@ -20,7 +20,8 @@ export function parseChild(value: unknown): ChildProfile {
   }
 
   const age = Number(c?.age);
-  if (!Number.isInteger(age) || age < 2 || age > 12) {
+  // 1세부터 받는다. 9는 '8세 이상'을 담는 값이라 그 위쪽도 열어 둔다.
+  if (!Number.isInteger(age) || age < 1 || age > 12) {
     throw new Error("나이는 2~12세만 됩니다.");
   }
 

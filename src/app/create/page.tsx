@@ -11,6 +11,8 @@ import { loadSession, spendTokens } from "@/lib/auth";
 import {
   loadChild,
   loadChildRemote,
+  AGES,
+  AGE_OVER,
   countMyBooks,
   looksToPrompt,
   saveChild,
@@ -37,7 +39,6 @@ type Step = "child" | "theme" | "style" | "outline" | "story" | "illustrate" | "
  */
 const IMAGES_ENABLED = true;
 
-const AGES = [3, 4, 5, 6, 7, 8];
 const GENDERS: { value: Gender; label: string; icon: string }[] = [
   { value: "girl", label: "여자", icon: "/icons/gender-girl.webp" },
   { value: "boy", label: "남자", icon: "/icons/gender-boy.webp" },
@@ -249,6 +250,8 @@ const PAGE_OPTIONS = [3, 4, 5, 6, 7, 8];
  */
 function recommendedPages(age: number | null): number {
   if (age === null) return 6;
+  // 1~2세는 이야기를 따라가기보다 그림을 보는 나이라 짧게 시작한다.
+  if (age <= 2) return 3;
   if (age <= 4) return 4;
   if (age <= 6) return 6;
   return 8;
@@ -1163,7 +1166,7 @@ export default function CreatePage() {
 
               <div>
                 <label className="mb-1.5 block text-sm font-bold text-neutral-500">나이</label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {AGES.map((a) => (
                     <button
                       key={a}
@@ -1179,6 +1182,20 @@ export default function CreatePage() {
                       {a}
                     </button>
                   ))}
+                  {/* 8세 위로는 한 살 단위로 나눌 만큼 글 수준이 달라지지 않는다 —
+                      하나로 묶어 목록이 끝없이 길어지지 않게 한다. */}
+                  <button
+                    type="button"
+                    onClick={() => setAge(AGE_OVER)}
+                    style={age === AGE_OVER ? { background: accent } : undefined}
+                    className={`h-12 rounded-full px-4 text-sm font-extrabold transition ${
+                      age === AGE_OVER
+                        ? "scale-105 text-white shadow"
+                        : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                    }`}
+                  >
+                    8세 이상
+                  </button>
                 </div>
               </div>
 

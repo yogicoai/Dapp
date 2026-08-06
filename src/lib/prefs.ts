@@ -36,6 +36,26 @@ export type ChildLooks = {
   note?: string;
 };
 
+/**
+ * 고를 수 있는 나이 — 1~8세, 그리고 '8세 이상'.
+ *
+ * 만들기 화면과 설정 화면 두 곳에서 같은 목록을 써야 해서 여기 둔다.
+ * 예전엔 각자 [3..8]을 들고 있어 한쪽만 고치면 어긋났다.
+ */
+export const AGES = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+
+/**
+ * '8세 이상'을 담는 값. 나이를 숫자 하나로 저장·전달하는 구조를 그대로 두려고
+ * 9로 표시한다 — 글 분량 규칙의 마지막 갈래(8세 이상)로 자연스럽게 간다.
+ */
+export const AGE_OVER = 9;
+
+/** 화면에 보여줄 나이 글자. 9는 숫자가 아니라 '8세 이상'으로 읽혀야 한다. */
+export function ageLabel(age: number | null): string {
+  if (age === null) return "";
+  return age >= AGE_OVER ? "8세 이상" : `${age}세`;
+}
+
 export type ChildPrefs = {
   name: string;
   age: number | null;
