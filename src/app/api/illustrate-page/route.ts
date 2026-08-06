@@ -124,6 +124,27 @@ export async function POST(request: Request) {
           "Only the pose, the expression and the camera angle may change — never the character's appearance.",
         ].join("\n")
       : "",
+    /*
+     * 쪽마다 그림의 '크기'와 '색감'이 달라 보이는 문제.
+     *
+     * 크기: 캔버스 비율은 API로 고정하는데도, 모델이 그림 안에 흰 여백이나 액자
+     * 테두리를 그려 넣어 어떤 쪽은 그림이 작아 보인다. 책을 넘길 때 그림이 커졌다
+     * 작아졌다 하면 인쇄가 잘못된 책처럼 보인다.
+     *
+     * 색감: 한 쪽은 쨍하고 다음 쪽은 물 빠진 듯 나오면 같은 책 같지가 않다.
+     * 다만 낮·밤처럼 장면이 정하는 차이는 살려야 하므로, '무엇을 칠하느냐'가 아니라
+     * '어떤 톤으로 칠하느냐'를 맞추라고 이른다.
+     */
+    [
+      "SAME SIZE ON EVERY PAGE — the artwork must fill the entire canvas, edge to edge.",
+      "No white margins, no borders, no frames, no rounded corners, no vignette box, no drop shadow around the picture, no paper edge, no letterboxing bars. The illustration itself IS the whole image.",
+      "Do not shrink the scene to sit inside a smaller box. Every page in this book must look like the same size of picture.",
+      "",
+      "SAME COLOUR FEEL ON EVERY PAGE — this book is one set, printed together.",
+      "Keep the same palette family, the same saturation level, the same brightness and contrast, and the same softness of light across all pages.",
+      "Never make one page vivid and glossy and the next page pale and washed out. Never switch between a warm and a cold overall cast without the story asking for it.",
+      "Scene-driven changes are fine and welcome — night is darker, sunset is warmer, indoors is softer. What must stay constant is the TREATMENT: how strong the colours are, how much contrast, how the light is rendered.",
+    ].join("\n"),
     "Keep the bottom quarter of the image simple and uncluttered (plain ground, sky, or soft color) so text can be placed there.",
     "Wholesome, innocent, fully clothed, child-friendly.",
     "NO text, no letters, no words in the image.",

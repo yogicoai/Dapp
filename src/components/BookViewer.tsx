@@ -350,6 +350,19 @@ export function BookViewer({ book }: { book: Book }) {
   //   성우의 첫 재생마다 크레딧이 나가서 사장님 지시로 뺐다 — 2026-07-31)
   // · '내가 만든 동화'(id가 my-): 부모 목소리(복제) + 성우 전체(만들 때 고른 성우로 낭독).
   const isCreated = book.id.startsWith("my-");
+
+  /*
+   * 쪽마다 그림 크기가 달라 보이지 않게.
+   *
+   * 만든 동화는 모든 쪽을 같은 비율로 그린다. 그런데 한 장이 조금 다르게 나오면
+   * 화면이 그 쪽만 다른 크기로 그려서 오히려 차이가 도드라진다. 그래서 내가 만든
+   * 책은 첫 쪽 비율로 전부 통일한다 — 살짝 어긋난 장도 같은 크기로 보인다.
+   *
+   * 제공 동화(전래·세계명작)는 쪽마다 그림 비율이 진짜로 다르므로(해님달님 2.36:1 등)
+   * 통일하면 안 된다. 그건 쪽마다 잰 값을 그대로 쓴다.
+   */
+  const ratioOf = (i: number): number =>
+    (isCreated ? imgRatios[0] : undefined) ?? imgRatios[i] ?? 4 / 3;
   const parentChoices = parentVoices.map((p) => ({
     id: `parent:${p.role}`,
     label: `${p.label} 목소리`,
@@ -1108,7 +1121,7 @@ export function BookViewer({ book }: { book: Book }) {
                       ? "landscape:mx-auto landscape:my-auto landscape:w-[min(100vw,calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(100vw/(var(--ar)*2)))]"
                       : ""
                   }`}
-                  style={{ "--ar": String(imgRatios[i] ?? 4 / 3) } as React.CSSProperties}
+                  style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                 >
                   <div
                     className={`relative shrink-0 overflow-hidden [aspect-ratio:var(--ar)] portrait:w-full ${
@@ -1117,7 +1130,7 @@ export function BookViewer({ book }: { book: Book }) {
                           "landscape:h-full landscape:w-1/2"
                         : "landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
                     }`}
-                    style={{ "--ar": String(imgRatios[i] ?? 4 / 3) } as React.CSSProperties}
+                    style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                   >
                     {page.video ? (
                       <video
@@ -1363,7 +1376,7 @@ export function BookViewer({ book }: { book: Book }) {
           {/* 그림 실측 비율(--ar)로 무대와 같은 크기를 유지한다 — 좌표가 그림과 맞아떨어진다. */}
           <div
             className="relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))]"
-            style={{ "--ar": String(imgRatios[index] ?? 4 / 3) } as React.CSSProperties}
+            style={{ "--ar": String(ratioOf(index)) } as React.CSSProperties}
           >
             {book.pages[index].actors!.map((a, ai) => (
               // eslint-disable-next-line @next/next/no-img-element
@@ -1471,13 +1484,13 @@ export function BookViewer({ book }: { book: Book }) {
               ? "landscape:mx-auto landscape:my-auto landscape:w-[min(100vw,calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(100vw/(var(--ar)*2)))] landscape:justify-start"
               : ""
           }`}
-          style={{ "--ar": String(imgRatios[index] ?? 4 / 3) } as React.CSSProperties}
+          style={{ "--ar": String(ratioOf(index)) } as React.CSSProperties}
         >
           <div
             className={`relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))] ${
               spread ? "landscape:h-full landscape:w-1/2" : ""
             }`}
-            style={{ "--ar": String(imgRatios[index] ?? 4 / 3) } as React.CSSProperties}
+            style={{ "--ar": String(ratioOf(index)) } as React.CSSProperties}
           >
             {book.pages[index].hotspots!.map((h, hi) => {
               return (
