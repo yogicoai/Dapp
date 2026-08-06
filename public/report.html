@@ -145,33 +145,33 @@
   <header>
     <p class="eyebrow">개발 현황 · 가격 정책 보고 · 내부용</p>
     <h1>우리 가족 보이스 동화 — 진행 현황과 가격·크레딧 정책</h1>
-    <p class="lede">아이가 주인공인 AI 그림동화 앱. 이야기 생성·음성·콘텐츠·테마까지 완성했고, 남은 것은 회원가입·저장·결제와 배포입니다. 아래는 <b>개발 현황</b>과 <b>동화 1권 원가 → 판매가·크레딧 정책</b>을 정리한 회의 자료입니다.</p>
+    <p class="lede">아이가 주인공인 AI 그림동화 앱. <b>베타가 실제로 돌아가고 있습니다</b> — 회원가입·저장·크레딧 차감까지 붙어 회원들이 직접 동화를 만들고 있습니다. 아래는 <b>개발 현황</b>, <b>지금 쓰고 있는 것과 그 단가</b>, 그리고 <b>크레딧을 어떻게 운영할지</b>를 정리한 회의 자료입니다.</p>
     <div class="meta">
       <span><b>작성일</b> 2026-07-22</span>
-      <span><b>갱신</b> 2026-07-29</span>
-      <span><b>기준 원가</b> 1권 ₩615(Sonnet)~₩1,085(Opus)</span>
-      <span><b>용도</b> 결제·크레딧 회의</span>
+      <span><b>갱신</b> 2026-08-06</span>
+      <span><b>기준 원가</b> 8쪽 1권 ₩615 (Sonnet + 삽화)</span>
+      <span><b>단계</b> 베타 운영 중</span>
     </div>
     <nav class="jump">
-      <a href="#done">개발 현황</a>
-      <a href="#todo">남은 작업</a>
+      <a href="#beta">베타 현황</a>
+      <a href="#stack">지금 쓰는 것</a>
+      <a href="#credit">크레딧 운영</a>
       <a href="#cost">1권 원가</a>
       <a href="#compare">품질 비교</a>
       <a href="#sale">판매가</a>
-      <a href="#models">요금 모델</a>
       <a href="#agenda">회의 안건</a>
       <a href="#extra">부가 비용</a>
-      <a href="#update">최근 업데이트</a>
+      <a href="#done">개발 현황</a>
     </nav>
     <div style="background:var(--sage-soft);border:1px solid var(--sage);border-radius:14px;padding:14px 18px;margin-top:18px;font-size:13.5px;color:var(--ink);">
-      <b style="color:var(--sage);">7/29 업데이트.</b> 만든 동화 저장·관리, 삽화(Gemini) 연결, 성우를 만들 때 고르는 구조(방법 B), 이야기 품질 강화, 엄마·아빠 목소리 클로닝 벤더 조사를 진행했습니다 — <b>맨 아래 08번 섹션</b> 참고.
+      <b style="color:var(--sage);">8/6 업데이트.</b> 베타가 가동 중입니다 — 회원가입·서버 저장·크레딧 차감·엄마아빠 목소리·의견 게시판이 모두 붙었습니다. 이번 자료의 핵심은 <b><a href="#stack" style="color:var(--sage);">10 지금 쓰고 있는 것</a></b>과 <b><a href="#credit" style="color:var(--sage);">11 크레딧 운영 방식</a></b>입니다. <b>보고서 앞쪽(05 요금 모델)의 “1권=1코인” 안은 실제로 만든 구조와 어긋나</b> 11번에서 정정했습니다.
     </div>
   </header>
 
   <div class="stats">
-    <div class="stat"><p class="k">테마(나라)</p><p class="v">7<small> 종</small></p></div>
-    <div class="stat"><p class="k">동화 만드는 방식</p><p class="v">3<small> 가지</small></p></div>
-    <div class="stat"><p class="k">1권 원가(8장)</p><p class="v">₩615<small>~1,085</small></p></div>
+    <div class="stat"><p class="k">8쪽 1권 원가</p><p class="v">₩615</p></div>
+    <div class="stat"><p class="k">8쪽 1권 크레딧</p><p class="v">16<small> 토큰</small></p></div>
+    <div class="stat"><p class="k">베타 1인 최대 원가</p><p class="v">₩9,150</p></div>
   </div>
 
   <hr class="rule" />
@@ -192,12 +192,13 @@
 
   <section id="todo">
     <div class="section-head"><span class="section-num">02</span><h2>남은 작업 (상용화까지)</h2></div>
+    <p class="section-note">7/22 기준으로 적었던 목록입니다. <b>8/6 현재 대부분 끝났고</b>, 상태를 갱신했습니다 — 자세한 내용은 <a href="#beta">09 베타 현황</a>.</p>
     <ul class="clean">
-      <li><span class="tag todo">필요</span><div class="li-body"><b>회원가입 · 데이터 저장 (Supabase)</b><p>아이 정보·만든 동화를 계정에 저장. 현재는 기기에만 임시 저장.</p></div></li>
-      <li><span class="tag todo">필요</span><div class="li-body"><b>아이 사진 → 주인공 얼굴 반영</b><p>업로드 사진을 삽화 주인공에 반영. 개인정보라 안전한 전용 저장소 필요.</p></div></li>
-      <li><span class="tag done">가동됨</span><div class="li-body"><b>삽화 생성 정식 가동</b><p>Gemini 이미지 AI 연결 완료(7/29). 만들 때 “그림까지 그리기”로 삽화 생성(장당 약 ₩55). 후불 결제·지출한도 세팅으로 <b>테스트 가동 중</b>.</p></div></li>
-      <li><span class="tag todo">필요</span><div class="li-body"><b>결제 · 크레딧 시스템 (수익 모델)</b><p>1권당 얼마·무료 몇 권. 오늘 회의의 핵심.</p></div></li>
-      <li><span class="tag todo">필요</span><div class="li-body"><b>배포 · 이미지 호스팅 연결</b><p>앱은 Vercel + 회사 도메인. 전래·세계명작 같은 <b>고정 이미지·음성은 카페24 이미지 호스팅</b>, 사용자 사진은 전용 저장소.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>회원가입 · 데이터 저장 (Supabase)</b><p>아이디/비번 가입, 아이 정보·만든 동화·크레딧을 <b>서버에 저장</b>. 기기를 바꿔도 따라옵니다. 마스터 아이디에서 회원·보유 토큰·만든 동화를 볼 수 있습니다.</p></div></li>
+      <li><span class="tag todo">보류</span><div class="li-body"><b>아이 사진 → 주인공 얼굴 반영</b><p>사진 대신 <b>“아이 특징” 프로필</b>로 갈음했습니다(머리 모양·머리 색·눈매·안경·늘 지니는 것 등 + 자유 입력 한 줄). 아동 얼굴은 개인정보 부담이 크고, 어설프게 닮으면 오히려 실망합니다. 특징만으로도 “우리 애 같네”는 충분히 나옵니다. <b>사진 방식은 회의에서 다시 판단할 사안</b>입니다.</p></div></li>
+      <li><span class="tag done">가동됨</span><div class="li-body"><b>삽화 생성 정식 가동</b><p>Gemini 이미지 AI로 <b>모든 동화에 삽화가 기본</b>으로 들어갑니다(장당 약 ₩55). 캐릭터 기준 그림 1장을 먼저 만들어 전 쪽의 주인공 얼굴을 맞춥니다.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>크레딧 시스템 (차감·지급·잔액)</b><p>토큰 차감·잔액·충전이 서버에서 돌아갑니다. <b>남은 것은 “실제 결제(PG) 연결”과 가격 확정</b> — <a href="#credit">11번</a>이 그 내용입니다.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>배포 · 이미지 호스팅 연결</b><p>Vercel에 배포되어 베타 회원이 접속 중. 고정 이미지·음성은 카페24 호스팅.</p></div></li>
     </ul>
   </section>
 
@@ -342,6 +343,9 @@
 
   <section id="models">
     <div class="section-head"><span class="section-num">05</span><h2>요금 모델 3가지 안</h2></div>
+    <div class="callout amber" style="margin-top:0;margin-bottom:16px;">
+      <p><b class="amber">이 섹션은 7/22 구상안입니다 — <a href="#credit" style="color:var(--amber);">11 크레딧 운영 방식</a>으로 대체되었습니다.</b> 아래 “동화코인(1권=1~3코인)” 방식은 원가가 쪽수에 비례하는 구조와 어긋나, 실제로는 <b>쪽당 과금</b>으로 만들었습니다. 기록용으로 남겨 둡니다.</p>
+    </div>
     <p class="section-note">하나만 고를 필요 없이 섞어도 됩니다(예: 무료 1권 + 크레딧 팩).</p>
     <div class="models">
       <div class="model"><span class="badge">A안</span><h3>단건 구매</h3><p class="desc">한 권 만들 때마다 결제. 가장 단순.</p><p class="price">₩3,100<small> / 권</small></p><ul><li>진입장벽 낮음</li><li>가끔 쓰는 이용자에 적합</li><li>재구매 유도가 과제</li></ul></div>
@@ -360,13 +364,16 @@
 
   <section id="agenda">
     <div class="section-head"><span class="section-num">06</span><h2>오늘 정할 것 (회의에서 채울 빈칸)</h2></div>
+    <p class="section-note">7/22에 적었던 안건 중 <b>글 모델은 Sonnet으로, 요금 모델은 쪽당 과금 크레딧으로 이미 확정</b>되어 만들었습니다. 아래는 <b>8/6 기준 남아 있는 결정</b>입니다.</p>
     <div class="agenda">
-      <div class="q"><span class="qn">1</span><div class="qt"><b>이야기 글 모델</b><p>고성능 Opus(품질) vs 가성비 Sonnet(원가 1/5) → <span class="fill">선택: ______</span></p></div></div>
-      <div class="q"><span class="qn">2</span><div class="qt"><b>1권 판매 기준가</b><p>×3 / ×5 / ×8 → <span class="fill">기준가: ₩______</span></p></div></div>
-      <div class="q"><span class="qn">3</span><div class="qt"><b>요금 모델</b><p>단건 / 크레딧 팩 / 구독 / 조합 → <span class="fill">선택: ______</span></p></div></div>
-      <div class="q"><span class="qn">4</span><div class="qt"><b>무료 제공</b><p>가입 시 무료 권수 → <span class="fill">______ 권</span></p></div></div>
-      <div class="q"><span class="qn">5</span><div class="qt"><b>결제 채널</b><p>웹 결제(수수료↓) 중심 vs 앱스토어 → <span class="fill">선택: ______</span></p></div></div>
-      <div class="q"><span class="qn">6</span><div class="qt"><b>음성 유료 전환</b><p>무료 3만 자 초과 시점의 요금제 → <span class="fill">확정: ______</span></p></div></div>
+      <div class="q"><span class="qn">1</span><div class="qt"><b>충전 팩 가격</b><p>제안: 32토큰 ₩4,900 · 96토큰 ₩12,900 · 240토큰 ₩27,900 (<a href="#credit">11-4</a>) → <span class="fill">확정: ______</span></p></div></div>
+      <div class="q"><span class="qn">2</span><div class="qt"><b>정식 가입 무료 토큰</b><p>베타 200토큰 → 정식은 32토큰(2권) 권고. 그대로 두면 1인 원가 최대 ₩9,150 → <span class="fill">______ 토큰</span></p></div></div>
+      <div class="q"><span class="qn">3</span><div class="qt"><b>엄마·아빠 목소리 값</b><p>현재 15토큰 = 마진 0. 미끼로 유지 vs 20~25토큰 → <span class="fill">확정: ______ 토큰</span></p></div></div>
+      <div class="q"><span class="qn">4</span><div class="qt"><b>결제 채널</b><p>웹 결제(수수료 3~4%) 중심 vs 앱스토어(15~30%) → <span class="fill">선택: ______</span></p></div></div>
+      <div class="q"><span class="qn">5</span><div class="qt"><b>토큰 유효기간 · 환불 규정</b><p>선불 충전이라 약관에 필요 → <span class="fill">유효기간: ______ 개월</span></p></div></div>
+      <div class="q"><span class="qn">6</span><div class="qt"><b>권수 상한 10권 해제 여부</b><p>유료 전환 시 토큰이 상한 역할 → <span class="fill">확정: ______</span></p></div></div>
+      <div class="q"><span class="qn">7</span><div class="qt"><b>아이 사진 방식 재검토</b><p>현재는 “아이 특징” 프로필로 갈음(사진 안 받음). 사진을 쓰려면 개인정보 처리·전용 저장소 필요 → <span class="fill">방향: ______</span></p></div></div>
+      <div class="q"><span class="qn">8</span><div class="qt"><b>삽화 모델 업그레이드</b><p>나노바나나 2 전환 검토 — <b>장당 단가 확인이 선행</b> → <span class="fill">확정: ______</span></p></div></div>
     </div>
   </section>
 
@@ -415,10 +422,166 @@
     </ul>
   </section>
 
+  <hr class="rule" />
+
+  <section id="beta">
+    <div class="section-head"><span class="section-num">09</span><h2>베타 현황 (2026-08-06)</h2></div>
+    <p class="section-note">7/29 이후 <b>베타가 실제로 열렸습니다</b>. 회원이 가입해 자기 아이디로 동화를 만들고, 크레딧이 차감되고, 의견을 남기면 보상이 지급됩니다.</p>
+    <ul class="clean">
+      <li><span class="tag done">가동</span><div class="li-body"><b>회원가입 · 서버 저장 · 회원 관리</b><p>아이디/비번 가입. 아이 정보·만든 동화·크레딧이 <b>서버에 저장</b>되어 기기를 바꿔도 따라옵니다. 마스터 아이디에서 <b>회원별 보유 토큰과 만든 동화</b>를 볼 수 있습니다.</p></div></li>
+      <li><span class="tag done">가동</span><div class="li-body"><b>크레딧 차감 · 지급</b><p>가입 시 <b>200토큰</b> 자동 지급. 동화를 완성하면 쪽수만큼 차감됩니다. 기존 회원에게도 200토큰을 일괄 충전했습니다.</p></div></li>
+      <li><span class="tag done">가동</span><div class="li-body"><b>엄마 · 아빠 목소리 (각각)</b><p>부모가 직접 녹음한 목소리로 동화를 읽어 줍니다. <b>엄마·아빠를 각각</b> 만들 수 있고(1명당 15토큰), 만들어 두면 <b>성우 목록 맨 앞에</b> 나옵니다. 녹음 정확도를 위해 <b>같은 글을 두 번 읽게</b> 하고 잡음·침묵을 정리해 보냅니다.</p></div></li>
+      <li><span class="tag done">가동</span><div class="li-body"><b>의견 게시판</b><p>베타 사용 중 불편·개선 의견을 남기는 곳. <b>첫 글을 남기면 100토큰</b>을 드립니다. 관리자는 모든 글을 수정·삭제할 수 있고, 일반 회원은 본인 글만 가능합니다.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>속도 개선</b><p>책장 열기·낭독 시작·동화 만들기가 느리던 것을 잡았습니다. 특히 낭독은 <b>첫 문장부터 바로 재생</b>하도록 바꿔 기다림이 거의 없어졌습니다.</p></div></li>
+      <li><span class="tag done">완료</span><div class="li-body"><b>제공 동화 삽화 교체</b><p>브레멘 음악대·미운 오리 새끼·개미와 베짱이·아기돼지 삼형제·시골쥐와 도시쥐 — 글과 그림이 어긋나던 곳을 찾아 다시 그렸습니다.</p></div></li>
+    </ul>
+
+    <h3 class="mini-h">8/6 오늘 한 것</h3>
+    <p class="section-note">읽는 경험과 “우리 아이 이야기”라는 느낌을 다듬는 데 집중했습니다.</p>
+    <ul class="clean">
+      <li><span class="tag done">신규</span><div class="li-body"><b>아이 특징 프로필 — 사진 없이 주인공을 우리 아이 닮게</b><p>설정에서 <b>머리 모양·앞머리·머리 색·눈매·피부·몸집·좋아하는 옷 색·늘 지니는 것·안경</b>을 고르면, 그 특징으로 주인공을 그립니다. 칩으로 못 담는 건 <b>자유 입력 한 줄</b>(“늘 공룡 티셔츠를 입어요”)로 채웁니다. <b>아이 사진을 받지 않는 방식</b>이라 개인정보 부담이 없습니다.</p></div></li>
+      <li><span class="tag done">신규</span><div class="li-body"><b>친구 성별 고르기</b><p>친구·선생님은 이름만으로 성별을 알 수 없어, <b>남자 친구가 여자아이로 그려지는</b> 일이 있었습니다. 이름 옆에서 성별을 고르면 이야기와 그림 양쪽에 반영됩니다. (엄마·아빠·형·언니처럼 호칭에 답이 있는 경우엔 묻지 않습니다.)</p></div></li>
+      <li><span class="tag done">수정</span><div class="li-body"><b>아이 이름 뒤 조사 교정</b><p>“<b>하온이</b> 열쇠를 돌렸어요”, “<b>하온은</b> 웃었어요”처럼 어색하게 나오던 것을 “<b>하온이가</b>·<b>하온이는</b>”으로 바로잡았습니다. 프롬프트로 지시하고, <b>서버가 마지막에 한 번 더 검사</b>해 고칩니다. 부모가 소리 내어 읽어 주는 글이라 이런 문장 하나가 바로 티가 납니다.</p></div></li>
+      <li><span class="tag done">신규</span><div class="li-body"><b>펼침면 보기 (그림 | 글 반반)</b><p>화면을 반으로 나눠 <b>왼쪽 그림·오른쪽 글</b>로 보는 방식을 추가했습니다. 종이 질감을 깔아 실제 그림책을 펼친 느낌을 냈습니다. 기존 “꽉 찬 그림” 방식과 골라 쓸 수 있습니다.</p></div></li>
+      <li><span class="tag done">개선</span><div class="li-body"><b>책 넘기기 · 글자 크기</b><p>아래 가운데 <b>넘김 바와 쪽 위치 표시</b>, 동화가 끝나면 <b>‘다음 동화 보기’</b>. 빠르게 넘길 때 넘김 소리가 겹쳐 끊기던 것도 잡았습니다. 책 안에서 <b>글자 크기</b>를 네 단계로 조절할 수 있습니다.</p></div></li>
+      <li><span class="tag done">수정</span><div class="li-body"><b>성우 목록 정리 · 목소리 만들기 오류</b><p>성우를 골라 만든 책인데도 다른 성우가 늘 끼어 있던 문제를 잡아, <b>고른 성우만</b> 나옵니다. 휴대폰에서 목소리를 만들 때 <b>용량 초과로 실패하던 오류</b>도 해결했습니다.</p></div></li>
+    </ul>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="stack">
+    <div class="section-head"><span class="section-num">10</span><h2>지금 쓰고 있는 것</h2></div>
+    <p class="section-note">동화 한 권은 <b>글 → 삽화 → 음성</b> 세 회사를 거쳐 만들어집니다. 각각 어디를 쓰고 얼마인지 정리했습니다.</p>
+    <div class="costwrap">
+      <table>
+        <caption>사용 중인 서비스와 단가 (환율 ₩1,400/$ 가정 · 부가세 별도)</caption>
+        <thead><tr><th>역할</th><th>쓰는 것</th><th>단가</th></tr></thead>
+        <tbody>
+          <tr class="group"><td colspan="3">동화를 만들 때마다 드는 돈 (변동비)</td></tr>
+          <tr><td class="rowlabel">이야기 글<small>줄거리 → 본문</small></td><td>Claude <b>Sonnet</b></td><td>8쪽 1권 ₩120</td></tr>
+          <tr><td class="rowlabel">삽화<small>캐릭터 1장 + 본문 쪽수</small></td><td>Google <b>Gemini 2.5 Flash Image</b></td><td>장당 ₩55 → 8쪽 ₩495</td></tr>
+          <tr><td class="rowlabel">낭독 음성<small>만들 때 한 번만 합성</small></td><td><b>Typecast</b> (성우 16명)</td><td>월 3만 자 무료 ≈ 35권</td></tr>
+          <tr><td class="rowlabel">엄마·아빠 목소리<small>1명 = 클론 1슬롯</small></td><td><b>Typecast</b> 클로닝</td><td>1명 약 ₩1,400~1,500</td></tr>
+          <tr class="group"><td colspan="3">매달 고정으로 드는 돈</td></tr>
+          <tr><td class="rowlabel">회원·데이터 저장</td><td><b>Supabase</b></td><td>무료 ~ $25/월</td></tr>
+          <tr><td class="rowlabel">앱 서버·배포</td><td><b>Vercel</b></td><td>무료 ~ $20/월</td></tr>
+          <tr><td class="rowlabel">고정 이미지·음성</td><td><b>카페24</b></td><td>기결제 보유</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout sage">
+      <p><b class="sage">글 모델은 Sonnet으로 확정해 쓰고 있습니다.</b> Opus로 올리면 8쪽 1권 글값이 ₩120 → ₩590으로 <b>약 5배</b>가 됩니다. 품질 비교는 <a href="#compare">03번 아래</a>에 실제 생성 결과로 실어 두었습니다. <b>설정값 한 줄만 바꾸면 언제든 전환</b>되므로, 대표 콘텐츠만 Opus로 굽는 식의 혼용도 가능합니다.</p>
+    </div>
+    <div class="callout amber">
+      <p><b class="amber">확인이 필요한 것 — 삽화 모델 업그레이드.</b> 구글이 더 좋은 이미지 모델(<b>Gemini 3.1 Flash Image, 일명 나노바나나 2</b>)을 냈고, 앱에서 <b>설정값 한 줄로 바꿔 쓸 수 있게</b> 해 두었습니다. 다만 <b>이 모델의 장당 단가는 아직 확정하지 못했습니다</b> — 원가의 절반이 삽화라 <b>단가를 확인한 뒤 결정</b>해야 합니다. 현재는 안전하게 2.5 Flash Image(장당 ₩55)로 운영 중입니다.</p>
+      <p>참고로 “힉스필드 나노바나나”는 <b>같은 구글 모델을 대신 호출해 주는 서비스</b>라, 품질이 올라가는 게 아니라 <b>중간 수수료만 더 붙습니다</b>. 구글에 직접 붙는 지금 방식이 맞습니다.</p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="credit">
+    <div class="section-head"><span class="section-num">11</span><h2>크레딧 운영 방식</h2></div>
+    <p class="section-note"><b>이 섹션이 앞의 05번 “요금 모델”을 대체합니다.</b> 05번은 아직 아무것도 만들기 전의 구상이고, 아래는 <b>실제로 만들어 돌아가고 있는 구조</b>와 그 위에서 정할 것들입니다.</p>
+
+    <h3 class="mini-h">(1) 지금 앱에 들어 있는 값</h3>
+    <div class="costwrap">
+      <table>
+        <caption>토큰(크레딧) 설정 — 코드 기준 2026-08-06</caption>
+        <thead><tr><th>항목</th><th>값</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td class="rowlabel">1토큰 명목가</td><td><b>₩100</b></td><td>표시·충전 기준</td></tr>
+          <tr><td class="rowlabel">가입 무료 토큰</td><td><b>200</b>토큰</td><td>베타 “10권은 만들어 보게”</td></tr>
+          <tr><td class="rowlabel">그림동화</td><td><b>2</b>토큰 / 쪽</td><td>8쪽 = 16토큰</td></tr>
+          <tr><td class="rowlabel">글만 있는 동화</td><td>1토큰 / 쪽</td><td>현재는 삽화가 기본이라 미사용</td></tr>
+          <tr><td class="rowlabel">엄마·아빠 목소리</td><td><b>15</b>토큰 / 1명</td><td>엄마·아빠 각각 · 수정도 같은 값</td></tr>
+          <tr><td class="rowlabel">의견 게시판 첫 글</td><td><b>+100</b>토큰</td><td>계정당 1회</td></tr>
+          <tr><td class="rowlabel">아이디당 동화 권수</td><td><b>10</b>권</td><td>베타 한정 안전장치</td></tr>
+          <tr class="hi"><td class="rowlabel">낭독 듣기 · 다시 듣기</td><td><b>0</b></td><td>만들 때 한 번 굽고 기기에 저장</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout sage">
+      <p><b class="sage">이미 이렇게 돌아갑니다 — 과금 규칙 4가지.</b></p>
+      <p>① <b>완성된 뒤에 차감</b>합니다. 중간에 실패하면 토큰이 나가지 않습니다.<br />
+      ② 삽화가 한 장도 안 그려졌으면 <b>글 단가(절반)</b>로만 받습니다.<br />
+      ③ 목소리 만들기가 실패하면 <b>자동으로 되돌려</b> 줍니다.<br />
+      ④ <b>읽는 것은 몇 번을 들어도 무료</b>입니다. 성우를 고르는 건 “그 성우까지 제공한다”는 뜻이지 들을 때마다 과금이 아닙니다.</p>
+    </div>
+
+    <h3 class="mini-h">(2) 원가 대비 — 지금 배수는 2.1~2.6배</h3>
+    <div class="costwrap">
+      <table>
+        <caption>토큰 명목가(₩100)로 환산했을 때</caption>
+        <thead><tr><th>만드는 것</th><th>원가</th><th>토큰</th><th>명목가</th><th>배수</th></tr></thead>
+        <tbody>
+          <tr><td class="rowlabel">그림동화 3쪽</td><td>₩290</td><td>6</td><td>₩600</td><td>2.1×</td></tr>
+          <tr><td class="rowlabel">그림동화 6쪽</td><td>₩480</td><td>12</td><td>₩1,200</td><td>2.5×</td></tr>
+          <tr class="hi"><td class="rowlabel">그림동화 8쪽</td><td>₩615</td><td>16</td><td>₩1,600</td><td>2.6×</td></tr>
+          <tr><td class="rowlabel">엄마·아빠 목소리 1명</td><td>₩1,400~1,500</td><td>15</td><td>₩1,500</td><td>1.0×</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout amber">
+      <p><b class="amber">확인해야 할 점 두 가지.</b></p>
+      <p>① 지금 배수는 <b>2.1~2.6배</b>로, 04번 판매가 시나리오의 <b>“×5 표준”보다 낮습니다</b>. 여기서 결제 수수료(웹 3~4%)와 서버 고정비가 더 빠집니다. <b>토큰 명목가 ₩100을 그대로 실제 판매가로 쓰면 마진이 얇습니다.</b></p>
+      <p>② <b>엄마·아빠 목소리 15토큰은 원가와 거의 같습니다(마진 0).</b> 이게 재방문을 부르는 대표 기능이라 <b>일부러 원가에 맞춘 것</b>인데, 그대로 둘지 20~25토큰으로 올릴지 <b>회의에서 정해야 합니다</b>.</p>
+    </div>
+
+    <h3 class="mini-h">(3) 정정 — “1권 = 1코인” 안은 쓰지 않습니다</h3>
+    <div class="callout amber">
+      <p><b class="amber">왜 바꿨나.</b> 05번의 “짧은 동화 1코인 · 긴 동화 3코인” 방식은 <b>원가 구조와 어긋납니다</b>. 원가의 절반이 삽화이고 삽화는 <b>쪽수에 정비례</b>(장당 ₩55)하는데, 권 단위로 값을 매기면 <b>3쪽 만드는 사람은 비싸게, 8쪽 만드는 사람은 싸게</b> 내게 됩니다.</p>
+      <p>그래서 실제로는 <b>쪽당 과금</b>으로 만들었습니다 — 원가가 늘어나는 만큼만 정확히 더 받습니다. 아래 충전 팩도 <b>권 단위로 딱 떨어지게</b> 짜서, 이용자에게는 여전히 “몇 권치”로 보이게 했습니다.</p>
+    </div>
+
+    <h3 class="mini-h">(4) 제안 — 충전 팩 (결정 필요)</h3>
+    <div class="costwrap">
+      <table>
+        <caption>8쪽 그림동화 1권 = 16토큰 기준으로 권수가 딱 떨어지게 구성</caption>
+        <thead><tr><th>팩</th><th>토큰</th><th>가격</th><th>토큰당</th><th>8쪽 1권</th><th>배수</th></tr></thead>
+        <tbody>
+          <tr><td class="rowlabel">맛보기<small>2권치</small></td><td>32</td><td>₩4,900</td><td>₩153</td><td>₩2,450</td><td>4.0×</td></tr>
+          <tr class="hi"><td class="rowlabel">기본<small>6권치 · 주력</small></td><td>96</td><td>₩12,900</td><td>₩134</td><td>₩2,150</td><td>3.5×</td></tr>
+          <tr><td class="rowlabel">넉넉<small>15권치</small></td><td>240</td><td>₩27,900</td><td>₩116</td><td>₩1,860</td><td>3.0×</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout sage">
+      <p><b class="sage">이 구성의 뜻.</b> 많이 살수록 토큰당 단가가 <b>₩153 → ₩116</b>으로 내려가 묶음 구매를 유도하되, 배수는 <b>4.0 → 3.0배</b>로 어디서나 마진이 남습니다. 1권 체감가는 <b>₩1,860~2,450</b>으로, 시중 그림책 1권(₩2,000~5,000)보다 쌉니다.</p>
+      <p>토큰 명목가 ₩100은 <b>앱 화면에 보여 주는 기준값</b>으로만 두고, <b>실제 판매는 팩 단위</b>로 하는 방식입니다. 이래야 나중에 원가가 바뀌어도 팩 가격만 손보면 됩니다.</p>
+    </div>
+
+    <h3 class="mini-h">(5) 정식 출시 때 반드시 바꿀 것</h3>
+    <ul class="clean">
+      <li><span class="tag todo">필수</span><div class="li-body"><b>가입 무료 토큰 200 → 32토큰(2권) 수준으로</b><p>200토큰은 <b>“10권은 만들어 보게 하자”는 베타 약속</b>에 맞춘 값입니다. 정식에서 그대로 두면 가입만 해도 원가가 <b>1인당 최대 ₩9,150</b> 나갑니다.</p></div></li>
+      <li><span class="tag todo">필수</span><div class="li-body"><b>실제 결제(PG) 연결</b><p>지금은 마스터가 수동으로 충전합니다. <b>웹 결제(수수료 3~4%)를 주 채널로</b> 두세요. 앱스토어 인앱결제는 15~30%를 뗍니다 — 같은 값에 팔아도 남는 돈이 크게 차이납니다.</p></div></li>
+      <li><span class="tag todo">결정</span><div class="li-body"><b>토큰 유효기간 · 환불 규정</b><p>선불 충전이라 <b>유효기간(예: 12개월)과 환불 기준</b>을 정해 약관에 넣어야 합니다. 미정 상태로 팔면 나중에 분쟁이 됩니다.</p></div></li>
+      <li><span class="tag todo">결정</span><div class="li-body"><b>권수 상한 10권을 어떻게 할지</b><p>베타 안전장치입니다. 유료 전환하면 <b>토큰 자체가 상한 역할</b>을 하므로 풀어도 되지만, 서버 부담을 보며 단계적으로 여는 편이 안전합니다.</p></div></li>
+      <li><span class="tag todo">결정</span><div class="li-body"><b>엄마·아빠 목소리 값(15토큰) 유지 여부</b><p>지금은 원가만 겨우 덮습니다. <b>미끼 상품으로 유지</b>하거나 <b>20~25토큰</b>으로 올리거나 — 둘 다 합리적입니다.</p></div></li>
+    </ul>
+
+    <h3 class="mini-h">(6) 베타 원가는 얼마나 나갈 수 있나</h3>
+    <div class="callout sage">
+      <p><b class="sage">1인당 최대 약 ₩9,150 — 상한이 걸려 있습니다.</b> 8쪽 동화 10권(₩6,150) + 엄마·아빠 목소리 2명(₩3,000)이 한 사람이 쓸 수 있는 전부입니다.</p>
+      <p>진짜 방어선은 토큰이 아니라 <b>권수 상한 10권</b>입니다. 의견 게시판 보상으로 100토큰을 더 드려도 <b>권수에 막혀 원가는 늘지 않습니다</b> — 남는 토큰은 목소리 만들기에만 쓸 수 있습니다. 회원 20명이면 <b>최대 약 ₩18만</b>, 실제로는 다 쓰지 않으므로 그보다 훨씬 적게 나옵니다.</p>
+    </div>
+
+    <h3 class="mini-h">(7) 원가가 바뀌면</h3>
+    <div class="callout amber">
+      <p><b class="amber">값은 한 곳에 모아 두었습니다.</b> 토큰 단가·가입 보너스·권수 상한·목소리 값이 <b>파일 하나(tokens.ts)</b>에 있어, 회의에서 정해지는 대로 <b>그 숫자만 고치면 앱 전체 가격이 바뀝니다</b>. 개발을 다시 하지 않아도 됩니다.</p>
+      <p>다만 <b>삽화 모델을 바꾸면 쪽당 단가를 다시 계산해야</b> 합니다(원가의 절반이 삽화). 나노바나나 2 전환을 검토한다면 <b>장당 단가 확인이 먼저</b>입니다.</p>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
   <p class="disclaimer">
-    <b>산정 기준 및 주의.</b> 원가는 환율 ₩1,400/$ 가정과 사용량 실측 추정치, 부가세 별도 기준입니다. <b>삽화는 Gemini 2.5 Flash Image(장당 ₩55, $0.039)</b>, <b>음성은 Typecast API(무료 월 3만 자·약 35권, 초과 시 1권 약 ₩100 = $0.09/1,000자)</b>로 단가가 확인됐습니다. 남은 변수는 <b>글 모델 최종 선택(Opus/Sonnet)</b>과 결제 수수료 정도입니다. 판매가·팩 가격·코인 매칭은 <b>의사결정용 예시</b>로, 실제 청구액과 오차가 있을 수 있습니다.
+    <b>산정 기준 및 주의.</b> 원가는 환율 ₩1,400/$ 가정과 사용량 실측 추정치, 부가세 별도 기준입니다. <b>삽화는 Gemini 2.5 Flash Image(장당 ₩55, $0.039)</b>, <b>음성은 Typecast API(무료 월 3만 자·약 35권, 초과 시 1권 약 ₩100 = $0.09/1,000자)</b>로 단가가 확인됐습니다. <b>글 모델은 Sonnet으로 확정</b>해 운영 중입니다(8쪽 1권 ₩120).
+    <br /><br />
+    <b>11번 크레딧 항목의 값</b>(1토큰 ₩100 · 가입 200토큰 · 쪽당 2토큰 · 목소리 15토큰 · 권수 10권)은 <b>추정이 아니라 지금 앱에 실제로 들어 있는 설정값</b>입니다. 반면 <b>충전 팩 가격(₩4,900 / ₩12,900 / ₩27,900)은 아직 정해지지 않은 제안</b>이며, 회의에서 확정할 사항입니다. <b>Gemini 3.1 Flash Image(나노바나나 2)의 장당 단가는 아직 확인되지 않았습니다</b> — 전환을 검토한다면 이 확인이 먼저입니다.
   </p>
-  <p class="foothint">우리 가족 보이스 동화 · 개발 현황 · 가격 정책 보고 · 2026-07-22 작성 · 2026-07-29 갱신 · 내부 회의용 (임시 파일: public/report.html)</p>
+  <p class="foothint">우리 가족 보이스 동화 · 개발 현황 · 크레딧 운영 보고 · 2026-07-22 작성 · 2026-08-06 갱신(베타 운영 중) · 내부 회의용 (임시 파일: public/report.html)</p>
 </div>
 </body>
 </html>
