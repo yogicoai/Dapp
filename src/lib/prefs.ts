@@ -28,6 +28,12 @@ export type ChildLooks = {
   items?: string[]; // 늘 지니는 것 (곰인형·모자·머리핀 …) 여러 개
   glasses?: boolean; // 안경
   marks?: string[]; // 특징 (주근깨·보조개 …) 여러 개
+  /**
+   * 칩으로 못 담는 것을 부모가 직접 적는 자리(선택).
+   * 칩만 두면 "우리 애한테 딱 맞는 게 없네"가 생기고, 자유 입력만 두면 백지 공포가 온다.
+   * 그래서 칩이 뼈대를 잡고 이 한 줄이 나머지를 채운다("늘 공룡 티셔츠를 입어요" 등).
+   */
+  note?: string;
 };
 
 export type ChildPrefs = {
@@ -55,6 +61,8 @@ function normalizeLooks(raw: unknown): ChildLooks | undefined {
     items: list(v.items),
     glasses: v.glasses === true ? true : undefined,
     marks: list(v.marks),
+    // 자유 입력은 그림 프롬프트로 그대로 들어가므로 길이를 제한한다.
+    note: typeof v.note === "string" && v.note.trim() ? v.note.trim().slice(0, 100) : undefined,
   };
   // 하나도 안 골랐으면 아예 없는 것으로 둔다 — 빈 껍데기를 들고 다니지 않는다.
   const any = Object.values(looks).some((x) => (Array.isArray(x) ? x.length > 0 : Boolean(x)));
@@ -104,6 +112,7 @@ export function looksToPrompt(looks: ChildLooks | undefined): string {
   if (looks.color) parts.push(`${looks.color} 옷을 즐겨 입는다`);
   if (looks.items?.length) parts.push(`늘 ${looks.items.join("·")}을(를) 지니고 다닌다`);
   if (looks.marks?.length) parts.push(looks.marks.join("·"));
+  if (looks.note) parts.push(looks.note); // 부모가 직접 적은 것 — 맨 뒤에 그대로 얹는다
   return parts.join(", ");
 }
 

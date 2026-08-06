@@ -775,6 +775,25 @@ export default function SettingsPage() {
                     </div>
                   ))}
 
+                  {/* 자유 입력 — 칩으로 못 담는 것을 부모가 직접 적는다.
+                      칩이 "이런 걸 적으면 되는구나"를 알려주는 예시 역할을 해서
+                      백지 공포 없이 쓸 수 있다. */}
+                  <div className="flex flex-col gap-1.5">
+                    <p className="text-xs font-bold text-neutral-400">
+                      더 알려주고 싶은 점 <span className="font-medium text-neutral-300">(선택)</span>
+                    </p>
+                    <input
+                      value={looks.note ?? ""}
+                      onChange={(e) => setLook({ note: e.target.value.slice(0, 100) || undefined })}
+                      maxLength={100}
+                      placeholder="예) 늘 공룡 티셔츠를 입어요 / 머리를 옆으로 묶어요"
+                      className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-2.5 text-sm font-bold outline-none placeholder:font-medium placeholder:text-neutral-300 focus:border-neutral-400"
+                    />
+                    <p className="text-[11px] font-medium text-neutral-300">
+                      생김새만 적어주세요. 이름·나이·성격은 위에서 이미 받고 있어요.
+                    </p>
+                  </div>
+
                   {/* 지금까지 고른 것을 한 줄로 — 이 문장이 그대로 그림에 전해진다. */}
                   {looksToPrompt(looks) && (
                     <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-emerald-50 px-4 py-2.5">
