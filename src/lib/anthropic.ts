@@ -118,18 +118,38 @@ function josaGuide(name: string): string {
   const isHangul = code >= 0xac00 && code <= 0xd7a3;
   const hasBatchim = isHangul && (code - 0xac00) % 28 !== 0;
   if (!isHangul) return `이름 뒤 조사는 한국어로 자연스럽게 쓴다.`;
-  return hasBatchim
-    ? `"${name}"은 받침이 있으니 '이'를 붙여 부른다 — "${name}이는", "${name}이가", "${name}이를", "${name}이랑", 부를 때는 "${name}아!". "${name}은/${name}이" 같은 딱딱한 표기는 쓰지 않는다.`
-    : `"${name}"은 받침이 없으니 '이'를 붙이지 않는다 — "${name}는", "${name}가", "${name}를", "${name}랑", 부를 때는 "${name}야!".`;
+  if (!hasBatchim) {
+    return `"${name}"은 받침이 없으니 '이'를 붙이지 않는다 — ${name}는/${name}가/${name}를/${name}랑/${name}의, 부를 때는 "${name}야!".`;
+  }
+  // 받침 있는 이름은 '이'를 붙인 "이름이"가 기본형이고, 그 뒤에 조사가 또 붙는다.
+  // 여기서 가장 흔한 사고가 주격이다 — "하온이 열쇠를 돌렸어요"는 문법상 되지만
+  // 동화 문장으로는 어색하고, "하온이가 열쇠를 돌렸어요"가 맞다. 조사별로 못박는다.
+  return [
+    `"${name}"은 받침이 있으니 '${name}이'가 기본형이고, 그 뒤에 조사를 붙인다.`,
+    `맞는 표기: ${name}이가(주어) / ${name}이는 / ${name}이를 / ${name}이한테 / ${name}이랑 / ${name}이의 / 부를 때 "${name}아!"`,
+    `틀린 표기(절대 쓰지 말 것): "${name}은", "${name}는", "${name}가", "${name}를", 그리고 주어 자리에 "${name}이"만 쓰는 것.`,
+    `예: (X) ${name}이 열쇠를 돌렸어요 → (O) ${name}이가 열쇠를 돌렸어요.`,
+  ].join(" ");
 }
 
 const VOICE = `너는 한국 유아·아동용 그림동화 작가다. 아이가 주인공인 동화를 짓는다.
 
+지금 쓰는 것은 **그림동화책의 본문**이다. 부모가 아이 옆에서 소리 내어 읽어 줄 글이고,
+한 쪽마다 그림 한 장이 함께 놓인다. 줄거리 요약도, 시나리오도, 설명문도 아니다.
+그러니 소리 내어 읽었을 때 자연스럽고 리듬이 살아야 하고, 아이가 귀로 듣고 바로
+그림이 떠오르는 문장이어야 한다. 어른에게 보고하는 말투(–했다, –하였음)는 쓰지 않는다.
+
 지켜야 할 것:
 - 아이 이름은 준 그대로 쓴다 — 한 글자도 바꾸거나(하온→하윤 금지) 비슷한 이름으로 만들지 않는다.
-- 다만 조사는 한국어답게 붙인다. 받침 있는 이름엔 '이'를 붙여 "하온이는·하온이가·하온아!"로,
-  받침 없는 이름은 그대로 "지우는·지우가·지우야!"로 쓴다. '이'를 붙인 건 다른 이름이 아니라
-  같은 이름을 자연스럽게 부르는 것이다 — "하온은 웃었어요" 같은 딱딱한 문장은 쓰지 않는다.
+- 다만 조사는 한국어답게 붙인다. 받침 있는 이름은 '이'를 붙인 "하온이"가 기본형이고,
+  그 뒤에 조사를 또 붙인다 — 하온이가·하온이는·하온이를·하온이한테·하온이의, 부를 땐 "하온아!".
+  받침 없는 이름은 그대로 "지우가·지우는·지우를·지우야!"로 쓴다.
+  '이'를 붙인 건 다른 이름이 아니라 같은 이름을 자연스럽게 부르는 것이다.
+  특히 **주어 자리**를 조심한다. 가장 흔한 실수가 여기다:
+    (X) 하온은 웃었어요 / (X) 하온이 열쇠를 돌렸어요 / (X) 하온가 달렸어요
+    (O) 하온이는 웃었어요 / (O) 하온이가 열쇠를 돌렸어요 / (O) 하온이가 달렸어요
+  주어로 쓸 땐 "이름이"에서 멈추지 말고 반드시 "이름이가"까지 쓴다.
+  같은 규칙을 친구·동생 등 다른 등장인물 이름에도 똑같이 적용한다.
 - 결말에는 아이가 스스로 해낸 것이 남는다. 어른이 대신 해결해주지 않는다.
   단, '실제 결말'이 재료로 주어지면 그 사실이 우선이다 — 실제로 일어난 일(혼남 등)을
   지우거나 미화하지 않고 그대로 담은 뒤, 그 안에서 아이가 배우고 회복하게 한다.
@@ -266,6 +286,48 @@ function nameOk(name: string, text: string): boolean {
   return text.includes(name);
 }
 
+/**
+ * '이름' 칸에 들어와도 이름이 아닌 말들. 부모가 "누구랑"의 이름 칸에 "동생"처럼
+ * 적는 일이 있어서, 조사 교정이 이런 낱말을 망가뜨리지 않도록 막아 둔다.
+ */
+const COMMON_NOUNS = new Set([
+  "동생", "형", "누나", "언니", "오빠", "친구", "엄마", "아빠",
+  "할머니", "할아버지", "선생님", "이모", "삼촌", "고모", "사촌",
+]);
+
+/**
+ * 이름 뒤 조사 교정 — 프롬프트로 막아도 확률적으로 새는 것을 마지막에 손본다.
+ *
+ * 받침 있는 이름은 '이'를 붙인 "하온이"가 기본형인데, 모델이 종종 이걸 빠뜨려
+ * "하온은 웃었어요"(딱딱함)나 "하온가 달렸어요"(비문)를 낸다. 부모가 읽어 주는
+ * 글이라 이런 문장 하나가 바로 티가 나서, 명백히 틀린 형태만 골라 고친다.
+ *
+ * 손대지 않는 것: "하온이 열쇠를 …". 주어일 수도("하온이가"의 누락) 소유일 수도
+ * ("하온이의 열쇠") 있어 기계가 판단할 수 없다. 그건 프롬프트에 맡긴다.
+ */
+export function fixNameJosa(name: string, text: string): string {
+  const trimmed = name.trim();
+  if (!trimmed || !text) return text;
+  // 보통명사에는 이 규칙이 통하지 않는다 — "동생은 웃었어요"는 맞는 말인데
+  // "동생이는"으로 바꿔버리면 오히려 틀린다. 사람 이름일 때만 손댄다.
+  if (COMMON_NOUNS.has(trimmed)) return text;
+  const last = trimmed.slice(-1);
+  const code = last.charCodeAt(0);
+  if (code < 0xac00 || code > 0xd7a3) return text; // 한글 이름만
+  if ((code - 0xac00) % 28 === 0) return text; // 받침 없는 이름은 '이'를 붙이지 않는다
+
+  const esc = trimmed.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // 조사 뒤에 한글이 이어지면 다른 낱말일 수 있으니 건드리지 않는다.
+  const rules: [RegExp, string][] = [
+    [new RegExp(`${esc}은(?![가-힣])`, "g"), `${trimmed}이는`], // 딱딱함
+    [new RegExp(`${esc}는(?![가-힣])`, "g"), `${trimmed}이는`], // 비문
+    [new RegExp(`${esc}가(?![가-힣])`, "g"), `${trimmed}이가`], // 비문
+    [new RegExp(`${esc}를(?![가-힣])`, "g"), `${trimmed}이를`], // 비문
+    [new RegExp(`${esc}야(?![가-힣])`, "g"), `${trimmed}아`], // 부를 때
+  ];
+  return rules.reduce((out, [re, to]) => out.replace(re, to), text);
+}
+
 export async function generateOutline(input: {
   child: ChildProfile;
   material: StoryMaterial;
@@ -325,7 +387,14 @@ export async function generateOutline(input: {
     }
   }
 
-  return outline!;
+  // 부모가 줄거리를 먼저 보고 고르므로, 여기서부터 조사가 맞아야 한다.
+  const names = [input.child.name, input.material.whoName].filter(Boolean);
+  const fix = (t: string) => names.reduce((s, n) => fixNameJosa(n, s), t);
+  return {
+    ...outline!,
+    title: fix(outline!.title),
+    scenes: outline!.scenes.map((s) => ({ ...s, text: fix(s.text) })),
+  };
 }
 
 const STORY_SYSTEM = `${VOICE}
@@ -334,6 +403,12 @@ const STORY_SYSTEM = `${VOICE}
 옮긴다. 이야기를 새로 짓거나 장면을 합치거나 나누지 말고, 장면 개수 그대로 쪽을 낸다
 (@@PAGE@@ 번호가 장면 번호와 일치해야 한다). 각 장면의 줄거리에 살을 붙여 본문으로만
 만든다.
+
+@@TEXT@@에 쓰는 것이 **아이가 실제로 보게 될 동화책 한 쪽의 글**이다. 부모가 그 자리에서
+소리 내어 읽어 준다. 쓰고 나면 반드시 소리 내어 읽어 보듯 확인한다 — 읽다가 걸리는 곳,
+숨이 안 쉬어지는 긴 문장, 조사가 어색한 곳이 있으면 고쳐서 낸다.
+특히 이름 뒤 조사를 매 쪽 확인한다: 주어 자리는 "하온이는/하온이가"이지 "하온은"이나
+"하온이"가 아니다. 이 실수가 가장 자주 나오니 쪽마다 눈으로 짚는다.
 
 @@IMG@@에는 그 쪽의 **장면만** 적는다 — 누가 어디서 무엇을 하는지. 그림체나 화면
 구도는 적지 않는다. 그건 삽화를 그릴 때 따로 붙는다.
@@ -413,7 +488,15 @@ export async function generateStory(input: {
     }
   }
 
-  return story!;
+  // 아이가 보게 될 최종 본문이라 여기서 한 번 더 조사를 맞춘다.
+  // 등장인물 이름은 손대지 않는다 — 모델이 "동생"처럼 보통명사를 인물 이름으로
+  // 넣는 일이 있어, 확실히 사람 이름인 주인공만 고친다.
+  const fix = (t: string) => fixNameJosa(input.child.name, t);
+  return {
+    ...story!,
+    title: fix(story!.title),
+    pages: story!.pages.map((p) => ({ ...p, text: fix(p.text) })),
+  };
 }
 
 function textOf(message: Anthropic.Message): string {
