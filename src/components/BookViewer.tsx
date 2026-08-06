@@ -296,10 +296,14 @@ export function BookViewer({ book }: { book: Book }) {
     const stored = loadSelectedVoiceId();
     const safeStored = stored.startsWith("parent:") && !isMine ? "tc-booqoo" : stored;
     if (overriddenRef.current) return; // 직접 고른 성우를 뒤늦게 덮지 않는다
-    const v =
-      isMine && parentVoices.length > 0
+    // 창작 동화는 메뉴에 없는 성우로 읽히면 안 된다 — 메뉴는 '고른 성우(+부모)'뿐인데
+    // 저장된 다른 성우로 읽으면 목록과 실제 소리가 어긋난다. 그래서 부모 → 이 책의 성우
+    // → 부끄 순으로만 정한다(설정에 저장된 값은 쓰지 않는다).
+    const v = isMine
+      ? parentVoices.length > 0
         ? `parent:${parentVoices[0].role}`
-        : book.narrators?.[0] ?? book.narrator ?? safeStored;
+        : book.narrator || "tc-booqoo"
+      : book.narrators?.[0] ?? book.narrator ?? safeStored;
     setVoiceId(v);
     voiceIdRef.current = v;
   }, [book.narrators, book.narrator, book.id, parentVoices]);
