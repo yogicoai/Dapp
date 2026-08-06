@@ -176,6 +176,33 @@ function normalize(x: Float32Array): Float32Array {
   return y;
 }
 
+/**
+ * 클로닝용 표본율. 사람 목소리는 16kHz면 충분하다(광대역 음성 표준).
+ *
+ * 왜 낮추나: WAV는 압축이 없어서 44.1kHz로 보내면 40초가 3.4MB, 두 번 읽으면 6.7MB다.
+ * 서버 함수의 요청 본문 한도(4.5MB)를 넘겨 413(용량 초과)이 났다(실제 발생).
+ * 16kHz로 낮추면 두 번 읽어도 2.4MB — 넉넉히 들어가고, 목소리 특징은 그대로 남는다.
+ */
+const CLONE_SAMPLE_RATE = 16000;
+/** 안전 상한 — 아무리 길게 읽어도 이보다 길게는 안 보낸다(한도 초과 방지). */
+const CLONE_MAX_SECONDS = 120;
+
+/** 표본율 변환(선형 보간). 목소리 재료로는 이 정도면 충분하다. */
+function resample(x: Float32Array, from: number, to: number): Float32Array {
+  if (from === to) return x;
+  const ratio = from / to;
+  const len = Math.floor(x.length / ratio);
+  const y = new Float32Array(len);
+  for (let i = 0; i < len; i++) {
+    const pos = i * ratio;
+    const i0 = Math.floor(pos);
+    const i1 = Math.min(x.length - 1, i0 + 1);
+    const t = pos - i0;
+    y[i] = x[i0] * (1 - t) + x[i1] * t;
+  }
+  return y;
+}
+
 /** AudioBuffer → 모노 Float32 (여러 채널이면 섞는다). */
 function toMono(buffer: AudioBuffer): Float32Array {
   const len = buffer.length;
@@ -199,14 +226,14 @@ export async function prepareVoiceWav(blobs: Blob[]): Promise<Blob> {
   const ctx = new AC();
   try {
     const pieces: Float32Array[] = [];
-    let sampleRate = 44100;
     for (const b of blobs) {
       const audio = await ctx.decodeAudioData(await b.arrayBuffer());
-      sampleRate = audio.sampleRate;
-      pieces.push(trimSilence(highPass(toMono(audio), sampleRate), sampleRate));
+      // 다듬기는 원본 표본율에서 하고, 마지막에 16kHz로 낮춰 보낸다(용량 절약).
+      const cleaned = trimSilence(highPass(toMono(audio), audio.sampleRate), audio.sampleRate);
+      pieces.push(resample(cleaned, audio.sampleRate, CLONE_SAMPLE_RATE));
     }
     // 사이에 0.4초 숨 쉴 틈 — 두 번 읽은 게 한 문장처럼 붙어 들리지 않게.
-    const gap = Math.floor(sampleRate * 0.4);
+    const gap = Math.floor(CLONE_SAMPLE_RATE * 0.4);
     const total = pieces.reduce((n, p) => n + p.length, 0) + gap * Math.max(0, pieces.length - 1);
     const merged = new Float32Array(total);
     let at = 0;
@@ -214,7 +241,10 @@ export async function prepareVoiceWav(blobs: Blob[]): Promise<Blob> {
       merged.set(p, at);
       at += p.length + (i < pieces.length - 1 ? gap : 0);
     });
-    return encodeWav(normalize(merged), sampleRate);
+    // 안전 상한 — 너무 길면 앞부분만 보낸다(재료는 이미 충분하고, 한도를 넘기면 아예 실패한다).
+    const cap = CLONE_SAMPLE_RATE * CLONE_MAX_SECONDS;
+    const capped = merged.length > cap ? merged.subarray(0, cap) : merged;
+    return encodeWav(normalize(capped), CLONE_SAMPLE_RATE);
   } finally {
     void ctx.close();
   }
