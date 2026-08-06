@@ -35,6 +35,7 @@ import {
   type BookBrief,
   type Gender,
 } from "@/lib/prefs";
+import { migrateBookArt, type MigrateProgress } from "@/lib/migrate-art";
 import { COST_PARENT_VOICE, TOKEN_PRICE_KRW } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import {
@@ -218,6 +219,12 @@ export default function SettingsPage() {
   const [memberBooks, setMemberBooks] = useState<Record<string, BookBrief[]>>({});
   // 회원(owner) → 등록한 부모 목소리 역할들(["mom","dad"]). 등록 여부 확인용.
   const [memberVoices, setMemberVoices] = useState<Record<string, string[]>>({});
+  // 옛 책 삽화 옮기기 — 진행 중이면 진행 상황, 끝나면 결과 문장.
+  const [migrating, setMigrating] = useState<MigrateProgress | null>(null);
+  const [migrateDone, setMigrateDone] = useState("");
+  // 화면을 떠나면 옮기기를 멈춘다 — 안 보는 화면에서 계속 돌 이유가 없다.
+  const migrateStop = useRef(false);
+  useEffect(() => () => void (migrateStop.current = true), []);
 
   // 부모 목소리(복제됨) 목록·남은 만들기 기회를 계정에서 불러온다(로그인 안 됐으면 빈 목록).
   useEffect(() => {
@@ -341,6 +348,51 @@ export default function SettingsPage() {
     setMyBooks((prev) => prev.map((b) => (b.id === id ? { ...b, hidden } : b)));
     flashSaved();
   }
+  /**
+   * 옛 책 삽화를 cafe24로 옮긴다 (마스터 전용, 한 번만 돌리면 되는 정리 작업).
+   *
+   * 전 회원의 책을 대상으로 하되 폴더는 그 책 주인의 아이디로 나눈다 — 마스터가
+   * 대신 옮겨 줘도 파일은 원래 주인 자리에 들어가야 나중에 찾을 수 있다.
+   */
+  async function migrateOldArt() {
+    const all = Object.values(memberBooks).flat();
+    // 마스터 자신의 책도 대상 — memberBooks에는 다른 회원 것만 묶여 있을 수 있다.
+    const mine = myBooks.filter((b) => !all.some((x) => x.id === b.id));
+    const targets = [...all, ...mine];
+    if (targets.length === 0) {
+      setMigrateDone("옮길 동화가 없어요.");
+      return;
+    }
+    if (!window.confirm(`동화 ${targets.length}권의 그림을 옮길까요?\n\n몇 분 걸릴 수 있고, 이 화면을 열어 두셔야 해요.`)) return;
+
+    migrateStop.current = false;
+    setMigrateDone("");
+    // 회원id → 아이디. 폴더 이름이 될 값이라, 모르면 회원id를 그대로 쓴다.
+    const names: Record<string, string> = {};
+    for (const m of members) names[m.id] = m.username;
+    if (uid && acctId) names[uid] = acctId;
+
+    try {
+      const r = await migrateBookArt(
+        targets.map((b) => ({ id: b.id, owner: b.owner, title: b.title })),
+        (ownerId) => names[ownerId] ?? ownerId,
+        setMigrating,
+        () => migrateStop.current,
+      );
+      setMigrateDone(
+        `끝났어요 — ${r.moved}권에서 그림 ${r.images}장을 옮겼어요.` +
+          (r.skipped ? ` (이미 옮겨진 책 ${r.skipped}권)` : "") +
+          (r.failed ? ` ⚠️ ${r.failed}권은 실패했어요 — 다시 눌러 주세요.` : ""),
+      );
+      // 표지가 URL로 바뀌었으니 목록도 새로 읽는다.
+      void loadMyBookBriefs().then(setMyBooks).catch(() => {});
+    } catch {
+      setMigrateDone("옮기는 중 문제가 생겼어요. 다시 눌러 주세요.");
+    } finally {
+      setMigrating(null);
+    }
+  }
+
   // 영구 삭제 — 복원 불가라 경고를 띄우고 한 번 더 확인받는다.
   async function purgeBook(id: string, title: string) {
     if (!window.confirm(`⚠️ "${title}"을(를) 영구 삭제할까요?\n\n완전히 지워지며 복원할 수 없어요.`)) return;
@@ -1251,6 +1303,34 @@ export default function SettingsPage() {
               <p className="-mt-1 text-xs font-medium text-neutral-400">
                 가입한 회원과 각자 만든 동화·부모 목소리 등록 여부를 볼 수 있어요. 회원을 누르면 그 사람의 책장이 펼쳐져요.
               </p>
+
+              {/* ── 옛 책 삽화 옮기기 ── 한 번만 돌리면 되는 정리 작업.
+                  예전 책은 그림이 DB 안에 들어 있어 열 때마다 전송량이 나간다. */}
+              <div className="flex flex-col gap-2 rounded-2xl bg-amber-50 px-4 py-3">
+                <p className="text-xs font-extrabold text-amber-700">🧹 옛 책 그림 정리</p>
+                <p className="text-[11px] font-medium leading-relaxed text-amber-700/80">
+                  예전에 만든 동화는 그림이 데이터베이스 안에 들어 있어, 책을 열 때마다 전송량이 나가요.
+                  그림을 이미지 호스팅으로 옮기면 전송량이 거의 안 나가고 책도 빨리 열려요.
+                  <b> 한 번만 누르면 되고, 중간에 멈춰도 옮긴 데까지는 그대로 남아요.</b>
+                </p>
+                {migrating ? (
+                  <p className="text-xs font-bold text-amber-800">
+                    {migrating.bookNo} / {migrating.bookCount}권 · {migrating.title}
+                    {migrating.imageCount > 0 && ` (그림 ${migrating.imageDone}/${migrating.imageCount}장)`}
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={migrateOldArt}
+                    className="self-start rounded-full bg-amber-500 px-4 py-2 text-xs font-extrabold text-white shadow-sm"
+                  >
+                    그림 옮기기 시작
+                  </button>
+                )}
+                {migrateDone && (
+                  <p className="text-xs font-bold text-amber-800">{migrateDone}</p>
+                )}
+              </div>
               {members.length === 0 ? (
                 <p className="rounded-2xl bg-neutral-100 px-4 py-3 text-sm font-bold text-neutral-500">
                   아직 가입한 회원이 없어요.

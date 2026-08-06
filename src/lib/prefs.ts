@@ -620,6 +620,32 @@ export async function loadMyBook(id: string): Promise<Book | null> {
   return data ? rowToBook(data as BookRow) : null;
 }
 
+/** 책 한 권을 주인(owner)까지 함께 가져온다 — 삽화 옮기기에서 폴더 이름을 정하는 데 쓴다. */
+export async function loadBookWithOwner(id: string): Promise<{ book: Book; owner: string } | null> {
+  const sb = getSupabase();
+  if (!sb) return null;
+  const { data } = await sb.from("books").select("id,owner,title,data,hidden").eq("id", id).maybeSingle();
+  if (!data) return null;
+  const row = data as BookRow;
+  return { book: rowToBook(row), owner: row.owner };
+}
+
+/**
+ * 책의 내용(data)만 바꿔 쓴다. 주인(owner)은 건드리지 않는다.
+ *
+ * saveMyBook을 쓰면 안 되는 자리다 — 그건 owner를 '지금 로그인한 사람'으로 덮어서,
+ * 마스터가 남의 책을 고치면 주인이 마스터로 바뀌어 버린다.
+ *
+ * RLS에 막히면 오류가 아니라 0줄이 돌아오므로(게시판에서 겪은 그 함정), 반드시
+ * 바뀐 줄 수를 확인해서 성공 여부를 돌려준다.
+ */
+export async function updateBookData(id: string, book: Book): Promise<boolean> {
+  const sb = getSupabase();
+  if (!sb) return false;
+  const { data, error } = await sb.from("books").update({ data: book }).eq("id", id).select("id");
+  return !error && Array.isArray(data) && data.length > 0;
+}
+
 export async function saveMyBook(book: Book): Promise<void> {
   const sb = getSupabase();
   if (!sb) return;
