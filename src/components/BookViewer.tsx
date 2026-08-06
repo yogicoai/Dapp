@@ -1105,7 +1105,7 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 아래 가운데 넘김 바 — 우측 상단 ◀▶는 작고 눈에 잘 안 띄어서, 크고 분명한
           '다음 장'을 아래에 하나 더 둔다. 지금 몇 쪽인지도 같이 보여 준다
           (아이는 "얼마나 남았어?"를 자주 묻는다). 마지막 쪽에선 다음이 잠긴다. */}
-      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/45 px-2 py-1.5 backdrop-blur">
+      <div className="absolute bottom-6 left-1/2 z-10 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 flex-nowrap items-center gap-2 rounded-full bg-black/45 px-2 py-1.5 backdrop-blur">
         <button
           type="button"
           aria-label="이전 장"
@@ -1119,7 +1119,8 @@ export function BookViewer({ book }: { book: Book }) {
           <span className="hidden sm:inline">이전</span>
         </button>
 
-        <span className="min-w-[3.5rem] text-center text-sm font-extrabold text-white/90">
+        {/* 쪽 표시도 줄바꿈되지 않게 한 줄로 고정한다. */}
+        <span className="min-w-[3.5rem] whitespace-nowrap text-center text-sm font-extrabold text-white/90">
           {index + 1} / {book.pages.length}
         </span>
 
@@ -1130,7 +1131,10 @@ export function BookViewer({ book }: { book: Book }) {
           disabled={index === lastIndex}
           className="flex h-10 items-center gap-1 rounded-full bg-white/20 px-3 text-sm font-extrabold text-white transition hover:bg-white/30 disabled:opacity-30 outline-none focus:outline-none"
         >
-          <span>다음 장</span>
+          {/* 폰에서는 글자를 감춘다 — '이전'과 같은 규칙.
+              좁은 화면에서 글자까지 들어가면 바가 밀려 줄이 깨졌다(사장님 지적).
+              화살표만으로도 뜻이 통하고, 읽어 주는 이름은 aria-label에 남아 있다. */}
+          <span className="hidden sm:inline">다음 장</span>
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
             <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
