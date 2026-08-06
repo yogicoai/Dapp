@@ -45,6 +45,8 @@ export function parseMaterial(value: unknown): StoryMaterial {
     subject: pick(v?.subject),
     who: pick(v?.who),
     whoName: pick(v?.whoName),
+    // "여자"/"남자"만 받는다 — 프롬프트에 그대로 들어가는 값이라 아무 문자열이나 통과시키지 않는다.
+    whoGender: v?.whoGender === "여자" || v?.whoGender === "남자" ? v.whoGender : "",
     happening: pick(v?.happening),
     place: pick(v?.place),
     feeling: pick(v?.feeling),

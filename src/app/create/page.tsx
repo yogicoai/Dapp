@@ -257,21 +257,44 @@ function companionTerm(who: string): string {
 }
 
 /**
- * 동행 이름 입력 — "친구랑" 같은 사람 동행을 골랐을 때만 뜬다. 이름을 넣으면 그
- * 이름을 그대로 쓰고, 비우면 "친구"처럼 지칭어로만 부른다("친구토토" 엉킴 방지).
- * "혼자서"엔 뜨지 않는다.
+ * 호칭만으로 성별을 알 수 있는 동행 — 이 사람들에겐 성별을 묻지 않는다.
+ * 엄마·아빠·할머니·형·언니·남동생 …은 이미 답이 나와 있고,
+ * 동물 친구에게 "여자아이/남자아이"를 묻는 건 말이 안 된다.
+ * 남는 건 친구·선생님 — 이름만으로는 알 수 없어 모델이 짐작하다 틀리는 자리다.
+ */
+const GENDER_KNOWN = new Set([
+  "혼자서", "엄마", "아빠", "엄마 아빠", "할머니", "할아버지",
+  "형", "오빠", "누나", "언니", "남동생", "여동생", "동물 친구",
+]);
+
+/**
+ * 동행 이름·성별 입력 — "친구랑" 같은 사람 동행을 골랐을 때만 뜬다.
+ *
+ * 이름: 넣으면 그 이름을 그대로 쓰고, 비우면 "친구"처럼 지칭어로만 부른다
+ * ("친구토토" 엉킴 방지). "혼자서"엔 뜨지 않는다.
+ *
+ * 성별: 호칭으로 알 수 없는 동행(친구·선생님)에만 묻는다. 안 물으면 모델이
+ * 이름으로 짐작해 남자 친구가 여자아이로 그려진다 — 실제 친구가 주인공 옆에
+ * 서는 책이라 아이가 바로 알아본다.
  */
 function WhoNameInput({
   who,
   value,
   onChange,
+  gender,
+  onGenderChange,
+  accent,
 }: {
   who: string;
   value: string;
   onChange: (v: string) => void;
+  gender: string;
+  onGenderChange: (v: string) => void;
+  accent: string;
 }) {
   if (!who || who === "혼자서") return null;
   const term = companionTerm(who);
+  const askGender = !GENDER_KNOWN.has(term);
   return (
     <div className="flex flex-col gap-1">
       <p className="text-xs font-bold text-neutral-400">
@@ -284,6 +307,29 @@ function WhoNameInput({
         placeholder="이름만 적어요 (예: 토토, 민지)"
         className="w-full rounded-2xl border-2 border-dashed border-neutral-200 bg-white px-4 py-2.5 text-sm font-bold outline-none focus:border-neutral-400"
       />
+      {askGender && (
+        <div className="mt-1 flex items-center gap-1.5">
+          <span className="text-xs font-bold text-neutral-400">{term}는</span>
+          {["여자", "남자"].map((g) => {
+            const on = gender === g;
+            return (
+              <button
+                key={g}
+                type="button"
+                // 같은 걸 다시 누르면 해제 — 안 고르면 모델이 알아서 정한다.
+                onClick={() => onGenderChange(on ? "" : g)}
+                aria-pressed={on}
+                style={on ? { background: accent } : undefined}
+                className={`rounded-full px-3 py-1 text-xs font-bold transition ${
+                  on ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                }`}
+              >
+                {g === "여자" ? "👧 여자" : "👦 남자"}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -391,6 +437,8 @@ export default function CreatePage() {
   const [who, setWho] = useState("");
   // 동행의 실제 이름(선택). "친구랑" 고르고 이름을 넣으면 그 이름을 그대로 쓴다.
   const [whoName, setWhoName] = useState("");
+  // 동행의 성별(선택, "여자"/"남자"). 친구·선생님처럼 호칭으로 알 수 없을 때만 묻는다.
+  const [whoGender, setWhoGender] = useState("");
   const [happening, setHappening] = useState("");
   const [extra, setExtra] = useState("");
   // 「오늘의 이야기」 전용 — 어디서·무슨 일(자유)·기분. 누구랑(who)은 공유한다.
@@ -564,6 +612,7 @@ export default function CreatePage() {
   function chooseWho(t: string) {
     setWho((prev) => (prev === t ? "" : t));
     setWhoName("");
+    setWhoGender(""); // 이름과 같은 이유 — 다른 동행으로 바꿨는데 앞의 성별이 남으면 안 된다
   }
 
   async function makeOutline() {
@@ -590,6 +639,7 @@ export default function CreatePage() {
                   subject: "",
                   who,
                   whoName: whoName.trim(),
+                  whoGender,
                   happening: todayEvent.trim(),
                   place,
                   feeling,
@@ -604,6 +654,7 @@ export default function CreatePage() {
                     subject: "",
                     who,
                     whoName: whoName.trim(),
+                  whoGender,
                     happening: "",
                     place: "",
                     feeling: "",
@@ -616,6 +667,7 @@ export default function CreatePage() {
                     subject: theme,
                     who,
                     whoName: whoName.trim(),
+                  whoGender,
                     happening,
                     place: "",
                     feeling: "",
@@ -1055,7 +1107,14 @@ export default function CreatePage() {
                     />
                   </div>
 
-                  <WhoNameInput who={who} value={whoName} onChange={setWhoName} />
+                  <WhoNameInput
+                    who={who}
+                    value={whoName}
+                    onChange={setWhoName}
+                    gender={whoGender}
+                    onGenderChange={setWhoGender}
+                    accent={accent}
+                  />
 
                   <div className="flex flex-col gap-2">
                     <p className="text-xs font-bold text-neutral-400">그때 기분이 어땠어요?</p>
@@ -1196,7 +1255,14 @@ export default function CreatePage() {
                     </div>
                   </div>
 
-                  <WhoNameInput who={who} value={whoName} onChange={setWhoName} />
+                  <WhoNameInput
+                    who={who}
+                    value={whoName}
+                    onChange={setWhoName}
+                    gender={whoGender}
+                    onGenderChange={setWhoGender}
+                    accent={accent}
+                  />
 
                   {seed && (
                     <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-center text-sm font-bold text-neutral-500">
@@ -1295,7 +1361,14 @@ export default function CreatePage() {
                     </div>
                   </div>
 
-                  <WhoNameInput who={who} value={whoName} onChange={setWhoName} />
+                  <WhoNameInput
+                    who={who}
+                    value={whoName}
+                    onChange={setWhoName}
+                    gender={whoGender}
+                    onGenderChange={setWhoGender}
+                    accent={accent}
+                  />
 
                   <div className="flex flex-col gap-2">
                     <p className="text-xs font-bold text-neutral-400">무슨 일이 생길까요?</p>
