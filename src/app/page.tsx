@@ -81,9 +81,6 @@ export default function Home() {
       alive = false;
     };
   }, [router]);
-  // 그림책나라 배경(이사님 hero)은 인물이 크게 담겨 넓은 화면에서 꽉 차 부담스럽다.
-  // 살짝 흐리고 흰 베일을 더 얹어 은은하게 가라앉힌다 — 이 테마에만 적용한다.
-  const softBg = theme.id === "picturebook";
 
   // 언어는 설정(⚙️)에서 고른다. 메인은 아이가 보는 화면이라 컨트롤을 두지 않는다.
   const all = books as Book[];
@@ -108,6 +105,9 @@ export default function Home() {
     "princess",
     "ocean",
     "storybook",
+    // 그림책나라. 예전엔 이 테마만 따로 그린 '액자' 안에서 영상을 틀어서 이 목록에
+    // 없었는데, 액자를 없애 다른 테마와 같은 길로 오게 되면서 여기 들어와야 한다.
+    "picturebook",
   ]);
   // 책장 탭 — 내가 만든 책 | 제공 서가(전래동화·세계명작, 빈 책장 해결사).
   // 제공 서가는 언어 필터를 안 탄다 — 서가 자체가 콘텐츠다.
@@ -150,50 +150,30 @@ export default function Home() {
 
   return (
     <div className="relative min-h-dvh w-full overflow-hidden">
-      {softBg ? (
-        // 그림책나라 — 배경(이사님 hero)을 화면 가득 채우면 인물이 크고 눈이
-        // 피로하다. 흐림도 뿌옇게 보여 오히려 이상하다. 그래서 영상을 중앙
-        // 1200px 폭 '액자' 안에만 두고, 바깥은 크림빛 여백으로 감싼다. 넓은
-        // 화면일수록 양옆 크림이 넉넉해져 아늑한 그림책 펼침면처럼 보인다.
-        <div className="fixed inset-0 -z-10 bg-[#efe6d4]">
-          <div className="relative mx-auto h-full w-full max-w-[1200px] overflow-hidden shadow-[0_0_80px_rgba(120,90,50,0.12)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={theme.background}
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <BgVideo
-              src={`/themes/${theme.id}/bg-video.mp4`}
-              poster={theme.background}
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
-            />
-          </div>
-        </div>
-      ) : (
-        <>
-          {/* 테마 배경 — 화면을 항상 꽉 채운다. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={theme.background}
-            alt=""
-            className="fixed inset-0 -z-10 h-full w-full object-cover"
-          />
-          {/* 은은하게 움직이는 배경 영상이 있는 테마만 재생한다. 정지 이미지(poster)를
-              깔아 로딩 지연이 없고, "모션 줄이기" 기기에선 영상이 숨겨진다. key가 없으면
-              테마 전환 때 소스가 다시 로드되지 않아 poster만 뜬다. */}
-          {THEMES_WITH_BG_VIDEO.has(theme.id) && (
-            <BgVideo
-              src={`/themes/${theme.id}/bg-video.mp4`}
-              poster={theme.background}
-              className="pointer-events-none fixed inset-0 -z-10 h-full w-full object-cover motion-reduce:hidden"
-            />
-          )}
-        </>
+      {/* 테마 배경 — 어떤 테마든 화면을 꽉 채운다.
+          그림책나라는 한동안 중앙 1200px '액자' 안에만 영상을 두고 양옆을 크림빛으로
+          감쌌는데, 넓은 화면에서 그 여백을 보고 화면이 덜 로드된 줄 아는 사람이
+          많았다(사장님 확인). 아늑함보다 "고장 난 줄 안다"가 크다 — 꽉 채운다. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={theme.background}
+        alt=""
+        className="fixed inset-0 -z-10 h-full w-full object-cover"
+      />
+      {/* 은은하게 움직이는 배경 영상이 있는 테마만 재생한다. 정지 이미지(poster)를
+          깔아 로딩 지연이 없고, "모션 줄이기" 기기에선 영상이 숨겨진다. key가 없으면
+          테마 전환 때 소스가 다시 로드되지 않아 poster만 뜬다. */}
+      {THEMES_WITH_BG_VIDEO.has(theme.id) && (
+        <BgVideo
+          src={`/themes/${theme.id}/bg-video.mp4`}
+          poster={theme.background}
+          className="pointer-events-none fixed inset-0 -z-10 h-full w-full object-cover motion-reduce:hidden"
+        />
       )}
       {/* 원색 배경이 너무 세면 책 표지가 묻힌다 — 흰 베일로 채도를 한 김 뺀다.
-          그림책나라는 중앙 영상만이라 아주 옅게(제목 대비는 글자 그림자로 낸다). */}
-      <div className={`fixed inset-0 -z-10 ${softBg ? "bg-white/10" : "bg-white/25"}`} />
+          그림책나라는 예전에 중앙 액자 안에만 영상이 있어 아주 옅게(10%) 덮었는데,
+          이제 화면을 꽉 채우므로 다른 테마와 같은 세기로 덮어야 표지가 안 묻힌다. */}
+      <div className="fixed inset-0 -z-10 bg-white/25" />
 
       {/* 아래 여백: 폰은 버튼이 흐름 안에 있어 얕게, sm부터는 떠 있는 버튼 자리만큼. */}
       <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center px-6 pb-10 pt-6 sm:pb-32">
