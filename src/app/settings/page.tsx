@@ -22,10 +22,13 @@ import {
   loadChildRemote,
   loadLang,
   loadMyBooks,
+  loadBookLayout,
   loadTextPos,
+  saveBookLayout,
   saveChild,
   saveLang,
   saveTextPos,
+  type BookLayout,
   setMyBookHidden,
   type BookBrief,
   type Gender,
@@ -92,6 +95,8 @@ export default function SettingsPage() {
   const [voiceRate, setVoiceRate] = useState(DEFAULT_VOICE_RATE);
   // 책 화면 — 글자 위치(위/아래)
   const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
+  // 책 보는 방식 — 가로에서 '꽉 찬 그림' / '펼침면(그림|글 반반)'.
+  const [bookLayout, setBookLayout] = useState<BookLayout>("full");
   const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
   // 부모 목소리(복제됨) — 계정별로 Supabase에서 불러온다. cloningRole = 지금 복제 중인 역할.
@@ -147,6 +152,7 @@ export default function SettingsPage() {
     setVoiceId(loadSelectedVoiceId());
     setVoiceRate(loadVoiceRate());
     setTextPos(loadTextPos());
+    setBookLayout(loadBookLayout());
     // (녹음 목록은 계정별 저장이라 세션 effect에서 uid를 안 뒤에 불러온다.)
   }, []);
 
@@ -781,7 +787,60 @@ export default function SettingsPage() {
 
           {/* ── 책 화면 ── */}
           <section className="flex flex-col gap-2.5">
-            <h2 className="text-sm font-extrabold text-neutral-400">책 글자 위치</h2>
+            <h2 className="text-sm font-extrabold text-neutral-400">책 보는 방식</h2>
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  {
+                    value: "full",
+                    label: "꽉 찬 그림",
+                    hint: "그림 위에 글자",
+                    icon: "🖼️",
+                  },
+                  {
+                    value: "spread",
+                    label: "펼침면",
+                    hint: "그림 | 글 반반",
+                    icon: "📖",
+                  },
+                ] as const
+              ).map((o) => {
+                const active = bookLayout === o.value;
+                return (
+                  <button
+                    key={o.value}
+                    type="button"
+                    onClick={() => {
+                      setBookLayout(o.value);
+                      saveBookLayout(o.value);
+                      flashSaved();
+                    }}
+                    aria-pressed={active}
+                    style={active ? { background: accent } : undefined}
+                    className={`flex items-center gap-2 rounded-2xl px-4 py-2.5 transition ${
+                      active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                    }`}
+                  >
+                    <span className="text-lg leading-none" aria-hidden>
+                      {o.icon}
+                    </span>
+                    <span className="flex flex-col items-start leading-tight">
+                      <span className="text-sm font-extrabold">{o.label}</span>
+                      <span className={`text-[11px] font-bold ${active ? "text-white/80" : "text-neutral-400"}`}>
+                        {o.hint}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
+              가로로 볼 때만 달라져요. <b>펼침면</b>은 그림이 가려지지 않아 진짜 그림책 같고,
+              세로 그림(핸드폰용)으로 만든 동화에서 특히 예뻐요. 세로로 볼 때는 원래대로
+              그림 아래에 글자가 놓여요.
+            </p>
+
+            <h2 className="mt-1 text-sm font-extrabold text-neutral-400">책 글자 위치</h2>
             <div className="flex flex-wrap gap-2">
               {(
                 [

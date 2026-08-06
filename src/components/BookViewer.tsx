@@ -7,10 +7,13 @@ import {
   loadBgmOn,
   loadBookProgress,
   loadSfxOn,
+  loadBookLayout,
   loadMyBooksBrief,
   loadTextPos,
   loadTextScale,
+  type BookLayout,
   saveBgmOn,
+  saveBookLayout,
   saveBookProgress,
   saveTextScale,
   TEXT_SCALES,
@@ -104,6 +107,11 @@ export function BookViewer({ book }: { book: Book }) {
   const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영(hydration 안전)
   useEffect(() => setTextPos(loadTextPos()), []);
+  // 책 보는 방식 — 가로에서 '꽉 찬 그림'이냐 '펼침면(그림|글 반반)'이냐.
+  const [layout, setLayout] = useState<BookLayout>("full");
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영
+  useEffect(() => setLayout(loadBookLayout()), []);
+  const spread = layout === "spread";
   // 글자 크기 배율 — 책 안에서 바로 바꾼다("보다가 작네" 싶을 때). 계정별로 저장된다.
   const [textScale, setTextScale] = useState(1);
   const [sizeMenu, setSizeMenu] = useState(false);
@@ -847,16 +855,24 @@ export function BookViewer({ book }: { book: Book }) {
       <div className="relative z-0 h-full w-full">
         {book.pages.map((page, i) => {
           // 낭독 글자를 노래방처럼 색칠해 보여준다 — 가로 오버레이·세로 패널 두 곳에서 같은 내용을 쓴다.
-          const renderRuns = () =>
-            i === index && reading ? (
+          /**
+           * @param onPaper 펼침면의 '종이' 위에 놓이는 글인지. 종이 위에서는 흰 글씨가
+           *   안 보이므로 어두운 글씨로 바꾼다(색칠도 진한 주황으로).
+           *   같은 본문이 어두운 밴드와 종이 두 곳에 쓰여서 색을 갈라 준다.
+           */
+          const renderRuns = (onPaper = false) => {
+            const done = onPaper ? "text-amber-600" : "text-amber-300";
+            const rest = onPaper ? "text-neutral-800" : "text-white";
+            return i === index && reading ? (
               page.text.split("").map((ch, k) => (
-                <span key={k} className={k < highlight ? "text-amber-300" : "text-white"}>
+                <span key={k} className={k < highlight ? done : rest}>
                   {ch}
                 </span>
               ))
             ) : (
-              <span className="text-white">{page.text}</span>
+              <span className={rest}>{page.text}</span>
             );
+          };
 
           // 그림 위에 얹는 오버레이 — '가로로 보기'처럼 그림이 화면을 꽉 채울 때 쓴다.
           // (세로에선 그림을 가리지 않게, 그림 아래 전용 자리에 따로 글을 놓는다.)
@@ -918,7 +934,12 @@ export function BookViewer({ book }: { book: Book }) {
                     틀 비율은 그림 실측(--ar) — 4:3 고정이면 와이드 그림이 '짤려' 보인다. */}
                 <div className="absolute inset-0 flex items-center justify-center portrait:flex-col portrait:bottom-24">
                   <div
-                    className="relative shrink-0 overflow-hidden [aspect-ratio:var(--ar)] portrait:w-full landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
+                    className={`relative shrink-0 overflow-hidden [aspect-ratio:var(--ar)] portrait:w-full ${
+                      spread
+                        ? // 펼침면 — 그림은 왼쪽 절반 안에서 최대한 크게(높이·너비 둘 다 안 넘치게).
+                          "landscape:h-full landscape:w-auto landscape:max-w-[calc(50vw-1.5rem)]"
+                        : "landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
+                    }`}
                     style={{ "--ar": String(imgRatios[i] ?? 4 / 3) } as React.CSSProperties}
                   >
                     {page.video ? (
@@ -959,8 +980,13 @@ export function BookViewer({ book }: { book: Book }) {
                         }`}
                       />
                     )}
-                    {/* 가로 보기 전용: 그림 위 하단 밴드 — 이제 틀이 그림에 딱 맞아 밴드도 그림 하단에 붙는다. */}
-                    <div className="absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[7%] pt-[12%] landscape:block">
+                    {/* 가로 보기 전용: 그림 위 하단 밴드 — 이제 틀이 그림에 딱 맞아 밴드도 그림 하단에 붙는다.
+                        펼침면에서는 글이 옆 종이로 빠지므로 이 밴드를 쓰지 않는다(그림이 안 가려진다). */}
+                    <div
+                      className={`absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[7%] pt-[12%] ${
+                        spread ? "" : "landscape:block"
+                      }`}
+                    >
                       <p
                         style={scaled("clamp(1.35rem,2.9vw,2.05rem)")}
                         className="font-story mx-auto max-w-[46rem] whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.35] text-white drop-shadow-md"
@@ -969,15 +995,36 @@ export function BookViewer({ book }: { book: Book }) {
                       </p>
                     </div>
                   </div>
-                  {/* 세로 보기 전용: 그림 바로 아래 글자 칸(flex 형제라 그림에 딱 붙는다).
-                      아래 버튼(재생·배속)을 안 가리게 pb를 넉넉히 둔다. */}
-                  <div className="flex max-h-[42dvh] w-full shrink-0 items-center justify-center overflow-y-auto bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:hidden">
+                  {/* 글자 칸.
+                      · 세로(폰): 그림 바로 아래 — 원래부터 그림과 글이 나뉘어 있다.
+                      · 가로 + 펼침면: 오른쪽 절반의 '종이' — 진짜 그림책 펼침면이 된다.
+                      · 가로 + 꽉 찬 그림: 이 칸은 숨고 위의 하단 밴드가 대신한다.
+                      아래 버튼(재생·배속·넘김)을 안 가리게 여백을 넉넉히 둔다. */}
+                  <div
+                    className={`flex shrink-0 items-center justify-center overflow-y-auto ${
+                      spread
+                        ? "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:max-h-none landscape:h-full landscape:w-1/2 landscape:bg-none landscape:bg-[#fffdf5] landscape:px-[6%] landscape:pb-24 landscape:pt-8"
+                        : "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:hidden"
+                    }`}
+                  >
+                    {/* 세로(어두운 배경) — 흰 글씨. 펼침면일 때도 세로에서는 이쪽을 쓴다. */}
                     <p
                       style={scaled("clamp(1.15rem,4.4vw,1.85rem)")}
-                      className="font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.5] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
+                      className={`font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.5] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
+                        spread ? "landscape:hidden" : ""
+                      }`}
                     >
-                      {renderRuns()}
+                      {renderRuns(false)}
                     </p>
+                    {/* 가로 + 펼침면 — 종이 위 어두운 글씨. 색칠도 종이에 맞춰 진한 주황. */}
+                    {spread && (
+                      <p
+                        style={scaled("clamp(1.15rem,2.4vw,1.75rem)")}
+                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.75] landscape:block"
+                      >
+                        {renderRuns(true)}
+                      </p>
+                    )}
                   </div>
                 </div>
               </>
@@ -1261,6 +1308,32 @@ export function BookViewer({ book }: { book: Book }) {
       <div className="absolute bottom-[4.75rem] left-5 z-10">
         {sizeMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
+            {/* 보는 방식 — 설정까지 나가지 않고 책 안에서 바로 바꾼다(가로에서만 달라진다). */}
+            <p className="px-5 pt-2.5 text-[11px] font-extrabold text-white/50">보는 방식 (가로)</p>
+            {(
+              [
+                { v: "full", label: "🖼️ 꽉 찬 그림" },
+                { v: "spread", label: "📖 펼침면" },
+              ] as const
+            ).map((o) => (
+              <button
+                key={o.v}
+                type="button"
+                onClick={() => {
+                  setLayout(o.v);
+                  saveBookLayout(o.v);
+                  setSizeMenu(false);
+                }}
+                className={`px-5 py-2 text-left text-sm font-bold outline-none transition ${
+                  layout === o.v ? "bg-amber-400 text-white" : "text-white/90 hover:bg-white/15"
+                }`}
+              >
+                {o.label} {layout === o.v ? "✓" : ""}
+              </button>
+            ))}
+            <p className="mt-1 border-t border-white/15 px-5 pt-2.5 text-[11px] font-extrabold text-white/50">
+              글자 크기
+            </p>
             {TEXT_SCALES.map((s) => (
               <button
                 key={s.value}

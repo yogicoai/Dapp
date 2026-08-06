@@ -176,6 +176,31 @@ export function saveTextPos(pos: TextPos): void {
 }
 
 /**
+ * 책 보는 방식 — 가로 화면에서만 갈린다.
+ *
+ * full   : 그림이 화면을 꽉 채우고 글자는 그림 위 하단 띠에 얹힌다(지금까지의 방식).
+ *          극장처럼 몰입되지만 글자 자리로 그림 아래쪽이 늘 어두워진다.
+ * spread : 진짜 그림책 펼침면 — 왼쪽 그림, 오른쪽 종이 위 글. 그림이 가려지지 않고
+ *          글도 또렷하다. 세로(3:4) 그림일 때 반쪽을 꽉 채워 가장 예쁘다.
+ *
+ * 기존 책은 대부분 가로(4:3) 그림이라 기본은 full로 둔다.
+ * 세로 화면(폰)은 이미 그림 위·글 아래로 나뉘어 있어 이 설정과 무관하다.
+ */
+export type BookLayout = "full" | "spread";
+
+const BOOK_LAYOUT_KEY = "voice-storybook:book-layout";
+
+export function loadBookLayout(): BookLayout {
+  if (typeof window === "undefined") return "full";
+  return window.localStorage.getItem(acctKey(BOOK_LAYOUT_KEY)) === "spread" ? "spread" : "full";
+}
+
+export function saveBookLayout(v: BookLayout): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(acctKey(BOOK_LAYOUT_KEY), v);
+}
+
+/**
  * 동화 글자 크기 배율 — 기본을 정해 두었지만 "작네" 싶을 때 책 안에서 바로 키운다.
  * 화면 크기에 따라 자동으로 커지는 기본값(clamp)에 이 배율을 곱한다.
  * 부모마다 눈이 다르고, 아이와 나란히 앉는 거리도 달라서 취향 문제다.
@@ -357,6 +382,7 @@ const DEVICE_PREF_KEYS = [
   BGM_KEY,
   PROGRESS_KEY,
   TEXT_SCALE_KEY,
+  BOOK_LAYOUT_KEY,
   "voice-storybook:voice",
   "voice-storybook:voice-rate",
   "voice-storybook:theme",
