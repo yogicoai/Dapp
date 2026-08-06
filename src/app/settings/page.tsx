@@ -76,7 +76,7 @@ import {
  * multi=true면 여러 개 고를 수 있다.
  */
 /** 하나만 고르는 항목 / 여러 개 고르는 항목을 타입으로 갈라 둔다(코드가 헷갈리지 않게). */
-type LookSingleKey = "hair" | "bangs" | "hairColor" | "eyes" | "skin" | "build" | "color" | "outfit";
+type LookSingleKey = "hair" | "bangs" | "hairColor" | "eyes" | "skin" | "build" | "color";
 type LookMultiKey = "items" | "marks";
 type LookRow =
   | { key: LookSingleKey; label: string; opts: readonly string[]; multi?: false }
@@ -116,19 +116,16 @@ const LOOK_ROWS: readonly LookRow[] = [
     opts: ["밝은 편", "보통이에요", "조금 진한 편", "햇볕에 그을렸어요"],
   },
   {
+    // 키는 뺐다 — 그림 한 장에 아이 혼자 있으면 큰지 작은지 알 수가 없어서
+    // 골라도 결과가 안 달라진다. 몸집만 남긴다.
     key: "build" as const,
-    label: "키·몸집",
-    opts: ["또래보다 작아요", "보통이에요", "또래보다 커요", "통통해요", "날씬해요"],
+    label: "몸집",
+    opts: ["통통해요", "보통이에요", "마른 편이에요"],
   },
   {
     key: "color" as const,
     label: "좋아하는 옷 색",
     opts: ["빨강", "노랑", "파랑", "초록", "분홍", "보라", "하양"],
-  },
-  {
-    key: "outfit" as const,
-    label: "자주 입는 옷",
-    opts: ["원피스", "티셔츠에 바지", "멜빵바지", "후드티", "치마에 티셔츠"],
   },
   {
     key: "items" as const,
@@ -139,7 +136,7 @@ const LOOK_ROWS: readonly LookRow[] = [
   {
     key: "marks" as const,
     label: "이런 점도 있어요",
-    opts: ["곱슬머리", "주근깨", "보조개", "앞니 빠짐", "볼이 통통해요", "점이 있어요"],
+    opts: ["곱슬머리", "주근깨", "보조개", "앞니 빠짐", "볼이 통통해요"],
     multi: true,
   },
 ];

@@ -25,7 +25,6 @@ export type ChildLooks = {
   skin?: string; // 피부 톤
   build?: string; // 키·몸집 (또래보다 작아요 / 통통해요 …)
   color?: string; // 좋아하는 옷 색
-  outfit?: string; // 자주 입는 옷 (원피스 / 티셔츠에 바지 …)
   items?: string[]; // 늘 지니는 것 (곰인형·모자·머리핀 …) 여러 개
   glasses?: boolean; // 안경
   marks?: string[]; // 특징 (주근깨·보조개 …) 여러 개
@@ -53,7 +52,6 @@ function normalizeLooks(raw: unknown): ChildLooks | undefined {
     skin: str(v.skin),
     build: str(v.build),
     color: str(v.color),
-    outfit: str(v.outfit),
     items: list(v.items),
     glasses: v.glasses === true ? true : undefined,
     marks: list(v.marks),
@@ -103,8 +101,7 @@ export function looksToPrompt(looks: ChildLooks | undefined): string {
   if (looks.skin) parts.push(`피부는 ${looks.skin}`);
   if (looks.build) parts.push(looks.build);
   if (looks.glasses) parts.push("안경을 썼다");
-  const wear = [looks.color, looks.outfit].filter(Boolean).join(" ");
-  if (wear) parts.push(`${wear}를 즐겨 입는다`);
+  if (looks.color) parts.push(`${looks.color} 옷을 즐겨 입는다`);
   if (looks.items?.length) parts.push(`늘 ${looks.items.join("·")}을(를) 지니고 다닌다`);
   if (looks.marks?.length) parts.push(looks.marks.join("·"));
   return parts.join(", ");
