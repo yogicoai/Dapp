@@ -81,6 +81,24 @@ export async function POST(request: Request) {
           "The child must think 'that's MY character, but drawn beautifully'.",
         ].join("\n")
       : "",
+    /*
+     * 시트가 흔들리면 책 전체가 흔들린다. 여기서 두 가지를 못박는다.
+     *
+     * ① 인원 수 — 목록에 없는 인물이 끼거나 같은 인물이 두 번 그려지면, 매 쪽 삽화가
+     *    그 시트를 참조하므로 8쪽 내내 같은 사고가 반복된다.
+     * ② 서로 달라 보이기 — 주인공과 친구가 비슷하게 그려지면, 쪽 삽화에서 모델이
+     *    둘을 구별하지 못해 주인공을 두 번 그린다(실제 발생: 친구가 주인공의 쌍둥이로 나옴).
+     *    그래서 머리와 옷 색이 확실히 다르도록 시트 단계에서 갈라 둔다.
+     */
+    `Draw EXACTLY ${characters.length} character${characters.length > 1 ? "s" : ""}, one per person listed above, arranged left to right in that order, evenly spaced and clearly separated.`,
+    "Each listed character appears exactly ONCE. Never repeat a character, never draw twins, never add anyone who is not on the list.",
+    characters.length > 1
+      ? [
+          "MAKE THEM UNMISTAKABLY DIFFERENT FROM EACH OTHER. This is the most important rule of this sheet.",
+          "Give each character a clearly different hairstyle (length and shape) AND clearly different clothing colours. If two descriptions happen to be similar, push them apart — change one character's hair length and shirt colour so the two can never be confused.",
+          "A reader glancing at this sheet must be able to tell instantly which character is which. Two characters that could be mistaken for the same child is a failure.",
+        ].join("\n")
+      : "",
     "Full body, front view, standing, simple plain white background.",
     "Consistent character design to be reused across every page of the book.",
     "Wholesome, innocent, fully clothed, child-friendly.",

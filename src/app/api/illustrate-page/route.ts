@@ -83,17 +83,42 @@ export async function POST(request: Request) {
           "Characters must physically belong to the scene: touching, holding, standing on, or reacting to what is around them, with an expression that matches the moment.",
         ].join("\n")
       : "",
+    /*
+     * 같은 아이가 한 화면에 두 번 나오는 사고 — 이 앱에서 가장 자주 나는 그림 오류다.
+     *
+     * 원인은 "두 번 그려라"가 아니라, 친구의 생김새가 주인공과 비슷하게 정해져
+     * 모델이 둘을 구별하지 못하고 주인공을 복사하는 것이다(실제 발생: 놀이터 장면에서
+     * 친구가 주인공과 같은 파란 옷·같은 얼굴로 나옴).
+     *
+     * 그래서 ① 인물마다 무엇이 다른지 대비시켜 주고 ② 다 그린 뒤 얼굴을 세어 보게 하는
+     * 확인 절차를 붙인다. 금지만 적는 것보다 확인 단계를 주는 쪽이 훨씬 잘 먹힌다.
+     */
     cast.length > 0
       ? [
           `The only people who may appear are: ${cast.map((c) => c.name).join(", ")}. Draw each of them at most once, and only if this scene actually needs them.`,
           ...cast.filter((c) => c.description).map((c) => `- ${c.name}: ${c.description}`),
-        ].join("\n")
+          cast.length > 1
+            ? [
+                "These are DIFFERENT people. They have different hair and different clothing colours — keep those differences obvious and never give one character another character's hair or outfit.",
+                "Do not make the friend, sibling or classmate look like a copy of the main child. If the descriptions read alike, differentiate them clearly in the drawing.",
+              ].join("\n")
+            : "",
+        ]
+          .filter(Boolean)
+          .join("\n")
       : "",
+    [
+      "HOW MANY PEOPLE — read the scene text and count the characters named in it. Draw exactly that many people. No extra background children, no crowd filler, and never a second copy of someone already in the picture.",
+      "If the scene names only one character, exactly one person is in this picture.",
+      "FINAL CHECK before you finish: look at every face you drew. If two figures share the same face, the same hair and the same clothes, that is the duplication error — remove one of them or redraw that figure as the correct, visibly different character.",
+    ].join("\n"),
     // 일관성 — 이 앱의 핵심 약속이다. 쪽마다 얼굴이나 옷이 바뀌면 "내 동화"가 아니게 된다.
     sheet
       ? [
           "ABSOLUTE RULE — CHARACTER CONSISTENCY.",
           "These characters appear on every page of one book. They must look like the SAME person on page 1 and page 8.",
+          // 주인공만 챙기고 친구는 쪽마다 바뀌는 일이 잦았다 — 아이는 친구도 알아본다.
+          "This applies to EVERY character, not just the main child. The friend, the sibling, the classmate, the grown-up — each one keeps the exact same hair, face and outfit on every single page. A friend who changes shirt colour between pages breaks the book just as badly as a hero who does.",
           "Copy from the reference sheet without any change: face shape and features, eye shape and colour, eyebrows, hairstyle, hair colour and hair length, skin tone, body proportions and apparent age, EVERY garment with its exact colour and pattern, shoes, and every accessory.",
           "Do NOT restyle, do NOT age the character up or down, do NOT change the haircut, do NOT swap or recolour the outfit, do NOT add or remove accessories, do NOT 'improve' the design.",
           "Only the pose, the expression and the camera angle may change — never the character's appearance.",
