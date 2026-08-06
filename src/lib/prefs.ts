@@ -693,6 +693,68 @@ export function saveShelfCols(n: ShelfCols): void {
   }
 }
 
+/* ── 동화 본문 글꼴 ──
+ * 전부 무료·오픈소스(OFL) 글꼴이다.
+ *
+ * scale이 필요한 이유: 같은 글자 크기(px)를 줘도 글꼴마다 실제로 보이는 크기가
+ * 꽤 다르다. 특히 동글체는 글자가 작게 잡혀 있어서 지금 본문 크기가 그에 맞춰
+ * 크게 잡혀 있는데, 그대로 다른 글꼴로 바꾸면 글자가 확 커진다.
+ * 그래서 글꼴마다 배율을 함께 들고 다니며 눈에 보이는 크기를 맞춘다.
+ *
+ * leading도 같이 둔다 — 글꼴마다 글자 위아래 여백이 달라 같은 줄 간격 숫자가
+ * 다르게 보인다(동글체가 특히 넓어 보인다).
+ *
+ * 배율·줄 간격은 눈으로 맞춘 시작값이다. 화면에서 보고 조정하면 된다.
+ */
+export type StoryFont = {
+  id: string;
+  label: string;
+  /** 미리보기·본문에 쓰는 font-family 값 */
+  family: string;
+  /** 동글체를 1로 본 글자 크기 배율 */
+  scale: number;
+  leading: number;
+};
+
+export const STORY_FONTS: StoryFont[] = [
+  { id: "dongle", label: "동글동글", family: '"Dongle"', scale: 1, leading: 1.4 },
+  { id: "jua", label: "또렷한 주아", family: '"Jua"', scale: 0.66, leading: 1.6 },
+  { id: "gaegu", label: "아이 손글씨", family: '"Gaegu"', scale: 0.76, leading: 1.55 },
+  { id: "pen", label: "부드러운 펜글씨", family: '"Nanum Pen Script"', scale: 0.86, leading: 1.5 },
+  { id: "dodum", label: "차분한 돋움", family: '"Gowun Dodum"', scale: 0.62, leading: 1.7 },
+  {
+    id: "gothic",
+    label: "읽기 쉬운 고딕",
+    family: '"Pretendard Variable", Pretendard',
+    scale: 0.6,
+    leading: 1.7,
+  },
+];
+
+const STORY_FONT_KEY = "voice-storybook:story-font";
+
+export function findStoryFont(id: string | null): StoryFont {
+  return STORY_FONTS.find((f) => f.id === id) ?? STORY_FONTS[0];
+}
+
+export function loadStoryFont(): StoryFont {
+  if (typeof window === "undefined") return STORY_FONTS[0];
+  try {
+    return findStoryFont(window.localStorage.getItem(acctKey(STORY_FONT_KEY)));
+  } catch {
+    return STORY_FONTS[0];
+  }
+}
+
+export function saveStoryFont(id: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(acctKey(STORY_FONT_KEY), id);
+  } catch {
+    /* 무시 */
+  }
+}
+
 /* ── 홈 화면에 추가 안내 (아이폰) ──
  * 아이폰 사파리에는 전체화면 기능이 없어서, 홈 화면 앱으로 열어야 주소창 없이
  * 꽉 찬 화면이 된다. 그런데 그 방법을 아는 부모가 드물다. 한 번만 알려 준다.

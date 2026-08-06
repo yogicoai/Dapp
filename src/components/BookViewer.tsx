@@ -20,6 +20,9 @@ import {
   hotspotHintSeen,
   markHotspotHintSeen,
   updateBookData,
+  loadStoryFont,
+  type StoryFont,
+  STORY_FONTS,
 } from "@/lib/prefs";
 import { loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
@@ -159,7 +162,17 @@ export function BookViewer({ book }: { book: Book }) {
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영
   useEffect(() => setTextScale(loadTextScale()), []);
   /** 기본 크기(화면 따라 자동)에 배율을 곱한다 — 인라인이라 세 군데 본문에 똑같이 먹는다. */
-  const scaled = (base: string) => ({ fontSize: `calc(${base} * ${textScale})` });
+  /*
+   * 본문 글꼴 — 부모가 설정에서 고른다. 글꼴마다 같은 px에서도 보이는 크기가 달라서,
+   * 글자 크기 배율(textScale)에 글꼴 배율(font.scale)을 함께 곱해야 어떤 글꼴을 골라도
+   * 비슷한 크기로 보인다. 줄 간격도 글꼴이 들고 있는 값을 쓴다.
+   */
+  const [font, setFont] = useState<StoryFont>(STORY_FONTS[0]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용
+  useEffect(() => setFont(loadStoryFont()), []);
+  const scaled = (base: string) => ({
+    fontSize: `calc(${base} * ${textScale} * ${font.scale})`,
+  });
   const applyTextScale = (s: number) => {
     setTextScale(s);
     saveTextScale(s);
@@ -972,6 +985,10 @@ export function BookViewer({ book }: { book: Book }) {
   return (
     <div
       className="fixed inset-0 select-none overflow-hidden bg-neutral-950"
+      // 고른 글꼴과 그 글꼴에 맞는 줄 간격을 .font-story가 받아 쓴다.
+      style={
+        { "--story-font": font.family, "--story-leading": String(font.leading) } as React.CSSProperties
+      }
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
@@ -1060,7 +1077,7 @@ export function BookViewer({ book }: { book: Book }) {
             >
               <p
                 style={scaled(size)}
-                className={`font-story whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.4] drop-shadow-md ${
+                className={`font-story whitespace-pre-line break-keep text-pretty text-center font-semibold drop-shadow-md ${
                   textPos === "bottom" || textPos === "top"
                     ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : "w-full rounded-3xl bg-black/55 p-5 backdrop-blur-[2px] sm:p-6"
@@ -1208,7 +1225,7 @@ export function BookViewer({ book }: { book: Book }) {
                     {/* 세로(어두운 배경) — 흰 글씨. 펼침면일 때도 세로에서는 이쪽을 쓴다. */}
                     <p
                       style={scaled("clamp(1.15rem,4.4vw,1.85rem)")}
-                      className={`font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.4] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
+                      className={`font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
                         spread ? "landscape:hidden" : ""
                       }`}
                     >
@@ -1222,7 +1239,7 @@ export function BookViewer({ book }: { book: Book }) {
                       // 그래도 넘치면 스크롤은 되되 막대는 감춘다.
                       <p
                         style={scaled("clamp(0.95rem,1.85vw,1.45rem)")}
-                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.4] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden landscape:block"
+                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold [scrollbar-width:none] [&::-webkit-scrollbar]:hidden landscape:block"
                       >
                         {renderRuns(true)}
                       </p>

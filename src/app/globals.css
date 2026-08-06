@@ -6,6 +6,13 @@
   펼쳐지므로, 폰트 import를 그 앞(맨 위)에 둬야 CSS 파싱 에러가 안 난다.
 */
 @import url("https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&display=swap");
+/* 고를 수 있는 본문 글꼴들 — 전부 무료·오픈소스(OFL). 한글 글꼴은 unicode-range로
+   잘려 있어 실제로 쓰는 글자 조각만 내려받는다(고르지 않은 글꼴은 거의 안 받는다).
+   '읽기 쉬운 고딕'은 이미 UI에 쓰는 Pretendard라 따로 받지 않는다. */
+@import url("https://fonts.googleapis.com/css2?family=Jua&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap");
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/variable/pretendardvariable-dynamic-subset.css");
 @import "tailwindcss";
 
@@ -38,11 +45,13 @@ body {
   책 본문·제목·대사처럼 아이가 읽는 글에만 이 클래스를 붙인다.
 */
 .font-story {
-  font-family: "Dongle", "Pretendard Variable", Pretendard, system-ui, sans-serif;
-  /* 동글체는 자간이 좁고 글자가 작게 잡혀, 살짝 벌리고 키워야 본문이 편하다.
-     다만 글자에 견줘 위아래 여백(em 박스)을 크게 잡는 글꼴이라, 줄 간격 숫자가
-     같아도 다른 글꼴보다 훨씬 떨어져 보인다 — 본문 줄 간격을 1.4로 두는 이유다.
-     BookViewer의 leading 값을 바꿀 일이 있으면 이 점을 같이 감안할 것. */
+  /* 부모가 고른 글꼴이 --story-font로 들어온다. 아직 안 정해졌으면 동글체.
+     글꼴마다 같은 px에서도 글자가 크게/작게 보이고 줄 간격도 다르게 느껴져서,
+     크기 배율(--story-scale)과 줄 간격(--story-leading)을 글꼴과 함께 넘긴다.
+     (동글체는 글자에 견줘 위아래 여백을 크게 잡아, 같은 숫자여도 훨씬 벌어져 보인다.) */
+  font-family: var(--story-font, "Dongle"), "Pretendard Variable", Pretendard, system-ui,
+    sans-serif;
+  line-height: var(--story-leading, 1.4);
   letter-spacing: 0.01em;
 }
 
