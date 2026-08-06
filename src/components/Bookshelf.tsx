@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import Link from "next/link";
 import { useTheme } from "./ThemeProvider";
 
@@ -29,12 +30,21 @@ const FALLBACK_EMOJI = ["🌈", "🍀", "⭐", "🎈"];
  * 제목(리본 안)·그림(원 창)·쪽수만 얹는다. 틀과 좌표는 테마가 들고 있어서
  * 공룡나라로 넘어가면 표지도 정글 틀로 바뀐다.
  */
-export function Bookshelf({ books }: { books: ShelfItem[] }) {
+export function Bookshelf({ books, cols = 5 }: { books: ShelfItem[]; cols?: number }) {
   const { theme } = useTheme();
   const cover = theme.cover;
 
   return (
-    <div className="flex flex-wrap items-end justify-center gap-6 sm:gap-7">
+    /*
+     * 한 줄에 몇 권을 놓을지 — 책 크기는 그대로 두고 책장 폭만 좁혀서 정한다.
+     * 칸에 맞춰 책을 늘리는 방식은 3권일 때 책이 우스꽝스럽게 커진다.
+     * 폭 = 권수 × (책 너비 11rem + 사이 간격 1.75rem).
+     * 좁은 화면(sm 미만)에는 안 건다 — 거기선 화면 폭이 알아서 2권으로 맞춘다.
+     */
+    <div
+      style={{ "--cols": String(cols) } as React.CSSProperties}
+      className="mx-auto flex flex-wrap items-end justify-center gap-6 sm:w-[calc(var(--cols)*12.75rem)] sm:max-w-full sm:gap-7"
+    >
       {books.map((book, i) => {
         const art = book.coverImage ?? book.pages?.find((p) => p.image)?.image ?? null;
         const pageCount = book.pageCount ?? book.pages?.length ?? null;

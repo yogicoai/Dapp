@@ -620,6 +620,36 @@ export async function loadMyBook(id: string): Promise<Book | null> {
   return data ? rowToBook(data as BookRow) : null;
 }
 
+/* ── 책장 한 줄에 몇 권 ──
+ * 넓은 화면에서 한 줄에 몇 권을 놓을지. 책 크기는 그대로 두고 책장 폭만 줄여서
+ * 줄당 권수를 정한다 — 칸에 맞춰 책을 늘리면 3권일 때 책이 우스꽝스럽게 커진다.
+ * 휴대폰은 화면이 좁아 2권으로 고정된다(설정과 무관).
+ */
+export const SHELF_COLS = [3, 4, 5, 6] as const;
+export type ShelfCols = (typeof SHELF_COLS)[number];
+const SHELF_COLS_KEY = "voice-storybook:shelf-cols";
+/** 기본 5 — 지금 넓은 화면에서 자연스럽게 놓이던 권수와 같다(바꾸기 전과 똑같이 보인다). */
+const DEFAULT_SHELF_COLS: ShelfCols = 5;
+
+export function loadShelfCols(): ShelfCols {
+  if (typeof window === "undefined") return DEFAULT_SHELF_COLS;
+  try {
+    const n = Number(window.localStorage.getItem(acctKey(SHELF_COLS_KEY)));
+    return (SHELF_COLS as readonly number[]).includes(n) ? (n as ShelfCols) : DEFAULT_SHELF_COLS;
+  } catch {
+    return DEFAULT_SHELF_COLS;
+  }
+}
+
+export function saveShelfCols(n: ShelfCols): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(acctKey(SHELF_COLS_KEY), String(n));
+  } catch {
+    /* 무시 */
+  }
+}
+
 /* ── 캐릭터 눌러 보기 안내 ──
  * 전래동화·세계명작은 그림 속 인물을 누르면 그 인물이 말한다. 그런데 눌러 볼 수
  * 있다는 걸 아무 데도 안 알려 줘서, 있는 줄 모르고 지나가는 부모가 많다.

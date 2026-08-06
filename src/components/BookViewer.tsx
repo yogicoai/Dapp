@@ -99,6 +99,43 @@ const HOTSPOT_KO: Record<string, string> = {
   greedy: "욕심쟁이",
 };
 
+/**
+ * 본문을 문장 단위로 자른다 — 그림책처럼 문장마다 줄을 놓기 위해.
+ *
+ * 글자를 하나도 더하거나 빼지 않는다. 낭독 색칠이 '몇 번째 글자까지'로 돌기 때문에,
+ * 공백 하나만 손대도 색칠 위치가 어긋난다. 잘라 낸 조각을 그대로 이어 붙이면
+ * 원문이 된다.
+ *
+ * 마침표·물음표·느낌표에서 끊되, 대사 안의 문장부호에서는 끊지 않는다.
+ * 동화는 대사가 많아서 이걸 안 가리면 엉뚱하게 잘린다:
+ *   ("찰칵!" 열차 문이 열렸어요.) → 「"찰칵!"」과 「열차 문이…」로 갈라져 버린다.
+ * 닫는 따옴표 뒤에 글이 더 이어지면 대개 그 대사를 받는 서술이라 한 문장으로 둔다.
+ * 반대로 따옴표가 글의 끝이면 거기서 자연스럽게 끝난다.
+ */
+function splitSentences(text: string): string[] {
+  const out: string[] = [];
+  let cur = "";
+  for (let i = 0; i < text.length; i++) {
+    cur += text[i];
+    if (!".!?。".includes(text[i])) continue;
+
+    // 뒤따르는 닫는 따옴표는 이 문장에 붙인다 — 따옴표만 다음 줄로 떨어지면 흉하다.
+    let quoted = false;
+    while (i + 1 < text.length && `"'”’」』)`.includes(text[i + 1])) {
+      cur += text[++i];
+      quoted = true;
+    }
+    // 대사가 닫힌 뒤에도 글이 남아 있으면 아직 문장이 안 끝났다 — 계속 모은다.
+    if (quoted && i + 1 < text.length) continue;
+
+    while (i + 1 < text.length && /\s/.test(text[i + 1])) cur += text[++i];
+    out.push(cur);
+    cur = "";
+  }
+  if (cur) out.push(cur);
+  return out.length > 0 ? out : [text];
+}
+
 export function BookViewer({ book }: { book: Book }) {
   const router = useRouter();
   // 그림 없는 쪽의 배경으로 쓴다 — 글 동화도 테마(동화나라) 안에서 읽힌다.
@@ -179,6 +216,9 @@ export function BookViewer({ book }: { book: Book }) {
 
   // 소리 — 책장 넘김 효과음(짧아서 낭독과 안 겹침) + 배경음(토글로 켜고 끈다).
   const sfxRef = useRef<HTMLAudioElement | null>(null);
+  // 넘김 소리가 나는 동안 잠가 둔다 — 자세한 이유는 go()의 주석 참고.
+  const sfxBusy = useRef(false);
+  const sfxTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bgmRef = useRef<HTMLAudioElement | null>(null);
   const [bgmOn, setBgmOn] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영
@@ -771,18 +811,32 @@ export function BookViewer({ book }: { book: Book }) {
         setEnded(false); // 넘기면 "다시 듣기" 안내는 닫는다
         stopSay(); // 넘김과 동시에 캐릭터 대사 음성을 끊는다(다음 쪽까지 새어 나가지 않게)
       }
-      // 책장 넘김 효과음 — 실제로 쪽이 바뀔 때만. 설정에서 끌 수 있다.
-      // 빠르게 여러 장을 넘기면 소리가 끝나기 전에 매번 처음부터 다시 재생돼
-      // '쫙쫙쫙' 하고 끊겨 들렸다. 아직 나는 중이면 다시 틀지 않는다 —
-      // 넘김은 그대로 되고 소리만 한 번 깔끔하게 난다.
-      if (clamped !== index && loadSfxOn()) {
+      /*
+       * 책장 넘김 효과음 — 실제로 쪽이 바뀔 때만. 설정에서 끌 수 있다.
+       *
+       * 빠르게 여러 장을 넘기면 소리가 끝나기 전에 매번 처음부터 다시 재생돼
+       * '쫙쫙쫙' 하고 끊겨 들렸다. 전엔 el.paused로 막아 봤는데 안 잡혔다 —
+       * play()는 비동기라 실제로 소리가 나기 전까지 paused가 잠깐 true로 남아,
+       * 그 사이에 들어온 두 번째 넘김이 검사를 통과해 처음부터 다시 틀어 버린다.
+       *
+       * 그래서 브라우저 상태를 믿지 말고 우리가 직접 잠근다. 소리를 틀 때 잠그고
+       * 끝나면 푼다. ended가 안 오는 경우(탭 전환 등)를 대비해 시간제한도 같이 건다.
+       */
+      if (clamped !== index && loadSfxOn() && !sfxBusy.current) {
         const el = sfxRef.current ?? new Audio("/sfx/page-turn.mp3");
         sfxRef.current = el;
-        if (el.paused || el.ended) {
-          el.currentTime = 0;
-          el.volume = 0.5;
-          el.play().catch(() => {});
-        }
+        sfxBusy.current = true;
+        const unlock = () => {
+          sfxBusy.current = false;
+          if (sfxTimer.current) clearTimeout(sfxTimer.current);
+          sfxTimer.current = null;
+        };
+        el.onended = unlock;
+        if (sfxTimer.current) clearTimeout(sfxTimer.current);
+        sfxTimer.current = setTimeout(unlock, 1200); // 안전장치
+        el.currentTime = 0;
+        el.volume = 0.5;
+        el.play().catch(unlock);
       }
       setIndex(clamped);
       if (readingRef.current && clamped !== index) {
@@ -886,15 +940,36 @@ export function BookViewer({ book }: { book: Book }) {
           const renderRuns = (onPaper = false) => {
             const done = onPaper ? "text-amber-600" : "text-amber-300";
             const rest = onPaper ? "text-neutral-800" : "text-white";
-            return i === index && reading ? (
-              page.text.split("").map((ch, k) => (
-                <span key={k} className={k < highlight ? done : rest}>
-                  {ch}
+            const live = i === index && reading;
+            /*
+             * 문장마다 줄을 바꾼다. 한 덩어리로 흘리면 줄이 아무 데서나 끊겨
+             * 문서처럼 딱딱해 보인다 — 그림책은 문장 단위로 놓인다.
+             * 문장 사이를 한 줄 띄워 숨 쉴 자리를 준다.
+             *
+             * 글자를 더하거나 빼지 않는 게 중요하다. 낭독 색칠이 '몇 번째 글자까지'로
+             * 도는데, 여기서 공백 하나만 손대도 색칠이 어긋난다. 그래서 자르기만 하고
+             * 이어 붙이면 원문 그대로가 되게 한다.
+             */
+            let at = 0;
+            return splitSentences(page.text).map((sentence, si) => {
+              const start = at;
+              at += sentence.length;
+              return (
+                <span key={si} className="block [&+&]:mt-[0.7em]">
+                  {live ? (
+                    sentence
+                      .split("")
+                      .map((ch, k) => (
+                        <span key={k} className={start + k < highlight ? done : rest}>
+                          {ch}
+                        </span>
+                      ))
+                  ) : (
+                    <span className={rest}>{sentence}</span>
+                  )}
                 </span>
-              ))
-            ) : (
-              <span className={rest}>{page.text}</span>
-            );
+              );
+            });
           };
 
           /*
@@ -1078,9 +1153,13 @@ export function BookViewer({ book }: { book: Book }) {
                     </p>
                     {/* 가로 + 펼침면 — 종이 위 어두운 글씨. 색칠도 종이에 맞춰 진한 주황. */}
                     {spread && (
+                      // 종이 한 쪽에 8쪽짜리 본문(150~250자)이 들어가야 해서, 글자가 크면
+                      // 넘쳐 스크롤바가 생긴다 — 그림책에 스크롤바가 보이면 책이 아니게 된다.
+                      // 조금 줄이고 줄간격도 좁혀 한 화면에 담기게 한다(글자 크기 설정은 그대로 적용).
+                      // 그래도 넘치면 스크롤은 되되 막대는 감춘다.
                       <p
-                        style={scaled("clamp(1.15rem,2.4vw,1.75rem)")}
-                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.75] landscape:block"
+                        style={scaled("clamp(0.95rem,1.85vw,1.45rem)")}
+                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center font-semibold leading-[1.6] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden landscape:block"
                       >
                         {renderRuns(true)}
                       </p>

@@ -13,6 +13,7 @@ import books from "@/data/sample-books.json";
 import {
   loadLang,
   loadMyBooksBrief,
+  loadShelfCols,
   loadShelfCache,
   migrateLegacyBooks,
   saveShelfCache,
@@ -112,6 +113,10 @@ export default function Home() {
   // 책장 탭 — 내가 만든 책 | 제공 서가(전래동화·세계명작, 빈 책장 해결사).
   // 제공 서가는 언어 필터를 안 탄다 — 서가 자체가 콘텐츠다.
   const [shelf, setShelf] = useState<"mine" | "folk" | "classic">("mine");
+  // 한 줄에 몇 권 (넓은 화면에서만 — 폰은 화면 폭이 알아서 2권으로 맞춘다).
+  const [shelfCols, setShelfCols] = useState(5);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용
+  useEffect(() => setShelfCols(loadShelfCols()), []);
   // 게스트는 "우리 가족 책장"이 로그인 안내라, 콘텐츠가 있는 전래동화 탭을 먼저 보여준다.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 게스트 판별 후 기본 탭 전환
@@ -381,7 +386,7 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <Bookshelf books={shown} />
+          <Bookshelf books={shown} cols={shelfCols} />
         )}
 
 

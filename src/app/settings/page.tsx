@@ -24,6 +24,10 @@ import {
   loadLang,
   loadMyBookBriefs,
   loadBookLayout,
+  loadShelfCols,
+  saveShelfCols,
+  SHELF_COLS,
+  type ShelfCols,
   loadTextPos,
   looksToPrompt,
   type ChildLooks,
@@ -185,6 +189,8 @@ export default function SettingsPage() {
   const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
   // 책 보는 방식 — 가로에서 '꽉 찬 그림' / '펼침면(그림|글 반반)'.
   const [bookLayout, setBookLayout] = useState<BookLayout>("full");
+  // 책장 한 줄 권수(넓은 화면 전용).
+  const [shelfCols, setShelfCols] = useState<ShelfCols>(5);
   const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
   // 부모 목소리(복제됨) — 계정별로 Supabase에서 불러온다. cloningRole = 지금 복제 중인 역할.
@@ -256,6 +262,7 @@ export default function SettingsPage() {
     setVoiceRate(loadVoiceRate());
     setTextPos(loadTextPos());
     setBookLayout(loadBookLayout());
+    setShelfCols(loadShelfCols());
     // (녹음 목록은 계정별 저장이라 세션 effect에서 uid를 안 뒤에 불러온다.)
   }, []);
 
@@ -1211,6 +1218,36 @@ export default function SettingsPage() {
             </div>
             <p className="text-[11px] font-medium text-neutral-400">
               동화책에서 글이 그림의 어느 쪽에 얹힐지 골라요.
+            </p>
+
+            {/* 책장 한 줄 권수 — 넓은 화면에서만 의미가 있다.
+                폰은 화면이 좁아 어차피 2권으로 맞춰지므로, 헷갈리지 않게 그 말을 적어 둔다. */}
+            <h2 className="mt-1 text-sm font-extrabold text-neutral-400">책장 한 줄에</h2>
+            <div className="flex flex-wrap gap-2">
+              {SHELF_COLS.map((n) => {
+                const active = shelfCols === n;
+                return (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => {
+                      setShelfCols(n);
+                      saveShelfCols(n);
+                      flashSaved();
+                    }}
+                    aria-pressed={active}
+                    style={active ? { background: accent } : undefined}
+                    className={`rounded-full px-4 py-2 text-sm font-extrabold transition ${
+                      active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                    }`}
+                  >
+                    {n}권
+                  </button>
+                );
+              })}
+            </div>
+            <p className="-mt-1 text-xs font-medium text-neutral-400">
+              컴퓨터 화면에서 한 줄에 몇 권씩 놓을지예요. 휴대폰에서는 화면이 좁아 2권으로 보여요.
             </p>
           </section>
 
