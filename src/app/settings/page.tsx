@@ -166,6 +166,12 @@ export default function SettingsPage() {
   const [gender, setGender] = useState<Gender>("girl");
   // 아이 생김새 — 동화 주인공을 "우리 애 같게" 만드는 특징들(사진 대신).
   const [looks, setLooks] = useState<ChildLooks>({});
+  /**
+   * 부모가 아이 정보를 한 번이라도 만졌는지.
+   * 서버에서 아이 정보를 되살리는 데 1~2초가 걸리는데, 그 사이 부모가 특징을 고르면
+   * 뒤늦게 도착한 옛 값이 방금 고른 걸 덮어 "저장이 안 된다"로 보였다.
+   */
+  const childTouched = useRef(false);
   // 항목이 많아 화면이 길어진다 — 평소엔 접어 두고 눌러서 편다.
   const [looksOpen, setLooksOpen] = useState(false);
   const [lang, setLang] = useState("ko");
@@ -259,8 +265,10 @@ export default function SettingsPage() {
       setUid(s.uid ?? null);
       setCustomVoices(loadCustomVoices(s.uid ?? null));
       // 계정에 저장된 아이 정보를 서버에서 되살린다 (로컬 캐시가 비어 있어도 복구).
+      // 단, 이게 돌아오는 데 1~2초 걸리는 동안 부모가 이미 만졌다면 덮지 않는다.
+      // 안 그러면 방금 고른 특징이 서버의 옛 값으로 되돌아가 "저장이 안 된다"가 된다.
       const remoteChild = await loadChildRemote();
-      if (alive && remoteChild) {
+      if (alive && remoteChild && !childTouched.current) {
         setName(remoteChild.name);
         setAge(remoteChild.age);
         setGender(remoteChild.gender);
@@ -509,6 +517,8 @@ export default function SettingsPage() {
     gender?: Gender;
     looks?: ChildLooks;
   }) => {
+    // 부모가 손을 댄 순간부터는 뒤늦게 도착하는 서버 값이 이걸 덮지 못하게 한다.
+    childTouched.current = true;
     const merged = {
       name: next.name ?? name,
       age: next.age !== undefined ? next.age : age,

@@ -177,7 +177,15 @@ export async function loadChildRemote(): Promise<ChildPrefs | null> {
       .maybeSingle();
     if (!error) {
       const remote = normalizeChild((data as { child?: unknown } | null)?.child);
-      if (remote) child = remote;
+      if (remote) {
+        // 서버 값이 우선이되, 서버에 '생김새'가 아예 없으면 로컬 것을 살린다.
+        // 아이 특징은 나중에 생긴 기능이라 서버에 저장된 아이 정보가 이름·나이·성별만
+        // 들어 있는 계정이 많다. 통째로 갈아끼우면 방금 고른 특징이 불러올 때마다
+        // 지워져서 "저장이 안 된다"가 된다.
+        // (다른 기기에서 특징을 지운 경우 이 기기 것이 되살아날 수 있지만,
+        //  애써 고른 걸 말없이 잃는 쪽보다 낫다.)
+        child = { ...remote, looks: remote.looks ?? child?.looks };
+      }
     }
     if (child && typeof window !== "undefined") {
       // 계정별 키에만 쓴다 — loadChild()가 읽는 자리가 바로 여기다(acctKey(CHILD_KEY)와 같은 키).
