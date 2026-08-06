@@ -620,6 +620,31 @@ export async function loadMyBook(id: string): Promise<Book | null> {
   return data ? rowToBook(data as BookRow) : null;
 }
 
+/**
+ * 아직 그림이 DB 안에 들어 있는 책이 몇 권인지 — 그림 내용은 받지 않고 개수만 센다.
+ *
+ * "옛 책 그림 정리"가 끝났는지 알려면 이게 필요하다. 책을 다 열어 보면 확인은
+ * 되지만, 그건 지금 없애려는 그 전송량을 다시 쓰는 일이라 말이 안 된다.
+ * 그래서 표지나 첫 쪽 그림이 아직 base64인지만 서버에서 판단하게 한다.
+ *
+ * 조회가 안 되면(구버전 PostgREST 등) -1을 돌려준다 — '모름'이라는 뜻이라,
+ * 부르는 쪽은 정리 버튼을 그냥 보여 주면 된다.
+ */
+export async function countBooksWithEmbeddedArt(): Promise<number> {
+  const sb = getSupabase();
+  if (!sb) return 0;
+  try {
+    const { count, error } = await sb
+      .from("books")
+      .select("id", { count: "exact", head: true })
+      .or("data->>coverImage.like.data:*,data->pages->0->>image.like.data:*");
+    if (error) return -1;
+    return count ?? 0;
+  } catch {
+    return -1;
+  }
+}
+
 /** 책 한 권을 주인(owner)까지 함께 가져온다 — 삽화 옮기기에서 폴더 이름을 정하는 데 쓴다. */
 export async function loadBookWithOwner(id: string): Promise<{ book: Book; owner: string } | null> {
   const sb = getSupabase();

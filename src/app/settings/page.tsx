@@ -16,6 +16,7 @@ import {
   type Profile,
 } from "@/lib/auth";
 import {
+  countBooksWithEmbeddedArt,
   deleteMyBook,
   loadAllBooksBrief,
   loadChild,
@@ -222,6 +223,11 @@ export default function SettingsPage() {
   // 옛 책 삽화 옮기기 — 진행 중이면 진행 상황, 끝나면 결과 문장.
   const [migrating, setMigrating] = useState<MigrateProgress | null>(null);
   const [migrateDone, setMigrateDone] = useState("");
+  /**
+   * 아직 그림이 DB 안에 있는 책 수. 0이면 정리가 끝난 것이라 칸을 감춘다.
+   * -1은 '아직 모름'(조회 전이거나 실패) — 그땐 칸을 보여 준다.
+   */
+  const [oldArtCount, setOldArtCount] = useState(-1);
   // 화면을 떠나면 옮기기를 멈춘다 — 안 보는 화면에서 계속 돌 이유가 없다.
   const migrateStop = useRef(false);
   useEffect(() => () => void (migrateStop.current = true), []);
@@ -317,6 +323,10 @@ export default function SettingsPage() {
         void loadAllParentVoiceRoles()
           .then((v) => alive && setMemberVoices(v))
           .catch(() => {});
+        // 정리할 게 남았는지 — 개수만 센다(그림은 안 받는다).
+        void countBooksWithEmbeddedArt()
+          .then((n) => alive && setOldArtCount(n))
+          .catch(() => {});
       }
     })();
     return () => {
@@ -384,8 +394,10 @@ export default function SettingsPage() {
           (r.skipped ? ` (이미 옮겨진 책 ${r.skipped}권)` : "") +
           (r.failed ? ` ⚠️ ${r.failed}권은 실패했어요 — 다시 눌러 주세요.` : ""),
       );
-      // 표지가 URL로 바뀌었으니 목록도 새로 읽는다.
+      // 표지가 URL로 바뀌었으니 목록도 새로 읽고, 남은 권수도 다시 센다
+      // (0이 되면 정리 칸이 사라진다).
       void loadMyBookBriefs().then(setMyBooks).catch(() => {});
+      void countBooksWithEmbeddedArt().then(setOldArtCount).catch(() => {});
     } catch {
       setMigrateDone("옮기는 중 문제가 생겼어요. 다시 눌러 주세요.");
     } finally {
@@ -1305,32 +1317,43 @@ export default function SettingsPage() {
               </p>
 
               {/* ── 옛 책 삽화 옮기기 ── 한 번만 돌리면 되는 정리 작업.
-                  예전 책은 그림이 DB 안에 들어 있어 열 때마다 전송량이 나간다. */}
-              <div className="flex flex-col gap-2 rounded-2xl bg-amber-50 px-4 py-3">
-                <p className="text-xs font-extrabold text-amber-700">🧹 옛 책 그림 정리</p>
-                <p className="text-[11px] font-medium leading-relaxed text-amber-700/80">
-                  예전에 만든 동화는 그림이 데이터베이스 안에 들어 있어, 책을 열 때마다 전송량이 나가요.
-                  그림을 이미지 호스팅으로 옮기면 전송량이 거의 안 나가고 책도 빨리 열려요.
-                  <b> 한 번만 누르면 되고, 중간에 멈춰도 옮긴 데까지는 그대로 남아요.</b>
-                </p>
-                {migrating ? (
-                  <p className="text-xs font-bold text-amber-800">
-                    {migrating.bookNo} / {migrating.bookCount}권 · {migrating.title}
-                    {migrating.imageCount > 0 && ` (그림 ${migrating.imageDone}/${migrating.imageCount}장)`}
+                  예전 책은 그림이 DB 안에 들어 있어 열 때마다 전송량이 나간다.
+                  정리가 끝나면(0권) 칸 자체를 감춘다 — 할 일이 없는데 버튼이 남아
+                  있으면 "왜 아직 있지?" 하고 다시 누르게 된다. */}
+              {oldArtCount !== 0 && (
+                <div className="flex flex-col gap-2 rounded-2xl bg-amber-50 px-4 py-3">
+                  <p className="text-xs font-extrabold text-amber-700">
+                    🧹 옛 책 그림 정리
+                    {oldArtCount > 0 && ` · ${oldArtCount}권 남음`}
                   </p>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={migrateOldArt}
-                    className="self-start rounded-full bg-amber-500 px-4 py-2 text-xs font-extrabold text-white shadow-sm"
-                  >
-                    그림 옮기기 시작
-                  </button>
-                )}
-                {migrateDone && (
-                  <p className="text-xs font-bold text-amber-800">{migrateDone}</p>
-                )}
-              </div>
+                  <p className="text-[11px] font-medium leading-relaxed text-amber-700/80">
+                    예전에 만든 동화는 그림이 데이터베이스 안에 들어 있어, 책을 열 때마다 전송량이 나가요.
+                    그림을 이미지 호스팅으로 옮기면 전송량이 거의 안 나가고 책도 빨리 열려요.
+                    <b> 한 번만 누르면 되고, 중간에 멈춰도 옮긴 데까지는 그대로 남아요.</b>
+                  </p>
+                  {migrating ? (
+                    <p className="text-xs font-bold text-amber-800">
+                      {migrating.bookNo} / {migrating.bookCount}권 · {migrating.title}
+                      {migrating.imageCount > 0 && ` (그림 ${migrating.imageDone}/${migrating.imageCount}장)`}
+                    </p>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={migrateOldArt}
+                      className="self-start rounded-full bg-amber-500 px-4 py-2 text-xs font-extrabold text-white shadow-sm"
+                    >
+                      그림 옮기기 시작
+                    </button>
+                  )}
+                  {migrateDone && <p className="text-xs font-bold text-amber-800">{migrateDone}</p>}
+                </div>
+              )}
+              {/* 다 끝났는데 방금 돌린 결과는 알려 준다(칸이 사라져도 결과는 남게). */}
+              {oldArtCount === 0 && migrateDone && (
+                <p className="rounded-2xl bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-700">
+                  ✅ {migrateDone}
+                </p>
+              )}
               {members.length === 0 ? (
                 <p className="rounded-2xl bg-neutral-100 px-4 py-3 text-sm font-bold text-neutral-500">
                   아직 가입한 회원이 없어요.
