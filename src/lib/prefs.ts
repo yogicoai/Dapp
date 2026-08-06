@@ -18,11 +18,17 @@ export type Gender = "girl" | "boy" | "unspecified";
  * 전부 선택이라 아무것도 안 골라도 동화는 만들어진다.
  */
 export type ChildLooks = {
-  hair?: string; // 머리 길이·모양 (짧은 머리 / 단발 / 긴 머리 …)
+  hair?: string; // 머리 모양 (짧은 머리 / 단발 / 양갈래 …)
+  bangs?: string; // 앞머리 (있어요 / 없어요 / 옆으로 넘겨요)
   hairColor?: string; // 머리 색
-  glasses?: boolean; // 안경
+  eyes?: string; // 눈매 (크고 동그래요 / 웃으면 반달 …)
+  skin?: string; // 피부 톤
+  build?: string; // 키·몸집 (또래보다 작아요 / 통통해요 …)
   color?: string; // 좋아하는 옷 색
-  marks?: string[]; // 특징 (주근깨·보조개·곱슬머리 …) 여러 개 가능
+  outfit?: string; // 자주 입는 옷 (원피스 / 티셔츠에 바지 …)
+  items?: string[]; // 늘 지니는 것 (곰인형·모자·머리핀 …) 여러 개
+  glasses?: boolean; // 안경
+  marks?: string[]; // 특징 (주근깨·보조개 …) 여러 개
 };
 
 export type ChildPrefs = {
@@ -37,17 +43,23 @@ function normalizeLooks(raw: unknown): ChildLooks | undefined {
   const v = raw as Partial<ChildLooks> | null | undefined;
   if (!v || typeof v !== "object") return undefined;
   const str = (x: unknown) => (typeof x === "string" && x.trim() ? x.trim().slice(0, 30) : undefined);
+  const list = (x: unknown) =>
+    Array.isArray(x) ? x.map(str).filter((s): s is string => Boolean(s)).slice(0, 5) : undefined;
   const looks: ChildLooks = {
     hair: str(v.hair),
+    bangs: str(v.bangs),
     hairColor: str(v.hairColor),
-    glasses: v.glasses === true ? true : undefined,
+    eyes: str(v.eyes),
+    skin: str(v.skin),
+    build: str(v.build),
     color: str(v.color),
-    marks: Array.isArray(v.marks)
-      ? v.marks.map(str).filter((s): s is string => Boolean(s)).slice(0, 4)
-      : undefined,
+    outfit: str(v.outfit),
+    items: list(v.items),
+    glasses: v.glasses === true ? true : undefined,
+    marks: list(v.marks),
   };
   // 하나도 안 골랐으면 아예 없는 것으로 둔다 — 빈 껍데기를 들고 다니지 않는다.
-  const any = looks.hair || looks.hairColor || looks.glasses || looks.color || looks.marks?.length;
+  const any = Object.values(looks).some((x) => (Array.isArray(x) ? x.length > 0 : Boolean(x)));
   return any ? looks : undefined;
 }
 
@@ -83,11 +95,17 @@ function normalizeChild(raw: unknown): ChildPrefs | null {
 export function looksToPrompt(looks: ChildLooks | undefined): string {
   if (!looks) return "";
   const parts: string[] = [];
-  if (looks.hairColor || looks.hair) {
-    parts.push([looks.hairColor, looks.hair].filter(Boolean).join(" "));
-  }
+  // 머리 — 색·모양·앞머리를 한 덩어리로 묶어야 그림이 헷갈리지 않는다.
+  const hair = [looks.hairColor, looks.hair].filter(Boolean).join(" ");
+  if (hair) parts.push(hair);
+  if (looks.bangs) parts.push(`앞머리는 ${looks.bangs}`);
+  if (looks.eyes) parts.push(`눈은 ${looks.eyes}`);
+  if (looks.skin) parts.push(`피부는 ${looks.skin}`);
+  if (looks.build) parts.push(looks.build);
   if (looks.glasses) parts.push("안경을 썼다");
-  if (looks.color) parts.push(`${looks.color} 옷을 즐겨 입는다`);
+  const wear = [looks.color, looks.outfit].filter(Boolean).join(" ");
+  if (wear) parts.push(`${wear}를 즐겨 입는다`);
+  if (looks.items?.length) parts.push(`늘 ${looks.items.join("·")}을(를) 지니고 다닌다`);
   if (looks.marks?.length) parts.push(looks.marks.join("·"));
   return parts.join(", ");
 }

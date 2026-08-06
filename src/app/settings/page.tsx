@@ -67,6 +67,64 @@ import {
   type ParentVoice,
 } from "@/lib/parent-voice";
 
+/**
+ * 아이 특징 항목 — 동화 주인공을 "우리 애 같게" 만드는 재료.
+ *
+ * 무엇을 넣을지는 '아이를 알아보게 하는 힘'으로 골랐다. 앞머리 유무·눈매·늘 지니는
+ * 물건은 부모가 아이를 떠올릴 때 가장 먼저 말하는 것들이라 반드시 넣었고,
+ * 반대로 그림에서 티가 안 나는 항목(키 몇 cm 같은)은 뺐다.
+ * multi=true면 여러 개 고를 수 있다.
+ */
+/** 하나만 고르는 항목 / 여러 개 고르는 항목을 타입으로 갈라 둔다(코드가 헷갈리지 않게). */
+type LookSingleKey = "hair" | "bangs" | "hairColor" | "eyes" | "skin" | "build" | "color" | "outfit";
+type LookMultiKey = "items" | "marks";
+type LookRow =
+  | { key: LookSingleKey; label: string; opts: readonly string[]; multi?: false }
+  | { key: LookMultiKey; label: string; opts: readonly string[]; multi: true };
+
+const LOOK_ROWS: readonly LookRow[] = [
+  {
+    key: "hair" as const,
+    label: "머리 모양",
+    opts: ["짧은 머리", "단발", "긴 머리", "양갈래", "하나로 묶기", "똥머리", "곱슬머리"],
+  },
+  { key: "bangs" as const, label: "앞머리", opts: ["있어요", "없어요", "옆으로 넘겨요"] },
+  { key: "hairColor" as const, label: "머리 색", opts: ["까만색", "짙은 갈색", "밝은 갈색"] },
+  {
+    key: "eyes" as const,
+    label: "눈매",
+    opts: ["크고 동그래요", "웃으면 반달이 돼요", "또렷해요", "쌍꺼풀이 있어요"],
+  },
+  { key: "skin" as const, label: "피부", opts: ["밝은 편", "보통", "가무잡잡해요"] },
+  {
+    key: "build" as const,
+    label: "키·몸집",
+    opts: ["또래보다 작아요", "보통이에요", "또래보다 커요", "통통해요", "날씬해요"],
+  },
+  {
+    key: "color" as const,
+    label: "좋아하는 옷 색",
+    opts: ["빨강", "노랑", "파랑", "초록", "분홍", "보라", "하양"],
+  },
+  {
+    key: "outfit" as const,
+    label: "자주 입는 옷",
+    opts: ["원피스", "티셔츠에 바지", "멜빵바지", "후드티", "치마에 티셔츠"],
+  },
+  {
+    key: "items" as const,
+    label: "늘 지니는 것",
+    opts: ["곰인형", "모자", "머리핀", "가방", "장난감 자동차", "담요"],
+    multi: true,
+  },
+  {
+    key: "marks" as const,
+    label: "이런 점도 있어요",
+    opts: ["주근깨", "보조개", "앞니 빠짐", "볼이 통통해요", "점이 있어요"],
+    multi: true,
+  },
+];
+
 const AGES = [3, 4, 5, 6, 7, 8];
 const GENDERS: { value: Gender; label: string; icon: string }[] = [
   { value: "girl", label: "여자", icon: "/icons/gender-girl.webp" },
@@ -92,6 +150,8 @@ export default function SettingsPage() {
   const [gender, setGender] = useState<Gender>("girl");
   // 아이 생김새 — 동화 주인공을 "우리 애 같게" 만드는 특징들(사진 대신).
   const [looks, setLooks] = useState<ChildLooks>({});
+  // 항목이 많아 화면이 길어진다 — 평소엔 접어 두고 눌러서 편다.
+  const [looksOpen, setLooksOpen] = useState(false);
   const [lang, setLang] = useState("ko");
 
   // 목소리 — 프리셋 선택 + 엄마·아빠 녹음 관리
@@ -449,11 +509,11 @@ export default function SettingsPage() {
     setLooks(merged);
     persistChild({ looks: merged });
   };
-  /** 특징(주근깨·보조개…)은 여러 개 고를 수 있다. */
-  const toggleMark = (m: string) => {
-    const cur = looks.marks ?? [];
-    const next = cur.includes(m) ? cur.filter((x) => x !== m) : [...cur, m].slice(0, 4);
-    setLook({ marks: next });
+  /** 여러 개 고르는 항목(늘 지니는 것·이런 점도)에서 하나를 켜고 끈다. */
+  const toggleIn = (key: "items" | "marks", v: string) => {
+    const cur = looks[key] ?? [];
+    const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v].slice(0, 5);
+    setLook({ [key]: next });
   };
 
   return (
@@ -608,104 +668,118 @@ export default function SettingsPage() {
           </section>
 
           {/* ── 아이 특징 ── 동화 주인공을 "우리 애 같게" 만드는 재료.
+              항목이 많아 화면이 길어지므로 평소엔 접어 두고 눌러서 편다.
               사진을 받지 않는 이유를 부모에게도 그대로 말해 준다(안심시키는 게 목적). */}
-          <section className="flex flex-col gap-3">
-            <h2 className="text-sm font-extrabold text-neutral-400">
-              아이 특징 <span className="font-bold text-neutral-300">(선택)</span>
-            </h2>
-            <p className="break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
-              고르면 동화 주인공이 우리 아이를 닮게 그려져요. 사진은 받지 않아요 —
-              특징만으로 충분하고, 아이 사진을 어디에도 올리지 않아 안전해요.
-            </p>
+          <section className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => setLooksOpen((v) => !v)}
+              aria-expanded={looksOpen}
+              className="flex items-center gap-2 rounded-2xl bg-neutral-100 px-4 py-3 text-left transition hover:bg-neutral-200"
+            >
+              <span className="text-lg leading-none" aria-hidden>🧒</span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-extrabold text-neutral-700">
+                  아이 특징 <span className="font-bold text-neutral-400">(선택)</span>
+                </span>
+                <span className="block truncate text-[11px] font-bold text-neutral-400">
+                  {looksToPrompt(looks) || "고르면 주인공이 우리 아이를 닮게 그려져요"}
+                </span>
+              </span>
+              <span
+                aria-hidden
+                className={`text-neutral-400 transition-transform ${looksOpen ? "rotate-180" : ""}`}
+              >
+                ▼
+              </span>
+            </button>
 
-            {(
-              [
-                {
-                  key: "hair" as const,
-                  label: "머리 모양",
-                  opts: ["짧은 머리", "단발", "긴 머리", "묶은 머리", "곱슬머리"],
-                },
-                {
-                  key: "hairColor" as const,
-                  label: "머리 색",
-                  opts: ["까만색", "짙은 갈색", "밝은 갈색"],
-                },
-                {
-                  key: "color" as const,
-                  label: "좋아하는 옷 색",
-                  opts: ["빨강", "노랑", "파랑", "초록", "분홍", "보라", "하양"],
-                },
-              ]
-            ).map((row) => (
-              <div key={row.key} className="flex flex-col gap-1.5">
-                <p className="text-xs font-bold text-neutral-400">{row.label}</p>
-                <div className="flex flex-wrap gap-2">
-                  {row.opts.map((o) => {
-                    const active = looks[row.key] === o;
-                    return (
+            {/* 펼침 — 높이 애니메이션으로 스르르 내려온다. */}
+            <div
+              className={`grid transition-[grid-template-rows,opacity] duration-300 ${
+                looksOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="flex flex-col gap-3 pt-1">
+                  <p className="break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
+                    사진은 받지 않아요 — 특징만으로 충분하고, 아이 사진을 어디에도 올리지 않아
+                    안전해요. 안 골라도 동화는 만들어져요.
+                  </p>
+
+                  {LOOK_ROWS.map((row) => (
+                    <div key={row.key} className="flex flex-col gap-1.5">
+                      <p className="text-xs font-bold text-neutral-400">
+                        {row.label}
+                        {row.multi && <span className="font-medium text-neutral-300"> (여러 개)</span>}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {row.opts.map((o) => {
+                          const active = row.multi
+                            ? (looks[row.key] ?? []).includes(o)
+                            : looks[row.key] === o;
+                          return (
+                            <button
+                              key={o}
+                              type="button"
+                              // 같은 걸 다시 누르면 해제된다 — 잘못 고르고 못 되돌리면 답답하다.
+                              onClick={() => {
+                                if (row.multi) toggleIn(row.key, o);
+                                else setLook({ [row.key]: active ? undefined : o } as Partial<ChildLooks>);
+                              }}
+                              aria-pressed={active}
+                              style={active ? { background: accent } : undefined}
+                              className={`rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                                active
+                                  ? "text-white shadow"
+                                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                              }`}
+                            >
+                              {o}
+                            </button>
+                          );
+                        })}
+                        {/* 안경은 켜고 끄는 값이라 '이런 점도' 줄 끝에 붙인다. */}
+                        {row.key === "marks" && (
+                          <button
+                            type="button"
+                            onClick={() => setLook({ glasses: looks.glasses ? undefined : true })}
+                            aria-pressed={!!looks.glasses}
+                            style={looks.glasses ? { background: accent } : undefined}
+                            className={`rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                              looks.glasses
+                                ? "text-white shadow"
+                                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                            }`}
+                          >
+                            👓 안경
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* 지금까지 고른 것을 한 줄로 — 이 문장이 그대로 그림에 전해진다. */}
+                  {looksToPrompt(looks) && (
+                    <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-emerald-50 px-4 py-2.5">
+                      <p className="min-w-0 flex-1 break-keep text-[12px] font-bold leading-relaxed text-emerald-700">
+                        이렇게 그려요 — {looksToPrompt(looks)}
+                      </p>
                       <button
-                        key={o}
                         type="button"
-                        // 같은 걸 다시 누르면 해제된다 — 잘못 고르고 못 되돌리면 답답하다.
-                        onClick={() => setLook({ [row.key]: active ? undefined : o })}
-                        aria-pressed={active}
-                        style={active ? { background: accent } : undefined}
-                        className={`rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                          active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                        }`}
+                        onClick={() => {
+                          setLooks({});
+                          persistChild({ looks: {} });
+                        }}
+                        className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[11px] font-extrabold text-neutral-500 shadow-sm"
                       >
-                        {o}
+                        모두 지우기
                       </button>
-                    );
-                  })}
+                    </div>
+                  )}
                 </div>
               </div>
-            ))}
-
-            <div className="flex flex-col gap-1.5">
-              <p className="text-xs font-bold text-neutral-400">이런 점도 있어요 (여러 개)</p>
-              <div className="flex flex-wrap gap-2">
-                {["주근깨", "보조개", "앞니 빠짐", "볼이 통통해요"].map((m) => {
-                  const active = looks.marks?.includes(m) ?? false;
-                  return (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => toggleMark(m)}
-                      aria-pressed={active}
-                      style={active ? { background: accent } : undefined}
-                      className={`rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                        active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                      }`}
-                    >
-                      {m}
-                    </button>
-                  );
-                })}
-                <button
-                  type="button"
-                  onClick={() => setLook({ glasses: looks.glasses ? undefined : true })}
-                  aria-pressed={!!looks.glasses}
-                  style={looks.glasses ? { background: accent } : undefined}
-                  className={`rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                    looks.glasses ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                  }`}
-                >
-                  👓 안경
-                </button>
-              </div>
             </div>
-
-            {/* 지금까지 고른 것을 한 줄로 — 이 문장이 그대로 그림에 전해진다. */}
-            {looksToPrompt(looks) ? (
-              <p className="break-keep rounded-2xl bg-emerald-50 px-4 py-2.5 text-[12px] font-bold leading-relaxed text-emerald-700">
-                이렇게 그려요 — {looksToPrompt(looks)}
-              </p>
-            ) : (
-              <p className="text-[11px] font-medium text-neutral-300">
-                아무것도 안 골라도 괜찮아요. 그때는 이야기에 어울리게 알아서 그려요.
-              </p>
-            )}
           </section>
           </>)}
 
