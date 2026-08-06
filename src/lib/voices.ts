@@ -609,3 +609,42 @@ export function prefetchTypecastPageAudio(tc: TypecastPreset, text: string): voi
     /* 무시 */
   }
 }
+
+/** 동화를 다 만든 직후 미리 구워 둘 쪽 수. */
+export const PREWARM_PAGES = 2;
+
+/**
+ * 막 만든 동화의 앞 몇 쪽을 미리 합성해 캐시에 넣어 둔다.
+ *
+ * 왜: 지금은 책을 열고 읽기를 눌러야 그 쪽을 합성한다. 첫 쪽에서 몇 초 기다리게
+ * 되는데, 아이는 그 몇 초를 못 기다린다. 만들기가 끝나면 어차피 부모가 결과를
+ * 보고 있으니, 그 사이에 앞쪽을 구워 두면 열자마자 소리가 난다.
+ *
+ * 왜 전부가 아니라 앞 2쪽만: 8쪽을 다 구우면 안 읽고 덮는 책에도 크레딧이 나가고
+ * Typecast 월 한도(19만 자)에 훨씬 빨리 닿는다. 읽는 중에는 이미 '한 쪽 앞서
+ * 받기'가 돌고 있어서, 앞 2쪽만 있으면 그 뒤로는 기다림이 이어지지 않는다.
+ *
+ * 목소리는 '책을 열었을 때 실제로 쓰일 것'과 같아야 캐시가 맞는다 — 부모 목소리가
+ * 있으면 그게 기본이므로 그걸로 굽는다(뷰어의 기본 성우 결정과 같은 규칙).
+ * 결과는 쓰지 않는다. 실패는 조용히 넘어간다 — 미리 굽기일 뿐이라 못 구워도
+ * 읽을 때 그때 합성된다.
+ */
+export function prewarmBookAudio(
+  texts: string[],
+  voice: { kind: "parent"; voiceId: string } | { kind: "preset"; preset: TypecastPreset },
+): void {
+  if (!CLIENT_TTS_ENABLED) return;
+  for (const text of texts.slice(0, PREWARM_PAGES)) {
+    if (!text) continue;
+    try {
+      if (voice.kind === "parent") {
+        // 부모 목소리는 쪽 전체를 한 번에 합성한다(뷰어와 같은 방식·같은 캐시 키).
+        void fetchTypecastVoiceAudio(voice.voiceId, text).catch(() => {});
+      } else {
+        startTypecastPageAudio(voice.preset, text);
+      }
+    } catch {
+      /* 무시 */
+    }
+  }
+}

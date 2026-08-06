@@ -19,7 +19,8 @@ import {
 import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book } from "@/lib/types";
-import { TYPECAST_VOICES } from "@/lib/voices";
+import { findTypecast, prewarmBookAudio, TYPECAST_VOICES } from "@/lib/voices";
+import { loadParentVoices, type ParentVoice } from "@/lib/parent-voice";
 
 type Gender = "girl" | "boy" | "unspecified";
 type Scene = { sceneNo: number; text: string };
@@ -699,6 +700,14 @@ export default function CreatePage() {
   // 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로 읽는다.
   // 기본 선택을 두지 않는다("") — 부모가 직접 골라 들어보고 정하게 유도한다.
   const [narratorVoice, setNarratorVoice] = useState<string>("");
+  /*
+   * 이 계정에 등록된 엄마·아빠 목소리. 동화를 다 만든 뒤 앞 쪽 낭독을 미리 구울 때,
+   * 부모 목소리가 있으면 그게 기본 성우가 되므로 그것으로 구워야 캐시가 맞는다.
+   */
+  const [parentVoices, setParentVoices] = useState<ParentVoice[]>([]);
+  useEffect(() => {
+    loadParentVoices().then(setParentVoices).catch(() => {});
+  }, []);
   // 이야기 길이 — 쪽수가 적어도 각 쪽을 더 길고 풍부하게 연출할지.
   const [longerStory, setLongerStory] = useState(false);
   // 성우를 고르면 미리 구운 샘플(진짜 그 성우 목소리, static mp3)을 들려준다 — 크레딧 0.
@@ -1045,6 +1054,25 @@ export default function CreatePage() {
       pages: s.pages.map((p, i) => ({ text: p.text, image: hosted.images[i] ?? null })),
     };
     await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
+
+    /*
+     * 앞 몇 쪽 낭독을 미리 구워 둔다 — 열자마자 소리가 나게.
+     * 지금은 읽기를 눌러야 그때 합성해서 첫 쪽에서 몇 초 기다리는데, 아이는 그
+     * 몇 초를 못 기다린다. 만들기가 끝난 직후엔 부모가 결과를 보고 있으니 그 사이가
+     * 굽기 좋은 시간이다.
+     *
+     * 기다리지 않는다(await 없음) — 완성 화면은 바로 띄우고 뒤에서 조용히 굽는다.
+     * 목소리는 책을 열었을 때 실제로 쓰일 것과 같아야 캐시가 맞는다: 부모 목소리가
+     * 있으면 그게 기본이므로 그걸로, 없으면 만들 때 고른 성우로 굽는다.
+     */
+    const texts = book.pages.map((p) => p.text);
+    if (parentVoices.length > 0) {
+      prewarmBookAudio(texts, { kind: "parent", voiceId: parentVoices[0].voiceId });
+    } else {
+      const preset = findTypecast(narratorVoice);
+      if (preset) prewarmBookAudio(texts, { kind: "preset", preset });
+    }
+
     setFinalBook(book);
     setStep("done");
   }
