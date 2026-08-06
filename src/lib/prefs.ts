@@ -673,6 +673,30 @@ export function saveShelfCols(n: ShelfCols): void {
   }
 }
 
+/* ── 홈 화면에 추가 안내 (아이폰) ──
+ * 아이폰 사파리에는 전체화면 기능이 없어서, 홈 화면 앱으로 열어야 주소창 없이
+ * 꽉 찬 화면이 된다. 그런데 그 방법을 아는 부모가 드물다. 한 번만 알려 준다.
+ */
+const HOME_HINT_KEY = "voice-storybook:add-to-home-hint";
+
+export function homeHintSeen(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    return window.localStorage.getItem(acctKey(HOME_HINT_KEY)) === "1";
+  } catch {
+    return true;
+  }
+}
+
+export function markHomeHintSeen(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(acctKey(HOME_HINT_KEY), "1");
+  } catch {
+    /* 저장 못 해도 한 번 더 뜨는 것뿐이라 무시한다 */
+  }
+}
+
 /* ── 캐릭터 눌러 보기 안내 ──
  * 전래동화·세계명작은 그림 속 인물을 누르면 그 인물이 말한다. 그런데 눌러 볼 수
  * 있다는 걸 아무 데도 안 알려 줘서, 있는 줄 모르고 지나가는 부모가 많다.

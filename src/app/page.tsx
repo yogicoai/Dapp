@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AddToHomeHint } from "@/components/AddToHomeHint";
 import { BgVideo } from "@/components/BgVideo";
 import { Bookshelf } from "@/components/Bookshelf";
 import { useTheme } from "@/components/ThemeProvider";
@@ -155,6 +156,9 @@ export default function Home() {
 
   return (
     <div className="relative min-h-dvh w-full overflow-hidden">
+      {/* 아이폰에서만, 한 번만 — 홈 화면에 추가하면 꽉 찬 화면으로 볼 수 있다는 안내. */}
+      <AddToHomeHint />
+
       {/* 테마 배경 — 어떤 테마든 화면을 꽉 채운다.
           그림책나라는 한동안 중앙 1200px '액자' 안에만 영상을 두고 양옆을 크림빛으로
           감쌌는데, 넓은 화면에서 그 여백을 보고 화면이 덜 로드된 줄 아는 사람이
