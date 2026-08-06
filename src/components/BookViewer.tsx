@@ -19,7 +19,9 @@ import {
   TEXT_SCALES,
   hotspotHintSeen,
   markHotspotHintSeen,
+  updateBookData,
 } from "@/lib/prefs";
+import { loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
@@ -237,6 +239,46 @@ export function BookViewer({ book }: { book: Book }) {
   }, []);
   // 이야기 끝남 — 마지막 쪽 낭독이 끝나면 "다시 듣기"를 띄운다.
   const [ended, setEnded] = useState(false);
+
+  /*
+   * 본문 고치기 (마스터 전용, 내가 만든 동화만).
+   *
+   * 글자가 소실돼 ◆? 로 나오는 쪽이 있었는데, 소실된 글자는 어떤 코드로도 되살릴 수
+   * 없다 — 사람이 다시 써 넣는 수밖에 없다. 그 한 글자 때문에 동화를 다시 만들면
+   * 토큰과 그림이 통째로 날아가므로, 글만 고치는 길을 둔다.
+   * (제공 동화는 파일로 관리하니 여기서 손대지 않는다.)
+   */
+  const editable = book.id.startsWith("my-");
+  const [master, setMaster] = useState(false);
+  useEffect(() => {
+    if (!editable) return;
+    loadSession()
+      .then((s) => setMaster(s.isMaster))
+      .catch(() => {});
+  }, [editable]);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function saveText() {
+    setSaving(true);
+    try {
+      const next: Book = {
+        ...book,
+        pages: book.pages.map((p, i) => (i === index ? { ...p, text: draft.normalize("NFC") } : p)),
+      };
+      const ok = await updateBookData(book.id, next);
+      if (!ok) {
+        window.alert("고친 글을 저장하지 못했어요. 권한(SQL)을 확인해 주세요.");
+        return;
+      }
+      // 저장한 글로 다시 그린다. 본문은 낭독·색칠 등 여러 곳에서 쓰여, 새로 읽어
+      // 오는 편이 어중간하게 갈아끼우는 것보다 확실하다.
+      window.location.reload();
+    } finally {
+      setSaving(false);
+    }
+  }
 
   /**
    * 다음 동화 — 이야기가 끝나면 "다음 것도 보자"가 자연스럽다. 서재로 나갔다
@@ -1341,6 +1383,61 @@ export function BookViewer({ book }: { book: Book }) {
                 }}
               />
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* 본문 고치기 (마스터 · 내가 만든 동화만).
+          글자가 소실돼 ◆? 로 나오는 쪽은 사람이 다시 써 넣는 수밖에 없다.
+          그 한 글자 때문에 동화를 다시 만들면 토큰과 그림이 통째로 날아간다. */}
+      {master && editable && !editing && (
+        <button
+          type="button"
+          onClick={() => {
+            setDraft(book.pages[index].text);
+            setEditing(true);
+          }}
+          className="absolute left-3 top-16 z-20 rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
+        >
+          ✏️ 글 고치기
+        </button>
+      )}
+      {editing && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="flex w-full max-w-2xl flex-col gap-3 rounded-3xl bg-white p-5 shadow-2xl">
+            <div>
+              <p className="text-sm font-extrabold text-neutral-800">
+                {index + 1}쪽 글 고치기
+              </p>
+              <p className="mt-0.5 text-xs font-medium text-neutral-500">
+                고친 글은 바로 저장돼요. 그림과 목소리는 그대로예요.
+              </p>
+            </div>
+            <textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              rows={6}
+              autoFocus
+              className="w-full resize-y rounded-2xl border-2 border-neutral-200 p-3 text-sm font-bold leading-relaxed outline-none focus:border-neutral-400"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setEditing(false)}
+                disabled={saving}
+                className="rounded-full bg-neutral-100 px-4 py-2 text-sm font-extrabold text-neutral-600 disabled:opacity-50"
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                onClick={saveText}
+                disabled={saving || !draft.trim()}
+                className="rounded-full bg-neutral-800 px-5 py-2 text-sm font-extrabold text-white disabled:opacity-50"
+              >
+                {saving ? "저장 중…" : "저장"}
+              </button>
+            </div>
           </div>
         </div>
       )}
