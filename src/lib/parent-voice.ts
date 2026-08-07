@@ -56,48 +56,6 @@ function saveLocal(uid: string, map: Record<string, string>): void {
   window.localStorage.setItem(`${LS_KEY}:${uid}`, JSON.stringify(map));
 }
 
-/* ── 만들기 횟수 — 엄마·아빠를 각각 하나씩, 역할마다 2회(처음 1 + 수정 1). ──
- * 2026-08-05 변경: 예전엔 계정당 '한 명'이라 횟수도 계정 단위로 셌다. 이제 엄마와
- * 아빠가 서로 독립이라 역할별로 센다(엄마를 고쳐도 아빠 기회는 그대로).
- * 삭제해도 횟수는 남는다 — 지웠다 다시 만들며 무한히 시도하는 걸 막는다. */
-export const MAX_CLONE_ATTEMPTS = 2;
-function localAttempts(uid: string, role: string): number {
-  if (typeof window === "undefined") return 0;
-  const n = Number(window.localStorage.getItem(`${LS_ATTEMPTS}:${uid}:${role}`));
-  return Number.isFinite(n) && n > 0 ? n : 0;
-}
-function saveAttempts(uid: string, role: string, n: number): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(`${LS_ATTEMPTS}:${uid}:${role}`, String(n));
-}
-
-async function attemptsUsed(role: string): Promise<number> {
-  const uid = await currentUserId();
-  if (!uid) return 0; // 부모 목소리는 회원 전용 — 로그인 전엔 셈할 것도 없다
-  let used = localAttempts(uid, role);
-  try {
-    const sb = getSupabase();
-    if (sb) {
-      const { data } = await sb
-        .from("voice_clones")
-        .select("attempts")
-        .eq("owner", uid)
-        .eq("role", role)
-        .maybeSingle();
-      const a = Number((data as { attempts?: number } | null)?.attempts ?? 0);
-      if (a > used) used = a;
-    }
-  } catch {
-    /* 테이블 없음 등 — 기기 값만 사용 */
-  }
-  return used;
-}
-
-/** 이 역할(엄마/아빠)의 남은 만들기 기회. 0이면 더는 만들 수 없다. */
-export async function remainingCloneChances(role: string): Promise<number> {
-  return Math.max(0, MAX_CLONE_ATTEMPTS - (await attemptsUsed(role)));
-}
-
 /** 로그인 회원 id — 로컬 세션에서 읽는다(서버 왕복 없음). @see supabase.currentUid */
 async function currentUserId(): Promise<string | null> {
   return currentUid();
@@ -288,25 +246,18 @@ function encodeWav(mono: Float32Array, sampleRate: number): Blob {
 /**
  * 녹음 오디오 → Typecast 퀵 클론 → (기기 + 가능하면 Supabase) 저장 → voice_id 반환.
  *
- * 규칙(2026-08-05): 엄마와 아빠를 **각각** 하나씩 만들 수 있다. 역할마다 2회
- * (처음 1 + 수정 1)이고, 만들 때마다 15토큰이 나간다(엄마·아빠 따로 냄).
- * 엄마를 고쳐도 아빠 기회는 줄지 않는다 — 둘은 서로 독립이다.
+ * 엄마와 아빠를 **각각** 하나씩 보관할 수 있고, 만들 때마다 토큰이 나간다.
+ * 기존 목소리를 삭제하면 같은 역할의 목소리를 다시 만들 수 있다.
  */
 export async function cloneParentVoice(role: string, name: string, audio: Blob): Promise<string> {
   const uid = await currentUserId();
   if (!uid) throw new Error("로그인한 계정에서만 목소리를 만들 수 있어요.");
   const label = metaForRole(role).label;
-  // 이 역할의 만들기 기회를 '먼저' 검사한다 — 기회를 다 쓴 사람에게 "지우고 다시
-  // 만들라"는 잘못된 안내(지우면 영영 못 만듦)가 나가지 않게.
-  const used = await attemptsUsed(role);
-  if (used >= MAX_CLONE_ATTEMPTS) {
-    throw new Error(`${label} 목소리 만들기 기회(처음 1번 + 수정 1번)를 모두 사용했어요.`);
-  }
   // 같은 역할의 목소리가 이미 있으면 먼저 지우고 다시 만들게 한다(수정 = 지우고 새로).
   const existing = await loadParentVoices();
   if (existing.some((p) => p.role === role)) {
     throw new Error(
-      `${label} 목소리가 이미 있어요. 지운 뒤 다시 만들어 주세요. (남은 ${label} 만들기 기회 ${MAX_CLONE_ATTEMPTS - used}번)`,
+      `${label} 목소리가 이미 있어요. 지운 뒤 다시 만들어 주세요.`,
     );
   }
 
@@ -321,11 +272,10 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   }
   const { voiceId } = (await r.json()) as { voiceId: string };
 
-  // ① 기기에 항상 저장(계정별 키) — SQL 없이도 바로 테스트되게. 만들기 횟수도 함께 올린다.
+  // ① 기기에 항상 저장(계정별 키) — SQL 없이도 바로 테스트되게.
   const local = loadLocal(uid);
   local[role] = voiceId;
   saveLocal(uid, local);
-  saveAttempts(uid, role, used + 1);
 
   // ② Supabase에도 저장 시도(테이블 있으면). 없거나 오프라인이면 무시 — 기기 저장으로 동작.
   try {
@@ -338,7 +288,6 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
           provider: "typecast",
           provider_voice_id: voiceId,
           status: "ready",
-          attempts: used + 1,
         },
         // 역할별로 한 줄이라 (owner, role)이 충돌 기준이다 — 엄마 줄이 아빠 줄을 덮지 않게.
         { onConflict: "owner,role" },
@@ -411,7 +360,6 @@ export async function loadParentVoices(): Promise<ParentVoice[]> {
                 provider: "typecast",
                 provider_voice_id: local[role],
                 status: "ready",
-                attempts: Math.max(1, localAttempts(uid, role)),
               },
               { onConflict: "owner,role" },
             );
@@ -429,7 +377,7 @@ export async function loadParentVoices(): Promise<ParentVoice[]> {
 
 /**
  * 부모가 본인 목소리를 삭제한다 — 기기·Supabase에서 지우고 Typecast 서버에서도 완전 제거.
- * (개인정보를 어디에도 남기지 않는다.) 단, 만들기 횟수(attempts)는 남겨 수정 기회는 안 돌려준다.
+ * 개인정보를 어디에도 남기지 않으며, 삭제 뒤 같은 역할의 목소리를 다시 만들 수 있다.
  */
 export async function deleteParentVoice(role: string): Promise<void> {
   const uid = await currentUserId();
@@ -462,17 +410,20 @@ export async function deleteParentVoice(role: string): Promise<void> {
     }).catch(() => {});
   }
 
-  // 기기 저장에서 제거 (만들기 횟수는 남긴다 — 수정 기회는 안 돌아온다).
+  // 기기 저장에서 제거. 이전 버전의 횟수 제한 값도 함께 지워 더는 영향을 주지 않게 한다.
   delete local[role];
   saveLocal(uid, local);
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem(`${LS_ATTEMPTS}:${uid}:${role}`);
+  }
 
-  // Supabase — 행을 지우지 않고 '삭제됨'으로 바꿔 attempts(만들기 횟수)를 보존한다.
+  // Supabase에서도 행을 제거해 같은 역할을 새 목소리로 다시 등록할 수 있게 한다.
   // 반드시 이 역할만 — role 조건이 없으면 엄마를 지울 때 아빠까지 지워진다.
   if (sb) {
     try {
       await sb
         .from("voice_clones")
-        .update({ provider_voice_id: null, status: "deleted" })
+        .delete()
         .eq("owner", uid)
         .eq("role", role);
     } catch {

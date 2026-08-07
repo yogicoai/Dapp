@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useEscClose } from "@/lib/use-esc-close";
 import {
-  RECORDING_SCRIPT,
+  RECORDING_SCRIPTS,
   saveCustomVoices,
   saveVoiceAudio,
   loadCustomVoices,
@@ -11,7 +11,7 @@ import {
 } from "@/lib/voices";
 import { prepareVoiceWav } from "@/lib/parent-voice";
 
-type Phase = "idle" | "recording" | "preview" | "saving";
+type Phase = "idle" | "checking" | "recording" | "preview" | "saving";
 
 /**
  * 녹음 길이 기준.
@@ -22,7 +22,9 @@ type Phase = "idle" | "recording" | "preview" | "saving";
  * 지정 문장(RECORDING_SCRIPT)을 자연스럽게 읽으면 40초쯤 나온다 — 그게 목표선이다.
  */
 const MIN_SEC = 30;
-const TARGET_SEC = 40;
+const TARGET_SEC = 35;
+const NOISE_CHECK_MS = 2000;
+const NOISE_RMS_MAX = 0.012;
 
 /**
  * 마이크 입력 크기 기준.
@@ -74,6 +76,7 @@ export function VoiceRecorder({
    */
   const takesRef = useRef<Blob[]>([]);
   const [takes, setTakes] = useState(0);
+  const [activeTake, setActiveTake] = useState(0);
   // 마이크 권한을 기다리는 사이 닫히면, 뒤늦게 온 스트림을 바로 꺼야 한다.
   const closedRef = useRef(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -104,6 +107,32 @@ export function VoiceRecorder({
     [],
   );
 
+  /** 녹음 전에 2초간 말하지 않은 방의 평균 소음을 잰다. */
+  async function measureRoomNoise(stream: MediaStream): Promise<number> {
+    const AC =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new AC();
+    try {
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 2048;
+      ctx.createMediaStreamSource(stream).connect(analyser);
+      const buf = new Float32Array(analyser.fftSize);
+      let squareSum = 0;
+      let sampleCount = 0;
+      const startedAt = performance.now();
+      while (performance.now() - startedAt < NOISE_CHECK_MS) {
+        await new Promise<void>((resolve) => window.setTimeout(resolve, 100));
+        analyser.getFloatTimeDomainData(buf);
+        for (const sample of buf) squareSum += sample * sample;
+        sampleCount += buf.length;
+      }
+      return sampleCount > 0 ? Math.sqrt(squareSum / sampleCount) : 0;
+    } finally {
+      void ctx.close().catch(() => {});
+    }
+  }
+
   // 이전 미리듣기 URL은 새것이 생기거나 화면을 떠날 때 해제한다.
   useEffect(
     () => () => {
@@ -126,11 +155,34 @@ export function VoiceRecorder({
       takesRef.current = [];
       setTakes(0);
     }
+    const takeIndex = fresh ? 0 : Math.min(takesRef.current.length, RECORDING_SCRIPTS.length - 1);
+    setActiveTake(takeIndex);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          channelCount: { ideal: 1 },
+          echoCancellation: { ideal: false },
+          noiseSuppression: { ideal: false },
+          autoGainControl: { ideal: false },
+        },
+      });
       // 기다리는 동안 팝업이 닫혔으면(ESC·닫기) 마이크를 켜두지 않는다.
       if (closedRef.current) {
         stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
+      setPhase("checking");
+      const roomNoise = await measureRoomNoise(stream);
+      if (closedRef.current) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
+      if (roomNoise > NOISE_RMS_MAX) {
+        stream.getTracks().forEach((t) => t.stop());
+        setPhase("idle");
+        setError(
+          "주변 소리가 크게 들려요. TV·음악·선풍기·에어컨을 끄고, 다른 사람의 말소리가 없는 방에서 다시 시도해주세요.",
+        );
         return;
       }
       const rec = new MediaRecorder(stream);
@@ -162,7 +214,7 @@ export function VoiceRecorder({
         analyser.fftSize = 1024;
         ctx.createMediaStreamSource(stream).connect(analyser);
         const buf = new Float32Array(analyser.fftSize);
-        const startedAt = Date.now();
+        let elapsedTicks = 0;
         meterTimerRef.current = setInterval(() => {
           analyser.getFloatTimeDomainData(buf);
           let sum = 0;
@@ -176,7 +228,8 @@ export function VoiceRecorder({
           setLevel(Math.min(1, rms / LEVEL_FULL));
           // 판정은 막대 길이가 아니라 실제 값으로 한다 — 막대를 채우려고 소리치게 만들지 않는다.
           setZone(peak > 0.98 || rms >= LEVEL_LOUD ? "loud" : rms < LEVEL_QUIET ? "quiet" : "good");
-          setSecs(Math.floor((Date.now() - startedAt) / 1000));
+          elapsedTicks++;
+          setSecs(Math.floor(elapsedTicks / 10));
         }, 100);
       } catch {
         /* 소리 막대는 보조 장치다 — 안 되면 녹음만 계속한다 */
@@ -188,7 +241,7 @@ export function VoiceRecorder({
 
   /**
    * 녹음이 끝나면 파일을 열어 품질을 본다 — 길이·평균 크기·깨진 구간·무음 비율.
-   * 다시 녹음은 몇 번이든 공짜이므로, 여기서 걸러야 진짜 기회(계정당 2번)를 지킨다.
+   * 다시 녹음은 몇 번이든 공짜이므로, 품질 기준을 통과한 녹음만 저장한다.
    */
   async function checkQuality(blob: Blob): Promise<void> {
     setVerdict(null);
@@ -261,7 +314,7 @@ export function VoiceRecorder({
   }
 
   async function save() {
-    if (!blobRef.current || !consent) return;
+    if (!blobRef.current || !consent || !verdict?.ok || takes < RECORDING_SCRIPTS.length) return;
     setPhase("saving");
     // 읽은 것들을 하나로 이어 붙이고, 소리 크기·침묵·저주파 잡음까지 다듬어 저장한다.
     // 여기서 잘 다듬을수록 복제된 목소리가 더 닮는다.
@@ -303,7 +356,10 @@ export function VoiceRecorder({
           아래 문장을 또박또박 읽어주세요:
         </p>
         <p className="mt-2 text-[15px] font-bold leading-relaxed text-neutral-800">
-          “{RECORDING_SCRIPT}”
+          <span className="mb-1 block text-[11px] text-neutral-400">
+            {activeTake + 1}번째 문장 / {RECORDING_SCRIPTS.length}
+          </span>
+          “{RECORDING_SCRIPTS[activeTake]}”
         </p>
       </div>
 
@@ -326,17 +382,17 @@ export function VoiceRecorder({
               {
                 img: "/guide/rec-distance.webp",
                 title: "한 뼘 거리",
-                tip: "폰을 입에서 한 뼘쯤 두고",
+                tip: "입에서 15~20cm 두고 고정해요",
               },
               {
                 img: "/guide/rec-quiet.webp",
                 title: "조용한 방",
-                tip: "TV·에어컨은 잠깐 꺼요",
+                tip: "TV·선풍기·에어컨은 잠깐 꺼요",
               },
               {
                 img: "/guide/rec-read.webp",
                 title: "동화 읽듯이",
-                tip: "쉬지 말고 끝까지",
+                tip: "목소리를 꾸미지 말고 편안하게",
               },
             ].map((g) => (
               <div key={g.title} className="flex flex-col items-center gap-1 rounded-2xl bg-white p-2">
@@ -361,8 +417,19 @@ export function VoiceRecorder({
             🎙️ 녹음 시작
           </button>
           <p className="text-center text-[11px] font-medium text-neutral-400">
-            문장을 끝까지 읽으면 약 {TARGET_SEC}초예요 · 다시 녹음은 몇 번이든 무료예요
+            서로 다른 문장 두 개를 읽어요 · 한 문장당 약 {TARGET_SEC}초예요
           </p>
+          <p className="break-keep text-center text-[10px] font-medium leading-relaxed text-neutral-400">
+            휴대폰 기본 마이크를 권장해요. 기침·문소리·다른 사람 목소리가 들어가면 다시
+            녹음해주세요.
+          </p>
+        </div>
+      )}
+
+      {phase === "checking" && (
+        <div className="rounded-2xl bg-sky-50 px-4 py-5 text-center">
+          <p className="text-sm font-extrabold text-sky-700">🔇 2초 동안 말하지 말아주세요</p>
+          <p className="mt-1 text-xs font-medium text-sky-600">방의 주변 소음을 확인하고 있어요…</p>
         </div>
       )}
 
@@ -428,8 +495,7 @@ export function VoiceRecorder({
 
       {(phase === "preview" || phase === "saving") && (
         <div className="flex flex-col gap-3">
-          {/* 품질 판정 — 문제가 있으면 이유를 콕 집어 다시 권한다.
-              다시 녹음은 공짜지만 '목소리 만들기'는 계정당 2번뿐이라, 여기서 걸러야 한다. */}
+          {/* 품질 판정 — 기준을 통과하지 못하면 저장하지 않고 다시 녹음하게 한다. */}
           {verdict === null ? (
             <p className="rounded-xl bg-white px-4 py-3 text-center text-[13px] font-bold text-neutral-400">
               녹음을 확인하고 있어요…
@@ -453,28 +519,25 @@ export function VoiceRecorder({
 
           {previewUrl && <audio controls src={previewUrl} className="w-full" />}
 
-          {/* 한 번 더 읽기 — 퀵 클로닝은 재료가 길수록 잘 닮는다. 같은 문장을 한 번 더
-              읽으면 재료가 두 배가 되고, 두 번은 이어 붙여 하나로 저장된다.
-              강요하지 않는다: 이대로 저장해도 된다. */}
-          {takes < 2 ? (
+          {/* 첫 녹음이 합격하면 발음 구성이 다른 두 번째 문장을 반드시 읽는다. */}
+          {takes < RECORDING_SCRIPTS.length && verdict?.ok ? (
             <button
               type="button"
               onClick={() => startRecording(false)}
               className="rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50 px-4 py-3 text-left"
             >
               <span className="block text-[13px] font-extrabold text-amber-800">
-                🔁 한 번 더 읽으면 훨씬 더 닮아요
+                ➡️ 두 번째 문장 읽기
               </span>
               <span className="mt-0.5 block break-keep text-[11px] font-medium leading-relaxed text-amber-700">
-                같은 문장을 한 번 더 읽어주세요. 두 번 읽은 것을 이어 붙여 더 정확한
-                목소리를 만들어요. (건너뛰고 이대로 저장해도 괜찮아요)
+                다른 발음과 질문·감탄이 담긴 문장을 한 번 더 읽어야 저장할 수 있어요.
               </span>
             </button>
-          ) : (
+          ) : takes >= RECORDING_SCRIPTS.length && verdict?.ok ? (
             <p className="break-keep rounded-2xl bg-emerald-50 px-4 py-2.5 text-[12px] font-extrabold text-emerald-700">
-              ✅ 두 번 읽었어요 — 이어 붙여서 더 정확한 목소리를 만들어요
+              ✅ 서로 다른 문장 두 개가 모두 준비됐어요
             </p>
-          )}
+          ) : null}
 
           <label className="flex items-start gap-2 text-[13px] font-medium text-neutral-700">
             <input
@@ -490,7 +553,7 @@ export function VoiceRecorder({
           </label>
 
           <div className="flex gap-2">
-            {/* 판정이 나쁘면 '다시 녹음'을 눈에 띄게 — 다시 하는 건 공짜다. */}
+            {/* 판정이 나쁘면 저장을 막고 처음부터 다시 녹음하게 한다. */}
             <button
               type="button"
               onClick={() => startRecording(true)}
@@ -503,7 +566,12 @@ export function VoiceRecorder({
             <button
               type="button"
               onClick={save}
-              disabled={!consent || phase === "saving" || verdict === null}
+              disabled={
+                !consent ||
+                phase === "saving" ||
+                !verdict?.ok ||
+                takes < RECORDING_SCRIPTS.length
+              }
               className="flex-1 rounded-full py-2.5 text-sm font-extrabold text-white disabled:opacity-40"
               style={{ background: accent }}
             >
