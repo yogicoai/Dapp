@@ -16,7 +16,7 @@ create table if not exists public.voice_clones (
   role              text not null,                       -- 'mom' | 'dad'
   provider          text not null default 'typecast',    -- 복제 업체
   provider_voice_id text,                                -- 업체가 준 목소리 id (삭제 시 null)
-  status            text not null default 'ready',       -- 'ready' | 'deleted'
+  status            text not null default 'ready',       -- 'review' | 'ready' | 'deleted'
   attempts          int  not null default 1,             -- 이전 버전 호환용(현재 한도 판정에는 미사용)
   created_at        timestamptz not null default now(),
   primary key (owner, role)

@@ -88,6 +88,20 @@ const SAMPLE = `네, 아린이를 위한 동화를 만들어 드릴게요!
 `;
 
 describe("parseStory", () => {
+  it("페이지별 구조화 성우 연기 지시를 읽는다", () => {
+    const story = parseStory(`@@TITLE@@ 별빛 산책
+@@PAGE@@ 1
+@@TEXT@@ 민이가 별빛 아래를 걸었어요. 아주 반짝였어요.
+@@VOICE@@ narration=normal | dialogue=happy | intensity=0.9 | pace=slow
+@@IMG@@ 별빛 아래 걷는 민이`);
+    assert.deepEqual(story.pages[0].voiceDirection, {
+      narration: "normal",
+      dialogue: "happy",
+      intensity: 0.9,
+      pace: "slow",
+    });
+  });
+
   it("마커 평문에서 제목·요약·인물·페이지를 뽑는다", () => {
     const story = parseStory(SAMPLE);
 

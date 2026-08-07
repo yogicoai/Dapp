@@ -120,6 +120,7 @@ export async function synthesize(input: {
   model?: string;
   /** 감정 프리셋(happy·sad·angry·toneup 등) — 대사 연기용. 음성이 지원할 때만 먹는다. */
   emotion?: string;
+  intensity?: number;
 }): Promise<{ audio: ArrayBuffer; contentType: string }> {
   // 과금 자동 차단 — 안전선(19만 자)에 닿으면 합성하지 않는다(무료 음성으로 폴백).
   const used = await usedCreditsThisMonth();
@@ -138,7 +139,10 @@ export async function synthesize(input: {
   };
   if (input.emotion && input.emotion !== "normal") {
     // ssfm-v30의 감정 연기. intensity는 1이 기본 — 살짝 과장해 동화 낭독 톤으로.
-    body.prompt = { emotion_preset: input.emotion, emotion_intensity: 1.4 };
+    body.prompt = {
+      emotion_preset: input.emotion,
+      emotion_intensity: Math.min(1.2, Math.max(0.3, input.intensity ?? 0.8)),
+    };
   }
 
   const res = await fetch(`${BASE}/v1/text-to-speech`, {

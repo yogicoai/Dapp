@@ -15,6 +15,8 @@ export type ParentVoice = {
   voiceId: string; // 복제된 ElevenLabs voice_id
 };
 
+export const PARENT_VOICE_TEST_TEXT = "오늘은 우리 함께 반짝이는 이야기를 읽어 볼까? 천천히, 다정하게 시작해 보자.";
+
 const ROLE_META: Record<string, { label: string; emoji: string }> = {
   mom: { label: "엄마", emoji: "👩" },
   dad: { label: "아빠", emoji: "👨" },
@@ -33,6 +35,7 @@ export function metaForRole(role: string): { label: string; emoji: string } {
  * 옛(계정 구분 없는) 키는 소유자를 알 수 없어 이관하지 않고 지운다 — 정본은
  * Supabase(voice_clones)라 실제 클론은 계정 로그인만 하면 되살아난다. */
 const LS_KEY = "voice-storybook:parent-voices";
+const LS_PENDING_KEY = "voice-storybook:pending-parent-voices";
 const LS_ATTEMPTS = "voice-storybook:parent-voice-attempts";
 function dropLegacyDeviceKeys(): void {
   if (typeof window === "undefined") return;
@@ -54,6 +57,18 @@ function loadLocal(uid: string): Record<string, string> {
 function saveLocal(uid: string, map: Record<string, string>): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(`${LS_KEY}:${uid}`, JSON.stringify(map));
+}
+function loadPendingLocal(uid: string): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  try {
+    return JSON.parse(window.localStorage.getItem(`${LS_PENDING_KEY}:${uid}`) || "{}") as Record<string, string>;
+  } catch {
+    return {};
+  }
+}
+function savePendingLocal(uid: string, map: Record<string, string>): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(`${LS_PENDING_KEY}:${uid}`, JSON.stringify(map));
 }
 
 /** 로그인 회원 id — 로컬 세션에서 읽는다(서버 왕복 없음). @see supabase.currentUid */
@@ -255,7 +270,8 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   const label = metaForRole(role).label;
   // 같은 역할의 목소리가 이미 있으면 먼저 지우고 다시 만들게 한다(수정 = 지우고 새로).
   const existing = await loadParentVoices();
-  if (existing.some((p) => p.role === role)) {
+  const pending = await loadPendingParentVoices();
+  if (existing.some((p) => p.role === role) || pending.some((p) => p.role === role)) {
     throw new Error(
       `${label} 목소리가 이미 있어요. 지운 뒤 다시 만들어 주세요.`,
     );
@@ -273,9 +289,9 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   const { voiceId } = (await r.json()) as { voiceId: string };
 
   // ① 기기에 항상 저장(계정별 키) — SQL 없이도 바로 테스트되게.
-  const local = loadLocal(uid);
+  const local = loadPendingLocal(uid);
   local[role] = voiceId;
-  saveLocal(uid, local);
+  savePendingLocal(uid, local);
 
   // ② Supabase에도 저장 시도(테이블 있으면). 없거나 오프라인이면 무시 — 기기 저장으로 동작.
   try {
@@ -287,7 +303,7 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
           role,
           provider: "typecast",
           provider_voice_id: voiceId,
-          status: "ready",
+          status: "review",
         },
         // 역할별로 한 줄이라 (owner, role)이 충돌 기준이다 — 엄마 줄이 아빠 줄을 덮지 않게.
         { onConflict: "owner,role" },
@@ -297,6 +313,49 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
     /* voice_clones 테이블 없음 등 — 기기 저장으로도 충분히 동작한다 */
   }
   return voiceId;
+}
+
+/** 복제는 끝났지만 사용자가 실제 합성 샘플을 승인하지 않은 목소리. */
+export async function loadPendingParentVoices(): Promise<ParentVoice[]> {
+  const uid = await currentUserId();
+  if (!uid) return [];
+  const byRole = loadPendingLocal(uid);
+  try {
+    const sb = getSupabase();
+    if (sb) {
+      const { data, error } = await sb
+        .from("voice_clones")
+        .select("role, provider_voice_id, status")
+        .eq("owner", uid);
+      if (!error && data) {
+        if (data.length > 0) {
+          for (const role of Object.keys(byRole)) delete byRole[role];
+        }
+        for (const row of data as { role: string; provider_voice_id: string | null; status: string }[]) {
+          if (row.status === "review" && row.provider_voice_id) byRole[row.role] = row.provider_voice_id;
+        }
+        savePendingLocal(uid, byRole);
+      }
+    }
+  } catch {}
+  return Object.entries(byRole).map(([role, voiceId]) => ({ role, voiceId, ...metaForRole(role) }));
+}
+
+export async function approveParentVoice(role: string, voiceId: string): Promise<void> {
+  const uid = await currentUserId();
+  if (!uid) throw new Error("로그인한 계정에서만 승인할 수 있어요.");
+  const pending = loadPendingLocal(uid);
+  if (pending[role] !== voiceId) throw new Error("승인할 목소리를 찾지 못했어요.");
+  const sb = getSupabase();
+  if (sb) {
+    const { error } = await sb.from("voice_clones").update({ status: "ready" }).eq("owner", uid).eq("role", role);
+    if (error) throw error;
+  }
+  const ready = loadLocal(uid);
+  ready[role] = voiceId;
+  saveLocal(uid, ready);
+  delete pending[role];
+  savePendingLocal(uid, pending);
 }
 
 /**
@@ -383,7 +442,8 @@ export async function deleteParentVoice(role: string): Promise<void> {
   const uid = await currentUserId();
   if (!uid) return; // 회원 전용 — 로그인 없이 지울 것도 없다
   const local = loadLocal(uid);
-  let voiceId = local[role];
+  const pending = loadPendingLocal(uid);
+  let voiceId = local[role] ?? pending[role];
 
   // Supabase에 있으면 그 voice_id도 확인해 함께 지운다.
   const sb = getSupabase();
@@ -413,6 +473,8 @@ export async function deleteParentVoice(role: string): Promise<void> {
   // 기기 저장에서 제거. 이전 버전의 횟수 제한 값도 함께 지워 더는 영향을 주지 않게 한다.
   delete local[role];
   saveLocal(uid, local);
+  delete pending[role];
+  savePendingLocal(uid, pending);
   if (typeof window !== "undefined") {
     window.localStorage.removeItem(`${LS_ATTEMPTS}:${uid}:${role}`);
   }

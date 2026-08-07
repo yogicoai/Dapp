@@ -62,6 +62,7 @@ import {
   buildPresetUtterance,
   deleteVoiceAudio,
   findTypecast,
+  fetchTypecastVoiceAudio,
   loadCustomVoices,
   loadSelectedVoiceId,
   loadVoiceAudio,
@@ -74,10 +75,14 @@ import {
   type TypecastPreset,
 } from "@/lib/voices";
 import {
+  approveParentVoice,
   cloneParentVoice,
   deleteParentVoice,
   loadAllParentVoiceRoles,
+  loadPendingParentVoices,
   loadParentVoices,
+  metaForRole,
+  PARENT_VOICE_TEST_TEXT,
   roleFromLabel,
   type ParentVoice,
 } from "@/lib/parent-voice";
@@ -207,6 +212,7 @@ export default function SettingsPage() {
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
   // 부모 목소리(복제됨) — 계정별로 Supabase에서 불러온다. cloningRole = 지금 복제 중인 역할.
   const [parentVoices, setParentVoices] = useState<ParentVoice[]>([]);
+  const [pendingParentVoices, setPendingParentVoices] = useState<ParentVoice[]>([]);
   const [cloningRole, setCloningRole] = useState<string | null>(null);
   const [cloneErr, setCloneErr] = useState("");
   // 만들기 연타 방지 잠금 — state가 아닌 ref라 클릭 즉시 걸린다.
@@ -242,6 +248,7 @@ export default function SettingsPage() {
   // 부모 목소리(복제됨) 목록을 계정에서 불러온다(로그인 안 됐으면 빈 목록).
   useEffect(() => {
     loadParentVoices().then(setParentVoices).catch(() => {});
+    loadPendingParentVoices().then(setPendingParentVoices).catch(() => {});
   }, []);
 
   // 아이 정보·언어·목소리 등 '로컬 저장값'은 세션(네트워크)과 무관하게 즉시 반영한다.
@@ -534,8 +541,43 @@ export default function SettingsPage() {
     el.play().catch(() => {});
   };
 
+  const auditionParentVoice = async (voice: ParentVoice) => {
+    stopPreview();
+    setCloneErr("");
+    try {
+      const blob = await fetchTypecastVoiceAudio(voice.voiceId, PARENT_VOICE_TEST_TEXT);
+      const el = previewAudioRef.current ?? new Audio();
+      previewAudioRef.current = el;
+      el.src = URL.createObjectURL(blob);
+      applyPlaybackRate(el, 1);
+      await el.play();
+    } catch (error) {
+      setCloneErr(error instanceof Error ? error.message : "확인용 음성을 재생하지 못했어요.");
+    }
+  };
+
+  const acceptParentVoice = async (voice: ParentVoice) => {
+    setCloneErr("");
+    try {
+      await approveParentVoice(voice.role, voice.voiceId);
+      setPendingParentVoices((items) => items.filter((item) => item.role !== voice.role));
+      setParentVoices(await loadParentVoices());
+      flashSaved();
+    } catch (error) {
+      setCloneErr(error instanceof Error ? error.message : "목소리를 승인하지 못했어요.");
+    }
+  };
+
+  const retryParentVoice = async (voice: ParentVoice) => {
+    if (!window.confirm("이 복제 음성을 삭제하고 다시 녹음할까요? 이미 사용한 토큰은 복제 비용이 발생해 환불되지 않아요.")) return;
+    await deleteParentVoice(voice.role);
+    setPendingParentVoices((items) => items.filter((item) => item.role !== voice.role));
+    setCloneErr("다시 녹음한 뒤 목소리 만들기를 눌러 주세요.");
+  };
+
   /** 이 녹음(엄마/아빠)이 이미 복제(목소리 만들기)됐는지. */
   const isCloned = (v: CustomVoice) => parentVoices.some((p) => p.role === roleFromLabel(v.label));
+  const isPending = (v: CustomVoice) => pendingParentVoices.some((p) => p.role === roleFromLabel(v.label));
 
   /**
    * 녹음 → 복제(목소리 만들기). 성공하면 계정에 저장되고 동화에서 그 목소리로 읽을 수 있다.
@@ -564,8 +606,11 @@ export default function SettingsPage() {
         charged = true;
         setAcctTokens((t) => Math.max(0, t - COST_PARENT_VOICE));
       }
-      await cloneParentVoice(roleFromLabel(v.label), v.label, blob);
-      setParentVoices(await loadParentVoices());
+      const role = roleFromLabel(v.label);
+      const voiceId = await cloneParentVoice(role, v.label, blob);
+      const pending = { role, voiceId, ...metaForRole(role) };
+      setPendingParentVoices(await loadPendingParentVoices());
+      await auditionParentVoice(pending);
       flashSaved();
     } catch (e) {
       // 복제 실패 — 선차감했던 토큰을 돌려준다.
@@ -983,6 +1028,26 @@ export default function SettingsPage() {
             {ttsError && <p className="text-[11px] font-bold text-rose-500">{ttsError}</p>}
             {cloneErr && <p className="text-[11px] font-bold text-rose-500">{cloneErr}</p>}
 
+            {pendingParentVoices.map((voice) => (
+              <div key={`review-${voice.role}`} className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                <p className="text-sm font-black text-amber-900">{voice.emoji} {voice.label} 목소리를 확인해 주세요</p>
+                <p className="mt-1 text-xs font-medium leading-relaxed text-amber-800">
+                  녹음 원본이 아니라 실제로 합성된 목소리입니다. 들어 본 뒤 승인해야 동화에서 선택할 수 있어요.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button type="button" onClick={() => auditionParentVoice(voice)} className="rounded-full bg-white px-3 py-1.5 text-xs font-bold text-amber-800 shadow-sm">
+                    ▶ 다시 듣기
+                  </button>
+                  <button type="button" onClick={() => acceptParentVoice(voice)} className="rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm">
+                    닮았어요, 사용하기
+                  </button>
+                  <button type="button" onClick={() => retryParentVoice(voice)} className="rounded-full bg-white px-3 py-1.5 text-xs font-bold text-rose-600 shadow-sm">
+                    다시 녹음할게요
+                  </button>
+                </div>
+              </div>
+            ))}
+
             {/* 녹음한 엄마·아빠 목소리 — "목소리 만들기"로 복제하면 동화에서 그 목소리로 읽힌다 */}
             {customVoices.length > 0 && (
               <div className="flex flex-wrap gap-2">
@@ -1000,7 +1065,11 @@ export default function SettingsPage() {
                       <span className="text-lg leading-none">{v.emoji}</span>
                       {v.label} 🔊
                     </button>
-                    {isCloned(v) ? (
+                    {isPending(v) ? (
+                      <span className="rounded-full bg-amber-200 px-2 text-[10px] font-bold text-amber-800">
+                        확인 필요
+                      </span>
+                    ) : isCloned(v) ? (
                       <span className="rounded-full bg-emerald-100 px-2 text-[10px] font-bold text-emerald-700">
                         ✅ 완성
                       </span>

@@ -20,14 +20,14 @@ import {
 } from "@/lib/prefs";
 import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
-import type { Book } from "@/lib/types";
-import { findTypecast, prewarmBookAudio, TYPECAST_VOICES } from "@/lib/voices";
-import { loadParentVoices, type ParentVoice } from "@/lib/parent-voice";
+import type { Book, VoiceDirection } from "@/lib/types";
+import { fetchTypecastVoiceAudio, findTypecast, prewarmBookAudio, TYPECAST_VOICES } from "@/lib/voices";
+import { loadParentVoices, PARENT_VOICE_TEST_TEXT, type ParentVoice } from "@/lib/parent-voice";
 
 type Gender = "girl" | "boy" | "unspecified";
 type Scene = { sceneNo: number; text: string };
 type Outline = { title: string; summary: string; scenes: Scene[] };
-type StoryPage = { pageNo: number; text: string; imagePrompt: string };
+type StoryPage = { pageNo: number; text: string; imagePrompt: string; voiceDirection: VoiceDirection };
 type Character = { name: string; description: string };
 type Story = { title: string; summary: string; characters: Character[]; pages: StoryPage[] };
 
@@ -715,12 +715,19 @@ export default function CreatePage() {
   const [longerStory, setLongerStory] = useState(false);
   // 성우를 고르면 미리 구운 샘플(진짜 그 성우 목소리, static mp3)을 들려준다 — 크레딧 0.
   const narratorPreviewRef = useRef<HTMLAudioElement | null>(null);
-  function pickNarrator(id: string) {
+  async function pickNarrator(id: string) {
     setNarratorVoice(id);
     try {
       const el = narratorPreviewRef.current ?? new Audio();
       narratorPreviewRef.current = el;
-      el.src = `/casting/preview-${id}.mp3`;
+      if (id.startsWith("parent:")) {
+        const parent = parentVoices.find((voice) => voice.role === id.slice("parent:".length));
+        if (!parent) return;
+        const blob = await fetchTypecastVoiceAudio(parent.voiceId, PARENT_VOICE_TEST_TEXT);
+        el.src = URL.createObjectURL(blob);
+      } else {
+        el.src = `/casting/preview-${id}.mp3`;
+      }
       el.currentTime = 0;
       void el.play().catch(() => {});
     } catch {
@@ -811,6 +818,22 @@ export default function CreatePage() {
     setWhoName("");
     setWhoGender(""); // 이름과 같은 이유 — 다른 동행으로 바꿨는데 앞의 성별이 남으면 안 된다
     setFriends([{ name: "", gender: "" }]);
+  }
+
+  function buildStoryMaterial() {
+    const common = {
+      who,
+      whoName: whoName.trim(),
+      whoGender,
+      friends: friends.filter((friend) => friend.name.trim() || friend.gender),
+    };
+    if (storyMode === "today") {
+      return { kind: "today", subject: "", ...common, happening: todayEvent.trim(), place, feeling, ending, emotion: "", situation: "", extra: "" };
+    }
+    if (storyMode === "emotion") {
+      return { kind: "emotion", subject: "", ...common, happening: "", place: "", feeling: "", emotion, situation: situation.trim(), extra: "" };
+    }
+    return { kind: "imagine", subject: theme, ...common, happening, place: "", feeling: "", emotion: "", situation: "", extra: extra.trim() };
   }
 
   async function makeOutline() {
@@ -909,6 +932,7 @@ export default function CreatePage() {
         body: JSON.stringify({
           child,
           outline,
+          material: buildStoryMaterial(),
           mood: storyMode === "emotion" ? "" : mood.ko,
           longer: longerStory,
         }),
@@ -1110,7 +1134,7 @@ export default function CreatePage() {
       narrator: narratorVoice,
       coverImage: hosted.cover,
       pageCount: s.pages.length,
-      pages: s.pages.map((p, i) => ({ text: p.text, image: hosted.images[i] ?? null })),
+      pages: s.pages.map((p, i) => ({ text: p.text, voiceDirection: p.voiceDirection, image: hosted.images[i] ?? null })),
     };
     await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
 
@@ -1124,12 +1148,14 @@ export default function CreatePage() {
      * 목소리는 책을 열었을 때 실제로 쓰일 것과 같아야 캐시가 맞는다: 부모 목소리가
      * 있으면 그게 기본이므로 그걸로, 없으면 만들 때 고른 성우로 굽는다.
      */
-    const texts = book.pages.map((p) => p.text);
-    if (parentVoices.length > 0) {
-      prewarmBookAudio(texts, { kind: "parent", voiceId: parentVoices[0].voiceId });
+    const selectedParent = narratorVoice.startsWith("parent:")
+      ? parentVoices.find((voice) => voice.role === narratorVoice.slice("parent:".length))
+      : undefined;
+    if (selectedParent) {
+      prewarmBookAudio(book.pages, { kind: "parent", voiceId: selectedParent.voiceId });
     } else {
       const preset = findTypecast(narratorVoice);
-      if (preset) prewarmBookAudio(texts, { kind: "preset", preset });
+      if (preset) prewarmBookAudio(book.pages, { kind: "preset", preset });
     }
 
     setFinalBook(book);
@@ -1953,13 +1979,30 @@ export default function CreatePage() {
                   <span className="text-rose-500"> *</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
+                  {parentVoices.map((voice) => {
+                    const id = `parent:${voice.role}`;
+                    const active = narratorVoice === id;
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => void pickNarrator(id)}
+                        aria-pressed={active}
+                        style={active ? { background: accent } : undefined}
+                        className={`flex items-center gap-1.5 rounded-full py-1.5 pl-2.5 pr-3.5 text-sm font-bold transition ${active ? "text-white" : "bg-amber-100 text-amber-800 hover:bg-amber-200"}`}
+                      >
+                        <span>{voice.emoji}</span>
+                        {voice.label} 목소리
+                      </button>
+                    );
+                  })}
                   {TYPECAST_VOICES.map((v) => {
                     const active = narratorVoice === v.id;
                     return (
                       <button
                         key={v.id}
                         type="button"
-                        onClick={() => pickNarrator(v.id)}
+                        onClick={() => void pickNarrator(v.id)}
                         aria-pressed={active}
                         style={active ? { background: accent } : undefined}
                         className={`flex items-center gap-1.5 rounded-full py-1.5 pl-2.5 pr-3.5 text-sm font-bold transition ${
@@ -1976,7 +2019,9 @@ export default function CreatePage() {
                 </div>
                 {narratorVoice ? (
                   <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
-                    {TYPECAST_VOICES.find((v) => v.id === narratorVoice)?.desc}
+                    {narratorVoice.startsWith("parent:")
+                      ? "승인한 부모 목소리로 이 동화를 읽어 줍니다."
+                      : TYPECAST_VOICES.find((v) => v.id === narratorVoice)?.desc}
                   </p>
                 ) : (
                   // 아직 안 골랐으면 고르라고 한 번 더 안내한다.

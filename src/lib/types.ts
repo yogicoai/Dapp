@@ -1,5 +1,16 @@
+export type VoiceEmotion = "normal" | "toneup" | "happy" | "sad" | "angry";
+export type VoicePace = "slow" | "normal" | "lively";
+export type VoiceDirection = {
+  narration: VoiceEmotion;
+  dialogue: VoiceEmotion;
+  intensity: number;
+  pace: VoicePace;
+};
+
 export type BookPage = {
   text: string;
+  /** 이야기 생성 단계에서 정한 페이지별 성우 연기 지시. 부모 복제 음성에는 강제 적용하지 않는다. */
+  voiceDirection?: VoiceDirection;
   /** 4:3 가로 삽화. 아직 생성 전이면 null이고 뷰어가 플레이스홀더를 그린다. */
   image?: string | null;
   /**

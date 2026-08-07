@@ -402,16 +402,25 @@ export function BookViewer({ book }: { book: Book }) {
   // 성우 음성을 만드는 중 — 눌렀는데 소리가 안 나면 고장으로 오해하니(베타 피드백 4번)
   // 버튼과 안내로 "준비 중"을 보여준다. 첫 소리가 나면 내린다.
   const [preparing, setPreparing] = useState(false);
+  // IndexedDB 캐시는 보통 즉시 열리므로 짧은 로딩에는 안내를 띄우지 않는다.
+  const [showPreparing, setShowPreparing] = useState(false);
   // 준비에 걸린 초 — 숫자가 올라가는 걸 보면 멈춘 게 아니라 되는 중임을 안다.
   const [prepSecs, setPrepSecs] = useState(0);
   useEffect(() => {
     if (!preparing) {
-      setPrepSecs(0);
-      return;
+      const resetId = window.setTimeout(() => {
+        setShowPreparing(false);
+        setPrepSecs(0);
+      }, 0);
+      return () => window.clearTimeout(resetId);
     }
     const startedAt = Date.now();
+    const revealId = window.setTimeout(() => setShowPreparing(true), 400);
     const id = setInterval(() => setPrepSecs(Math.round((Date.now() - startedAt) / 1000)), 1000);
-    return () => clearInterval(id);
+    return () => {
+      window.clearTimeout(revealId);
+      clearInterval(id);
+    };
   }, [preparing]);
   // 미리받아 둔 다음 쪽 번호 — 같은 쪽을 두 번 미리받지 않게.
   const prefetchedRef = useRef(-1);
@@ -480,10 +489,17 @@ export function BookViewer({ book }: { book: Book }) {
     // 창작 동화는 메뉴에 없는 성우로 읽히면 안 된다 — 메뉴는 '고른 성우(+부모)'뿐인데
     // 저장된 다른 성우로 읽으면 목록과 실제 소리가 어긋난다. 그래서 부모 → 이 책의 성우
     // → 부끄 순으로만 정한다(설정에 저장된 값은 쓰지 않는다).
+    const savedParent = book.narrator?.startsWith("parent:") && parentVoices.some(
+      (voice) => `parent:${voice.role}` === book.narrator,
+    );
     const v = isMine
-      ? parentVoices.length > 0
-        ? `parent:${parentVoices[0].role}`
-        : book.narrator || "tc-booqoo"
+      ? savedParent
+        ? book.narrator!
+        : TYPECAST_VOICES.some((voice) => voice.id === book.narrator)
+          ? book.narrator!
+          : parentVoices.length > 0
+            ? `parent:${parentVoices[0].role}`
+            : "tc-booqoo"
       : book.narrators?.[0] ?? book.narrator ?? safeStored;
     setVoiceId(v);
     voiceIdRef.current = v;
@@ -715,7 +731,8 @@ export function BookViewer({ book }: { book: Book }) {
         if (run !== runIdRef.current || !readingRef.current) return;
         const url = URL.createObjectURL(blob);
         el.src = url;
-        applyPlaybackRate(el, rateBoost);
+        const paceMultiplier = seg.pace === "slow" ? 0.9 : seg.pace === "lively" ? 1.08 : 1;
+        applyPlaybackRate(el, rateBoost * paceMultiplier);
         el.ontimeupdate = () => {
           if (el.duration > 0) {
             setHighlight(
@@ -758,7 +775,7 @@ export function BookViewer({ book }: { book: Book }) {
       if (nextBundled && (!overriddenRef.current || (tc !== null && book.narrator === tc.id))) return;
       if (!tc) return;
       prefetchedRef.current = i + 1;
-      prefetchTypecastPageAudio(tc, next.text);
+      prefetchTypecastPageAudio(tc, next.text, next.voiceDirection);
     };
 
     // 완성작(전래·세계명작)은 기본적으로 딸린 나레이션을 쓴다 — 파일 재생이라 무료이고,
@@ -821,7 +838,7 @@ export function BookViewer({ book }: { book: Book }) {
       // 조각 합성을 한꺼번에 걸어두고(startTypecast…) 첫 조각이 오는 대로 재생한다.
       try {
         setPreparing(true);
-        playPending(startTypecastPageAudio(tc, page.text));
+        playPending(startTypecastPageAudio(tc, page.text, page.voiceDirection));
       } catch {
         // 실시간 합성 꺼짐(client-tts-disabled) — 딸린 파일이 있으면 그걸(무료),
         // 없으면 브라우저 기계음으로 대체한다. 크레딧은 안 나간다.
@@ -1791,13 +1808,13 @@ export function BookViewer({ book }: { book: Book }) {
       <div className="absolute bottom-5 right-5 z-10 flex flex-col items-center gap-2">
         {/* 성우 목소리를 만드는 동안 — 눌렀는데 조용하면 고장으로 오해한다(피드백 4번).
             몇 초 걸리는지까지 보여줘서 "기다리면 되는구나"를 알게 한다. */}
-        {preparing && (
+        {showPreparing && (
           <span className="flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 animate-spin" aria-hidden>
               <circle cx="12" cy="12" r="9" fill="none" stroke="#ffffff55" strokeWidth="3" />
               <path d="M21 12a9 9 0 0 0-9-9" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
             </svg>
-            성우가 목소리를 만들고 있어요{prepSecs > 0 ? ` (${prepSecs}초)` : ""}
+            성우 음성을 불러오고 있어요{prepSecs > 0 ? ` (${prepSecs}초)` : ""}
           </span>
         )}
         {!reading && !ended && !preparing && (

@@ -5,6 +5,7 @@ import {
   type ParsedOutline,
   type ParsedStory,
 } from "./story-format";
+import { StoryQualityError, validateStoryQuality } from "./story-quality";
 
 const client = new Anthropic();
 // 이야기 생성 모델 — 가성비 Sonnet 기본(원가 약 1/5). 품질이 필요한 순간엔
@@ -463,6 +464,8 @@ export async function generateOutline(input: {
 }
 
 const STORY_SYSTEM = `${VOICE}
+독자가 아이인 만큼 노골적인 폭력·공포·성인 소재를 쓰지 않는다. 갈등은 안전하게 해소하고 아이를 탓하거나 겁주지 않는다.
+공통 작품 테마는 '아이의 실제 마음에서 시작해 작은 모험을 스스로 선택하고, 따뜻하고 안전하게 돌아오는 성장 이야기'다. 사용자가 고른 공룡·우주·습관 같은 소재는 유지하되 훈계보다 아이의 선택과 감정 회복을 보여 준다.
 
 확정된 줄거리는 장면별로 나뉘어 있다. **1장면 → 1쪽**으로, 장면 하나를 한 쪽 본문으로
 옮긴다. 이야기를 새로 짓거나 장면을 합치거나 나누지 말고, 장면 개수 그대로 쪽을 낸다
@@ -507,12 +510,14 @@ const STORY_SYSTEM = `${VOICE}
 @@CHARACTER@@ 이름 | 생김새와 특징
 @@PAGE@@ 1
 @@TEXT@@ ...
+@@VOICE@@ narration=normal | dialogue=happy | intensity=0.8 | pace=normal
 @@IMG@@ ...
 @@PAGE@@ 2
 ...`;
 
 export async function generateStory(input: {
   child: ChildProfile;
+  material: StoryMaterial;
   outline: ParsedOutline;
   occasion?: string;
   mood?: string;
@@ -528,6 +533,7 @@ export async function generateStory(input: {
 
   // 이름 가드 — 줄거리와 같은 방식. 본문에서 이름이 틀리면 한 번 다시 짓는다.
   let story: ParsedStory | null = null;
+  let lastIssues: string[] = [];
   for (let attempt = 1; attempt <= 2; attempt++) {
     const message = await client.messages.create({
       model: MODEL,
@@ -542,12 +548,16 @@ export async function generateStory(input: {
             `아이: ${describeChild(input.child)}`,
             `장면 수: ${pageCount}장면 (이 개수만큼, 장면 하나당 한 쪽씩 낸다)`,
             `쪽당 분량: ${lengthGuide(input.child.age, input.longer)}`,
+            "처음 입력한 이야기 재료(사실·인물·장소)는 줄거리보다 우선하며, 빠뜨리거나 다른 내용으로 바꾸지 않는다.",
+            ...materialLines(input.material),
+            "각 페이지에는 @@VOICE@@를 정확히 한 번 쓴다. narration/dialogue는 normal|toneup|happy|sad|angry 중 하나, intensity는 0.3~1.2, pace는 slow|normal|lively 중 하나다. 지문은 차분하게, 대사는 장면 감정에 맞게 과장 없이 지정한다.",
             ...(input.occasion
               ? [`특별한 날: ${input.occasion} — 축하가 이야기에 자연스럽게 스며들게.`]
               : []),
             ...(input.mood ? [`분위기: ${input.mood}`] : []),
             ...(attempt > 1
               ? [
+                  `직전 결과의 품질 검사 실패 항목: ${lastIssues.join(" / ")}. 이 항목을 모두 바로잡아 전체를 다시 출력한다.`,
                   `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 "${input.child.name}"이다 — 비슷한 다른 이름 절대 금지. (조사는 자연스럽게: ${josaGuide(input.child.name)})`,
                 ]
               : []),
@@ -562,17 +572,18 @@ export async function generateStory(input: {
 
     story = parseStory(textOf(message));
 
-    if (story.pages.length !== pageCount) {
-      throw new Error(
-        `${pageCount}쪽이어야 하는데 ${story.pages.length}쪽이 나왔습니다.`,
-      );
-    }
-
-    const joined = story.title + " " + story.pages.map((p) => p.text).join(" ");
-    if (nameOk(input.child.name, joined)) break;
-    if (attempt === 2) {
-      console.warn(`[story] 이름 불일치 2회: "${input.child.name}"`);
-    }
+    lastIssues = validateStoryQuality(story, {
+      childName: input.child.name,
+      age: input.child.age,
+      expectedPages: pageCount,
+      requiredTerms: [
+        input.material.whoName,
+        ...input.material.friends.map((friend) => friend.name),
+        input.material.place.length <= 20 ? input.material.place : "",
+      ].filter(Boolean),
+    });
+    if (lastIssues.length === 0) break;
+    if (attempt === 2) throw new StoryQualityError(lastIssues);
   }
 
   // 아이가 보게 될 최종 본문이라 여기서 한 번 더 조사를 맞춘다.

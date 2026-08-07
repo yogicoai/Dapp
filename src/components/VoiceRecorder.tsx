@@ -309,7 +309,11 @@ export function VoiceRecorder({
       }
     } catch {
       // 분석 실패는 막지 않는다 — 판정은 도우미일 뿐, 저장 자체는 되게 한다.
-      setVerdict({ ok: true, title: "녹음 완료", detail: "들어보고 저장해 주세요." });
+      setVerdict({
+        ok: false,
+        title: "녹음 파일을 확인하지 못했어요",
+        detail: "판매용 목소리 품질을 확인할 수 없어 저장을 막았어요. 브라우저를 새로 열고 다시 녹음해 주세요.",
+      });
     }
   }
 
@@ -322,7 +326,9 @@ export function VoiceRecorder({
     try {
       audio = await prepareVoiceWav(takesRef.current.length > 0 ? takesRef.current : [blobRef.current]);
     } catch {
-      audio = blobRef.current; // 다듬기 실패해도 저장은 되게 — 원본 그대로 쓴다
+      setError("녹음을 음성 학습용 파일로 정리하지 못했어요. 다시 녹음해 주세요.");
+      setPhase("preview");
+      return;
     }
     const id = `custom-${Date.now()}`;
     const voice: CustomVoice = {
@@ -548,7 +554,8 @@ export function VoiceRecorder({
             />
             <span>
               <b>제 목소리</b>가 맞으며, 우리 아이 동화 낭독을 만드는 데 사용하는 것에
-              동의합니다.
+              동의합니다. 녹음 원본은 이 기기에 보관되고, 목소리 복제 시 정리된 녹음이
+              Typecast로 전송되며 계정에는 복제 음성 ID가 저장됩니다.
             </span>
           </label>
 
