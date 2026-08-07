@@ -1234,9 +1234,9 @@ export function BookViewer({ book }: { book: Book }) {
                   src={page.image}
                   alt=""
                   aria-hidden
-                  className="absolute inset-0 h-full w-full scale-110 object-cover opacity-70 blur-2xl"
+                  className="absolute inset-0 h-full w-full scale-125 object-cover opacity-55 blur-lg saturate-110"
                 />
-                {/* 무대 — 꽉 찬 그림은 모바일에서도 남은 화면 전체를 그림 무대로 쓰고
+                {/* 무대 — 꽉 찬 그림은 모바일에서도 원본 비율의 실제 그림 영역에
                     본문을 겹친다. 펼침면만 [그림+글자] 책 구조를 유지한다.
                     아래 버튼 자리(6rem)는 비운다(겹침 방지).
                     틀 비율은 그림 실측(--ar) — 4:3 고정이면 와이드 그림이 '짤려' 보인다. */}
@@ -1267,8 +1267,8 @@ export function BookViewer({ book }: { book: Book }) {
                       spread
                         ? // 펼침면 — 왼쪽 쪽. 무대가 이미 책 크기라 절반이 곧 한 쪽이다.
                           "[aspect-ratio:var(--ar)] portrait:w-full landscape:h-full landscape:w-1/2"
-                        : "portrait:h-full portrait:w-full landscape:[aspect-ratio:var(--ar)] landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
-                    }`}
+                        : "[aspect-ratio:var(--ar)] portrait:w-full landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
+                    } ${!spread && ratioOf(i) > 1 ? "portrait:translate-y-10" : ""}`}
                     style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                   >
                     {page.video ? (
@@ -1522,7 +1522,9 @@ export function BookViewer({ book }: { book: Book }) {
         <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center portrait:bottom-24">
           {/* 그림 실측 비율(--ar)로 무대와 같은 크기를 유지한다 — 좌표가 그림과 맞아떨어진다. */}
           <div
-            className="relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))]"
+            className={`relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))] ${
+              !spread && ratioOf(index) > 1 ? "portrait:translate-y-10" : ""
+            }`}
             style={{ "--ar": String(ratioOf(index)) } as React.CSSProperties}
           >
             {book.pages[index].actors!.map((a, ai) => (
@@ -1636,7 +1638,7 @@ export function BookViewer({ book }: { book: Book }) {
           <div
             className={`relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))] ${
               spread ? "landscape:h-full landscape:w-1/2" : ""
-            }`}
+            } ${!spread && ratioOf(index) > 1 ? "portrait:translate-y-10" : ""}`}
             style={{ "--ar": String(ratioOf(index)) } as React.CSSProperties}
           >
             {book.pages[index].hotspots!.map((h, hi) => {
