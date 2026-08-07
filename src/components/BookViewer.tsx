@@ -56,6 +56,7 @@ import {
 import { loadParentVoices, type ParentVoice } from "@/lib/parent-voice";
 import { OrientationHint } from "./OrientationHint";
 import { useTheme } from "./ThemeProvider";
+import { currentReadingChunk, splitStorySentences } from "@/lib/reading-chunks";
 
 const SWIPE_THRESHOLD_PX = 50;
 
@@ -175,43 +176,6 @@ const HOTSPOT_KO: Record<string, string> = {
   greedy: "욕심쟁이",
 };
 
-/**
- * 본문을 문장 단위로 자른다 — 그림책처럼 문장마다 줄을 놓기 위해.
- *
- * 글자를 하나도 더하거나 빼지 않는다. 낭독 색칠이 '몇 번째 글자까지'로 돌기 때문에,
- * 공백 하나만 손대도 색칠 위치가 어긋난다. 잘라 낸 조각을 그대로 이어 붙이면
- * 원문이 된다.
- *
- * 마침표·물음표·느낌표에서 끊되, 대사 안의 문장부호에서는 끊지 않는다.
- * 동화는 대사가 많아서 이걸 안 가리면 엉뚱하게 잘린다:
- *   ("찰칵!" 열차 문이 열렸어요.) → 「"찰칵!"」과 「열차 문이…」로 갈라져 버린다.
- * 닫는 따옴표 뒤에 글이 더 이어지면 대개 그 대사를 받는 서술이라 한 문장으로 둔다.
- * 반대로 따옴표가 글의 끝이면 거기서 자연스럽게 끝난다.
- */
-function splitSentences(text: string): string[] {
-  const out: string[] = [];
-  let cur = "";
-  for (let i = 0; i < text.length; i++) {
-    cur += text[i];
-    if (!".!?。".includes(text[i])) continue;
-
-    // 뒤따르는 닫는 따옴표는 이 문장에 붙인다 — 따옴표만 다음 줄로 떨어지면 흉하다.
-    let quoted = false;
-    while (i + 1 < text.length && `"'”’」』)`.includes(text[i + 1])) {
-      cur += text[++i];
-      quoted = true;
-    }
-    // 대사가 닫힌 뒤에도 글이 남아 있으면 아직 문장이 안 끝났다 — 계속 모은다.
-    if (quoted && i + 1 < text.length) continue;
-
-    while (i + 1 < text.length && /\s/.test(text[i + 1])) cur += text[++i];
-    out.push(cur);
-    cur = "";
-  }
-  if (cur) out.push(cur);
-  return out.length > 0 ? out : [text];
-}
-
 export function BookViewer({ book }: { book: Book }) {
   const router = useRouter();
   // 그림 없는 쪽의 배경으로 쓴다 — 글 동화도 테마(동화나라) 안에서 읽힌다.
@@ -251,6 +215,9 @@ export function BookViewer({ book }: { book: Book }) {
   };
   const [index, setIndex] = useState(0);
   const lastIndex = book.pages.length - 1;
+  const completedThisVisitRef = useRef(false);
+  const progressBookRef = useRef<string | null>(null);
+  const [progressReady, setProgressReady] = useState(false);
 
   // 쪽별 그림의 실제 비율(가로÷세로) — 그림이 로드되면 잰다. 책마다 그림 비율이 달라서
   // (흥부 4:3, 해님달님 2.36:1 등) 4:3 고정 틀은 와이드 그림에서 위아래가 뜨고 '짤린'
@@ -263,16 +230,35 @@ export function BookViewer({ book }: { book: Book }) {
   const [animate, setAnimate] = useState(false);
   useEffect(() => {
     const saved = loadBookProgress(book.id);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage 이어보기 위치 반영
-    if (saved > 0 && saved <= lastIndex) setIndex(saved);
+    completedThisVisitRef.current = false;
+    progressBookRef.current = null;
+    const resumeAt = saved > 0 && saved < lastIndex ? saved : 0;
+    if (saved >= lastIndex) {
+      // 예전 버전에서 마지막 쪽이 저장된 책도 다음 방문부터 첫 쪽으로 정리한다.
+      saveBookProgress(book.id, 0);
+    }
+    let cancelled = false;
+    // 외부 저장소 값을 읽은 뒤 다음 microtask에서 반영해 동기 effect 연쇄 렌더를 피한다.
+    queueMicrotask(() => {
+      if (cancelled) return;
+      setIndex(resumeAt);
+      progressBookRef.current = book.id;
+      setProgressReady(true);
+    });
     const t = setTimeout(() => setAnimate(true), 80);
-    return () => clearTimeout(t);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
   }, [book.id, lastIndex]);
 
-  // 쪽을 넘길 때마다 진행 위치를 저장한다(만들기 미리보기 id="new"는 저장 안 함).
+  // 중간에 나가면 이어 보고, 마지막 쪽까지 도달한 책은 다음 방문에 처음부터 본다.
+  // 완독 뒤 같은 방문에서 앞장을 다시 보더라도 완료 상태(0)를 덮어쓰지 않는다.
   useEffect(() => {
-    saveBookProgress(book.id, index);
-  }, [book.id, index]);
+    if (!progressReady || progressBookRef.current !== book.id) return;
+    if (index >= lastIndex) completedThisVisitRef.current = true;
+    saveBookProgress(book.id, completedThisVisitRef.current ? 0 : index);
+  }, [book.id, index, lastIndex, progressReady]);
 
   /**
    * 읽어주기 — 노래방처럼, 읽힌 글자가 색으로 표시된다.
@@ -613,7 +599,6 @@ export function BookViewer({ book }: { book: Book }) {
     const resumable = !!el && !el.paused && el.currentTime > 0;
     pausedRef.current = resumable ? { run: runIdRef.current, page: currentPageRef.current } : null;
     el?.pause();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stopReading = useCallback(() => {
@@ -1116,10 +1101,25 @@ export function BookViewer({ book }: { book: Book }) {
            *   안 보이므로 어두운 글씨로 바꾼다(색칠도 진한 주황으로).
            *   같은 본문이 어두운 밴드와 종이 두 곳에 쓰여서 색을 갈라 준다.
            */
-          const renderRuns = (onPaper = false) => {
+          const renderRuns = (onPaper = false, focusCurrent = false) => {
             const done = onPaper ? "text-amber-600" : "text-amber-300";
             const rest = onPaper ? "text-neutral-800" : "text-white";
             const live = i === index && reading;
+            if (live && focusCurrent) {
+              const chunk = currentReadingChunk(page.text, highlight);
+              return (
+                <span
+                  key={chunk.from}
+                  className="block animate-[subtitle-in_180ms_ease-out] text-balance"
+                >
+                  {chunk.text.split("").map((ch, k) => (
+                    <span key={k} className={chunk.from + k < highlight ? done : rest}>
+                      {ch}
+                    </span>
+                  ))}
+                </span>
+              );
+            }
             /*
              * 문장마다 줄을 바꾼다. 한 덩어리로 흘리면 줄이 아무 데서나 끊겨
              * 문서처럼 딱딱해 보인다 — 그림책은 문장 단위로 놓인다.
@@ -1130,7 +1130,7 @@ export function BookViewer({ book }: { book: Book }) {
              * 이어 붙이면 원문 그대로가 되게 한다.
              */
             let at = 0;
-            return splitSentences(page.text).map((sentence, si) => {
+            return splitStorySentences(page.text).map((sentence, si) => {
               const start = at;
               at += sentence.length;
               return (
@@ -1169,17 +1169,24 @@ export function BookViewer({ book }: { book: Book }) {
            * 위치 목록에 flex를 섞어 두면 hidden과 부딪혀 어느 쪽이 이길지 불안정해진다.
            */
           const posNeedsFlex = textPos === "center" || textPos === "left" || textPos === "right";
-          const overlayText = (display: string, size: string) => (
+          const overlayText = (
+            display: string,
+            size: string,
+            focusCurrent = false,
+            position: typeof textPos = textPos,
+          ) => (
             <div
               className={`absolute ${
-                {
-                  bottom:
-                    "inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[6%] pt-[14%]",
-                  top: "inset-x-0 top-0 bg-gradient-to-b from-black/85 via-black/55 to-transparent px-[6%] pt-[6%] pb-[14%]",
-                  center: "inset-0 items-center justify-center p-[6%]",
-                  left: "inset-y-0 left-0 w-[46%] items-center pl-[5%] pr-[2%]",
-                  right: "inset-y-0 right-0 w-[46%] items-center pr-[5%] pl-[2%]",
-                }[textPos]
+                focusCurrent && position === "bottom" && reading
+                  ? "inset-x-[6%] bottom-28 px-[2%] py-2"
+                  : {
+                      bottom:
+                        "inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[6%] pt-[14%]",
+                      top: "inset-x-0 top-0 bg-gradient-to-b from-black/85 via-black/55 to-transparent px-[6%] pt-[6%] pb-[14%]",
+                      center: "inset-0 items-center justify-center p-[6%]",
+                      left: "inset-y-0 left-0 w-[46%] items-center pl-[5%] pr-[2%]",
+                      right: "inset-y-0 right-0 w-[46%] items-center pr-[5%] pl-[2%]",
+                    }[position]
               } ${display}`}
             >
               <AutoFitStoryText
@@ -1188,12 +1195,14 @@ export function BookViewer({ book }: { book: Book }) {
                 fontScale={font.scale}
                 fontWeight={storyWeightForFont(font, weight)}
                 className={`font-story max-h-[76dvh] whitespace-pre-line break-keep text-pretty text-center drop-shadow-md ${
-                  textPos === "bottom" || textPos === "top"
-                    ? "mx-auto w-full max-w-[max(20rem,60vw)]"
+                  focusCurrent && position === "bottom" && reading
+                    ? "mx-auto w-full max-w-[min(46rem,82vw)] [text-shadow:0_1px_2px_rgba(0,0,0,0.7),0_3px_7px_rgba(0,0,0,0.5)]"
+                    : position === "bottom" || position === "top"
+                      ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : "w-full rounded-3xl bg-black/55 p-5 backdrop-blur-[2px] sm:p-6"
-                } ${textPos === "center" ? "max-w-[max(20rem,55vw)]" : ""}`}
+                } ${position === "center" ? "max-w-[max(20rem,55vw)]" : ""}`}
               >
-                {renderRuns()}
+                {renderRuns(false, focusCurrent)}
               </AutoFitStoryText>
             </div>
           );
@@ -1305,8 +1314,10 @@ export function BookViewer({ book }: { book: Book }) {
                         펼침면에서는 글이 옆 종이로 빠지므로 이 오버레이를 쓰지 않는다. */}
                     {!spread &&
                       overlayText(
-                        `hidden ${posNeedsFlex ? "landscape:flex" : "landscape:block"}`,
+                        "hidden landscape:block",
                         "clamp(1.35rem,2.9vw,2.05rem)",
+                        true,
+                        "bottom",
                       )}
                   </div>
                   {/* 글자 칸.
@@ -1342,7 +1353,7 @@ export function BookViewer({ book }: { book: Book }) {
                         spread ? "landscape:hidden" : ""
                       }`}
                     >
-                      {renderRuns(false)}
+                      {renderRuns(false, !spread)}
                     </AutoFitStoryText>
                     {/* 가로 + 펼침면 — 종이 위 어두운 글씨. 색칠도 종이에 맞춰 진한 주황. */}
                     {spread && (

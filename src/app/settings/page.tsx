@@ -96,7 +96,7 @@ import {
  * multi=true면 여러 개 고를 수 있다.
  */
 /** 하나만 고르는 항목 / 여러 개 고르는 항목을 타입으로 갈라 둔다(코드가 헷갈리지 않게). */
-type LookSingleKey = "hair" | "bangs" | "hairColor" | "eyes" | "skin" | "build" | "color";
+type LookSingleKey = "hair" | "hairTexture" | "bangs" | "hairColor" | "eyes" | "skin" | "build" | "color";
 type LookMultiKey = "items" | "marks";
 type LookRow =
   | { key: LookSingleKey; label: string; opts: readonly string[]; multi?: false }
@@ -120,6 +120,11 @@ const LOOK_ROWS: readonly LookRow[] = [
       "하나로 묶기",
       "똥머리",
     ],
+  },
+  {
+    key: "hairTexture" as const,
+    label: "머리결",
+    opts: ["곧은 생머리", "살짝 웨이브", "곱슬머리", "파마머리"],
   },
   { key: "bangs" as const, label: "앞머리", opts: ["있어요", "없어요", "옆으로 넘겨요"] },
   { key: "hairColor" as const, label: "머리 색", opts: ["까만색", "짙은 갈색", "밝은 갈색"] },
@@ -156,7 +161,7 @@ const LOOK_ROWS: readonly LookRow[] = [
   {
     key: "marks" as const,
     label: "이런 점도 있어요",
-    opts: ["곱슬머리", "주근깨", "보조개", "앞니 빠짐", "볼이 통통해요"],
+    opts: ["주근깨", "보조개", "앞니 빠짐", "볼이 통통해요"],
     multi: true,
   },
 ];

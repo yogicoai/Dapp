@@ -11,6 +11,7 @@ import {
   repairStoryContinuity,
   validateStoryQuality,
 } from "./story-quality";
+import type { NarrationStyle } from "./types";
 
 const client = new Anthropic();
 // 이야기 생성 모델 — 가성비 Sonnet 기본(원가 약 1/5). 품질이 필요한 순간엔
@@ -567,6 +568,8 @@ export async function generateStory(input: {
   mood?: string;
   /** 넉넉하게(길게) — 쪽수가 적어도 각 쪽 분량을 늘려 이야기를 더 풍부하게. */
   longer?: boolean;
+  /** 제작 단계에서 한 번 고르고 책에 고정하는 낭독 느낌. */
+  narrationStyle?: NarrationStyle;
 }): Promise<ParsedStory> {
   // 쪽수는 줄거리 장면 수를 그대로 따른다 — 장면 1개 = 쪽 1개.
   const pageCount = input.outline.scenes.length;
@@ -574,6 +577,15 @@ export async function generateStory(input: {
   const outlineText = input.outline.scenes
     .map((s) => `${s.sceneNo}장면: ${s.text}`)
     .join("\n");
+  const narrationStyle = input.narrationStyle ?? "natural";
+  const narrationStyleGuide = {
+    cozy:
+      "선택한 낭독 느낌은 '포근하게'다. narration=normal, intensity=0.35, pace=slow를 기본으로 하고 대사는 대부분 normal로 지정한다. 슬픈 대사만 sad를 약하게 허용한다.",
+    natural:
+      "선택한 낭독 느낌은 '자연스럽게'다. narration=normal, intensity=0.5, pace=normal을 기본으로 하고 감정이 분명한 대사에만 happy|sad|angry를 지정한다.",
+    lively:
+      "선택한 낭독 느낌은 '조금 신나게'다. narration=normal, intensity=0.6, pace=lively를 기본으로 하되 슬프거나 조용한 장면은 pace=normal로 낮춘다. 높은 음정이나 과장은 금지한다.",
+  }[narrationStyle];
 
   // 이름 가드 — 줄거리와 같은 방식. 본문에서 이름이 틀리면 한 번 다시 짓는다.
   let story: ParsedStory | null = null;
@@ -595,6 +607,7 @@ export async function generateStory(input: {
             "처음 입력한 이야기 재료(사실·인물·장소)는 줄거리보다 우선하며, 빠뜨리거나 다른 내용으로 바꾸지 않는다.",
             ...materialLines(input.material),
             "각 페이지에는 @@VOICE@@를 정확히 한 번 쓴다. 부모가 잠자리에서 책을 읽어주는 듯 낮고 편안한 낭독을 기준으로 한다. narration은 항상 normal이다. dialogue는 기본 normal이며 감정이 분명한 짧은 대사에만 happy|sad|angry를 쓴다(toneup은 사용하지 않는다). intensity는 0.3~0.65이고 기본 0.5다. pace는 기본 normal, 아주 차분한 장면은 slow, lively는 꼭 필요한 장면에만 쓴다. 신나는 감정은 높은 음정이나 빠른 말투가 아니라 자연스러운 리듬과 미소로 표현한다.",
+            narrationStyleGuide,
             ...(input.occasion
               ? [`특별한 날: ${input.occasion} — 축하가 이야기에 자연스럽게 스며들게.`]
               : []),
@@ -638,6 +651,40 @@ export async function generateStory(input: {
   // 등장인물 이름은 손대지 않는다 — 모델이 "동생"처럼 보통명사를 인물 이름으로
   // 넣는 일이 있어, 확실히 사람 이름인 주인공만 고친다.
   const fix = (t: string) => fixNameJosa(input.child.name, nfc(t));
+  const lockDirection = (page: ParsedStory["pages"][number]) => {
+    const dialogue = page.voiceDirection.dialogue === "toneup" ? "normal" : page.voiceDirection.dialogue;
+    if (narrationStyle === "cozy") {
+      return {
+        ...page,
+        voiceDirection: {
+          narration: "normal" as const,
+          dialogue: dialogue === "sad" ? "sad" as const : "normal" as const,
+          intensity: 0.35,
+          pace: "slow" as const,
+        },
+      };
+    }
+    if (narrationStyle === "lively") {
+      return {
+        ...page,
+        voiceDirection: {
+          narration: "normal" as const,
+          dialogue,
+          intensity: 0.6,
+          pace: page.voiceDirection.pace === "slow" ? "normal" as const : "lively" as const,
+        },
+      };
+    }
+    return {
+      ...page,
+      voiceDirection: {
+        narration: "normal" as const,
+        dialogue,
+        intensity: 0.5,
+        pace: "normal" as const,
+      },
+    };
+  };
   return {
     ...story!,
     title: fix(story!.title),
@@ -647,7 +694,7 @@ export async function generateStory(input: {
       name: nfc(c.name),
       description: nfc(c.description),
     })),
-    pages: story!.pages.map((p) => ({ ...p, text: fix(p.text), imagePrompt: nfc(p.imagePrompt) })),
+    pages: story!.pages.map((p) => lockDirection({ ...p, text: fix(p.text), imagePrompt: nfc(p.imagePrompt) })),
   };
 }
 

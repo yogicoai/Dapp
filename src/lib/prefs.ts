@@ -19,6 +19,7 @@ export type Gender = "girl" | "boy" | "unspecified";
  */
 export type ChildLooks = {
   hair?: string; // 머리 모양 (짧은 머리 / 단발 / 양갈래 …)
+  hairTexture?: string; // 머리결 (생머리 / 웨이브 / 곱슬 / 파마)
   bangs?: string; // 앞머리 (있어요 / 없어요 / 옆으로 넘겨요)
   hairColor?: string; // 머리 색
   eyes?: string; // 눈매 (크고 동그래요 / 웃으면 반달 …)
@@ -70,8 +71,12 @@ function normalizeLooks(raw: unknown): ChildLooks | undefined {
   const str = (x: unknown) => (typeof x === "string" && x.trim() ? x.trim().slice(0, 30) : undefined);
   const list = (x: unknown) =>
     Array.isArray(x) ? x.map(str).filter((s): s is string => Boolean(s)).slice(0, 5) : undefined;
+  const rawMarks = list(v.marks);
+  const legacyCurly = rawMarks?.includes("곱슬머리");
   const looks: ChildLooks = {
     hair: str(v.hair),
+    // 예전의 '이런 점도 있어요 → 곱슬머리' 값은 새 단일 선택으로 자동 이전한다.
+    hairTexture: str(v.hairTexture) ?? (legacyCurly ? "곱슬머리" : undefined),
     bangs: str(v.bangs),
     hairColor: str(v.hairColor),
     eyes: str(v.eyes),
@@ -80,7 +85,7 @@ function normalizeLooks(raw: unknown): ChildLooks | undefined {
     color: str(v.color),
     items: list(v.items),
     glasses: v.glasses === true ? true : undefined,
-    marks: list(v.marks),
+    marks: rawMarks?.filter((mark) => mark !== "곱슬머리"),
     // 자유 입력은 그림 프롬프트로 그대로 들어가므로 길이를 제한한다.
     note: typeof v.note === "string" && v.note.trim() ? v.note.trim().slice(0, 100) : undefined,
   };
@@ -124,6 +129,15 @@ export function looksToPrompt(looks: ChildLooks | undefined): string {
   // 머리 — 색·모양·앞머리를 한 덩어리로 묶어야 그림이 헷갈리지 않는다.
   const hair = [looks.hairColor, looks.hair].filter(Boolean).join(" ");
   if (hair) parts.push(hair);
+  if (looks.hairTexture) {
+    const texture = {
+      "곧은 생머리": "머리결은 곧은 생머리이며 웨이브·곱슬·파마가 전혀 없다",
+      "살짝 웨이브": "머리결은 끝부분에만 부드러운 웨이브가 살짝 있다",
+      곱슬머리: "머리결은 자연스럽고 촘촘한 곱슬머리다",
+      파마머리: "머리 전체에 둥근 컬이 반복되는 파마머리다",
+    }[looks.hairTexture] ?? `머리결은 ${looks.hairTexture}`;
+    parts.push(texture);
+  }
   if (looks.bangs) parts.push(`앞머리는 ${looks.bangs}`);
   if (looks.eyes) parts.push(`눈은 ${looks.eyes}`);
   if (looks.skin) parts.push(`피부는 ${looks.skin}`);

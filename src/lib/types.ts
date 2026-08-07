@@ -1,5 +1,6 @@
 export type VoiceEmotion = "normal" | "toneup" | "happy" | "sad" | "angry";
 export type VoicePace = "slow" | "normal" | "lively";
+export type NarrationStyle = "cozy" | "natural" | "lively";
 export type VoiceDirection = {
   narration: VoiceEmotion;
   dialogue: VoiceEmotion;
@@ -59,6 +60,8 @@ export type Book = {
    * 내장 mp3를 그대로 써서 크레딧을 아낀다.
    */
   narrator?: string;
+  /** 제작할 때 한 번 고른 낭독 느낌. 완성 후에는 바꾸지 않아 재합성을 막는다. */
+  narrationStyle?: NarrationStyle;
   /**
    * 이 책의 추천 성우 목록(성우 id 2~3개). 첫 번째가 기본.
    * 각 성우 낭독은 미리 구워 public에 있어(narr-{성우id}-pN.mp3), 뷰어에서 이 목록

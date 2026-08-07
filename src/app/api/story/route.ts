@@ -3,6 +3,7 @@ import { generateStory } from "@/lib/anthropic";
 import { StoryParseError } from "@/lib/story-format";
 import { StoryQualityError } from "@/lib/story-quality";
 import { parseChild, parseMaterial, parseMood, parseOccasion, parseOutlineInput } from "../_input";
+import type { NarrationStyle } from "@/lib/types";
 
 /**
  * 2단계 — 확정된 장면별 줄거리를 본문으로. 장면 하나가 한 쪽이 된다(1:1).
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
     occasion?: unknown;
     mood?: unknown;
     longer?: unknown;
+    narrationStyle?: unknown;
   };
 
   let child, outline, material, occasion, mood;
@@ -39,9 +41,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: (e as Error).message }, { status: 400 });
   }
   const longer = input.longer === true;
+  const narrationStyle: NarrationStyle =
+    input.narrationStyle === "cozy" || input.narrationStyle === "lively"
+      ? input.narrationStyle
+      : "natural";
 
   try {
-    const story = await generateStory({ child, material, outline, occasion, mood, longer });
+    const story = await generateStory({ child, material, outline, occasion, mood, longer, narrationStyle });
     return NextResponse.json({ story });
   } catch (e) {
     if (e instanceof StoryParseError) {

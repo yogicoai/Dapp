@@ -20,7 +20,7 @@ import {
 } from "@/lib/prefs";
 import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
-import type { Book, VoiceDirection } from "@/lib/types";
+import type { Book, NarrationStyle, VoiceDirection } from "@/lib/types";
 import { fetchTypecastVoiceAudio, findTypecast, prewarmBookAudio, TYPECAST_VOICES } from "@/lib/voices";
 import { loadParentVoices, PARENT_VOICE_TEST_TEXT, type ParentVoice } from "@/lib/parent-voice";
 
@@ -378,6 +378,7 @@ type CreateDraft = {
   artStyle: string;
   screenShape: "tablet" | "phone";
   narratorVoice: string;
+  narrationStyle?: NarrationStyle;
   longerStory: boolean;
   pageCount: number;
   outline: Outline | null;
@@ -843,6 +844,8 @@ export default function CreatePage() {
   // 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로 읽는다.
   // 기본 선택을 두지 않는다("") — 부모가 직접 골라 들어보고 정하게 유도한다.
   const [narratorVoice, setNarratorVoice] = useState<string>("");
+  // 제작할 때 한 번만 고르고 책에 고정한다. 뷰어에서 바꾸지 않아 TTS 재합성을 막는다.
+  const [narrationStyle, setNarrationStyle] = useState<NarrationStyle>("natural");
   /*
    * 이 계정에 등록된 엄마·아빠 목소리. 동화를 다 만든 뒤 앞 쪽 낭독을 미리 구울 때,
    * 부모 목소리가 있으면 그게 기본 성우가 되므로 그것으로 구워야 캐시가 맞는다.
@@ -941,7 +944,7 @@ export default function CreatePage() {
     step: (["child", "theme", "style", "outline", "story"] as Step[]).includes(step) ? step : "theme",
     name, age, gender, theme, themeGroup, storyMode, who, whoName, whoGender, friends,
     happening, extra, place, todayEvent, feeling, ending, emotion, situation,
-    artStyle, screenShape, narratorVoice, longerStory, pageCount, outline, story,
+    artStyle, screenShape, narratorVoice, narrationStyle, longerStory, pageCount, outline, story,
     directMode, directOpening, directDevelopment, directCrisis, directEnding, directText,
   });
 
@@ -999,6 +1002,7 @@ export default function CreatePage() {
     setArtStyle(ART_STYLES.some((style) => style.id === draft.artStyle) ? draft.artStyle : ART_STYLES[0].id);
     setScreenShape(draft.screenShape === "phone" ? "phone" : "tablet");
     setNarratorVoice(draft.narratorVoice);
+    setNarrationStyle(draft.narrationStyle ?? "natural");
     setLongerStory(draft.longerStory);
     setPageCount(Math.min(8, Math.max(3, draft.pageCount)));
     setOutline(draft.outline);
@@ -1165,6 +1169,7 @@ export default function CreatePage() {
           material: buildStoryMaterial(),
           mood: mood.ko,
           longer: longerStory,
+          narrationStyle,
         }),
         signal: ac.signal,
       });
@@ -1206,6 +1211,7 @@ export default function CreatePage() {
     const images: (string | null)[] = [];
     const locationReferences = new Map<string, { image: string; scene: string }>();
     try {
+      const heroLooks = looksToPrompt(loadChild()?.looks);
       const sheetRes = await fetch("/api/character-sheet", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -1214,7 +1220,7 @@ export default function CreatePage() {
           artStyleId: artStyle,
           drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
           // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
-          looks: looksToPrompt(loadChild()?.looks),
+          looks: heroLooks,
         }),
         signal: ac.signal,
       });
@@ -1275,7 +1281,14 @@ export default function CreatePage() {
                   shape: screenShape,
                   qualityCorrection,
                   // 책 전체 인물을 보내되 서버가 장면에 이름이 있는 인물만 골라 잠근다.
-                  cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
+                  cast: s.characters.map((c, characterIndex) => ({
+                    name: c.name,
+                    // 주인공 머리결 선택을 페이지 QA에도 넣어 시트 이후 다시 곱슬로 변하지 않게 한다.
+                    description:
+                      characterIndex === 0 && heroLooks
+                        ? `${c.description}, ${heroLooks}`
+                        : c.description,
+                  })),
                 }),
                 signal: ac.signal,
               });
@@ -1412,6 +1425,7 @@ export default function CreatePage() {
       summary: s.summary,
       // 고른 성우를 책에 박는다 — 뷰어가 이 성우로 읽어준다(방법 B).
       narrator: narratorVoice,
+      narrationStyle,
       coverImage: hosted.cover,
       pageCount: s.pages.length,
       pages: s.pages.map((p, i) => ({ text: p.text, voiceDirection: p.voiceDirection, image: hosted.images[i] ?? null })),
@@ -2333,6 +2347,47 @@ export default function CreatePage() {
                 </div>
                 <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
                   장면 수가 적어도 ‘넉넉하게’를 고르면 이야기를 더 길게 들려줘요.
+                </p>
+              </div>
+
+              {/* 낭독 느낌 — 제작할 때 한 번 고른 뒤 페이지별 음성 지시에 박아 둔다.
+                  완성된 책에서는 변경 UI를 제공하지 않아 같은 본문을 다른 톤으로 재합성하지 않는다. */}
+              <div>
+                <p className="mb-1.5 text-xs font-bold text-neutral-400">
+                  낭독 느낌 <span className="font-medium">(제작 후 고정)</span>
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  {(
+                    [
+                      { id: "cozy", icon: "🌙", label: "포근하게", desc: "느리고 편안하게" },
+                      { id: "natural", icon: "📖", label: "자연스럽게", desc: "차분한 기본 낭독" },
+                      { id: "lively", icon: "✨", label: "조금 신나게", desc: "리듬만 살짝 경쾌하게" },
+                    ] as const
+                  ).map((option) => {
+                    const active = narrationStyle === option.id;
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => setNarrationStyle(option.id)}
+                        aria-pressed={active}
+                        style={active ? { borderColor: accent, background: accentSoft } : undefined}
+                        className={`flex min-w-0 flex-col items-center gap-0.5 rounded-2xl border-[3px] px-2 py-3 text-center transition ${
+                          active
+                            ? "shadow-sm"
+                            : "border-transparent bg-neutral-100 hover:bg-neutral-200"
+                        }`}
+                      >
+                        <span className="text-xl" aria-hidden>{option.icon}</span>
+                        <span className="break-keep text-xs font-extrabold text-neutral-700">{option.label}</span>
+                        <span className="break-keep text-[10px] font-medium leading-tight text-neutral-400">{option.desc}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-1.5 break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
+                  처음 만든 음성을 이 기기에 저장해 같은 브라우저에서 다시 들을 때는 추가
+                  토큰이 들지 않아요. 부모 목소리는 원래 음색을 지키기 위해 자연스럽게 읽어요.
                 </p>
               </div>
 

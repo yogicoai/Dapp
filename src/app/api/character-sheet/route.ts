@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     `Characters:\n${cast}`,
     // 주인공(첫 번째 인물)의 생김새는 부모가 고른 특징을 그대로 따른다.
     looks
-      ? `The FIRST character is the child hero. Their appearance MUST match these traits exactly: ${looks}. Keep these traits visible and consistent — they are how the child recognizes themselves.`
+      ? `The FIRST character is the child hero. Their appearance MUST match these traits exactly: ${looks}. Keep these traits visible and consistent — they are how the child recognizes themselves. Hair texture is a hard identity trait: straight hair must stay completely straight with no curls or perm volume; wave, natural curls, and permed curls must remain visually distinct and must never be substituted for one another.`
       : "",
     // 아이 그림이 있으면 그 그림이 주인공의 원본이다 — 아이가 자기 캐릭터로 알아보게
     // 눈에 띄는 특징(머리 모양·옷 색·좋아하는 물건)을 반드시 살린다.
