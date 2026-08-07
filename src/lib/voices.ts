@@ -135,18 +135,17 @@ const RATE_KEY = "voice-storybook:voice-rate";
  */
 export const VOICE_RATES = [
   { value: 0.8, label: "느리게" },
-  { value: 0.9, label: "보통" },
-  { value: 1.0, label: "조금 빠르게" },
+  { value: 0.9, label: "조금 느리게" },
+  { value: 1.0, label: "보통" },
   { value: 1.2, label: "빠르게" },
 ] as const;
 
 /**
- * 기본 배속 0.9 — 베타 피드백에서 "기본 읽기 속도가 빠르다"는 지적이 나와 한 단계
- * 낮췄다(2026-07-31). 1.0을 목록에 남겨둬서, 이미 1.0으로 저장해 둔 기기는
- * '조금 빠르게'로 그대로 이어진다(설정이 초기화되지 않는다).
- * 음높이는 applyPlaybackRate가 보존하므로 느려도 목소리가 늘어지지 않는다.
+ * 기본 배속은 원본 음성 속도인 1.0이다. 더 천천히 듣고 싶은 사용자는 0.8/0.9를
+ * 직접 고를 수 있으며, 선택한 값은 계정별로 그대로 저장한다.
+ * 음높이는 applyPlaybackRate가 보존하므로 속도를 바꿔도 목소리가 왜곡되지 않는다.
  */
-export const DEFAULT_VOICE_RATE = 0.9;
+export const DEFAULT_VOICE_RATE = 1;
 
 export function loadVoiceRate(): number {
   if (typeof window === "undefined") return DEFAULT_VOICE_RATE;
