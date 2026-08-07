@@ -1234,7 +1234,13 @@ export function BookViewer({ book }: { book: Book }) {
                   src={page.image}
                   alt=""
                   aria-hidden
-                  className="absolute inset-0 h-full w-full scale-125 object-cover opacity-55 blur-lg saturate-110"
+                  className="absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-[32px] saturate-[.7]"
+                />
+                {/* 현재 장면의 색만 은은하게 남기는 앰비언트 배경. 별도의 테마 그림을
+                    섞지 않아 장소가 충돌하지 않고, 상단 버튼도 밝은 그림에 묻히지 않는다. */}
+                <div
+                  aria-hidden
+                  className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,10,0.28)_0%,rgba(10,10,10,0.16)_48%,rgba(10,10,10,0.2)_100%)]"
                 />
                 {/* 무대 — 꽉 찬 그림은 모바일에서도 원본 비율의 실제 그림 영역에
                     본문을 겹친다. 펼침면의 [그림+글자] 책 구조는 가로에서만 유지한다.
@@ -1264,7 +1270,7 @@ export function BookViewer({ book }: { book: Book }) {
                   style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                 >
                   <div
-                    className={`relative shrink-0 overflow-hidden ${
+                    className={`relative shrink-0 overflow-hidden shadow-[0_0_28px_rgba(0,0,0,0.18)] ${
                       spread
                         ? // 펼침면 — 왼쪽 쪽. 무대가 이미 책 크기라 절반이 곧 한 쪽이다.
                           "[aspect-ratio:var(--ar)] portrait:w-full landscape:h-full landscape:w-1/2"
