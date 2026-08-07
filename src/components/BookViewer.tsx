@@ -1394,13 +1394,13 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 아래 가운데 넘김 바 — 우측 상단 ◀▶는 작고 눈에 잘 안 띄어서, 크고 분명한
           '다음 장'을 아래에 하나 더 둔다. 지금 몇 쪽인지도 같이 보여 준다
           (아이는 "얼마나 남았어?"를 자주 묻는다). 마지막 쪽에선 다음이 잠긴다. */}
-      <div className="absolute bottom-6 left-1/2 z-10 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 flex-nowrap items-center gap-2 rounded-full bg-black/45 px-2 py-1.5 backdrop-blur">
+      <div className="absolute bottom-4 left-1/2 z-10 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 flex-nowrap items-center gap-0 rounded-full bg-black/45 px-1 py-1 backdrop-blur sm:bottom-6 sm:gap-2 sm:px-2 sm:py-1.5">
         <button
           type="button"
           aria-label="이전 장"
           onClick={() => go(index - 1)}
           disabled={index === 0}
-          className="flex h-10 items-center gap-1 rounded-full px-3 text-sm font-extrabold text-white transition hover:bg-white/20 disabled:opacity-30 outline-none focus:outline-none"
+          className="flex h-9 items-center gap-1 rounded-full px-2 text-sm font-extrabold text-white transition hover:bg-white/20 disabled:opacity-30 outline-none focus:outline-none sm:h-10 sm:px-3"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
             <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -1409,7 +1409,7 @@ export function BookViewer({ book }: { book: Book }) {
         </button>
 
         {/* 쪽 표시도 줄바꿈되지 않게 한 줄로 고정한다. */}
-        <span className="min-w-[3.5rem] whitespace-nowrap text-center text-sm font-extrabold text-white/90">
+        <span className="min-w-[3rem] whitespace-nowrap text-center text-[13px] font-extrabold text-white/90 sm:min-w-[3.5rem] sm:text-sm">
           {index + 1} / {book.pages.length}
         </span>
 
@@ -1418,7 +1418,7 @@ export function BookViewer({ book }: { book: Book }) {
           aria-label="다음 장"
           onClick={() => go(index + 1)}
           disabled={index === lastIndex}
-          className="flex h-10 items-center gap-1 rounded-full bg-white/20 px-3 text-sm font-extrabold text-white transition hover:bg-white/30 disabled:opacity-30 outline-none focus:outline-none"
+          className="flex h-9 items-center gap-1 rounded-full bg-white/20 px-2 text-sm font-extrabold text-white transition hover:bg-white/30 disabled:opacity-30 outline-none focus:outline-none sm:h-10 sm:px-3"
         >
           {/* 폰에서는 글자를 감춘다 — '이전'과 같은 규칙.
               좁은 화면에서 글자까지 들어가면 바가 밀려 줄이 깨졌다(사장님 지적).
@@ -1438,7 +1438,7 @@ export function BookViewer({ book }: { book: Book }) {
           aria-label="이전 쪽"
           onClick={() => go(index - 1)}
           disabled={index === 0}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none sm:h-11 sm:w-11"
+          className="hidden h-9 w-9 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none sm:flex sm:h-11 sm:w-11"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden>
             <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="#404040" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -1449,7 +1449,7 @@ export function BookViewer({ book }: { book: Book }) {
           aria-label="다음 쪽"
           onClick={() => go(index + 1)}
           disabled={index === lastIndex}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none sm:h-11 sm:w-11"
+          className="hidden h-9 w-9 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none sm:flex sm:h-11 sm:w-11"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden>
             <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="#404040" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -1743,7 +1743,7 @@ export function BookViewer({ book }: { book: Book }) {
 
       {/* 글자 크기 — 배속 버튼 위. "보다가 작네" 싶을 때 책 안에서 바로 키운다.
           기본값(화면 크기 따라 자동)에 배율을 곱하는 방식이라 어느 기기에서도 자연스럽다. */}
-      <div className="absolute bottom-[4.75rem] left-5 z-10">
+      <div className="absolute bottom-4 left-3 z-10 sm:bottom-[4.75rem] sm:left-5">
         {sizeMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
             {/* 보는 방식 — 설정까지 나가지 않고 책 안에서 바로 바꾼다(가로에서만 달라진다). */}
@@ -1794,18 +1794,18 @@ export function BookViewer({ book }: { book: Book }) {
             setSpeedMenu(false); // 두 메뉴가 겹쳐 뜨지 않게
             setSizeMenu((v) => !v);
           }}
-          className="flex items-center gap-1.5 rounded-full bg-black/45 px-4 py-2.5 text-sm font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-black/45 p-0 text-sm font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none sm:h-auto sm:w-auto sm:gap-1.5 sm:px-4 sm:py-2.5"
         >
           <span aria-hidden className="leading-none">
             <span className="text-[0.7em]">가</span>
             <span className="text-[1.05em]">가</span>
           </span>
-          글자 크기
+          <span className="hidden sm:inline">글자 크기</span>
         </button>
       </div>
 
       {/* 재생 속도 (유튜브식) — 왼쪽 아래. 눌러서 배속을 고른다. 재생 중이면 즉시 반영. */}
-      <div className="absolute bottom-5 left-5 z-10">
+      <div className="absolute bottom-4 left-[3.75rem] z-10 sm:bottom-5 sm:left-5">
         {speedMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
             {[0.75, 1, 1.25, 1.5, 2].map((s) => (
@@ -1829,19 +1829,19 @@ export function BookViewer({ book }: { book: Book }) {
             setSizeMenu(false); // 두 메뉴가 겹쳐 뜨지 않게
             setSpeedMenu((v) => !v);
           }}
-          className="flex items-center gap-1.5 rounded-full bg-black/45 px-4 py-2.5 text-sm font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none"
+          className="flex h-11 min-w-14 items-center justify-center rounded-full bg-black/45 px-2 text-[13px] font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none sm:h-auto sm:gap-1.5 sm:px-4 sm:py-2.5 sm:text-sm"
         >
-          <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+          <svg viewBox="0 0 24 24" className="hidden h-4 w-4 sm:block" aria-hidden>
             <path d="M12 4a8 8 0 1 0 8 8" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
             <path d="M12 12l4-3" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
           </svg>
-          {rate}배속
+          <span>{rate}<span className="sm:hidden">×</span><span className="hidden sm:inline">배속</span></span>
         </button>
       </div>
 
       {/* 읽어주기 — 재생 버튼임이 한눈에 보이게 ①색이 도는 원 ②흰 재생 세모(▶)
           ③평소엔 "읽어주기" 라벨을 위에 띄운다. 읽는 중엔 정지(⏸) 막대로 바뀐다. */}
-      <div className="absolute bottom-5 right-5 z-10 flex flex-col items-center gap-2">
+      <div className="absolute bottom-3 right-3 z-10 flex flex-col items-center gap-0 sm:bottom-5 sm:right-5 sm:gap-2">
         {/* 성우 목소리를 만드는 동안 — 눌렀는데 조용하면 고장으로 오해한다(피드백 4번).
             몇 초 걸리는지까지 보여줘서 "기다리면 되는구나"를 알게 한다. */}
         {showPreparing && (
@@ -1854,7 +1854,7 @@ export function BookViewer({ book }: { book: Book }) {
           </span>
         )}
         {!reading && !ended && !preparing && (
-          <span className="animate-pulse rounded-full bg-black/55 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
+          <span className="hidden animate-pulse rounded-full bg-black/55 px-3 py-1 text-xs font-extrabold text-white backdrop-blur sm:block">
             ▶ 눌러서 읽어주기
           </span>
         )}
@@ -1863,7 +1863,7 @@ export function BookViewer({ book }: { book: Book }) {
           aria-label={reading ? "그만 읽기" : "읽어주기"}
           onClick={reading ? stopReading : startReading}
           style={reading || preparing ? undefined : { background: ui.colors.accent }}
-          className={`flex h-16 w-16 items-center justify-center rounded-full text-white shadow-[0_6px_16px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 ${
+          className={`flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_6px_16px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 sm:h-16 sm:w-16 ${
             preparing ? "bg-amber-400" : reading ? "animate-pulse bg-amber-400" : ""
           }`}
         >
