@@ -213,6 +213,23 @@ export function BookViewer({ book }: { book: Book }) {
     saveTextScale(s);
     setSizeMenu(false);
   };
+  const applyBookLayout = (next: BookLayout) => {
+    setLayout(next);
+    saveBookLayout(next);
+    setSizeMenu(false);
+
+    // 모바일 세로에서 펼침면을 고르면 클릭 제스처 안에서 곧바로 전체화면·가로 고정을
+    // 요청한다. Android Chrome/Samsung Internet은 자동 전환되고, 강제 회전을 막는
+    // iPhone Safari에서는 저장된 값만 유지되어 사용자가 직접 돌렸을 때 적용된다.
+    if (
+      next === "spread" &&
+      typeof window !== "undefined" &&
+      window.matchMedia("(orientation: portrait)").matches &&
+      (window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0)
+    ) {
+      enterStoryMode();
+    }
+  };
   const [index, setIndex] = useState(0);
   const lastIndex = book.pages.length - 1;
   const completedThisVisitRef = useRef(false);
@@ -1759,11 +1776,7 @@ export function BookViewer({ book }: { book: Book }) {
             aria-label="꽉 찬 그림으로 보기"
             aria-pressed={layout === "full"}
             title="꽉 찬 그림"
-            onClick={() => {
-              setLayout("full");
-              saveBookLayout("full");
-              setSizeMenu(false);
-            }}
+            onClick={() => applyBookLayout("full")}
             className={`flex h-8 w-8 items-center justify-center rounded-full p-0 text-[11px] font-extrabold transition outline-none focus:outline-none min-[480px]:w-auto min-[480px]:gap-1 min-[480px]:px-2.5 sm:text-xs ${
               layout === "full"
                 ? "bg-white text-neutral-700 shadow-sm"
@@ -1782,11 +1795,7 @@ export function BookViewer({ book }: { book: Book }) {
             aria-label="펼침면으로 보기"
             aria-pressed={layout === "spread"}
             title="펼침면"
-            onClick={() => {
-              setLayout("spread");
-              saveBookLayout("spread");
-              setSizeMenu(false);
-            }}
+            onClick={() => applyBookLayout("spread")}
             className={`flex h-8 w-8 items-center justify-center rounded-full p-0 text-[11px] font-extrabold transition outline-none focus:outline-none min-[480px]:w-auto min-[480px]:gap-1 min-[480px]:px-2.5 sm:text-xs ${
               layout === "spread"
                 ? "bg-white text-neutral-700 shadow-sm"
