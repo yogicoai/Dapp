@@ -1428,7 +1428,10 @@ export function BookViewer({ book }: { book: Book }) {
 
       {/* 넘김은 우측 상단 전용 버튼(◀ ▶) — 화면 절반 탭 방식은 캐릭터 클릭
           대사와 겹쳐 오작동해서 걷어냈다. 스와이프와 키보드 ←→는 그대로 산다. */}
-      <div className="absolute right-3 top-4 z-10 flex gap-1.5 sm:right-4 sm:gap-2">
+      <div
+        className="absolute right-3 z-10 flex gap-1.5 sm:right-4 sm:gap-2"
+        style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
+      >
         <button
           type="button"
           aria-label="이전 쪽"
@@ -1488,7 +1491,10 @@ export function BookViewer({ book }: { book: Book }) {
 
       {/* 성우 목록 — 상단 버튼 아래로 펼쳐진다. 길어서 안에서 스크롤된다. */}
       {voiceMenu && (
-        <div className="absolute right-4 top-[3.75rem] z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur">
+        <div
+          className="absolute right-4 z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur"
+          style={{ top: "calc(3.75rem + env(safe-area-inset-top))" }}
+        >
           <p className="px-2 py-1 text-[11px] font-bold text-neutral-400">
             {isCreated ? "읽어주는 성우를 골라요" : "이 동화 추천 성우 (무료로 바꿔 들어요)"}
           </p>
@@ -1611,7 +1617,8 @@ export function BookViewer({ book }: { book: Book }) {
         <button
           type="button"
           onClick={() => setTapHint(false)}
-          className="absolute left-1/2 top-4 z-20 -translate-x-1/2 animate-[float_2s_ease-in-out_infinite] rounded-full bg-white/95 px-5 py-2.5 text-sm font-extrabold text-neutral-700 shadow-lg backdrop-blur"
+          className="absolute left-1/2 z-20 max-w-[calc(100vw-1.5rem)] -translate-x-1/2 animate-[float_2s_ease-in-out_infinite] whitespace-nowrap rounded-full bg-white/95 px-4 py-2 text-xs font-extrabold text-neutral-700 shadow-lg backdrop-blur sm:px-5 sm:py-2.5 sm:text-sm"
+          style={{ top: "calc(4.25rem + env(safe-area-inset-top))" }}
         >
           👆 그림 속 친구를 눌러 보세요 — 말을 해요!
         </button>
@@ -1716,12 +1723,17 @@ export function BookViewer({ book }: { book: Book }) {
         </div>
       )}
 
-      <div className="absolute left-3 top-4 z-10 flex gap-1.5 sm:left-4 sm:gap-2">
+      <div
+        className="absolute left-3 z-10 flex items-center gap-1.5 sm:left-4 sm:gap-2"
+        style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
+      >
         <Link
           href="/"
-          className="rounded-full bg-black/40 px-3 py-2 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 sm:px-4"
+          aria-label="서재로 돌아가기"
+          className="flex h-9 w-9 items-center justify-center gap-1 rounded-full bg-black/40 p-0 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 min-[360px]:w-auto min-[360px]:px-3 sm:px-4"
         >
-          ← 서재
+          <span aria-hidden>←</span>
+          <span className="hidden min-[360px]:inline">서재</span>
         </Link>
         {/* 가로로 보기 — 클릭(제스처) 안에서 전체화면 + 가로 고정을 요청한다.
             미지원 기기는 조용히 무시되고 회전 안내 힌트가 대신한다.
@@ -1735,6 +1747,59 @@ export function BookViewer({ book }: { book: Book }) {
           <span className="sm:hidden">{storyMode ? "↩" : "⛶"}</span>
           <span className="hidden sm:inline">{storyMode ? "원래대로" : "⛶ 가로로 보기"}</span>
         </button>
+        {/* 보는 방식은 중앙 장면을 가리지 않도록 탐색 버튼 옆에 붙인다.
+            모바일은 아이콘만, 여유 있는 화면은 짧은 이름도 함께 보여 준다. */}
+        <div
+          className="flex items-center rounded-full bg-black/40 p-0.5 shadow-md backdrop-blur"
+          role="group"
+          aria-label="책 보는 방식 (가로 화면에 적용)"
+        >
+          <button
+            type="button"
+            aria-label="꽉 찬 그림으로 보기"
+            aria-pressed={layout === "full"}
+            title="꽉 찬 그림"
+            onClick={() => {
+              setLayout("full");
+              saveBookLayout("full");
+              setSizeMenu(false);
+            }}
+            className={`flex h-8 w-8 items-center justify-center rounded-full p-0 text-[11px] font-extrabold transition outline-none focus:outline-none min-[480px]:w-auto min-[480px]:gap-1 min-[480px]:px-2.5 sm:text-xs ${
+              layout === "full"
+                ? "bg-white text-neutral-700 shadow-sm"
+                : "text-white/80 hover:bg-white/15 hover:text-white"
+            }`}
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+              <rect x="3.5" y="5" width="17" height="14" rx="2.5" fill="none" stroke="currentColor" strokeWidth="2" />
+              <circle cx="9" cy="10" r="1.5" fill="currentColor" />
+              <path d="m5.5 17 4.2-4 3.1 2.6 2.4-2.1 3.3 3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="hidden min-[480px]:inline">그림</span>
+          </button>
+          <button
+            type="button"
+            aria-label="펼침면으로 보기"
+            aria-pressed={layout === "spread"}
+            title="펼침면"
+            onClick={() => {
+              setLayout("spread");
+              saveBookLayout("spread");
+              setSizeMenu(false);
+            }}
+            className={`flex h-8 w-8 items-center justify-center rounded-full p-0 text-[11px] font-extrabold transition outline-none focus:outline-none min-[480px]:w-auto min-[480px]:gap-1 min-[480px]:px-2.5 sm:text-xs ${
+              layout === "spread"
+                ? "bg-white text-neutral-700 shadow-sm"
+                : "text-white/80 hover:bg-white/15 hover:text-white"
+            }`}
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+              <path d="M3.5 5.5c3.5-.7 6.2.1 8.5 2.2v11c-2.3-2.1-5-2.9-8.5-2.2v-11Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              <path d="M20.5 5.5c-3.5-.7-6.2.1-8.5 2.2v11c2.3-2.1 5-2.9 8.5-2.2v-11Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+            </svg>
+            <span className="hidden min-[480px]:inline">펼침</span>
+          </button>
+        </div>
       </div>
 
       {/* 글자 크기 — 배속 버튼 위. "보다가 작네" 싶을 때 책 안에서 바로 키운다.
@@ -1742,30 +1807,7 @@ export function BookViewer({ book }: { book: Book }) {
       <div className="absolute bottom-4 left-3 z-10 sm:bottom-[4.75rem] sm:left-5">
         {sizeMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
-            {/* 보는 방식 — 설정까지 나가지 않고 책 안에서 바로 바꾼다(가로에서만 달라진다). */}
-            <p className="px-5 pt-2.5 text-[11px] font-extrabold text-white/50">보는 방식 (가로)</p>
-            {(
-              [
-                { v: "full", label: "🖼️ 꽉 찬 그림" },
-                { v: "spread", label: "📖 펼침면" },
-              ] as const
-            ).map((o) => (
-              <button
-                key={o.v}
-                type="button"
-                onClick={() => {
-                  setLayout(o.v);
-                  saveBookLayout(o.v);
-                  setSizeMenu(false);
-                }}
-                className={`px-5 py-2 text-left text-sm font-bold outline-none transition ${
-                  layout === o.v ? "bg-amber-400 text-white" : "text-white/90 hover:bg-white/15"
-                }`}
-              >
-                {o.label} {layout === o.v ? "✓" : ""}
-              </button>
-            ))}
-            <p className="mt-1 border-t border-white/15 px-5 pt-2.5 text-[11px] font-extrabold text-white/50">
+            <p className="px-5 pt-2.5 text-[11px] font-extrabold text-white/50">
               글자 크기
             </p>
             {TEXT_SCALES.map((s) => (
