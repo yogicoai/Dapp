@@ -1105,7 +1105,9 @@ export function BookViewer({ book }: { book: Book }) {
             const done = onPaper ? "text-amber-600" : "text-amber-300";
             const rest = onPaper ? "text-neutral-800" : "text-white";
             const live = i === index && reading;
-            if (live && focusCurrent) {
+            // 꽉 찬 그림은 재생 전후 모두 같은 한두 줄 자막 슬롯을 쓴다.
+            // 재생을 눌러도 레이아웃은 움직이지 않고 이 자리에서 색칠만 시작된다.
+            if (focusCurrent) {
               const chunk = currentReadingChunk(page.text, highlight);
               return (
                 <span
@@ -1177,8 +1179,8 @@ export function BookViewer({ book }: { book: Book }) {
           ) => (
             <div
               className={`absolute ${
-                focusCurrent && position === "bottom" && reading
-                  ? "inset-x-[6%] bottom-28 px-[2%] py-2"
+                focusCurrent && position === "bottom"
+                  ? "inset-x-[6%] bottom-4 px-[2%] py-2 landscape:bottom-28"
                   : {
                       bottom:
                         "inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[6%] pt-[14%]",
@@ -1195,7 +1197,7 @@ export function BookViewer({ book }: { book: Book }) {
                 fontScale={font.scale}
                 fontWeight={storyWeightForFont(font, weight)}
                 className={`font-story max-h-[76dvh] whitespace-pre-line break-keep text-pretty text-center drop-shadow-md ${
-                  focusCurrent && position === "bottom" && reading
+                  focusCurrent && position === "bottom"
                     ? "mx-auto w-full max-w-[min(46rem,82vw)] [text-shadow:0_1px_2px_rgba(0,0,0,0.7),0_3px_7px_rgba(0,0,0,0.5)]"
                     : position === "bottom" || position === "top"
                       ? "mx-auto w-full max-w-[max(20rem,60vw)]"
@@ -1234,8 +1236,9 @@ export function BookViewer({ book }: { book: Book }) {
                   aria-hidden
                   className="absolute inset-0 h-full w-full scale-110 object-cover opacity-70 blur-2xl"
                 />
-                {/* 무대 — 가로: 그림이 화면을 채운다. 세로: [그림+글자]를 한 덩어리로 화면
-                    가운데 정렬하고, 아래 버튼 자리(6rem)는 비운다(겹침 방지).
+                {/* 무대 — 꽉 찬 그림은 모바일에서도 남은 화면 전체를 그림 무대로 쓰고
+                    본문을 겹친다. 펼침면만 [그림+글자] 책 구조를 유지한다.
+                    아래 버튼 자리(6rem)는 비운다(겹침 방지).
                     틀 비율은 그림 실측(--ar) — 4:3 고정이면 와이드 그림이 '짤려' 보인다. */}
                 {/*
                   펼침면 무대 — 그림과 종이가 '한 권의 책'으로 딱 맞아야 한다.
@@ -1260,11 +1263,11 @@ export function BookViewer({ book }: { book: Book }) {
                   style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                 >
                   <div
-                    className={`relative shrink-0 overflow-hidden [aspect-ratio:var(--ar)] portrait:w-full ${
+                    className={`relative shrink-0 overflow-hidden ${
                       spread
                         ? // 펼침면 — 왼쪽 쪽. 무대가 이미 책 크기라 절반이 곧 한 쪽이다.
-                          "landscape:h-full landscape:w-1/2"
-                        : "landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
+                          "[aspect-ratio:var(--ar)] portrait:w-full landscape:h-full landscape:w-1/2"
+                        : "portrait:h-full portrait:w-full landscape:[aspect-ratio:var(--ar)] landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
                     }`}
                     style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                   >
@@ -1314,14 +1317,15 @@ export function BookViewer({ book }: { book: Book }) {
                         펼침면에서는 글이 옆 종이로 빠지므로 이 오버레이를 쓰지 않는다. */}
                     {!spread &&
                       overlayText(
-                        "hidden landscape:block",
+                        "block",
                         "clamp(1.35rem,2.9vw,2.05rem)",
                         true,
                         "bottom",
                       )}
                   </div>
                   {/* 글자 칸.
-                      · 세로(폰): 그림 바로 아래 — 원래부터 그림과 글이 나뉘어 있다.
+                      · 세로(폰) + 꽉 찬 그림: 사용하지 않고 그림 위 오버레이를 쓴다.
+                      · 세로(폰) + 펼침면: 그림 아래에 전체 본문을 유지한다.
                       · 가로 + 펼침면: 오른쪽 절반의 '종이' — 진짜 그림책 펼침면이 된다.
                       · 가로 + 꽉 찬 그림: 이 칸은 숨고 위의 하단 밴드가 대신한다.
                       아래 버튼(재생·배속·넘김)을 안 가리게 여백을 넉넉히 둔다. */}
@@ -1340,7 +1344,7 @@ export function BookViewer({ book }: { book: Book }) {
                     className={`flex shrink-0 items-center justify-center overflow-hidden ${
                       spread
                         ? "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:max-h-none landscape:h-full landscape:w-1/2 landscape:bg-[image:var(--paper)] landscape:bg-[length:14px_14px,18px_18px,100%_100%] landscape:px-[7%] landscape:pb-24 landscape:pt-8 landscape:shadow-[inset_18px_0_28px_-18px_rgba(90,60,20,0.35)]"
-                        : "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:hidden"
+                        : "hidden"
                     }`}
                   >
                     {/* 세로(어두운 배경) — 흰 글씨. 펼침면일 때도 세로에서는 이쪽을 쓴다. */}

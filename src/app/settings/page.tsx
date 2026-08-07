@@ -212,6 +212,7 @@ export default function SettingsPage() {
   // 동화 본문 글꼴 — 고른 id만 들고 있는다(배율·줄 간격은 prefs의 목록이 안다).
   const [storyFont, setStoryFont] = useState("gothic");
   const [storyWeight, setStoryWeight] = useState("medium");
+  const [fontPickerOpen, setFontPickerOpen] = useState(false);
   const selectedStoryFont = STORY_FONTS.find((f) => f.id === storyFont) ?? STORY_FONTS[0];
   const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
@@ -1300,60 +1301,106 @@ export default function SettingsPage() {
                 폰은 화면이 좁아 어차피 2권으로 맞춰지므로, 헷갈리지 않게 그 말을 적어 둔다. */}
             {/* 본문 글꼴 — 미리보기를 그 글꼴로 보여 준다. 이름만 봐서는 어떤 느낌인지
                 알 수 없어서, 실제 글자를 보고 고르게 하는 편이 훨씬 빠르다. */}
-            <h2 className="mt-1 text-sm font-extrabold text-neutral-400">동화 글꼴</h2>
-            <div className="flex flex-col gap-2">
-              {(
-                [
-                  { id: "readable", label: "읽기 편함" },
-                  { id: "storybook", label: "동화 느낌" },
-                  { id: "decorative", label: "꾸밈 글꼴 · 짧은 동화에 추천" },
-                ] as const
-              ).map((group) => (
-                <div key={group.id} className="flex flex-col gap-1.5">
-                  <p className="px-1 text-[11px] font-extrabold text-neutral-400">{group.label}</p>
-                  {STORY_FONTS.filter((f) => f.category === group.id).map((f) => {
-                    const active = storyFont === f.id;
-                    const chosenWeight = findStoryWeight(storyWeight);
-                    return (
-                      <button
-                        key={f.id}
-                        type="button"
-                        onClick={() => {
-                          setStoryFont(f.id);
-                          saveStoryFont(f.id);
-                          if (!f.weights.includes(chosenWeight.value)) {
-                            setStoryWeight("normal");
-                            saveStoryWeight("normal");
-                          }
-                          flashSaved();
-                        }}
-                        aria-pressed={active}
-                        style={{
-                          ...(active ? { borderColor: accent } : undefined),
-                          fontFamily: `${f.family}, sans-serif`,
-                          fontWeight: storyWeightForFont(f, chosenWeight),
-                        }}
-                        className={`flex items-baseline justify-between gap-3 rounded-2xl border-2 px-4 py-3 text-left transition ${
-                          active ? "bg-white shadow-sm" : "border-transparent bg-neutral-100"
-                        }`}
-                      >
-                        <span
-                          className="min-w-0 flex-1 text-neutral-800"
-                          style={{ fontSize: `calc(1.15rem * ${f.scale} * 1.6)` }}
-                        >
-                          “와, 정말 멋진 별빛이야!” 아이는 숲길을 천천히 걸었어요.
-                        </span>
-                        <span
-                          className="shrink-0 text-xs font-extrabold text-neutral-400"
-                          style={{ fontFamily: "inherit" }}
-                        >
-                          {f.label}
-                        </span>
-                      </button>
-                    );
-                  })}
+            <button
+              type="button"
+              onClick={() => setFontPickerOpen((open) => !open)}
+              aria-expanded={fontPickerOpen}
+              aria-controls="story-font-picker"
+              className="mt-1 flex w-full items-center gap-3 rounded-2xl bg-neutral-100 px-4 py-3 text-left transition hover:bg-neutral-200"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block text-[11px] font-extrabold text-neutral-400">동화 글꼴</span>
+                <span
+                  className="mt-0.5 block truncate text-neutral-800"
+                  style={{
+                    fontFamily: `${selectedStoryFont.family}, sans-serif`,
+                    fontSize: `calc(1rem * ${selectedStoryFont.scale} * 1.35)`,
+                    fontWeight: storyWeightForFont(selectedStoryFont, findStoryWeight(storyWeight)),
+                  }}
+                >
+                  우리 가족의 따뜻한 동화
+                </span>
+              </span>
+              <span className="shrink-0 text-right">
+                <span className="block text-xs font-extrabold text-neutral-500">{selectedStoryFont.label}</span>
+                <span
+                  aria-hidden
+                  className={`inline-block text-lg leading-none text-neutral-400 transition-transform duration-300 ${
+                    fontPickerOpen ? "rotate-180" : ""
+                  }`}
+                >
+                  ⌄
+                </span>
+              </span>
+            </button>
+
+            <div
+              id="story-font-picker"
+              aria-hidden={!fontPickerOpen}
+              inert={!fontPickerOpen}
+              className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+                fontPickerOpen
+                  ? "grid-rows-[1fr] opacity-100"
+                  : "pointer-events-none grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <div className="min-h-0 overflow-hidden">
+                <div className="flex flex-col gap-2 pt-2">
+                  {(
+                    [
+                      { id: "readable", label: "읽기 편함" },
+                      { id: "storybook", label: "동화 느낌" },
+                      { id: "decorative", label: "꾸밈 글꼴 · 짧은 동화에 추천" },
+                    ] as const
+                  ).map((group) => (
+                    <div key={group.id} className="flex flex-col gap-1.5">
+                      <p className="px-1 text-[11px] font-extrabold text-neutral-400">{group.label}</p>
+                      {STORY_FONTS.filter((f) => f.category === group.id).map((f) => {
+                        const active = storyFont === f.id;
+                        const chosenWeight = findStoryWeight(storyWeight);
+                        return (
+                          <button
+                            key={f.id}
+                            type="button"
+                            onClick={() => {
+                              setStoryFont(f.id);
+                              saveStoryFont(f.id);
+                              if (!f.weights.includes(chosenWeight.value)) {
+                                setStoryWeight("normal");
+                                saveStoryWeight("normal");
+                              }
+                              setFontPickerOpen(false);
+                              flashSaved();
+                            }}
+                            aria-pressed={active}
+                            style={{
+                              ...(active ? { borderColor: accent } : undefined),
+                              fontFamily: `${f.family}, sans-serif`,
+                              fontWeight: storyWeightForFont(f, chosenWeight),
+                            }}
+                            className={`flex items-baseline justify-between gap-3 rounded-2xl border-2 px-4 py-3 text-left transition ${
+                              active ? "bg-white shadow-sm" : "border-transparent bg-neutral-100"
+                            }`}
+                          >
+                            <span
+                              className="min-w-0 flex-1 text-neutral-800"
+                              style={{ fontSize: `calc(1.15rem * ${f.scale} * 1.6)` }}
+                            >
+                              “와, 정말 멋진 별빛이야!” 아이는 숲길을 천천히 걸었어요.
+                            </span>
+                            <span
+                              className="shrink-0 text-xs font-extrabold text-neutral-400"
+                              style={{ fontFamily: "inherit" }}
+                            >
+                              {f.label}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
 
             {/* 글자 굵기 — 미리보기 글씨도 고른 굵기로 바뀌게 해서 바로 비교된다. */}
