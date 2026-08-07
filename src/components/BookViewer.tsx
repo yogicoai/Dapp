@@ -1238,7 +1238,8 @@ export function BookViewer({ book }: { book: Book }) {
                 />
                 {/* 무대 — 꽉 찬 그림은 모바일에서도 원본 비율의 실제 그림 영역에
                     본문을 겹친다. 펼침면의 [그림+글자] 책 구조는 가로에서만 유지한다.
-                    아래 버튼 자리(6rem)는 비운다(겹침 방지).
+                    세로 화면도 전체 높이의 정중앙에 둔다. 하단 버튼 자리를 무대에서
+                    미리 빼면 세로 이미지가 화면 위쪽으로 밀려 보이기 때문이다.
                     틀 비율은 그림 실측(--ar) — 4:3 고정이면 와이드 그림이 '짤려' 보인다. */}
                 {/*
                   펼침면 무대 — 그림과 종이가 '한 권의 책'으로 딱 맞아야 한다.
@@ -1255,7 +1256,7 @@ export function BookViewer({ book }: { book: Book }) {
                   가운데 정렬은 inset-0(좌우 0) + mx-auto로 한다.
                 */}
                 <div
-                  className={`absolute inset-0 flex items-center justify-center portrait:flex-col portrait:bottom-24 ${
+                  className={`absolute inset-0 flex items-center justify-center portrait:flex-col ${
                     spread
                       ? "landscape:mx-auto landscape:my-auto landscape:w-[min(100vw,calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(100vw/(var(--ar)*2)))]"
                       : ""
@@ -1508,11 +1509,11 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 움직이는 캐릭터(배우) 레이어 — 캐릭터 없는 배경 위에 투명 스티커를
           겹치고, 낭독 중에는 뒤뚱뒤뚱 움직인다. 클릭은 통과시켜 핫스팟이 받는다. */}
       {(book.pages[index].actors?.length ?? 0) > 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center portrait:bottom-24">
+        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center">
           {/* 그림 실측 비율(--ar)로 무대와 같은 크기를 유지한다 — 좌표가 그림과 맞아떨어진다. */}
           <div
             className={`relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))] ${
-              !spread && ratioOf(index) > 1 ? "portrait:translate-y-10" : ""
+              ratioOf(index) > 1 ? "portrait:translate-y-10" : ""
             }`}
             style={{ "--ar": String(ratioOf(index)) } as React.CSSProperties}
           >
@@ -1617,7 +1618,7 @@ export function BookViewer({ book }: { book: Book }) {
           무대 크기와 정렬을 그림 쪽과 똑같이 맞춘다 — 안 맞추면 엉뚱한 자리를 누르게 된다. */}
       {book.pages[index].image && (book.pages[index].hotspots?.length ?? 0) > 0 && (
         <div
-          className={`pointer-events-none absolute inset-0 z-[5] flex items-center justify-center portrait:bottom-24 ${
+          className={`pointer-events-none absolute inset-0 z-[5] flex items-center justify-center ${
             spread
               ? "landscape:mx-auto landscape:my-auto landscape:w-[min(100vw,calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(100vw/(var(--ar)*2)))] landscape:justify-start"
               : ""
@@ -1627,7 +1628,7 @@ export function BookViewer({ book }: { book: Book }) {
           <div
             className={`relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))] ${
               spread ? "landscape:h-full landscape:w-1/2" : ""
-            } ${!spread && ratioOf(index) > 1 ? "portrait:translate-y-10" : ""}`}
+            } ${ratioOf(index) > 1 ? "portrait:translate-y-10" : ""}`}
             style={{ "--ar": String(ratioOf(index)) } as React.CSSProperties}
           >
             {book.pages[index].hotspots!.map((h, hi) => {
