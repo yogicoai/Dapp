@@ -5,7 +5,12 @@ import {
   type ParsedOutline,
   type ParsedStory,
 } from "./story-format";
-import { StoryQualityError, validateStoryQuality } from "./story-quality";
+import {
+  StoryQualityError,
+  isBlockingStoryQualityIssue,
+  repairStoryContinuity,
+  validateStoryQuality,
+} from "./story-quality";
 
 const client = new Anthropic();
 // 이야기 생성 모델 — 가성비 Sonnet 기본(원가 약 1/5). 품질이 필요한 순간엔
@@ -212,14 +217,15 @@ const OUTLINE_SYSTEM = `${VOICE}
  * 이야기 재료 — 만들기 화면에서 고른 것들. 콤마로 뭉치지 않고 항목별 라벨을
  * 붙여 넘겨야 클로드가 각 재료의 역할을 정확히 반영한다.
  *
- * 세 갈래가 있다:
+ * 네 갈래가 있다:
  * · today   「오늘의 이야기」 — 아이가 실제 겪은 일(어디서·누구랑·무슨 일·기분)을
  *   따뜻한 동화로 각색한다.
  * · imagine 「상상 이야기」 — 소재·인물·사건 재료로 상상 동화를 짓는다.
  * · emotion 「감정 동화」 — 아이가 느낀 마음(화·무서움·슬픔 등)을 다루는 감정동화.
+ * · direct  「직접 이야기 구성」 — 부모가 쓴 기승전결 또는 완성 원고를 보존해 책으로 나눈다.
  */
 export type StoryMaterial = {
-  kind: "today" | "imagine" | "emotion";
+  kind: "today" | "imagine" | "emotion" | "direct";
   subject: string; // 상상: 소재(공룡 등)
   who: string; // 누구랑 (공통) — 칩 라벨(친구랑·동생이랑 등)
   whoName: string; // 동행의 실제 이름(선택). 있으면 그 이름을 그대로 쓴다.
@@ -242,6 +248,12 @@ export type StoryMaterial = {
   emotion: string; // 감정: 어떤 마음(화가 나요 등)
   situation: string; // 감정: 그런 마음이 든 상황
   extra: string; // 상상: 아이가 자유롭게 더한 이야기
+  directMode: string;
+  directOpening: string;
+  directDevelopment: string;
+  directCrisis: string;
+  directEnding: string;
+  directText: string;
 };
 
 /**
@@ -297,12 +309,32 @@ function whoLine(
 }
 
 function materialLines(m: StoryMaterial): string[] {
+  if (m.kind === "direct") {
+    return m.directMode === "full"
+      ? [
+          "아래는 부모가 직접 완성한 동화 원고다. 사건·인물·대사·결말을 새로 만들거나 삭제하지 않는다.",
+          "맞춤법과 어색한 조사만 바로잡고, 아이 연령에 맞게 문장을 다듬어 선택한 장면 수로 나눈다.",
+          "원문에 없는 교훈, 악역, 반전, 새 인물을 추가하지 않는다.",
+          `- 부모의 완성 원고:\n${m.directText}`,
+        ]
+      : [
+          "아래 기승전결은 부모가 직접 정한 이야기다. 네 부분의 사실과 순서와 결말을 반드시 보존한다.",
+          "빈 곳을 임의의 큰 사건으로 채우지 말고, 연결 문장과 자연스러운 대사만 보완한다.",
+          `- 기(시작): ${m.directOpening}`,
+          `- 승(전개): ${m.directDevelopment}`,
+          `- 전(위기): ${m.directCrisis}`,
+          `- 결(결말): ${m.directEnding}`,
+        ];
+  }
   if (m.kind === "today") {
     return [
       "아래는 아이가 오늘 실제로 겪은 일이다. 이 경험을 살려 따뜻한 동화로 각색한다.",
       "완전히 다른 이야기로 바꾸지 말고, 실제 있었던 일의 결을 지키되 아이가 주인공으로",
       "빛나게 하고, 속상한 일이면 마지막엔 마음이 풀리게 한다.",
       m.place ? `- 어디에서: ${m.place}` : "",
+      m.place
+        ? `- 장소 연속성: '${m.place}'를 이 이야기의 기본 장소로 고정한다. 사용자가 적은 사건에 실제 이동이 없는 한 다른 집·한옥·공원·유치원 같은 장소를 새로 만들지 않는다.`
+        : "- 장소 연속성: 사용자가 말하지 않은 새 장소를 임의로 추가하지 않는다.",
       whoLine("- 누구랑", m.who, m.whoName, m.whoGender, m.friends),
       m.happening ? `- 무슨 일이 있었나: ${m.happening}` : "",
       m.feeling ? `- 그때 아이 기분: ${m.feeling}` : "",
@@ -506,6 +538,15 @@ const STORY_SYSTEM = `${VOICE}
 민준을 돌아본다.\` 누가 앞/뒤인지, 어느 쪽에 있는지, 무엇을 들고 누구를 보는지까지
 장면에 중요한 관계를 적는다. 행동의 주인을 서로 바꾸면 안 된다.
 
+장소도 인물처럼 고정한다. 각 @@IMG@@에 \`장소: 장소 이름 — 고정 특징.\`을 반드시 적는다.
+같은 집·방·유치원·놀이터가 다시 나오면 장소 이름과 벽 색, 바닥, 창문, 큰 가구나 놀이기구 같은
+고정 특징을 **앞 페이지와 같은 말로 반복**한다. 본문에서 실제 이동했다고 쓰지 않은 한 장소를
+집에서 한옥으로, 방에서 공원으로 임의 변경하지 않는다. 장소가 바뀌는 페이지는 @@TEXT@@에도
+이동 과정이 분명히 있어야 한다.
+페이지를 쓰기 전에 직전 페이지의 장소를 기억한다. 새 페이지의 장소가 다르면 @@TEXT@@에
+누가 어디에서 어디로 어떻게 이동했는지 먼저 쓴다. 이동 문장이 없다면 장소 이름과 고정 특징을
+직전 페이지와 똑같이 유지한다. 특히 일상 이야기에서는 재미를 위해 뜬금없는 새 장소를 만들지 않는다.
+
 출력은 아래 마커 형식만. 앞뒤에 다른 말을 붙이지 않는다.
 
 @@TITLE@@ 제목
@@ -573,7 +614,7 @@ export async function generateStory(input: {
       ],
     });
 
-    story = parseStory(textOf(message));
+    story = repairStoryContinuity(parseStory(textOf(message)));
 
     lastIssues = validateStoryQuality(story, {
       childName: input.child.name,
@@ -586,7 +627,11 @@ export async function generateStory(input: {
       ].filter(Boolean),
     });
     if (lastIssues.length === 0) break;
-    if (attempt === 2) throw new StoryQualityError(lastIssues);
+    if (attempt === 2) {
+      const blockingIssues = lastIssues.filter(isBlockingStoryQualityIssue);
+      if (blockingIssues.length > 0) throw new StoryQualityError(blockingIssues);
+      console.warn(`[story] 자동 보정 후 진행하는 품질 권고: ${lastIssues.join(" / ")}`);
+    }
   }
 
   // 아이가 보게 될 최종 본문이라 여기서 한 번 더 조사를 맞춘다.

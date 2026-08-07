@@ -185,7 +185,9 @@ export async function generateImage(input: {
 export async function validateIllustration(input: {
   image: GeneratedImage;
   reference?: GeneratedImage | null;
+  styleReference?: GeneratedImage | null;
   scene: string;
+  expectedLocation?: string;
   cast: { name: string; description: string }[];
   stylePrompt: string;
 }): Promise<IllustrationCheck> {
@@ -200,18 +202,29 @@ export async function validateIllustration(input: {
     ...(input.reference
       ? [{ inlineData: { mimeType: input.reference.mimeType, data: input.reference.data } }]
       : []),
+    ...(input.styleReference
+      ? [{ inlineData: { mimeType: input.styleReference.mimeType, data: input.styleReference.data } }]
+      : []),
     {
       text: [
         "You are checking a generated children's-book page for factual illustration errors.",
-        "The FIRST attached image is the generated page. If present, the SECOND is the whole-book character reference sheet.",
+        "The FIRST attached image is the generated page. If present, the SECOND is the whole-book character reference sheet. If present, the THIRD is a previously approved page from this same book and is the authoritative rendering-style reference.",
         `Scene instruction: ${input.scene}`,
+        input.expectedLocation
+          ? `MANDATORY EXPECTED LOCATION: ${input.expectedLocation}. The generated page must visibly depict this exact kind of place.`
+          : "",
         `Expected visible people: exactly ${expected}.`,
         expected > 0 ? `Expected cast:\n${cast}` : "No person should be visible.",
         `Required illustration style: ${input.stylePrompt}.`,
-        "Fail ONLY for a clear error: wrong number of people, an extra/background person, a duplicated person, a missing expected person, identities/outfits swapped or inconsistent with the reference, a named character doing/occupying the clearly wrong action/place, or a clear change of medium/rendering style from the reference sheet and required illustration style.",
+        "FAIL for any readable or pseudo-readable writing inside the artwork: captions, subtitles, story sentences, English or Korean letters, numbers, labels, signs, logos, signatures, speech bubbles or watermarks. The page must be image-only.",
+        "FAIL if the setting contradicts the mandatory expected location. A home/playroom cannot be shown as a forest path, park, hanok courtyard, classroom or generic outdoor landscape. A park cannot be shown as an indoor room. Do not accept a metaphorical or merely pretty substitute for the named place.",
+        "For a recurring place, FAIL if its fixed architecture, wall/floor colours, windows, large furniture or play equipment visibly change from the approved same-location reference.",
+        "FAIL for wrong number of people, an extra/background person, a duplicated person, a missing expected person, identities/outfits swapped, or any visible change from the character reference in face construction, hair shape/colour, clothing design/colour, shoes or accessories.",
+        "FAIL for any rendering-style drift from the references: 3D/clay to flat 2D, 2D to 3D, watercolor to vector/anime, different line quality, texture, shading, saturation or finish. Treat the approved-page style as mandatory, not optional.",
+        "FAIL if a named character performs or occupies the clearly wrong action or place.",
         "Also FAIL if the artwork is presented as a page, print, card, panel, framed picture or smaller image inside the canvas; if any white/unpainted margin, border, gutter, strip, rounded-corner frame or letterbox is visible at ANY outer edge; or if the illustration does not fill the canvas edge to edge.",
-        "Do not fail for harmless artistic choices, camera angle, minor pose differences, or scenery details.",
-        "Reply on one line only. Use PASS if there is no clear error. Otherwise use FAIL: followed by a short concrete correction instruction in English.",
+        "Do not fail for harmless camera-angle or minor pose differences, but location identity, character identity, readable text and rendering medium are never harmless.",
+        "Before replying, check in this order: (1) no writing, (2) exact people, (3) exact named location, (4) character match, (5) rendering-style match. Reply PASS only if all five pass. Otherwise reply FAIL: followed by a short concrete correction instruction in English.",
       ].join("\n"),
     },
   ];

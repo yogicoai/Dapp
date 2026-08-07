@@ -30,6 +30,8 @@ export async function POST(request: Request) {
     storyText?: unknown;
     artStyleId?: unknown;
     characterSheet?: unknown;
+    styleReference?: unknown;
+    styleReferenceScene?: unknown;
     mood?: unknown;
     shape?: unknown;
     cast?: unknown;
@@ -52,6 +54,20 @@ export async function POST(request: Request) {
 
   const sheet =
     typeof input.characterSheet === "string" ? fromDataUrl(input.characterSheet) : null;
+  const styleReference =
+    typeof input.styleReference === "string" ? fromDataUrl(input.styleReference) : null;
+  const styleReferenceScene =
+    typeof input.styleReferenceScene === "string" ? input.styleReferenceScene.trim().slice(0, 500) : "";
+  const readLocation = (value: string) => {
+    const match = /장소\s*:\s*([^\n—.-]+?)\s*[—-]\s*([^\n.]+)/.exec(value);
+    return match ? { name: match[1].trim(), description: match[2].trim() } : null;
+  };
+  const currentLocation = readLocation(scene);
+  const referenceLocation = readLocation(styleReferenceScene);
+  const sameReferenceLocation = Boolean(
+    currentLocation && referenceLocation &&
+    currentLocation.name.replace(/\s+/g, "") === referenceLocation.name.replace(/\s+/g, ""),
+  );
 
   const mood = typeof input.mood === "string" ? input.mood.trim().slice(0, 80) : "";
   const qualityCorrection =
@@ -91,6 +107,9 @@ export async function POST(request: Request) {
       "Never switch medium or rendering technique between pages. Do not turn watercolor into 3D, vector, crayon, anime, pencil, collage or a different kind of painting. Do not mix two styles in one page.",
     ].join("\n"),
     `Scene: ${scene}`,
+    currentLocation
+      ? `LOCATION LOCK — this scene visibly takes place at "${currentLocation.name}": ${currentLocation.description}. Draw that setting, not a generic forest, park, hanok, classroom or another house.`
+      : "",
     storyText ? `Story text for factual context: ${storyText}` : "",
     mood ? `Mood: ${mood}.` : "",
     // 캐릭터 시트를 참조로 넣으면 모델이 '생김새'뿐 아니라 시트의 '나란히 선 배치'까지
@@ -108,6 +127,16 @@ export async function POST(request: Request) {
           "Use a natural storytelling camera angle — three-quarter view, profile, from behind, from above or below as the moment needs.",
           "Avoid a symmetrical front-facing full-body figure standing in the centre with arms hanging down and a blank expression. That looks pasted in, not part of the picture.",
           "Characters must physically belong to the scene: touching, holding, standing on, or reacting to what is around them, with an expression that matches the moment.",
+        ].join("\n")
+      : "",
+    styleReference
+      ? [
+          "A previously APPROVED page from this same book is attached after the character sheet.",
+          "Use that approved page ONLY as the book-wide rendering reference: identical medium, dimensionality (2D versus 3D), line/edge treatment, textures, facial construction, lighting softness, colour strength and finish.",
+          sameReferenceLocation
+            ? `SAME LOCATION LOCK — the approved page and this page are both "${currentLocation?.name}". Preserve the same room/outdoor identity, architecture, wall and floor colours, windows, large furniture or play equipment and their stable arrangement. Change only camera angle, character pose and small story props.`
+            : "Do not copy its composition or location because this scene uses a different place.",
+          "Never change a 3D/clay-like book into a flat 2D drawing, or a flat drawing into 3D.",
         ].join("\n")
       : "",
     /*
@@ -176,7 +205,7 @@ export async function POST(request: Request) {
     ].join("\n"),
     "Keep the bottom quarter simple but FULLY PAINTED with scene color (ground, sky, water or another natural background) so text can be placed there. Simple never means white, blank, transparent or unfinished.",
     "Wholesome, innocent, fully clothed, child-friendly.",
-    "NO text, no letters, no words in the image.",
+    "IMAGE ONLY — absolutely NO captions, subtitles, story sentences, labels, speech bubbles, letters, numbers, logos, signatures, watermarks or readable writing in ANY language, including English and Korean. Leave the painted bottom area empty for the app to overlay text later.",
     phone
       ? "Tall 3:4 portrait composition, framed for a phone screen held upright."
       : "Wide 4:3 landscape composition.",
@@ -191,7 +220,7 @@ export async function POST(request: Request) {
     // 비용 상한: 페이지당 이미지 생성은 정확히 한 번만 호출한다.
     let image = await generateImage({
       prompt,
-      references: sheet ? [sheet] : undefined,
+      references: [sheet, styleReference].filter(Boolean) as NonNullable<typeof sheet>[],
       aspectRatio,
     });
 
@@ -203,7 +232,11 @@ export async function POST(request: Request) {
     const check = await validateIllustration({
       image,
       reference: sheet,
+      styleReference,
       scene: storyText ? `${scene}\nStory text: ${storyText}` : scene,
+      expectedLocation: currentLocation
+        ? `${currentLocation.name}: ${currentLocation.description}`
+        : "",
       cast: sceneCast,
       stylePrompt: style.prompt,
     });

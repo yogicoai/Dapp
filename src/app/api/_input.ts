@@ -39,8 +39,9 @@ export function parseChild(value: unknown): ChildProfile {
 export function parseMaterial(value: unknown): StoryMaterial {
   const v = value as Partial<Record<keyof StoryMaterial, unknown>> | undefined;
   const pick = (x: unknown) => (typeof x === "string" ? x.trim().slice(0, 200) : "");
+  const pickLong = (x: unknown) => (typeof x === "string" ? x.trim().slice(0, 5000) : "");
   const kind =
-    v?.kind === "today" || v?.kind === "emotion" ? v.kind : "imagine";
+    v?.kind === "today" || v?.kind === "emotion" || v?.kind === "direct" ? v.kind : "imagine";
   const material: StoryMaterial = {
     kind,
     subject: pick(v?.subject),
@@ -66,7 +67,25 @@ export function parseMaterial(value: unknown): StoryMaterial {
     emotion: pick(v?.emotion),
     situation: pick(v?.situation),
     extra: pick(v?.extra),
+    directMode: v?.directMode === "full" ? "full" : v?.directMode === "guided" ? "guided" : "",
+    directOpening: pickLong(v?.directOpening),
+    directDevelopment: pickLong(v?.directDevelopment),
+    directCrisis: pickLong(v?.directCrisis),
+    directEnding: pickLong(v?.directEnding),
+    directText: pickLong(v?.directText),
   };
+  if (material.kind === "direct") {
+    if (material.directMode === "full" && material.directText.length < 80) {
+      throw new Error("완성 원고를 80자 이상 적어주세요.");
+    }
+    if (
+      material.directMode !== "full" &&
+      [material.directOpening, material.directDevelopment, material.directCrisis, material.directEnding]
+        .some((part) => part.length < 8)
+    ) {
+      throw new Error("기승전결을 각각 한 문장 이상 적어주세요.");
+    }
+  }
   const filled =
     material.subject ||
     material.who ||
@@ -75,7 +94,12 @@ export function parseMaterial(value: unknown): StoryMaterial {
     material.feeling ||
     material.emotion ||
     material.situation ||
-    material.extra;
+    material.extra ||
+    material.directOpening ||
+    material.directDevelopment ||
+    material.directCrisis ||
+    material.directEnding ||
+    material.directText;
   if (!filled) {
     throw new Error("이야기 재료를 하나 이상 골라주세요.");
   }
