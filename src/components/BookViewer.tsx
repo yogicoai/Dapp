@@ -1292,7 +1292,7 @@ export function BookViewer({ book }: { book: Book }) {
                         ? // 펼침면 — 왼쪽 쪽. 무대가 이미 책 크기라 절반이 곧 한 쪽이다.
                           "[aspect-ratio:var(--ar)] portrait:w-full landscape:h-full landscape:w-1/2"
                         : "[aspect-ratio:var(--ar)] portrait:w-full landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
-                    } ${ratioOf(i) > 1 ? "portrait:translate-y-10" : ""}`}
+                    }`}
                     style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                   >
                     {page.video ? (
@@ -1541,9 +1541,7 @@ export function BookViewer({ book }: { book: Book }) {
         <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center">
           {/* 그림 실측 비율(--ar)로 무대와 같은 크기를 유지한다 — 좌표가 그림과 맞아떨어진다. */}
           <div
-            className={`relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))] ${
-              ratioOf(index) > 1 ? "portrait:translate-y-10" : ""
-            }`}
+            className="relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))]"
             style={{ "--ar": String(ratioOf(index)) } as React.CSSProperties}
           >
             {book.pages[index].actors!.map((a, ai) => (
@@ -1658,7 +1656,7 @@ export function BookViewer({ book }: { book: Book }) {
           <div
             className={`relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))] ${
               spread ? "landscape:h-full landscape:w-1/2" : ""
-            } ${ratioOf(index) > 1 ? "portrait:translate-y-10" : ""}`}
+            }`}
             style={{ "--ar": String(ratioOf(index)) } as React.CSSProperties}
           >
             {book.pages[index].hotspots!.map((h, hi) => {
