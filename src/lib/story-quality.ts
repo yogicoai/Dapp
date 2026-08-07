@@ -44,6 +44,19 @@ export function validateStoryQuality(
     if (page.text.split(/[.!?。！？]\s*/).some((sentence) => compact(sentence).length > (input.age <= 5 ? 125 : 180))) {
       issues.push(`${index + 1}쪽에 아이가 듣기 지나치게 긴 문장이 있습니다.`);
     }
+
+    const mentionedCharacters = story.characters.filter((character) =>
+      character.name && page.text.normalize("NFC").includes(character.name.normalize("NFC")),
+    );
+    for (const character of mentionedCharacters) {
+      if (!page.imagePrompt.normalize("NFC").includes(character.name.normalize("NFC"))) {
+        issues.push(`${index + 1}쪽 삽화 장면에서 누락된 본문 인물: '${character.name}'.`);
+      }
+    }
+    const declaredCount = /등장인물\s*(\d+)명/.exec(page.imagePrompt)?.[1];
+    if (declaredCount && Number(declaredCount) < mentionedCharacters.length) {
+      issues.push(`${index + 1}쪽 삽화의 등장인물 수가 본문에 나온 인물보다 적습니다.`);
+    }
   });
 
   if (/(자살|성폭행|토막\s*살인|피가\s*분수처럼|내장이|목을\s*졸라\s*죽)/i.test(allText)) {

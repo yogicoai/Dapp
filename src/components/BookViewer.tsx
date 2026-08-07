@@ -987,9 +987,17 @@ export function BookViewer({ book }: { book: Book }) {
           if (sfxTimer.current) clearTimeout(sfxTimer.current);
           sfxTimer.current = null;
         };
+        const stopAndUnlock = () => {
+          el.pause();
+          el.currentTime = 0;
+          unlock();
+        };
         el.onended = unlock;
         if (sfxTimer.current) clearTimeout(sfxTimer.current);
-        sfxTimer.current = setTimeout(unlock, 1200); // 안전장치
+        // 원본 파일은 약 9초로 뒤쪽에 넘김 소리가 더 남아 있다. 첫 효과음만 쓰고
+        // 실제 오디오까지 정지해야 빠르게 넘긴 횟수만큼 나중에 몰려 나오지 않는다.
+        sfxTimer.current = setTimeout(stopAndUnlock, 750);
+        el.pause();
         el.currentTime = 0;
         el.volume = 0.5;
         el.play().catch(unlock);
@@ -1008,6 +1016,16 @@ export function BookViewer({ book }: { book: Book }) {
 
   // 뷰어를 떠날 때 소리를 끄고, 전체화면·가로 고정도 되돌린다.
   useEffect(() => stopReading, [stopReading]);
+  useEffect(() => () => {
+    if (sfxTimer.current) clearTimeout(sfxTimer.current);
+    sfxTimer.current = null;
+    sfxBusy.current = false;
+    const sfx = sfxRef.current;
+    if (sfx) {
+      sfx.pause();
+      sfx.currentTime = 0;
+    }
+  }, []);
   // 화면을 떠날 때(서재로 나가기·주소 이동 등) 캐릭터 대사 음성도 확실히 끊는다.
   useEffect(() => () => stopSay(), [stopSay]);
   useEffect(() => () => exitStoryMode(), []);

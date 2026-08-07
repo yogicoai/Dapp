@@ -10,7 +10,7 @@ function story(texts: string[]): ParsedStory {
     title: "민이의 별빛 산책",
     summary: "민이가 친구와 별빛을 만나요.",
     characters: [{ name: "민이", description: "노란 모자를 쓴 아이" }],
-    pages: texts.map((text, index) => ({ pageNo: index + 1, text, imagePrompt: "별빛 길", voiceDirection: direction })),
+    pages: texts.map((text, index) => ({ pageNo: index + 1, text, imagePrompt: "등장인물 1명: 민이. 민이가 별빛 길을 걷는다.", voiceDirection: direction })),
   };
 }
 
@@ -28,5 +28,12 @@ describe("validateStoryQuality", () => {
     const result = validateStoryQuality(story([duplicate, duplicate]), { childName: "수아", age: 6, expectedPages: 2 });
     assert.ok(result.some((item) => item.includes("주인공 이름")));
     assert.ok(result.some((item) => item.includes("중복")));
+  });
+
+  it("본문의 친구가 삽화 설명에서 빠지면 실패한다", () => {
+    const value = story(["민이는 태이와 블록을 만들며 환하게 웃었어요. 두 친구는 정말 즐거웠어요."]);
+    value.characters.push({ name: "태이", description: "초록색 옷을 입은 친구" });
+    const result = validateStoryQuality(value, { childName: "민이", age: 6, expectedPages: 1 });
+    assert.ok(result.some((item) => item.includes("누락된 본문 인물: '태이'")));
   });
 });

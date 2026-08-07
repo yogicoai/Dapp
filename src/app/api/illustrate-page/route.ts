@@ -27,6 +27,7 @@ export async function POST(request: Request) {
 
   const input = body as {
     scene?: unknown;
+    storyText?: unknown;
     artStyleId?: unknown;
     characterSheet?: unknown;
     mood?: unknown;
@@ -41,6 +42,7 @@ export async function POST(request: Request) {
   const aspectRatio = phone ? ("3:4" as const) : ("4:3" as const);
 
   const scene = typeof input.scene === "string" ? input.scene.trim() : "";
+  const storyText = typeof input.storyText === "string" ? input.storyText.trim().slice(0, 1200) : "";
   if (!scene || scene.length > 500) {
     return NextResponse.json({ error: "장면 묘사가 비었거나 너무 깁니다." }, { status: 400 });
   }
@@ -77,7 +79,9 @@ export async function POST(request: Request) {
    * 책 전체 인물 중 이 장면에 이름이 실제로 적힌 사람만 보낸다.
    * 전체 cast를 보내면 참조 시트에 있는 친구를 Gemini가 배경 인물로 임의 추가한다.
    */
-  const sceneCast = cast.filter((c) => scene.includes(c.name));
+  // 모델이 @@IMG@@에서 친구 이름을 실수로 빠뜨려도, 실제 본문에 이름이 나오면
+  // 꽃이나 소품으로 대신하지 못하게 등장인물로 다시 잠근다.
+  const sceneCast = cast.filter((c) => scene.includes(c.name) || storyText.includes(c.name));
 
   const prompt = [
     `Children's picture book illustration, ${style.prompt}.`,
@@ -87,6 +91,7 @@ export async function POST(request: Request) {
       "Never switch medium or rendering technique between pages. Do not turn watercolor into 3D, vector, crayon, anime, pencil, collage or a different kind of painting. Do not mix two styles in one page.",
     ].join("\n"),
     `Scene: ${scene}`,
+    storyText ? `Story text for factual context: ${storyText}` : "",
     mood ? `Mood: ${mood}.` : "",
     // 캐릭터 시트를 참조로 넣으면 모델이 '생김새'뿐 아니라 시트의 '나란히 선 배치'까지
     // 따라 그려서, 같은 인물이 두 명씩 나오는 일이 생긴다(실제 발생). 그래서
@@ -198,7 +203,7 @@ export async function POST(request: Request) {
     const check = await validateIllustration({
       image,
       reference: sheet,
-      scene,
+      scene: storyText ? `${scene}\nStory text: ${storyText}` : scene,
       cast: sceneCast,
       stylePrompt: style.prompt,
     });

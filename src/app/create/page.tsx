@@ -196,6 +196,9 @@ const TODAY_ENDINGS = [
  * 상황이 구체적일수록 감정동화의 위로가 정확해진다. 누르면 입력칸에 채워져 고칠 수 있다.
  */
 const EMOTION_TIMES = [
+  { t: "엄마 아빠가 꼭 안아줬을 때", e: "🤗" },
+  { t: "좋아하는 친구와 함께 놀 때", e: "💞" },
+  { t: "귀여운 동물 친구를 만났을 때", e: "🐶" },
   { t: "동생이 장난감을 뺏었을 때", e: "🧸" },
   { t: "친구가 같이 안 놀아줘서", e: "😞" },
   { t: "엄마 아빠한테 혼나서", e: "😢" },
@@ -212,6 +215,7 @@ const EMOTION_TIMES = [
  * 폭넓게 담았다. 긍정 감정(뿌듯·설렘)도 몇 개 둬서 "좋은 마음"도 이야기가 되게 한다.
  */
 const EMOTIONS = [
+  { t: "좋아해요", e: "❤️" },
   { t: "화가 나요", e: "😠" },
   { t: "무서워요", e: "😨" },
   { t: "슬퍼요", e: "😢" },
@@ -1011,6 +1015,7 @@ export default function CreatePage() {
                 headers: { "content-type": "application/json" },
                 body: JSON.stringify({
                   scene: s.pages[i].imagePrompt,
+                  storyText: s.pages[i].text,
                   artStyleId: artStyle,
                   characterSheet: sheet,
                   mood: mood.en,
@@ -2135,8 +2140,9 @@ export default function CreatePage() {
               {/* 고치는 자리는 여기다 — 그림도 크레딧도 쓰기 전이라, 마음에 안 드는
                   장면을 지금 고치면 공짜이고 그림이 어긋날 일도 없다.
                   완성된 뒤에 글만 고치면 그림은 그대로라 오히려 어긋난다. */}
-              <p className="-mt-2 break-keep text-center text-xs font-medium text-neutral-400">
-                고치고 싶은 곳을 눌러 보세요. 지금은 얼마든지 고칠 수 있어요.
+              <p className="-mt-2 self-center break-keep rounded-xl bg-white/90 px-4 py-2 text-center text-sm font-bold leading-relaxed text-neutral-700 shadow-sm ring-1 ring-black/5">
+                아래 내용이 동화 속 이야기로 표현돼요.<br />
+                바꾸고 싶은 부분을 눌러 수정해 주세요.
               </p>
               <div className="rounded-2xl p-5" style={{ background: accentSoft }}>
                 {editScene === "title" ? (
