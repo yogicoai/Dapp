@@ -554,7 +554,7 @@ const STORY_SYSTEM = `${VOICE}
 @@CHARACTER@@ 이름 | 생김새와 특징
 @@PAGE@@ 1
 @@TEXT@@ ...
-@@VOICE@@ narration=normal | dialogue=happy | intensity=0.8 | pace=normal
+@@VOICE@@ narration=normal | dialogue=happy | intensity=0.5 | pace=normal
 @@IMG@@ ...
 @@PAGE@@ 2
 ...`;
@@ -594,7 +594,7 @@ export async function generateStory(input: {
             `쪽당 분량: ${lengthGuide(input.child.age, input.longer)}`,
             "처음 입력한 이야기 재료(사실·인물·장소)는 줄거리보다 우선하며, 빠뜨리거나 다른 내용으로 바꾸지 않는다.",
             ...materialLines(input.material),
-            "각 페이지에는 @@VOICE@@를 정확히 한 번 쓴다. narration/dialogue는 normal|toneup|happy|sad|angry 중 하나, intensity는 0.3~1.2, pace는 slow|normal|lively 중 하나다. 지문은 차분하게, 대사는 장면 감정에 맞게 과장 없이 지정한다.",
+            "각 페이지에는 @@VOICE@@를 정확히 한 번 쓴다. 부모가 잠자리에서 책을 읽어주는 듯 낮고 편안한 낭독을 기준으로 한다. narration은 항상 normal이다. dialogue는 기본 normal이며 감정이 분명한 짧은 대사에만 happy|sad|angry를 쓴다(toneup은 사용하지 않는다). intensity는 0.3~0.65이고 기본 0.5다. pace는 기본 normal, 아주 차분한 장면은 slow, lively는 꼭 필요한 장면에만 쓴다. 신나는 감정은 높은 음정이나 빠른 말투가 아니라 자연스러운 리듬과 미소로 표현한다.",
             ...(input.occasion
               ? [`특별한 날: ${input.occasion} — 축하가 이야기에 자연스럽게 스며들게.`]
               : []),

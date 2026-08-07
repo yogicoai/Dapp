@@ -138,10 +138,10 @@ export async function synthesize(input: {
     language: "kor",
   };
   if (input.emotion && input.emotion !== "normal") {
-    // ssfm-v30의 감정 연기. intensity는 1이 기본 — 살짝 과장해 동화 낭독 톤으로.
+    // ssfm-v30 감정 연기는 대사에만 낮게 적용한다. 높은 값은 음색까지 하이톤으로 바꾼다.
     body.prompt = {
       emotion_preset: input.emotion,
-      emotion_intensity: Math.min(1.2, Math.max(0.3, input.intensity ?? 0.8)),
+      emotion_intensity: Math.min(0.65, Math.max(0.3, input.intensity ?? 0.5)),
     };
   }
 

@@ -731,7 +731,8 @@ export function BookViewer({ book }: { book: Book }) {
         if (run !== runIdRef.current || !readingRef.current) return;
         const url = URL.createObjectURL(blob);
         el.src = url;
-        const paceMultiplier = seg.pace === "slow" ? 0.9 : seg.pace === "lively" ? 1.08 : 1;
+        // 책 읽기 리듬을 유지한다. lively도 말이 급해지지 않을 정도로만 움직인다.
+        const paceMultiplier = seg.pace === "slow" ? 0.94 : seg.pace === "lively" ? 1.03 : 1;
         applyPlaybackRate(el, rateBoost * paceMultiplier);
         el.ontimeupdate = () => {
           if (el.duration > 0) {

@@ -97,7 +97,7 @@ describe("parseStory", () => {
     assert.deepEqual(story.pages[0].voiceDirection, {
       narration: "normal",
       dialogue: "happy",
-      intensity: 0.9,
+      intensity: 0.65,
       pace: "slow",
     });
   });

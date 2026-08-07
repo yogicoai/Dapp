@@ -57,8 +57,8 @@ export type ParsedPage = {
 
 const DEFAULT_VOICE_DIRECTION: VoiceDirection = {
   narration: "normal",
-  dialogue: "toneup",
-  intensity: 0.8,
+  dialogue: "normal",
+  intensity: 0.5,
   pace: "normal",
 };
 
@@ -83,7 +83,7 @@ function parseVoiceDirection(value: string): VoiceDirection {
     : DEFAULT_VOICE_DIRECTION.pace;
   const rawIntensity = Number(fields.intensity);
   const intensity = Number.isFinite(rawIntensity)
-    ? Math.min(1.2, Math.max(0.3, rawIntensity))
+    ? Math.min(0.65, Math.max(0.3, rawIntensity))
     : DEFAULT_VOICE_DIRECTION.intensity;
   return { narration, dialogue, intensity, pace };
 }

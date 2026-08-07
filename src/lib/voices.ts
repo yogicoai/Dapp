@@ -404,8 +404,10 @@ export async function fetchTypecastAudio(
   emotion?: string,
   intensity?: number,
 ): Promise<Blob> {
-  const safeIntensity = Math.min(1.2, Math.max(0.3, intensity ?? 0.8));
-  const cacheId = `tts:${tc.voiceId}:${emotion ?? "normal"}:${safeIntensity.toFixed(1)}:${hashText(text)}`;
+  // 감정 프리셋이 원래 음색을 밀어 올리지 않도록 낭독용 강도 범위만 허용한다.
+  const safeIntensity = Math.min(0.65, Math.max(0.3, intensity ?? 0.5));
+  // 기존의 강한 연기 캐시와 분리한다. 새 낭독은 한 번만 합성된 뒤 다시 캐시된다.
+  const cacheId = `tts-read-v2:${tc.voiceId}:${emotion ?? "normal"}:${safeIntensity.toFixed(2)}:${hashText(text)}`;
   return fetchCachedVoiceAudio(cacheId, async () => {
     const r = await fetch("/api/tts", {
       method: "POST",
@@ -521,14 +523,19 @@ export function splitDialogue(text: string): { text: string; dialogue: boolean }
 }
 
 /**
- * 대사의 감정을 내용으로 추정한다. 확신이 없으면 toneup(생기 있는 연기톤).
- * 잘못 짚어도 "감정이 들어간 낭독"이라는 목표는 지켜진다.
+ * 대사의 감정을 내용으로 추정한다. 확신이 없으면 원래 음색을 유지한다.
  */
 export function guessEmotion(line: string): string {
   if (/으악|살려|엉엉|훌쩍|눈물|슬퍼|무서|가엾|흑흑|어떡해/.test(line)) return "sad";
   if (/잡아먹|안 돼|버럭|어흥|크르렁|날려 버리|호통|이놈|썩 /.test(line)) return "angry";
   if (/만세|신나|좋아|와아|우와|기뻐|히히|하하|최고|고마워/.test(line)) return "happy";
-  return "toneup";
+  return "normal";
+}
+
+/** 지문은 원래 음색, 대사만 낮은 강도의 명확한 감정을 사용한다. */
+export function storyReadingEmotion(emotion: string | undefined, dialogue: boolean): string {
+  if (!dialogue || !emotion || emotion === "toneup") return "normal";
+  return emotion;
 }
 
 /**
@@ -599,12 +606,12 @@ export function startTypecastPageAudio(tc: TypecastPreset, text: string, directi
     return p;
   };
 
-  // 대사가 없어도 지문에 어울리는 감정을 살짝 입혀 밋밋하지 않게 한다.
+  // 대사가 없는 페이지는 성우 본래 음색으로 편안하게 읽는다.
   if (segs.length <= 1 || !segs.some((s) => s.dialogue)) {
     return [{
       from: 0,
       to: text.length,
-      audio: synthEmo(text, direction?.narration ?? guessEmotion(text)),
+      audio: synthEmo(text, "normal"),
       pace: direction?.pace,
     }];
   }
@@ -614,11 +621,11 @@ export function startTypecastPageAudio(tc: TypecastPreset, text: string, directi
   for (const s of segs) {
     const from = pos;
     pos += s.text.length;
-    // 대사든 지문이든 내용에 맞는 감정을 입힌다 — 지문은 대개 toneup(생기 있는 낭독),
-    // 대사는 놀람·화남·기쁨 등. 이렇게 해야 페이지마다 톤이 끊기지 않는다.
-    const emotion = direction
+    // 지문은 성우 본래 음색을 유지하고, 따옴표 속 대사에만 낮은 강도의 감정을 넣는다.
+    const requestedEmotion = direction
       ? (s.dialogue ? direction.dialogue : direction.narration)
       : guessEmotion(s.text);
+    const emotion = storyReadingEmotion(requestedEmotion, s.dialogue);
     out.push({ from, to: pos, audio: synthEmo(s.text, emotion), pace: direction?.pace });
   }
   return out;
