@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   loadBgmOn,
   loadBookProgress,
@@ -26,6 +26,7 @@ import {
   loadStoryWeight,
   type StoryWeight,
   STORY_WEIGHTS,
+  storyWeightForFont,
 } from "@/lib/prefs";
 import { loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
@@ -60,6 +61,73 @@ const SWIPE_THRESHOLD_PX = 50;
 
 /** Web Speech 폴백용 읽기 속도(초당 글자). 경계 이벤트가 안 오는 기기에서 쓴다. */
 const FALLBACK_CHARS_PER_SEC = 5.5;
+
+/**
+ * 본문이 준비된 칸보다 길면 스크롤을 만들지 않고 글자만 단계적으로 줄인다.
+ * 실제 DOM 크기를 재므로 글꼴·기기·가로세로·사용자 글자 크기가 달라도 맞는다.
+ */
+function AutoFitStoryText({
+  children,
+  baseSize,
+  textScale,
+  fontScale,
+  fontWeight,
+  className,
+}: {
+  children: React.ReactNode;
+  baseSize: string;
+  textScale: number;
+  fontScale: number;
+  fontWeight: number;
+  className: string;
+}) {
+  const ref = useRef<HTMLParagraphElement>(null);
+
+  useLayoutEffect(() => {
+    const text = ref.current;
+    const box = text?.parentElement;
+    if (!text || !box) return;
+
+    const fit = () => {
+      text.style.setProperty("--story-fit", "1");
+      const availableHeight = Math.min(box.clientHeight, window.innerHeight * 0.76);
+      const availableWidth = box.clientWidth;
+      const fits = () =>
+        text.scrollHeight <= availableHeight + 1 && text.scrollWidth <= availableWidth + 1;
+      if (fits()) return;
+
+      // 42%까지 이분 탐색한다. 일반적인 150~300자 본문은 대개 65~90%에서 들어온다.
+      let low = 0.42;
+      let high = 1;
+      for (let n = 0; n < 9; n++) {
+        const mid = (low + high) / 2;
+        text.style.setProperty("--story-fit", String(mid));
+        if (fits()) low = mid;
+        else high = mid;
+      }
+      text.style.setProperty("--story-fit", String(low));
+    };
+
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(box);
+    void document.fonts?.ready.then(fit);
+    return () => observer.disconnect();
+  }, [baseSize, fontScale, fontWeight, textScale]);
+
+  return (
+    <p
+      ref={ref}
+      style={{
+        fontSize: `calc(${baseSize} * ${textScale} * ${fontScale} * var(--story-fit, 1))`,
+        fontWeight,
+      }}
+      className={`${className} overflow-hidden`}
+    >
+      {children}
+    </p>
+  );
+}
 
 /** 핫스팟 라벨 → 한국어 이름 (스크린리더·접근성용). */
 const HOTSPOT_KO: Record<string, string> = {
@@ -164,7 +232,6 @@ export function BookViewer({ book }: { book: Book }) {
   const [sizeMenu, setSizeMenu] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영
   useEffect(() => setTextScale(loadTextScale()), []);
-  /** 기본 크기(화면 따라 자동)에 배율을 곱한다 — 인라인이라 세 군데 본문에 똑같이 먹는다. */
   /*
    * 본문 글꼴 — 부모가 설정에서 고른다. 글꼴마다 같은 px에서도 보이는 크기가 달라서,
    * 글자 크기 배율(textScale)에 글꼴 배율(font.scale)을 함께 곱해야 어떤 글꼴을 골라도
@@ -177,10 +244,6 @@ export function BookViewer({ book }: { book: Book }) {
   const [weight, setWeight] = useState<StoryWeight>(STORY_WEIGHTS[1]);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용
   useEffect(() => setWeight(loadStoryWeight()), []);
-  const scaled = (base: string) => ({
-    fontSize: `calc(${base} * ${textScale} * ${font.scale})`,
-    fontWeight: weight.value,
-  });
   const applyTextScale = (s: number) => {
     setTextScale(s);
     saveTextScale(s);
@@ -1083,16 +1146,19 @@ export function BookViewer({ book }: { book: Book }) {
                 }[textPos]
               } ${display}`}
             >
-              <p
-                style={scaled(size)}
-                className={`font-story whitespace-pre-line break-keep text-pretty text-center drop-shadow-md ${
+              <AutoFitStoryText
+                baseSize={size}
+                textScale={textScale}
+                fontScale={font.scale}
+                fontWeight={storyWeightForFont(font, weight)}
+                className={`font-story max-h-[76dvh] whitespace-pre-line break-keep text-pretty text-center drop-shadow-md ${
                   textPos === "bottom" || textPos === "top"
                     ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : "w-full rounded-3xl bg-black/55 p-5 backdrop-blur-[2px] sm:p-6"
                 } ${textPos === "center" ? "max-w-[max(20rem,55vw)]" : ""}`}
               >
                 {renderRuns()}
-              </p>
+              </AutoFitStoryText>
             </div>
           );
           return (
@@ -1224,33 +1290,38 @@ export function BookViewer({ book }: { book: Book }) {
                           } as React.CSSProperties)
                         : undefined
                     }
-                    className={`flex shrink-0 items-center justify-center overflow-y-auto ${
+                    className={`flex shrink-0 items-center justify-center overflow-hidden ${
                       spread
                         ? "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:max-h-none landscape:h-full landscape:w-1/2 landscape:bg-[image:var(--paper)] landscape:bg-[length:14px_14px,18px_18px,100%_100%] landscape:px-[7%] landscape:pb-24 landscape:pt-8 landscape:shadow-[inset_18px_0_28px_-18px_rgba(90,60,20,0.35)]"
                         : "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:hidden"
                     }`}
                   >
                     {/* 세로(어두운 배경) — 흰 글씨. 펼침면일 때도 세로에서는 이쪽을 쓴다. */}
-                    <p
-                      style={scaled("clamp(1.15rem,4.4vw,1.85rem)")}
-                      className={`font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
+                    <AutoFitStoryText
+                      baseSize="clamp(1.15rem,4.4vw,1.85rem)"
+                      textScale={textScale}
+                      fontScale={font.scale}
+                      fontWeight={storyWeightForFont(font, weight)}
+                      className={`font-story max-h-full whitespace-pre-line break-keep text-pretty text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
                         spread ? "landscape:hidden" : ""
                       }`}
                     >
                       {renderRuns(false)}
-                    </p>
+                    </AutoFitStoryText>
                     {/* 가로 + 펼침면 — 종이 위 어두운 글씨. 색칠도 종이에 맞춰 진한 주황. */}
                     {spread && (
                       // 종이 한 쪽에 8쪽짜리 본문(150~250자)이 들어가야 해서, 글자가 크면
                       // 넘쳐 스크롤바가 생긴다 — 그림책에 스크롤바가 보이면 책이 아니게 된다.
-                      // 조금 줄이고 줄간격도 좁혀 한 화면에 담기게 한다(글자 크기 설정은 그대로 적용).
-                      // 그래도 넘치면 스크롤은 되되 막대는 감춘다.
-                      <p
-                        style={scaled("clamp(0.95rem,1.85vw,1.45rem)")}
-                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden landscape:block"
+                      // 길면 AutoFitStoryText가 실제 칸을 재서 스크롤 없이 자동 축소한다.
+                      <AutoFitStoryText
+                        baseSize="clamp(0.95rem,1.85vw,1.45rem)"
+                        textScale={textScale}
+                        fontScale={font.scale}
+                        fontWeight={storyWeightForFont(font, weight)}
+                        className="font-story hidden max-h-full max-w-[34rem] whitespace-pre-line break-keep text-pretty text-center landscape:block"
                       >
                         {renderRuns(true)}
-                      </p>
+                      </AutoFitStoryText>
                     )}
                   </div>
                 </div>

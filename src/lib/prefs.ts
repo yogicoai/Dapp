@@ -714,21 +714,26 @@ export type StoryFont = {
   /** 동글체를 1로 본 글자 크기 배율 */
   scale: number;
   leading: number;
+  category: "readable" | "storybook" | "decorative";
+  /** 글꼴 파일에 실제로 들어 있는 굵기만 허용한다. */
+  weights: readonly number[];
 };
 
 export const STORY_FONTS: StoryFont[] = [
-  { id: "dongle", label: "동글동글", family: '"Dongle"', scale: 1, leading: 1.4 },
-  { id: "jua", label: "또렷한 주아", family: '"Jua"', scale: 0.66, leading: 1.6 },
-  { id: "gaegu", label: "아이 손글씨", family: '"Gaegu"', scale: 0.76, leading: 1.55 },
-  { id: "pen", label: "부드러운 펜글씨", family: '"Nanum Pen Script"', scale: 0.86, leading: 1.5 },
-  { id: "dodum", label: "차분한 돋움", family: '"Gowun Dodum"', scale: 0.62, leading: 1.7 },
   {
     id: "gothic",
     label: "읽기 쉬운 고딕",
     family: '"Pretendard Variable", Pretendard',
     scale: 0.6,
-    leading: 1.7,
+    leading: 1.65,
+    category: "readable",
+    weights: [400, 600, 700],
   },
+  { id: "dodum", label: "차분한 돋움", family: "var(--font-gowun-dodum)", scale: 0.62, leading: 1.65, category: "readable", weights: [400] },
+  { id: "dongle", label: "동글동글", family: "var(--font-dongle)", scale: 1, leading: 1.55, category: "storybook", weights: [300, 400, 700] },
+  { id: "jua", label: "또렷한 주아", family: "var(--font-jua)", scale: 0.66, leading: 1.6, category: "storybook", weights: [400] },
+  { id: "gaegu", label: "아이 손글씨", family: "var(--font-gaegu)", scale: 0.76, leading: 1.6, category: "decorative", weights: [400, 700] },
+  { id: "pen", label: "부드러운 펜글씨", family: "var(--font-nanum-pen)", scale: 0.86, leading: 1.6, category: "decorative", weights: [400] },
 ];
 
 /**
@@ -737,8 +742,8 @@ export const STORY_FONTS: StoryFont[] = [
  * 글꼴에 따라 실제로 가진 굵기가 다르다 — 동글체는 300·400·700, 아이 손글씨는
  * 400·700, 주아·펜글씨·돋움은 400 하나뿐이다. 없는 굵기를 고르면 브라우저가
  * 흉내 내서 굵게 그리는데(가짜 굵기), 그게 오히려 뭉개져 보일 때가 있다.
- * 그래서 '보통'을 기본으로 두고, 굵게는 고르고 싶은 사람만 고르게 한다.
- * (예전엔 모든 글꼴에 600을 박아 놔서, 400뿐인 글꼴은 늘 가짜 굵기로 나왔다.)
+ * 설정 화면은 선택한 글꼴에 실제로 들어 있는 굵기만 활성화하고, 예전 저장값이
+ * 지원되지 않으면 보통(400)으로 되돌려 가짜 굵기로 뭉개지지 않게 한다.
  */
 export const STORY_WEIGHTS = [
   { id: "normal", label: "보통", value: 400 },
@@ -752,6 +757,15 @@ const STORY_WEIGHT_KEY = "voice-storybook:story-weight";
 
 export function findStoryWeight(id: string | null): StoryWeight {
   return STORY_WEIGHTS.find((w) => w.id === id) ?? STORY_WEIGHTS[1];
+}
+
+/** 선택한 글꼴이 지원하지 않는 굵기면 실제 파일에 있는 400으로 안전하게 맞춘다. */
+export function storyWeightForFont(font: StoryFont, weight: StoryWeight): number {
+  return font.weights.includes(weight.value)
+    ? weight.value
+    : font.weights.includes(400)
+      ? 400
+      : font.weights[0];
 }
 
 export function loadStoryWeight(): StoryWeight {

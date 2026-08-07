@@ -1,3 +1,5 @@
+import sharp from "sharp";
+
 /**
  * Gemini 2.5 Flash Image ("Nano Banana") — 삽화 생성.
  *
@@ -9,11 +11,11 @@
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
 export class GeminiError extends Error {
-  constructor(
-    message: string,
-    readonly status?: number,
-  ) {
+  readonly status?: number;
+
+  constructor(message: string, status?: number) {
     super(message);
+    this.status = status;
     this.name = "GeminiError";
   }
 }
@@ -23,6 +25,79 @@ export type GeneratedImage = {
   /** base64 원문. 클라이언트에는 data URL로 내려준다. */
   data: string;
 };
+
+export type IllustrationCheck = {
+  ok: boolean;
+  issues: string;
+};
+
+/** 가장자리의 연속된 흰색 띠를 픽셀로 검사한다. 구름·하늘 같은 부분적 흰색은 통과한다. */
+export async function detectBlankCanvasBorder(image: GeneratedImage): Promise<string | null> {
+  try {
+    const { data, info } = await sharp(Buffer.from(image.data, "base64"))
+      .removeAlpha()
+      .resize(160, 120, { fit: "fill" })
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const channels = info.channels;
+    const white = (x: number, y: number) => {
+      const at = (y * info.width + x) * channels;
+      const r = data[at];
+      const g = data[at + 1];
+      const b = data[at + 2];
+      return r >= 238 && g >= 238 && b >= 238 && Math.max(r, g, b) - Math.min(r, g, b) <= 12;
+    };
+    const rowWhiteRatio = (y: number) => {
+      let count = 0;
+      for (let x = 0; x < info.width; x++) if (white(x, y)) count++;
+      return count / info.width;
+    };
+    const colWhiteRatio = (x: number) => {
+      let count = 0;
+      for (let y = 0; y < info.height; y++) if (white(x, y)) count++;
+      return count / info.height;
+    };
+    const band = (length: number, ratioAt: (n: number) => number, reverse = false) => {
+      let continuous = 0;
+      const limit = Math.ceil(length * 0.12);
+      for (let n = 0; n < limit; n++) {
+        const at = reverse ? length - 1 - n : n;
+        if (ratioAt(at) < 0.92) break;
+        continuous++;
+      }
+      return continuous;
+    };
+    const edges = [
+      ["top", band(info.height, rowWhiteRatio)],
+      ["bottom", band(info.height, rowWhiteRatio, true)],
+      ["left", band(info.width, colWhiteRatio)],
+      ["right", band(info.width, colWhiteRatio, true)],
+    ] as const;
+    const broken = edges.filter(([, pixels]) => pixels >= 2).map(([edge]) => edge);
+    return broken.length > 0
+      ? `Unpainted white canvas band detected on the ${broken.join(", ")} edge(s). The artwork must reach every canvas edge.`
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+/** 감지된 흰 테두리를 잘라낸 뒤 원래 픽셀 크기와 비율로 복원한다. 추가 AI 호출은 없다. */
+export async function repairBlankCanvasBorder(image: GeneratedImage): Promise<GeneratedImage> {
+  try {
+    const source = Buffer.from(image.data, "base64");
+    const metadata = await sharp(source).metadata();
+    if (!metadata.width || !metadata.height) return image;
+    const repaired = await sharp(source)
+      .trim({ background: "#ffffff", threshold: 20 })
+      .resize(metadata.width, metadata.height, { fit: "cover", position: "centre" })
+      .png()
+      .toBuffer();
+    return { mimeType: "image/png", data: repaired.toString("base64") };
+  } catch {
+    return image;
+  }
+}
 
 type Part = {
   text?: string;
@@ -101,6 +176,65 @@ export async function generateImage(input: {
   }
 
   throw new GeminiError("응답에 이미지가 없습니다. (모델이 텍스트만 반환)", 502);
+}
+
+/**
+ * 완성 삽화의 인원·정체성·행동 구도를 저렴한 멀티모달 모델로 검사한다.
+ * 그림체 취향은 평가하지 않고, 책의 내용과 어긋나는 명백한 오류만 실패시킨다.
+ */
+export async function validateIllustration(input: {
+  image: GeneratedImage;
+  reference?: GeneratedImage | null;
+  scene: string;
+  cast: { name: string; description: string }[];
+  stylePrompt: string;
+}): Promise<IllustrationCheck> {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) return { ok: true, issues: "" };
+
+  const model = process.env.GEMINI_VISION_MODEL ?? "gemini-2.5-flash";
+  const expected = input.cast.length;
+  const cast = input.cast.map((c, i) => `${i + 1}. ${c.name}: ${c.description}`).join("\n");
+  const parts: unknown[] = [
+    { inlineData: { mimeType: input.image.mimeType, data: input.image.data } },
+    ...(input.reference
+      ? [{ inlineData: { mimeType: input.reference.mimeType, data: input.reference.data } }]
+      : []),
+    {
+      text: [
+        "You are checking a generated children's-book page for factual illustration errors.",
+        "The FIRST attached image is the generated page. If present, the SECOND is the whole-book character reference sheet.",
+        `Scene instruction: ${input.scene}`,
+        `Expected visible people: exactly ${expected}.`,
+        expected > 0 ? `Expected cast:\n${cast}` : "No person should be visible.",
+        `Required illustration style: ${input.stylePrompt}.`,
+        "Fail ONLY for a clear error: wrong number of people, an extra/background person, a duplicated person, a missing expected person, identities/outfits swapped or inconsistent with the reference, a named character doing/occupying the clearly wrong action/place, or a clear change of medium/rendering style from the reference sheet and required illustration style.",
+        "Also FAIL if the artwork is presented as a page, print, card, panel, framed picture or smaller image inside the canvas; if any white/unpainted margin, border, gutter, strip, rounded-corner frame or letterbox is visible at ANY outer edge; or if the illustration does not fill the canvas edge to edge.",
+        "Do not fail for harmless artistic choices, camera angle, minor pose differences, or scenery details.",
+        "Reply on one line only. Use PASS if there is no clear error. Otherwise use FAIL: followed by a short concrete correction instruction in English.",
+      ].join("\n"),
+    },
+  ];
+
+  try {
+    const res = await fetch(`${API_BASE}/${model}:generateContent`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-goog-api-key": key },
+      body: JSON.stringify({ contents: [{ parts }], generationConfig: { temperature: 0 } }),
+    });
+    if (!res.ok) return { ok: true, issues: "" }; // 검수 장애가 책 생성을 막지는 않는다.
+    const json = (await res.json()) as { candidates?: { content?: { parts?: Part[] } }[] };
+    const answer = (json.candidates?.[0]?.content?.parts ?? [])
+      .map((p) => p.text ?? "")
+      .join(" ")
+      .trim();
+    if (/^FAIL\s*:/i.test(answer)) {
+      return { ok: false, issues: answer.replace(/^FAIL\s*:\s*/i, "").slice(0, 500) };
+    }
+    return { ok: true, issues: "" };
+  } catch {
+    return { ok: true, issues: "" };
+  }
 }
 
 export function toDataUrl(img: GeneratedImage): string {

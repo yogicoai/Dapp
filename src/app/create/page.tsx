@@ -973,29 +973,52 @@ export default function CreatePage() {
       images.fill(null);
       let done = 0;
       let cursor = 0;
+      // 판매용 품질과 비용 상한의 균형: 한 권 전체에서 인물 QA 재생성은 최대 2장만.
+      const MAX_CHARACTER_RETRIES_PER_BOOK = 2;
+      let characterRetriesUsed = 0;
       const drawWorker = async (): Promise<void> => {
         for (;;) {
           const i = cursor++;
           if (i >= s.pages.length || ac.signal.aborted) return;
           try {
-            const r = await fetch("/api/illustrate-page", {
-              method: "POST",
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify({
-                scene: s.pages[i].imagePrompt,
-                artStyleId: artStyle,
-                characterSheet: sheet,
-                mood: mood.en,
-                shape: screenShape,
-                // 등장인물 — 이름과 생김새 설명을 함께 보낸다. 이름은 "이 사람들만,
-                // 각자 한 번씩"(복제 방지)에, 설명은 쪽마다 얼굴·옷이 흔들리지 않게
-                // 그림 시트와 겹쳐 붙잡는 데 쓰인다.
-                cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
-              }),
-              signal: ac.signal,
-            });
-            const d = await r.json();
-            images[i] = r.ok ? (d.image as string) : null;
+            const requestImage = async (qualityCorrection = "") => {
+              const r = await fetch("/api/illustrate-page", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({
+                  scene: s.pages[i].imagePrompt,
+                  artStyleId: artStyle,
+                  characterSheet: sheet,
+                  mood: mood.en,
+                  shape: screenShape,
+                  qualityCorrection,
+                  // 책 전체 인물을 보내되 서버가 장면에 이름이 있는 인물만 골라 잠근다.
+                  cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
+                }),
+                signal: ac.signal,
+              });
+              const data = (await r.json()) as {
+                image?: string;
+                qualityPassed?: boolean;
+                qualityWarning?: string;
+              };
+              return { ok: r.ok, data };
+            };
+
+            let result = await requestImage();
+            if (
+              result.ok &&
+              result.data.qualityPassed === false &&
+              characterRetriesUsed < MAX_CHARACTER_RETRIES_PER_BOOK
+            ) {
+              // 증분은 await 전에 동기적으로 실행돼 동시 worker끼리도 예산을 넘기지 않는다.
+              characterRetriesUsed++;
+              result = await requestImage(result.data.qualityWarning ?? "Character mismatch");
+            }
+            images[i] =
+              result.ok && result.data.qualityPassed !== false
+                ? (result.data.image ?? null)
+                : null;
           } catch (e) {
             if ((e as Error).name === "AbortError") return;
             // 한 장이 실패해도 나머지는 계속 그린다 — 그 쪽만 플레이스홀더가 된다.
@@ -1009,6 +1032,14 @@ export default function CreatePage() {
       await Promise.all(
         Array.from({ length: Math.min(CONCURRENT_IMAGES, s.pages.length) }, drawWorker),
       );
+      if (images.some((image) => !image)) {
+        setPageImages([...images]);
+        setError(
+          `인물·그림체 품질 검사를 통과하지 못한 장면이 있어 저장하지 않았어요. 이미지 생성은 기본 ${s.pages.length}장 + 재검수 최대 ${MAX_CHARACTER_RETRIES_PER_BOOK}장으로 제한돼요. 다시 시도해주세요.`,
+        );
+        setStep("story");
+        return;
+      }
     } catch (e) {
       // 취소는 정상 경로 — 그때까지 그린 쪽으로 조용히 마무리한다.
       // 그 외(키·결제·안전필터 등)는 조용히 넘기지 말고 이유를 보여주고 검토 화면으로
