@@ -1237,7 +1237,7 @@ export function BookViewer({ book }: { book: Book }) {
                   className="absolute inset-0 h-full w-full scale-125 object-cover opacity-55 blur-lg saturate-110"
                 />
                 {/* 무대 — 꽉 찬 그림은 모바일에서도 원본 비율의 실제 그림 영역에
-                    본문을 겹친다. 펼침면만 [그림+글자] 책 구조를 유지한다.
+                    본문을 겹친다. 펼침면의 [그림+글자] 책 구조는 가로에서만 유지한다.
                     아래 버튼 자리(6rem)는 비운다(겹침 방지).
                     틀 비율은 그림 실측(--ar) — 4:3 고정이면 와이드 그림이 '짤려' 보인다. */}
                 {/*
@@ -1268,7 +1268,7 @@ export function BookViewer({ book }: { book: Book }) {
                         ? // 펼침면 — 왼쪽 쪽. 무대가 이미 책 크기라 절반이 곧 한 쪽이다.
                           "[aspect-ratio:var(--ar)] portrait:w-full landscape:h-full landscape:w-1/2"
                         : "[aspect-ratio:var(--ar)] portrait:w-full landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
-                    } ${!spread && ratioOf(i) > 1 ? "portrait:translate-y-10" : ""}`}
+                    } ${ratioOf(i) > 1 ? "portrait:translate-y-10" : ""}`}
                     style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                   >
                     {page.video ? (
@@ -1309,23 +1309,24 @@ export function BookViewer({ book }: { book: Book }) {
                         }`}
                       />
                     )}
-                    {/* 가로 보기 전용: 그림 위에 얹는 글.
+                    {/* 꽉 찬 그림의 자막. 세로 화면에서는 저장된 보기 방식과 관계없이
+                        항상 그림 안에 현재 한두 줄만 표시한다. 펼침면의 전체 본문 종이는
+                        가로 화면에서만 적용한다.
                         예전엔 여기가 '하단 밴드'로 굳어 있어서, 설정에서 글자 위치를
                         바꿔도 그림 있는 책에서는 아무 반응이 없었다(설정이 안 먹는
                         것처럼 보이던 원인). 이제 글 없는 쪽과 같은 오버레이를 써서
                         위·아래·가운데·좌·우가 그대로 반영된다.
                         펼침면에서는 글이 옆 종이로 빠지므로 이 오버레이를 쓰지 않는다. */}
-                    {!spread &&
-                      overlayText(
-                        "block",
-                        "clamp(1.35rem,2.9vw,2.05rem)",
-                        true,
-                        "bottom",
-                      )}
+                    {overlayText(
+                      spread ? "block landscape:hidden" : "block",
+                      "clamp(1.35rem,2.9vw,2.05rem)",
+                      true,
+                      "bottom",
+                    )}
                   </div>
                   {/* 글자 칸.
                       · 세로(폰) + 꽉 찬 그림: 사용하지 않고 그림 위 오버레이를 쓴다.
-                      · 세로(폰) + 펼침면: 그림 아래에 전체 본문을 유지한다.
+                      · 세로(폰): 저장된 보기 방식과 무관하게 이 칸을 숨긴다.
                       · 가로 + 펼침면: 오른쪽 절반의 '종이' — 진짜 그림책 펼침면이 된다.
                       · 가로 + 꽉 찬 그림: 이 칸은 숨고 위의 하단 밴드가 대신한다.
                       아래 버튼(재생·배속·넘김)을 안 가리게 여백을 넉넉히 둔다. */}
@@ -1341,24 +1342,12 @@ export function BookViewer({ book }: { book: Book }) {
                           } as React.CSSProperties)
                         : undefined
                     }
-                    className={`flex shrink-0 items-center justify-center overflow-hidden ${
+                    className={`shrink-0 items-center justify-center overflow-hidden ${
                       spread
-                        ? "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:max-h-none landscape:h-full landscape:w-1/2 landscape:bg-[image:var(--paper)] landscape:bg-[length:14px_14px,18px_18px,100%_100%] landscape:px-[7%] landscape:pb-24 landscape:pt-8 landscape:shadow-[inset_18px_0_28px_-18px_rgba(90,60,20,0.35)]"
+                        ? "hidden landscape:flex landscape:h-full landscape:w-1/2 landscape:bg-[image:var(--paper)] landscape:bg-[length:14px_14px,18px_18px,100%_100%] landscape:px-[7%] landscape:pb-24 landscape:pt-8 landscape:shadow-[inset_18px_0_28px_-18px_rgba(90,60,20,0.35)]"
                         : "hidden"
                     }`}
                   >
-                    {/* 세로(어두운 배경) — 흰 글씨. 펼침면일 때도 세로에서는 이쪽을 쓴다. */}
-                    <AutoFitStoryText
-                      baseSize="clamp(1.15rem,4.4vw,1.85rem)"
-                      textScale={textScale}
-                      fontScale={font.scale}
-                      fontWeight={storyWeightForFont(font, weight)}
-                      className={`font-story max-h-full whitespace-pre-line break-keep text-pretty text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
-                        spread ? "landscape:hidden" : ""
-                      }`}
-                    >
-                      {renderRuns(false, !spread)}
-                    </AutoFitStoryText>
                     {/* 가로 + 펼침면 — 종이 위 어두운 글씨. 색칠도 종이에 맞춰 진한 주황. */}
                     {spread && (
                       // 종이 한 쪽에 8쪽짜리 본문(150~250자)이 들어가야 해서, 글자가 크면
