@@ -1469,7 +1469,17 @@ export default function CreatePage() {
       narrationStyle,
       coverImage: hosted.cover,
       pageCount: s.pages.length,
-      pages: s.pages.map((p, i) => ({ text: p.text, voiceDirection: p.voiceDirection, image: hosted.images[i] ?? null })),
+      // 나중에 한 쪽만 다시 그릴 때 쓸 재료를 함께 남긴다 — 이게 없으면 다시 그린
+      // 그림만 화풍·인물·비율이 어긋나 오히려 더 눈에 띈다.
+      artStyleId: artStyle,
+      shape: screenShape,
+      cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
+      pages: s.pages.map((p, i) => ({
+        text: p.text,
+        imagePrompt: p.imagePrompt,
+        voiceDirection: p.voiceDirection,
+        image: hosted.images[i] ?? null,
+      })),
     };
     await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
     clearCreateDraft(draftOwner);

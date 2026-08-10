@@ -10,6 +10,13 @@ export type VoiceDirection = {
 
 export type BookPage = {
   text: string;
+  /**
+   * 이 쪽을 그릴 때 쓴 장면 설명(@@IMG@@).
+   *
+   * 나중에 이 쪽만 다시 그릴 때 필요하다 — 없으면 본문에서 짐작해 그려야 해서
+   * 원래 그림과 어긋난다. 예전 책에는 없으므로(있으면 쓰고 없으면 본문으로) 선택이다.
+   */
+  imagePrompt?: string;
   /** 이야기 생성 단계에서 정한 페이지별 성우 연기 지시. 부모 복제 음성에는 강제 적용하지 않는다. */
   voiceDirection?: VoiceDirection;
   /** 4:3 가로 삽화. 아직 생성 전이면 null이고 뷰어가 플레이스홀더를 그린다. */
@@ -81,5 +88,15 @@ export type Book = {
   pageCount?: number;
   /** 책장에서 숨김 (주소로는 열림). 다듬는 중인 책을 서가에서 내릴 때 쓴다 — DB의 hidden_at 전신. */
   hidden?: boolean;
+  /**
+   * 만들 때 고른 그림체와 등장인물 — 나중에 한 쪽만 다시 그릴 때 쓴다.
+   *
+   * 이게 없으면 다시 그린 그림만 화풍과 인물이 어긋나 더 눈에 띈다.
+   * 예전 책에는 없으므로 선택이다(없으면 옆 쪽 그림을 기준으로 삼는다).
+   */
+  artStyleId?: string;
+  cast?: { name: string; description: string }[];
+  /** 만들 때 고른 화면 모양 — 다시 그릴 때 같은 비율로 그리기 위해. */
+  shape?: "phone" | "tablet";
   pages: BookPage[];
 };

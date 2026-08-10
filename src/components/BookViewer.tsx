@@ -337,10 +337,15 @@ export function BookViewer({ book }: { book: Book }) {
    */
   const editable = book.id.startsWith("my-");
   const [master, setMaster] = useState(false);
+  /** 다시 그린 그림을 올릴 cafe24 폴더 이름 — 만들 때와 같이 회원 아이디로 나눈다. */
+  const [redrawOwner, setRedrawOwner] = useState("guest");
   useEffect(() => {
     if (!editable) return;
     loadSession()
-      .then((s) => setMaster(s.isMaster))
+      .then((s) => {
+        setMaster(s.isMaster);
+        if (s.profile?.username) setRedrawOwner(s.profile.username);
+      })
       .catch(() => {});
   }, [editable]);
   const [editing, setEditing] = useState(false);
@@ -364,6 +369,97 @@ export function BookViewer({ book }: { book: Book }) {
       window.location.reload();
     } finally {
       setSaving(false);
+    }
+  }
+
+  /*
+   * 이 쪽 그림 다시 그리기 (마스터 전용, 내가 만든 동화만).
+   *
+   * 삽화가 실패해도 책은 저장되게 바꾼 뒤로, 그림이 빠진 쪽이 남을 수 있다.
+   * 그 한 쪽 때문에 동화를 통째로 다시 만들면 토큰과 나머지 그림이 다 날아가므로,
+   * 그 쪽만 다시 그리는 길을 둔다.
+   *
+   * 어긋나지 않게 하는 것이 핵심이다. 만들 때 남겨 둔 그림체·인물·비율을 쓰고,
+   * 옆 쪽의 성공한 그림을 '이 책은 이렇게 생겼다'는 기준으로 함께 보낸다.
+   * 예전 책은 그 재료가 없으므로 본문과 옆 쪽 그림만으로 최선을 다한다.
+   */
+  const [redrawing, setRedrawing] = useState(false);
+
+  async function redrawPage() {
+    const page = book.pages[index];
+    const scene = page.imagePrompt?.trim() || page.text;
+    if (!scene) return;
+    if (
+      !window.confirm(
+        `${index + 1}쪽 그림을 다시 그릴까요?\n\n그림 한 장 값(약 ₩55)이 나가고, 글과 목소리는 그대로예요.`,
+      )
+    ) {
+      return;
+    }
+
+    setRedrawing(true);
+    try {
+      // 옆 쪽의 성공한 그림 — 화풍·장소가 이 책과 맞게 이어지도록 기준으로 보낸다.
+      const sibling = book.pages.find((p, i) => i !== index && p.image);
+      const res = await fetch("/api/illustrate-page", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          scene,
+          storyText: page.text,
+          artStyleId: book.artStyleId,
+          styleReference: sibling?.image ?? "",
+          styleReferenceScene: sibling?.imagePrompt ?? "",
+          shape: book.shape,
+          cast: book.cast ?? [],
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { image?: string; error?: string };
+      if (!res.ok || !data.image) {
+        window.alert(data.error ?? "그림을 그리지 못했어요. 잠시 뒤 다시 눌러 주세요.");
+        return;
+      }
+
+      /*
+       * 그림은 cafe24로 올리고 책에는 주소만 남긴다 — 그림을 책 데이터에 넣으면
+       * 책을 열 때마다 그 그림이 DB에서 빠져나가 전송량을 먹는다(8/6에 옮긴 이유).
+       * 올리기가 실패하면 그림 자체는 살리되 예전 방식으로 넣는다.
+       */
+      let stored = data.image;
+      try {
+        const up = await fetch("/api/upload-art", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            owner: redrawOwner,
+            bookId: book.id,
+            name: `p${index + 1}-redraw-${Date.now().toString(36)}`,
+            image: data.image,
+          }),
+        });
+        if (up.ok) {
+          const { url } = (await up.json()) as { url?: string };
+          if (url) stored = url;
+        }
+      } catch {
+        /* 못 올려도 그림은 남긴다 */
+      }
+
+      const next: Book = {
+        ...book,
+        pages: book.pages.map((p, i) => (i === index ? { ...p, image: stored } : p)),
+        // 표지가 비어 있던 책이면 이 그림으로 채워 준다 — 책장에서 무지개로 보이던 것.
+        coverImage: book.coverImage ?? stored,
+      };
+      if (!(await updateBookData(book.id, next))) {
+        window.alert("그림은 그렸는데 저장하지 못했어요. 권한(SQL)을 확인해 주세요.");
+        return;
+      }
+      window.location.reload();
+    } catch (e) {
+      window.alert((e as Error).message || "그림을 그리지 못했어요.");
+    } finally {
+      setRedrawing(false);
     }
   }
 
@@ -1570,18 +1666,36 @@ export function BookViewer({ book }: { book: Book }) {
           글자가 소실돼 ◆? 로 나오는 쪽은 사람이 다시 써 넣는 수밖에 없다.
           그 한 글자 때문에 동화를 다시 만들면 토큰과 그림이 통째로 날아간다. */}
       {master && editable && !editing && (
-        <button
-          type="button"
-          onClick={() => {
-            setDraft(book.pages[index].text);
-            setEditing(true);
-          }}
-          className="absolute left-3 top-16 z-20 rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/icons/func-edit.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
-          글 고치기
-        </button>
+        <div className="absolute left-3 top-16 z-20 flex flex-col items-start gap-1.5">
+          <button
+            type="button"
+            onClick={() => {
+              setDraft(book.pages[index].text);
+              setEditing(true);
+            }}
+            className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/icons/func-edit.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
+            글 고치기
+          </button>
+          {/* 이 쪽 그림 다시 그리기 — 삽화가 빠졌거나 마음에 안 드는 쪽을 그 쪽만 고친다.
+              그림이 없는 쪽은 문구를 바꿔, 비어 있다는 걸 먼저 알아채게 한다. */}
+          <button
+            type="button"
+            onClick={redrawPage}
+            disabled={redrawing}
+            className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur disabled:opacity-60"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/icons/func-remake.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
+            {redrawing
+              ? "그리는 중…"
+              : book.pages[index].image
+                ? "이 쪽 그림 다시 그리기"
+                : "이 쪽 그림 그리기"}
+          </button>
+        </div>
       )}
       {editing && (
         <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
