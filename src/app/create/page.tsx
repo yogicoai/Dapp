@@ -18,6 +18,7 @@ import {
   saveChild,
   saveMyBook,
 } from "@/lib/prefs";
+import { rewriteScene } from "@/lib/scene-edit";
 import {
   illustrationTokenCost,
   MAX_BOOKS_PER_USER,
@@ -361,7 +362,19 @@ export type FriendEntry = { name: string; gender: string };
  * 걸리는 사람도 거의 없지만, 값이 걸린 일이니 버리는 쪽이 맞다.
  */
 const CREATE_DRAFT_VERSION = 3;
+/*
+ * 임시저장이 살아 있는 시간 — 값을 냈느냐로 갈린다.
+ *
+ * 재료만 고르다 만 것은 10분이면 된다. 어제 채우다 만 화면이 오늘 되살아나면
+ * 오히려 당황스럽다.
+ *
+ * 그런데 대본이 나온 뒤는 다르다. 그때는 이미 대본 값을 냈다. 아이가 부르거나
+ * 전화가 와서 자리를 비운 사이에 지워 버리면, 낸 토큰과 대본이 같이 사라진다.
+ * 예전엔 마지막에 한 번에 받아서 날아가도 손해가 없었지만 이제는 아니다.
+ * 그래서 값을 낸 임시저장은 이레 동안 지키고, 부모가 돌아와 이어서 만들게 한다.
+ */
 const CREATE_DRAFT_TTL_MS = 10 * 60 * 1000;
+const PAID_DRAFT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const CREATE_DRAFT_KEY = "voice-storybook:create-draft";
 
 type CreateDraft = {
@@ -417,7 +430,9 @@ function loadCreateDraft(owner: string): CreateDraft | null {
   const key = createDraftKey(owner);
   try {
     const value = JSON.parse(window.localStorage.getItem(key) || "null") as CreateDraft | null;
-    if (!value || value.version !== CREATE_DRAFT_VERSION || Date.now() - value.savedAt > CREATE_DRAFT_TTL_MS) {
+    // 대본 값을 낸 임시저장은 오래 지킨다 — 지우면 낸 토큰까지 같이 사라진다.
+    const ttl = value?.scriptCharged ? PAID_DRAFT_TTL_MS : CREATE_DRAFT_TTL_MS;
+    if (!value || value.version !== CREATE_DRAFT_VERSION || Date.now() - value.savedAt > ttl) {
       window.localStorage.removeItem(key);
       return null;
     }
@@ -672,6 +687,24 @@ export default function CreatePage() {
   useEscClose(() => abortRef.current?.abort(), busy || step === "illustrate");
   // 화면을 떠나면 진행 중인 요청도 끊는다 — 아무도 안 볼 삽화에 비용을 쓰지 않는다.
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  /*
+   * 그림을 그리는 동안 창을 닫으려 하면 한 번 물어본다.
+   *
+   * 8쪽을 그리다 6쪽에서 닫으면 그 여섯 장이 그대로 사라진다. 다시 들어와도
+   * 대본은 남지만 그림은 처음부터 다시 그려야 하고, 그림 값을 또 낸다.
+   * 브라우저가 보여 주는 문구는 우리가 정할 수 없다(보안상 고정 문구다) —
+   * 그래도 '닫으면 뭔가 잃는다'는 신호는 준다.
+   */
+  useEffect(() => {
+    if (step !== "illustrate") return;
+    const warn = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [step]);
 
   // 로그인한 아이디 — 삽화를 올릴 cafe24 폴더 이름(books/<아이디>/…)으로 쓴다.
   const [acctId, setAcctId] = useState<string | null>(null);
@@ -1017,6 +1050,9 @@ export default function CreatePage() {
   /** 대본에서 지금 고치고 있는 쪽 번호. null이면 아무것도 안 고치는 중. */
   const [editingPage, setEditingPage] = useState<number | null>(null);
   const [pageDraft, setPageDraft] = useState("");
+  /** 제목을 고치는 중인지. */
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState("");
   /**
    * 그림 그리기 전에 부모가 덧붙이는 장소 설명(선택).
    *
@@ -1263,7 +1299,13 @@ export default function CreatePage() {
     }
   }
 
-  /** 대본에서 한 쪽 문장을 부모가 고친 것을 반영한다. */
+  /**
+   * 대본에서 한 쪽 문장을 부모가 고친 것을 반영한다.
+   *
+   * 본문만 바꾸면 안 된다. 그림은 본문이 아니라 따로 적힌 장면 지시를 보고 그리기
+   * 때문에, 본문만 고치면 "사과를 배로" 바꿔도 그림에는 사과가 그대로 남는다.
+   * 장면 지시의 잠금 줄(인물·장소·물건)은 두고 '일어나는 일'만 갈아 끼운다.
+   */
   function savePageText(index: number) {
     // 맥에서 입력한 한글은 자모가 분리된 형태(NFD)로 들어올 수 있다. 그대로 두면
     // 동글 같은 글꼴에서 ◆?로 깨져 보인다 — 저장 전에 한 번 합쳐 둔다.
@@ -1274,10 +1316,37 @@ export default function CreatePage() {
     }
     setStory((prev) =>
       prev
-        ? { ...prev, pages: prev.pages.map((p, i) => (i === index ? { ...p, text } : p)) }
+        ? {
+            ...prev,
+            pages: prev.pages.map((p, i) =>
+              i === index
+                ? {
+                    ...p,
+                    text,
+                    // 등장인물도 고친 문장 기준으로 다시 센다 — 빠진 인물이 그림에 남지 않게.
+                    imagePrompt: rewriteScene(
+                      p.imagePrompt,
+                      text,
+                      prev.characters.map((c) => c.name),
+                    ),
+                  }
+                : p,
+            ),
+          }
         : prev,
     );
     setEditingPage(null);
+  }
+
+  /** 제목도 고칠 수 있어야 한다 — 책장에서 제일 먼저 보이는 것이 제목이다. */
+  function saveTitle() {
+    const title = titleDraft.normalize("NFC").trim().slice(0, 40);
+    if (!title) {
+      setEditingTitle(false);
+      return; // 제목 없는 책은 만들지 않는다
+    }
+    setStory((prev) => (prev ? { ...prev, title } : prev));
+    setEditingTitle(false);
   }
 
   async function makeStory() {
@@ -1333,6 +1402,7 @@ export default function CreatePage() {
       setScriptCharged(true);
       if (isRewrite) setStoryRewrites((n) => n + 1);
       setEditingPage(null); // 새 대본이니 고치던 자리는 닫는다
+      setEditingTitle(false);
       setStory(story);
       setStep("story");
     } catch (e) {
@@ -2734,6 +2804,10 @@ export default function CreatePage() {
                   }}
                 />
               </div>
+              {/* 닫으면 그때까지 그린 그림이 사라지고 그림 값을 다시 낸다 — 미리 말해 준다. */}
+              <p className="break-keep text-center text-[11px] font-medium text-neutral-400">
+                이 화면을 닫으면 그리던 그림이 사라져요. 잠깐만 기다려 주세요.
+              </p>
               {/* 기다리는 동안 이야기를 먼저 읽는다 — 글은 이미 다 나와 있으니
                   그림을 기다리며 한 쪽씩 보여준다. 빈 화면을 보며 기다리지 않게. */}
               <div className="w-full rounded-3xl bg-white/80 px-5 py-4 shadow-inner">
@@ -2947,9 +3021,54 @@ export default function CreatePage() {
                 <br />그 글 그대로 그림을 그려요.
               </p>
               <div className="rounded-2xl p-5" style={{ background: accentSoft }}>
-                <h2 className="text-center text-xl font-extrabold text-neutral-800">
-                  {story.title}
-                </h2>
+                {/* 제목도 눌러서 고친다 — 책장에서 제일 먼저 보이는 것이 제목이다. */}
+                {editingTitle ? (
+                  <div className="flex flex-col gap-2">
+                    <input
+                      autoFocus
+                      value={titleDraft}
+                      onChange={(e) => setTitleDraft(e.target.value.slice(0, 40))}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") saveTitle();
+                        if (e.key === "Escape") setEditingTitle(false);
+                      }}
+                      className="w-full rounded-xl border-2 border-white bg-white/90 px-3 py-2 text-center text-xl font-extrabold text-neutral-800 outline-none"
+                    />
+                    <div className="flex justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={saveTitle}
+                        style={{ background: accent }}
+                        className="rounded-full px-4 py-1.5 text-xs font-extrabold text-white"
+                      >
+                        확인
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditingTitle(false)}
+                        className="rounded-full bg-white px-4 py-1.5 text-xs font-extrabold text-neutral-500"
+                      >
+                        취소
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTitleDraft(story.title);
+                      setEditingTitle(true);
+                    }}
+                    className="mx-auto flex w-full items-center justify-center gap-1.5 rounded-xl px-2 py-1 text-center transition-colors hover:bg-white/50"
+                  >
+                    <span className="break-keep text-xl font-extrabold text-neutral-800">
+                      {story.title}
+                    </span>
+                    <span className="shrink-0 text-[11px] font-bold text-neutral-400 underline">
+                      고치기
+                    </span>
+                  </button>
+                )}
                 {/* 쪽별로 나눠 보여준다 — 책이 어떻게 넘어갈지 그대로 보인다.
                     문장을 누르면 그 자리에서 고칠 수 있다(그림은 고친 글을 보고 그린다). */}
                 <ol className="mt-4 flex max-h-[42dvh] flex-col gap-3 overflow-y-auto pr-1">
@@ -3096,6 +3215,37 @@ export default function CreatePage() {
                   {!master && storyRewrites >= MAX_STORY_REWRITES
                     ? "다시 쓰기를 모두 썼어요"
                     : `같은 줄거리로 다시 쓰기 🔄${master ? "" : ` (${MAX_STORY_REWRITES - storyRewrites}번 남음)`}`}
+                </button>
+                {/*
+                  * 처음부터 다시 가는 길 — 이게 없으면 대본이 통째로 마음에 안 들 때
+                  * 갇힌다(다시 쓰기는 같은 줄거리 안에서만 돈다).
+                  * 다만 이야기 값은 이미 냈으니, 버리기 전에 반드시 물어본다.
+                  */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (
+                      !master &&
+                      !window.confirm(
+                        `지금 이야기를 버리고 재료부터 새로 만들까요?\n이미 낸 이야기 값 ${scriptTokenCost(story.pages.length)}개는 돌려받을 수 없어요.`,
+                      )
+                    ) {
+                      return;
+                    }
+                    setStory(null);
+                    setOutline(null);
+                    setScriptCharged(false);
+                    setStoryRewrites(0);
+                    setOutlineRetries(0);
+                    setLocationDetail("");
+                    setEditingPage(null);
+                    setEditingTitle(false);
+                    setError("");
+                    setStep("theme");
+                  }}
+                  className="text-xs font-bold text-neutral-400"
+                >
+                  ← 재료 바꿔 새로 만들기
                 </button>
               </div>
             </section>
