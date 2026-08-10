@@ -466,6 +466,20 @@ const MAX_OUTLINE_RETRIES = 3;
  */
 const MAX_STORY_REWRITES = 2;
 
+/**
+ * 아이 사진으로 주인공 만들기 — **베타 시험용 스위치** (2026-08-10 사장님 요청).
+ *
+ * 이 값을 false로 두면 화면에서 사라진다. 시험이 끝나면 이 커밋을 통째로 되돌리는
+ * 것이 가장 깨끗하다(git revert 한 번).
+ *
+ * 정식 기능으로 열려면 그전에 반드시 정리해야 할 것이 있다 —
+ * 아이 얼굴은 개인정보보호법에서 민감하게 다루는 자료이고, 만 14세 미만은
+ * 법정대리인 동의가 필요하다. 사진은 구글(Gemini)로 나간다. 지금은 사장님이
+ * 본인 아이로 한 번 해 보는 것이라 그 판단이 사장님께 있지만, 남의 아이 사진을
+ * 받는 순간 이야기가 완전히 달라진다.
+ */
+const PHOTO_HERO_BETA = true;
+
 /** "친구들이랑"에서 친구를 몇 명까지 받을지. 주인공까지 넷이면 그림 한 장에 담기는 한계다. */
 const MAX_FRIENDS = 3;
 
@@ -804,6 +818,11 @@ export default function CreatePage() {
    * "내가 그린 애가 주인공"이라는 몰입이 훨씬 크다(피드백 7번).
    */
   const [drawing, setDrawing] = useState<string | null>(null);
+  /**
+   * 아이 사진(베타 시험) — 캐릭터를 만드는 데만 쓰고 어디에도 저장하지 않는다.
+   * 임시저장(localStorage)에도 담기지 않는다(draftContent에 없다).
+   */
+  const [photo, setPhoto] = useState<string | null>(null);
   const [drawingBusy, setDrawingBusy] = useState(false);
 
   /**
@@ -887,7 +906,7 @@ export default function CreatePage() {
   }
 
   /** 올린 그림을 캔버스로 줄여 data URL로 만든다 — 원본 사진은 몇 MB라 그대로 보내면 느리다. */
-  async function pickDrawing(file: File) {
+  async function pickDrawing(file: File, into: (url: string) => void = setDrawing) {
     setDrawingBusy(true);
     try {
       const url = URL.createObjectURL(file);
@@ -904,7 +923,7 @@ export default function CreatePage() {
       canvas.height = Math.round(img.height * scale);
       canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
       URL.revokeObjectURL(url);
-      setDrawing(canvas.toDataURL("image/jpeg", 0.85));
+      into(canvas.toDataURL("image/jpeg", 0.85));
     } catch (e) {
       setError((e as Error).message || "그림을 읽지 못했어요.");
     } finally {
@@ -1459,6 +1478,7 @@ export default function CreatePage() {
           characters: s.characters,
           artStyleId: artStyle,
           drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
+          photo, // 아이 사진(베타 시험) — 있으면 이 얼굴 특징으로 캐릭터를 만든다
           // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
           looks: heroLooks,
         }),
@@ -2543,6 +2563,58 @@ export default function CreatePage() {
                   그려줘요. 올린 그림은 캐릭터를 만드는 데만 쓰고 저장하지 않아요.
                 </p>
               </div>
+
+              {/*
+                * 아이 사진으로 주인공 만들기 — 베타 시험용. PHOTO_HERO_BETA로 끈다.
+                * 그림을 이미 올렸으면 이 칸은 숨긴다 — 둘 다 보내면 무엇을 기준으로
+                * 그릴지 모호해져서, 화면에서 아예 하나만 고르게 한다.
+                */}
+              {PHOTO_HERO_BETA && !drawing && (
+                <div className="flex flex-col items-center gap-2 rounded-3xl border-2 border-dashed border-amber-200 bg-amber-50 px-5 py-4">
+                  <p className="break-keep text-center text-sm font-extrabold text-amber-800">
+                    🧪 아이 사진으로 주인공 만들기{" "}
+                    <span className="font-bold text-amber-500">(시험 중)</span>
+                  </p>
+                  {photo ? (
+                    <div className="flex flex-col items-center gap-2">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={photo}
+                        alt="올린 아이 사진"
+                        className="h-28 w-28 rounded-2xl border-4 border-white object-cover shadow"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setPhoto(null)}
+                        className="rounded-full bg-white px-4 py-1.5 text-xs font-extrabold text-neutral-500 shadow-sm transition hover:bg-neutral-50"
+                      >
+                        ✕ 이 사진 빼기
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer rounded-full bg-white px-5 py-2.5 text-sm font-extrabold text-amber-800 shadow-sm transition hover:bg-amber-100">
+                      {drawingBusy ? "읽는 중…" : "📷 아이 사진 올리기"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) void pickDrawing(f, setPhoto);
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
+                  )}
+                  <p className="break-keep text-center text-[11px] font-medium leading-relaxed text-amber-700">
+                    얼굴을 그대로 그리는 게 아니라, 머리색·머리모양·피부톤 같은 특징만 읽어
+                    동화 그림체의 캐릭터로 만들어요.
+                    <br />
+                    사진은 캐릭터를 만드는 데만 쓰고 <b>어디에도 저장하지 않아요</b> — 다만
+                    만드는 동안 구글 그림 서버로 한 번 전송돼요.
+                  </p>
+                </div>
+              )}
 
               {/* 어느 화면에서 볼지 — 삽화를 그 비율로 그린다. 핸드폰은 세로,
                   태블릿은 가로. 기기에 맞춰 그려야 그림이 화면을 꽉 채운다. */}
