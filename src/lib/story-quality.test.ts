@@ -104,6 +104,54 @@ describe("validateStoryQuality", () => {
     assert.ok(repaired.pages[0].imagePrompt.includes("장소: 별빛 숲길"));
   });
 
+  it("같은 물건은 처음 적은 한 줄로 되돌린다 — 아이스크림이 쪽마다 바뀌지 않게", () => {
+    const value = story([
+      "민이는 분홍 아이스크림을 받아 들고 활짝 웃었어요. 정말 신이 났어요.",
+      "민이는 아이스크림을 한 입 먹고 눈을 동그랗게 떴어요. 참 달콤했어요.",
+    ]);
+    value.pages[0].imagePrompt =
+      "등장인물 1명: 민이. 물건: 아이스크림 — 분홍색 동그란 덩어리 하나, 갈색 콘 위에. 민이가 웃는다.";
+    // 모델이 말을 바꾼 경우 — 컵에 담긴 초코 두 덩이가 되어 다른 물건이 된다.
+    value.pages[1].imagePrompt =
+      "등장인물 1명: 민이. 물건: 아이스크림 — 초코색 두 덩이, 유리컵에 스프링클을 얹고. 민이가 먹는다.";
+
+    const repaired = repairStoryContinuity(value);
+
+    assert.match(repaired.pages[1].imagePrompt, /물건: 아이스크림 — 분홍색 동그란 덩어리 하나, 갈색 콘 위에/);
+    assert.ok(!repaired.pages[1].imagePrompt.includes("스프링클"));
+    // 물건 줄만 갈아 끼우고 그 쪽의 행동은 건드리지 않는다.
+    assert.ok(repaired.pages[1].imagePrompt.includes("민이가 먹는다"));
+  });
+
+  it("물건이 둘이어도 각자 자기 첫 줄로 되돌린다", () => {
+    const value = story([
+      "민이는 노란 곰인형과 빨간 우산을 챙겼어요. 오늘은 비가 온대요.",
+      "민이는 우산을 펴고 곰인형을 꼭 안았어요. 빗방울 소리가 즐거웠어요.",
+    ]);
+    value.pages[0].imagePrompt =
+      "등장인물 1명: 민이. 물건: 곰인형 — 노란 갈색, 아이 팔만 한 크기. 물건: 우산 — 빨간색 동그란 우산 하나. 민이가 챙긴다.";
+    value.pages[1].imagePrompt =
+      "등장인물 1명: 민이. 물건: 곰인형 — 흰색 작은 토끼 모양. 물건: 우산 — 파란 줄무늬 우산. 민이가 안는다.";
+
+    const repaired = repairStoryContinuity(value);
+
+    assert.match(repaired.pages[1].imagePrompt, /물건: 곰인형 — 노란 갈색, 아이 팔만 한 크기/);
+    assert.match(repaired.pages[1].imagePrompt, /물건: 우산 — 빨간색 동그란 우산 하나/);
+  });
+
+  it("처음 나오는 물건은 그대로 둔다 — 새 물건까지 옛 물건으로 바꾸지 않는다", () => {
+    const value = story([
+      "민이는 노란 곰인형을 안고 잠들었어요. 아주 포근한 밤이었어요.",
+      "다음 날 민이는 빨간 풍선을 손에 쥐고 뛰어갔어요. 바람이 시원했어요.",
+    ]);
+    value.pages[0].imagePrompt = "등장인물 1명: 민이. 물건: 곰인형 — 노란 갈색, 아이 팔만 한 크기. 민이가 안는다.";
+    value.pages[1].imagePrompt = "등장인물 1명: 민이. 물건: 풍선 — 빨간색 동그란 풍선 하나. 민이가 뛴다.";
+
+    const repaired = repairStoryContinuity(value);
+
+    assert.match(repaired.pages[1].imagePrompt, /물건: 풍선 — 빨간색 동그란 풍선 하나/);
+  });
+
   it("장소 권고는 제작을 막지 않고 안전·중복 오류만 막는다", () => {
     assert.equal(isBlockingStoryQualityIssue("2쪽 삽화에 고정 장소 설명이 없습니다."), false);
     assert.equal(isBlockingStoryQualityIssue("2쪽 본문이 다른 페이지와 중복됩니다."), true);

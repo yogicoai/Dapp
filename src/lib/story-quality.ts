@@ -15,6 +15,13 @@ function compact(text: string): string {
 }
 
 const LOCATION_PATTERN = /장소\s*:\s*([^\n—.-]+?)\s*[—-]\s*([^\n.]+)/;
+/**
+ * `물건: 이름 — 고정 모습.` — 두 쪽 이상 나오는 물건을 잠그는 줄.
+ *
+ * 장소와 달리 g 플래그를 쓴다. 한 쪽에 물건이 둘까지 나올 수 있어서다.
+ * (g 정규식은 lastIndex를 들고 다녀 재사용하면 결과가 밀린다 — 쓸 때마다 새로 만든다.)
+ */
+const PROP_SOURCE = "물건\\s*:\\s*([^\\n—.-]+?)\\s*[—-]\\s*([^\\n.]+)";
 const MOVE_PATTERN = /(가기로|가던|갔|가요|갑니다|도착|출발|나섰|나가|들어갔|돌아왔|돌아가|옮겼|이동|건너갔|향했|찾아갔|다음\s*날|그날\s*(아침|오후|저녁)|잠시\s*후|집을\s*나서|차를\s*타|버스를\s*타|걸어서)/;
 
 type LocationHint = { family: string; name: string; description: string; index: number };
@@ -45,12 +52,33 @@ function locationFamily(text: string): string {
   return inferLocationFromText(text)?.family ?? compact(text);
 }
 
+/**
+ * 같은 물건이 쪽마다 다른 물건이 되지 않게, 처음 적은 한 줄로 되돌린다.
+ *
+ * 1쪽은 "콘에 담긴 딸기 아이스크림", 3쪽은 "컵에 담긴 초코 아이스크림"이 되는 사고가
+ * 흔하다 — 아이는 같은 물건으로 못 알아본다. 프롬프트로 "한 글자도 다르지 않게
+ * 반복하라"고 일러도 모델은 말을 바꾼다. 그래서 코드로 되돌린다: 그 물건 이름이
+ * 처음 나온 줄이 그 책의 정답이고, 뒤에서 뭐라 썼든 그 줄로 갈아 끼운다.
+ */
+function lockProps(imagePrompt: string, fixedProps: Map<string, string>): string {
+  return imagePrompt.replace(new RegExp(PROP_SOURCE, "g"), (clause, rawName: string) => {
+    const key = compact(rawName);
+    if (!key) return clause;
+    const canonical = fixedProps.get(key);
+    if (canonical) return canonical;
+    fixedProps.set(key, clause);
+    return clause;
+  });
+}
+
 /** 모델이 장소 문구를 조금씩 바꿔도 이미지 생성 전에 이전 장면과 같은 장소로 정규화한다. */
 export function repairStoryContinuity(story: ParsedStory): ParsedStory {
   const fixedLocations = new Map<string, string>();
+  const fixedProps = new Map<string, string>();
   let previous: { name: string; clause: string; text: string } | null = null;
   const pages = story.pages.map((page) => {
-    let imagePrompt = page.imagePrompt;
+    // 물건 잠금은 장소 손질과 얽히지 않는다 — 먼저 끝내 두면 아래 어느 갈래로 빠져도 적용된다.
+    let imagePrompt = lockProps(page.imagePrompt, fixedProps);
     let location = LOCATION_PATTERN.exec(imagePrompt);
     const textLocation = inferLocationFromText(page.text);
     if (location && textLocation && locationFamily(location[1]) !== textLocation.family) {

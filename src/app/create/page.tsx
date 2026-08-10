@@ -1325,7 +1325,7 @@ export default function CreatePage() {
       if (!master && !scriptCharged) {
         const cost = scriptTokenCost(story.pages.length);
         if (!(await spendTokens(cost))) {
-          setError(`토큰이 부족해요. 이야기를 만들려면 ${cost}개가 필요해요.`);
+          setError(`토큰이 부족해요. 대본을 만들려면 ${cost}개가 필요해요.`);
           return; // 줄거리 화면에 그대로 남는다 — 대본은 버린다
         }
         setTokens((t) => Math.max(0, t - cost));
@@ -1733,7 +1733,7 @@ export default function CreatePage() {
               className="h-24 w-24 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white"
             />
             <p className="text-lg font-extrabold text-white drop-shadow">
-              {step === "outline" ? "동화를 그리고 있어요…" : "이야기를 짓고 있어요…"}
+              {step === "outline" ? "동화를 그리고 있어요…" : "대본을 쓰고 있어요…"}
             </p>
           </div>
         )}
@@ -2527,7 +2527,7 @@ export default function CreatePage() {
                 </div>
                 <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
                   ⭐ {age ?? "우리 아이"}세에게 알맞은 길이예요 · 이 장수면{" "}
-                  <b className="text-neutral-600">이야기 {scriptCost}개</b>
+                  <b className="text-neutral-600">대본 {scriptCost}개</b>
                   {IMAGES_ENABLED ? ` + 그림 ${imageCost}개` : ""} 토큰이 들어요
                 </p>
               </div>
@@ -2872,14 +2872,14 @@ export default function CreatePage() {
                 {confirmMake ? (
                   <div className="flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-neutral-200 p-3">
                     <p className="text-sm font-extrabold text-neutral-700">
-                      이 줄거리로 이야기를 써 볼까요?
+                      이 줄거리로 대본을 만들까요?
                     </p>
                     <p className="flex items-center justify-center gap-1 break-keep text-center text-[11px] font-medium text-neutral-400">
                       <span aria-hidden className="inline-block shrink-0 rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
                       {outline.scenes.length}장 ·{" "}
                       {master
                         ? "관리자는 토큰이 들지 않아요"
-                        : `지금은 이야기 값 ${scriptTokenCost(outline.scenes.length)}개만 나가요 (내 잔액 ${tokens}개). 그림은 이야기를 읽어 보고 정해요.`}
+                        : `지금은 대본 값 ${scriptTokenCost(outline.scenes.length)}개만 나가요 (내 잔액 ${tokens}개). 그림은 대본을 읽어 보고 정해요.`}
                     </p>
                     {bookLimitReached ? (
                       <p className="text-center text-xs font-bold text-red-600">
@@ -2911,7 +2911,7 @@ export default function CreatePage() {
                 ) : (
                   <BigButton accent={accent} accentDark={accentDark} onClick={() => setConfirmMake(true)}>
                     {/* 여기서는 글만 짓는다 — 그림은 대본을 읽어 보고 정한다. */}
-                    이 줄거리로 이야기 짓기 ✍️
+                    이야기로 대본 구성하기 ✍️
                   </BigButton>
                 )}
                 <button
@@ -2940,7 +2940,7 @@ export default function CreatePage() {
           {step === "story" && story && (
             <section className="flex flex-col gap-4">
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
-                이야기가 완성됐어요!
+                대본이 완성됐어요!
               </h1>
               <p className="-mt-2 break-keep text-center text-xs font-medium text-neutral-400">
                 그림은 아직 그리지 않았어요. 문장을 눌러 마음에 들게 고친 뒤,
@@ -3021,17 +3021,18 @@ export default function CreatePage() {
                     htmlFor="location-detail"
                     className="block break-keep text-sm font-extrabold text-neutral-700"
                   >
-                    그림 속 장소를 좀 더 알려 주실래요? <span className="font-bold text-neutral-400">(안 쓰셔도 돼요)</span>
+                    그림 속 장소나 물건을 좀 더 알려 주실래요?{" "}
+                    <span className="font-bold text-neutral-400">(안 쓰셔도 돼요)</span>
                   </label>
                   <input
                     id="location-detail"
                     value={locationDetail}
                     onChange={(e) => setLocationDetail(e.target.value.slice(0, 120))}
-                    placeholder="예: 계곡 — 회색 자갈 바닥, 물가에 넓적한 바위 하나, 짙은 초록 나무"
+                    placeholder="예: 계곡은 회색 자갈 바닥에 넓적한 바위 하나, 아이스크림은 분홍색 한 덩이"
                     className="mt-2 w-full rounded-xl border-2 border-neutral-100 bg-neutral-50 px-3 py-2.5 text-sm font-medium text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-200"
                   />
                   <p className="mt-1.5 break-keep text-[11px] font-medium text-neutral-400">
-                    바닥·눈에 띄는 것 하나·색 두 가지만 적어 주시면 모든 쪽이 같은 곳처럼 보여요.
+                    장소는 자세히, 물건은 단순하게 적어 주시면 모든 쪽이 같아 보여요.
                   </p>
                 </div>
               )}

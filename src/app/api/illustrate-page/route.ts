@@ -55,7 +55,14 @@ export async function POST(request: Request) {
   const locationDetail =
     typeof input.locationDetail === "string" ? input.locationDetail.trim().slice(0, 200) : "";
   const storyText = typeof input.storyText === "string" ? input.storyText.trim().slice(0, 1200) : "";
-  if (!scene || scene.length > 500) {
+  /*
+   * 상한을 500 → 700으로 올렸다.
+   *
+   * 장면 한 줄에 등장인물·장소 고정 특징·물건 고정 모습이 모두 들어가면서 500자에
+   * 닿는 쪽이 생겼다. 여기서 400을 돌려주면 그 쪽만 그림 없이 남는다 — 길다고 막을
+   * 일이 아니다. 상한은 터무니없는 입력을 걸러내는 용도로만 남긴다.
+   */
+  if (!scene || scene.length > 700) {
     return NextResponse.json({ error: "장면 묘사가 비었거나 너무 깁니다." }, { status: 400 });
   }
 
@@ -82,6 +89,23 @@ export async function POST(request: Request) {
     const match = /장소\s*:\s*([^\n—.-]+?)\s*[—-]\s*([^\n.]+)/.exec(value);
     return match ? { name: match[1].trim(), description: match[2].trim() } : null;
   };
+  /**
+   * 장면에 적힌 `물건: 이름 — 고정 모습.`을 모두 읽는다.
+   *
+   * 두 쪽 이상에 나오는 물건이 매번 다르게 그려지는 것이 가장 흔한 사고다(1쪽은 콘에
+   * 담긴 딸기, 3쪽은 컵에 담긴 초코). 인물처럼 참조 그림이 없으니 글로만 잠근다 —
+   * 대신 '단순하게' 잠근다. 꾸밀 거리가 많을수록 매번 다르게 그려지기 때문이다.
+   */
+  const readProps = (value: string) => {
+    const found: { name: string; description: string }[] = [];
+    const re = /물건\s*:\s*([^\n—.-]+?)\s*[—-]\s*([^\n.]+)/g;
+    for (let m = re.exec(value); m && found.length < 3; m = re.exec(value)) {
+      found.push({ name: m[1].trim(), description: m[2].trim() });
+    }
+    return found;
+  };
+  const props = readProps(scene);
+
   const currentLocation = readLocation(scene);
   const referenceLocation = readLocation(styleReferenceScene);
   const sameReferenceLocation = Boolean(
@@ -151,13 +175,26 @@ export async function POST(request: Request) {
       ? `LOCATION LOCK — this scene visibly takes place at "${currentLocation.name}": ${currentLocation.description}. Draw that setting, not a generic forest, park, hanok, classroom or another house.`
       : "",
     /*
+     * 물건 잠금 — 장소와 같은 이유로 넣는다. 다만 요구는 반대다: 장소는 '더 구체적으로',
+     * 물건은 '더 단순하게'. 물건은 꾸밀 거리를 줄여야 다음 쪽에서 같게 그려진다.
+     */
+    props.length
+      ? [
+          `PROP LOCK — ${props
+            .map((prop) => `"${prop.name}" (${prop.description})`)
+            .join("; ")}. These objects come back on other pages and must look IDENTICAL every time.`,
+          "Draw each one as a SIMPLE, plain shape in flat color, exactly as described and nothing more. Do not add a second scoop, a different flavor, sprinkles, toppings, patterns, logos, sparkles, ribbons or decoration that is not in the description.",
+          "Simplicity is the point: a plain shape is what lets a child recognize it as the same object on the next page. If you are unsure how detailed to make it, make it simpler.",
+        ].join("\n")
+      : "",
+    /*
      * 부모가 적어 준 장소는 모델이 상상한 장소보다 우선한다 — 아이가 실제로 아는
      * 곳이기 때문이다. 다만 이것도 '그릴 것'이지 '쓸 글자'가 아니라고 못박는다.
      */
     locationDetail
       ? [
-          `PLACE DETAIL (highest priority, written by the child's parent, Korean): ${locationDetail}`,
-          "Build the setting from this description on EVERY page of the book: the same ground, the same big landmark, the same colors. If it conflicts with what you would normally imagine for this place, follow this description.",
+          `PLACE / OBJECT DETAIL (highest priority, written by the child's parent, Korean): ${locationDetail}`,
+          "Build the setting and any object it names from this description on EVERY page of the book: the same ground, the same big landmark, the same colors, the same shape of object. If it conflicts with what you would normally imagine, follow this description.",
           "These are things to draw, never words to write in the image.",
         ].join("\n")
       : "",
