@@ -114,6 +114,14 @@ export function VoiceRecorder({
   // 소음 검사에 연달아 걸린 횟수 — 두 번 걸리면 그냥 진행할 수 있게 열어 준다.
   const noiseRejectsRef = useRef(0);
   const [skipNoiseCheck, setSkipNoiseCheck] = useState(false);
+  /**
+   * 녹음 조작(소리 막대·시간·끝내기) 자리.
+   *
+   * 녹음이 시작되면 여기로 화면을 옮겨 준다. 대본이 길어서, 시작 버튼을 누른 자리에
+   * 그대로 있으면 조작이 화면 아래로 밀려 보이지 않는다 — 다 읽고 나서 끝내려고
+   * 아래로 내려야 했던 것이 그 때문이다.
+   */
+  const recordingControlsRef = useRef<HTMLDivElement | null>(null);
 
   // 녹음 중 상태 — 지금 소리 크기(0~1)와 흘러간 초. 말하면서 바로 보여 준다.
   const [level, setLevel] = useState(0);
@@ -130,6 +138,21 @@ export function VoiceRecorder({
     audioCtxRef.current = null;
   };
   useEffect(() => stopMeter, []);
+
+  /** 녹음 중인지 — 이때만 화면을 대본 읽기에 맞춰 다시 짠다. */
+  const recordingNow = phase === "recording";
+
+  /*
+   * 녹음이 시작되면 조작이 있는 곳으로 화면을 옮긴다.
+   *
+   * 대본이 여섯 문장이라, 시작 버튼을 누른 자리에 그대로 서 있으면 소리 막대와
+   * '녹음 끝내기'가 화면 밖에 있다. 읽는 동안 내 소리가 잘 들어가는지 못 보고,
+   * 다 읽고 나서야 아래로 내려 끝내야 했다.
+   */
+  useEffect(() => {
+    if (!recordingNow) return;
+    recordingControlsRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [recordingNow]);
 
   /*
    * 팝업이 닫혔는지 표시 — 마이크 권한을 기다리는 사이 닫히면 뒤늦게 온 스트림을 바로 끈다.
@@ -457,25 +480,112 @@ export function VoiceRecorder({
         {emoji} {label} 목소리 녹음
       </h3>
 
-      {/* 지정 문장 — 이것만 읽는다 */}
-      <div className="rounded-xl bg-white p-4">
-        <p className="text-[13px] font-medium leading-relaxed text-neutral-700">
-          아래 문장을 또박또박 읽어주세요:
-        </p>
-        <p className="mt-2 text-[15px] font-bold leading-relaxed text-neutral-800">
-          <span className="mb-1 block text-[11px] text-neutral-400">
-            {reviewIndex + 1}번째 문장 / {RECORDING_SCRIPTS.length}
-          </span>
-          “{RECORDING_SCRIPTS[reviewIndex]}”
-        </p>
+      {/*
+        * 녹음 중에는 대본과 조작을 한 덩어리로 묶는다.
+        *
+        * 대본이 여섯 문장이라 길다. 예전엔 그 아래에 '녹음 끝내기'가 있어서, 다 읽고
+        * 나면 버튼이 화면 밖에 있었다 — 읽다 말고 아래로 내려야 끝낼 수 있었다.
+        *
+        * 좁은 화면에서는 대본 칸의 높이를 30dvh로 묶어 안에서 굴리게 한다. 그러면
+        * 대본이 아무리 길어도 조작이 밀려나지 않는다(대본 30dvh + 조작 약 230px이라
+        * 작은 폰에서도 한 화면에 든다). 넓은 화면에서는 대본 옆에 나란히 세운다.
+        */}
+      <div
+        className={
+          recordingNow
+            ? "flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4"
+            : "contents"
+        }
+      >
+        {/* 지정 문장 — 이것만 읽는다 */}
+        <div
+          className={`rounded-xl bg-white p-4 ${
+            recordingNow ? "max-h-[30dvh] overflow-y-auto sm:max-h-[52dvh] sm:flex-1" : ""
+          }`}
+        >
+          <p className="text-[13px] font-medium leading-relaxed text-neutral-700">
+            아래 문장을 또박또박 읽어주세요:
+          </p>
+          <p className="mt-2 text-[15px] font-bold leading-relaxed text-neutral-800">
+            <span className="mb-1 block text-[11px] text-neutral-400">
+              {reviewIndex + 1}번째 문장 / {RECORDING_SCRIPTS.length}
+            </span>
+            “{RECORDING_SCRIPTS[reviewIndex]}”
+          </p>
+        </div>
+
+        {phase === "recording" && (
+          <div
+            ref={recordingControlsRef}
+            className="flex flex-col gap-3 sm:w-60 sm:shrink-0"
+          >
+            {/* 소리 크기 막대 — 말하는 동안 실시간으로 찬다. 색으로 상태를 알려준다. */}
+            {(() => {
+              const color = zone === "quiet" ? "#c7c7c7" : zone === "loud" ? "#ef4444" : "#22c55e";
+              const hint =
+                zone === "quiet"
+                  ? "소리가 작아요 — 폰을 가까이 두고 말해주세요"
+                  : zone === "loud"
+                    ? "소리가 너무 커요 — 조금 떨어져서 말해주세요"
+                    : "좋아요! 그대로 읽어주세요";
+              return (
+                <div className="flex flex-col gap-1.5">
+                  <div className="h-4 w-full overflow-hidden rounded-full bg-neutral-200">
+                    <div
+                      className="h-full rounded-full transition-[width] duration-100"
+                      style={{ width: `${Math.round(level * 100)}%`, background: color }}
+                    />
+                  </div>
+                  <p className="text-center text-[12px] font-extrabold" style={{ color }}>
+                    {hint}
+                  </p>
+                </div>
+              );
+            })()}
+
+            {/* 시간 — 최소치를 채워야 끝낼 수 있다. 목표선(40초)도 함께 보여준다. */}
+            <div className="flex flex-col gap-1.5">
+              <div className="relative h-2 w-full overflow-hidden rounded-full bg-neutral-200">
+                <div
+                  className="h-full rounded-full bg-neutral-400 transition-[width] duration-300"
+                  style={{ width: `${Math.min(100, (secs / TARGET_SEC) * 100)}%` }}
+                />
+                {/* 최소 길이 눈금 */}
+                <div
+                  className="absolute top-0 h-full w-0.5 bg-neutral-500/70"
+                  style={{ left: `${(MIN_SEC / TARGET_SEC) * 100}%` }}
+                />
+              </div>
+              <p className="text-center text-[12px] font-bold text-neutral-500">
+                {Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}
+                {secs < MIN_SEC
+                  ? ` · ${MIN_SEC - secs}초만 더 읽어주세요`
+                  : ` · 목표 ${TARGET_SEC}초 (지금 끝내도 좋아요)`}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => recorderRef.current?.stop()}
+              disabled={secs < MIN_SEC}
+              className={`rounded-full py-3 text-base font-extrabold text-white disabled:cursor-not-allowed disabled:bg-neutral-300 ${
+                secs < MIN_SEC ? "" : "animate-pulse bg-red-500"
+              }`}
+            >
+              {secs < MIN_SEC ? "읽는 중… (조금만 더!)" : "⏹ 녹음 끝내기"}
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* 신뢰 안내 — 숨기지 않고 전면에 */}
-      <ul className="flex flex-col gap-1 text-[12px] font-medium text-neutral-500">
-        <li>✓ 지정된 동화 문장만 녹음해요 — 개인 정보는 녹음되지 않아요</li>
-        <li>✓ 녹음은 이 기기에만 보관돼요</li>
-        <li>✓ 언제든지 삭제할 수 있어요</li>
-      </ul>
+      {/* 신뢰 안내 — 숨기지 않고 전면에. 다만 읽는 중에는 자리를 비켜 준다. */}
+      {!recordingNow && (
+        <ul className="flex flex-col gap-1 text-[12px] font-medium text-neutral-500">
+          <li>✓ 지정된 동화 문장만 녹음해요 — 개인 정보는 녹음되지 않아요</li>
+          <li>✓ 녹음은 이 기기에만 보관돼요</li>
+          <li>✓ 언제든지 삭제할 수 있어요</li>
+        </ul>
+      )}
 
       {phase === "idle" && (
         <div className="flex flex-col gap-3">
@@ -537,66 +647,6 @@ export function VoiceRecorder({
         <div className="rounded-2xl bg-sky-50 px-4 py-5 text-center">
           <p className="text-sm font-extrabold text-sky-700">🔇 2초 동안 말하지 말아주세요</p>
           <p className="mt-1 text-xs font-medium text-sky-600">방의 주변 소음을 확인하고 있어요…</p>
-        </div>
-      )}
-
-      {phase === "recording" && (
-        <div className="flex flex-col gap-3">
-          {/* 소리 크기 막대 — 말하는 동안 실시간으로 찬다. 색으로 상태를 알려준다. */}
-          {(() => {
-            const color = zone === "quiet" ? "#c7c7c7" : zone === "loud" ? "#ef4444" : "#22c55e";
-            const hint =
-              zone === "quiet"
-                ? "소리가 작아요 — 폰을 가까이 두고 말해주세요"
-                : zone === "loud"
-                  ? "소리가 너무 커요 — 조금 떨어져서 말해주세요"
-                  : "좋아요! 그대로 읽어주세요";
-            return (
-              <div className="flex flex-col gap-1.5">
-                <div className="h-4 w-full overflow-hidden rounded-full bg-neutral-200">
-                  <div
-                    className="h-full rounded-full transition-[width] duration-100"
-                    style={{ width: `${Math.round(level * 100)}%`, background: color }}
-                  />
-                </div>
-                <p className="text-center text-[12px] font-extrabold" style={{ color }}>
-                  {hint}
-                </p>
-              </div>
-            );
-          })()}
-
-          {/* 시간 — 최소치를 채워야 끝낼 수 있다. 목표선(40초)도 함께 보여준다. */}
-          <div className="flex flex-col gap-1.5">
-            <div className="relative h-2 w-full overflow-hidden rounded-full bg-neutral-200">
-              <div
-                className="h-full rounded-full bg-neutral-400 transition-[width] duration-300"
-                style={{ width: `${Math.min(100, (secs / TARGET_SEC) * 100)}%` }}
-              />
-              {/* 최소 길이 눈금 */}
-              <div
-                className="absolute top-0 h-full w-0.5 bg-neutral-500/70"
-                style={{ left: `${(MIN_SEC / TARGET_SEC) * 100}%` }}
-              />
-            </div>
-            <p className="text-center text-[12px] font-bold text-neutral-500">
-              {Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}
-              {secs < MIN_SEC
-                ? ` · ${MIN_SEC - secs}초만 더 읽어주세요`
-                : ` · 목표 ${TARGET_SEC}초 (지금 끝내도 좋아요)`}
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => recorderRef.current?.stop()}
-            disabled={secs < MIN_SEC}
-            className={`rounded-full py-3 text-base font-extrabold text-white disabled:cursor-not-allowed disabled:bg-neutral-300 ${
-              secs < MIN_SEC ? "" : "animate-pulse bg-red-500"
-            }`}
-          >
-            {secs < MIN_SEC ? "읽는 중… (조금만 더!)" : "⏹ 녹음 끝내기"}
-          </button>
         </div>
       )}
 
