@@ -833,7 +833,16 @@ export function BookViewer({ book }: { book: Book }) {
         el.src = url;
         // 책 읽기 리듬을 유지한다. lively도 말이 급해지지 않을 정도로만 움직인다.
         const paceMultiplier = seg.pace === "slow" ? 0.94 : seg.pace === "lively" ? 1.03 : 1;
-        applyPlaybackRate(el, rateBoost * paceMultiplier);
+        /*
+         * 배역 톤 — 할머니 대사는 느리고 낮게, 작은 동물은 빠르고 높게.
+         * 성우를 바꾸는 게 아니라 한 성우가 목소리를 바꾸는 것이라, 합성 요청도
+         * 크레딧도 늘지 않는다. 지문 조각은 tone이 '그대로'라 아무 영향이 없다.
+         */
+        applyPlaybackRate(
+          el,
+          rateBoost * paceMultiplier * (seg.tone?.rate ?? 1),
+          seg.tone?.shiftPitch ?? false,
+        );
         el.ontimeupdate = () => {
           if (el.duration > 0) {
             setHighlight(
@@ -939,7 +948,7 @@ export function BookViewer({ book }: { book: Book }) {
       // 조각 합성을 한꺼번에 걸어두고(startTypecast…) 첫 조각이 오는 대로 재생한다.
       try {
         setPreparing(true);
-        playPending(startTypecastPageAudio(tc, page.text, page.voiceDirection));
+        playPending(startTypecastPageAudio(tc, page.text, page.voiceDirection, book.cast ?? []));
       } catch {
         // 실시간 합성 꺼짐(client-tts-disabled) — 딸린 파일이 있으면 그걸(무료),
         // 없으면 브라우저 기계음으로 대체한다. 크레딧은 안 나간다.

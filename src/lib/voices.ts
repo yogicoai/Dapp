@@ -9,6 +9,7 @@
  */
 
 import { acctKey } from "@/lib/supabase";
+import { segmentTones, type CastMember, type SpeakerTone } from "@/lib/speaker-tone";
 import type { VoiceDirection, VoicePace } from "@/lib/types";
 
 export type PresetVoice = {
@@ -163,15 +164,24 @@ export function saveVoiceRate(rate: number): void {
  * 딴사람처럼 들리는 왜곡을 막는다. 구형 사파리/웹킷은 접두사 속성을 써야 해서 함께 켠다.
  * 오디오 속도를 바꾸는 곳은 전부 이 함수를 거치게 한다.
  */
-export function applyPlaybackRate(el: HTMLMediaElement, rate: number): void {
-  el.playbackRate = rate;
-  el.preservesPitch = true;
+export function applyPlaybackRate(el: HTMLMediaElement, rate: number, shiftPitch = false): void {
+  // 기기가 감당하는 범위를 벗어나면 소리가 깨진다. 읽기 속도 설정과 배역 톤이
+  // 곱해지므로 여기서 한 번 조인다(예: 느리게 설정 + 할머니 톤).
+  el.playbackRate = Math.min(2, Math.max(0.5, rate));
+  /*
+   * 기본은 '속도를 바꿔도 음높이는 그대로'다 — 부모 목소리가 왜곡되면 안 되니까.
+   *
+   * 배역 대사에서만 이걸 끈다. 그래야 느려진 할머니 대사가 낮게도 들린다.
+   * Typecast API에는 음높이 조절이 없어서, 이게 배역을 목소리로 만드는 유일한 길이다.
+   */
+  const preserve = !shiftPitch;
+  el.preservesPitch = preserve;
   const legacy = el as unknown as {
     mozPreservesPitch?: boolean;
     webkitPreservesPitch?: boolean;
   };
-  legacy.mozPreservesPitch = true;
-  legacy.webkitPreservesPitch = true;
+  legacy.mozPreservesPitch = preserve;
+  legacy.webkitPreservesPitch = preserve;
 }
 
 // 기본 성우는 "부끄"(tc-booqoo) — 처음 들어와도 진짜 성우 목소리로 시작한다.
@@ -577,7 +587,14 @@ async function withTtsSlot<T>(fn: () => Promise<T>): Promise<T> {
 }
 
 /** 아직 합성이 안 끝난 조각. 부른 쪽이 오는 순서대로 기다렸다 재생한다. */
-export type PendingSegment = { from: number; to: number; audio: Promise<Blob>; pace?: VoicePace };
+export type PendingSegment = {
+  from: number;
+  to: number;
+  audio: Promise<Blob>;
+  pace?: VoicePace;
+  /** 이 조각을 어떤 배역 톤으로 읽을지 — 지문은 언제나 '그대로'다. */
+  tone?: SpeakerTone;
+};
 
 /**
  * 한 쪽을 지문/대사 조각으로 나눠 **동시에** 합성을 걸고, 기다리지 않고 바로 돌려준다.
@@ -589,11 +606,21 @@ export type PendingSegment = { from: number; to: number; audio: Promise<Blob>; p
  *
  * 대사에는 감정 연기가 실리고, 감정을 거부하는 음성이면 그 조각만 기본톤으로 물러난다.
  * 글자 수 총합은 통짜 합성과 같아 크레딧 비용은 그대로다.
+ *
+ * cast(등장인물)를 주면 대사마다 누가 말하는지 찾아 배역 톤까지 얹는다 — 할머니는
+ * 느리고 낮게, 작은 동물은 빠르고 높게. 성우를 나누는 게 아니라 한 성우가 목소리를
+ * 바꾸는 방식이라 합성 요청도, 크레딧도 늘지 않는다(재생할 때 조절한다).
  */
-export function startTypecastPageAudio(tc: TypecastPreset, text: string, direction?: VoiceDirection): PendingSegment[] {
+export function startTypecastPageAudio(
+  tc: TypecastPreset,
+  text: string,
+  direction?: VoiceDirection,
+  cast: CastMember[] = [],
+): PendingSegment[] {
   // 실시간 합성이 꺼져 있으면 호출 자체를 막는다 → 호출한 쪽이 딸린 파일/기계음으로 대체.
   if (!CLIENT_TTS_ENABLED) throw new Error("client-tts-disabled");
   const segs = splitDialogue(text);
+  const tones = segmentTones(segs, cast);
 
   const synthEmo = (t: string, emotion: string): Promise<Blob> => {
     const p = withTtsSlot(() => fetchTypecastAudio(tc, t, emotion, direction?.intensity)).catch(() =>
@@ -617,7 +644,7 @@ export function startTypecastPageAudio(tc: TypecastPreset, text: string, directi
 
   const out: PendingSegment[] = [];
   let pos = 0;
-  for (const s of segs) {
+  segs.forEach((s, index) => {
     const from = pos;
     pos += s.text.length;
     // 지문은 성우 본래 음색을 유지하고, 따옴표 속 대사에만 낮은 강도의 감정을 넣는다.
@@ -625,8 +652,14 @@ export function startTypecastPageAudio(tc: TypecastPreset, text: string, directi
       ? (s.dialogue ? direction.dialogue : direction.narration)
       : guessEmotion(s.text);
     const emotion = storyReadingEmotion(requestedEmotion, s.dialogue);
-    out.push({ from, to: pos, audio: synthEmo(s.text, emotion), pace: direction?.pace });
-  }
+    out.push({
+      from,
+      to: pos,
+      audio: synthEmo(s.text, emotion),
+      pace: direction?.pace,
+      tone: tones[index],
+    });
+  });
   return out;
 }
 
@@ -639,6 +672,7 @@ export function startTypecastPageAudio(tc: TypecastPreset, text: string, directi
 export function prefetchTypecastPageAudio(tc: TypecastPreset, text: string, direction?: VoiceDirection): void {
   if (!CLIENT_TTS_ENABLED || !text) return;
   try {
+    // 배역 톤은 넘기지 않는다 — 톤은 재생할 때 거는 것이라 캐시에 담기는 소리와 무관하다.
     startTypecastPageAudio(tc, text, direction);
   } catch {
     /* 무시 */
