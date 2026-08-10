@@ -962,7 +962,9 @@ export default function SettingsPage() {
                                 : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                             }`}
                           >
-                            👓 안경
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/icons/feature-glasses.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.25em]" />
+                            안경
                           </button>
                         )}
                       </div>
@@ -1111,9 +1113,11 @@ export default function SettingsPage() {
                           disabled={cloningRole !== null}
                           className="whitespace-nowrap rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-amber-700 shadow-sm transition hover:bg-amber-50 disabled:opacity-50"
                         >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/icons/func-remake.webp" alt="" aria-hidden className="mr-0.5 inline-block h-4 w-4 object-contain align-[-0.2em]" />
                           {cloningRole === roleFromLabel(v.label)
                             ? "만드는 중…"
-                            : `🔁 다시 만들기${master ? "" : ` (${COST_PARENT_VOICE}토큰)`}`}
+                            : `다시 만들기${master ? "" : ` (${COST_PARENT_VOICE}토큰)`}`}
                         </button>
                       </>
                     ) : (
@@ -1252,13 +1256,13 @@ export default function SettingsPage() {
                     value: "full",
                     label: "꽉 찬 그림",
                     hint: "그림 위에 글자",
-                    icon: "🖼️",
+                    icon: "/icons/layout-full.webp",
                   },
                   {
                     value: "spread",
                     label: "펼침면",
                     hint: "그림 | 글 반반",
-                    icon: "📖",
+                    icon: "/icons/layout-spread.webp",
                   },
                 ] as const
               ).map((o) => {
@@ -1278,9 +1282,8 @@ export default function SettingsPage() {
                       active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                     }`}
                   >
-                    <span className="text-lg leading-none" aria-hidden>
-                      {o.icon}
-                    </span>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={o.icon} alt="" aria-hidden className="h-8 w-8 shrink-0 object-contain" />
                     <span className="flex flex-col items-start leading-tight">
                       <span className="text-sm font-extrabold">{o.label}</span>
                       <span className={`text-[11px] font-bold ${active ? "text-white/80" : "text-neutral-400"}`}>
@@ -1301,11 +1304,11 @@ export default function SettingsPage() {
             <div className="flex flex-wrap gap-2">
               {(
                 [
-                  { value: "bottom", label: "아래쪽", icon: "⬇️" },
-                  { value: "top", label: "위쪽", icon: "⬆️" },
-                  { value: "center", label: "가운데", icon: "🎯" },
-                  { value: "left", label: "왼쪽 가운데", icon: "⬅️" },
-                  { value: "right", label: "오른쪽 가운데", icon: "➡️" },
+                  { value: "bottom", label: "아래쪽", icon: "/icons/textpos-bottom.webp" },
+                  { value: "top", label: "위쪽", icon: "/icons/textpos-top.webp" },
+                  { value: "center", label: "가운데", icon: "/icons/textpos-center.webp" },
+                  { value: "left", label: "왼쪽 가운데", icon: "/icons/textpos-left.webp" },
+                  { value: "right", label: "오른쪽 가운데", icon: "/icons/textpos-right.webp" },
                 ] as const
               ).map((p) => {
                 const active = textPos === p.value;
@@ -1324,7 +1327,8 @@ export default function SettingsPage() {
                       active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                     }`}
                   >
-                    <span aria-hidden>{p.icon}</span>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={p.icon} alt="" aria-hidden className="h-7 w-7 shrink-0 object-contain" />
                     {p.label}
                   </button>
                 );
@@ -1617,7 +1621,9 @@ export default function SettingsPage() {
               {oldArtCount !== 0 && (
                 <div className="flex flex-col gap-2 rounded-2xl bg-amber-50 px-4 py-3">
                   <p className="text-xs font-extrabold text-amber-700">
-                    🧹 옛 책 그림 정리
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/icons/func-cleanup.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.25em]" />
+                    옛 책 그림 정리
                     {oldArtCount > 0 && ` · ${oldArtCount}권 남음`}
                   </p>
                   <p className="text-[11px] font-medium leading-relaxed text-amber-700/80">

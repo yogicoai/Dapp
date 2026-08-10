@@ -104,7 +104,7 @@ const THEME_GROUPS = [
 const WHO_OPTIONS = [
   { t: "혼자서", e: "🧒" },
   { t: "친구랑", e: "👫" },
-  { t: "친구들이랑", e: "🧑‍🤝‍🧑" },
+  { t: "친구들이랑", e: "🧑‍🤝‍🧑", icon: "/icons/who-friends.webp" },
   { t: "엄마랑", e: "👩" },
   { t: "아빠랑", e: "👨" },
   { t: "엄마 아빠랑", e: "👨‍👩‍👧" },
@@ -139,7 +139,7 @@ const TODAY_PLACES = [
 ];
 const TODAY_WHO = [
   { t: "친구랑", e: "👫" },
-  { t: "친구들이랑", e: "🧑‍🤝‍🧑" },
+  { t: "친구들이랑", e: "🧑‍🤝‍🧑", icon: "/icons/who-friends.webp" },
   { t: "선생님이랑", e: "👩‍🏫" },
   { t: "엄마랑", e: "👩" },
   { t: "아빠랑", e: "👨" },
@@ -524,6 +524,18 @@ function WhoNameInput({
       )}
     </div>
   );
+}
+
+/**
+ * 칩 앞의 그림 — 전용 아이콘이 있으면 그림, 없으면 이모지.
+ * 칩 목록이 여러 벌이고 목록마다 항목 모양이 조금씩 달라, 한 자리에서 처리한다.
+ */
+function ChipIcon({ emoji, icon }: { emoji: string; icon?: string }) {
+  if (icon) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={icon} alt="" aria-hidden className="h-6 w-6 shrink-0 object-contain" />;
+  }
+  return <span className="text-base leading-none">{emoji}</span>;
 }
 
 /** 밝은 톤 공통 버튼. 강조색은 활성 테마에서 온다. */
@@ -1808,7 +1820,7 @@ export default function CreatePage() {
                             place === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                           }`}
                         >
-                          <span className="text-base leading-none">{it.e}</span>
+                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
                           {it.t}
                         </button>
                       ))}
@@ -1828,7 +1840,7 @@ export default function CreatePage() {
                             who === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                           }`}
                         >
-                          <span className="text-base leading-none">{it.e}</span>
+                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
                           {it.t}
                         </button>
                       ))}
@@ -1876,7 +1888,7 @@ export default function CreatePage() {
                             feeling === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                           }`}
                         >
-                          <span className="text-base leading-none">{it.e}</span>
+                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
                           {it.t}
                         </button>
                       ))}
@@ -1899,7 +1911,7 @@ export default function CreatePage() {
                             ending === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                           }`}
                         >
-                          <span className="text-base leading-none">{it.e}</span>
+                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
                           {it.t}
                         </button>
                       ))}
@@ -1939,7 +1951,7 @@ export default function CreatePage() {
                             emotion === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                           }`}
                         >
-                          <span className="text-base leading-none">{it.e}</span>
+                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
                           {it.t}
                         </button>
                       ))}
@@ -1995,7 +2007,7 @@ export default function CreatePage() {
                             who === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                           }`}
                         >
-                          <span className="text-base leading-none">{it.e}</span>
+                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
                           {it.t}
                         </button>
                       ))}
@@ -2103,7 +2115,7 @@ export default function CreatePage() {
                             who === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                           }`}
                         >
-                          <span className="text-base leading-none">{it.e}</span>
+                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
                           {it.t}
                         </button>
                       ))}
@@ -2134,7 +2146,7 @@ export default function CreatePage() {
                             happening === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                           }`}
                         >
-                          <span className="text-base leading-none">{it.e}</span>
+                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
                           {it.t}
                         </button>
                       ))}
@@ -2271,8 +2283,8 @@ export default function CreatePage() {
                 <div className="flex flex-wrap justify-center gap-2.5">
                   {(
                     [
-                      { id: "phone", label: "핸드폰", hint: "세로 그림", icon: "📱" },
-                      { id: "tablet", label: "태블릿·PC", hint: "가로 그림", icon: "🖥️" },
+                      { id: "phone", label: "핸드폰", hint: "세로 그림", icon: "/icons/shape-phone.webp" },
+                      { id: "tablet", label: "태블릿·PC", hint: "가로 그림", icon: "/icons/shape-tablet.webp" },
                     ] as const
                   ).map((o) => {
                     const active = screenShape === o.id;
@@ -2287,9 +2299,8 @@ export default function CreatePage() {
                           active ? "shadow" : "border-transparent bg-neutral-100 hover:bg-neutral-200"
                         }`}
                       >
-                        <span className="text-xl leading-none" aria-hidden>
-                          {o.icon}
-                        </span>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={o.icon} alt="" aria-hidden className="h-9 w-9 shrink-0 object-contain" />
                         <span className="flex flex-col items-start leading-tight">
                           <span className="break-keep text-sm font-extrabold text-neutral-700">
                             {o.label}

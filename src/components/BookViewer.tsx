@@ -1578,7 +1578,9 @@ export function BookViewer({ book }: { book: Book }) {
           }}
           className="absolute left-3 top-16 z-20 rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
         >
-          ✏️ 글 고치기
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/icons/func-edit.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
+          글 고치기
         </button>
       )}
       {editing && (
@@ -1635,7 +1637,9 @@ export function BookViewer({ book }: { book: Book }) {
           className="absolute left-1/2 z-20 max-w-[calc(100vw-1.5rem)] -translate-x-1/2 animate-[float_2s_ease-in-out_infinite] whitespace-nowrap rounded-full bg-white/95 px-4 py-2 text-xs font-extrabold text-neutral-700 shadow-lg backdrop-blur sm:px-5 sm:py-2.5 sm:text-sm"
           style={{ top: "calc(4.25rem + env(safe-area-inset-top))" }}
         >
-          👆 그림 속 친구를 눌러 보세요 — 말을 해요!
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/icons/hint-tap.webp" alt="" aria-hidden className="mr-1.5 inline-block h-7 w-7 object-contain align-[-0.45em]" />
+          그림 속 친구를 눌러 보세요 — 말을 해요!
         </button>
       )}
 

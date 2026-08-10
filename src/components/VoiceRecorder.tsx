@@ -682,7 +682,9 @@ export function VoiceRecorder({
                 onClick={() => startRecording(reviewIndex)}
                 className="flex-1 rounded-2xl border-2 border-dashed border-neutral-300 bg-white px-4 py-2.5 text-[13px] font-extrabold text-neutral-700"
               >
-                🔁 이 문장 다시 읽기
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/icons/func-remake.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
+                이 문장 다시 읽기
               </button>
             )}
             {takes.findIndex((take) => !take) >= 0 && (

@@ -49,9 +49,13 @@ export function AddToHomeHint() {
   return (
     <div className="fixed inset-x-3 bottom-3 z-30 mx-auto max-w-md rounded-3xl bg-white/95 p-4 shadow-2xl backdrop-blur">
       <div className="flex items-start gap-3">
-        <span aria-hidden className="text-2xl leading-none">
-          📱
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/icons/hint-addhome.webp"
+          alt=""
+          aria-hidden
+          className="h-10 w-10 shrink-0 object-contain"
+        />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-extrabold text-neutral-800">
             홈 화면에 추가하면 더 크게 볼 수 있어요
