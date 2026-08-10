@@ -128,6 +128,28 @@ function joinBody(block: Block): string {
 }
 
 /**
+ * 마커 한 줄에 붙은 글과 그 아래 줄들을 **모두** 합친다.
+ *
+ * 예전에는 `block.inline || joinBody(block)`이었다 — 마커 줄에 한 글자라도 있으면
+ * 아래 줄을 통째로 버렸다. 그래서 모델이 이렇게 쓰면 뒷줄이 다 사라졌다:
+ *
+ *   @@IMG@@ 등장인물 1명: 하온.
+ *   하온이가 서가 앞에서 책을 펼친다. 장소: 도서관 — 나무 책장과 창문.
+ *
+ * 남는 것은 "등장인물 1명: 하온."뿐이라, 그림 모델은 인원수만 알고 무엇을
+ * 그릴지는 모르는 채 그렸다(실제로 세 권이 그렇게 나왔다). 장소·물건 잠금도
+ * 같이 날아가서, 애써 넣은 규칙이 하나도 닿지 않았다.
+ *
+ * 줄이 나뉘는 건 모델의 자유다. 파서가 거기에 맞춰야지 그 반대가 아니다.
+ */
+function markerContent(block: Block): string {
+  const body = joinBody(block);
+  if (!block.inline) return body;
+  if (!body) return block.inline;
+  return `${block.inline}\n${body}`;
+}
+
+/**
  * 줄거리(1단계)를 파싱한다.
  *
  * 본문을 바로 뽑지 않고 줄거리를 먼저 받는 이유는 원가다. 삽화 8장이 ₩440인데
@@ -153,7 +175,7 @@ export function parseOutline(raw: string): ParsedOutline {
   };
 
   for (const block of blocks) {
-    const inlineOrBody = block.inline || joinBody(block);
+    const inlineOrBody = markerContent(block);
 
     switch (block.tag) {
       case "TITLE":
@@ -219,7 +241,7 @@ export function parseStory(raw: string): ParsedStory {
   };
 
   for (const block of blocks) {
-    const inlineOrBody = block.inline || joinBody(block);
+    const inlineOrBody = markerContent(block);
 
     switch (block.tag) {
       case "TITLE":

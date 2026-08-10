@@ -191,3 +191,43 @@ describe("parseStory", () => {
     assert.throws(() => parseStory("그냥 평범한 문장입니다."), StoryParseError);
   });
 });
+
+describe("markerContent — 마커 줄과 아랫줄을 모두 살린다", () => {
+  it("@@IMG@@가 여러 줄이면 뒷줄도 살아남는다", () => {
+    // 실제로 난 사고: 마커 줄에 인물 수만 적고 장면을 다음 줄에 쓰면,
+    // 파서가 뒷줄을 버려서 그림 모델이 '무엇을 그릴지'를 통째로 못 받았다.
+    const raw = [
+      "@@TITLE@@ 하얀 고래 책",
+      "@@CHARACTER@@ 하온 | 4세 남자아이",
+      "@@PAGE@@ 1",
+      "@@TEXT@@ 하온이는 책을 빌렸어요.",
+      "@@IMG@@ 등장인물 1명: 하온.",
+      "하온이가 서가 앞에서 책을 펼친다. 장소: 도서관 — 나무 책장과 큰 창문.",
+      "물건: 그림책 — 파란 표지에 하얀 고래 하나.",
+    ].join("\n");
+
+    const story = parseStory(raw);
+    const scene = story.pages[0].imagePrompt;
+    assert.ok(scene.includes("등장인물 1명: 하온."), "인물 줄이 남아야 한다");
+    assert.ok(scene.includes("장소: 도서관"), "장소 잠금이 살아야 한다");
+    assert.ok(scene.includes("물건: 그림책"), "물건 잠금이 살아야 한다");
+    assert.ok(scene.includes("서가 앞에서 책을 펼친다"), "행동이 살아야 한다");
+  });
+
+  it("마커 줄에만 쓰면 그대로 (예전 동작 유지)", () => {
+    const raw = [
+      "@@TITLE@@ 제목",
+      "@@PAGE@@ 1",
+      "@@TEXT@@ 본문이에요.",
+      "@@IMG@@ 등장인물 1명: 하온. 하온이가 웃는다.",
+    ].join("\n");
+    assert.equal(parseStory(raw).pages[0].imagePrompt, "등장인물 1명: 하온. 하온이가 웃는다.");
+  });
+
+  it("아랫줄에만 쓰면 그대로 (예전 동작 유지)", () => {
+    const raw = ["@@TITLE@@ 제목", "@@PAGE@@ 1", "@@TEXT@@", "본문이에요.", "@@IMG@@", "하온이가 웃는다."].join("\n");
+    const page = parseStory(raw).pages[0];
+    assert.equal(page.text, "본문이에요.");
+    assert.equal(page.imagePrompt, "하온이가 웃는다.");
+  });
+});
