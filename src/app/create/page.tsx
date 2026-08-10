@@ -1745,7 +1745,8 @@ export default function CreatePage() {
                       onClick={() => setStoryMode("direct")}
                       className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-200"
                     >
-                      <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-4xl shadow-sm" aria-hidden>✍️</span>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/icons/topic-direct.webp" alt="" className="h-16 w-16 object-contain" />
                       <b className="text-lg text-neutral-800">직접 이야기 구성</b>
                       <span className="text-sm font-bold text-neutral-500">
                         기승전결을 쓰거나 완성 원고 붙여넣기
