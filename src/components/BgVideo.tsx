@@ -41,7 +41,16 @@ export function BgVideo({
   // 한 번의 이음매에서 두 번 넘기지 않도록 잠근다.
   const swapping = useRef(false);
   // 실제로 쓰는 페이드 길이 — 영상 길이를 알고 나서 정해진다.
+  // 렌더에서 읽으면 안 된다: ref는 바뀌어도 다시 그리지 않아 첫 값(0.6초)으로 굳어
+  // 짧은 영상에서 줄인 페이드가 화면에 반영되지 않는다. 그래서 DOM에 직접 써 준다.
   const fade = useRef(CROSSFADE);
+
+  /** 두 겹의 페이드 시간을 실제 화면(DOM)에 반영한다. */
+  const setFadeStyle = useCallback((sec: number) => {
+    for (const v of [aRef.current, bRef.current]) {
+      if (v) v.style.transitionDuration = `${sec}s`;
+    }
+  }, []);
 
   const play = useCallback((v: HTMLVideoElement | null) => {
     if (!v) return;
@@ -78,6 +87,7 @@ export function BgVideo({
     swapping.current = false;
     frontRef.current = "a";
     fade.current = CROSSFADE;
+    setFadeStyle(CROSSFADE);
     setFront("a");
     a.load();
     b.load();
@@ -85,7 +95,7 @@ export function BgVideo({
     b.currentTime = 0;
     b.pause();
     play(a);
-  }, [src, play]);
+  }, [src, play, setFadeStyle]);
 
   /**
    * 화면 그리는 박자로 넘길 자리를 지킨다. 정지 화면일 땐 브라우저가 rAF를 멈춰 줘서
@@ -101,12 +111,16 @@ export function BgVideo({
       const dur = cur.duration;
       if (!Number.isFinite(dur) || dur <= 0) return;
       // 짧은 영상에서 페이드가 길면 거의 내내 두 겹이 돈다 — 길이의 1/4로 묶는다.
-      fade.current = Math.min(CROSSFADE, dur / 4);
+      const nextFade = Math.min(CROSSFADE, dur / 4);
+      if (nextFade !== fade.current) {
+        fade.current = nextFade;
+        setFadeStyle(nextFade); // 렌더에서 ref를 읽지 않고 DOM에 직접 반영
+      }
       if (dur - cur.currentTime <= fade.current) swap();
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [swap]);
+  }, [swap, setFadeStyle]);
 
   const common = "absolute inset-0 h-full w-full object-cover transition-opacity ease-linear";
 
@@ -124,7 +138,6 @@ export function BgVideo({
         poster={poster}
         // 넘길 자리를 놓쳐도 여기서 잡는다 — loop이 없어 안 그러면 얼어붙는다.
         onEnded={swap}
-        style={{ transitionDuration: `${fade.current}s` }}
         className={`${common} ${front === "a" ? "opacity-100" : "opacity-0"}`}
       />
       <video
@@ -136,7 +149,6 @@ export function BgVideo({
         preload="auto"
         poster={poster}
         onEnded={swap}
-        style={{ transitionDuration: `${fade.current}s` }}
         className={`${common} ${front === "b" ? "opacity-100" : "opacity-0"}`}
       />
     </div>
