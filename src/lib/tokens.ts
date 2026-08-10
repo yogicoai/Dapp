@@ -35,6 +35,25 @@ export function bookTokenCost(pages: number, illustrated: boolean): number {
   return Math.max(1, Math.round(pages)) * per;
 }
 
+/*
+ * 값을 두 번에 나눠 받는다 — 대본을 만들 때 한 번, 그림을 붙일 때 한 번.
+ *
+ * 예전엔 대본과 그림을 한 번에 만들고 끝에서 한꺼번에 받았다. 그러면 부모가 대본을
+ * 보기도 전에 그림 값까지 나가서, 이야기가 마음에 안 들어도 되돌릴 수가 없었다.
+ * 이제 대본을 먼저 보고 고친 뒤 "이걸로 그림 만들자" 할 때 그림 값을 낸다.
+ * 두 값을 더하면 예전과 같다(쪽당 2토큰) — 나누기만 한 것이지 올린 게 아니다.
+ */
+
+/** 대본까지 만드는 값. 글 동화 한 권과 같다. */
+export function scriptTokenCost(pages: number): number {
+  return Math.max(1, Math.round(pages)) * COST_TEXT_PER_PAGE;
+}
+
+/** 대본 값을 이미 낸 책에 그림을 붙일 때 더 드는 값. */
+export function illustrationTokenCost(pages: number): number {
+  return Math.max(1, Math.round(pages)) * (COST_ILLUSTRATED_PER_PAGE - COST_TEXT_PER_PAGE);
+}
+
 /**
  * 베타 한정 — 아이디당 만들 수 있는 동화 최대 권수. (마스터는 제외)
  *

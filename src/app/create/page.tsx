@@ -18,7 +18,11 @@ import {
   saveChild,
   saveMyBook,
 } from "@/lib/prefs";
-import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
+import {
+  illustrationTokenCost,
+  MAX_BOOKS_PER_USER,
+  scriptTokenCost,
+} from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book, NarrationStyle, VoiceDirection } from "@/lib/types";
 import { fetchTypecastVoiceAudio, findTypecast, prewarmBookAudio, TYPECAST_VOICES } from "@/lib/voices";
@@ -349,7 +353,14 @@ function GenderChips({
 
 export type FriendEntry = { name: string; gender: string };
 
-const CREATE_DRAFT_VERSION = 2;
+/*
+ * 임시저장 형식이 바뀌면 이 숫자를 올린다 — 옛 임시저장은 버려진다.
+ *
+ * 2 → 3: 값을 대본과 그림 두 번에 나눠 받게 바꿨다. 옛 임시저장에는 '대본 값을
+ * 냈는지'가 없어서, 그대로 이어 만들면 그림 값만 내고 책이 나온다. TTL이 10분이라
+ * 걸리는 사람도 거의 없지만, 값이 걸린 일이니 버리는 쪽이 맞다.
+ */
+const CREATE_DRAFT_VERSION = 3;
 const CREATE_DRAFT_TTL_MS = 10 * 60 * 1000;
 const CREATE_DRAFT_KEY = "voice-storybook:create-draft";
 
@@ -389,6 +400,12 @@ type CreateDraft = {
   directCrisis: string;
   directEnding: string;
   directText: string;
+  /** 지금까지 이야기를 다시 지은 횟수 — 새로고침해도 이어지게 임시저장에 함께 담는다. */
+  outlineRetries?: number;
+  /** 대본 값(글 값)을 이미 받았는지 — 새로고침해도 두 번 받지 않게. */
+  scriptCharged?: boolean;
+  storyRewrites?: number;
+  locationDetail?: string;
 };
 
 function createDraftKey(owner: string): string {
@@ -415,6 +432,24 @@ function clearCreateDraft(owner: string | null): void {
   if (typeof window === "undefined" || !owner) return;
   window.localStorage.removeItem(createDraftKey(owner));
 }
+
+/**
+ * 같은 재료로 이야기를 다시 지을 수 있는 횟수.
+ *
+ * 다시 짓기는 회원 토큰이 안 드는 단계지만, 누를 때마다 글 생성 값은 실제로 나간다.
+ * 마음에 드는 이야기를 고를 자유(3번이면 서로 꽤 다른 이야기 넷을 보게 된다)와
+ * 끝없이 돌려 보는 것 사이의 선이다. 재료를 바꾸면 0으로 되돌아간다.
+ */
+const MAX_OUTLINE_RETRIES = 3;
+
+/**
+ * 같은 줄거리로 대본을 다시 쓸 수 있는 횟수.
+ *
+ * 대본 값은 처음 한 번만 받으므로 다시 쓰기는 부모에게 공짜다 — 대신 우리가 API 값을
+ * 문다. 문장이 조금 어색해서 한두 번 다시 쓰는 건 당연한 일이니 넉넉히 두 번 준다.
+ * 그 이상 마음에 안 들면 줄거리부터 바꾸는 게 맞다.
+ */
+const MAX_STORY_REWRITES = 2;
 
 /** "친구들이랑"에서 친구를 몇 명까지 받을지. 주인공까지 넷이면 그림 한 장에 담기는 한계다. */
 const MAX_FRIENDS = 3;
@@ -891,14 +926,18 @@ export default function CreatePage() {
   }
   // 장면(쪽) 수 3~8. 나이에 맞는 추천값으로 시작한다(부모가 바꿀 수 있다).
   const [pageCount, setPageCount] = useState(() => recommendedPages(null));
-  // 이번에 만들 동화의 토큰 값 — 장면 수 × 쪽당 단가 (몇 장이냐로 달라진다).
-  const bookCost = bookTokenCost(pageCount, IMAGES_ENABLED);
+  /*
+   * 값은 두 번에 나눠 받는다 — 대본을 만들 때 글 값, 그림을 붙일 때 그림 값.
+   * 둘을 더하면 예전과 같다(쪽당 2토큰). 나누기만 한 것이지 올린 게 아니다.
+   */
+  const scriptCost = scriptTokenCost(pageCount);
+  const imageCost = illustrationTokenCost(pageCount);
   /*
    * 마스터는 토큰이 들지 않는다(auth.spendTokens에서 면제). 그런데 화면이 잔액으로
    * 버튼을 먼저 막고 있어서, 서버만 면제해 봐야 잔액이 바닥나면 못 만들었다.
    * 여기서도 같이 면제해야 실제로 계속 만들 수 있다.
    */
-  const shortOnTokens = !master && tokens < bookCost;
+  const shortOnTokens = !master && tokens < scriptCost;
 
   // 생성 결과
   const [outline, setOutline] = useState<Outline | null>(null);
@@ -928,6 +967,13 @@ export default function CreatePage() {
   }
 
   const [story, setStory] = useState<Story | null>(null);
+  /*
+   * 그림 값이 모자란 채로 그리기 시작하면, 다 그린 뒤 저장에서 막힌다 —
+   * 그때는 이미 Gemini 값이 다 나간 뒤다. 시작 전에 막아야 손해가 없다.
+   * 잔액은 대본 값을 낸 뒤의 것이라, 여기서 다시 본다.
+   */
+  const shortOnImageTokens =
+    !master && story ? tokens < illustrationTokenCost(story.pages.length) : false;
   // 쪽별 삽화(data URL). 실패한 쪽은 null → 뷰어가 플레이스홀더를 그린다.
   const [pageImages, setPageImages] = useState<(string | null)[]>([]);
   const [drawn, setDrawn] = useState(0);
@@ -947,6 +993,38 @@ export default function CreatePage() {
   }, [step]);
   // 완성해 책장에 저장한 책 — done 화면은 이걸 뷰어로 보여준다(id="new" 대신 진짜 id).
   const [finalBook, setFinalBook] = useState<Book | null>(null);
+  /*
+   * 이야기를 다시 지은 횟수.
+   *
+   * 다시 짓기는 회원 토큰이 안 드는 단계다(토큰은 책이 저장될 때 한 번만 빠진다).
+   * 그런데 누를 때마다 글 생성 값은 실제로 나간다 — 마음에 드는 이야기를 고를 자유는
+   * 주되, 끝없이 돌려 보는 건 막는다.
+   *
+   * 새로고침으로 초기화되지 않게 임시저장에 함께 담는다. 재료를 바꾸면 0으로 되돌린다 —
+   * 다른 이야기를 짓는 것이지 같은 것을 다시 돌리는 게 아니기 때문이다.
+   */
+  const [outlineRetries, setOutlineRetries] = useState(0);
+
+  /**
+   * 대본 값(글 값)을 이미 받았는지.
+   *
+   * 대본을 만들 때 한 번만 받는다. 새로고침해도 두 번 받지 않도록 임시저장에 함께 담는다.
+   * 재료를 바꿔 새로 지으면 0으로 되돌린다 — 그건 다른 이야기다.
+   */
+  const [scriptCharged, setScriptCharged] = useState(false);
+  /** 같은 줄거리로 대본을 다시 쓴 횟수. */
+  const [storyRewrites, setStoryRewrites] = useState(0);
+  /** 대본에서 지금 고치고 있는 쪽 번호. null이면 아무것도 안 고치는 중. */
+  const [editingPage, setEditingPage] = useState<number | null>(null);
+  const [pageDraft, setPageDraft] = useState("");
+  /**
+   * 그림 그리기 전에 부모가 덧붙이는 장소 설명(선택).
+   *
+   * 장소는 글로만 잠겨 있어서 쪽마다 흔들린다. 부모가 "우리 동네 계곡은 자갈밭이고
+   * 큰 바위가 하나 있어요"처럼 한 줄 적어 주면 그림이 훨씬 덜 흔들린다.
+   */
+  const [locationDetail, setLocationDetail] = useState("");
+
   // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
   const [confirmMake, setConfirmMake] = useState(false);
 
@@ -958,6 +1036,7 @@ export default function CreatePage() {
     happening, extra, place, todayEvent, feeling, ending, emotion, situation,
     artStyle, screenShape, narratorVoice, narrationStyle, longerStory, pageCount, outline, story,
     directMode, directOpening, directDevelopment, directCrisis, directEnding, directText,
+    outlineRetries, scriptCharged, storyRewrites, locationDetail,
   });
 
   useEffect(() => {
@@ -1011,6 +1090,10 @@ export default function CreatePage() {
     setDirectCrisis(draft.directCrisis);
     setDirectEnding(draft.directEnding);
     setDirectText(draft.directText);
+    setOutlineRetries(draft.outlineRetries ?? 0);
+    setScriptCharged(draft.scriptCharged ?? false);
+    setStoryRewrites(draft.storyRewrites ?? 0);
+    setLocationDetail(draft.locationDetail ?? "");
     setArtStyle(ART_STYLES.some((style) => style.id === draft.artStyle) ? draft.artStyle : ART_STYLES[0].id);
     setScreenShape(draft.screenShape === "phone" ? "phone" : "tablet");
     setNarratorVoice(draft.narratorVoice);
@@ -1080,11 +1163,27 @@ export default function CreatePage() {
     return { kind: "imagine", subject: theme, ...common, happening, place: "", feeling: "", ending: "", emotion: "", situation: "", extra: extra.trim(), directMode: "", directOpening: "", directDevelopment: "", directCrisis: "", directEnding: "", directText: "" };
   }
 
-  async function makeOutline() {
+  /**
+   * 줄거리 짓기. 이미 줄거리가 있는데 또 부르면 '다시 짓기'다.
+   *
+   * @param isRetry 다시 짓기인지 — 횟수를 세고, 다 썼으면 막는다.
+   */
+  async function makeOutline(isRetry = false) {
     if (busyRef.current) return;
+    if (isRetry && !master && outlineRetries >= MAX_OUTLINE_RETRIES) {
+      setError(
+        `이야기 다시 짓기는 ${MAX_OUTLINE_RETRIES}번까지예요. 재료를 바꾸면 새로 지을 수 있어요.`,
+      );
+      return;
+    }
     busyRef.current = true;
     setBusy(true);
     setError("");
+    if (isRetry) setOutlineRetries((n) => n + 1);
+    // 새 줄거리 = 다른 이야기다. 대본을 새로 만들면 글 값을 다시 받는다.
+    setScriptCharged(false);
+    setStoryRewrites(0);
+    setLocationDetail("");
     const ac = new AbortController();
     abortRef.current = ac;
     // 다음에 또 만들 때 아이 정보를 다시 안 묻도록 저장해 둔다.
@@ -1164,8 +1263,33 @@ export default function CreatePage() {
     }
   }
 
+  /** 대본에서 한 쪽 문장을 부모가 고친 것을 반영한다. */
+  function savePageText(index: number) {
+    // 맥에서 입력한 한글은 자모가 분리된 형태(NFD)로 들어올 수 있다. 그대로 두면
+    // 동글 같은 글꼴에서 ◆?로 깨져 보인다 — 저장 전에 한 번 합쳐 둔다.
+    const text = pageDraft.normalize("NFC").trim();
+    if (!text) {
+      setEditingPage(null);
+      return; // 빈 쪽은 만들지 않는다 — 고치기 전 문장을 그대로 둔다
+    }
+    setStory((prev) =>
+      prev
+        ? { ...prev, pages: prev.pages.map((p, i) => (i === index ? { ...p, text } : p)) }
+        : prev,
+    );
+    setEditingPage(null);
+  }
+
   async function makeStory() {
     if (!outline || busyRef.current) return;
+    // 대본을 이미 받은 뒤 다시 부르는 것 = 다시 쓰기. 값은 더 받지 않으니 횟수로 막는다.
+    const isRewrite = scriptCharged;
+    if (isRewrite && !master && storyRewrites >= MAX_STORY_REWRITES) {
+      setError(
+        `같은 줄거리로 다시 쓰기는 ${MAX_STORY_REWRITES}번까지예요. 문장을 눌러 직접 고치실 수 있어요.`,
+      );
+      return;
+    }
     busyRef.current = true;
     setBusy(true);
     setError("");
@@ -1190,15 +1314,27 @@ export default function CreatePage() {
         const detail = Array.isArray(data.detail) ? data.detail.slice(0, 2).join(" ") : "";
         throw new Error([data.error ?? "동화를 만들지 못했어요.", detail].filter(Boolean).join(" "));
       }
-      setStory(data.story);
-      // 고객은 줄거리(상황설명)에서 이미 판단했다 — 본문 검토를 또 시키지 않는다.
-      // 그림이 켜져 있으면 이어서 삽화까지 그려 완성하고(illustrate가 자체 진행화면을
-      // 띄운다 — await 안 해 busy 오버레이와 안 겹친다), 꺼져 있으면 글 동화로 마무리.
-      if (IMAGES_ENABLED) {
-        illustrate(data.story);
-      } else {
-        await finish([], data.story);
+      /*
+       * 대본이 나왔으면 여기서 글 값을 받고 멈춘다 — 그림은 아직 그리지 않는다.
+       *
+       * 예전엔 대본과 그림을 한 번에 만들고 끝에서 값을 한꺼번에 받았다. 그러면 부모가
+       * 대본을 보기도 전에 그림 값까지 나가서, 이야기가 마음에 안 들어도 되돌릴 수 없었다.
+       * 이제 대본을 먼저 읽고 고친 뒤 "이걸로 그림 만들자" 할 때 그림 값을 낸다.
+       */
+      const story = data.story as Story;
+      if (!master && !scriptCharged) {
+        const cost = scriptTokenCost(story.pages.length);
+        if (!(await spendTokens(cost))) {
+          setError(`토큰이 부족해요. 이야기를 만들려면 ${cost}개가 필요해요.`);
+          return; // 줄거리 화면에 그대로 남는다 — 대본은 버린다
+        }
+        setTokens((t) => Math.max(0, t - cost));
       }
+      setScriptCharged(true);
+      if (isRewrite) setStoryRewrites((n) => n + 1);
+      setEditingPage(null); // 새 대본이니 고치던 자리는 닫는다
+      setStory(story);
+      setStep("story");
     } catch (e) {
       // ESC로 취소한 경우는 오류가 아니다 — 줄거리 화면에 그대로 남는다.
       if ((e as Error).name !== "AbortError") setError((e as Error).message);
@@ -1314,6 +1450,8 @@ export default function CreatePage() {
                   mood: mood.en,
                   shape: screenShape,
                   qualityCorrection,
+                  // 부모가 대본 화면에서 적어 준 장소 — 모든 쪽이 같은 곳을 그리게 하는 유일한 끈이다.
+                  locationDetail: locationDetail.trim(),
                   // 책 전체 인물을 보내되 서버가 장면에 이름이 있는 인물만 골라 잠근다.
                   cast: s.characters.map((c, characterIndex) => ({
                     name: c.name,
@@ -1445,21 +1583,25 @@ export default function CreatePage() {
    */
   async function finish(images: (string | null)[], s: Story | null = story) {
     if (!s) return;
-    // 완성 시 토큰 차감 — 실제 쪽 수 × 쪽당 단가 (그림 있으면 그림 단가).
-    // 차감 결과를 반드시 확인한다: 서버 잔액이 부족하거나 갱신에 실패하면 저장하지
-    // 않고 이유를 알린다(무료 생성 방지 + 부모가 원인을 알 수 있게).
+    /*
+     * 여기서는 '그림 값'만 받는다 — 글 값은 대본이 나왔을 때 이미 받았다.
+     * 그림 없이 끝내면 더 받을 것이 없다(글 동화 한 권 값을 이미 낸 셈이다).
+     */
     const illustrated = images.some(Boolean);
-    const cost = bookTokenCost(s.pages.length, illustrated);
-    const paid = await spendTokens(cost);
-    if (!paid) {
-      setError(
-        `토큰이 부족해서 저장하지 못했어요. (필요 ${cost}개) 설정에서 충전한 뒤 다시 만들어 주세요.`,
-      );
-      setStep("story");
-      return;
+    const cost = illustrated ? illustrationTokenCost(s.pages.length) : 0;
+    if (cost > 0) {
+      // 차감 결과를 반드시 확인한다: 서버 잔액이 부족하거나 갱신에 실패하면 저장하지
+      // 않고 이유를 알린다(무료 생성 방지 + 부모가 원인을 알 수 있게).
+      if (!(await spendTokens(cost))) {
+        setError(
+          `토큰이 부족해서 저장하지 못했어요. (그림에 ${cost}개 필요) 충전한 뒤 '그림 만들기'를 다시 눌러 주세요.`,
+        );
+        setStep("story");
+        return;
+      }
+      // 마스터는 실제로 차감되지 않으니 화면 잔액도 그대로 둔다(안 그러면 숫자만 줄어 헷갈린다).
+      if (!master) setTokens((t) => Math.max(0, t - cost));
     }
-    // 마스터는 실제로 차감되지 않으니 화면 잔액도 그대로 둔다(안 그러면 숫자만 줄어 헷갈린다).
-    if (!master) setTokens((t) => Math.max(0, t - cost));
     // 저장 전에 삽화를 화면 크기로 줄인다 — 원본(장당 약 1MB)을 그대로 넣으면 책이
     // 8MB가 되어 책장·책 열기가 둘 다 느려진다. 표지는 더 작게 따로 만들어 두어
     // 책장이 본문을 안 받고도 표지를 보여줄 수 있게 한다.
@@ -1497,6 +1639,7 @@ export default function CreatePage() {
       // 그림만 화풍·인물·비율이 어긋나 오히려 더 눈에 띈다.
       artStyleId: artStyle,
       shape: screenShape,
+      locationDetail: locationDetail.trim() || undefined,
       cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
       pages: s.pages.map((p, i) => ({
         text: p.text,
@@ -2384,8 +2527,8 @@ export default function CreatePage() {
                 </div>
                 <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
                   ⭐ {age ?? "우리 아이"}세에게 알맞은 길이예요 · 이 장수면{" "}
-                  <b className="text-neutral-600">토큰 {bookCost}개</b>
-                  {IMAGES_ENABLED ? " (그림 2토큰/장)" : " (글 1토큰/장)"}
+                  <b className="text-neutral-600">이야기 {scriptCost}개</b>
+                  {IMAGES_ENABLED ? ` + 그림 ${imageCost}개` : ""} 토큰이 들어요
                 </p>
               </div>
 
@@ -2729,17 +2872,14 @@ export default function CreatePage() {
                 {confirmMake ? (
                   <div className="flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-neutral-200 p-3">
                     <p className="text-sm font-extrabold text-neutral-700">
-                      {IMAGES_ENABLED
-                        ? "이 줄거리로 그림동화를 만들까요?"
-                        : "이 줄거리로 동화를 만들까요?"}
+                      이 줄거리로 이야기를 써 볼까요?
                     </p>
-                    <p className="flex items-center justify-center gap-1 text-[11px] font-medium text-neutral-400">
-                      <span aria-hidden className="inline-block rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
+                    <p className="flex items-center justify-center gap-1 break-keep text-center text-[11px] font-medium text-neutral-400">
+                      <span aria-hidden className="inline-block shrink-0 rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
                       {outline.scenes.length}장 ·{" "}
                       {master
                         ? "관리자는 토큰이 들지 않아요"
-                        : `토큰 ${bookCost}개 사용 (내 잔액 ${tokens}개)`}
-                      {IMAGES_ENABLED && " · 그림 포함 · 약 1~2분"}
+                        : `지금은 이야기 값 ${scriptTokenCost(outline.scenes.length)}개만 나가요 (내 잔액 ${tokens}개). 그림은 이야기를 읽어 보고 정해요.`}
                     </p>
                     {bookLimitReached ? (
                       <p className="text-center text-xs font-bold text-red-600">
@@ -2770,15 +2910,19 @@ export default function CreatePage() {
                   </div>
                 ) : (
                   <BigButton accent={accent} accentDark={accentDark} onClick={() => setConfirmMake(true)}>
-                    {IMAGES_ENABLED ? "이 이야기로 그림동화 만들기 🎨" : "이 이야기로 동화 만들기 📖"}
+                    {/* 여기서는 글만 짓는다 — 그림은 대본을 읽어 보고 정한다. */}
+                    이 줄거리로 이야기 짓기 ✍️
                   </BigButton>
                 )}
                 <button
                   type="button"
-                  onClick={makeOutline}
-                  className="text-sm font-bold text-neutral-500 underline"
+                  onClick={() => makeOutline(true)}
+                  disabled={!master && outlineRetries >= MAX_OUTLINE_RETRIES}
+                  className="text-sm font-bold text-neutral-500 underline disabled:no-underline disabled:opacity-50"
                 >
-                  다른 이야기로 다시 짓기 🔄
+                  {!master && outlineRetries >= MAX_OUTLINE_RETRIES
+                    ? "다시 짓기를 다 썼어요 — 재료를 바꾸면 새로 지을 수 있어요"
+                    : `다른 이야기로 다시 짓기 🔄${master ? "" : ` (${MAX_OUTLINE_RETRIES - outlineRetries}번 남음)`}`}
                 </button>
                 <button
                   type="button"
@@ -2798,13 +2942,18 @@ export default function CreatePage() {
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 이야기가 완성됐어요!
               </h1>
+              <p className="-mt-2 break-keep text-center text-xs font-medium text-neutral-400">
+                그림은 아직 그리지 않았어요. 문장을 눌러 마음에 들게 고친 뒤,
+                <br />그 글 그대로 그림을 그려요.
+              </p>
               <div className="rounded-2xl p-5" style={{ background: accentSoft }}>
                 <h2 className="text-center text-xl font-extrabold text-neutral-800">
                   {story.title}
                 </h2>
-                {/* 쪽별로 나눠 보여준다 — 책이 어떻게 넘어갈지 그대로 보인다. */}
+                {/* 쪽별로 나눠 보여준다 — 책이 어떻게 넘어갈지 그대로 보인다.
+                    문장을 누르면 그 자리에서 고칠 수 있다(그림은 고친 글을 보고 그린다). */}
                 <ol className="mt-4 flex max-h-[42dvh] flex-col gap-3 overflow-y-auto pr-1">
-                  {story.pages.map((p) => (
+                  {story.pages.map((p, pageIndex) => (
                     <li key={p.pageNo} className="flex gap-2.5">
                       <span
                         style={{ background: accent }}
@@ -2812,13 +2961,80 @@ export default function CreatePage() {
                       >
                         {p.pageNo}
                       </span>
-                      <p className="text-sm font-medium leading-relaxed text-neutral-700">
-                        {p.text}
-                      </p>
+                      {editingPage === pageIndex ? (
+                        <div className="flex flex-1 flex-col gap-2">
+                          <textarea
+                            autoFocus
+                            rows={4}
+                            value={pageDraft}
+                            onChange={(e) => setPageDraft(e.target.value.slice(0, 400))}
+                            className="w-full rounded-xl border-2 border-white bg-white/90 p-3 text-sm font-medium leading-relaxed text-neutral-700 outline-none"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => savePageText(pageIndex)}
+                              style={{ background: accent }}
+                              className="rounded-full px-4 py-1.5 text-xs font-extrabold text-white"
+                            >
+                              확인
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingPage(null)}
+                              className="rounded-full bg-white px-4 py-1.5 text-xs font-extrabold text-neutral-500"
+                            >
+                              취소
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingPage(pageIndex);
+                            setPageDraft(p.text);
+                          }}
+                          className="flex-1 rounded-xl px-2 py-1 text-left text-sm font-medium leading-relaxed text-neutral-700 transition-colors hover:bg-white/60"
+                        >
+                          {p.text}
+                          <span className="ml-1.5 whitespace-nowrap text-[11px] font-bold text-neutral-400 underline">
+                            고치기
+                          </span>
+                        </button>
+                      )}
                     </li>
                   ))}
                 </ol>
               </div>
+
+              {/*
+                * 장소 다듬기 — 그림이 쪽마다 다른 곳처럼 보이는 문제의 실질적인 해결책.
+                *
+                * 인물은 캐릭터 그림 한 장이 기준을 잡아 주는데, 장소는 그런 게 없어서
+                * 모델이 쪽마다 "계곡"을 새로 상상한다. 부모가 아이가 실제로 아는 곳을
+                * 한 줄 적어 주면 모든 쪽이 같은 곳을 그린다. 안 적어도 그만이다.
+                */}
+              {IMAGES_ENABLED && (
+                <div className="rounded-2xl border-2 border-neutral-100 bg-white p-4">
+                  <label
+                    htmlFor="location-detail"
+                    className="block break-keep text-sm font-extrabold text-neutral-700"
+                  >
+                    그림 속 장소를 좀 더 알려 주실래요? <span className="font-bold text-neutral-400">(안 쓰셔도 돼요)</span>
+                  </label>
+                  <input
+                    id="location-detail"
+                    value={locationDetail}
+                    onChange={(e) => setLocationDetail(e.target.value.slice(0, 120))}
+                    placeholder="예: 계곡 — 회색 자갈 바닥, 물가에 넓적한 바위 하나, 짙은 초록 나무"
+                    className="mt-2 w-full rounded-xl border-2 border-neutral-100 bg-neutral-50 px-3 py-2.5 text-sm font-medium text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-200"
+                  />
+                  <p className="mt-1.5 break-keep text-[11px] font-medium text-neutral-400">
+                    바닥·눈에 띄는 것 하나·색 두 가지만 적어 주시면 모든 쪽이 같은 곳처럼 보여요.
+                  </p>
+                </div>
+              )}
 
               {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
 
@@ -2828,9 +3044,13 @@ export default function CreatePage() {
                     <BigButton
                       accent={accent}
                       accentDark={accentDark}
-                      onClick={() => illustrate(story)}
+                      disabled={shortOnImageTokens}
+                      onClick={() => {
+                        if (shortOnImageTokens) return;
+                        illustrate(story);
+                      }}
                     >
-                      그림까지 그리기 🎨
+                      이 글로 그림 그리기 🎨
                     </BigButton>
                   )}
                   {/* 이미지 off일 때는 글 동화 버튼이 메인이 된다. */}
@@ -2844,17 +3064,37 @@ export default function CreatePage() {
                     </BigButton>
                   )}
                 </div>
-                {IMAGES_ENABLED && (
-                  <p className="text-[11px] font-medium text-neutral-400">
-                    그림은 1~2분 정도 걸려요 · 글 동화는 바로 읽을 수 있어요
-                  </p>
-                )}
+                {IMAGES_ENABLED &&
+                  (shortOnImageTokens ? (
+                    <p className="break-keep text-center text-xs font-bold text-red-600">
+                      그림을 그리려면 토큰 {illustrationTokenCost(story.pages.length)}개가 더 필요해요
+                      (내 잔액 {tokens}개).
+                      <br />
+                      <span className="font-medium text-neutral-500">
+                        지금은 글 동화로 저장해 두고, 충전한 뒤에 그림을 붙일 수 있어요.
+                      </span>
+                    </p>
+                  ) : (
+                    <p className="break-keep text-center text-[11px] font-medium text-neutral-400">
+                      {master
+                        ? "관리자는 토큰이 들지 않아요"
+                        : `그림을 그리면 토큰 ${illustrationTokenCost(story.pages.length)}개가 더 들어요 (내 잔액 ${tokens}개)`}
+                      <br />그림은 1~2분 정도 걸려요 · 글 동화는 더 들지 않고 바로 읽을 수 있어요
+                    </p>
+                  ))}
+                {/*
+                  * 다시 쓰기는 토큰을 더 받지 않는다(대본 값은 이미 냈다). 그래서 횟수로
+                  * 막는다 — 안 그러면 무한정 다시 쓸 수 있고, 값은 우리가 문다.
+                  */}
                 <button
                   type="button"
                   onClick={makeStory}
-                  className="text-xs font-bold text-neutral-400 underline"
+                  disabled={!master && storyRewrites >= MAX_STORY_REWRITES}
+                  className="text-xs font-bold text-neutral-400 underline disabled:no-underline disabled:opacity-50"
                 >
-                  같은 줄거리로 다시 쓰기 🔄
+                  {!master && storyRewrites >= MAX_STORY_REWRITES
+                    ? "다시 쓰기를 모두 썼어요"
+                    : `같은 줄거리로 다시 쓰기 🔄${master ? "" : ` (${MAX_STORY_REWRITES - storyRewrites}번 남음)`}`}
                 </button>
               </div>
             </section>

@@ -98,5 +98,12 @@ export type Book = {
   cast?: { name: string; description: string }[];
   /** 만들 때 고른 화면 모양 — 다시 그릴 때 같은 비율로 그리기 위해. */
   shape?: "phone" | "tablet";
+  /**
+   * 부모가 대본 화면에서 적어 준 장소 설명 — 한 쪽만 다시 그릴 때도 같은 곳이 나오게.
+   *
+   * 인물은 캐릭터 그림이 기준을 잡아 주지만 장소는 그런 게 없다. 이 한 줄이 없으면
+   * 다시 그린 쪽만 다른 계곡, 다른 방이 되어 오히려 더 눈에 띈다.
+   */
+  locationDetail?: string;
   pages: BookPage[];
 };

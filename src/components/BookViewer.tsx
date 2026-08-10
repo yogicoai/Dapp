@@ -412,6 +412,8 @@ export function BookViewer({ book }: { book: Book }) {
           styleReferenceScene: sibling?.imagePrompt ?? "",
           shape: book.shape,
           cast: book.cast ?? [],
+          // 만들 때 부모가 적어 둔 장소 — 이게 있어야 다시 그린 쪽도 같은 곳이 된다.
+          locationDetail: book.locationDetail ?? "",
         }),
       });
       const data = (await res.json().catch(() => ({}))) as { image?: string; error?: string };

@@ -36,6 +36,7 @@ export async function POST(request: Request) {
     shape?: unknown;
     cast?: unknown;
     qualityCorrection?: unknown;
+    locationDetail?: unknown;
   };
 
   // 어느 화면에서 볼 동화인가 — 핸드폰은 세로(3:4), 태블릿은 가로(4:3)로 그린다.
@@ -44,6 +45,15 @@ export async function POST(request: Request) {
   const aspectRatio = phone ? ("3:4" as const) : ("4:3" as const);
 
   const scene = typeof input.scene === "string" ? input.scene.trim() : "";
+  /*
+   * 부모가 대본 화면에서 손으로 적어 준 장소 설명(선택).
+   *
+   * 장소는 인물과 달리 참조 그림이 없어서 쪽마다 흔들린다("계곡"이 어떤 계곡인지
+   * 모델이 매번 새로 상상한다). 부모가 "회색 자갈 바닥, 넓적한 바위 하나"처럼
+   * 한 줄만 적어 주면 모든 쪽이 같은 곳을 그린다. 한국어 그대로 넘긴다.
+   */
+  const locationDetail =
+    typeof input.locationDetail === "string" ? input.locationDetail.trim().slice(0, 200) : "";
   const storyText = typeof input.storyText === "string" ? input.storyText.trim().slice(0, 1200) : "";
   if (!scene || scene.length > 500) {
     return NextResponse.json({ error: "장면 묘사가 비었거나 너무 깁니다." }, { status: 400 });
@@ -139,6 +149,17 @@ export async function POST(request: Request) {
     `Scene: ${scene}`,
     currentLocation
       ? `LOCATION LOCK — this scene visibly takes place at "${currentLocation.name}": ${currentLocation.description}. Draw that setting, not a generic forest, park, hanok, classroom or another house.`
+      : "",
+    /*
+     * 부모가 적어 준 장소는 모델이 상상한 장소보다 우선한다 — 아이가 실제로 아는
+     * 곳이기 때문이다. 다만 이것도 '그릴 것'이지 '쓸 글자'가 아니라고 못박는다.
+     */
+    locationDetail
+      ? [
+          `PLACE DETAIL (highest priority, written by the child's parent, Korean): ${locationDetail}`,
+          "Build the setting from this description on EVERY page of the book: the same ground, the same big landmark, the same colors. If it conflicts with what you would normally imagine for this place, follow this description.",
+          "These are things to draw, never words to write in the image.",
+        ].join("\n")
       : "",
     /*
      * 본문은 '무슨 일이 일어나는지'를 알려 주려고 건넨다 — 장면 설명만으로는 인물이
