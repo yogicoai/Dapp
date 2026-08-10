@@ -22,6 +22,7 @@ import {
   saveStoryFont,
   STORY_FONTS,
   findStoryWeight,
+  storyWeightForFont,
   loadStoryWeight,
   saveStoryWeight,
   STORY_WEIGHTS,
@@ -61,6 +62,7 @@ import {
   buildPresetUtterance,
   deleteVoiceAudio,
   findTypecast,
+  fetchTypecastVoiceAudio,
   loadCustomVoices,
   loadSelectedVoiceId,
   loadVoiceAudio,
@@ -73,11 +75,14 @@ import {
   type TypecastPreset,
 } from "@/lib/voices";
 import {
+  approveParentVoice,
   cloneParentVoice,
   deleteParentVoice,
   loadAllParentVoiceRoles,
+  loadPendingParentVoices,
   loadParentVoices,
-  remainingCloneChances,
+  metaForRole,
+  PARENT_VOICE_TEST_TEXT,
   roleFromLabel,
   type ParentVoice,
 } from "@/lib/parent-voice";
@@ -91,7 +96,7 @@ import {
  * multi=true면 여러 개 고를 수 있다.
  */
 /** 하나만 고르는 항목 / 여러 개 고르는 항목을 타입으로 갈라 둔다(코드가 헷갈리지 않게). */
-type LookSingleKey = "hair" | "bangs" | "hairColor" | "eyes" | "skin" | "build" | "color";
+type LookSingleKey = "hair" | "hairTexture" | "bangs" | "hairColor" | "eyes" | "skin" | "build" | "color";
 type LookMultiKey = "items" | "marks";
 type LookRow =
   | { key: LookSingleKey; label: string; opts: readonly string[]; multi?: false }
@@ -115,6 +120,11 @@ const LOOK_ROWS: readonly LookRow[] = [
       "하나로 묶기",
       "똥머리",
     ],
+  },
+  {
+    key: "hairTexture" as const,
+    label: "머리결",
+    opts: ["곧은 생머리", "살짝 웨이브", "곱슬머리", "파마머리"],
   },
   { key: "bangs" as const, label: "앞머리", opts: ["있어요", "없어요", "옆으로 넘겨요"] },
   { key: "hairColor" as const, label: "머리 색", opts: ["까만색", "짙은 갈색", "밝은 갈색"] },
@@ -151,7 +161,7 @@ const LOOK_ROWS: readonly LookRow[] = [
   {
     key: "marks" as const,
     label: "이런 점도 있어요",
-    opts: ["곱슬머리", "주근깨", "보조개", "앞니 빠짐", "볼이 통통해요"],
+    opts: ["주근깨", "보조개", "앞니 빠짐", "볼이 통통해요"],
     multi: true,
   },
 ];
@@ -200,25 +210,17 @@ export default function SettingsPage() {
   // 책장 한 줄 권수(넓은 화면 전용).
   const [shelfCols, setShelfCols] = useState<ShelfCols>(5);
   // 동화 본문 글꼴 — 고른 id만 들고 있는다(배율·줄 간격은 prefs의 목록이 안다).
-  const [storyFont, setStoryFont] = useState("dongle");
+  const [storyFont, setStoryFont] = useState("gothic");
   const [storyWeight, setStoryWeight] = useState("medium");
+  const [fontPickerOpen, setFontPickerOpen] = useState(false);
+  const selectedStoryFont = STORY_FONTS.find((f) => f.id === storyFont) ?? STORY_FONTS[0];
   const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
   const [recording, setRecording] = useState<{ label: string; emoji: string } | null>(null);
   // 부모 목소리(복제됨) — 계정별로 Supabase에서 불러온다. cloningRole = 지금 복제 중인 역할.
   const [parentVoices, setParentVoices] = useState<ParentVoice[]>([]);
+  const [pendingParentVoices, setPendingParentVoices] = useState<ParentVoice[]>([]);
   const [cloningRole, setCloningRole] = useState<string | null>(null);
   const [cloneErr, setCloneErr] = useState("");
-  // 역할별 남은 만들기 기회 — 엄마·아빠가 서로 독립이다(각각 처음 1 + 수정 1).
-  // null = 아직 확인 전.
-  const [chances, setChances] = useState<{ mom: number; dad: number } | null>(null);
-  const chancesFor = (role: string) => (chances ? (role === "dad" ? chances.dad : chances.mom) : null);
-  const refreshChances = async () => {
-    const [mom, dad] = await Promise.all([
-      remainingCloneChances("mom"),
-      remainingCloneChances("dad"),
-    ]);
-    setChances({ mom, dad });
-  };
   // 만들기 연타 방지 잠금 — state가 아닌 ref라 클릭 즉시 걸린다.
   const cloneBusyRef = useRef(false);
   // 내 동화 — 만든 책 전체. 여기서 책장 노출(숨기기/보이기)과 영구 삭제를 관리한다.
@@ -249,11 +251,10 @@ export default function SettingsPage() {
   const migrateStop = useRef(false);
   useEffect(() => () => void (migrateStop.current = true), []);
 
-  // 부모 목소리(복제됨) 목록·남은 만들기 기회를 계정에서 불러온다(로그인 안 됐으면 빈 목록).
+  // 부모 목소리(복제됨) 목록을 계정에서 불러온다(로그인 안 됐으면 빈 목록).
   useEffect(() => {
     loadParentVoices().then(setParentVoices).catch(() => {});
-    void refreshChances().catch(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 마운트 때 한 번만 불러온다
+    loadPendingParentVoices().then(setPendingParentVoices).catch(() => {});
   }, []);
 
   // 아이 정보·언어·목소리 등 '로컬 저장값'은 세션(네트워크)과 무관하게 즉시 반영한다.
@@ -274,8 +275,15 @@ export default function SettingsPage() {
     setTextPos(loadTextPos());
     setBookLayout(loadBookLayout());
     setShelfCols(loadShelfCols());
-    setStoryFont(loadStoryFont().id);
-    setStoryWeight(loadStoryWeight().id);
+    const savedFont = loadStoryFont();
+    const savedWeight = loadStoryWeight();
+    setStoryFont(savedFont.id);
+    if (savedFont.weights.includes(savedWeight.value)) {
+      setStoryWeight(savedWeight.id);
+    } else {
+      setStoryWeight("normal");
+      saveStoryWeight("normal");
+    }
     // (녹음 목록은 계정별 저장이라 세션 effect에서 uid를 안 뒤에 불러온다.)
   }, []);
 
@@ -539,8 +547,47 @@ export default function SettingsPage() {
     el.play().catch(() => {});
   };
 
+  const auditionParentVoice = async (voice: ParentVoice) => {
+    stopPreview();
+    setCloneErr("");
+    try {
+      const blob = await fetchTypecastVoiceAudio(voice.voiceId, PARENT_VOICE_TEST_TEXT);
+      const el = previewAudioRef.current ?? new Audio();
+      previewAudioRef.current = el;
+      el.src = URL.createObjectURL(blob);
+      applyPlaybackRate(el, 1);
+      await el.play();
+    } catch (error) {
+      setCloneErr(error instanceof Error ? error.message : "확인용 음성을 재생하지 못했어요.");
+    }
+  };
+
+  const acceptParentVoice = async (voice: ParentVoice) => {
+    setCloneErr("");
+    try {
+      await approveParentVoice(voice.role, voice.voiceId);
+      setPendingParentVoices((items) => items.filter((item) => item.role !== voice.role));
+      setParentVoices(await loadParentVoices());
+      flashSaved();
+    } catch (error) {
+      setCloneErr(error instanceof Error ? error.message : "목소리를 승인하지 못했어요.");
+    }
+  };
+
+  /**
+   * 마음에 안 들어 다시 녹음하러 간다.
+   *
+   * 복제를 여기서 미리 지우지 않는다 — 지워 놓고 다음 복제가 실패하면 아무것도 없이
+   * 남는다. 옛 복제는 새 목소리가 만들어진 뒤에 cloneParentVoice가 알아서 지운다.
+   */
+  const retryParentVoice = (voice: ParentVoice) => {
+    setCloneErr("");
+    setRecording({ label: voice.label, emoji: voice.emoji });
+  };
+
   /** 이 녹음(엄마/아빠)이 이미 복제(목소리 만들기)됐는지. */
   const isCloned = (v: CustomVoice) => parentVoices.some((p) => p.role === roleFromLabel(v.label));
+  const isPending = (v: CustomVoice) => pendingParentVoices.some((p) => p.role === roleFromLabel(v.label));
 
   /**
    * 녹음 → 복제(목소리 만들기). 성공하면 계정에 저장되고 동화에서 그 목소리로 읽을 수 있다.
@@ -548,6 +595,22 @@ export default function SettingsPage() {
    * 과금은 '선차감 → 복제 실패 시 환불' — 차감이 서버 잔액 기준이라(다른 탭에서 잔액이
    * 바뀌어도) 무과금 복제가 생기지 않고, 복제가 실패하면 토큰이 돌아온다.
    */
+  /**
+   * 이미 만든 목소리를 이 녹음으로 다시 만든다.
+   * 확인은 반드시 토큰이 빠지기 전에 받는다(makeParentVoice가 바로 선차감한다).
+   */
+  const remakeParentVoice = async (v: CustomVoice) => {
+    if (
+      !master &&
+      !window.confirm(
+        `${v.label} 목소리를 다시 만들까요?\n\n토큰 ${COST_PARENT_VOICE}개가 나가고, 지금 목소리는 새 목소리로 바뀌어요.`,
+      )
+    ) {
+      return;
+    }
+    await makeParentVoice(v);
+  };
+
   const makeParentVoice = async (v: CustomVoice) => {
     // 연타 방지 — state(cloningRole)는 재렌더 전까지 버튼을 못 잠그므로 ref로 즉시 잠근다.
     if (cloneBusyRef.current) return;
@@ -569,9 +632,13 @@ export default function SettingsPage() {
         charged = true;
         setAcctTokens((t) => Math.max(0, t - COST_PARENT_VOICE));
       }
-      await cloneParentVoice(roleFromLabel(v.label), v.label, blob);
+      const role = roleFromLabel(v.label);
+      const voiceId = await cloneParentVoice(role, v.label, blob);
+      const pending = { role, voiceId, ...metaForRole(role) };
+      setPendingParentVoices(await loadPendingParentVoices());
+      // 다시 만든 경우 옛 목소리가 '완성'에서 내려가므로 이 목록도 새로 읽는다.
       setParentVoices(await loadParentVoices());
-      await refreshChances();
+      await auditionParentVoice(pending);
       flashSaved();
     } catch (e) {
       // 복제 실패 — 선차감했던 토큰을 돌려준다.
@@ -587,20 +654,15 @@ export default function SettingsPage() {
   };
 
   const removeCustom = async (v: CustomVoice) => {
-    // 복제까지 된 목소리면 — 지워도 만들기 기회는 안 돌아온다는 걸 확인받는다.
+    // 복제까지 된 목소리면 서버에서도 함께 삭제된다는 걸 확인받는다.
     if (isCloned(v)) {
-      const left = chancesFor(roleFromLabel(v.label)) ?? 0;
-      const warn =
-        left > 0
-          ? `${v.label} 목소리를 지울까요?\n\n지우고 새로 만들면 남은 ${v.label} 수정 기회(${left}번)를 사용해요.`
-          : `${v.label} 목소리를 지울까요?\n\n⚠️ 남은 ${v.label} 수정 기회가 없어, 지우면 다시 만들 수 없어요.`;
+      const warn = `${v.label} 목소리를 지울까요?\n\n서버에서도 완전히 삭제되지만, 토큰을 사용해 다시 만들 수 있어요.`;
       if (!window.confirm(warn)) return;
     }
     await deleteVoiceAudio(v.id).catch(() => {});
     // 복제된 목소리도 함께 삭제한다 — 우리 DB + Typecast 서버 양쪽에서(개인정보 미보존).
     await deleteParentVoice(roleFromLabel(v.label)).catch(() => {});
     setParentVoices((prev) => prev.filter((p) => p.role !== roleFromLabel(v.label)));
-    await refreshChances();
     const next = customVoices.filter((x) => x.id !== v.id);
     setCustomVoices(next);
     saveCustomVoices(next, uid);
@@ -610,15 +672,10 @@ export default function SettingsPage() {
 
   /** 이 기기에 녹음이 없는(다른 기기에서 만든) 완성 목소리 삭제 — 계정·Typecast 서버에서 제거. */
   const removeParentOnly = async (p: ParentVoice) => {
-    const left = chancesFor(p.role) ?? 0;
-    const warn =
-      left > 0
-        ? `${p.label} 목소리를 지울까요?\n\n지우고 새로 만들면 남은 ${p.label} 수정 기회(${left}번)를 사용해요.`
-        : `${p.label} 목소리를 지울까요?\n\n⚠️ 남은 ${p.label} 수정 기회가 없어, 지우면 다시 만들 수 없어요.`;
+    const warn = `${p.label} 목소리를 지울까요?\n\n서버에서도 완전히 삭제되지만, 토큰을 사용해 다시 만들 수 있어요.`;
     if (!window.confirm(warn)) return;
     await deleteParentVoice(p.role).catch(() => {});
     setParentVoices((prev) => prev.filter((x) => x.role !== p.role));
-    await refreshChances();
     flashSaved();
   };
 
@@ -999,6 +1056,26 @@ export default function SettingsPage() {
             {ttsError && <p className="text-[11px] font-bold text-rose-500">{ttsError}</p>}
             {cloneErr && <p className="text-[11px] font-bold text-rose-500">{cloneErr}</p>}
 
+            {pendingParentVoices.map((voice) => (
+              <div key={`review-${voice.role}`} className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                <p className="text-sm font-black text-amber-900">{voice.emoji} {voice.label} 목소리를 확인해 주세요</p>
+                <p className="mt-1 text-xs font-medium leading-relaxed text-amber-800">
+                  녹음 원본이 아니라 실제로 합성된 목소리입니다. 들어 본 뒤 승인해야 동화에서 선택할 수 있어요.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button type="button" onClick={() => auditionParentVoice(voice)} className="rounded-full bg-white px-3 py-1.5 text-xs font-bold text-amber-800 shadow-sm">
+                    ▶ 다시 듣기
+                  </button>
+                  <button type="button" onClick={() => acceptParentVoice(voice)} className="rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm">
+                    닮았어요, 사용하기
+                  </button>
+                  <button type="button" onClick={() => retryParentVoice(voice)} className="rounded-full bg-white px-3 py-1.5 text-xs font-bold text-rose-600 shadow-sm">
+                    다시 녹음할게요
+                  </button>
+                </div>
+              </div>
+            ))}
+
             {/* 녹음한 엄마·아빠 목소리 — "목소리 만들기"로 복제하면 동화에서 그 목소리로 읽힌다 */}
             {customVoices.length > 0 && (
               <div className="flex flex-wrap gap-2">
@@ -1016,10 +1093,29 @@ export default function SettingsPage() {
                       <span className="text-lg leading-none">{v.emoji}</span>
                       {v.label} 🔊
                     </button>
-                    {isCloned(v) ? (
-                      <span className="rounded-full bg-emerald-100 px-2 text-[10px] font-bold text-emerald-700">
-                        ✅ 완성
+                    {isPending(v) ? (
+                      <span className="rounded-full bg-amber-200 px-2 text-[10px] font-bold text-amber-800">
+                        확인 필요
                       </span>
+                    ) : isCloned(v) ? (
+                      <>
+                        <span className="rounded-full bg-emerald-100 px-2 text-[10px] font-bold text-emerald-700">
+                          ✅ 완성
+                        </span>
+                        {/* 다시 만들기 — 토큰만 있으면 언제든. 예전엔 먼저 지워야 해서,
+                            지우고 나서 복제가 실패하면 멀쩡한 목소리만 잃었다.
+                            이제 새로 만들어진 뒤에 옛것이 지워진다. */}
+                        <button
+                          type="button"
+                          onClick={() => remakeParentVoice(v)}
+                          disabled={cloningRole !== null}
+                          className="whitespace-nowrap rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-amber-700 shadow-sm transition hover:bg-amber-50 disabled:opacity-50"
+                        >
+                          {cloningRole === roleFromLabel(v.label)
+                            ? "만드는 중…"
+                            : `🔁 다시 만들기${master ? "" : ` (${COST_PARENT_VOICE}토큰)`}`}
+                        </button>
+                      </>
                     ) : (
                       <button
                         type="button"
@@ -1098,9 +1194,7 @@ export default function SettingsPage() {
               })}
             </div>
 
-            {/* 엄마·아빠 추가 — 이제 둘을 각각 만들 수 있다(2026-08-05).
-                역할마다 따로 판단한다: 이미 만들었거나 녹음이 있으면 그 역할 버튼은 숨기고,
-                그 역할의 기회를 다 썼으면 그 역할만 안내로 바꾼다. */}
+            {/* 엄마·아빠 추가 — 역할마다 하나씩 보관하며 삭제 후 다시 만들 수 있다. */}
             {!recording && (
               <div className="flex flex-wrap gap-2">
                 {[
@@ -1110,14 +1204,6 @@ export default function SettingsPage() {
                   const hasVoice = parentVoices.some((p) => p.role === o.role);
                   const hasRecording = customVoices.some((v) => roleFromLabel(v.label) === o.role);
                   if (hasVoice || hasRecording) return null; // 이미 있으면 위쪽 칩으로 관리한다
-                  const left = chancesFor(o.role);
-                  if (left === 0) {
-                    return (
-                      <p key={o.role} className="text-[11px] font-bold text-neutral-400">
-                        {o.emoji} {o.label} 목소리는 만들기 기회를 모두 사용했어요.
-                      </p>
-                    );
-                  }
                   return (
                     <button
                       key={o.role}
@@ -1151,9 +1237,8 @@ export default function SettingsPage() {
               <b>엄마와 아빠를 각각</b> 만들 수 있어요. 녹음한 뒤 <b>🎙️ 목소리 만들기</b>를
               누르면 그 목소리로 복제돼요(한 명당 {COST_PARENT_VOICE}토큰).
               그다음 동화에서 <b>엄마·아빠 목소리</b>로 읽는 건 무료예요.
-              수정(다시 만들기)은 <b>각각 1번씩</b>이고, 만들 때마다 {COST_PARENT_VOICE}토큰이에요.
-              (✕로 지우면 서버에서도 완전히 삭제
-              {chances ? ` · 남은 기회 — 엄마 ${chances.mom}번, 아빠 ${chances.dad}번` : ""})
+              수정하려면 기존 목소리를 지우고 다시 만들면 되며, 만들 때마다 {COST_PARENT_VOICE}
+              토큰이에요. (✕로 지우면 서버에서도 완전히 삭제돼요.)
             </p>
           </section>
 
@@ -1253,45 +1338,106 @@ export default function SettingsPage() {
                 폰은 화면이 좁아 어차피 2권으로 맞춰지므로, 헷갈리지 않게 그 말을 적어 둔다. */}
             {/* 본문 글꼴 — 미리보기를 그 글꼴로 보여 준다. 이름만 봐서는 어떤 느낌인지
                 알 수 없어서, 실제 글자를 보고 고르게 하는 편이 훨씬 빠르다. */}
-            <h2 className="mt-1 text-sm font-extrabold text-neutral-400">동화 글꼴</h2>
-            <div className="flex flex-col gap-2">
-              {STORY_FONTS.map((f) => {
-                const active = storyFont === f.id;
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => {
-                      setStoryFont(f.id);
-                      saveStoryFont(f.id);
-                      flashSaved();
-                    }}
-                    aria-pressed={active}
-                    style={{
-                      ...(active ? { borderColor: accent } : undefined),
-                      fontFamily: `${f.family}, sans-serif`,
-                      fontWeight: findStoryWeight(storyWeight).value,
-                    }}
-                    className={`flex items-baseline justify-between gap-3 rounded-2xl border-2 px-4 py-3 text-left transition ${
-                      active ? "bg-white shadow-sm" : "border-transparent bg-neutral-100"
-                    }`}
-                  >
-                    <span
-                      className="min-w-0 flex-1 truncate text-neutral-800"
-                      // 글꼴마다 보이는 크기가 달라, 미리보기도 본문과 같은 배율로 맞춘다.
-                      style={{ fontSize: `calc(1.15rem * ${f.scale} * 1.6)` }}
-                    >
-                      오늘은 참 즐거운 날이에요
-                    </span>
-                    <span
-                      className="shrink-0 text-xs font-extrabold text-neutral-400"
-                      style={{ fontFamily: "inherit" }}
-                    >
-                      {f.label}
-                    </span>
-                  </button>
-                );
-              })}
+            <button
+              type="button"
+              onClick={() => setFontPickerOpen((open) => !open)}
+              aria-expanded={fontPickerOpen}
+              aria-controls="story-font-picker"
+              className="mt-1 flex w-full items-center gap-3 rounded-2xl bg-neutral-100 px-4 py-3 text-left transition hover:bg-neutral-200"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block text-[11px] font-extrabold text-neutral-400">동화 글꼴</span>
+                <span
+                  className="mt-0.5 block truncate text-neutral-800"
+                  style={{
+                    fontFamily: `${selectedStoryFont.family}, sans-serif`,
+                    fontSize: `calc(1rem * ${selectedStoryFont.scale} * 1.35)`,
+                    fontWeight: storyWeightForFont(selectedStoryFont, findStoryWeight(storyWeight)),
+                  }}
+                >
+                  우리 가족의 따뜻한 동화
+                </span>
+              </span>
+              <span className="shrink-0 text-right">
+                <span className="block text-xs font-extrabold text-neutral-500">{selectedStoryFont.label}</span>
+                <span
+                  aria-hidden
+                  className={`inline-block text-lg leading-none text-neutral-400 transition-transform duration-300 ${
+                    fontPickerOpen ? "rotate-180" : ""
+                  }`}
+                >
+                  ⌄
+                </span>
+              </span>
+            </button>
+
+            <div
+              id="story-font-picker"
+              aria-hidden={!fontPickerOpen}
+              inert={!fontPickerOpen}
+              className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+                fontPickerOpen
+                  ? "grid-rows-[1fr] opacity-100"
+                  : "pointer-events-none grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <div className="min-h-0 overflow-hidden">
+                <div className="flex flex-col gap-2 pt-2">
+                  {(
+                    [
+                      { id: "readable", label: "읽기 편함" },
+                      { id: "storybook", label: "동화 느낌" },
+                      { id: "decorative", label: "꾸밈 글꼴 · 짧은 동화에 추천" },
+                    ] as const
+                  ).map((group) => (
+                    <div key={group.id} className="flex flex-col gap-1.5">
+                      <p className="px-1 text-[11px] font-extrabold text-neutral-400">{group.label}</p>
+                      {STORY_FONTS.filter((f) => f.category === group.id).map((f) => {
+                        const active = storyFont === f.id;
+                        const chosenWeight = findStoryWeight(storyWeight);
+                        return (
+                          <button
+                            key={f.id}
+                            type="button"
+                            onClick={() => {
+                              setStoryFont(f.id);
+                              saveStoryFont(f.id);
+                              if (!f.weights.includes(chosenWeight.value)) {
+                                setStoryWeight("normal");
+                                saveStoryWeight("normal");
+                              }
+                              setFontPickerOpen(false);
+                              flashSaved();
+                            }}
+                            aria-pressed={active}
+                            style={{
+                              ...(active ? { borderColor: accent } : undefined),
+                              fontFamily: `${f.family}, sans-serif`,
+                              fontWeight: storyWeightForFont(f, chosenWeight),
+                            }}
+                            className={`flex items-baseline justify-between gap-3 rounded-2xl border-2 px-4 py-3 text-left transition ${
+                              active ? "bg-white shadow-sm" : "border-transparent bg-neutral-100"
+                            }`}
+                          >
+                            <span
+                              className="min-w-0 flex-1 text-neutral-800"
+                              style={{ fontSize: `calc(1.15rem * ${f.scale} * 1.6)` }}
+                            >
+                              “와, 정말 멋진 별빛이야!” 아이는 숲길을 천천히 걸었어요.
+                            </span>
+                            <span
+                              className="shrink-0 text-xs font-extrabold text-neutral-400"
+                              style={{ fontFamily: "inherit" }}
+                            >
+                              {f.label}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* 글자 굵기 — 미리보기 글씨도 고른 굵기로 바뀌게 해서 바로 비교된다. */}
@@ -1299,22 +1445,29 @@ export default function SettingsPage() {
             <div className="flex flex-wrap gap-2">
               {STORY_WEIGHTS.map((w) => {
                 const active = storyWeight === w.id;
+                const supported = selectedStoryFont.weights.includes(w.value);
                 return (
                   <button
                     key={w.id}
                     type="button"
                     onClick={() => {
+                      if (!supported) return;
                       setStoryWeight(w.id);
                       saveStoryWeight(w.id);
                       flashSaved();
                     }}
                     aria-pressed={active}
+                    disabled={!supported}
                     style={{
                       fontWeight: w.value,
                       ...(active ? { background: accent } : undefined),
                     }}
                     className={`rounded-full px-4 py-2 text-sm transition ${
-                      active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                      active
+                        ? "text-white shadow"
+                        : supported
+                          ? "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          : "cursor-not-allowed bg-neutral-100 text-neutral-300 line-through"
                     }`}
                   >
                     {w.label}
@@ -1323,8 +1476,7 @@ export default function SettingsPage() {
               })}
             </div>
             <p className="-mt-1 break-keep text-xs font-medium text-neutral-400">
-              글꼴에 따라 굵기가 한 가지뿐인 것도 있어요. 그럴 땐 굵게를 골라도 크게 달라지지
-              않아요.
+              선택한 글꼴에 실제로 들어 있는 굵기만 고를 수 있어요.
             </p>
 
             <h2 className="mt-1 text-sm font-extrabold text-neutral-400">책장 한 줄에</h2>

@@ -20,16 +20,17 @@ import {
 } from "@/lib/prefs";
 import { bookTokenCost, MAX_BOOKS_PER_USER } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
-import type { Book } from "@/lib/types";
-import { findTypecast, prewarmBookAudio, TYPECAST_VOICES } from "@/lib/voices";
-import { loadParentVoices, type ParentVoice } from "@/lib/parent-voice";
+import type { Book, NarrationStyle, VoiceDirection } from "@/lib/types";
+import { fetchTypecastVoiceAudio, findTypecast, prewarmBookAudio, TYPECAST_VOICES } from "@/lib/voices";
+import { loadParentVoices, PARENT_VOICE_TEST_TEXT, type ParentVoice } from "@/lib/parent-voice";
 
 type Gender = "girl" | "boy" | "unspecified";
 type Scene = { sceneNo: number; text: string };
 type Outline = { title: string; summary: string; scenes: Scene[] };
-type StoryPage = { pageNo: number; text: string; imagePrompt: string };
+type StoryPage = { pageNo: number; text: string; imagePrompt: string; voiceDirection: VoiceDirection };
 type Character = { name: string; description: string };
 type Story = { title: string; summary: string; characters: Character[]; pages: StoryPage[] };
+type StoryMode = "today" | "imagine" | "emotion" | "direct";
 
 type Step = "child" | "theme" | "style" | "outline" | "story" | "illustrate" | "done";
 
@@ -196,6 +197,9 @@ const TODAY_ENDINGS = [
  * 상황이 구체적일수록 감정동화의 위로가 정확해진다. 누르면 입력칸에 채워져 고칠 수 있다.
  */
 const EMOTION_TIMES = [
+  { t: "엄마 아빠가 꼭 안아줬을 때", e: "🤗" },
+  { t: "좋아하는 친구와 함께 놀 때", e: "💞" },
+  { t: "귀여운 동물 친구를 만났을 때", e: "🐶" },
   { t: "동생이 장난감을 뺏었을 때", e: "🧸" },
   { t: "친구가 같이 안 놀아줘서", e: "😞" },
   { t: "엄마 아빠한테 혼나서", e: "😢" },
@@ -212,6 +216,7 @@ const EMOTION_TIMES = [
  * 폭넓게 담았다. 긍정 감정(뿌듯·설렘)도 몇 개 둬서 "좋은 마음"도 이야기가 되게 한다.
  */
 const EMOTIONS = [
+  { t: "좋아해요", e: "❤️" },
   { t: "화가 나요", e: "😠" },
   { t: "무서워요", e: "😨" },
   { t: "슬퍼요", e: "😢" },
@@ -228,18 +233,44 @@ const EMOTIONS = [
   { t: "심심해요", e: "😑" },
 ];
 
-/**
- * 분위기 — 옛 앱의 무드 6종을 이어받았다.
- * ko는 이야기 톤(클로드)에, en은 삽화 조명·색감(Gemini)에 실린다.
- */
-const MOODS = [
-  { ko: "따뜻하고 포근한", en: "warm cozy soft lighting", icon: "/icons/mood-cozy.webp" },
-  { ko: "신나고 활기찬", en: "bright energetic vibrant colors", icon: "/icons/mood-energetic.webp" },
-  { ko: "마법같이 몽환적인", en: "dreamy magical sparkling atmosphere", icon: "/icons/mood-magical.webp" },
-  { ko: "차분하고 잔잔한", en: "calm gentle serene mood", icon: "/icons/mood-calm.webp" },
-  { ko: "용감한 모험", en: "adventurous heroic exciting, kid-friendly", icon: "/icons/mood-adventure.webp" },
-  { ko: "장난스럽고 웃긴", en: "playful silly humorous", icon: "/icons/mood-funny.webp" },
-];
+/** 사용자에게 별도로 묻지 않고 이야기 재료에서 글의 톤과 삽화 조명을 정한다. */
+function deriveAutomaticMood(input: {
+  storyMode: StoryMode | null;
+  emotion: string;
+  theme: string;
+  happening: string;
+  todayEvent: string;
+  feeling: string;
+  directStory: string;
+}): { ko: string; en: string } {
+  const clues = `${input.emotion} ${input.theme} ${input.happening} ${input.todayEvent} ${input.feeling} ${input.directStory}`;
+  if (/(무서|걱정|슬퍼|외로|속상|서운|미안|샘이|답답|화가)/.test(clues)) {
+    return {
+      ko: "아이의 감정을 차분히 인정하고 마지막에는 따뜻하고 안심되는",
+      en: "calm gentle reassuring atmosphere, softly warm and safe ending",
+    };
+  }
+  if (/(좋아해요|뿌듯|설레|칭찬|친구|가족|안아)/.test(clues)) {
+    return { ko: "따뜻하고 밝으며 다정한", en: "warm bright affectionate atmosphere, soft joyful light" };
+  }
+  if (/(마법|공주|왕자|별|꿈)/.test(clues)) {
+    return { ko: "따뜻하고 신비로운", en: "warm dreamy magical atmosphere, gentle sparkling light" };
+  }
+  if (/(공룡|우주|바다|모험|찾으러|용감)/.test(clues)) {
+    return { ko: "신나고 용감하지만 아이에게 안전한", en: "bright adventurous energetic atmosphere, wholesome and child-safe" };
+  }
+  if (/(잠자기|밤|조용|휴식)/.test(clues)) {
+    return { ko: "조용하고 포근한", en: "calm cozy bedtime atmosphere, soft low-contrast lighting" };
+  }
+  return input.storyMode === "today"
+    ? { ko: "자연스럽고 따뜻한 일상의", en: "natural warm everyday atmosphere, soft realistic picture-book light" }
+    : { ko: "따뜻하고 포근한", en: "warm cozy soft lighting" };
+}
+
+function locationKeyFromImagePrompt(prompt: string): string {
+  const match = /장소\s*:\s*([^\n—.-]+?)\s*[—-]/.exec(prompt);
+  return match?.[1].replace(/\s+/g, "").normalize("NFC") ?? "";
+}
 
 /** 장면(쪽) 수 선택지 3~8. 삽화를 켜면 쪽수가 곧 그림 장수(=크레딧)라 8이 상한. */
 const PAGE_OPTIONS = [3, 4, 5, 6, 7, 8];
@@ -317,6 +348,73 @@ function GenderChips({
 }
 
 export type FriendEntry = { name: string; gender: string };
+
+const CREATE_DRAFT_VERSION = 2;
+const CREATE_DRAFT_TTL_MS = 10 * 60 * 1000;
+const CREATE_DRAFT_KEY = "voice-storybook:create-draft";
+
+type CreateDraft = {
+  version: number;
+  savedAt: number;
+  step: "child" | "theme" | "style" | "outline" | "story";
+  name: string;
+  age: number | null;
+  gender: Gender;
+  theme: string;
+  themeGroup: string | null;
+  storyMode: StoryMode | null;
+  who: string;
+  whoName: string;
+  whoGender: string;
+  friends: FriendEntry[];
+  happening: string;
+  extra: string;
+  place: string;
+  todayEvent: string;
+  feeling: string;
+  ending: string;
+  emotion: string;
+  situation: string;
+  artStyle: string;
+  screenShape: "tablet" | "phone";
+  narratorVoice: string;
+  narrationStyle?: NarrationStyle;
+  longerStory: boolean;
+  pageCount: number;
+  outline: Outline | null;
+  story: Story | null;
+  directMode: "guided" | "full";
+  directOpening: string;
+  directDevelopment: string;
+  directCrisis: string;
+  directEnding: string;
+  directText: string;
+};
+
+function createDraftKey(owner: string): string {
+  return `${CREATE_DRAFT_KEY}:${owner}`;
+}
+
+function loadCreateDraft(owner: string): CreateDraft | null {
+  if (typeof window === "undefined") return null;
+  const key = createDraftKey(owner);
+  try {
+    const value = JSON.parse(window.localStorage.getItem(key) || "null") as CreateDraft | null;
+    if (!value || value.version !== CREATE_DRAFT_VERSION || Date.now() - value.savedAt > CREATE_DRAFT_TTL_MS) {
+      window.localStorage.removeItem(key);
+      return null;
+    }
+    return value;
+  } catch {
+    window.localStorage.removeItem(key);
+    return null;
+  }
+}
+
+function clearCreateDraft(owner: string | null): void {
+  if (typeof window === "undefined" || !owner) return;
+  window.localStorage.removeItem(createDraftKey(owner));
+}
 
 /** "친구들이랑"에서 친구를 몇 명까지 받을지. 주인공까지 넷이면 그림 한 장에 담기는 한계다. */
 const MAX_FRIENDS = 3;
@@ -484,6 +582,7 @@ export default function CreatePage() {
       }
       setTokens(s.profile?.tokens ?? 0);
       setMaster(s.isMaster);
+      setDraftOwner(s.uid);
       // 삽화를 cafe24에 올릴 때 회원별 폴더 이름으로 쓴다.
       setAcctId(s.profile?.username ?? null);
       // 권수 상한 확인용 — 숫자만 센다. 예전엔 책을 통째로 받아 세느라(삽화 포함)
@@ -497,6 +596,11 @@ export default function CreatePage() {
         setGender(remoteChild.gender);
         if (remoteChild.name && remoteChild.age !== null) setStep("theme");
         setPageCount(recommendedPages(remoteChild.age));
+      }
+      if (alive) {
+        const savedDraft = loadCreateDraft(s.uid);
+        if (savedDraft) setPendingDraft(savedDraft);
+        else setDraftReady(true);
       }
     })();
     return () => {
@@ -524,6 +628,10 @@ export default function CreatePage() {
 
   // 로그인한 아이디 — 삽화를 올릴 cafe24 폴더 이름(books/<아이디>/…)으로 쓴다.
   const [acctId, setAcctId] = useState<string | null>(null);
+  const [draftOwner, setDraftOwner] = useState<string | null>(null);
+  const [pendingDraft, setPendingDraft] = useState<CreateDraft | null>(null);
+  const [draftReady, setDraftReady] = useState(false);
+  const draftBaselineRef = useRef<string | null>(null);
 
   // 입력값
   const [name, setName] = useState("");
@@ -533,7 +641,7 @@ export default function CreatePage() {
   // 주제 고르기 1단계 — 펼쳐진 갈래 카드. null이면 아직 안 골랐다.
   const [themeGroup, setThemeGroup] = useState<string | null>(null);
   // 이야기 갈래 — 오늘의 이야기(실경험) / 상상 이야기(칩) / 감정 동화(마음). null=미선택.
-  const [storyMode, setStoryMode] = useState<"today" | "imagine" | "emotion" | null>(null);
+  const [storyMode, setStoryMode] = useState<StoryMode | null>(null);
   // 이야기 재료 — 누구랑·무슨 일. 세부주제(theme)와 함께 씨앗을 이룬다.
   const [who, setWho] = useState("");
   // 동행의 실제 이름(선택). "친구랑" 고르고 이름을 넣으면 그 이름을 그대로 쓴다.
@@ -553,6 +661,13 @@ export default function CreatePage() {
   // 「감정 동화」 전용 — 어떤 마음·그런 마음이 든 상황. 누구랑(who)은 공유한다.
   const [emotion, setEmotion] = useState("");
   const [situation, setSituation] = useState("");
+  // 「직접 이야기 구성」 — 기승전결 안내 작성 또는 완성 원고 붙여넣기.
+  const [directMode, setDirectMode] = useState<"guided" | "full">("guided");
+  const [directOpening, setDirectOpening] = useState("");
+  const [directDevelopment, setDirectDevelopment] = useState("");
+  const [directCrisis, setDirectCrisis] = useState("");
+  const [directEnding, setDirectEnding] = useState("");
+  const [directText, setDirectText] = useState("");
 
   useEffect(() => {
     const saved = loadChild();
@@ -571,7 +686,30 @@ export default function CreatePage() {
       ? [place, who, todayEvent.trim(), feeling].filter(Boolean).join(", ")
       : storyMode === "emotion"
         ? [emotion, situation.trim(), who].filter(Boolean).join(", ")
+        : storyMode === "direct"
+          ? directMode === "guided"
+            ? [directOpening, directDevelopment, directCrisis, directEnding].filter(Boolean).join(" ")
+            : directText.trim()
         : [theme, who, happening, extra.trim()].filter(Boolean).join(", ");
+  const directReady = directMode === "guided"
+    ? [directOpening, directDevelopment, directCrisis, directEnding].every((part) => part.trim().length >= 8)
+    : directText.trim().length >= 80;
+  const directFeedback = storyMode === "direct"
+    ? directMode === "guided"
+      ? [
+          !directOpening.trim() ? "시작에 주인공과 장소를 적어 주세요." : "",
+          !directDevelopment.trim() ? "전개에 어떤 일이 생겼는지 적어 주세요." : "",
+          !directCrisis.trim() ? "위기에 해결해야 할 어려움을 적어 주세요." : "",
+          !directEnding.trim() ? "결말에 해결 방법과 남은 마음을 적어 주세요." : "",
+          [directOpening, directDevelopment, directCrisis, directEnding].some((part) => part.trim() && part.trim().length < 8)
+            ? "각 부분을 한 문장 이상 적으면 장면 구성이 더 정확해져요."
+            : "",
+        ].filter(Boolean)
+      : [
+          directText.trim().length < 80 ? "완성 원고를 80자 이상 적어 주세요." : "",
+          directText.trim() && !/[.!?。！？]$/.test(directText.trim()) ? "마지막 문장을 마무리하면 결말을 더 정확히 나눌 수 있어요." : "",
+        ].filter(Boolean)
+    : [];
   // 그림체 — 지금은 저장만 한다. Gemini 삽화가 붙으면 이 스타일의 prompt가 쓰인다.
   const [artStyle, setArtStyle] = useState(ART_STYLES[0].id);
   /**
@@ -699,10 +837,15 @@ export default function CreatePage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 화면 크기는 클라 전용, 마운트 후 판별
     setScreenShape(window.innerWidth < 700 ? "phone" : "tablet");
   }, []);
-  const [mood, setMood] = useState(MOODS[0]);
+  const mood = deriveAutomaticMood({
+    storyMode, emotion, theme, happening, todayEvent, feeling,
+    directStory: directMode === "full" ? directText : `${directOpening} ${directDevelopment} ${directCrisis} ${directEnding}`,
+  });
   // 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로 읽는다.
   // 기본 선택을 두지 않는다("") — 부모가 직접 골라 들어보고 정하게 유도한다.
   const [narratorVoice, setNarratorVoice] = useState<string>("");
+  // 제작할 때 한 번만 고르고 책에 고정한다. 뷰어에서 바꾸지 않아 TTS 재합성을 막는다.
+  const [narrationStyle, setNarrationStyle] = useState<NarrationStyle>("natural");
   /*
    * 이 계정에 등록된 엄마·아빠 목소리. 동화를 다 만든 뒤 앞 쪽 낭독을 미리 구울 때,
    * 부모 목소리가 있으면 그게 기본 성우가 되므로 그것으로 구워야 캐시가 맞는다.
@@ -715,12 +858,19 @@ export default function CreatePage() {
   const [longerStory, setLongerStory] = useState(false);
   // 성우를 고르면 미리 구운 샘플(진짜 그 성우 목소리, static mp3)을 들려준다 — 크레딧 0.
   const narratorPreviewRef = useRef<HTMLAudioElement | null>(null);
-  function pickNarrator(id: string) {
+  async function pickNarrator(id: string) {
     setNarratorVoice(id);
     try {
       const el = narratorPreviewRef.current ?? new Audio();
       narratorPreviewRef.current = el;
-      el.src = `/casting/preview-${id}.mp3`;
+      if (id.startsWith("parent:")) {
+        const parent = parentVoices.find((voice) => voice.role === id.slice("parent:".length));
+        if (!parent) return;
+        const blob = await fetchTypecastVoiceAudio(parent.voiceId, PARENT_VOICE_TEST_TEXT);
+        el.src = URL.createObjectURL(blob);
+      } else {
+        el.src = `/casting/preview-${id}.mp3`;
+      }
       el.currentTime = 0;
       void el.play().catch(() => {});
     } catch {
@@ -788,6 +938,88 @@ export default function CreatePage() {
   // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
   const [confirmMake, setConfirmMake] = useState(false);
 
+  const draftContent = JSON.stringify({
+    version: CREATE_DRAFT_VERSION,
+    savedAt: 0,
+    step: (["child", "theme", "style", "outline", "story"] as Step[]).includes(step) ? step : "theme",
+    name, age, gender, theme, themeGroup, storyMode, who, whoName, whoGender, friends,
+    happening, extra, place, todayEvent, feeling, ending, emotion, situation,
+    artStyle, screenShape, narratorVoice, narrationStyle, longerStory, pageCount, outline, story,
+    directMode, directOpening, directDevelopment, directCrisis, directEnding, directText,
+  });
+
+  useEffect(() => {
+    if (!draftReady || !draftOwner || step === "illustrate" || step === "done") return;
+    if (draftBaselineRef.current === null) {
+      draftBaselineRef.current = draftContent;
+      return;
+    }
+    if (draftBaselineRef.current === draftContent) return;
+    const timer = window.setTimeout(() => {
+      const draft = { ...(JSON.parse(draftContent) as CreateDraft), savedAt: Date.now() };
+      window.localStorage.setItem(createDraftKey(draftOwner), JSON.stringify(draft));
+      draftBaselineRef.current = draftContent;
+    }, 500);
+    return () => window.clearTimeout(timer);
+  }, [draftContent, draftOwner, draftReady, step]);
+
+  useEffect(() => {
+    if (!draftReady || !draftOwner || step === "illustrate" || step === "done") return;
+    const saveBeforeLeaving = () => {
+      if (draftBaselineRef.current === draftContent) return;
+      const draft = { ...(JSON.parse(draftContent) as CreateDraft), savedAt: Date.now() };
+      window.localStorage.setItem(createDraftKey(draftOwner), JSON.stringify(draft));
+    };
+    window.addEventListener("pagehide", saveBeforeLeaving);
+    return () => window.removeEventListener("pagehide", saveBeforeLeaving);
+  }, [draftContent, draftOwner, draftReady, step]);
+
+  function restoreCreateDraft(draft: CreateDraft): void {
+    setName(draft.name);
+    setAge(draft.age);
+    setGender(draft.gender);
+    setTheme(draft.theme);
+    setThemeGroup(draft.themeGroup);
+    setStoryMode(draft.storyMode);
+    setWho(draft.who);
+    setWhoName(draft.whoName);
+    setWhoGender(draft.whoGender);
+    setFriends(draft.friends.length > 0 ? draft.friends.slice(0, MAX_FRIENDS) : [{ name: "", gender: "" }]);
+    setHappening(draft.happening);
+    setExtra(draft.extra);
+    setPlace(draft.place);
+    setTodayEvent(draft.todayEvent);
+    setFeeling(draft.feeling);
+    setEnding(draft.ending);
+    setEmotion(draft.emotion);
+    setSituation(draft.situation);
+    setDirectMode(draft.directMode);
+    setDirectOpening(draft.directOpening);
+    setDirectDevelopment(draft.directDevelopment);
+    setDirectCrisis(draft.directCrisis);
+    setDirectEnding(draft.directEnding);
+    setDirectText(draft.directText);
+    setArtStyle(ART_STYLES.some((style) => style.id === draft.artStyle) ? draft.artStyle : ART_STYLES[0].id);
+    setScreenShape(draft.screenShape === "phone" ? "phone" : "tablet");
+    setNarratorVoice(draft.narratorVoice);
+    setNarrationStyle(draft.narrationStyle ?? "natural");
+    setLongerStory(draft.longerStory);
+    setPageCount(Math.min(8, Math.max(3, draft.pageCount)));
+    setOutline(draft.outline);
+    setStory(draft.story);
+    setStep(draft.step);
+    draftBaselineRef.current = null;
+    setPendingDraft(null);
+    setDraftReady(true);
+  }
+
+  function discardCreateDraft(): void {
+    clearCreateDraft(draftOwner);
+    draftBaselineRef.current = null;
+    setPendingDraft(null);
+    setDraftReady(true);
+  }
+
   const child = { name: name.trim(), age: age ?? 0, gender };
 
   // '누구랑' 칩 — 아이 성별에 맞는 형제 호칭을 끼워 만든다.
@@ -813,6 +1045,29 @@ export default function CreatePage() {
     setFriends([{ name: "", gender: "" }]);
   }
 
+  function buildStoryMaterial() {
+    const common = {
+      who,
+      whoName: whoName.trim(),
+      whoGender,
+      friends: friends.filter((friend) => friend.name.trim() || friend.gender),
+    };
+    if (storyMode === "today") {
+      return { kind: "today", subject: "", ...common, happening: todayEvent.trim(), place, feeling, ending, emotion: "", situation: "", extra: "", directMode: "", directOpening: "", directDevelopment: "", directCrisis: "", directEnding: "", directText: "" };
+    }
+    if (storyMode === "emotion") {
+      return { kind: "emotion", subject: "", ...common, happening: "", place: "", feeling: "", ending: "", emotion, situation: situation.trim(), extra: "", directMode: "", directOpening: "", directDevelopment: "", directCrisis: "", directEnding: "", directText: "" };
+    }
+    if (storyMode === "direct") {
+      return {
+        kind: "direct", subject: "", ...common, happening: "", place: "", feeling: "", ending: "", emotion: "", situation: "", extra: "",
+        directMode, directOpening: directOpening.trim(), directDevelopment: directDevelopment.trim(),
+        directCrisis: directCrisis.trim(), directEnding: directEnding.trim(), directText: directText.trim(),
+      };
+    }
+    return { kind: "imagine", subject: theme, ...common, happening, place: "", feeling: "", ending: "", emotion: "", situation: "", extra: extra.trim(), directMode: "", directOpening: "", directDevelopment: "", directCrisis: "", directEnding: "", directText: "" };
+  }
+
   async function makeOutline() {
     if (busyRef.current) return;
     busyRef.current = true;
@@ -831,7 +1086,9 @@ export default function CreatePage() {
           // 항목별로 보낸다(콤마로 안 뭉침). 갈래에 따라 재료 형태가 다르다:
           // 오늘=실경험(어디·누구·무슨일·기분), 상상=칩 조합(소재·누구·사건·자유).
           material:
-            storyMode === "today"
+            storyMode === "direct"
+              ? buildStoryMaterial()
+              : storyMode === "today"
               ? {
                   kind: "today",
                   subject: "",
@@ -877,8 +1134,8 @@ export default function CreatePage() {
                     extra: extra.trim(),
                   },
           pageCount,
-          // 감정동화는 감정이 톤을 정하므로 분위기를 안 넘긴다(톤 충돌 방지).
-          mood: storyMode === "emotion" ? "" : mood.ko,
+          // 사용자가 고르지 않아도 재료에서 계산한 톤을 글과 삽화에 동일하게 넘긴다.
+          mood: mood.ko,
         }),
         signal: ac.signal,
       });
@@ -909,13 +1166,18 @@ export default function CreatePage() {
         body: JSON.stringify({
           child,
           outline,
-          mood: storyMode === "emotion" ? "" : mood.ko,
+          material: buildStoryMaterial(),
+          mood: mood.ko,
           longer: longerStory,
+          narrationStyle,
         }),
         signal: ac.signal,
       });
       const data = await r.json();
-      if (!r.ok) throw new Error(data.error ?? "동화를 만들지 못했어요.");
+      if (!r.ok) {
+        const detail = Array.isArray(data.detail) ? data.detail.slice(0, 2).join(" ") : "";
+        throw new Error([data.error ?? "동화를 만들지 못했어요.", detail].filter(Boolean).join(" "));
+      }
       setStory(data.story);
       // 고객은 줄거리(상황설명)에서 이미 판단했다 — 본문 검토를 또 시키지 않는다.
       // 그림이 켜져 있으면 이어서 삽화까지 그려 완성하고(illustrate가 자체 진행화면을
@@ -947,7 +1209,9 @@ export default function CreatePage() {
     const ac = new AbortController();
     abortRef.current = ac;
     const images: (string | null)[] = [];
+    const locationReferences = new Map<string, { image: string; scene: string }>();
     try {
+      const heroLooks = looksToPrompt(loadChild()?.looks);
       const sheetRes = await fetch("/api/character-sheet", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -956,13 +1220,18 @@ export default function CreatePage() {
           artStyleId: artStyle,
           drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
           // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
-          looks: looksToPrompt(loadChild()?.looks),
+          looks: heroLooks,
         }),
         signal: ac.signal,
       });
-      const sheetData = await sheetRes.json();
-      if (!sheetRes.ok) throw new Error(sheetData.error ?? "캐릭터 생성 실패");
-      const sheet = sheetData.image as string;
+      // .json()을 ok 검사보다 먼저 부르면, 프록시가 HTML 오류 페이지를 주는 순간
+      // "Unexpected token '<'" 같은 알 수 없는 말이 부모에게 그대로 뜬다.
+      const sheetData = (await sheetRes.json().catch(() => ({}))) as { error?: string; image?: string };
+      if (!sheetRes.ok) {
+        throw new Error(sheetData.error ?? `캐릭터 그림을 만들지 못했어요 (HTTP ${sheetRes.status})`);
+      }
+      const sheet = sheetData.image;
+      if (!sheet) throw new Error("캐릭터 그림을 받지 못했어요. 잠시 뒤 다시 시도해 주세요.");
 
       // 삽화는 쪽마다 독립이다(캐릭터 일관성은 위에서 만든 캐릭터 시트가 잡아준다).
       // 예전엔 한 장씩 줄 세워 그려서 8쪽이면 '한 장 시간 × 8'을 기다려야 했다 —
@@ -971,31 +1240,115 @@ export default function CreatePage() {
       const CONCURRENT_IMAGES = 3;
       images.length = s.pages.length;
       images.fill(null);
+      /**
+       * 쪽마다 품질검사를 통과했는지. 그림 자체와 따로 둔다.
+       *
+       * 검사에 떨어져도 그림은 버리지 않는다(이미 결제한 그림이다). 다만 통과한
+       * 그림만 뒤 쪽의 '그림체·장소 기준'으로 쓴다 — 안 그러면 떨어진 1쪽이 책 전체의
+       * 기준이 되어 나머지까지 끌고 내려간다.
+       */
+      const passed: boolean[] = new Array(s.pages.length).fill(false);
       let done = 0;
       let cursor = 0;
-      const drawWorker = async (): Promise<void> => {
+      const claimedPages = new Set<number>();
+      // 비용 상한일 뿐 실패 사유가 아니다 — 여기 걸려도 그림은 그대로 책에 들어간다.
+      const MAX_QA_REDRAWS_PER_BOOK = Math.max(2, Math.ceil(s.pages.length / 3));
+      let qaRedrawsUsed = 0;
+      const nextUnclaimedPage = (): number | null => {
+        while (cursor < s.pages.length && claimedPages.has(cursor)) cursor++;
+        if (cursor >= s.pages.length) return null;
+        const index = cursor++;
+        claimedPages.add(index);
+        return index;
+      };
+      const drawWorker = async (singlePage = false, requestedIndex?: number): Promise<void> => {
         for (;;) {
-          const i = cursor++;
-          if (i >= s.pages.length || ac.signal.aborted) return;
+          let i: number | null;
+          if (requestedIndex !== undefined) {
+            if (claimedPages.has(requestedIndex)) return;
+            i = requestedIndex;
+            claimedPages.add(i);
+            requestedIndex = undefined;
+          } else {
+            i = nextUnclaimedPage();
+          }
+          if (i === null || ac.signal.aborted) return;
           try {
-            const r = await fetch("/api/illustrate-page", {
-              method: "POST",
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify({
-                scene: s.pages[i].imagePrompt,
-                artStyleId: artStyle,
-                characterSheet: sheet,
-                mood: mood.en,
-                shape: screenShape,
-                // 등장인물 — 이름과 생김새 설명을 함께 보낸다. 이름은 "이 사람들만,
-                // 각자 한 번씩"(복제 방지)에, 설명은 쪽마다 얼굴·옷이 흔들리지 않게
-                // 그림 시트와 겹쳐 붙잡는 데 쓰인다.
-                cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
-              }),
-              signal: ac.signal,
-            });
-            const d = await r.json();
-            images[i] = r.ok ? (d.image as string) : null;
+            const requestImage = async (qualityCorrection = "") => {
+              const locationKey = locationKeyFromImagePrompt(s.pages[i].imagePrompt);
+              const sameLocationReference = locationKey ? locationReferences.get(locationKey) : undefined;
+              // 그림체 기준은 '검사를 통과한' 그림에서만 가져온다. 떨어진 그림을 기준으로
+              // 삼으면 그 어긋남이 뒤 쪽으로 번진다.
+              const styleSeed = passed[0] ? 0 : passed.findIndex(Boolean);
+              const styleFallback = styleSeed >= 0 ? images[styleSeed] : null;
+              const styleReference = sameLocationReference?.image ?? styleFallback ?? "";
+              const styleReferenceScene =
+                sameLocationReference?.scene ??
+                (styleFallback && styleSeed >= 0 ? s.pages[styleSeed].imagePrompt : "");
+              const r = await fetch("/api/illustrate-page", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({
+                  scene: s.pages[i].imagePrompt,
+                  storyText: s.pages[i].text,
+                  artStyleId: artStyle,
+                  characterSheet: sheet,
+                  // 같은 장소의 통과 이미지를 우선 참조하고, 없으면 첫 페이지를 그림체 기준으로만 쓴다.
+                  styleReference,
+                  styleReferenceScene,
+                  mood: mood.en,
+                  shape: screenShape,
+                  qualityCorrection,
+                  // 책 전체 인물을 보내되 서버가 장면에 이름이 있는 인물만 골라 잠근다.
+                  cast: s.characters.map((c, characterIndex) => ({
+                    name: c.name,
+                    // 주인공 머리결 선택을 페이지 QA에도 넣어 시트 이후 다시 곱슬로 변하지 않게 한다.
+                    description:
+                      characterIndex === 0 && heroLooks
+                        ? `${c.description}, ${heroLooks}`
+                        : c.description,
+                  })),
+                }),
+                signal: ac.signal,
+              });
+              // ok 검사보다 .json()이 먼저면 HTML 오류 페이지에서 SyntaxError가 난다.
+              const data = (await r.json().catch(() => ({}))) as {
+                image?: string;
+                qualityPassed?: boolean;
+                qualityWarning?: string;
+              };
+              return { ok: r.ok, data };
+            };
+
+            /*
+             * 품질검사는 '다시 그릴지'만 정한다. '버릴지'는 정하지 않는다.
+             *
+             * 예전엔 검사에 떨어진 그림을 null로 만들었고, 그 null 하나가 책 저장을
+             * 통째로 막았다. 이미 결제한 그림을 버리고 책까지 못 만드는 이중 손해였다.
+             * 이제 다시 그려 보되, 그것도 신통찮으면 처음 그림을 그대로 쓴다.
+             */
+            const first = await requestImage();
+            let image = first.ok ? (first.data.image ?? null) : null;
+            let ok = first.ok && first.data.qualityPassed !== false && Boolean(image);
+
+            if (image && !ok && qaRedrawsUsed < MAX_QA_REDRAWS_PER_BOOK) {
+              // 증분은 await 전에 동기적으로 실행돼 동시 worker끼리도 예산을 넘기지 않는다.
+              qaRedrawsUsed++;
+              const second = await requestImage(first.data.qualityWarning ?? "Character mismatch");
+              if (second.ok && second.data.image && second.data.qualityPassed !== false) {
+                image = second.data.image;
+                ok = true;
+              }
+            }
+
+            images[i] = image; // 그린 그림은 검사 결과와 무관하게 남긴다
+            passed[i] = ok;
+            if (image && ok) {
+              const locationKey = locationKeyFromImagePrompt(s.pages[i].imagePrompt);
+              if (locationKey && !locationReferences.has(locationKey)) {
+                locationReferences.set(locationKey, { image, scene: s.pages[i].imagePrompt });
+              }
+            }
           } catch (e) {
             if ((e as Error).name === "AbortError") return;
             // 한 장이 실패해도 나머지는 계속 그린다 — 그 쪽만 플레이스홀더가 된다.
@@ -1004,15 +1357,39 @@ export default function CreatePage() {
           done++;
           setDrawn(done);
           setPageImages([...images]);
+          if (singlePage) return;
         }
       };
+      // 첫 페이지는 책 전체 그림체 기준이다. 이어서 장소별 첫 장만 먼저 확정해
+      // 같은 집·놀이터의 후속 장면이 실제 통과 이미지를 환경 기준으로 참조하게 한다.
+      await drawWorker(true, 0);
+      const seededLocations = new Set<string>();
+      const locationSeedPages: number[] = [];
+      s.pages.forEach((page, index) => {
+        const key = locationKeyFromImagePrompt(page.imagePrompt);
+        if (!key || seededLocations.has(key)) return;
+        seededLocations.add(key);
+        if (index !== 0) locationSeedPages.push(index);
+      });
+      for (const index of locationSeedPages) {
+        await drawWorker(true, index);
+      }
+      // 장소 기준이 모두 준비된 뒤 나머지 장면은 최대 3장씩 병렬 생성한다.
       await Promise.all(
         Array.from({ length: Math.min(CONCURRENT_IMAGES, s.pages.length) }, drawWorker),
       );
+      /*
+       * 여기서 막지 않는다.
+       *
+       * 예전엔 한 장이라도 비면 저장을 통째로 막고 검토 화면으로 돌려보냈다. 그런데
+       * 그 시점엔 이미 8~11장을 다 결제한 뒤였고, 다시 시도하면 성공한 쪽까지 새로
+       * 그려서 같은 돈을 또 냈다. 못 그린 쪽은 뷰어가 글만 보여 주므로 책은 성립한다.
+       */
     } catch (e) {
       // 취소는 정상 경로 — 그때까지 그린 쪽으로 조용히 마무리한다.
-      // 그 외(키·결제·안전필터 등)는 조용히 넘기지 말고 이유를 보여주고 검토 화면으로
-      // 돌려보낸다. 첫 라이브 호출 실패를 부모가 바로 알고 다시 시도할 수 있게.
+      //
+      // 여기로 오는 실패는 사실상 캐릭터 시트뿐이다(쪽 그림은 위에서 다 삼킨다).
+      // 시트는 쪽 그림에 돈이 나가기 '전'이라 여기서 돌려보내도 손해가 없다.
       if ((e as Error).name !== "AbortError") {
         console.warn("[illustrate]", e);
         setError((e as Error).message || "삽화를 그리지 못했어요. 다시 시도해주세요.");
@@ -1077,11 +1454,14 @@ export default function CreatePage() {
       summary: s.summary,
       // 고른 성우를 책에 박는다 — 뷰어가 이 성우로 읽어준다(방법 B).
       narrator: narratorVoice,
+      narrationStyle,
       coverImage: hosted.cover,
       pageCount: s.pages.length,
-      pages: s.pages.map((p, i) => ({ text: p.text, image: hosted.images[i] ?? null })),
+      pages: s.pages.map((p, i) => ({ text: p.text, voiceDirection: p.voiceDirection, image: hosted.images[i] ?? null })),
     };
     await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
+    clearCreateDraft(draftOwner);
+    draftBaselineRef.current = null;
 
     /*
      * 앞 몇 쪽 낭독을 미리 구워 둔다 — 열자마자 소리가 나게.
@@ -1093,12 +1473,14 @@ export default function CreatePage() {
      * 목소리는 책을 열었을 때 실제로 쓰일 것과 같아야 캐시가 맞는다: 부모 목소리가
      * 있으면 그게 기본이므로 그걸로, 없으면 만들 때 고른 성우로 굽는다.
      */
-    const texts = book.pages.map((p) => p.text);
-    if (parentVoices.length > 0) {
-      prewarmBookAudio(texts, { kind: "parent", voiceId: parentVoices[0].voiceId });
+    const selectedParent = narratorVoice.startsWith("parent:")
+      ? parentVoices.find((voice) => voice.role === narratorVoice.slice("parent:".length))
+      : undefined;
+    if (selectedParent) {
+      prewarmBookAudio(book.pages, { kind: "parent", voiceId: selectedParent.voiceId });
     } else {
       const preset = findTypecast(narratorVoice);
-      if (preset) prewarmBookAudio(texts, { kind: "preset", preset });
+      if (preset) prewarmBookAudio(book.pages, { kind: "preset", preset });
     }
 
     setFinalBook(book);
@@ -1119,6 +1501,28 @@ export default function CreatePage() {
         className="fixed inset-0 -z-10 h-full w-full object-cover"
       />
       <div className="fixed inset-0 -z-10 bg-white/25" />
+
+      {pendingDraft && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="draft-title">
+          <div className="w-full max-w-sm rounded-[28px] bg-white p-6 text-center shadow-2xl">
+            <div className="text-4xl" aria-hidden>📝</div>
+            <h2 id="draft-title" className="mt-2 text-xl font-extrabold text-neutral-800">
+              작성 중이던 동화가 있어요
+            </h2>
+            <p className="mt-2 break-keep text-sm font-medium leading-relaxed text-neutral-600">
+              10분 동안 임시로 보관해 두었어요. 이어서 만들까요?
+            </p>
+            <div className="mt-5 flex gap-2">
+              <button type="button" onClick={discardCreateDraft} className="flex-1 rounded-full bg-neutral-100 px-4 py-3 text-sm font-extrabold text-neutral-600">
+                새로 시작
+              </button>
+              <button type="button" onClick={() => restoreCreateDraft(pendingDraft)} className="flex-1 rounded-full px-4 py-3 text-sm font-extrabold text-white shadow" style={{ background: accent }}>
+                이어서 만들기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col justify-center px-6 py-8">
         {/* 뒤로 / 홈 — absolute면 스크롤 때 위로 밀려 나가고 카드가 덮어버린다(폰 실측).
@@ -1245,13 +1649,15 @@ export default function CreatePage() {
                   ? `${name}에게 오늘 무슨 일이 있었어요?`
                   : storyMode === "imagine"
                     ? `${name}의 동화, 무슨 이야기로 할까요?`
+                    : storyMode === "direct"
+                      ? "직접 만든 이야기를 들려주세요"
                     : `${name}의 동화, 어떤 이야기를 만들까요?`}
               </h1>
 
               {/* 갈래 고르기 — 오늘 겪은 일(실경험)이냐 상상 이야기냐. 둘은 입력 방식이 다르다. */}
               {storyMode === null && (
                 <>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <button
                       type="button"
                       onClick={() => setStoryMode("today")}
@@ -1288,10 +1694,99 @@ export default function CreatePage() {
                         아이 마음을 다독이는 동화
                       </span>
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setStoryMode("direct")}
+                      className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-200"
+                    >
+                      <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-4xl shadow-sm" aria-hidden>✍️</span>
+                      <b className="text-lg text-neutral-800">직접 이야기 구성</b>
+                      <span className="text-sm font-bold text-neutral-500">
+                        기승전결을 쓰거나 완성 원고 붙여넣기
+                      </span>
+                    </button>
                   </div>
                   <div className="flex justify-center">
                     <BigButton tone="white" onClick={() => setStep("child")}>
                       ← 뒤로
+                    </BigButton>
+                  </div>
+                </>
+              )}
+
+              {/* ── 직접 이야기 구성 — 기승전결 안내 작성 또는 완성 원고 ── */}
+              {storyMode === "direct" && (
+                <>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setDirectMode("guided")}
+                      style={directMode === "guided" ? { background: accent } : undefined}
+                      className={`rounded-2xl px-3 py-3 text-sm font-extrabold ${directMode === "guided" ? "text-white shadow" : "bg-neutral-100 text-neutral-600"}`}
+                    >
+                      🧩 기승전결 안내 작성
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDirectMode("full")}
+                      style={directMode === "full" ? { background: accent } : undefined}
+                      className={`rounded-2xl px-3 py-3 text-sm font-extrabold ${directMode === "full" ? "text-white shadow" : "bg-neutral-100 text-neutral-600"}`}
+                    >
+                      📄 완성 원고 붙여넣기
+                    </button>
+                  </div>
+
+                  {directMode === "guided" ? (
+                    <div className="flex flex-col gap-3">
+                      {[
+                        { key: "기 · 시작", hint: "누가 어디에서 무엇을 하고 있었나요?", value: directOpening, set: setDirectOpening },
+                        { key: "승 · 전개", hint: "어떤 사건이나 만남이 생겼나요?", value: directDevelopment, set: setDirectDevelopment },
+                        { key: "전 · 위기", hint: "주인공이 해결해야 할 어려움은 무엇인가요?", value: directCrisis, set: setDirectCrisis },
+                        { key: "결 · 결말", hint: "어떻게 해결되고 어떤 마음이 남았나요?", value: directEnding, set: setDirectEnding },
+                      ].map((part) => (
+                        <label key={part.key} className="block">
+                          <span className="mb-1 block text-sm font-extrabold text-neutral-700">{part.key}</span>
+                          <textarea
+                            value={part.value}
+                            onChange={(event) => part.set(event.target.value.slice(0, 800))}
+                            rows={2}
+                            placeholder={part.hint}
+                            className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-sm font-bold leading-relaxed outline-none focus:border-neutral-400"
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      <p className="text-xs font-bold text-neutral-500">
+                        작성한 사건·인물·결말은 바꾸지 않고 맞춤법, 문장 길이와 페이지 구분만 다듬어요.
+                      </p>
+                      <div className="flex justify-center"><VoiceInput onResult={setDirectText} /></div>
+                      <textarea
+                        value={directText}
+                        onChange={(event) => setDirectText(event.target.value.slice(0, 5000))}
+                        rows={10}
+                        placeholder="완성한 이야기를 여기에 적거나 붙여넣어 주세요."
+                        className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-sm font-bold leading-relaxed outline-none focus:border-neutral-400"
+                      />
+                      <p className="text-right text-[11px] font-bold text-neutral-400">{directText.length} / 5000자</p>
+                    </div>
+                  )}
+
+                  <div className={`rounded-2xl px-4 py-3 text-sm font-bold leading-relaxed ${directFeedback.length > 0 ? "bg-amber-50 text-amber-800" : "bg-emerald-50 text-emerald-700"}`}>
+                    {directFeedback.length > 0 ? (
+                      <ul className="list-inside list-disc space-y-1">
+                        {directFeedback.map((feedback) => <li key={feedback}>{feedback}</li>)}
+                      </ul>
+                    ) : (
+                      <p>✅ 이야기의 기본 흐름이 준비됐어요. 다음 단계에서 페이지별 장면으로 나눠 드릴게요.</p>
+                    )}
+                  </div>
+
+                  <div className="mt-2 flex flex-wrap justify-center gap-3">
+                    <BigButton tone="white" onClick={() => setStoryMode(null)}>← 뒤로</BigButton>
+                    <BigButton accent={accent} accentDark={accentDark} onClick={() => setStep("style")} disabled={!directReady}>
+                      다음 →
                     </BigButton>
                   </div>
                 </>
@@ -1681,7 +2176,7 @@ export default function CreatePage() {
             </section>
           )}
 
-          {/* ── 3. 그림체 + 분위기 + 특별한 날 ── */}
+          {/* ── 3. 그림체 + 화면 모양 + 특별한 날 ── */}
           {step === "style" && (
             <section className="flex flex-col gap-5">
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
@@ -1809,36 +2304,6 @@ export default function CreatePage() {
                 </div>
               </div>
 
-              {/* 분위기 — 이야기 톤과 그림 조명에 함께 반영된다.
-                  감정동화에선 감정 자체가 톤을 정하고 마무리는 늘 따뜻해서, 분위기를
-                  또 고르면 톤이 충돌한다. 그래서 감정동화 모드에선 숨긴다. */}
-              {storyMode !== "emotion" && (
-              <div>
-                <p className="mb-1.5 text-xs font-bold text-neutral-400">분위기</p>
-                <div className="flex flex-wrap gap-2">
-                  {MOODS.map((m) => (
-                    <button
-                      key={m.ko}
-                      type="button"
-                      onClick={() => setMood(m)}
-                      style={mood.ko === m.ko ? { background: accent } : undefined}
-                      className={`flex items-center gap-1.5 rounded-full py-1.5 pl-1.5 pr-3.5 text-sm font-bold transition ${
-                        mood.ko === m.ko
-                          ? "text-white"
-                          : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                      }`}
-                    >
-                      <span className="h-7 w-7 overflow-hidden rounded-full bg-white">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={m.icon} alt="" className="h-full w-full object-cover" />
-                      </span>
-                      {m.ko}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              )}
-
               {/* 장면 수 — 이야기를 몇 쪽으로 나눌지. 나이 추천값을 별로 표시한다.
                   글만 받는 지금은 장수와 상관없이 무료, 삽화를 켜면 장면당 과금. */}
               <div>
@@ -1914,6 +2379,47 @@ export default function CreatePage() {
                 </p>
               </div>
 
+              {/* 낭독 느낌 — 제작할 때 한 번 고른 뒤 페이지별 음성 지시에 박아 둔다.
+                  완성된 책에서는 변경 UI를 제공하지 않아 같은 본문을 다른 톤으로 재합성하지 않는다. */}
+              <div>
+                <p className="mb-1.5 text-xs font-bold text-neutral-400">
+                  낭독 느낌 <span className="font-medium">(제작 후 고정)</span>
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  {(
+                    [
+                      { id: "cozy", icon: "🌙", label: "포근하게", desc: "느리고 편안하게" },
+                      { id: "natural", icon: "📖", label: "자연스럽게", desc: "차분한 기본 낭독" },
+                      { id: "lively", icon: "✨", label: "조금 신나게", desc: "리듬만 살짝 경쾌하게" },
+                    ] as const
+                  ).map((option) => {
+                    const active = narrationStyle === option.id;
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => setNarrationStyle(option.id)}
+                        aria-pressed={active}
+                        style={active ? { borderColor: accent, background: accentSoft } : undefined}
+                        className={`flex min-w-0 flex-col items-center gap-0.5 rounded-2xl border-[3px] px-2 py-3 text-center transition ${
+                          active
+                            ? "shadow-sm"
+                            : "border-transparent bg-neutral-100 hover:bg-neutral-200"
+                        }`}
+                      >
+                        <span className="text-xl" aria-hidden>{option.icon}</span>
+                        <span className="break-keep text-xs font-extrabold text-neutral-700">{option.label}</span>
+                        <span className="break-keep text-[10px] font-medium leading-tight text-neutral-400">{option.desc}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-1.5 break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
+                  처음 만든 음성을 이 기기에 저장해 같은 브라우저에서 다시 들을 때는 추가
+                  토큰이 들지 않아요. 부모 목소리는 원래 음색을 지키기 위해 자연스럽게 읽어요.
+                </p>
+              </div>
+
               {/* 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로
                   읽어준다. 실시간 합성이 켜지면 만들 때 한 번 구워 재생은 늘 무료가 된다. */}
               <div>
@@ -1922,13 +2428,30 @@ export default function CreatePage() {
                   <span className="text-rose-500"> *</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
+                  {parentVoices.map((voice) => {
+                    const id = `parent:${voice.role}`;
+                    const active = narratorVoice === id;
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => void pickNarrator(id)}
+                        aria-pressed={active}
+                        style={active ? { background: accent } : undefined}
+                        className={`flex items-center gap-1.5 rounded-full py-1.5 pl-2.5 pr-3.5 text-sm font-bold transition ${active ? "text-white" : "bg-amber-100 text-amber-800 hover:bg-amber-200"}`}
+                      >
+                        <span>{voice.emoji}</span>
+                        {voice.label} 목소리
+                      </button>
+                    );
+                  })}
                   {TYPECAST_VOICES.map((v) => {
                     const active = narratorVoice === v.id;
                     return (
                       <button
                         key={v.id}
                         type="button"
-                        onClick={() => pickNarrator(v.id)}
+                        onClick={() => void pickNarrator(v.id)}
                         aria-pressed={active}
                         style={active ? { background: accent } : undefined}
                         className={`flex items-center gap-1.5 rounded-full py-1.5 pl-2.5 pr-3.5 text-sm font-bold transition ${
@@ -1945,7 +2468,9 @@ export default function CreatePage() {
                 </div>
                 {narratorVoice ? (
                   <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
-                    {TYPECAST_VOICES.find((v) => v.id === narratorVoice)?.desc}
+                    {narratorVoice.startsWith("parent:")
+                      ? "승인한 부모 목소리로 이 동화를 읽어 줍니다."
+                      : TYPECAST_VOICES.find((v) => v.id === narratorVoice)?.desc}
                   </p>
                 ) : (
                   // 아직 안 골랐으면 고르라고 한 번 더 안내한다.
@@ -2059,8 +2584,9 @@ export default function CreatePage() {
               {/* 고치는 자리는 여기다 — 그림도 크레딧도 쓰기 전이라, 마음에 안 드는
                   장면을 지금 고치면 공짜이고 그림이 어긋날 일도 없다.
                   완성된 뒤에 글만 고치면 그림은 그대로라 오히려 어긋난다. */}
-              <p className="-mt-2 break-keep text-center text-xs font-medium text-neutral-400">
-                고치고 싶은 곳을 눌러 보세요. 지금은 얼마든지 고칠 수 있어요.
+              <p className="-mt-2 self-center break-keep rounded-xl bg-white/90 px-4 py-2 text-center text-sm font-bold leading-relaxed text-neutral-700 shadow-sm ring-1 ring-black/5">
+                아래 내용이 동화 속 이야기로 표현돼요.<br />
+                바꾸고 싶은 부분을 눌러 수정해 주세요.
               </p>
               <div className="rounded-2xl p-5" style={{ background: accentSoft }}>
                 {editScene === "title" ? (

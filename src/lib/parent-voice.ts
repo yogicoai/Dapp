@@ -7,6 +7,7 @@
  * — 여러 기기·재설치에도 남는 '정식' 저장(테이블 SQL을 돌리면 자동 사용, 없으면 로컬만).
  */
 import { currentUid, getSupabase } from "@/lib/supabase";
+import { capPieceLengths } from "@/lib/voice-trim";
 
 export type ParentVoice = {
   role: string; // 'mom' | 'dad'
@@ -14,6 +15,8 @@ export type ParentVoice = {
   emoji: string;
   voiceId: string; // 복제된 ElevenLabs voice_id
 };
+
+export const PARENT_VOICE_TEST_TEXT = "오늘은 우리 함께 반짝이는 이야기를 읽어 볼까? 천천히, 다정하게 시작해 보자.";
 
 const ROLE_META: Record<string, { label: string; emoji: string }> = {
   mom: { label: "엄마", emoji: "👩" },
@@ -33,6 +36,7 @@ export function metaForRole(role: string): { label: string; emoji: string } {
  * 옛(계정 구분 없는) 키는 소유자를 알 수 없어 이관하지 않고 지운다 — 정본은
  * Supabase(voice_clones)라 실제 클론은 계정 로그인만 하면 되살아난다. */
 const LS_KEY = "voice-storybook:parent-voices";
+const LS_PENDING_KEY = "voice-storybook:pending-parent-voices";
 const LS_ATTEMPTS = "voice-storybook:parent-voice-attempts";
 function dropLegacyDeviceKeys(): void {
   if (typeof window === "undefined") return;
@@ -55,47 +59,17 @@ function saveLocal(uid: string, map: Record<string, string>): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(`${LS_KEY}:${uid}`, JSON.stringify(map));
 }
-
-/* ── 만들기 횟수 — 엄마·아빠를 각각 하나씩, 역할마다 2회(처음 1 + 수정 1). ──
- * 2026-08-05 변경: 예전엔 계정당 '한 명'이라 횟수도 계정 단위로 셌다. 이제 엄마와
- * 아빠가 서로 독립이라 역할별로 센다(엄마를 고쳐도 아빠 기회는 그대로).
- * 삭제해도 횟수는 남는다 — 지웠다 다시 만들며 무한히 시도하는 걸 막는다. */
-export const MAX_CLONE_ATTEMPTS = 2;
-function localAttempts(uid: string, role: string): number {
-  if (typeof window === "undefined") return 0;
-  const n = Number(window.localStorage.getItem(`${LS_ATTEMPTS}:${uid}:${role}`));
-  return Number.isFinite(n) && n > 0 ? n : 0;
-}
-function saveAttempts(uid: string, role: string, n: number): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(`${LS_ATTEMPTS}:${uid}:${role}`, String(n));
-}
-
-async function attemptsUsed(role: string): Promise<number> {
-  const uid = await currentUserId();
-  if (!uid) return 0; // 부모 목소리는 회원 전용 — 로그인 전엔 셈할 것도 없다
-  let used = localAttempts(uid, role);
+function loadPendingLocal(uid: string): Record<string, string> {
+  if (typeof window === "undefined") return {};
   try {
-    const sb = getSupabase();
-    if (sb) {
-      const { data } = await sb
-        .from("voice_clones")
-        .select("attempts")
-        .eq("owner", uid)
-        .eq("role", role)
-        .maybeSingle();
-      const a = Number((data as { attempts?: number } | null)?.attempts ?? 0);
-      if (a > used) used = a;
-    }
+    return JSON.parse(window.localStorage.getItem(`${LS_PENDING_KEY}:${uid}`) || "{}") as Record<string, string>;
   } catch {
-    /* 테이블 없음 등 — 기기 값만 사용 */
+    return {};
   }
-  return used;
 }
-
-/** 이 역할(엄마/아빠)의 남은 만들기 기회. 0이면 더는 만들 수 없다. */
-export async function remainingCloneChances(role: string): Promise<number> {
-  return Math.max(0, MAX_CLONE_ATTEMPTS - (await attemptsUsed(role)));
+function savePendingLocal(uid: string, map: Record<string, string>): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(`${LS_PENDING_KEY}:${uid}`, JSON.stringify(map));
 }
 
 /** 로그인 회원 id — 로컬 세션에서 읽는다(서버 왕복 없음). @see supabase.currentUid */
@@ -186,6 +160,11 @@ function normalize(x: Float32Array): Float32Array {
 const CLONE_SAMPLE_RATE = 16000;
 /** 안전 상한 — 아무리 길게 읽어도 이보다 길게는 안 보낸다(한도 초과 방지). */
 const CLONE_MAX_SECONDS = 120;
+/**
+ * 이 크기 안의 WAV면 이미 클로닝용으로 구워진 것으로 보고 그대로 보낸다.
+ * (16-bit 모노 × 16kHz × 120초 + 헤더). 넘으면 다른 데서 온 파일이니 다시 굽는다.
+ */
+const CLONE_WAV_MAX_BYTES = CLONE_SAMPLE_RATE * 2 * CLONE_MAX_SECONDS + 64;
 
 /** 표본율 변환(선형 보간). 목소리 재료로는 이 정도면 충분하다. */
 function resample(x: Float32Array, from: number, to: number): Float32Array {
@@ -227,28 +206,41 @@ export async function prepareVoiceWav(blobs: Blob[]): Promise<Blob> {
   try {
     const pieces: Float32Array[] = [];
     for (const b of blobs) {
-      const audio = await ctx.decodeAudioData(await b.arrayBuffer());
-      // 다듬기는 원본 표본율에서 하고, 마지막에 16kHz로 낮춰 보낸다(용량 절약).
-      const cleaned = trimSilence(highPass(toMono(audio), audio.sampleRate), audio.sampleRate);
-      pieces.push(resample(cleaned, audio.sampleRate, CLONE_SAMPLE_RATE));
+      // 조각마다 따로 감싼다 — 예전엔 한 덩어리 루프라 2번 문장이 안 열리면
+      // 잘 읽은 1번 문장까지 함께 날아갔다. 하나가 안 되면 그것만 건너뛴다.
+      try {
+        const audio = await ctx.decodeAudioData(await b.arrayBuffer());
+        // 다듬기는 원본 표본율에서 하고, 마지막에 16kHz로 낮춰 보낸다(용량 절약).
+        const cleaned = trimSilence(highPass(toMono(audio), audio.sampleRate), audio.sampleRate);
+        pieces.push(resample(cleaned, audio.sampleRate, CLONE_SAMPLE_RATE));
+      } catch (e) {
+        console.warn("[prepareVoiceWav] 녹음 하나를 열지 못했어요 — 건너뜁니다", e);
+      }
     }
+    if (pieces.length === 0) throw new Error("녹음을 하나도 열지 못했어요.");
+
+    // 안전 상한 — 조각마다 예산을 나눠 앞부분을 남긴다.
+    // 예전엔 다 이어 붙인 뒤 뒤를 잘라서, 길게 읽으면 두 번째 문장이 통째로 사라졌다.
+    const capped = capPieceLengths(
+      pieces.map((p) => p.length),
+      CLONE_SAMPLE_RATE * CLONE_MAX_SECONDS,
+    ).map((len, i) => (len === pieces[i].length ? pieces[i] : pieces[i].subarray(0, len)));
+
     // 사이에 0.4초 숨 쉴 틈 — 두 번 읽은 게 한 문장처럼 붙어 들리지 않게.
     const gap = Math.floor(CLONE_SAMPLE_RATE * 0.4);
-    const total = pieces.reduce((n, p) => n + p.length, 0) + gap * Math.max(0, pieces.length - 1);
+    const total = capped.reduce((n, p) => n + p.length, 0) + gap * Math.max(0, capped.length - 1);
     const merged = new Float32Array(total);
     let at = 0;
-    pieces.forEach((p, i) => {
+    capped.forEach((p, i) => {
       merged.set(p, at);
-      at += p.length + (i < pieces.length - 1 ? gap : 0);
+      at += p.length + (i < capped.length - 1 ? gap : 0);
     });
-    // 안전 상한 — 너무 길면 앞부분만 보낸다(재료는 이미 충분하고, 한도를 넘기면 아예 실패한다).
-    const cap = CLONE_SAMPLE_RATE * CLONE_MAX_SECONDS;
-    const capped = merged.length > cap ? merged.subarray(0, cap) : merged;
-    return encodeWav(normalize(capped), CLONE_SAMPLE_RATE);
+    return encodeWav(normalize(merged), CLONE_SAMPLE_RATE);
   } finally {
     void ctx.close();
   }
 }
+
 
 /** 녹음 하나를 클로닝용 WAV로. (여러 개는 prepareVoiceWav를 쓴다) */
 async function audioToWav(blob: Blob): Promise<Blob> {
@@ -288,29 +280,37 @@ function encodeWav(mono: Float32Array, sampleRate: number): Blob {
 /**
  * 녹음 오디오 → Typecast 퀵 클론 → (기기 + 가능하면 Supabase) 저장 → voice_id 반환.
  *
- * 규칙(2026-08-05): 엄마와 아빠를 **각각** 하나씩 만들 수 있다. 역할마다 2회
- * (처음 1 + 수정 1)이고, 만들 때마다 15토큰이 나간다(엄마·아빠 따로 냄).
- * 엄마를 고쳐도 아빠 기회는 줄지 않는다 — 둘은 서로 독립이다.
+ * 엄마와 아빠를 **각각** 하나씩 보관할 수 있고, 만들 때마다 토큰이 나간다.
+ * 기존 목소리를 삭제하면 같은 역할의 목소리를 다시 만들 수 있다.
  */
 export async function cloneParentVoice(role: string, name: string, audio: Blob): Promise<string> {
   const uid = await currentUserId();
   if (!uid) throw new Error("로그인한 계정에서만 목소리를 만들 수 있어요.");
-  const label = metaForRole(role).label;
-  // 이 역할의 만들기 기회를 '먼저' 검사한다 — 기회를 다 쓴 사람에게 "지우고 다시
-  // 만들라"는 잘못된 안내(지우면 영영 못 만듦)가 나가지 않게.
-  const used = await attemptsUsed(role);
-  if (used >= MAX_CLONE_ATTEMPTS) {
-    throw new Error(`${label} 목소리 만들기 기회(처음 1번 + 수정 1번)를 모두 사용했어요.`);
-  }
-  // 같은 역할의 목소리가 이미 있으면 먼저 지우고 다시 만들게 한다(수정 = 지우고 새로).
-  const existing = await loadParentVoices();
-  if (existing.some((p) => p.role === role)) {
-    throw new Error(
-      `${label} 목소리가 이미 있어요. 지운 뒤 다시 만들어 주세요. (남은 ${label} 만들기 기회 ${MAX_CLONE_ATTEMPTS - used}번)`,
-    );
-  }
+  /*
+   * 같은 역할의 목소리가 이미 있어도 막지 않는다 — 토큰만 있으면 다시 만들 수 있다.
+   * 예전엔 "지운 뒤 다시 만들어 주세요"로 막아서, 부모가 먼저 지우고 나서 복제에
+   * 실패하면 멀쩡한 목소리만 잃었다.
+   *
+   * 순서가 곧 안전장치다:
+   *   ① 새 목소리를 **먼저** 복제한다. 실패하면 여기서 끝 — 옛 목소리는 그대로 남고,
+   *      설정 화면이 선차감한 토큰을 돌려준다.
+   *   ② 성공한 뒤에야 옛 목소리를 지운다. 이 단계는 절대 예외를 던지지 않는다 —
+   *      던지면 성공한 복제에 환불이 나가 공짜 목소리가 된다.
+   */
+  const previousId =
+    (await loadParentVoices()).find((p) => p.role === role)?.voiceId ??
+    (await loadPendingParentVoices()).find((p) => p.role === role)?.voiceId ??
+    null;
 
-  const wav = await audioToWav(audio); // Typecast는 wav/mp3만 받으므로 변환
+  /*
+   * 이미 클로닝용으로 구운 WAV면 그대로 보낸다.
+   * 녹음 저장 때 이미 하이패스·침묵 정리·정규화를 마쳤는데, 여기서 한 번 더 돌리면
+   * 정규화로 커진 신호에 같은 고정 임계값이 다시 걸려 말소리를 깎는다(닮은 정도가 떨어진다).
+   */
+  const wav =
+    audio.type === "audio/wav" && audio.size <= CLONE_WAV_MAX_BYTES
+      ? audio
+      : await audioToWav(audio); // Typecast는 wav/mp3만 받으므로 변환
   const form = new FormData();
   form.append("name", name);
   form.append("audio", wav, "voice.wav");
@@ -321,11 +321,16 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   }
   const { voiceId } = (await r.json()) as { voiceId: string };
 
-  // ① 기기에 항상 저장(계정별 키) — SQL 없이도 바로 테스트되게. 만들기 횟수도 함께 올린다.
-  const local = loadLocal(uid);
+  // ① 기기에 항상 저장(계정별 키) — SQL 없이도 바로 테스트되게.
+  const local = loadPendingLocal(uid);
   local[role] = voiceId;
-  saveLocal(uid, local);
-  saveAttempts(uid, role, used + 1);
+  savePendingLocal(uid, local);
+  // 다시 만든 경우 옛 목소리는 '완성' 목록에서 내린다 — 확인 전인데 완성으로 보이면 안 된다.
+  const ready = loadLocal(uid);
+  if (ready[role]) {
+    delete ready[role];
+    saveLocal(uid, ready);
+  }
 
   // ② Supabase에도 저장 시도(테이블 있으면). 없거나 오프라인이면 무시 — 기기 저장으로 동작.
   try {
@@ -337,8 +342,7 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
           role,
           provider: "typecast",
           provider_voice_id: voiceId,
-          status: "ready",
-          attempts: used + 1,
+          status: "review",
         },
         // 역할별로 한 줄이라 (owner, role)이 충돌 기준이다 — 엄마 줄이 아빠 줄을 덮지 않게.
         { onConflict: "owner,role" },
@@ -347,7 +351,60 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   } catch {
     /* voice_clones 테이블 없음 등 — 기기 저장으로도 충분히 동작한다 */
   }
+
+  /*
+   * 새 목소리가 자리를 잡은 뒤에야 옛것을 지운다.
+   * 여기서 예외가 나면 안 된다 — 부르는 쪽(설정)이 실패로 보고 토큰을 환불하는데,
+   * 복제는 이미 성공했으므로 공짜 목소리가 되어 버린다. 실패는 적어 두고 나중에 지운다.
+   */
+  if (previousId && previousId !== voiceId) {
+    if (!(await deleteCloneRemote(previousId))) rememberOrphan(uid, previousId);
+  }
+  void retryOrphanClones(uid);
   return voiceId;
+}
+
+/** 복제는 끝났지만 사용자가 실제 합성 샘플을 승인하지 않은 목소리. */
+export async function loadPendingParentVoices(): Promise<ParentVoice[]> {
+  const uid = await currentUserId();
+  if (!uid) return [];
+  const byRole = loadPendingLocal(uid);
+  try {
+    const sb = getSupabase();
+    if (sb) {
+      const { data, error } = await sb
+        .from("voice_clones")
+        .select("role, provider_voice_id, status")
+        .eq("owner", uid);
+      if (!error && data) {
+        if (data.length > 0) {
+          for (const role of Object.keys(byRole)) delete byRole[role];
+        }
+        for (const row of data as { role: string; provider_voice_id: string | null; status: string }[]) {
+          if (row.status === "review" && row.provider_voice_id) byRole[row.role] = row.provider_voice_id;
+        }
+        savePendingLocal(uid, byRole);
+      }
+    }
+  } catch {}
+  return Object.entries(byRole).map(([role, voiceId]) => ({ role, voiceId, ...metaForRole(role) }));
+}
+
+export async function approveParentVoice(role: string, voiceId: string): Promise<void> {
+  const uid = await currentUserId();
+  if (!uid) throw new Error("로그인한 계정에서만 승인할 수 있어요.");
+  const pending = loadPendingLocal(uid);
+  if (pending[role] !== voiceId) throw new Error("승인할 목소리를 찾지 못했어요.");
+  const sb = getSupabase();
+  if (sb) {
+    const { error } = await sb.from("voice_clones").update({ status: "ready" }).eq("owner", uid).eq("role", role);
+    if (error) throw error;
+  }
+  const ready = loadLocal(uid);
+  ready[role] = voiceId;
+  saveLocal(uid, ready);
+  delete pending[role];
+  savePendingLocal(uid, pending);
 }
 
 /**
@@ -411,7 +468,6 @@ export async function loadParentVoices(): Promise<ParentVoice[]> {
                 provider: "typecast",
                 provider_voice_id: local[role],
                 status: "ready",
-                attempts: Math.max(1, localAttempts(uid, role)),
               },
               { onConflict: "owner,role" },
             );
@@ -427,15 +483,76 @@ export async function loadParentVoices(): Promise<ParentVoice[]> {
     .map(([role, voiceId]) => ({ role, voiceId, ...metaForRole(role) }));
 }
 
+/* ── 버려진 복제 정리 ──
+ * Typecast 클론은 슬롯을 차지한다(라이트 50개). 지우기가 한 번 실패했을 때 그냥
+ * 넘기면 그 슬롯은 영영 뜬 채로 남는다 — 다시 만들기를 자유롭게 열어 두는 이상
+ * 이게 쌓이면 언젠가 복제가 통째로 막힌다. 그래서 실패한 id를 적어 두고 다음
+ * 기회에 다시 지운다.
+ */
+const LS_ORPHANS = "voice-storybook:orphan-clones";
+const MAX_ORPHANS = 20;
+
+function loadOrphans(uid: string): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(`${LS_ORPHANS}:${uid}`);
+    const list = raw ? (JSON.parse(raw) as unknown) : [];
+    return Array.isArray(list) ? list.filter((v): v is string => typeof v === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveOrphans(uid: string, list: string[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(`${LS_ORPHANS}:${uid}`, JSON.stringify(list.slice(-MAX_ORPHANS)));
+  } catch {
+    /* 무시 */
+  }
+}
+
+/** Typecast에서 클론 하나를 지운다. 지워졌으면 true. 예외를 던지지 않는다. */
+async function deleteCloneRemote(voiceId: string): Promise<boolean> {
+  try {
+    const r = await fetch("/api/voice/clone", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ voiceId }),
+    });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
+
+/** 지우지 못하고 밀린 클론들을 다시 지워 본다. 실패한 것만 남긴다. */
+async function retryOrphanClones(uid: string): Promise<void> {
+  const list = loadOrphans(uid);
+  if (list.length === 0) return;
+  const stillFailing: string[] = [];
+  for (const id of list) {
+    if (!(await deleteCloneRemote(id))) stillFailing.push(id);
+  }
+  saveOrphans(uid, stillFailing);
+}
+
+/** 지우기에 실패한 클론을 나중에 다시 지우도록 적어 둔다. */
+function rememberOrphan(uid: string, voiceId: string): void {
+  const list = loadOrphans(uid);
+  if (!list.includes(voiceId)) saveOrphans(uid, [...list, voiceId]);
+}
+
 /**
  * 부모가 본인 목소리를 삭제한다 — 기기·Supabase에서 지우고 Typecast 서버에서도 완전 제거.
- * (개인정보를 어디에도 남기지 않는다.) 단, 만들기 횟수(attempts)는 남겨 수정 기회는 안 돌려준다.
+ * 개인정보를 어디에도 남기지 않으며, 삭제 뒤 같은 역할의 목소리를 다시 만들 수 있다.
  */
 export async function deleteParentVoice(role: string): Promise<void> {
   const uid = await currentUserId();
   if (!uid) return; // 회원 전용 — 로그인 없이 지울 것도 없다
   const local = loadLocal(uid);
-  let voiceId = local[role];
+  const pending = loadPendingLocal(uid);
+  let voiceId = local[role] ?? pending[role];
 
   // Supabase에 있으면 그 voice_id도 확인해 함께 지운다.
   const sb = getSupabase();
@@ -453,26 +570,27 @@ export async function deleteParentVoice(role: string): Promise<void> {
     }
   }
 
-  // Typecast 서버에서 완전 삭제.
-  if (voiceId) {
-    await fetch("/api/voice/clone", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ voiceId }),
-    }).catch(() => {});
-  }
+  // Typecast 서버에서 완전 삭제. 실패하면 적어 두고 다음 기회에 다시 지운다 —
+  // 그냥 넘기면 그 슬롯(라이트 50개)이 영영 뜬 채로 남는다.
+  if (voiceId && !(await deleteCloneRemote(voiceId))) rememberOrphan(uid, voiceId);
+  void retryOrphanClones(uid);
 
-  // 기기 저장에서 제거 (만들기 횟수는 남긴다 — 수정 기회는 안 돌아온다).
+  // 기기 저장에서 제거. 이전 버전의 횟수 제한 값도 함께 지워 더는 영향을 주지 않게 한다.
   delete local[role];
   saveLocal(uid, local);
+  delete pending[role];
+  savePendingLocal(uid, pending);
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem(`${LS_ATTEMPTS}:${uid}:${role}`);
+  }
 
-  // Supabase — 행을 지우지 않고 '삭제됨'으로 바꿔 attempts(만들기 횟수)를 보존한다.
+  // Supabase에서도 행을 제거해 같은 역할을 새 목소리로 다시 등록할 수 있게 한다.
   // 반드시 이 역할만 — role 조건이 없으면 엄마를 지울 때 아빠까지 지워진다.
   if (sb) {
     try {
       await sb
         .from("voice_clones")
-        .update({ provider_voice_id: null, status: "deleted" })
+        .delete()
         .eq("owner", uid)
         .eq("role", role);
     } catch {
