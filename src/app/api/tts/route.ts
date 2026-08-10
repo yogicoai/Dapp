@@ -18,12 +18,17 @@ export async function POST(request: Request) {
     voiceId?: unknown;
     model?: unknown;
     emotion?: unknown;
+    intensity?: unknown;
   };
   const text = typeof input.text === "string" ? input.text.trim() : "";
   const voiceId = typeof input.voiceId === "string" ? input.voiceId.trim() : "";
   const model = typeof input.model === "string" ? input.model.trim() : undefined;
   const emotion =
     typeof input.emotion === "string" ? input.emotion.trim().slice(0, 20) : undefined;
+  const rawIntensity = Number(input.intensity);
+  const intensity = Number.isFinite(rawIntensity)
+    ? Math.min(1.2, Math.max(0.3, rawIntensity))
+    : undefined;
 
   if (!text || text.length > 500) {
     return NextResponse.json({ error: "문장을 1~500자로 보내주세요." }, { status: 400 });
@@ -33,7 +38,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { audio, contentType } = await synthesize({ text, voiceId, model, emotion });
+    const { audio, contentType } = await synthesize({ text, voiceId, model, emotion, intensity });
     return new Response(audio, {
       headers: { "Content-Type": contentType, "Cache-Control": "no-store" },
     });

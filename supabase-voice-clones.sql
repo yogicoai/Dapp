@@ -1,11 +1,10 @@
--- 부모 목소리(복제) 저장 — 엄마·아빠를 각각 하나씩, 역할마다 만들기 2회(최초 1 + 수정 1).
+-- 부모 목소리(복제) 저장 — 엄마·아빠를 각각 하나씩 보관하며 삭제 후 다시 만들 수 있다.
 -- ─────────────────────────────────────────────────────────────
 -- 흐름: 부모가 앱에서 녹음 → Typecast 퀵 클론이 voice_id(uc_...) 발급 → 여기에 저장.
 --       동화를 읽을 때 이 voice_id로 그 부모 목소리를 합성한다(회원마다 자기 것만).
 --
 -- 규칙(2026-08-05 변경): 예전엔 계정당 목소리 '한 명'만 가능했다(owner가 기본키).
 --   이제 엄마와 아빠를 각각 만들 수 있다 — 기본키를 (owner, role)로 바꿔 역할마다 한 줄.
---   만들기 횟수(attempts)도 역할별로 센다. 삭제해도 횟수는 남아 기회가 되살아나지 않는다.
 --   비용은 만들 때마다 15토큰(엄마·아빠 각각 따로 낸다).
 --
 -- 사용법: Supabase → SQL Editor 에 붙여넣고 Run.
@@ -17,8 +16,8 @@ create table if not exists public.voice_clones (
   role              text not null,                       -- 'mom' | 'dad'
   provider          text not null default 'typecast',    -- 복제 업체
   provider_voice_id text,                                -- 업체가 준 목소리 id (삭제 시 null)
-  status            text not null default 'ready',       -- 'ready' | 'deleted'
-  attempts          int  not null default 1,             -- 이 역할의 만들기 누적 횟수 (최대 2)
+  status            text not null default 'ready',       -- 'review' | 'ready' | 'deleted'
+  attempts          int  not null default 1,             -- 이전 버전 호환용(현재 한도 판정에는 미사용)
   created_at        timestamptz not null default now(),
   primary key (owner, role)
 );

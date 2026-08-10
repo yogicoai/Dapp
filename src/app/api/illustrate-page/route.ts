@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import { ART_STYLES } from "@/lib/art-styles";
-import { GeminiError, fromDataUrl, generateImage, toDataUrl } from "@/lib/gemini";
+import {
+  GeminiError,
+  detectBlankCanvasBorder,
+  fromDataUrl,
+  generateImage,
+  repairBlankCanvasBorder,
+  toDataUrl,
+  validateIllustration,
+} from "@/lib/gemini";
 
 /**
  * 쪽별 삽화. 클로드가 쓴 장면 묘사(@@IMG@@) + 그림체 프롬프트 + 캐릭터 시트 참조.
@@ -19,11 +27,15 @@ export async function POST(request: Request) {
 
   const input = body as {
     scene?: unknown;
+    storyText?: unknown;
     artStyleId?: unknown;
     characterSheet?: unknown;
+    styleReference?: unknown;
+    styleReferenceScene?: unknown;
     mood?: unknown;
     shape?: unknown;
     cast?: unknown;
+    qualityCorrection?: unknown;
   };
 
   // 어느 화면에서 볼 동화인가 — 핸드폰은 세로(3:4), 태블릿은 가로(4:3)로 그린다.
@@ -32,6 +44,7 @@ export async function POST(request: Request) {
   const aspectRatio = phone ? ("3:4" as const) : ("4:3" as const);
 
   const scene = typeof input.scene === "string" ? input.scene.trim() : "";
+  const storyText = typeof input.storyText === "string" ? input.storyText.trim().slice(0, 1200) : "";
   if (!scene || scene.length > 500) {
     return NextResponse.json({ error: "장면 묘사가 비었거나 너무 깁니다." }, { status: 400 });
   }
@@ -41,8 +54,24 @@ export async function POST(request: Request) {
 
   const sheet =
     typeof input.characterSheet === "string" ? fromDataUrl(input.characterSheet) : null;
+  const styleReference =
+    typeof input.styleReference === "string" ? fromDataUrl(input.styleReference) : null;
+  const styleReferenceScene =
+    typeof input.styleReferenceScene === "string" ? input.styleReferenceScene.trim().slice(0, 500) : "";
+  const readLocation = (value: string) => {
+    const match = /장소\s*:\s*([^\n—.-]+?)\s*[—-]\s*([^\n.]+)/.exec(value);
+    return match ? { name: match[1].trim(), description: match[2].trim() } : null;
+  };
+  const currentLocation = readLocation(scene);
+  const referenceLocation = readLocation(styleReferenceScene);
+  const sameReferenceLocation = Boolean(
+    currentLocation && referenceLocation &&
+    currentLocation.name.replace(/\s+/g, "") === referenceLocation.name.replace(/\s+/g, ""),
+  );
 
   const mood = typeof input.mood === "string" ? input.mood.trim().slice(0, 80) : "";
+  const qualityCorrection =
+    typeof input.qualityCorrection === "string" ? input.qualityCorrection.trim().slice(0, 500) : "";
 
   /**
    * 등장인물 — 이름만이 아니라 생김새 설명까지 받는다.
@@ -62,9 +91,26 @@ export async function POST(request: Request) {
     .filter((c) => c.name)
     .slice(0, 6);
 
+  /**
+   * 책 전체 인물 중 이 장면에 이름이 실제로 적힌 사람만 보낸다.
+   * 전체 cast를 보내면 참조 시트에 있는 친구를 Gemini가 배경 인물로 임의 추가한다.
+   */
+  // 모델이 @@IMG@@에서 친구 이름을 실수로 빠뜨려도, 실제 본문에 이름이 나오면
+  // 꽃이나 소품으로 대신하지 못하게 등장인물로 다시 잠근다.
+  const sceneCast = cast.filter((c) => scene.includes(c.name) || storyText.includes(c.name));
+
   const prompt = [
     `Children's picture book illustration, ${style.prompt}.`,
+    [
+      `STYLE LOCK — render the entire page ONLY as: ${style.prompt}.`,
+      "The character reference sheet is also the rendering-style reference. Match its medium, brush/line quality, shape language, facial construction, shading method, texture, saturation and finish exactly.",
+      "Never switch medium or rendering technique between pages. Do not turn watercolor into 3D, vector, crayon, anime, pencil, collage or a different kind of painting. Do not mix two styles in one page.",
+    ].join("\n"),
     `Scene: ${scene}`,
+    currentLocation
+      ? `LOCATION LOCK — this scene visibly takes place at "${currentLocation.name}": ${currentLocation.description}. Draw that setting, not a generic forest, park, hanok, classroom or another house.`
+      : "",
+    storyText ? `Story text for factual context: ${storyText}` : "",
     mood ? `Mood: ${mood}.` : "",
     // 캐릭터 시트를 참조로 넣으면 모델이 '생김새'뿐 아니라 시트의 '나란히 선 배치'까지
     // 따라 그려서, 같은 인물이 두 명씩 나오는 일이 생긴다(실제 발생). 그래서
@@ -83,6 +129,16 @@ export async function POST(request: Request) {
           "Characters must physically belong to the scene: touching, holding, standing on, or reacting to what is around them, with an expression that matches the moment.",
         ].join("\n")
       : "",
+    styleReference
+      ? [
+          "A previously APPROVED page from this same book is attached after the character sheet.",
+          "Use that approved page ONLY as the book-wide rendering reference: identical medium, dimensionality (2D versus 3D), line/edge treatment, textures, facial construction, lighting softness, colour strength and finish.",
+          sameReferenceLocation
+            ? `SAME LOCATION LOCK — the approved page and this page are both "${currentLocation?.name}". Preserve the same room/outdoor identity, architecture, wall and floor colours, windows, large furniture or play equipment and their stable arrangement. Change only camera angle, character pose and small story props.`
+            : "Do not copy its composition or location because this scene uses a different place.",
+          "Never change a 3D/clay-like book into a flat 2D drawing, or a flat drawing into 3D.",
+        ].join("\n")
+      : "",
     /*
      * 같은 아이가 한 화면에 두 번 나오는 사고 — 이 앱에서 가장 자주 나는 그림 오류다.
      *
@@ -93,11 +149,12 @@ export async function POST(request: Request) {
      * 그래서 ① 인물마다 무엇이 다른지 대비시켜 주고 ② 다 그린 뒤 얼굴을 세어 보게 하는
      * 확인 절차를 붙인다. 금지만 적는 것보다 확인 단계를 주는 쪽이 훨씬 잘 먹힌다.
      */
-    cast.length > 0
+    sceneCast.length > 0
       ? [
-          `The only people who may appear are: ${cast.map((c) => c.name).join(", ")}. Draw each of them at most once, and only if this scene actually needs them.`,
-          ...cast.filter((c) => c.description).map((c) => `- ${c.name}: ${c.description}`),
-          cast.length > 1
+          `CAST LOCK — draw EXACTLY ${sceneCast.length} people: ${sceneCast.map((c) => c.name).join(", ")}. Every listed person appears exactly once.`,
+          `The reference sheet may contain other book characters. They are ABSENT from this page and must be ignored: ${cast.filter((c) => !sceneCast.some((s) => s.name === c.name)).map((c) => c.name).join(", ") || "none"}.`,
+          ...sceneCast.filter((c) => c.description).map((c) => `- ${c.name}: ${c.description}`),
+          sceneCast.length > 1
             ? [
                 "These are DIFFERENT people. They have different hair and different clothing colours — keep those differences obvious and never give one character another character's hair or outfit.",
                 "Do not make the friend, sibling or classmate look like a copy of the main child. If the descriptions read alike, differentiate them clearly in the drawing.",
@@ -108,8 +165,9 @@ export async function POST(request: Request) {
           .join("\n")
       : "",
     [
-      "HOW MANY PEOPLE — read the scene text and count the characters named in it. Draw exactly that many people. No extra background children, no crowd filler, and never a second copy of someone already in the picture.",
+      `HOW MANY PEOPLE — the exact answer is ${sceneCast.length}. Draw exactly ${sceneCast.length} visible people. No extra background children, no crowd filler, and never a second copy of someone already in the picture.`,
       "If the scene names only one character, exactly one person is in this picture.",
+      "Before drawing, assign each named character one position and one action from the Scene. Do not swap who performs an action, who has stopped, who leads, who follows, or which side of an object each person occupies.",
       "FINAL CHECK before you finish: look at every face you drew. If two figures share the same face, the same hair and the same clothes, that is the duplication error — remove one of them or redraw that figure as the correct, visibly different character.",
     ].join("\n"),
     // 일관성 — 이 앱의 핵심 약속이다. 쪽마다 얼굴이나 옷이 바뀌면 "내 동화"가 아니게 된다.
@@ -145,23 +203,49 @@ export async function POST(request: Request) {
       "Never make one page vivid and glossy and the next page pale and washed out. Never switch between a warm and a cold overall cast without the story asking for it.",
       "Scene-driven changes are fine and welcome — night is darker, sunset is warmer, indoors is softer. What must stay constant is the TREATMENT: how strong the colours are, how much contrast, how the light is rendered.",
     ].join("\n"),
-    "Keep the bottom quarter of the image simple and uncluttered (plain ground, sky, or soft color) so text can be placed there.",
+    "Keep the bottom quarter simple but FULLY PAINTED with scene color (ground, sky, water or another natural background) so text can be placed there. Simple never means white, blank, transparent or unfinished.",
     "Wholesome, innocent, fully clothed, child-friendly.",
-    "NO text, no letters, no words in the image.",
+    "IMAGE ONLY — absolutely NO captions, subtitles, story sentences, labels, speech bubbles, letters, numbers, logos, signatures, watermarks or readable writing in ANY language, including English and Korean. Leave the painted bottom area empty for the app to overlay text later.",
     phone
       ? "Tall 3:4 portrait composition, framed for a phone screen held upright."
       : "Wide 4:3 landscape composition.",
+    qualityCorrection
+      ? `QUALITY CORRECTION FROM THE REJECTED VERSION: ${qualityCorrection}. Draw a new version that corrects this exact character/composition error.`
+      : "",
   ]
     .filter(Boolean)
     .join("\n");
 
   try {
-    const image = await generateImage({
+    // 비용 상한: 페이지당 이미지 생성은 정확히 한 번만 호출한다.
+    let image = await generateImage({
       prompt,
-      references: sheet ? [sheet] : undefined,
+      references: [sheet, styleReference].filter(Boolean) as NonNullable<typeof sheet>[],
       aspectRatio,
     });
-    return NextResponse.json({ image: toDataUrl(image) });
+
+    // 흰 테두리는 재생성하지 않고 로컬 이미지 처리로 잘라내므로 AI 토큰이 들지 않는다.
+    const borderIssue = await detectBlankCanvasBorder(image);
+    if (borderIssue) image = await repairBlankCanvasBorder(image);
+
+    // 판매용 품질 기준: 이미지 생성보다 훨씬 저렴한 멀티모달 검수는 항상 수행한다.
+    const check = await validateIllustration({
+      image,
+      reference: sheet,
+      styleReference,
+      scene: storyText ? `${scene}\nStory text: ${storyText}` : scene,
+      expectedLocation: currentLocation
+        ? `${currentLocation.name}: ${currentLocation.description}`
+        : "",
+      cast: sceneCast,
+      stylePrompt: style.prompt,
+    });
+    return NextResponse.json({
+      image: toDataUrl(image),
+      corrected: Boolean(borderIssue),
+      qualityPassed: check.ok,
+      ...(check.ok ? {} : { qualityWarning: check.issues }),
+    });
   } catch (e) {
     if (e instanceof GeminiError) {
       return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });

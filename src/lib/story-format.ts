@@ -1,3 +1,5 @@
+import type { VoiceDirection, VoiceEmotion, VoicePace } from "@/lib/types";
+
 /**
  * 스토리 생성 결과를 파싱한다.
  *
@@ -50,7 +52,41 @@ export type ParsedPage = {
   text: string;
   /** 삽화 생성 프롬프트로 넘어갈 장면 묘사. */
   imagePrompt: string;
+  voiceDirection: VoiceDirection;
 };
+
+const DEFAULT_VOICE_DIRECTION: VoiceDirection = {
+  narration: "normal",
+  dialogue: "normal",
+  intensity: 0.5,
+  pace: "normal",
+};
+
+const VOICE_EMOTIONS = new Set<VoiceEmotion>(["normal", "toneup", "happy", "sad", "angry"]);
+const VOICE_PACES = new Set<VoicePace>(["slow", "normal", "lively"]);
+
+function parseVoiceDirection(value: string): VoiceDirection {
+  const fields = Object.fromEntries(
+    value.split("|").map((part) => {
+      const [key, ...rest] = part.split("=");
+      return [key?.trim().toLowerCase(), rest.join("=").trim().toLowerCase()];
+    }),
+  );
+  const narration = VOICE_EMOTIONS.has(fields.narration as VoiceEmotion)
+    ? (fields.narration as VoiceEmotion)
+    : DEFAULT_VOICE_DIRECTION.narration;
+  const dialogue = VOICE_EMOTIONS.has(fields.dialogue as VoiceEmotion)
+    ? (fields.dialogue as VoiceEmotion)
+    : DEFAULT_VOICE_DIRECTION.dialogue;
+  const pace = VOICE_PACES.has(fields.pace as VoicePace)
+    ? (fields.pace as VoicePace)
+    : DEFAULT_VOICE_DIRECTION.pace;
+  const rawIntensity = Number(fields.intensity);
+  const intensity = Number.isFinite(rawIntensity)
+    ? Math.min(0.65, Math.max(0.3, rawIntensity))
+    : DEFAULT_VOICE_DIRECTION.intensity;
+  return { narration, dialogue, intensity, pace };
+}
 
 export type ParsedStory = {
   title: string;
@@ -212,7 +248,12 @@ export function parseStory(raw: string): ParsedStory {
         if (!Number.isFinite(pageNo)) {
           throw new StoryParseError(`@@PAGE@@ 번호를 읽을 수 없습니다: "${block.inline}"`);
         }
-        current = { pageNo, text: "", imagePrompt: "" };
+        current = {
+          pageNo,
+          text: "",
+          imagePrompt: "",
+          voiceDirection: { ...DEFAULT_VOICE_DIRECTION },
+        };
         break;
       }
 
@@ -224,6 +265,11 @@ export function parseStory(raw: string): ParsedStory {
       case "IMG":
         if (!current) throw new StoryParseError("@@PAGE@@ 없이 @@IMG@@가 먼저 나왔습니다.");
         current.imagePrompt = inlineOrBody;
+        break;
+
+      case "VOICE":
+        if (!current) throw new StoryParseError("@@PAGE@@ 없이 @@VOICE@@가 먼저 나왔습니다.");
+        current.voiceDirection = parseVoiceDirection(inlineOrBody);
         break;
 
       default:

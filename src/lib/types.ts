@@ -1,5 +1,17 @@
+export type VoiceEmotion = "normal" | "toneup" | "happy" | "sad" | "angry";
+export type VoicePace = "slow" | "normal" | "lively";
+export type NarrationStyle = "cozy" | "natural" | "lively";
+export type VoiceDirection = {
+  narration: VoiceEmotion;
+  dialogue: VoiceEmotion;
+  intensity: number;
+  pace: VoicePace;
+};
+
 export type BookPage = {
   text: string;
+  /** 이야기 생성 단계에서 정한 페이지별 성우 연기 지시. 부모 복제 음성에는 강제 적용하지 않는다. */
+  voiceDirection?: VoiceDirection;
   /** 4:3 가로 삽화. 아직 생성 전이면 null이고 뷰어가 플레이스홀더를 그린다. */
   image?: string | null;
   /**
@@ -48,6 +60,8 @@ export type Book = {
    * 내장 mp3를 그대로 써서 크레딧을 아낀다.
    */
   narrator?: string;
+  /** 제작할 때 한 번 고른 낭독 느낌. 완성 후에는 바꾸지 않아 재합성을 막는다. */
+  narrationStyle?: NarrationStyle;
   /**
    * 이 책의 추천 성우 목록(성우 id 2~3개). 첫 번째가 기본.
    * 각 성우 낭독은 미리 구워 public에 있어(narr-{성우id}-pN.mp3), 뷰어에서 이 목록

@@ -19,6 +19,7 @@ export type Gender = "girl" | "boy" | "unspecified";
  */
 export type ChildLooks = {
   hair?: string; // 머리 모양 (짧은 머리 / 단발 / 양갈래 …)
+  hairTexture?: string; // 머리결 (생머리 / 웨이브 / 곱슬 / 파마)
   bangs?: string; // 앞머리 (있어요 / 없어요 / 옆으로 넘겨요)
   hairColor?: string; // 머리 색
   eyes?: string; // 눈매 (크고 동그래요 / 웃으면 반달 …)
@@ -70,8 +71,12 @@ function normalizeLooks(raw: unknown): ChildLooks | undefined {
   const str = (x: unknown) => (typeof x === "string" && x.trim() ? x.trim().slice(0, 30) : undefined);
   const list = (x: unknown) =>
     Array.isArray(x) ? x.map(str).filter((s): s is string => Boolean(s)).slice(0, 5) : undefined;
+  const rawMarks = list(v.marks);
+  const legacyCurly = rawMarks?.includes("곱슬머리");
   const looks: ChildLooks = {
     hair: str(v.hair),
+    // 예전의 '이런 점도 있어요 → 곱슬머리' 값은 새 단일 선택으로 자동 이전한다.
+    hairTexture: str(v.hairTexture) ?? (legacyCurly ? "곱슬머리" : undefined),
     bangs: str(v.bangs),
     hairColor: str(v.hairColor),
     eyes: str(v.eyes),
@@ -80,7 +85,7 @@ function normalizeLooks(raw: unknown): ChildLooks | undefined {
     color: str(v.color),
     items: list(v.items),
     glasses: v.glasses === true ? true : undefined,
-    marks: list(v.marks),
+    marks: rawMarks?.filter((mark) => mark !== "곱슬머리"),
     // 자유 입력은 그림 프롬프트로 그대로 들어가므로 길이를 제한한다.
     note: typeof v.note === "string" && v.note.trim() ? v.note.trim().slice(0, 100) : undefined,
   };
@@ -124,6 +129,15 @@ export function looksToPrompt(looks: ChildLooks | undefined): string {
   // 머리 — 색·모양·앞머리를 한 덩어리로 묶어야 그림이 헷갈리지 않는다.
   const hair = [looks.hairColor, looks.hair].filter(Boolean).join(" ");
   if (hair) parts.push(hair);
+  if (looks.hairTexture) {
+    const texture = {
+      "곧은 생머리": "머리결은 곧은 생머리이며 웨이브·곱슬·파마가 전혀 없다",
+      "살짝 웨이브": "머리결은 끝부분에만 부드러운 웨이브가 살짝 있다",
+      곱슬머리: "머리결은 자연스럽고 촘촘한 곱슬머리다",
+      파마머리: "머리 전체에 둥근 컬이 반복되는 파마머리다",
+    }[looks.hairTexture] ?? `머리결은 ${looks.hairTexture}`;
+    parts.push(texture);
+  }
   if (looks.bangs) parts.push(`앞머리는 ${looks.bangs}`);
   if (looks.eyes) parts.push(`눈은 ${looks.eyes}`);
   if (looks.skin) parts.push(`피부는 ${looks.skin}`);
@@ -714,21 +728,26 @@ export type StoryFont = {
   /** 동글체를 1로 본 글자 크기 배율 */
   scale: number;
   leading: number;
+  category: "readable" | "storybook" | "decorative";
+  /** 글꼴 파일에 실제로 들어 있는 굵기만 허용한다. */
+  weights: readonly number[];
 };
 
 export const STORY_FONTS: StoryFont[] = [
-  { id: "dongle", label: "동글동글", family: '"Dongle"', scale: 1, leading: 1.4 },
-  { id: "jua", label: "또렷한 주아", family: '"Jua"', scale: 0.66, leading: 1.6 },
-  { id: "gaegu", label: "아이 손글씨", family: '"Gaegu"', scale: 0.76, leading: 1.55 },
-  { id: "pen", label: "부드러운 펜글씨", family: '"Nanum Pen Script"', scale: 0.86, leading: 1.5 },
-  { id: "dodum", label: "차분한 돋움", family: '"Gowun Dodum"', scale: 0.62, leading: 1.7 },
   {
     id: "gothic",
     label: "읽기 쉬운 고딕",
     family: '"Pretendard Variable", Pretendard',
     scale: 0.6,
-    leading: 1.7,
+    leading: 1.65,
+    category: "readable",
+    weights: [400, 600, 700],
   },
+  { id: "dodum", label: "차분한 돋움", family: "var(--font-gowun-dodum)", scale: 0.62, leading: 1.65, category: "readable", weights: [400] },
+  { id: "dongle", label: "동글동글", family: "var(--font-dongle)", scale: 1, leading: 1.55, category: "storybook", weights: [300, 400, 700] },
+  { id: "jua", label: "또렷한 주아", family: "var(--font-jua)", scale: 0.66, leading: 1.6, category: "storybook", weights: [400] },
+  { id: "gaegu", label: "아이 손글씨", family: "var(--font-gaegu)", scale: 0.76, leading: 1.6, category: "decorative", weights: [400, 700] },
+  { id: "pen", label: "부드러운 펜글씨", family: "var(--font-nanum-pen)", scale: 0.86, leading: 1.6, category: "decorative", weights: [400] },
 ];
 
 /**
@@ -737,8 +756,8 @@ export const STORY_FONTS: StoryFont[] = [
  * 글꼴에 따라 실제로 가진 굵기가 다르다 — 동글체는 300·400·700, 아이 손글씨는
  * 400·700, 주아·펜글씨·돋움은 400 하나뿐이다. 없는 굵기를 고르면 브라우저가
  * 흉내 내서 굵게 그리는데(가짜 굵기), 그게 오히려 뭉개져 보일 때가 있다.
- * 그래서 '보통'을 기본으로 두고, 굵게는 고르고 싶은 사람만 고르게 한다.
- * (예전엔 모든 글꼴에 600을 박아 놔서, 400뿐인 글꼴은 늘 가짜 굵기로 나왔다.)
+ * 설정 화면은 선택한 글꼴에 실제로 들어 있는 굵기만 활성화하고, 예전 저장값이
+ * 지원되지 않으면 보통(400)으로 되돌려 가짜 굵기로 뭉개지지 않게 한다.
  */
 export const STORY_WEIGHTS = [
   { id: "normal", label: "보통", value: 400 },
@@ -752,6 +771,15 @@ const STORY_WEIGHT_KEY = "voice-storybook:story-weight";
 
 export function findStoryWeight(id: string | null): StoryWeight {
   return STORY_WEIGHTS.find((w) => w.id === id) ?? STORY_WEIGHTS[1];
+}
+
+/** 선택한 글꼴이 지원하지 않는 굵기면 실제 파일에 있는 400으로 안전하게 맞춘다. */
+export function storyWeightForFont(font: StoryFont, weight: StoryWeight): number {
+  return font.weights.includes(weight.value)
+    ? weight.value
+    : font.weights.includes(400)
+      ? 400
+      : font.weights[0];
 }
 
 export function loadStoryWeight(): StoryWeight {

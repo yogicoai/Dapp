@@ -5,6 +5,13 @@ import {
   type ParsedOutline,
   type ParsedStory,
 } from "./story-format";
+import {
+  StoryQualityError,
+  isBlockingStoryQualityIssue,
+  repairStoryContinuity,
+  validateStoryQuality,
+} from "./story-quality";
+import type { NarrationStyle } from "./types";
 
 const client = new Anthropic();
 // 이야기 생성 모델 — 가성비 Sonnet 기본(원가 약 1/5). 품질이 필요한 순간엔
@@ -211,14 +218,15 @@ const OUTLINE_SYSTEM = `${VOICE}
  * 이야기 재료 — 만들기 화면에서 고른 것들. 콤마로 뭉치지 않고 항목별 라벨을
  * 붙여 넘겨야 클로드가 각 재료의 역할을 정확히 반영한다.
  *
- * 세 갈래가 있다:
+ * 네 갈래가 있다:
  * · today   「오늘의 이야기」 — 아이가 실제 겪은 일(어디서·누구랑·무슨 일·기분)을
  *   따뜻한 동화로 각색한다.
  * · imagine 「상상 이야기」 — 소재·인물·사건 재료로 상상 동화를 짓는다.
  * · emotion 「감정 동화」 — 아이가 느낀 마음(화·무서움·슬픔 등)을 다루는 감정동화.
+ * · direct  「직접 이야기 구성」 — 부모가 쓴 기승전결 또는 완성 원고를 보존해 책으로 나눈다.
  */
 export type StoryMaterial = {
-  kind: "today" | "imagine" | "emotion";
+  kind: "today" | "imagine" | "emotion" | "direct";
   subject: string; // 상상: 소재(공룡 등)
   who: string; // 누구랑 (공통) — 칩 라벨(친구랑·동생이랑 등)
   whoName: string; // 동행의 실제 이름(선택). 있으면 그 이름을 그대로 쓴다.
@@ -241,6 +249,12 @@ export type StoryMaterial = {
   emotion: string; // 감정: 어떤 마음(화가 나요 등)
   situation: string; // 감정: 그런 마음이 든 상황
   extra: string; // 상상: 아이가 자유롭게 더한 이야기
+  directMode: string;
+  directOpening: string;
+  directDevelopment: string;
+  directCrisis: string;
+  directEnding: string;
+  directText: string;
 };
 
 /**
@@ -296,12 +310,32 @@ function whoLine(
 }
 
 function materialLines(m: StoryMaterial): string[] {
+  if (m.kind === "direct") {
+    return m.directMode === "full"
+      ? [
+          "아래는 부모가 직접 완성한 동화 원고다. 사건·인물·대사·결말을 새로 만들거나 삭제하지 않는다.",
+          "맞춤법과 어색한 조사만 바로잡고, 아이 연령에 맞게 문장을 다듬어 선택한 장면 수로 나눈다.",
+          "원문에 없는 교훈, 악역, 반전, 새 인물을 추가하지 않는다.",
+          `- 부모의 완성 원고:\n${m.directText}`,
+        ]
+      : [
+          "아래 기승전결은 부모가 직접 정한 이야기다. 네 부분의 사실과 순서와 결말을 반드시 보존한다.",
+          "빈 곳을 임의의 큰 사건으로 채우지 말고, 연결 문장과 자연스러운 대사만 보완한다.",
+          `- 기(시작): ${m.directOpening}`,
+          `- 승(전개): ${m.directDevelopment}`,
+          `- 전(위기): ${m.directCrisis}`,
+          `- 결(결말): ${m.directEnding}`,
+        ];
+  }
   if (m.kind === "today") {
     return [
       "아래는 아이가 오늘 실제로 겪은 일이다. 이 경험을 살려 따뜻한 동화로 각색한다.",
       "완전히 다른 이야기로 바꾸지 말고, 실제 있었던 일의 결을 지키되 아이가 주인공으로",
       "빛나게 하고, 속상한 일이면 마지막엔 마음이 풀리게 한다.",
       m.place ? `- 어디에서: ${m.place}` : "",
+      m.place
+        ? `- 장소 연속성: '${m.place}'를 이 이야기의 기본 장소로 고정한다. 사용자가 적은 사건에 실제 이동이 없는 한 다른 집·한옥·공원·유치원 같은 장소를 새로 만들지 않는다.`
+        : "- 장소 연속성: 사용자가 말하지 않은 새 장소를 임의로 추가하지 않는다.",
       whoLine("- 누구랑", m.who, m.whoName, m.whoGender, m.friends),
       m.happening ? `- 무슨 일이 있었나: ${m.happening}` : "",
       m.feeling ? `- 그때 아이 기분: ${m.feeling}` : "",
@@ -315,6 +349,9 @@ function materialLines(m: StoryMaterial): string[] {
       m.emotion
         ? `아이가 '${m.emotion}' 마음을 느꼈다. 이 감정을 다루는 감정동화를 짓는다.`
         : "아이의 마음을 다루는 감정동화를 짓는다.",
+      m.emotion === "좋아해요"
+        ? "'좋아해요'는 연애 감정으로 단정하지 말고, 입력된 상황에 맞춰 가족 사랑·우정·동물이나 대상에 대한 애정과 고마움으로 따뜻하게 표현한다. 좋아하는 마음을 말과 행동으로 건강하게 전하되 상대의 마음과 경계도 존중한다."
+        : "",
       "감정에 이름을 붙여 주고, 몸으로 느끼는 감각(가슴이 콩닥콩닥, 얼굴이 뜨끈 등)으로",
       "표현하며, 아이가 스스로 감정을 알아차리고 다독이는 과정을 이야기로 만든다.",
       "감정 자체를 나쁘다고 하지 않는다.",
@@ -463,6 +500,8 @@ export async function generateOutline(input: {
 }
 
 const STORY_SYSTEM = `${VOICE}
+독자가 아이인 만큼 노골적인 폭력·공포·성인 소재를 쓰지 않는다. 갈등은 안전하게 해소하고 아이를 탓하거나 겁주지 않는다.
+공통 작품 테마는 '아이의 실제 마음에서 시작해 작은 모험을 스스로 선택하고, 따뜻하고 안전하게 돌아오는 성장 이야기'다. 사용자가 고른 공룡·우주·습관 같은 소재는 유지하되 훈계보다 아이의 선택과 감정 회복을 보여 준다.
 
 확정된 줄거리는 장면별로 나뉘어 있다. **1장면 → 1쪽**으로, 장면 하나를 한 쪽 본문으로
 옮긴다. 이야기를 새로 짓거나 장면을 합치거나 나누지 말고, 장면 개수 그대로 쪽을 낸다
@@ -490,10 +529,24 @@ const STORY_SYSTEM = `${VOICE}
 키나 체격, 늘 지니는 물건까지 다르면 더 좋다. 주인공의 특징을 친구에게 그대로
 옮겨 적지 않는다.
 
-@@IMG@@에는 그 쪽의 **장면만** 적는다 — 누가 어디서 무엇을 하는지. 그림체나 화면
-구도는 적지 않는다. 그건 삽화를 그릴 때 따로 붙는다.
-그 쪽에 **실제로 나오는 인물의 이름을 모두** 적고, 나오지 않는 인물은 적지 않는다.
-혼자 있는 장면이면 혼자라고 분명히 쓴다 — 안 그러면 없어야 할 사람이 그려진다.
+@@IMG@@에는 그 쪽의 **장면만** 적는다. 그림체나 카메라 용어는 적지 않는다.
+반드시 첫 문장을 \`등장인물 N명: 이름1, 이름2.\` 형식으로 시작한다. 사람이 없는
+풍경이면 \`등장인물 0명.\`이라고 쓴다. 그 쪽에 실제로 보이는 인물의 **고유 이름을
+모두** 적고, 나오지 않는 인물은 절대 적지 않는다. "친구들", "아이들"처럼 누구인지
+모르는 뭉뚱그린 말도 쓰지 않는다.
+그 다음에는 이름마다 위치와 행동을 하나씩 분명히 배정한다. 예:
+\`민준은 다리 왼쪽 입구에서 발을 멈추고 난간을 잡는다. 서연은 다리 가운데에서
+민준을 돌아본다.\` 누가 앞/뒤인지, 어느 쪽에 있는지, 무엇을 들고 누구를 보는지까지
+장면에 중요한 관계를 적는다. 행동의 주인을 서로 바꾸면 안 된다.
+
+장소도 인물처럼 고정한다. 각 @@IMG@@에 \`장소: 장소 이름 — 고정 특징.\`을 반드시 적는다.
+같은 집·방·유치원·놀이터가 다시 나오면 장소 이름과 벽 색, 바닥, 창문, 큰 가구나 놀이기구 같은
+고정 특징을 **앞 페이지와 같은 말로 반복**한다. 본문에서 실제 이동했다고 쓰지 않은 한 장소를
+집에서 한옥으로, 방에서 공원으로 임의 변경하지 않는다. 장소가 바뀌는 페이지는 @@TEXT@@에도
+이동 과정이 분명히 있어야 한다.
+페이지를 쓰기 전에 직전 페이지의 장소를 기억한다. 새 페이지의 장소가 다르면 @@TEXT@@에
+누가 어디에서 어디로 어떻게 이동했는지 먼저 쓴다. 이동 문장이 없다면 장소 이름과 고정 특징을
+직전 페이지와 똑같이 유지한다. 특히 일상 이야기에서는 재미를 위해 뜬금없는 새 장소를 만들지 않는다.
 
 출력은 아래 마커 형식만. 앞뒤에 다른 말을 붙이지 않는다.
 
@@ -502,17 +555,21 @@ const STORY_SYSTEM = `${VOICE}
 @@CHARACTER@@ 이름 | 생김새와 특징
 @@PAGE@@ 1
 @@TEXT@@ ...
+@@VOICE@@ narration=normal | dialogue=happy | intensity=0.5 | pace=normal
 @@IMG@@ ...
 @@PAGE@@ 2
 ...`;
 
 export async function generateStory(input: {
   child: ChildProfile;
+  material: StoryMaterial;
   outline: ParsedOutline;
   occasion?: string;
   mood?: string;
   /** 넉넉하게(길게) — 쪽수가 적어도 각 쪽 분량을 늘려 이야기를 더 풍부하게. */
   longer?: boolean;
+  /** 제작 단계에서 한 번 고르고 책에 고정하는 낭독 느낌. */
+  narrationStyle?: NarrationStyle;
 }): Promise<ParsedStory> {
   // 쪽수는 줄거리 장면 수를 그대로 따른다 — 장면 1개 = 쪽 1개.
   const pageCount = input.outline.scenes.length;
@@ -520,9 +577,19 @@ export async function generateStory(input: {
   const outlineText = input.outline.scenes
     .map((s) => `${s.sceneNo}장면: ${s.text}`)
     .join("\n");
+  const narrationStyle = input.narrationStyle ?? "natural";
+  const narrationStyleGuide = {
+    cozy:
+      "선택한 낭독 느낌은 '포근하게'다. narration=normal, intensity=0.35, pace=slow를 기본으로 하고 대사는 대부분 normal로 지정한다. 슬픈 대사만 sad를 약하게 허용한다.",
+    natural:
+      "선택한 낭독 느낌은 '자연스럽게'다. narration=normal, intensity=0.5, pace=normal을 기본으로 하고 감정이 분명한 대사에만 happy|sad|angry를 지정한다.",
+    lively:
+      "선택한 낭독 느낌은 '조금 신나게'다. narration=normal, intensity=0.6, pace=lively를 기본으로 하되 슬프거나 조용한 장면은 pace=normal로 낮춘다. 높은 음정이나 과장은 금지한다.",
+  }[narrationStyle];
 
   // 이름 가드 — 줄거리와 같은 방식. 본문에서 이름이 틀리면 한 번 다시 짓는다.
   let story: ParsedStory | null = null;
+  let lastIssues: string[] = [];
   for (let attempt = 1; attempt <= 2; attempt++) {
     const message = await client.messages.create({
       model: MODEL,
@@ -537,12 +604,17 @@ export async function generateStory(input: {
             `아이: ${describeChild(input.child)}`,
             `장면 수: ${pageCount}장면 (이 개수만큼, 장면 하나당 한 쪽씩 낸다)`,
             `쪽당 분량: ${lengthGuide(input.child.age, input.longer)}`,
+            "처음 입력한 이야기 재료(사실·인물·장소)는 줄거리보다 우선하며, 빠뜨리거나 다른 내용으로 바꾸지 않는다.",
+            ...materialLines(input.material),
+            "각 페이지에는 @@VOICE@@를 정확히 한 번 쓴다. 부모가 잠자리에서 책을 읽어주는 듯 낮고 편안한 낭독을 기준으로 한다. narration은 항상 normal이다. dialogue는 기본 normal이며 감정이 분명한 짧은 대사에만 happy|sad|angry를 쓴다(toneup은 사용하지 않는다). intensity는 0.3~0.65이고 기본 0.5다. pace는 기본 normal, 아주 차분한 장면은 slow, lively는 꼭 필요한 장면에만 쓴다. 신나는 감정은 높은 음정이나 빠른 말투가 아니라 자연스러운 리듬과 미소로 표현한다.",
+            narrationStyleGuide,
             ...(input.occasion
               ? [`특별한 날: ${input.occasion} — 축하가 이야기에 자연스럽게 스며들게.`]
               : []),
             ...(input.mood ? [`분위기: ${input.mood}`] : []),
             ...(attempt > 1
               ? [
+                  `직전 결과의 품질 검사 실패 항목: ${lastIssues.join(" / ")}. 이 항목을 모두 바로잡아 전체를 다시 출력한다.`,
                   `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 "${input.child.name}"이다 — 비슷한 다른 이름 절대 금지. (조사는 자연스럽게: ${josaGuide(input.child.name)})`,
                 ]
               : []),
@@ -555,18 +627,23 @@ export async function generateStory(input: {
       ],
     });
 
-    story = parseStory(textOf(message));
+    story = repairStoryContinuity(parseStory(textOf(message)));
 
-    if (story.pages.length !== pageCount) {
-      throw new Error(
-        `${pageCount}쪽이어야 하는데 ${story.pages.length}쪽이 나왔습니다.`,
-      );
-    }
-
-    const joined = story.title + " " + story.pages.map((p) => p.text).join(" ");
-    if (nameOk(input.child.name, joined)) break;
+    lastIssues = validateStoryQuality(story, {
+      childName: input.child.name,
+      age: input.child.age,
+      expectedPages: pageCount,
+      requiredTerms: [
+        input.material.whoName,
+        ...input.material.friends.map((friend) => friend.name),
+        input.material.place.length <= 20 ? input.material.place : "",
+      ].filter(Boolean),
+    });
+    if (lastIssues.length === 0) break;
     if (attempt === 2) {
-      console.warn(`[story] 이름 불일치 2회: "${input.child.name}"`);
+      const blockingIssues = lastIssues.filter(isBlockingStoryQualityIssue);
+      if (blockingIssues.length > 0) throw new StoryQualityError(blockingIssues);
+      console.warn(`[story] 자동 보정 후 진행하는 품질 권고: ${lastIssues.join(" / ")}`);
     }
   }
 
@@ -574,6 +651,40 @@ export async function generateStory(input: {
   // 등장인물 이름은 손대지 않는다 — 모델이 "동생"처럼 보통명사를 인물 이름으로
   // 넣는 일이 있어, 확실히 사람 이름인 주인공만 고친다.
   const fix = (t: string) => fixNameJosa(input.child.name, nfc(t));
+  const lockDirection = (page: ParsedStory["pages"][number]) => {
+    const dialogue = page.voiceDirection.dialogue === "toneup" ? "normal" : page.voiceDirection.dialogue;
+    if (narrationStyle === "cozy") {
+      return {
+        ...page,
+        voiceDirection: {
+          narration: "normal" as const,
+          dialogue: dialogue === "sad" ? "sad" as const : "normal" as const,
+          intensity: 0.35,
+          pace: "slow" as const,
+        },
+      };
+    }
+    if (narrationStyle === "lively") {
+      return {
+        ...page,
+        voiceDirection: {
+          narration: "normal" as const,
+          dialogue,
+          intensity: 0.6,
+          pace: page.voiceDirection.pace === "slow" ? "normal" as const : "lively" as const,
+        },
+      };
+    }
+    return {
+      ...page,
+      voiceDirection: {
+        narration: "normal" as const,
+        dialogue,
+        intensity: 0.5,
+        pace: "normal" as const,
+      },
+    };
+  };
   return {
     ...story!,
     title: fix(story!.title),
@@ -583,7 +694,7 @@ export async function generateStory(input: {
       name: nfc(c.name),
       description: nfc(c.description),
     })),
-    pages: story!.pages.map((p) => ({ ...p, text: fix(p.text), imagePrompt: nfc(p.imagePrompt) })),
+    pages: story!.pages.map((p) => lockDirection({ ...p, text: fix(p.text), imagePrompt: nfc(p.imagePrompt) })),
   };
 }
 

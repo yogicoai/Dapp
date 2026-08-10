@@ -1,6 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { Dongle, Gaegu, Gowun_Dodum, Jua, Nanum_Pen_Script } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
+
+const dongle = Dongle({ weight: ["300", "400", "700"], variable: "--font-dongle", preload: false });
+const gaegu = Gaegu({ weight: ["400", "700"], variable: "--font-gaegu", preload: false });
+const gowunDodum = Gowun_Dodum({ weight: "400", variable: "--font-gowun-dodum", preload: false });
+const jua = Jua({ weight: "400", variable: "--font-jua", preload: false });
+const nanumPen = Nanum_Pen_Script({ weight: "400", variable: "--font-nanum-pen", preload: false });
 
 export const metadata: Metadata = {
   title: "우리 가족 보이스 동화",
@@ -35,7 +42,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-full antialiased">
+    <html
+      lang="ko"
+      className={`h-full antialiased ${dongle.variable} ${gaegu.variable} ${gowunDodum.variable} ${jua.variable} ${nanumPen.variable}`}
+    >
       {/* 옛 아이폰(iOS 16.4 미만)은 새 이름(mobile-web-app-capable)을 모르고 이 이름만 본다.
           Next는 새 이름만 넣어 주므로 직접 하나 더 얹는다 — 둘 다 있어도 문제없다.
           이게 있어야 '홈 화면에 추가'로 열 때 주소창 없이 꽉 찬 앱으로 뜬다. */}

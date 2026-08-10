@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   loadBgmOn,
   loadBookProgress,
@@ -26,6 +26,7 @@ import {
   loadStoryWeight,
   type StoryWeight,
   STORY_WEIGHTS,
+  storyWeightForFont,
 } from "@/lib/prefs";
 import { loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
@@ -55,11 +56,79 @@ import {
 import { loadParentVoices, type ParentVoice } from "@/lib/parent-voice";
 import { OrientationHint } from "./OrientationHint";
 import { useTheme } from "./ThemeProvider";
+import { currentReadingChunk, splitStorySentences } from "@/lib/reading-chunks";
 
 const SWIPE_THRESHOLD_PX = 50;
 
 /** Web Speech 폴백용 읽기 속도(초당 글자). 경계 이벤트가 안 오는 기기에서 쓴다. */
 const FALLBACK_CHARS_PER_SEC = 5.5;
+
+/**
+ * 본문이 준비된 칸보다 길면 스크롤을 만들지 않고 글자만 단계적으로 줄인다.
+ * 실제 DOM 크기를 재므로 글꼴·기기·가로세로·사용자 글자 크기가 달라도 맞는다.
+ */
+function AutoFitStoryText({
+  children,
+  baseSize,
+  textScale,
+  fontScale,
+  fontWeight,
+  className,
+}: {
+  children: React.ReactNode;
+  baseSize: string;
+  textScale: number;
+  fontScale: number;
+  fontWeight: number;
+  className: string;
+}) {
+  const ref = useRef<HTMLParagraphElement>(null);
+
+  useLayoutEffect(() => {
+    const text = ref.current;
+    const box = text?.parentElement;
+    if (!text || !box) return;
+
+    const fit = () => {
+      text.style.setProperty("--story-fit", "1");
+      const availableHeight = Math.min(box.clientHeight, window.innerHeight * 0.76);
+      const availableWidth = box.clientWidth;
+      const fits = () =>
+        text.scrollHeight <= availableHeight + 1 && text.scrollWidth <= availableWidth + 1;
+      if (fits()) return;
+
+      // 42%까지 이분 탐색한다. 일반적인 150~300자 본문은 대개 65~90%에서 들어온다.
+      let low = 0.42;
+      let high = 1;
+      for (let n = 0; n < 9; n++) {
+        const mid = (low + high) / 2;
+        text.style.setProperty("--story-fit", String(mid));
+        if (fits()) low = mid;
+        else high = mid;
+      }
+      text.style.setProperty("--story-fit", String(low));
+    };
+
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(box);
+    void document.fonts?.ready.then(fit);
+    return () => observer.disconnect();
+  }, [baseSize, fontScale, fontWeight, textScale]);
+
+  return (
+    <p
+      ref={ref}
+      style={{
+        fontSize: `calc(${baseSize} * ${textScale} * ${fontScale} * var(--story-fit, 1))`,
+        fontWeight,
+      }}
+      className={`${className} overflow-hidden`}
+    >
+      {children}
+    </p>
+  );
+}
 
 /** 핫스팟 라벨 → 한국어 이름 (스크린리더·접근성용). */
 const HOTSPOT_KO: Record<string, string> = {
@@ -107,43 +176,6 @@ const HOTSPOT_KO: Record<string, string> = {
   greedy: "욕심쟁이",
 };
 
-/**
- * 본문을 문장 단위로 자른다 — 그림책처럼 문장마다 줄을 놓기 위해.
- *
- * 글자를 하나도 더하거나 빼지 않는다. 낭독 색칠이 '몇 번째 글자까지'로 돌기 때문에,
- * 공백 하나만 손대도 색칠 위치가 어긋난다. 잘라 낸 조각을 그대로 이어 붙이면
- * 원문이 된다.
- *
- * 마침표·물음표·느낌표에서 끊되, 대사 안의 문장부호에서는 끊지 않는다.
- * 동화는 대사가 많아서 이걸 안 가리면 엉뚱하게 잘린다:
- *   ("찰칵!" 열차 문이 열렸어요.) → 「"찰칵!"」과 「열차 문이…」로 갈라져 버린다.
- * 닫는 따옴표 뒤에 글이 더 이어지면 대개 그 대사를 받는 서술이라 한 문장으로 둔다.
- * 반대로 따옴표가 글의 끝이면 거기서 자연스럽게 끝난다.
- */
-function splitSentences(text: string): string[] {
-  const out: string[] = [];
-  let cur = "";
-  for (let i = 0; i < text.length; i++) {
-    cur += text[i];
-    if (!".!?。".includes(text[i])) continue;
-
-    // 뒤따르는 닫는 따옴표는 이 문장에 붙인다 — 따옴표만 다음 줄로 떨어지면 흉하다.
-    let quoted = false;
-    while (i + 1 < text.length && `"'”’」』)`.includes(text[i + 1])) {
-      cur += text[++i];
-      quoted = true;
-    }
-    // 대사가 닫힌 뒤에도 글이 남아 있으면 아직 문장이 안 끝났다 — 계속 모은다.
-    if (quoted && i + 1 < text.length) continue;
-
-    while (i + 1 < text.length && /\s/.test(text[i + 1])) cur += text[++i];
-    out.push(cur);
-    cur = "";
-  }
-  if (cur) out.push(cur);
-  return out.length > 0 ? out : [text];
-}
-
 export function BookViewer({ book }: { book: Book }) {
   const router = useRouter();
   // 그림 없는 쪽의 배경으로 쓴다 — 글 동화도 테마(동화나라) 안에서 읽힌다.
@@ -164,7 +196,6 @@ export function BookViewer({ book }: { book: Book }) {
   const [sizeMenu, setSizeMenu] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영
   useEffect(() => setTextScale(loadTextScale()), []);
-  /** 기본 크기(화면 따라 자동)에 배율을 곱한다 — 인라인이라 세 군데 본문에 똑같이 먹는다. */
   /*
    * 본문 글꼴 — 부모가 설정에서 고른다. 글꼴마다 같은 px에서도 보이는 크기가 달라서,
    * 글자 크기 배율(textScale)에 글꼴 배율(font.scale)을 함께 곱해야 어떤 글꼴을 골라도
@@ -177,17 +208,33 @@ export function BookViewer({ book }: { book: Book }) {
   const [weight, setWeight] = useState<StoryWeight>(STORY_WEIGHTS[1]);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용
   useEffect(() => setWeight(loadStoryWeight()), []);
-  const scaled = (base: string) => ({
-    fontSize: `calc(${base} * ${textScale} * ${font.scale})`,
-    fontWeight: weight.value,
-  });
   const applyTextScale = (s: number) => {
     setTextScale(s);
     saveTextScale(s);
     setSizeMenu(false);
   };
+  const applyBookLayout = (next: BookLayout) => {
+    setLayout(next);
+    saveBookLayout(next);
+    setSizeMenu(false);
+
+    // 모바일 세로에서 펼침면을 고르면 클릭 제스처 안에서 곧바로 전체화면·가로 고정을
+    // 요청한다. Android Chrome/Samsung Internet은 자동 전환되고, 강제 회전을 막는
+    // iPhone Safari에서는 저장된 값만 유지되어 사용자가 직접 돌렸을 때 적용된다.
+    if (
+      next === "spread" &&
+      typeof window !== "undefined" &&
+      window.matchMedia("(orientation: portrait)").matches &&
+      (window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0)
+    ) {
+      enterStoryMode();
+    }
+  };
   const [index, setIndex] = useState(0);
   const lastIndex = book.pages.length - 1;
+  const completedThisVisitRef = useRef(false);
+  const progressBookRef = useRef<string | null>(null);
+  const [progressReady, setProgressReady] = useState(false);
 
   // 쪽별 그림의 실제 비율(가로÷세로) — 그림이 로드되면 잰다. 책마다 그림 비율이 달라서
   // (흥부 4:3, 해님달님 2.36:1 등) 4:3 고정 틀은 와이드 그림에서 위아래가 뜨고 '짤린'
@@ -200,16 +247,35 @@ export function BookViewer({ book }: { book: Book }) {
   const [animate, setAnimate] = useState(false);
   useEffect(() => {
     const saved = loadBookProgress(book.id);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage 이어보기 위치 반영
-    if (saved > 0 && saved <= lastIndex) setIndex(saved);
+    completedThisVisitRef.current = false;
+    progressBookRef.current = null;
+    const resumeAt = saved > 0 && saved < lastIndex ? saved : 0;
+    if (saved >= lastIndex) {
+      // 예전 버전에서 마지막 쪽이 저장된 책도 다음 방문부터 첫 쪽으로 정리한다.
+      saveBookProgress(book.id, 0);
+    }
+    let cancelled = false;
+    // 외부 저장소 값을 읽은 뒤 다음 microtask에서 반영해 동기 effect 연쇄 렌더를 피한다.
+    queueMicrotask(() => {
+      if (cancelled) return;
+      setIndex(resumeAt);
+      progressBookRef.current = book.id;
+      setProgressReady(true);
+    });
     const t = setTimeout(() => setAnimate(true), 80);
-    return () => clearTimeout(t);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
   }, [book.id, lastIndex]);
 
-  // 쪽을 넘길 때마다 진행 위치를 저장한다(만들기 미리보기 id="new"는 저장 안 함).
+  // 중간에 나가면 이어 보고, 마지막 쪽까지 도달한 책은 다음 방문에 처음부터 본다.
+  // 완독 뒤 같은 방문에서 앞장을 다시 보더라도 완료 상태(0)를 덮어쓰지 않는다.
   useEffect(() => {
-    saveBookProgress(book.id, index);
-  }, [book.id, index]);
+    if (!progressReady || progressBookRef.current !== book.id) return;
+    if (index >= lastIndex) completedThisVisitRef.current = true;
+    saveBookProgress(book.id, completedThisVisitRef.current ? 0 : index);
+  }, [book.id, index, lastIndex, progressReady]);
 
   /**
    * 읽어주기 — 노래방처럼, 읽힌 글자가 색으로 표시된다.
@@ -339,16 +405,25 @@ export function BookViewer({ book }: { book: Book }) {
   // 성우 음성을 만드는 중 — 눌렀는데 소리가 안 나면 고장으로 오해하니(베타 피드백 4번)
   // 버튼과 안내로 "준비 중"을 보여준다. 첫 소리가 나면 내린다.
   const [preparing, setPreparing] = useState(false);
+  // IndexedDB 캐시는 보통 즉시 열리므로 짧은 로딩에는 안내를 띄우지 않는다.
+  const [showPreparing, setShowPreparing] = useState(false);
   // 준비에 걸린 초 — 숫자가 올라가는 걸 보면 멈춘 게 아니라 되는 중임을 안다.
   const [prepSecs, setPrepSecs] = useState(0);
   useEffect(() => {
     if (!preparing) {
-      setPrepSecs(0);
-      return;
+      const resetId = window.setTimeout(() => {
+        setShowPreparing(false);
+        setPrepSecs(0);
+      }, 0);
+      return () => window.clearTimeout(resetId);
     }
     const startedAt = Date.now();
+    const revealId = window.setTimeout(() => setShowPreparing(true), 400);
     const id = setInterval(() => setPrepSecs(Math.round((Date.now() - startedAt) / 1000)), 1000);
-    return () => clearInterval(id);
+    return () => {
+      window.clearTimeout(revealId);
+      clearInterval(id);
+    };
   }, [preparing]);
   // 미리받아 둔 다음 쪽 번호 — 같은 쪽을 두 번 미리받지 않게.
   const prefetchedRef = useRef(-1);
@@ -417,10 +492,17 @@ export function BookViewer({ book }: { book: Book }) {
     // 창작 동화는 메뉴에 없는 성우로 읽히면 안 된다 — 메뉴는 '고른 성우(+부모)'뿐인데
     // 저장된 다른 성우로 읽으면 목록과 실제 소리가 어긋난다. 그래서 부모 → 이 책의 성우
     // → 부끄 순으로만 정한다(설정에 저장된 값은 쓰지 않는다).
+    const savedParent = book.narrator?.startsWith("parent:") && parentVoices.some(
+      (voice) => `parent:${voice.role}` === book.narrator,
+    );
     const v = isMine
-      ? parentVoices.length > 0
-        ? `parent:${parentVoices[0].role}`
-        : book.narrator || "tc-booqoo"
+      ? savedParent
+        ? book.narrator!
+        : TYPECAST_VOICES.some((voice) => voice.id === book.narrator)
+          ? book.narrator!
+          : parentVoices.length > 0
+            ? `parent:${parentVoices[0].role}`
+            : "tc-booqoo"
       : book.narrators?.[0] ?? book.narrator ?? safeStored;
     setVoiceId(v);
     voiceIdRef.current = v;
@@ -534,7 +616,6 @@ export function BookViewer({ book }: { book: Book }) {
     const resumable = !!el && !el.paused && el.currentTime > 0;
     pausedRef.current = resumable ? { run: runIdRef.current, page: currentPageRef.current } : null;
     el?.pause();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stopReading = useCallback(() => {
@@ -652,7 +733,9 @@ export function BookViewer({ book }: { book: Book }) {
         if (run !== runIdRef.current || !readingRef.current) return;
         const url = URL.createObjectURL(blob);
         el.src = url;
-        applyPlaybackRate(el, rateBoost);
+        // 책 읽기 리듬을 유지한다. lively도 말이 급해지지 않을 정도로만 움직인다.
+        const paceMultiplier = seg.pace === "slow" ? 0.94 : seg.pace === "lively" ? 1.03 : 1;
+        applyPlaybackRate(el, rateBoost * paceMultiplier);
         el.ontimeupdate = () => {
           if (el.duration > 0) {
             setHighlight(
@@ -695,7 +778,7 @@ export function BookViewer({ book }: { book: Book }) {
       if (nextBundled && (!overriddenRef.current || (tc !== null && book.narrator === tc.id))) return;
       if (!tc) return;
       prefetchedRef.current = i + 1;
-      prefetchTypecastPageAudio(tc, next.text);
+      prefetchTypecastPageAudio(tc, next.text, next.voiceDirection);
     };
 
     // 완성작(전래·세계명작)은 기본적으로 딸린 나레이션을 쓴다 — 파일 재생이라 무료이고,
@@ -758,7 +841,7 @@ export function BookViewer({ book }: { book: Book }) {
       // 조각 합성을 한꺼번에 걸어두고(startTypecast…) 첫 조각이 오는 대로 재생한다.
       try {
         setPreparing(true);
-        playPending(startTypecastPageAudio(tc, page.text));
+        playPending(startTypecastPageAudio(tc, page.text, page.voiceDirection));
       } catch {
         // 실시간 합성 꺼짐(client-tts-disabled) — 딸린 파일이 있으면 그걸(무료),
         // 없으면 브라우저 기계음으로 대체한다. 크레딧은 안 나간다.
@@ -907,9 +990,17 @@ export function BookViewer({ book }: { book: Book }) {
           if (sfxTimer.current) clearTimeout(sfxTimer.current);
           sfxTimer.current = null;
         };
+        const stopAndUnlock = () => {
+          el.pause();
+          el.currentTime = 0;
+          unlock();
+        };
         el.onended = unlock;
         if (sfxTimer.current) clearTimeout(sfxTimer.current);
-        sfxTimer.current = setTimeout(unlock, 1200); // 안전장치
+        // 원본 파일은 약 9초로 뒤쪽에 넘김 소리가 더 남아 있다. 첫 효과음만 쓰고
+        // 실제 오디오까지 정지해야 빠르게 넘긴 횟수만큼 나중에 몰려 나오지 않는다.
+        sfxTimer.current = setTimeout(stopAndUnlock, 750);
+        el.pause();
         el.currentTime = 0;
         el.volume = 0.5;
         el.play().catch(unlock);
@@ -928,6 +1019,16 @@ export function BookViewer({ book }: { book: Book }) {
 
   // 뷰어를 떠날 때 소리를 끄고, 전체화면·가로 고정도 되돌린다.
   useEffect(() => stopReading, [stopReading]);
+  useEffect(() => () => {
+    if (sfxTimer.current) clearTimeout(sfxTimer.current);
+    sfxTimer.current = null;
+    sfxBusy.current = false;
+    const sfx = sfxRef.current;
+    if (sfx) {
+      sfx.pause();
+      sfx.currentTime = 0;
+    }
+  }, []);
   // 화면을 떠날 때(서재로 나가기·주소 이동 등) 캐릭터 대사 음성도 확실히 끊는다.
   useEffect(() => () => stopSay(), [stopSay]);
   useEffect(() => () => exitStoryMode(), []);
@@ -1017,10 +1118,27 @@ export function BookViewer({ book }: { book: Book }) {
            *   안 보이므로 어두운 글씨로 바꾼다(색칠도 진한 주황으로).
            *   같은 본문이 어두운 밴드와 종이 두 곳에 쓰여서 색을 갈라 준다.
            */
-          const renderRuns = (onPaper = false) => {
+          const renderRuns = (onPaper = false, focusCurrent = false) => {
             const done = onPaper ? "text-amber-600" : "text-amber-300";
             const rest = onPaper ? "text-neutral-800" : "text-white";
             const live = i === index && reading;
+            // 꽉 찬 그림은 재생 전후 모두 같은 한두 줄 자막 슬롯을 쓴다.
+            // 재생을 눌러도 레이아웃은 움직이지 않고 이 자리에서 색칠만 시작된다.
+            if (focusCurrent) {
+              const chunk = currentReadingChunk(page.text, highlight);
+              return (
+                <span
+                  key={chunk.from}
+                  className="block animate-[subtitle-in_180ms_ease-out] text-balance"
+                >
+                  {chunk.text.split("").map((ch, k) => (
+                    <span key={k} className={chunk.from + k < highlight ? done : rest}>
+                      {ch}
+                    </span>
+                  ))}
+                </span>
+              );
+            }
             /*
              * 문장마다 줄을 바꾼다. 한 덩어리로 흘리면 줄이 아무 데서나 끊겨
              * 문서처럼 딱딱해 보인다 — 그림책은 문장 단위로 놓인다.
@@ -1031,7 +1149,7 @@ export function BookViewer({ book }: { book: Book }) {
              * 이어 붙이면 원문 그대로가 되게 한다.
              */
             let at = 0;
-            return splitSentences(page.text).map((sentence, si) => {
+            return splitStorySentences(page.text).map((sentence, si) => {
               const start = at;
               at += sentence.length;
               return (
@@ -1070,29 +1188,41 @@ export function BookViewer({ book }: { book: Book }) {
            * 위치 목록에 flex를 섞어 두면 hidden과 부딪혀 어느 쪽이 이길지 불안정해진다.
            */
           const posNeedsFlex = textPos === "center" || textPos === "left" || textPos === "right";
-          const overlayText = (display: string, size: string) => (
+          const overlayText = (
+            display: string,
+            size: string,
+            focusCurrent = false,
+            position: typeof textPos = textPos,
+          ) => (
             <div
               className={`absolute ${
-                {
-                  bottom:
-                    "inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[6%] pt-[14%]",
-                  top: "inset-x-0 top-0 bg-gradient-to-b from-black/85 via-black/55 to-transparent px-[6%] pt-[6%] pb-[14%]",
-                  center: "inset-0 items-center justify-center p-[6%]",
-                  left: "inset-y-0 left-0 w-[46%] items-center pl-[5%] pr-[2%]",
-                  right: "inset-y-0 right-0 w-[46%] items-center pr-[5%] pl-[2%]",
-                }[textPos]
+                focusCurrent && position === "bottom"
+                  ? "inset-x-[6%] bottom-4 px-[2%] py-2 landscape:bottom-28"
+                  : {
+                      bottom:
+                        "inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[6%] pt-[14%]",
+                      top: "inset-x-0 top-0 bg-gradient-to-b from-black/85 via-black/55 to-transparent px-[6%] pt-[6%] pb-[14%]",
+                      center: "inset-0 items-center justify-center p-[6%]",
+                      left: "inset-y-0 left-0 w-[46%] items-center pl-[5%] pr-[2%]",
+                      right: "inset-y-0 right-0 w-[46%] items-center pr-[5%] pl-[2%]",
+                    }[position]
               } ${display}`}
             >
-              <p
-                style={scaled(size)}
-                className={`font-story whitespace-pre-line break-keep text-pretty text-center drop-shadow-md ${
-                  textPos === "bottom" || textPos === "top"
-                    ? "mx-auto w-full max-w-[max(20rem,60vw)]"
+              <AutoFitStoryText
+                baseSize={size}
+                textScale={textScale}
+                fontScale={font.scale}
+                fontWeight={storyWeightForFont(font, weight)}
+                className={`font-story max-h-[76dvh] whitespace-pre-line break-keep text-pretty text-center drop-shadow-md ${
+                  focusCurrent && position === "bottom"
+                    ? "mx-auto w-full max-w-[min(46rem,82vw)] [text-shadow:0_1px_2px_rgba(0,0,0,0.7),0_3px_7px_rgba(0,0,0,0.5)]"
+                    : position === "bottom" || position === "top"
+                      ? "mx-auto w-full max-w-[max(20rem,60vw)]"
                     : "w-full rounded-3xl bg-black/55 p-5 backdrop-blur-[2px] sm:p-6"
-                } ${textPos === "center" ? "max-w-[max(20rem,55vw)]" : ""}`}
+                } ${position === "center" ? "max-w-[max(20rem,55vw)]" : ""}`}
               >
-                {renderRuns()}
-              </p>
+                {renderRuns(false, focusCurrent)}
+              </AutoFitStoryText>
             </div>
           );
           return (
@@ -1121,10 +1251,18 @@ export function BookViewer({ book }: { book: Book }) {
                   src={page.image}
                   alt=""
                   aria-hidden
-                  className="absolute inset-0 h-full w-full scale-110 object-cover opacity-70 blur-2xl"
+                  className="absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-[32px] saturate-[.7]"
                 />
-                {/* 무대 — 가로: 그림이 화면을 채운다. 세로: [그림+글자]를 한 덩어리로 화면
-                    가운데 정렬하고, 아래 버튼 자리(6rem)는 비운다(겹침 방지).
+                {/* 현재 장면의 색만 은은하게 남기는 앰비언트 배경. 별도의 테마 그림을
+                    섞지 않아 장소가 충돌하지 않고, 상단 버튼도 밝은 그림에 묻히지 않는다. */}
+                <div
+                  aria-hidden
+                  className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,10,0.28)_0%,rgba(10,10,10,0.16)_48%,rgba(10,10,10,0.2)_100%)]"
+                />
+                {/* 무대 — 꽉 찬 그림은 모바일에서도 원본 비율의 실제 그림 영역에
+                    본문을 겹친다. 펼침면의 [그림+글자] 책 구조는 가로에서만 유지한다.
+                    세로 화면도 전체 높이의 정중앙에 둔다. 하단 버튼 자리를 무대에서
+                    미리 빼면 세로 이미지가 화면 위쪽으로 밀려 보이기 때문이다.
                     틀 비율은 그림 실측(--ar) — 4:3 고정이면 와이드 그림이 '짤려' 보인다. */}
                 {/*
                   펼침면 무대 — 그림과 종이가 '한 권의 책'으로 딱 맞아야 한다.
@@ -1141,7 +1279,7 @@ export function BookViewer({ book }: { book: Book }) {
                   가운데 정렬은 inset-0(좌우 0) + mx-auto로 한다.
                 */}
                 <div
-                  className={`absolute inset-0 flex items-center justify-center portrait:flex-col portrait:bottom-24 ${
+                  className={`absolute inset-0 flex items-center justify-center portrait:flex-col ${
                     spread
                       ? "landscape:mx-auto landscape:my-auto landscape:w-[min(100vw,calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(100vw/(var(--ar)*2)))]"
                       : ""
@@ -1149,11 +1287,11 @@ export function BookViewer({ book }: { book: Book }) {
                   style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                 >
                   <div
-                    className={`relative shrink-0 overflow-hidden [aspect-ratio:var(--ar)] portrait:w-full ${
+                    className={`relative shrink-0 overflow-hidden shadow-[0_0_28px_rgba(0,0,0,0.18)] ${
                       spread
                         ? // 펼침면 — 왼쪽 쪽. 무대가 이미 책 크기라 절반이 곧 한 쪽이다.
-                          "landscape:h-full landscape:w-1/2"
-                        : "landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
+                          "[aspect-ratio:var(--ar)] portrait:w-full landscape:h-full landscape:w-1/2"
+                        : "[aspect-ratio:var(--ar)] portrait:w-full landscape:w-[min(100%,calc(var(--ar)*100dvh))]"
                     }`}
                     style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                   >
@@ -1195,20 +1333,24 @@ export function BookViewer({ book }: { book: Book }) {
                         }`}
                       />
                     )}
-                    {/* 가로 보기 전용: 그림 위에 얹는 글.
+                    {/* 꽉 찬 그림의 자막. 세로 화면에서는 저장된 보기 방식과 관계없이
+                        항상 그림 안에 현재 한두 줄만 표시한다. 펼침면의 전체 본문 종이는
+                        가로 화면에서만 적용한다.
                         예전엔 여기가 '하단 밴드'로 굳어 있어서, 설정에서 글자 위치를
                         바꿔도 그림 있는 책에서는 아무 반응이 없었다(설정이 안 먹는
                         것처럼 보이던 원인). 이제 글 없는 쪽과 같은 오버레이를 써서
                         위·아래·가운데·좌·우가 그대로 반영된다.
                         펼침면에서는 글이 옆 종이로 빠지므로 이 오버레이를 쓰지 않는다. */}
-                    {!spread &&
-                      overlayText(
-                        `hidden ${posNeedsFlex ? "landscape:flex" : "landscape:block"}`,
-                        "clamp(1.35rem,2.9vw,2.05rem)",
-                      )}
+                    {overlayText(
+                      spread ? "block landscape:hidden" : "block",
+                      "clamp(1.35rem,2.9vw,2.05rem)",
+                      true,
+                      "bottom",
+                    )}
                   </div>
                   {/* 글자 칸.
-                      · 세로(폰): 그림 바로 아래 — 원래부터 그림과 글이 나뉘어 있다.
+                      · 세로(폰) + 꽉 찬 그림: 사용하지 않고 그림 위 오버레이를 쓴다.
+                      · 세로(폰): 저장된 보기 방식과 무관하게 이 칸을 숨긴다.
                       · 가로 + 펼침면: 오른쪽 절반의 '종이' — 진짜 그림책 펼침면이 된다.
                       · 가로 + 꽉 찬 그림: 이 칸은 숨고 위의 하단 밴드가 대신한다.
                       아래 버튼(재생·배속·넘김)을 안 가리게 여백을 넉넉히 둔다. */}
@@ -1224,33 +1366,26 @@ export function BookViewer({ book }: { book: Book }) {
                           } as React.CSSProperties)
                         : undefined
                     }
-                    className={`flex shrink-0 items-center justify-center overflow-y-auto ${
+                    className={`shrink-0 items-center justify-center overflow-hidden ${
                       spread
-                        ? "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:max-h-none landscape:h-full landscape:w-1/2 landscape:bg-[image:var(--paper)] landscape:bg-[length:14px_14px,18px_18px,100%_100%] landscape:px-[7%] landscape:pb-24 landscape:pt-8 landscape:shadow-[inset_18px_0_28px_-18px_rgba(90,60,20,0.35)]"
-                        : "max-h-[42dvh] w-full bg-gradient-to-b from-transparent via-black/40 to-black/70 px-[7%] pb-3 pt-3 landscape:hidden"
+                        ? "hidden landscape:flex landscape:h-full landscape:w-1/2 landscape:bg-[image:var(--paper)] landscape:bg-[length:14px_14px,18px_18px,100%_100%] landscape:px-[7%] landscape:pb-24 landscape:pt-8 landscape:shadow-[inset_18px_0_28px_-18px_rgba(90,60,20,0.35)]"
+                        : "hidden"
                     }`}
                   >
-                    {/* 세로(어두운 배경) — 흰 글씨. 펼침면일 때도 세로에서는 이쪽을 쓴다. */}
-                    <p
-                      style={scaled("clamp(1.15rem,4.4vw,1.85rem)")}
-                      className={`font-story max-h-full overflow-y-auto whitespace-pre-line break-keep text-pretty text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] ${
-                        spread ? "landscape:hidden" : ""
-                      }`}
-                    >
-                      {renderRuns(false)}
-                    </p>
                     {/* 가로 + 펼침면 — 종이 위 어두운 글씨. 색칠도 종이에 맞춰 진한 주황. */}
                     {spread && (
                       // 종이 한 쪽에 8쪽짜리 본문(150~250자)이 들어가야 해서, 글자가 크면
                       // 넘쳐 스크롤바가 생긴다 — 그림책에 스크롤바가 보이면 책이 아니게 된다.
-                      // 조금 줄이고 줄간격도 좁혀 한 화면에 담기게 한다(글자 크기 설정은 그대로 적용).
-                      // 그래도 넘치면 스크롤은 되되 막대는 감춘다.
-                      <p
-                        style={scaled("clamp(0.95rem,1.85vw,1.45rem)")}
-                        className="font-story hidden max-h-full max-w-[34rem] overflow-y-auto whitespace-pre-line break-keep text-pretty text-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden landscape:block"
+                      // 길면 AutoFitStoryText가 실제 칸을 재서 스크롤 없이 자동 축소한다.
+                      <AutoFitStoryText
+                        baseSize="clamp(0.95rem,1.85vw,1.45rem)"
+                        textScale={textScale}
+                        fontScale={font.scale}
+                        fontWeight={storyWeightForFont(font, weight)}
+                        className="font-story hidden max-h-full max-w-[34rem] whitespace-pre-line break-keep text-pretty text-center landscape:block"
                       >
                         {renderRuns(true)}
-                      </p>
+                      </AutoFitStoryText>
                     )}
                   </div>
                 </div>
@@ -1272,13 +1407,13 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 아래 가운데 넘김 바 — 우측 상단 ◀▶는 작고 눈에 잘 안 띄어서, 크고 분명한
           '다음 장'을 아래에 하나 더 둔다. 지금 몇 쪽인지도 같이 보여 준다
           (아이는 "얼마나 남았어?"를 자주 묻는다). 마지막 쪽에선 다음이 잠긴다. */}
-      <div className="absolute bottom-6 left-1/2 z-10 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 flex-nowrap items-center gap-2 rounded-full bg-black/45 px-2 py-1.5 backdrop-blur">
+      <div className="absolute bottom-4 left-1/2 z-10 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 flex-nowrap items-center gap-0 rounded-full bg-black/45 px-1 py-1 backdrop-blur sm:bottom-6 sm:gap-2 sm:px-2 sm:py-1.5">
         <button
           type="button"
           aria-label="이전 장"
           onClick={() => go(index - 1)}
           disabled={index === 0}
-          className="flex h-10 items-center gap-1 rounded-full px-3 text-sm font-extrabold text-white transition hover:bg-white/20 disabled:opacity-30 outline-none focus:outline-none"
+          className="flex h-9 items-center gap-1 rounded-full px-2 text-sm font-extrabold text-white transition hover:bg-white/20 disabled:opacity-30 outline-none focus:outline-none sm:h-10 sm:px-3"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
             <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -1287,7 +1422,7 @@ export function BookViewer({ book }: { book: Book }) {
         </button>
 
         {/* 쪽 표시도 줄바꿈되지 않게 한 줄로 고정한다. */}
-        <span className="min-w-[3.5rem] whitespace-nowrap text-center text-sm font-extrabold text-white/90">
+        <span className="min-w-[3rem] whitespace-nowrap text-center text-[13px] font-extrabold text-white/90 sm:min-w-[3.5rem] sm:text-sm">
           {index + 1} / {book.pages.length}
         </span>
 
@@ -1296,7 +1431,7 @@ export function BookViewer({ book }: { book: Book }) {
           aria-label="다음 장"
           onClick={() => go(index + 1)}
           disabled={index === lastIndex}
-          className="flex h-10 items-center gap-1 rounded-full bg-white/20 px-3 text-sm font-extrabold text-white transition hover:bg-white/30 disabled:opacity-30 outline-none focus:outline-none"
+          className="flex h-9 items-center gap-1 rounded-full bg-white/20 px-2 text-sm font-extrabold text-white transition hover:bg-white/30 disabled:opacity-30 outline-none focus:outline-none sm:h-10 sm:px-3"
         >
           {/* 폰에서는 글자를 감춘다 — '이전'과 같은 규칙.
               좁은 화면에서 글자까지 들어가면 바가 밀려 줄이 깨졌다(사장님 지적).
@@ -1310,13 +1445,16 @@ export function BookViewer({ book }: { book: Book }) {
 
       {/* 넘김은 우측 상단 전용 버튼(◀ ▶) — 화면 절반 탭 방식은 캐릭터 클릭
           대사와 겹쳐 오작동해서 걷어냈다. 스와이프와 키보드 ←→는 그대로 산다. */}
-      <div className="absolute right-3 top-4 z-10 flex gap-1.5 sm:right-4 sm:gap-2">
+      <div
+        className="absolute right-3 z-10 flex gap-1.5 sm:right-4 sm:gap-2"
+        style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
+      >
         <button
           type="button"
           aria-label="이전 쪽"
           onClick={() => go(index - 1)}
           disabled={index === 0}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none sm:h-11 sm:w-11"
+          className="hidden h-9 w-9 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none sm:flex sm:h-11 sm:w-11"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden>
             <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="#404040" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -1327,7 +1465,7 @@ export function BookViewer({ book }: { book: Book }) {
           aria-label="다음 쪽"
           onClick={() => go(index + 1)}
           disabled={index === lastIndex}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none sm:h-11 sm:w-11"
+          className="hidden h-9 w-9 items-center justify-center rounded-full bg-white/85 shadow-md backdrop-blur transition hover:bg-white disabled:opacity-35 outline-none focus:outline-none sm:flex sm:h-11 sm:w-11"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden>
             <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="#404040" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -1370,7 +1508,10 @@ export function BookViewer({ book }: { book: Book }) {
 
       {/* 성우 목록 — 상단 버튼 아래로 펼쳐진다. 길어서 안에서 스크롤된다. */}
       {voiceMenu && (
-        <div className="absolute right-4 top-[3.75rem] z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur">
+        <div
+          className="absolute right-4 z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur"
+          style={{ top: "calc(3.75rem + env(safe-area-inset-top))" }}
+        >
           <p className="px-2 py-1 text-[11px] font-bold text-neutral-400">
             {isCreated ? "읽어주는 성우를 골라요" : "이 동화 추천 성우 (무료로 바꿔 들어요)"}
           </p>
@@ -1397,7 +1538,7 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 움직이는 캐릭터(배우) 레이어 — 캐릭터 없는 배경 위에 투명 스티커를
           겹치고, 낭독 중에는 뒤뚱뒤뚱 움직인다. 클릭은 통과시켜 핫스팟이 받는다. */}
       {(book.pages[index].actors?.length ?? 0) > 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center portrait:bottom-24">
+        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center">
           {/* 그림 실측 비율(--ar)로 무대와 같은 크기를 유지한다 — 좌표가 그림과 맞아떨어진다. */}
           <div
             className="relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))]"
@@ -1491,7 +1632,8 @@ export function BookViewer({ book }: { book: Book }) {
         <button
           type="button"
           onClick={() => setTapHint(false)}
-          className="absolute left-1/2 top-4 z-20 -translate-x-1/2 animate-[float_2s_ease-in-out_infinite] rounded-full bg-white/95 px-5 py-2.5 text-sm font-extrabold text-neutral-700 shadow-lg backdrop-blur"
+          className="absolute left-1/2 z-20 max-w-[calc(100vw-1.5rem)] -translate-x-1/2 animate-[float_2s_ease-in-out_infinite] whitespace-nowrap rounded-full bg-white/95 px-4 py-2 text-xs font-extrabold text-neutral-700 shadow-lg backdrop-blur sm:px-5 sm:py-2.5 sm:text-sm"
+          style={{ top: "calc(4.25rem + env(safe-area-inset-top))" }}
         >
           👆 그림 속 친구를 눌러 보세요 — 말을 해요!
         </button>
@@ -1504,7 +1646,7 @@ export function BookViewer({ book }: { book: Book }) {
           무대 크기와 정렬을 그림 쪽과 똑같이 맞춘다 — 안 맞추면 엉뚱한 자리를 누르게 된다. */}
       {book.pages[index].image && (book.pages[index].hotspots?.length ?? 0) > 0 && (
         <div
-          className={`pointer-events-none absolute inset-0 z-[5] flex items-center justify-center portrait:bottom-24 ${
+          className={`pointer-events-none absolute inset-0 z-[5] flex items-center justify-center ${
             spread
               ? "landscape:mx-auto landscape:my-auto landscape:w-[min(100vw,calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(100vw/(var(--ar)*2)))] landscape:justify-start"
               : ""
@@ -1596,12 +1738,17 @@ export function BookViewer({ book }: { book: Book }) {
         </div>
       )}
 
-      <div className="absolute left-3 top-4 z-10 flex gap-1.5 sm:left-4 sm:gap-2">
+      <div
+        className="absolute left-3 z-10 flex items-center gap-1.5 sm:left-4 sm:gap-2"
+        style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
+      >
         <Link
           href="/"
-          className="rounded-full bg-black/40 px-3 py-2 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 sm:px-4"
+          aria-label="서재로 돌아가기"
+          className="flex h-9 w-9 items-center justify-center gap-1 rounded-full bg-black/40 p-0 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 min-[360px]:w-auto min-[360px]:px-3 sm:px-4"
         >
-          ← 서재
+          <span aria-hidden>←</span>
+          <span className="hidden min-[360px]:inline">서재</span>
         </Link>
         {/* 가로로 보기 — 클릭(제스처) 안에서 전체화면 + 가로 고정을 요청한다.
             미지원 기기는 조용히 무시되고 회전 안내 힌트가 대신한다.
@@ -1615,37 +1762,59 @@ export function BookViewer({ book }: { book: Book }) {
           <span className="sm:hidden">{storyMode ? "↩" : "⛶"}</span>
           <span className="hidden sm:inline">{storyMode ? "원래대로" : "⛶ 가로로 보기"}</span>
         </button>
+        {/* 보는 방식은 중앙 장면을 가리지 않도록 탐색 버튼 옆에 붙인다.
+            모바일은 아이콘만, 여유 있는 화면은 짧은 이름도 함께 보여 준다. */}
+        <div
+          className="flex items-center rounded-full bg-black/40 p-0.5 shadow-md backdrop-blur"
+          role="group"
+          aria-label="책 보는 방식 (가로 화면에 적용)"
+        >
+          <button
+            type="button"
+            aria-label="꽉 찬 그림으로 보기"
+            aria-pressed={layout === "full"}
+            title="꽉 찬 그림"
+            onClick={() => applyBookLayout("full")}
+            className={`flex h-8 w-8 items-center justify-center rounded-full p-0 text-[11px] font-extrabold transition outline-none focus:outline-none min-[480px]:w-auto min-[480px]:gap-1 min-[480px]:px-2.5 sm:text-xs ${
+              layout === "full"
+                ? "bg-white text-neutral-700 shadow-sm"
+                : "text-white/80 hover:bg-white/15 hover:text-white"
+            }`}
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+              <rect x="3.5" y="5" width="17" height="14" rx="2.5" fill="none" stroke="currentColor" strokeWidth="2" />
+              <circle cx="9" cy="10" r="1.5" fill="currentColor" />
+              <path d="m5.5 17 4.2-4 3.1 2.6 2.4-2.1 3.3 3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="hidden min-[480px]:inline">그림</span>
+          </button>
+          <button
+            type="button"
+            aria-label="펼침면으로 보기"
+            aria-pressed={layout === "spread"}
+            title="펼침면"
+            onClick={() => applyBookLayout("spread")}
+            className={`flex h-8 w-8 items-center justify-center rounded-full p-0 text-[11px] font-extrabold transition outline-none focus:outline-none min-[480px]:w-auto min-[480px]:gap-1 min-[480px]:px-2.5 sm:text-xs ${
+              layout === "spread"
+                ? "bg-white text-neutral-700 shadow-sm"
+                : "text-white/80 hover:bg-white/15 hover:text-white"
+            }`}
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+              <path d="M3.5 5.5c3.5-.7 6.2.1 8.5 2.2v11c-2.3-2.1-5-2.9-8.5-2.2v-11Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              <path d="M20.5 5.5c-3.5-.7-6.2.1-8.5 2.2v11c2.3-2.1 5-2.9 8.5-2.2v-11Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+            </svg>
+            <span className="hidden min-[480px]:inline">펼침</span>
+          </button>
+        </div>
       </div>
 
       {/* 글자 크기 — 배속 버튼 위. "보다가 작네" 싶을 때 책 안에서 바로 키운다.
           기본값(화면 크기 따라 자동)에 배율을 곱하는 방식이라 어느 기기에서도 자연스럽다. */}
-      <div className="absolute bottom-[4.75rem] left-5 z-10">
+      <div className="absolute bottom-4 left-3 z-10 sm:bottom-[4.75rem] sm:left-5">
         {sizeMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
-            {/* 보는 방식 — 설정까지 나가지 않고 책 안에서 바로 바꾼다(가로에서만 달라진다). */}
-            <p className="px-5 pt-2.5 text-[11px] font-extrabold text-white/50">보는 방식 (가로)</p>
-            {(
-              [
-                { v: "full", label: "🖼️ 꽉 찬 그림" },
-                { v: "spread", label: "📖 펼침면" },
-              ] as const
-            ).map((o) => (
-              <button
-                key={o.v}
-                type="button"
-                onClick={() => {
-                  setLayout(o.v);
-                  saveBookLayout(o.v);
-                  setSizeMenu(false);
-                }}
-                className={`px-5 py-2 text-left text-sm font-bold outline-none transition ${
-                  layout === o.v ? "bg-amber-400 text-white" : "text-white/90 hover:bg-white/15"
-                }`}
-              >
-                {o.label} {layout === o.v ? "✓" : ""}
-              </button>
-            ))}
-            <p className="mt-1 border-t border-white/15 px-5 pt-2.5 text-[11px] font-extrabold text-white/50">
+            <p className="px-5 pt-2.5 text-[11px] font-extrabold text-white/50">
               글자 크기
             </p>
             {TEXT_SCALES.map((s) => (
@@ -1670,18 +1839,18 @@ export function BookViewer({ book }: { book: Book }) {
             setSpeedMenu(false); // 두 메뉴가 겹쳐 뜨지 않게
             setSizeMenu((v) => !v);
           }}
-          className="flex items-center gap-1.5 rounded-full bg-black/45 px-4 py-2.5 text-sm font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-black/45 p-0 text-sm font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none sm:h-auto sm:w-auto sm:gap-1.5 sm:px-4 sm:py-2.5"
         >
           <span aria-hidden className="leading-none">
             <span className="text-[0.7em]">가</span>
             <span className="text-[1.05em]">가</span>
           </span>
-          글자 크기
+          <span className="hidden sm:inline">글자 크기</span>
         </button>
       </div>
 
       {/* 재생 속도 (유튜브식) — 왼쪽 아래. 눌러서 배속을 고른다. 재생 중이면 즉시 반영. */}
-      <div className="absolute bottom-5 left-5 z-10">
+      <div className="absolute bottom-4 left-[3.75rem] z-10 sm:bottom-5 sm:left-5">
         {speedMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
             {[0.75, 1, 1.25, 1.5, 2].map((s) => (
@@ -1705,32 +1874,32 @@ export function BookViewer({ book }: { book: Book }) {
             setSizeMenu(false); // 두 메뉴가 겹쳐 뜨지 않게
             setSpeedMenu((v) => !v);
           }}
-          className="flex items-center gap-1.5 rounded-full bg-black/45 px-4 py-2.5 text-sm font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none"
+          className="flex h-11 min-w-14 items-center justify-center rounded-full bg-black/45 px-2 text-[13px] font-extrabold text-white backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none sm:h-auto sm:gap-1.5 sm:px-4 sm:py-2.5 sm:text-sm"
         >
-          <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+          <svg viewBox="0 0 24 24" className="hidden h-4 w-4 sm:block" aria-hidden>
             <path d="M12 4a8 8 0 1 0 8 8" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
             <path d="M12 12l4-3" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
           </svg>
-          {rate}배속
+          <span>{rate}<span className="sm:hidden">×</span><span className="hidden sm:inline">배속</span></span>
         </button>
       </div>
 
       {/* 읽어주기 — 재생 버튼임이 한눈에 보이게 ①색이 도는 원 ②흰 재생 세모(▶)
           ③평소엔 "읽어주기" 라벨을 위에 띄운다. 읽는 중엔 정지(⏸) 막대로 바뀐다. */}
-      <div className="absolute bottom-5 right-5 z-10 flex flex-col items-center gap-2">
+      <div className="absolute bottom-3 right-3 z-10 flex flex-col items-center gap-0 sm:bottom-5 sm:right-5 sm:gap-2">
         {/* 성우 목소리를 만드는 동안 — 눌렀는데 조용하면 고장으로 오해한다(피드백 4번).
             몇 초 걸리는지까지 보여줘서 "기다리면 되는구나"를 알게 한다. */}
-        {preparing && (
+        {showPreparing && (
           <span className="flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 animate-spin" aria-hidden>
               <circle cx="12" cy="12" r="9" fill="none" stroke="#ffffff55" strokeWidth="3" />
               <path d="M21 12a9 9 0 0 0-9-9" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
             </svg>
-            성우가 목소리를 만들고 있어요{prepSecs > 0 ? ` (${prepSecs}초)` : ""}
+            성우 음성을 불러오고 있어요{prepSecs > 0 ? ` (${prepSecs}초)` : ""}
           </span>
         )}
         {!reading && !ended && !preparing && (
-          <span className="animate-pulse rounded-full bg-black/55 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
+          <span className="hidden animate-pulse rounded-full bg-black/55 px-3 py-1 text-xs font-extrabold text-white backdrop-blur sm:block">
             ▶ 눌러서 읽어주기
           </span>
         )}
@@ -1739,7 +1908,7 @@ export function BookViewer({ book }: { book: Book }) {
           aria-label={reading ? "그만 읽기" : "읽어주기"}
           onClick={reading ? stopReading : startReading}
           style={reading || preparing ? undefined : { background: ui.colors.accent }}
-          className={`flex h-16 w-16 items-center justify-center rounded-full text-white shadow-[0_6px_16px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 ${
+          className={`flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_6px_16px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 sm:h-16 sm:w-16 ${
             preparing ? "bg-amber-400" : reading ? "animate-pulse bg-amber-400" : ""
           }`}
         >

@@ -9,6 +9,7 @@
  */
 
 import { acctKey } from "@/lib/supabase";
+import type { VoiceDirection, VoicePace } from "@/lib/types";
 
 export type PresetVoice = {
   kind: "preset";
@@ -107,19 +108,22 @@ export const RECOMMENDED_VOICES = [
 ] as const;
 
 /**
- * 녹음할 지정 문장. 개인정보가 전혀 없는 동화 문장이라 유출돼도 무해하다.
- * 분량을 40초 낭독 수준(약 230자)으로 늘렸다(2026-07-31) — 클론 분석 재료는
- * 30초→40초 구간에서 닮음 개선이 가장 크다. 의성어·질문·감탄을 섞어
- * 억양·발음 특징이 골고루 담기게 했다.
+ * 클로닝용 지정 문장 두 개. 같은 문장을 반복하지 않고 서로 다른 발음·받침·문장
+ * 길이를 담되, 둘 다 부모가 아이에게 읽어주는 따뜻한 톤을 유지하게 구성했다.
  */
-export const RECORDING_SCRIPT =
+export const RECORDING_SCRIPTS = [
   "옛날 옛적, 깊은 숲속에 작은 집이 한 채 있었어요. " +
-  "반짝이는 별들이 지붕 위에서 춤을 추고, 달님이 창문을 살며시 비추었지요. " +
-  "아침이 되자 파랑새가 포르르 날아와 노래하고, 시냇물은 졸졸졸 즐겁게 흘러갔어요. " +
-  "오늘은 어떤 신나는 일이 생길까? " +
-  "아이는 두근두근 설레는 마음으로 문을 활짝 열었답니다. " +
-  "향긋한 꽃향기가 솔솔 불어오고, 하늘엔 뭉게구름이 두둥실 떠 있었지요. " +
-  "자, 이제 우리 함께 재미있는 이야기 속으로 떠나 볼까요?";
+    "반짝이는 별들이 지붕 위에서 춤을 추고, 달님이 창문을 살며시 비추었지요. " +
+    "아침이 되자 파랑새가 포르르 날아와 노래하고, 시냇물은 졸졸졸 즐겁게 흘러갔어요. " +
+    "오늘은 어떤 신나는 일이 생길까? " +
+    "아이는 두근두근 설레는 마음으로 문을 활짝 열었답니다. " +
+    "자, 이제 우리 함께 재미있는 이야기 속으로 떠나 볼까요?",
+  "숲길 끝에서 아이는 작고 빨간 보물 상자를 발견했어요. " +
+    "정말 이 안에 별빛 열쇠가 들어 있을까? 조심조심 뚜껑을 열자, 와, 눈부신 무지개가 피어났어요! " +
+    "걱정하지 마. 천천히 한 걸음씩 가면 꼭 해낼 수 있단다. " +
+    "꽃잎 여섯 장과 파란 책, 동그란 돌멩이 세 개를 가방에 넣고 힘차게 출발했어요. " +
+    "바람아, 구름아, 우리와 함께 신나는 모험을 시작해 볼래?",
+] as const;
 
 const SELECTED_KEY = "voice-storybook:voice";
 const CUSTOM_KEY = "voice-storybook:custom-voices";
@@ -131,18 +135,17 @@ const RATE_KEY = "voice-storybook:voice-rate";
  */
 export const VOICE_RATES = [
   { value: 0.8, label: "느리게" },
-  { value: 0.9, label: "보통" },
-  { value: 1.0, label: "조금 빠르게" },
+  { value: 0.9, label: "조금 느리게" },
+  { value: 1.0, label: "보통" },
   { value: 1.2, label: "빠르게" },
 ] as const;
 
 /**
- * 기본 배속 0.9 — 베타 피드백에서 "기본 읽기 속도가 빠르다"는 지적이 나와 한 단계
- * 낮췄다(2026-07-31). 1.0을 목록에 남겨둬서, 이미 1.0으로 저장해 둔 기기는
- * '조금 빠르게'로 그대로 이어진다(설정이 초기화되지 않는다).
- * 음높이는 applyPlaybackRate가 보존하므로 느려도 목소리가 늘어지지 않는다.
+ * 기본 배속은 원본 음성 속도인 1.0이다. 더 천천히 듣고 싶은 사용자는 0.8/0.9를
+ * 직접 고를 수 있으며, 선택한 값은 계정별로 그대로 저장한다.
+ * 음높이는 applyPlaybackRate가 보존하므로 속도를 바꿔도 목소리가 왜곡되지 않는다.
  */
-export const DEFAULT_VOICE_RATE = 0.9;
+export const DEFAULT_VOICE_RATE = 1;
 
 export function loadVoiceRate(): number {
   if (typeof window === "undefined") return DEFAULT_VOICE_RATE;
@@ -360,6 +363,34 @@ function hashText(s: string): string {
   return h.toString(36);
 }
 
+// 다음 쪽 미리 받기와 실제 재생이 동시에 같은 음성을 요청해도 TTS 호출은 한 번만 한다.
+// IndexedDB 저장이 끝날 때까지 Promise를 공유해 저장 직전의 중복 요청도 막는다.
+const pendingVoiceAudio = new Map<string, Promise<Blob>>();
+
+async function fetchCachedVoiceAudio(
+  cacheId: string,
+  create: () => Promise<Blob>,
+): Promise<Blob> {
+  const cached = await loadVoiceAudio(cacheId).catch(() => null);
+  if (cached) return cached;
+
+  const pending = pendingVoiceAudio.get(cacheId);
+  if (pending) return pending;
+
+  const request = create()
+    .then(async (blob) => {
+      // 캐시 저장 실패는 재생을 막지 않되, 성공 시에는 저장 완료까지 기다린다.
+      await saveVoiceAudio(cacheId, blob).catch(() => {});
+      return blob;
+    })
+    .finally(() => {
+      pendingVoiceAudio.delete(cacheId);
+    });
+
+  pendingVoiceAudio.set(cacheId, request);
+  return request;
+}
+
 /**
  * 성우 음성을 받아온다. 같은 (목소리, 문장)은 IndexedDB에 캐시해서
  * 두 번째부터는 크레딧이 나가지 않는다 — 아이들은 같은 책을 계속 반복해 듣는다.
@@ -370,24 +401,24 @@ export async function fetchTypecastAudio(
   tc: TypecastPreset,
   text: string,
   emotion?: string,
+  intensity?: number,
 ): Promise<Blob> {
-  const cacheId = `tts:${tc.voiceId}:${emotion ?? "normal"}:${hashText(text)}`;
-  const cached = await loadVoiceAudio(cacheId).catch(() => null);
-  if (cached) return cached;
-
-  const r = await fetch("/api/tts", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, voiceId: tc.voiceId, model: tc.model, emotion }),
+  // 감정 프리셋이 원래 음색을 밀어 올리지 않도록 낭독용 강도 범위만 허용한다.
+  const safeIntensity = Math.min(0.65, Math.max(0.3, intensity ?? 0.5));
+  // 기존의 강한 연기 캐시와 분리한다. 새 낭독은 한 번만 합성된 뒤 다시 캐시된다.
+  const cacheId = `tts-read-v2:${tc.voiceId}:${emotion ?? "normal"}:${safeIntensity.toFixed(2)}:${hashText(text)}`;
+  return fetchCachedVoiceAudio(cacheId, async () => {
+    const r = await fetch("/api/tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, voiceId: tc.voiceId, model: tc.model, emotion, intensity: safeIntensity }),
+    });
+    if (!r.ok) {
+      const data = (await r.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(data?.error ?? `성우 음성 실패 (HTTP ${r.status})`);
+    }
+    return r.blob();
   });
-  if (!r.ok) {
-    const data = (await r.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(data?.error ?? `성우 음성 실패 (HTTP ${r.status})`);
-  }
-  const blob = await r.blob();
-  // 캐시 저장 실패는 무시한다 — 재생이 우선이다.
-  saveVoiceAudio(cacheId, blob).catch(() => {});
-  return blob;
 }
 
 /**
@@ -397,21 +428,18 @@ export async function fetchTypecastAudio(
  */
 export async function fetchGoogleAudio(voiceId: string, text: string): Promise<Blob> {
   const cacheId = `gtts:${voiceId}:${hashText(text)}`;
-  const cached = await loadVoiceAudio(cacheId).catch(() => null);
-  if (cached) return cached;
-
-  const r = await fetch("/api/tts/google", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, voiceId }),
+  return fetchCachedVoiceAudio(cacheId, async () => {
+    const r = await fetch("/api/tts/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, voiceId }),
+    });
+    if (!r.ok) {
+      const data = (await r.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(data?.error ?? `구글 음성 실패 (HTTP ${r.status})`);
+    }
+    return r.blob();
   });
-  if (!r.ok) {
-    const data = (await r.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(data?.error ?? `구글 음성 실패 (HTTP ${r.status})`);
-  }
-  const blob = await r.blob();
-  saveVoiceAudio(cacheId, blob).catch(() => {});
-  return blob;
 }
 
 /**
@@ -420,21 +448,18 @@ export async function fetchGoogleAudio(voiceId: string, text: string): Promise<B
  */
 export async function fetchElevenAudio(voiceId: string, text: string): Promise<Blob> {
   const cacheId = `eleven:${voiceId}:${hashText(text)}`;
-  const cached = await loadVoiceAudio(cacheId).catch(() => null);
-  if (cached) return cached;
-
-  const r = await fetch("/api/tts/eleven", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, voiceId }),
+  return fetchCachedVoiceAudio(cacheId, async () => {
+    const r = await fetch("/api/tts/eleven", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, voiceId }),
+    });
+    if (!r.ok) {
+      const d = (await r.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(d?.error ?? `부모 목소리 실패 (HTTP ${r.status})`);
+    }
+    return r.blob();
   });
-  if (!r.ok) {
-    const d = (await r.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(d?.error ?? `부모 목소리 실패 (HTTP ${r.status})`);
-  }
-  const blob = await r.blob();
-  saveVoiceAudio(cacheId, blob).catch(() => {});
-  return blob;
 }
 
 /**
@@ -443,21 +468,18 @@ export async function fetchElevenAudio(voiceId: string, text: string): Promise<B
  */
 export async function fetchTypecastVoiceAudio(voiceId: string, text: string): Promise<Blob> {
   const cacheId = `tcvoice:${voiceId}:${hashText(text)}`;
-  const cached = await loadVoiceAudio(cacheId).catch(() => null);
-  if (cached) return cached;
-
-  const r = await fetch("/api/tts", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, voiceId, model: "ssfm-v30" }),
+  return fetchCachedVoiceAudio(cacheId, async () => {
+    const r = await fetch("/api/tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, voiceId, model: "ssfm-v30" }),
+    });
+    if (!r.ok) {
+      const d = (await r.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(d?.error ?? `부모 목소리 실패 (HTTP ${r.status})`);
+    }
+    return r.blob();
   });
-  if (!r.ok) {
-    const d = (await r.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(d?.error ?? `부모 목소리 실패 (HTTP ${r.status})`);
-  }
-  const blob = await r.blob();
-  saveVoiceAudio(cacheId, blob).catch(() => {});
-  return blob;
 }
 
 /* ── 대사 연기 — 쪽 텍스트를 지문/대사로 나눠 감정을 입힌다 ── */
@@ -500,14 +522,19 @@ export function splitDialogue(text: string): { text: string; dialogue: boolean }
 }
 
 /**
- * 대사의 감정을 내용으로 추정한다. 확신이 없으면 toneup(생기 있는 연기톤).
- * 잘못 짚어도 "감정이 들어간 낭독"이라는 목표는 지켜진다.
+ * 대사의 감정을 내용으로 추정한다. 확신이 없으면 원래 음색을 유지한다.
  */
 export function guessEmotion(line: string): string {
   if (/으악|살려|엉엉|훌쩍|눈물|슬퍼|무서|가엾|흑흑|어떡해/.test(line)) return "sad";
   if (/잡아먹|안 돼|버럭|어흥|크르렁|날려 버리|호통|이놈|썩 /.test(line)) return "angry";
   if (/만세|신나|좋아|와아|우와|기뻐|히히|하하|최고|고마워/.test(line)) return "happy";
-  return "toneup";
+  return "normal";
+}
+
+/** 지문은 원래 음색, 대사만 낮은 강도의 명확한 감정을 사용한다. */
+export function storyReadingEmotion(emotion: string | undefined, dialogue: boolean): string {
+  if (!dialogue || !emotion || emotion === "toneup") return "normal";
+  return emotion;
 }
 
 /**
@@ -550,7 +577,7 @@ async function withTtsSlot<T>(fn: () => Promise<T>): Promise<T> {
 }
 
 /** 아직 합성이 안 끝난 조각. 부른 쪽이 오는 순서대로 기다렸다 재생한다. */
-export type PendingSegment = { from: number; to: number; audio: Promise<Blob> };
+export type PendingSegment = { from: number; to: number; audio: Promise<Blob>; pace?: VoicePace };
 
 /**
  * 한 쪽을 지문/대사 조각으로 나눠 **동시에** 합성을 걸고, 기다리지 않고 바로 돌려준다.
@@ -563,13 +590,13 @@ export type PendingSegment = { from: number; to: number; audio: Promise<Blob> };
  * 대사에는 감정 연기가 실리고, 감정을 거부하는 음성이면 그 조각만 기본톤으로 물러난다.
  * 글자 수 총합은 통짜 합성과 같아 크레딧 비용은 그대로다.
  */
-export function startTypecastPageAudio(tc: TypecastPreset, text: string): PendingSegment[] {
+export function startTypecastPageAudio(tc: TypecastPreset, text: string, direction?: VoiceDirection): PendingSegment[] {
   // 실시간 합성이 꺼져 있으면 호출 자체를 막는다 → 호출한 쪽이 딸린 파일/기계음으로 대체.
   if (!CLIENT_TTS_ENABLED) throw new Error("client-tts-disabled");
   const segs = splitDialogue(text);
 
   const synthEmo = (t: string, emotion: string): Promise<Blob> => {
-    const p = withTtsSlot(() => fetchTypecastAudio(tc, t, emotion)).catch(() =>
+    const p = withTtsSlot(() => fetchTypecastAudio(tc, t, emotion, direction?.intensity)).catch(() =>
       withTtsSlot(() => fetchTypecastAudio(tc, t)),
     );
     // 재생이 중간에 멈춰 아무도 이 조각을 기다리지 않게 되면 '처리 안 된 거부'
@@ -578,9 +605,14 @@ export function startTypecastPageAudio(tc: TypecastPreset, text: string): Pendin
     return p;
   };
 
-  // 대사가 없어도 지문에 어울리는 감정을 살짝 입혀 밋밋하지 않게 한다.
+  // 대사가 없는 페이지는 성우 본래 음색으로 편안하게 읽는다.
   if (segs.length <= 1 || !segs.some((s) => s.dialogue)) {
-    return [{ from: 0, to: text.length, audio: synthEmo(text, guessEmotion(text)) }];
+    return [{
+      from: 0,
+      to: text.length,
+      audio: synthEmo(text, "normal"),
+      pace: direction?.pace,
+    }];
   }
 
   const out: PendingSegment[] = [];
@@ -588,9 +620,12 @@ export function startTypecastPageAudio(tc: TypecastPreset, text: string): Pendin
   for (const s of segs) {
     const from = pos;
     pos += s.text.length;
-    // 대사든 지문이든 내용에 맞는 감정을 입힌다 — 지문은 대개 toneup(생기 있는 낭독),
-    // 대사는 놀람·화남·기쁨 등. 이렇게 해야 페이지마다 톤이 끊기지 않는다.
-    out.push({ from, to: pos, audio: synthEmo(s.text, guessEmotion(s.text)) });
+    // 지문은 성우 본래 음색을 유지하고, 따옴표 속 대사에만 낮은 강도의 감정을 넣는다.
+    const requestedEmotion = direction
+      ? (s.dialogue ? direction.dialogue : direction.narration)
+      : guessEmotion(s.text);
+    const emotion = storyReadingEmotion(requestedEmotion, s.dialogue);
+    out.push({ from, to: pos, audio: synthEmo(s.text, emotion), pace: direction?.pace });
   }
   return out;
 }
@@ -601,10 +636,10 @@ export function startTypecastPageAudio(tc: TypecastPreset, text: string): Pendin
  * 한 쪽만 앞서 받는다: 아이가 자동으로 다음 쪽까지 듣기 때문에 낭비가 거의 없고,
  * 같은 문장은 캐시되어 실제 재생 때 크레딧이 또 나가지 않는다.
  */
-export function prefetchTypecastPageAudio(tc: TypecastPreset, text: string): void {
+export function prefetchTypecastPageAudio(tc: TypecastPreset, text: string, direction?: VoiceDirection): void {
   if (!CLIENT_TTS_ENABLED || !text) return;
   try {
-    startTypecastPageAudio(tc, text);
+    startTypecastPageAudio(tc, text, direction);
   } catch {
     /* 무시 */
   }
@@ -630,18 +665,19 @@ export const PREWARM_PAGES = 2;
  * 읽을 때 그때 합성된다.
  */
 export function prewarmBookAudio(
-  texts: string[],
+  pages: { text: string; voiceDirection?: VoiceDirection }[],
   voice: { kind: "parent"; voiceId: string } | { kind: "preset"; preset: TypecastPreset },
 ): void {
   if (!CLIENT_TTS_ENABLED) return;
-  for (const text of texts.slice(0, PREWARM_PAGES)) {
+  for (const page of pages.slice(0, PREWARM_PAGES)) {
+    const text = page.text;
     if (!text) continue;
     try {
       if (voice.kind === "parent") {
         // 부모 목소리는 쪽 전체를 한 번에 합성한다(뷰어와 같은 방식·같은 캐시 키).
         void fetchTypecastVoiceAudio(voice.voiceId, text).catch(() => {});
       } else {
-        startTypecastPageAudio(voice.preset, text);
+        startTypecastPageAudio(voice.preset, text, page.voiceDirection);
       }
     } catch {
       /* 무시 */
