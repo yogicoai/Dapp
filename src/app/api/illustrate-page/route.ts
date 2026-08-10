@@ -272,6 +272,26 @@ export async function POST(request: Request) {
       "Before drawing, assign each named character one position and one action from the Scene. Do not swap who performs an action, who has stopped, who leads, who follows, or which side of an object each person occupies.",
       "FINAL CHECK before you finish: look at every face you drew. If two figures share the same face, the same hair and the same clothes, that is the duplication error — remove one of them or redraw that figure as the correct, visibly different character.",
     ].join("\n"),
+    /*
+     * 인물은 한 공간에 있어야 한다.
+     *
+     * 실제로 이런 그림이 나왔다 — 본문은 "하온이와 엄마는 집으로 돌아왔어요"인데,
+     * 아이는 방 안에 앉아 있고 엄마는 비 오는 창밖에 서서 안을 들여다보고 있었다.
+     * 아이 책에서 이건 따뜻한 장면이 아니라 무서운 장면이다.
+     *
+     * 왜 이렇게 되냐면, 앞 쪽의 장소(골목·놀이터)와 이 쪽의 장소(집)가 둘 다 신호로
+     * 들어올 때 모델이 '창문'으로 두 장소를 한 그림에 욱여넣기 때문이다. 그러면서
+     * 인물이 유리 양쪽으로 갈린다. 인원 수도 장소도 규칙을 어긴 게 아니라서
+     * 지금까지 아무 검사에도 안 걸렸다.
+     */
+    sceneCast.length > 1
+      ? [
+          "ONE SHARED SPACE — every named character stands in the SAME physical space, on the same side of every wall, window, door, fence and gate.",
+          "Never put one character indoors and another outdoors. Never place a character behind glass looking in at the others. Never separate them with a window frame, a doorway or a railing.",
+          "A person standing outside in the rain looking in through a window is frightening in a children's book, not warm — never compose the page that way.",
+          "If the story text says they arrived, came home or went somewhere together, they are together INSIDE that place, close enough to touch.",
+        ].join("\n")
+      : "",
     // 일관성 — 이 앱의 핵심 약속이다. 쪽마다 얼굴이나 옷이 바뀌면 "내 동화"가 아니게 된다.
     sheet
       ? [

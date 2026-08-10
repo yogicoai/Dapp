@@ -290,9 +290,13 @@ export async function validateIllustration(input: {
         "FAIL for wrong number of people, an extra/background person, a duplicated person, a missing expected person, identities/outfits swapped, or any visible change from the character reference in face construction, hair shape/colour, clothing design/colour, shoes or accessories.",
         "FAIL for any rendering-style drift from the references: 3D/clay to flat 2D, 2D to 3D, watercolor to vector/anime, different line quality, texture, shading, saturation or finish. Treat the approved-page style as mandatory, not optional.",
         "FAIL if a named character performs or occupies the clearly wrong action or place.",
+        // 실제로 나온 그림: 본문은 "둘이 집으로 돌아왔어요"인데 아이는 방 안, 엄마는
+        // 비 오는 창밖에서 안을 들여다보고 있었다. 인원 수도 장소도 어긴 게 없어서
+        // 위 검사 어디에도 안 걸렸다. 아이 책에서는 따뜻한 장면이 아니라 무서운 장면이다.
+        "FAIL if the characters are split across a barrier: one indoors and another outdoors, one behind glass looking in, or separated by a window frame, doorway, fence or railing — unless the scene explicitly says they are apart. They must share one space.",
         "Also FAIL if the artwork is presented as a page, print, card, panel, framed picture or smaller image inside the canvas; if any white/unpainted margin, border, gutter, strip, rounded-corner frame or letterbox is visible at ANY outer edge; or if the illustration does not fill the canvas edge to edge.",
         "Do not fail for harmless camera-angle or minor pose differences, but location identity, character identity, readable text and rendering medium are never harmless.",
-        "Before replying, check in this order: (1) no writing, (2) exact people, (3) exact named location, (4) character match, (5) rendering-style match. Reply PASS only if all five pass. Otherwise reply FAIL: followed by a short concrete correction instruction in English.",
+        "Before replying, check in this order: (1) no writing, (2) exact people, (3) exact named location, (4) character match, (5) rendering-style match, (6) everyone in one shared space. Reply PASS only if all six pass. Otherwise reply FAIL: followed by a short concrete correction instruction in English.",
       ].join("\n"),
     },
   ];
