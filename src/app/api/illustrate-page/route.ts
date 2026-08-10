@@ -3,8 +3,8 @@ import { ART_STYLES } from "@/lib/art-styles";
 import {
   GeminiError,
   detectBlankCanvasBorder,
-  fromDataUrl,
   generateImage,
+  loadReferenceImage,
   repairBlankCanvasBorder,
   toDataUrl,
   validateIllustration,
@@ -49,13 +49,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "장면 묘사가 비었거나 너무 깁니다." }, { status: 400 });
   }
 
-  const style =
-    ART_STYLES.find((s) => s.id === input.artStyleId) ?? ART_STYLES[0];
+  /*
+   * 어떤 그림체로 만든 책인지 아는가.
+   *
+   * 옛 책에는 그림체가 저장돼 있지 않다. 그때 목록의 첫 그림체를 골라 이름으로
+   * 못박아 버리면, 그 책이 실제로 어떤 그림체든 상관없이 그것으로 그려진다 —
+   * 한 쪽만 다시 그렸을 때 그 쪽만 화풍이 달라지던 원인이다.
+   */
+  const matchedStyle = ART_STYLES.find((s) => s.id === input.artStyleId);
+  const knownStyle = Boolean(matchedStyle);
+  const style = matchedStyle ?? ART_STYLES[0];
 
   const sheet =
-    typeof input.characterSheet === "string" ? fromDataUrl(input.characterSheet) : null;
+    typeof input.characterSheet === "string" ? await loadReferenceImage(input.characterSheet) : null;
+  // 주소로 저장된 그림(cafe24)도 참조로 쓸 수 있어야 한다 — 한 쪽만 다시 그릴 때
+  // 이 참조가 없으면 그 쪽만 그림체가 어긋난다.
   const styleReference =
-    typeof input.styleReference === "string" ? fromDataUrl(input.styleReference) : null;
+    typeof input.styleReference === "string" ? await loadReferenceImage(input.styleReference) : null;
   const styleReferenceScene =
     typeof input.styleReferenceScene === "string" ? input.styleReferenceScene.trim().slice(0, 500) : "";
   const readLocation = (value: string) => {
@@ -100,9 +110,29 @@ export async function POST(request: Request) {
   const sceneCast = cast.filter((c) => scene.includes(c.name) || storyText.includes(c.name));
 
   const prompt = [
-    `Children's picture book illustration, ${style.prompt}.`,
+    knownStyle
+      ? `Children's picture book illustration, ${style.prompt}.`
+      : "Children's picture book illustration in the exact style of the attached reference image(s).",
+    /*
+     * 글자 금지를 맨 앞에도 둔다.
+     *
+     * 그림 안에 엉터리 영어 문장이 그려져 나오는 일이 있었다(실제 발생). 아래에서
+     * 본문을 '사실 확인용'으로 건네는데, 문장을 받은 그림 모델은 그것을 그려 넣으려
+     * 든다. 금지 문구가 프롬프트 맨 끝에만 있으면 앞쪽의 문장에 밀린다.
+     */
+    "ABSOLUTE RULE — THIS IS A WORDLESS PICTURE. Draw ZERO writing of any kind: no captions, no sentences, no single letters, no numbers, no signs, no labels, no speech bubbles, no signatures, no watermarks — in Korean, English or any other script. Any written mark at all makes this page unusable.",
+    /*
+     * 그림체 잠금.
+     *
+     * 조심할 것: 어떤 그림체로 만든 책인지 모를 때(옛 책을 한 쪽만 다시 그릴 때)
+     * 목록의 첫 그림체를 이름으로 못박으면, 붙여 준 참조 그림과 정면으로 싸운다.
+     * 실제로 한 쪽만 다시 그렸더니 그 쪽만 화풍이 바뀌었다.
+     * 그래서 그림체를 모르면 이름을 말하지 않고 참조 그림을 그대로 따르게 한다.
+     */
     [
-      `STYLE LOCK — render the entire page ONLY as: ${style.prompt}.`,
+      knownStyle
+        ? `STYLE LOCK — render the entire page ONLY as: ${style.prompt}.`
+        : "STYLE LOCK — copy the rendering style of the attached reference image(s) exactly. Do not invent or substitute a style of your own; the attached pages define what this book looks like.",
       "The character reference sheet is also the rendering-style reference. Match its medium, brush/line quality, shape language, facial construction, shading method, texture, saturation and finish exactly.",
       "Never switch medium or rendering technique between pages. Do not turn watercolor into 3D, vector, crayon, anime, pencil, collage or a different kind of painting. Do not mix two styles in one page.",
     ].join("\n"),
@@ -110,7 +140,21 @@ export async function POST(request: Request) {
     currentLocation
       ? `LOCATION LOCK — this scene visibly takes place at "${currentLocation.name}": ${currentLocation.description}. Draw that setting, not a generic forest, park, hanok, classroom or another house.`
       : "",
-    storyText ? `Story text for factual context: ${storyText}` : "",
+    /*
+     * 본문은 '무슨 일이 일어나는지'를 알려 주려고 건넨다 — 장면 설명만으로는 인물이
+     * 무엇을 하는지 어긋나는 일이 있어서다.
+     *
+     * 그런데 문장을 그대로 주면 모델이 그 문장을 그림 안에 써 넣는다. 실제로 한국어
+     * 본문을 옮긴 듯한 엉터리 영어가 그림에 박혀 나왔다. 그래서 '이건 읽을 거리가
+     * 아니라 배경 지식'이라고 문장 바로 옆에서 못박는다.
+     */
+    storyText
+      ? [
+          "BACKGROUND INFORMATION ONLY — the sentences below tell you what happens so you draw the right action. They are NOT part of the picture.",
+          "Never copy, translate, paraphrase or render these words anywhere in the image. Draw what they describe, not the words themselves.",
+          `What happens on this page: ${storyText}`,
+        ].join("\n")
+      : "",
     mood ? `Mood: ${mood}.` : "",
     // 캐릭터 시트를 참조로 넣으면 모델이 '생김새'뿐 아니라 시트의 '나란히 선 배치'까지
     // 따라 그려서, 같은 인물이 두 명씩 나오는 일이 생긴다(실제 발생). 그래서
@@ -240,11 +284,20 @@ export async function POST(request: Request) {
       cast: sceneCast,
       stylePrompt: style.prompt,
     });
+    /*
+     * 글자가 그려진 건 다른 지적과 성격이 다르다.
+     *
+     * '그림체가 조금 다르다' 같은 지적은 사람에 따라 갈리지만, 그림 안의 글자는
+     * 언제나 잘못이고 한눈에 보인다. 부르는 쪽이 이것만 따로 다뤄 꼭 다시 그리게
+     * 구분해서 알려 준다.
+     */
+    const textIssue =
+      !check.ok && /\b(text|writing|caption|letter|word|subtitle|script|signage|label)/i.test(check.issues);
     return NextResponse.json({
       image: toDataUrl(image),
       corrected: Boolean(borderIssue),
       qualityPassed: check.ok,
-      ...(check.ok ? {} : { qualityWarning: check.issues }),
+      ...(check.ok ? {} : { qualityWarning: check.issues, qualityIssue: textIssue ? "text" : "other" }),
     });
   } catch (e) {
     if (e instanceof GeminiError) {

@@ -1266,6 +1266,9 @@ export default function CreatePage() {
       // 비용 상한일 뿐 실패 사유가 아니다 — 여기 걸려도 그림은 그대로 책에 들어간다.
       const MAX_QA_REDRAWS_PER_BOOK = Math.max(2, Math.ceil(s.pages.length / 3));
       let qaRedrawsUsed = 0;
+      // 그림에 글자가 박힌 경우 전용 예산 — 이건 취향 문제가 아니라 명백한 불량이다.
+      const MAX_TEXT_REDRAWS_PER_BOOK = Math.max(2, Math.ceil(s.pages.length / 3));
+      let textRedrawsUsed = 0;
       const nextUnclaimedPage = (): number | null => {
         while (cursor < s.pages.length && claimedPages.has(cursor)) cursor++;
         if (cursor >= s.pages.length) return null;
@@ -1328,6 +1331,7 @@ export default function CreatePage() {
                 image?: string;
                 qualityPassed?: boolean;
                 qualityWarning?: string;
+                qualityIssue?: "text" | "other";
               };
               return { ok: r.ok, data };
             };
@@ -1343,13 +1347,33 @@ export default function CreatePage() {
             let image = first.ok ? (first.data.image ?? null) : null;
             let ok = first.ok && first.data.qualityPassed !== false && Boolean(image);
 
-            if (image && !ok && qaRedrawsUsed < MAX_QA_REDRAWS_PER_BOOK) {
+            /*
+             * 그림 안에 글자가 그려진 경우는 예산과 따로 센다.
+             *
+             * '그림체가 조금 다르다'는 사람에 따라 갈리지만, 그림에 박힌 엉터리 글자는
+             * 언제나 잘못이고 한눈에 보인다(실제로 한국어 본문을 옮긴 듯한 영어 문장이
+             * 그려져 나왔다). 예산이 떨어졌다는 이유로 그대로 책에 넣으면 안 된다.
+             */
+            const isTextIssue = first.data.qualityIssue === "text";
+            const canRedraw = isTextIssue
+              ? textRedrawsUsed < MAX_TEXT_REDRAWS_PER_BOOK
+              : qaRedrawsUsed < MAX_QA_REDRAWS_PER_BOOK;
+
+            if (image && !ok && canRedraw) {
               // 증분은 await 전에 동기적으로 실행돼 동시 worker끼리도 예산을 넘기지 않는다.
-              qaRedrawsUsed++;
-              const second = await requestImage(first.data.qualityWarning ?? "Character mismatch");
+              if (isTextIssue) textRedrawsUsed++;
+              else qaRedrawsUsed++;
+              const second = await requestImage(
+                isTextIssue
+                  ? "The previous attempt drew readable words inside the picture. Draw the same scene with absolutely no writing of any kind."
+                  : (first.data.qualityWarning ?? "Character mismatch"),
+              );
               if (second.ok && second.data.image && second.data.qualityPassed !== false) {
                 image = second.data.image;
                 ok = true;
+              } else if (isTextIssue && second.ok && second.data.image && second.data.qualityIssue !== "text") {
+                // 글자는 지워졌고 다른 지적만 남았다면 그쪽이 낫다 — 글자보다는 낫다.
+                image = second.data.image;
               }
             }
 

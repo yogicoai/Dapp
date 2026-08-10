@@ -326,3 +326,30 @@ export function fromDataUrl(url: string): GeneratedImage | null {
   const m = /^data:([^;]+);base64,(.+)$/.exec(url);
   return m ? { mimeType: m[1], data: m[2] } : null;
 }
+
+/**
+ * 참조 그림을 받아 온다 — data URL이면 그대로 풀고, 주소면 내려받는다.
+ *
+ * 삽화를 cafe24로 옮긴 뒤로 책에 저장된 그림은 data URL이 아니라 주소다. 주소를
+ * fromDataUrl에 그냥 넣으면 null이 되어 '참조 없음'으로 조용히 넘어가고, 한 쪽만
+ * 다시 그릴 때 그림체가 어긋난다(실제 발생). 서버에서 받아 오면 브라우저의
+ * 교차 출처 제한도 걸리지 않는다.
+ */
+export async function loadReferenceImage(url: string): Promise<GeneratedImage | null> {
+  const inline = fromDataUrl(url);
+  if (inline) return inline;
+  if (!/^https?:\/\//i.test(url)) return null;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    // 5MB가 넘으면 참조로 쓰기엔 과하다 — 없이 그리는 편이 낫다.
+    if (buf.byteLength > 5 * 1024 * 1024) return null;
+    return {
+      mimeType: res.headers.get("content-type") || "image/webp",
+      data: buf.toString("base64"),
+    };
+  } catch {
+    return null;
+  }
+}
