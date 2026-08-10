@@ -18,7 +18,7 @@ import {
   saveChild,
   saveMyBook,
 } from "@/lib/prefs";
-import { rewriteScene } from "@/lib/scene-edit";
+import { rewriteScene, suggestLocationDetail } from "@/lib/scene-edit";
 import {
   illustrationTokenCost,
   MAX_BOOKS_PER_USER,
@@ -1060,6 +1060,14 @@ export default function CreatePage() {
    * 큰 바위가 하나 있어요"처럼 한 줄 적어 주면 그림이 훨씬 덜 흔들린다.
    */
   const [locationDetail, setLocationDetail] = useState("");
+  /**
+   * 장소 칸을 부모가 손댔는지.
+   *
+   * 대본이 나오면 이 칸을 이야기에서 뽑아 미리 채워 준다. 그런데 부모가 이미 고쳐
+   * 둔 것을 다시 쓸 때 덮어 버리면, 애써 적은 것이 말없이 사라진다.
+   * (설정 화면의 아이 특징에서 똑같은 사고가 났던 적이 있다.)
+   */
+  const locationTouchedRef = useRef(false);
 
   // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
   const [confirmMake, setConfirmMake] = useState(false);
@@ -1130,6 +1138,8 @@ export default function CreatePage() {
     setScriptCharged(draft.scriptCharged ?? false);
     setStoryRewrites(draft.storyRewrites ?? 0);
     setLocationDetail(draft.locationDetail ?? "");
+    // 적어 둔 것이 있으면 손댄 것으로 본다 — 이어서 만들 때 덮어쓰지 않게.
+    locationTouchedRef.current = Boolean(draft.locationDetail);
     setArtStyle(ART_STYLES.some((style) => style.id === draft.artStyle) ? draft.artStyle : ART_STYLES[0].id);
     setScreenShape(draft.screenShape === "phone" ? "phone" : "tablet");
     setNarratorVoice(draft.narratorVoice);
@@ -1220,6 +1230,7 @@ export default function CreatePage() {
     setScriptCharged(false);
     setStoryRewrites(0);
     setLocationDetail("");
+    locationTouchedRef.current = false;
     const ac = new AbortController();
     abortRef.current = ac;
     // 다음에 또 만들 때 아이 정보를 다시 안 묻도록 저장해 둔다.
@@ -1403,6 +1414,17 @@ export default function CreatePage() {
       if (isRewrite) setStoryRewrites((n) => n + 1);
       setEditingPage(null); // 새 대본이니 고치던 자리는 닫는다
       setEditingTitle(false);
+      /*
+       * 장소 칸을 이야기에서 뽑아 미리 채운다.
+       *
+       * 빈칸을 내밀면 대부분 그냥 넘어간다 — 뭘 적어야 할지 모르기 때문이다.
+       * 클로드는 이미 쪽마다 `장소: 골목 — 회색 시멘트 담과 물웅덩이.`를 적어 뒀으니,
+       * 그걸 사람이 읽는 한 줄로 바꿔 두면 부모는 고치기만 하면 된다.
+       * 이미 손댄 값은 건드리지 않는다.
+       */
+      if (!locationTouchedRef.current) {
+        setLocationDetail(suggestLocationDetail(story.pages.map((p) => p.imagePrompt)));
+      }
       setStory(story);
       setStep("story");
     } catch (e) {
@@ -3146,12 +3168,17 @@ export default function CreatePage() {
                   <input
                     id="location-detail"
                     value={locationDetail}
-                    onChange={(e) => setLocationDetail(e.target.value.slice(0, 120))}
+                    onChange={(e) => {
+                      locationTouchedRef.current = true;
+                      setLocationDetail(e.target.value.slice(0, 120));
+                    }}
                     placeholder="예: 계곡은 회색 자갈 바닥에 넓적한 바위 하나, 아이스크림은 분홍색 한 덩이"
                     className="mt-2 w-full rounded-xl border-2 border-neutral-100 bg-neutral-50 px-3 py-2.5 text-sm font-medium text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-200"
                   />
                   <p className="mt-1.5 break-keep text-[11px] font-medium text-neutral-400">
-                    장소는 자세히, 물건은 단순하게 적어 주시면 모든 쪽이 같아 보여요.
+                    {locationDetail && !locationTouchedRef.current
+                      ? "이야기에서 뽑아 미리 적어 뒀어요. 마음에 안 들면 고치셔도 돼요."
+                      : "장소는 자세히, 물건은 단순하게 적어 주시면 모든 쪽이 같아 보여요."}
                   </p>
                 </div>
               )}
@@ -3238,6 +3265,7 @@ export default function CreatePage() {
                     setStoryRewrites(0);
                     setOutlineRetries(0);
                     setLocationDetail("");
+                    locationTouchedRef.current = false;
                     setEditingPage(null);
                     setEditingTitle(false);
                     setError("");

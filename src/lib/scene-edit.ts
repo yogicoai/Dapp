@@ -21,6 +21,65 @@ const LOCATION_LINE = /장소\s*:[^.\n]*\./;
 /** 물건 잠금 줄 — 한 쪽에 둘까지 나올 수 있어 전부 가져온다. */
 const PROP_LINE = /물건\s*:[^.\n]*\./g;
 
+/** `장소: 이름 — 특징.`에서 이름과 특징을 따로 뽑는다. */
+const NAMED_LOCK = /^(?:장소|물건)\s*:\s*([^—\-\n]+?)\s*[—-]\s*([^\n]+?)\.?$/;
+
+/** 받침이 있으면 '은', 없으면 '는'. (가-힣 블록에서 (코드-0xac00)%28 != 0 이면 받침) */
+function topicParticle(word: string): string {
+  const last = word.trim().slice(-1);
+  const code = last.charCodeAt(0);
+  if (code < 0xac00 || code > 0xd7a3) return "는"; // 한글이 아니면 무난한 쪽으로
+  return (code - 0xac00) % 28 !== 0 ? "은" : "는";
+}
+
+/**
+ * 대본에서 장소·물건 설명을 뽑아 '장소 자세히 적기' 칸의 첫 줄을 만든다.
+ *
+ * 왜 — 이 칸은 비워 두면 아무 일도 안 한다. 그런데 부모에게 "장소를 자세히 적어
+ * 주세요"라고 빈칸을 내밀면 대부분 그냥 넘어간다. 뭘 적어야 할지 모르니까.
+ * 클로드는 이미 쪽마다 `장소: 골목 — 회색 시멘트 담과 물웅덩이.`를 적어 뒀다.
+ * 그걸 사람이 읽는 한 줄로 바꿔 미리 채워 두면, 부모는 고치기만 하면 된다.
+ *
+ * 장소는 앞의 둘, 물건도 앞의 둘까지만 담는다. 길어지면 어차피 안 읽는다.
+ */
+export function suggestLocationDetail(imagePrompts: string[], maxLength = 120): string {
+  const places = new Map<string, string>();
+  const props = new Map<string, string>();
+
+  const take = (into: Map<string, string>, clause: string) => {
+    const parsed = NAMED_LOCK.exec(clause.trim());
+    if (!parsed) return;
+    const name = parsed[1].trim();
+    const description = parsed[2].trim().replace(/\.$/, "");
+    // 처음 나온 설명이 그 책의 정답이다 — 뒤에서 달라졌어도 첫 줄을 지킨다.
+    if (name && description && !into.has(name)) into.set(name, description);
+  };
+
+  for (const prompt of imagePrompts) {
+    const source = (prompt ?? "").normalize("NFC");
+    const location = LOCATION_LINE.exec(source);
+    if (location) take(places, location[0]);
+    for (const prop of source.matchAll(PROP_LINE)) take(props, prop[0]);
+  }
+
+  const parts = [...[...places].slice(0, 2), ...[...props].slice(0, 2)].map(
+    ([name, description]) => `${name}${topicParticle(name)} ${description}`,
+  );
+  if (parts.length === 0) return "";
+
+  /*
+   * 칸이 120자라 넘치면 잘라야 하는데, 말 중간에서 자르면 뜻이 깨진다.
+   * 통째로 들어가는 것까지만 담고 나머지는 버린다.
+   */
+  let out = "";
+  for (const part of parts) {
+    const next = out ? `${out} · ${part}` : part;
+    if (next.length > maxLength) break;
+    out = next;
+  }
+  return out || parts[0].slice(0, maxLength);
+}
+
 /**
  * 고친 본문에 맞춰 장면 지시를 다시 쓴다.
  *

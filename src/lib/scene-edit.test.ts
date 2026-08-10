@@ -1,7 +1,43 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { rewriteScene } from "./scene-edit.ts";
+import { rewriteScene, suggestLocationDetail } from "./scene-edit.ts";
+
+describe("suggestLocationDetail", () => {
+  const prompts = [
+    "등장인물 2명: 하온, 엄마. 장소: 골목 — 회색 시멘트 담과 물웅덩이. 물건: 장화 — 샛노란색, 무릎까지 오는 길이. 하온이가 밟는다.",
+    "등장인물 1명: 하온. 장소: 골목 — 회색 시멘트 담과 물웅덩이. 물건: 장화 — 샛노란색, 무릎까지 오는 길이. 하온이가 웃는다.",
+  ];
+
+  it("대본에서 장소와 물건을 뽑아 한 줄로 만든다", () => {
+    const out = suggestLocationDetail(prompts);
+    assert.ok(out.includes("골목은 회색 시멘트 담과 물웅덩이"));
+    assert.ok(out.includes("장화는 샛노란색"));
+  });
+
+  it("같은 장소가 여러 쪽에 나와도 한 번만 담는다", () => {
+    const out = suggestLocationDetail(prompts);
+    assert.equal(out.split("골목").length - 1, 1);
+  });
+
+  it("받침에 따라 은/는을 가른다", () => {
+    // '골목'은 받침이 있어 '은', '장화'는 없어 '는'. 틀리면 부모가 읽을 때 걸린다.
+    const out = suggestLocationDetail(prompts);
+    assert.ok(out.includes("골목은"));
+    assert.ok(out.includes("장화는"));
+  });
+
+  it("칸 길이를 넘기지 않고, 말 중간에서 자르지 않는다", () => {
+    const long = `장소: 계곡 — ${"아주 넓고 깊은 회색 자갈 바닥".repeat(6)}. 하온이가 앉는다.`;
+    const out = suggestLocationDetail([long], 120);
+    assert.ok(out.length <= 120);
+  });
+
+  it("장소 줄이 없으면 빈 값 — 아무 말이나 채우지 않는다", () => {
+    assert.equal(suggestLocationDetail(["등장인물 1명: 하온. 하온이가 걷는다."]), "");
+    assert.equal(suggestLocationDetail([]), "");
+  });
+});
 
 describe("rewriteScene", () => {
   const scene =
