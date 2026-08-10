@@ -60,6 +60,16 @@ import { currentReadingChunk, splitStorySentences } from "@/lib/reading-chunks";
 
 const SWIPE_THRESHOLD_PX = 50;
 
+/**
+ * 한 권에 다시 그릴 수 있는 그림 수 (마스터 제외).
+ *
+ * 왜 여느냐 — 그림 하나가 이상하게 나왔을 때 돈 낸 부모가 할 수 있는 게 아무것도
+ * 없으면, 그건 환불 사유고 아이 앱에서는 "이 앱 이상하다"가 된다.
+ * 왜 한 장이냐 — 한 장에 약 55원이 실제로 나간다. 무제한이면 마음에 들 때까지
+ * 돌리게 되고 그 값은 우리가 문다. 한 장이면 "제일 이상한 쪽 하나"는 구제된다.
+ */
+const FREE_REDRAWS_PER_BOOK = 1;
+
 /** Web Speech 폴백용 읽기 속도(초당 글자). 경계 이벤트가 안 오는 기기에서 쓴다. */
 const FALLBACK_CHARS_PER_SEC = 5.5;
 
@@ -373,7 +383,7 @@ export function BookViewer({ book }: { book: Book }) {
   }
 
   /*
-   * 이 쪽 그림 다시 그리기 (마스터 전용, 내가 만든 동화만).
+   * 이 쪽 그림 다시 그리기 (내가 만든 동화만). 일반 회원은 한 권에 한 장까지.
    *
    * 삽화가 실패해도 책은 저장되게 바꾼 뒤로, 그림이 빠진 쪽이 남을 수 있다.
    * 그 한 쪽 때문에 동화를 통째로 다시 만들면 토큰과 나머지 그림이 다 날아가므로,
@@ -384,14 +394,26 @@ export function BookViewer({ book }: { book: Book }) {
    * 예전 책은 그 재료가 없으므로 본문과 옆 쪽 그림만으로 최선을 다한다.
    */
   const [redrawing, setRedrawing] = useState(false);
+  /** 이 책에서 다시 그릴 수 있는 장수. 마스터는 제한 없음. */
+  const redrawsLeft = master
+    ? Number.POSITIVE_INFINITY
+    : FREE_REDRAWS_PER_BOOK - (book.redrawsUsed ?? 0);
 
   async function redrawPage() {
     const page = book.pages[index];
     const scene = page.imagePrompt?.trim() || page.text;
     if (!scene) return;
+    if (redrawsLeft <= 0) {
+      window.alert(
+        `그림 다시 그리기는 한 권에 ${FREE_REDRAWS_PER_BOOK}장까지예요.\n이 책은 이미 사용하셨어요.`,
+      );
+      return;
+    }
     if (
       !window.confirm(
-        `${index + 1}쪽 그림을 다시 그릴까요?\n\n그림 한 장 값(약 ₩55)이 나가고, 글과 목소리는 그대로예요.`,
+        master
+          ? `${index + 1}쪽 그림을 다시 그릴까요?\n\n글과 목소리는 그대로예요.`
+          : `${index + 1}쪽 그림을 다시 그릴까요?\n\n한 권에 ${FREE_REDRAWS_PER_BOOK}장까지 다시 그릴 수 있어요.\n이걸 쓰면 이 책에서는 더 못 바꿔요.\n글과 목소리는 그대로예요.`,
       )
     ) {
       return;
@@ -452,6 +474,8 @@ export function BookViewer({ book }: { book: Book }) {
         pages: book.pages.map((p, i) => (i === index ? { ...p, image: stored } : p)),
         // 표지가 비어 있던 책이면 이 그림으로 채워 준다 — 책장에서 무지개로 보이던 것.
         coverImage: book.coverImage ?? stored,
+        // 마스터는 세지 않는다. 그림이 나온 뒤에 올린다 — 실패한 시도로 기회를 잃으면 안 된다.
+        redrawsUsed: master ? book.redrawsUsed : (book.redrawsUsed ?? 0) + 1,
       };
       if (!(await updateBookData(book.id, next))) {
         window.alert("그림은 그렸는데 저장하지 못했어요. 권한(SQL)을 확인해 주세요.");
@@ -1676,35 +1700,41 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 본문 고치기 (마스터 · 내가 만든 동화만).
           글자가 소실돼 ◆? 로 나오는 쪽은 사람이 다시 써 넣는 수밖에 없다.
           그 한 글자 때문에 동화를 다시 만들면 토큰과 그림이 통째로 날아간다. */}
-      {master && editable && !editing && (
+      {editable && !editing && (
         <div className="absolute left-3 top-16 z-20 flex flex-col items-start gap-1.5">
-          <button
-            type="button"
-            onClick={() => {
-              setDraft(book.pages[index].text);
-              setEditing(true);
-            }}
-            className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/icons/func-edit.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
-            글 고치기
-          </button>
+          {/* 글 고치기는 아직 마스터만 — 본문을 바꾸면 낭독 캐시와 어긋난다. */}
+          {master && (
+            <button
+              type="button"
+              onClick={() => {
+                setDraft(book.pages[index].text);
+                setEditing(true);
+              }}
+              className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icons/func-edit.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
+              글 고치기
+            </button>
+          )}
           {/* 이 쪽 그림 다시 그리기 — 삽화가 빠졌거나 마음에 안 드는 쪽을 그 쪽만 고친다.
-              그림이 없는 쪽은 문구를 바꿔, 비어 있다는 걸 먼저 알아채게 한다. */}
+              그림이 없는 쪽은 문구를 바꿔, 비어 있다는 걸 먼저 알아채게 한다.
+              다 쓴 뒤에도 버튼은 남긴다 — 사라지면 "있었는데 없어졌다"가 더 헷갈린다. */}
           <button
             type="button"
             onClick={redrawPage}
-            disabled={redrawing}
-            className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur disabled:opacity-60"
+            disabled={redrawing || redrawsLeft <= 0}
+            className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur disabled:opacity-50"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/icons/func-remake.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
             {redrawing
               ? "그리는 중…"
-              : book.pages[index].image
-                ? "이 쪽 그림 다시 그리기"
-                : "이 쪽 그림 그리기"}
+              : redrawsLeft <= 0
+                ? "다시 그리기를 다 썼어요"
+                : book.pages[index].image
+                  ? `이 쪽 그림 다시 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`
+                  : `이 쪽 그림 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`}
           </button>
         </div>
       )}
