@@ -848,6 +848,31 @@ export function markHomeHintSeen(): void {
   }
 }
 
+/* ── 새 소식(공지) 읽음 표시 ──
+ * '봤다/안 봤다'가 아니라 **어느 공지를 닫았는지**를 적어 둔다. 그래야 다음 공지가
+ * 올라왔을 때(id가 바뀌었을 때) 이미 닫은 사람에게도 다시 뜬다.
+ * 계정별로 기억한다 — 한 기기를 부모 둘이 나눠 쓰는 집이 있다.
+ */
+const UPDATE_SEEN_KEY = "voice-storybook:update-seen";
+
+export function updateNoticeSeen(id: string): boolean {
+  if (typeof window === "undefined") return true; // 서버에서는 안 띄운다
+  try {
+    return window.localStorage.getItem(acctKey(UPDATE_SEEN_KEY)) === id;
+  } catch {
+    return true;
+  }
+}
+
+export function markUpdateNoticeSeen(id: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(acctKey(UPDATE_SEEN_KEY), id);
+  } catch {
+    /* 저장 못 해도 한 번 더 뜨는 것뿐이라 무시한다 */
+  }
+}
+
 /* ── 캐릭터 눌러 보기 안내 ──
  * 전래동화·세계명작은 그림 속 인물을 누르면 그 인물이 말한다. 그런데 눌러 볼 수
  * 있다는 걸 아무 데도 안 알려 줘서, 있는 줄 모르고 지나가는 부모가 많다.

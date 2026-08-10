@@ -7,6 +7,7 @@ import { AddToHomeHint } from "@/components/AddToHomeHint";
 import { BgVideo } from "@/components/BgVideo";
 import { Bookshelf } from "@/components/Bookshelf";
 import { useTheme } from "@/components/ThemeProvider";
+import { UpdateNotice } from "@/components/UpdateNotice";
 import { loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
@@ -273,6 +274,9 @@ export default function Home() {
           </p>
 
         </header>
+
+        {/* 새 소식 — 회원에게만. 한 번 닫으면 작은 알약으로 접혀 아이 화면을 가리지 않는다. */}
+        {!guest && <UpdateNotice />}
 
         {/*
           책 만들기 — 이 앱의 핵심 행동. 화면 크기에 따라 연출을 바꾼다.
