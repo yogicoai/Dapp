@@ -71,6 +71,15 @@ const SWIPE_THRESHOLD_PX = 50;
  */
 const FREE_REDRAWS_PER_BOOK = 1;
 
+/**
+ * 링크 공유 버튼을 화면에 낼지.
+ *
+ * false로 두면 버튼만 사라진다 — **이미 켜 둔 책은 계속 열린다.** DB의 shared
+ * 값은 그대로이기 때문이다. 정말 닫으려면 켜 둔 책을 끄고 내려야 한다:
+ *   update public.books set shared = false where shared = true;
+ */
+const SHARE_ENABLED = true;
+
 /** Web Speech 폴백용 읽기 속도(초당 글자). 경계 이벤트가 안 오는 기기에서 쓴다. */
 const FALLBACK_CHARS_PER_SEC = 5.5;
 
@@ -1806,7 +1815,9 @@ export function BookViewer({ book }: { book: Book }) {
                   : `이 쪽 그림 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`}
           </button>
           {/* 링크 공유 — 켜면 주소를 아는 사람이 로그인 없이 읽는다. 켜져 있을 때만
-              '링크 복사'가 따로 뜬다(꺼진 링크를 보내는 헛수고를 막는다). */}
+              '링크 복사'가 따로 뜬다(꺼진 링크를 보내는 헛수고를 막는다).
+              지금은 SHARE_ENABLED로 화면에서 내려 두었다. */}
+          {SHARE_ENABLED && (
           <button
             type="button"
             onClick={toggleShare}
@@ -1817,10 +1828,11 @@ export function BookViewer({ book }: { book: Book }) {
           >
             {sharing ? "바꾸는 중…" : shared ? "🔗 공유 켜짐 — 끄기" : "🔗 링크로 공유하기"}
           </button>
+          )}
           {/* 켜져 있으면 주소를 화면에 그대로 보여 준다 — 창을 띄우는 방식은
               환경에 따라 막힌다(실제로 prompt()가 막혀 오류가 났다). 눈에 보이면
               복사가 실패해도 손으로 가져갈 수 있다. */}
-          {shared && !sharing && shareUrl && (
+          {SHARE_ENABLED && shared && !sharing && shareUrl && (
             <div className="flex w-64 max-w-[70vw] flex-col gap-1 rounded-2xl bg-white/90 p-2 shadow backdrop-blur">
               <input
                 ref={shareInputRef}
@@ -1838,7 +1850,7 @@ export function BookViewer({ book }: { book: Book }) {
               </button>
             </div>
           )}
-          {shareError && (
+          {SHARE_ENABLED && shareError && (
             <p className="w-64 max-w-[70vw] break-keep rounded-xl bg-red-50/95 px-2.5 py-1.5 text-[11px] font-bold text-red-700 shadow backdrop-blur">
               {shareError}
             </p>
