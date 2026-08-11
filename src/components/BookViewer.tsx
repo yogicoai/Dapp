@@ -372,6 +372,14 @@ export function BookViewer({ book }: { book: Book }) {
    */
   const [shared, setShared] = useState(book.shared === true);
   const [sharing, setSharing] = useState(false);
+  const [shareError, setShareError] = useState("");
+  const [copied, setCopied] = useState(false);
+  /** 주소는 브라우저에만 있다 — 서버 렌더와 어긋나지 않게 마운트 후에 채운다. */
+  const [shareUrl, setShareUrl] = useState("");
+  const shareInputRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    setShareUrl(`${window.location.origin}/book/${book.id}`);
+  }, [book.id]);
 
   async function toggleShare() {
     const next = !shared;
@@ -384,30 +392,43 @@ export function BookViewer({ book }: { book: Book }) {
       return;
     }
     setSharing(true);
+    setShareError("");
     try {
       if (!(await setBookShared(book.id, next))) {
         // 0줄이 돌아오는 경우는 대개 '내 책이 아닐 때'다(RLS는 오류가 아니라 0줄을 준다).
-        window.alert(
-          "공유 설정을 바꾸지 못했어요.\n내가 만든 동화만 공유할 수 있어요.\n(설정을 방금 올린 뒤라면 잠시 뒤 다시 눌러 주세요.)",
-        );
+        setShareError("내가 만든 동화만 공유할 수 있어요.");
         return;
       }
       setShared(next);
-      if (next) await copyShareLink();
+      setCopied(false);
     } finally {
       setSharing(false);
     }
   }
 
-  async function copyShareLink() {
-    const url = `${window.location.origin}/book/${book.id}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      window.alert(`링크를 복사했어요.\n\n${url}`);
-    } catch {
-      // 복사가 막힌 브라우저(권한·비보안 연결) — 주소를 직접 보여 준다.
-      window.prompt("아래 주소를 복사해 주세요", url);
-    }
+  /*
+   * 링크 복사 — 누른 그 순간에 바로 부른다.
+   *
+   * 예전에는 공유를 켠 **뒤에** 이어서 복사했는데, 그 사이에 서버를 한 번 다녀오면
+   * 브라우저가 "사용자가 누른 게 아니다"로 보고 클립보드를 막는다. 그래서 복사가
+   * 실패하고, 대신 띄우던 prompt()마저 막힌 환경에서 오류로 터졌다.
+   *
+   * 이제 켜기와 복사를 갈라 놓고, 복사는 버튼을 누른 그 자리에서 한다.
+   * 그마저 막히면 주소 칸을 통째로 선택해 준다 — 손으로 복사할 수 있게.
+   */
+  function copyShareLink() {
+    if (!shareUrl) return;
+    const fallback = () => {
+      shareInputRef.current?.focus();
+      shareInputRef.current?.select();
+      setShareError("자동 복사가 막혔어요. 파랗게 칠해진 주소를 복사해 주세요.");
+    };
+    if (!navigator.clipboard?.writeText) return fallback();
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true);
+      setShareError("");
+      window.setTimeout(() => setCopied(false), 2000);
+    }, fallback);
   }
 
   async function saveText() {
@@ -1796,14 +1817,31 @@ export function BookViewer({ book }: { book: Book }) {
           >
             {sharing ? "바꾸는 중…" : shared ? "🔗 공유 켜짐 — 끄기" : "🔗 링크로 공유하기"}
           </button>
-          {shared && !sharing && (
-            <button
-              type="button"
-              onClick={copyShareLink}
-              className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
-            >
-              링크 복사
-            </button>
+          {/* 켜져 있으면 주소를 화면에 그대로 보여 준다 — 창을 띄우는 방식은
+              환경에 따라 막힌다(실제로 prompt()가 막혀 오류가 났다). 눈에 보이면
+              복사가 실패해도 손으로 가져갈 수 있다. */}
+          {shared && !sharing && shareUrl && (
+            <div className="flex w-64 max-w-[70vw] flex-col gap-1 rounded-2xl bg-white/90 p-2 shadow backdrop-blur">
+              <input
+                ref={shareInputRef}
+                readOnly
+                value={shareUrl}
+                onFocus={(e) => e.currentTarget.select()}
+                className="w-full rounded-lg bg-neutral-100 px-2 py-1.5 text-[11px] font-bold text-neutral-600 outline-none"
+              />
+              <button
+                type="button"
+                onClick={copyShareLink}
+                className="rounded-full bg-neutral-800 px-3 py-1.5 text-xs font-extrabold text-white"
+              >
+                {copied ? "복사했어요 ✓" : "링크 복사"}
+              </button>
+            </div>
+          )}
+          {shareError && (
+            <p className="w-64 max-w-[70vw] break-keep rounded-xl bg-red-50/95 px-2.5 py-1.5 text-[11px] font-bold text-red-700 shadow backdrop-blur">
+              {shareError}
+            </p>
           )}
         </div>
       )}
