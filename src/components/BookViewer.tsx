@@ -80,6 +80,14 @@ const FREE_REDRAWS_PER_BOOK = 1;
  */
 const SHARE_ENABLED = true;
 
+/**
+ * 성우 목록에 부모 목소리(엄마·아빠)를 낼지 — **지금은 숨김** (2026-08-10 사장님 요청).
+ *
+ * 기능은 그대로 살아 있다. 이미 만들어 둔 부모 목소리로 저장된 책은 계속 그
+ * 목소리로 읽는다 — 고르는 칸에서만 내린다. 다시 열 때는 true 한 글자다.
+ */
+const PARENT_VOICE_PICKABLE = false;
+
 /** Web Speech 폴백용 읽기 속도(초당 글자). 경계 이벤트가 안 오는 기기에서 쓴다. */
 const FALLBACK_CHARS_PER_SEC = 5.5;
 
@@ -355,19 +363,34 @@ export function BookViewer({ book }: { book: Book }) {
    * 토큰과 그림이 통째로 날아가므로, 글만 고치는 길을 둔다.
    * (제공 동화는 파일로 관리하니 여기서 손대지 않는다.)
    */
-  const editable = book.id.startsWith("my-");
+  /*
+   * 조작(글 고치기·그림 다시 그리기·공유)을 낼지.
+   *
+   * 예전에는 "my-로 시작하는 책이면" 냈다. 그런데 공유 링크가 생기면서, 주소만
+   * 알고 들어온 남에게도 그 버튼들이 보이게 됐다(실제로 그렇게 보였다).
+   * 그래서 **내가 만든 책일 때만** 낸다. 주인을 확인하기 전(isOwner=false)에는
+   * 아무것도 내지 않는다 — 잠깐 보였다 사라지는 편보다 늦게 나오는 편이 낫다.
+   *
+   * 만들기 직후 화면처럼 주인 id가 아직 없는 책은, 로그인만 되어 있으면 낸다.
+   * 그 화면은 방금 자기가 만든 책이라 주인이 확실하다.
+   */
+  const savedBook = book.id.startsWith("my-");
+  const [isOwner, setIsOwner] = useState(false);
+  const editable = savedBook && isOwner;
   const [master, setMaster] = useState(false);
   /** 다시 그린 그림을 올릴 cafe24 폴더 이름 — 만들 때와 같이 회원 아이디로 나눈다. */
   const [redrawOwner, setRedrawOwner] = useState("guest");
   useEffect(() => {
-    if (!editable) return;
+    if (!savedBook) return;
     loadSession()
       .then((s) => {
         setMaster(s.isMaster);
         if (s.profile?.username) setRedrawOwner(s.profile.username);
+        // 주인 id가 실려 있으면 맞춰 보고, 없으면(만들기 직후) 로그인 여부로 본다.
+        setIsOwner(book.ownerId ? s.uid === book.ownerId : Boolean(s.uid));
       })
       .catch(() => {});
-  }, [editable]);
+  }, [savedBook, book.ownerId]);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
@@ -659,11 +682,13 @@ export function BookViewer({ book }: { book: Book }) {
    */
   const ratioOf = (i: number): number =>
     (isCreated ? imgRatios[0] : undefined) ?? imgRatios[i] ?? 4 / 3;
-  const parentChoices = parentVoices.map((p) => ({
-    id: `parent:${p.role}`,
-    label: `${p.label} 목소리`,
-    emoji: p.emoji,
-  }));
+  const parentChoices = PARENT_VOICE_PICKABLE
+    ? parentVoices.map((p) => ({
+        id: `parent:${p.role}`,
+        label: `${p.label} 목소리`,
+        emoji: p.emoji,
+      }))
+    : [];
   // 창작 동화는 성우 전체(16명)를 열지 않는다(2026-07-31 사장님 지시) — 바꿔 들을 때마다
   // 실시간 합성 크레딧이 나가서다.
   // "성우를 고른 책은 그 성우까지만" (2026-08-05): 만들 때 가을이를 골랐으면 가을이만
@@ -700,7 +725,7 @@ export function BookViewer({ book }: { book: Book }) {
         ? book.narrator!
         : TYPECAST_VOICES.some((voice) => voice.id === book.narrator)
           ? book.narrator!
-          : parentVoices.length > 0
+          : PARENT_VOICE_PICKABLE && parentVoices.length > 0
             ? `parent:${parentVoices[0].role}`
             : "tc-booqoo"
       : book.narrators?.[0] ?? book.narrator ?? safeStored;

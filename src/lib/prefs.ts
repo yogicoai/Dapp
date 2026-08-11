@@ -428,6 +428,7 @@ function rowToBook(r: BookRow): Book {
     id: r.id,
     hidden: r.hidden,
     shared: r.shared ?? false,
+    ownerId: r.owner,
     // 이미 저장된 책도 열 때 고쳐 보여 준다 — 다시 만들 필요 없이 바로 정상으로 보인다.
     title: toNfc(b.title),
     summary: toNfc(b.summary),
