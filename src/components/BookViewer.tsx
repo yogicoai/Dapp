@@ -406,6 +406,8 @@ export function BookViewer({ book }: { book: Book }) {
   const [sharing, setSharing] = useState(false);
   const [shareError, setShareError] = useState("");
   const [copied, setCopied] = useState(false);
+  /** 링크 상자를 펼쳤는지 — 늘 펼쳐 두면 그림을 가린다. */
+  const [shareOpen, setShareOpen] = useState(false);
   /** 주소는 브라우저에만 있다 — 서버 렌더와 어긋나지 않게 마운트 후에 채운다. */
   const [shareUrl, setShareUrl] = useState("");
   const shareInputRef = useRef<HTMLInputElement | null>(null);
@@ -433,6 +435,7 @@ export function BookViewer({ book }: { book: Book }) {
       }
       setShared(next);
       setCopied(false);
+      setShareOpen(next); // 켠 직후엔 바로 보낼 참이니 펼쳐 준다. 끄면 닫는다.
     } finally {
       setSharing(false);
     }
@@ -1843,21 +1846,21 @@ export function BookViewer({ book }: { book: Book }) {
               '링크 복사'가 따로 뜬다(꺼진 링크를 보내는 헛수고를 막는다).
               지금은 SHARE_ENABLED로 화면에서 내려 두었다. */}
           {SHARE_ENABLED && (
-          <button
-            type="button"
-            onClick={toggleShare}
-            disabled={sharing}
-            className={`rounded-full px-3 py-1.5 text-xs font-extrabold shadow backdrop-blur disabled:opacity-60 ${
-              shared ? "bg-emerald-600/90 text-white" : "bg-white/85 text-neutral-700"
-            }`}
-          >
-            {sharing ? "바꾸는 중…" : shared ? "🔗 공유 켜짐 — 끄기" : "🔗 링크로 공유하기"}
-          </button>
+            <button
+              type="button"
+              onClick={() => (shared ? setShareOpen((v) => !v) : toggleShare())}
+              disabled={sharing}
+              className={`rounded-full px-3 py-1.5 text-xs font-extrabold shadow backdrop-blur disabled:opacity-60 ${
+                shared ? "bg-emerald-600/90 text-white" : "bg-white/85 text-neutral-700"
+              }`}
+            >
+              {sharing ? "바꾸는 중…" : shared ? `🔗 공유 켜짐 ${shareOpen ? "▲" : "▼"}` : "🔗 링크로 공유하기"}
+            </button>
           )}
           {/* 켜져 있으면 주소를 화면에 그대로 보여 준다 — 창을 띄우는 방식은
               환경에 따라 막힌다(실제로 prompt()가 막혀 오류가 났다). 눈에 보이면
               복사가 실패해도 손으로 가져갈 수 있다. */}
-          {SHARE_ENABLED && shared && !sharing && shareUrl && (
+          {SHARE_ENABLED && shared && shareOpen && !sharing && shareUrl && (
             <div className="flex w-64 max-w-[70vw] flex-col gap-1 rounded-2xl bg-white/90 p-2 shadow backdrop-blur">
               <input
                 ref={shareInputRef}
@@ -1866,13 +1869,24 @@ export function BookViewer({ book }: { book: Book }) {
                 onFocus={(e) => e.currentTarget.select()}
                 className="w-full rounded-lg bg-neutral-100 px-2 py-1.5 text-[11px] font-bold text-neutral-600 outline-none"
               />
-              <button
-                type="button"
-                onClick={copyShareLink}
-                className="rounded-full bg-neutral-800 px-3 py-1.5 text-xs font-extrabold text-white"
-              >
-                {copied ? "복사했어요 ✓" : "링크 복사"}
-              </button>
+              <div className="flex gap-1.5">
+                <button
+                  type="button"
+                  onClick={copyShareLink}
+                  className="flex-1 rounded-full bg-neutral-800 px-3 py-1.5 text-xs font-extrabold text-white"
+                >
+                  {copied ? "복사했어요 ✓" : "링크 복사"}
+                </button>
+                {/* 끄기는 상자 안에 둔다 — 밖에 두면 여닫는 버튼과 헷갈려 실수로 꺼진다. */}
+                <button
+                  type="button"
+                  onClick={toggleShare}
+                  disabled={sharing}
+                  className="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-extrabold text-neutral-500 disabled:opacity-60"
+                >
+                  공유 끄기
+                </button>
+              </div>
             </div>
           )}
           {SHARE_ENABLED && shareError && (
