@@ -377,6 +377,15 @@ export function BookViewer({ book }: { book: Book }) {
   const savedBook = book.id.startsWith("my-");
   const [isOwner, setIsOwner] = useState(false);
   const editable = savedBook && isOwner;
+  /**
+   * 공유 링크로 들어온 손님인가 — 남이 만든 동화를 주소만 알고 연 사람.
+   *
+   * 손님에게는 고르는 것을 하나도 내지 않는다. 글 고치기·그림 다시 그리기·공유는
+   * 남의 책을 건드리는 일이고, 성우 바꾸기는 누를 때마다 낭독을 새로 합성해
+   * **우리 크레딧이 나간다.** 링크는 여러 사람에게 퍼질 수 있으니 잠가 둔다.
+   * 읽고 듣는 것은 그대로 다 된다.
+   */
+  const guestReader = savedBook && !isOwner;
   const [master, setMaster] = useState(false);
   /** 다시 그린 그림을 올릴 cafe24 폴더 이름 — 만들 때와 같이 회원 아이디로 나눈다. */
   const [redrawOwner, setRedrawOwner] = useState("guest");
@@ -1725,7 +1734,9 @@ export function BookViewer({ book }: { book: Book }) {
             {bgmOn ? "♪" : "♪"}
           </span>
         </button>
-        {/* 나레이션 성우 바꾸기 — 읽다가 마음에 안 들면 여기서 바로 교체. */}
+        {/* 나레이션 성우 바꾸기 — 읽다가 마음에 안 들면 여기서 바로 교체.
+            공유 링크로 온 손님에게는 내지 않는다(바꿀 때마다 합성 크레딧이 나간다). */}
+        {!guestReader && (
         <button
           type="button"
           aria-label="읽어주는 성우 바꾸기"
@@ -1741,10 +1752,11 @@ export function BookViewer({ book }: { book: Book }) {
           </span>
           <span className="hidden text-xs font-extrabold sm:inline">성우</span>
         </button>
+        )}
       </div>
 
       {/* 성우 목록 — 상단 버튼 아래로 펼쳐진다. 길어서 안에서 스크롤된다. */}
-      {voiceMenu && (
+      {voiceMenu && !guestReader && (
         <div
           className="absolute right-4 z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur"
           style={{ top: "calc(3.75rem + env(safe-area-inset-top))" }}
