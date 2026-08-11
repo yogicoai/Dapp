@@ -19,6 +19,7 @@ import {
   TEXT_SCALES,
   hotspotHintSeen,
   markHotspotHintSeen,
+  setBookShared,
   updateBookData,
   loadStoryFont,
   type StoryFont,
@@ -361,6 +362,53 @@ export function BookViewer({ book }: { book: Book }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
+
+  /*
+   * 공유 — 켜면 주소를 아는 사람이 로그인 없이 이 책을 읽는다.
+   *
+   * 기본은 꺼짐이다. 아이 이름과 아이를 닮은 그림이 들어 있는 책이라,
+   * 켜는 것은 부모가 한 번 더 누르는 일이어야 한다. 끄면 그 즉시 다시 안 열린다.
+   * 주소는 바뀌지 않으므로, 껐다 켜면 예전에 보낸 링크가 다시 살아난다.
+   */
+  const [shared, setShared] = useState(book.shared === true);
+  const [sharing, setSharing] = useState(false);
+
+  async function toggleShare() {
+    const next = !shared;
+    if (
+      next &&
+      !window.confirm(
+        "이 동화를 링크로 공유할까요?\n\n주소를 아는 사람은 로그인 없이 볼 수 있어요.\n아이 이름과 그림이 담겨 있으니 아는 분에게만 보내 주세요.\n\n언제든 다시 끌 수 있어요.",
+      )
+    ) {
+      return;
+    }
+    setSharing(true);
+    try {
+      if (!(await setBookShared(book.id, next))) {
+        // 0줄이 돌아오는 경우는 대개 '내 책이 아닐 때'다(RLS는 오류가 아니라 0줄을 준다).
+        window.alert(
+          "공유 설정을 바꾸지 못했어요.\n내가 만든 동화만 공유할 수 있어요.\n(설정을 방금 올린 뒤라면 잠시 뒤 다시 눌러 주세요.)",
+        );
+        return;
+      }
+      setShared(next);
+      if (next) await copyShareLink();
+    } finally {
+      setSharing(false);
+    }
+  }
+
+  async function copyShareLink() {
+    const url = `${window.location.origin}/book/${book.id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      window.alert(`링크를 복사했어요.\n\n${url}`);
+    } catch {
+      // 복사가 막힌 브라우저(권한·비보안 연결) — 주소를 직접 보여 준다.
+      window.prompt("아래 주소를 복사해 주세요", url);
+    }
+  }
 
   async function saveText() {
     setSaving(true);
@@ -1736,6 +1784,27 @@ export function BookViewer({ book }: { book: Book }) {
                   ? `이 쪽 그림 다시 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`
                   : `이 쪽 그림 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`}
           </button>
+          {/* 링크 공유 — 켜면 주소를 아는 사람이 로그인 없이 읽는다. 켜져 있을 때만
+              '링크 복사'가 따로 뜬다(꺼진 링크를 보내는 헛수고를 막는다). */}
+          <button
+            type="button"
+            onClick={toggleShare}
+            disabled={sharing}
+            className={`rounded-full px-3 py-1.5 text-xs font-extrabold shadow backdrop-blur disabled:opacity-60 ${
+              shared ? "bg-emerald-600/90 text-white" : "bg-white/85 text-neutral-700"
+            }`}
+          >
+            {sharing ? "바꾸는 중…" : shared ? "🔗 공유 켜짐 — 끄기" : "🔗 링크로 공유하기"}
+          </button>
+          {shared && !sharing && (
+            <button
+              type="button"
+              onClick={copyShareLink}
+              className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
+            >
+              링크 복사
+            </button>
+          )}
         </div>
       )}
       {editing && (
