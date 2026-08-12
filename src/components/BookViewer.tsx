@@ -70,14 +70,6 @@ const SWIPE_THRESHOLD_PX = 50;
  */
 const FREE_REDRAWS_PER_BOOK = 1;
 
-/**
- * 성우 목록에 부모 목소리(엄마·아빠)를 낼지 — **지금은 숨김** (2026-08-10 사장님 요청).
- *
- * 기능은 그대로 살아 있다. 이미 부모 목소리로 저장된 책은 계속 그 목소리로 읽는다 —
- * 고르는 칸에서만 내린다. 다시 열 때는 true 한 글자다.
- */
-const PARENT_VOICE_PICKABLE = false;
-
 /** Web Speech 폴백용 읽기 속도(초당 글자). 경계 이벤트가 안 오는 기기에서 쓴다. */
 const FALLBACK_CHARS_PER_SEC = 5.5;
 
@@ -591,13 +583,11 @@ export function BookViewer({ book }: { book: Book }) {
    */
   const ratioOf = (i: number): number =>
     (isCreated ? imgRatios[0] : undefined) ?? imgRatios[i] ?? 4 / 3;
-  const parentChoices = PARENT_VOICE_PICKABLE
-    ? parentVoices.map((p) => ({
-        id: `parent:${p.role}`,
-        label: `${p.label} 목소리`,
-        emoji: p.emoji,
-      }))
-    : [];
+  const parentChoices = parentVoices.map((p) => ({
+    id: `parent:${p.role}`,
+    label: `${p.label} 목소리`,
+    emoji: p.emoji,
+  }));
   // 창작 동화는 성우 전체(16명)를 열지 않는다(2026-07-31 사장님 지시) — 바꿔 들을 때마다
   // 실시간 합성 크레딧이 나가서다.
   // "성우를 고른 책은 그 성우까지만" (2026-08-05): 만들 때 가을이를 골랐으면 가을이만
@@ -634,7 +624,7 @@ export function BookViewer({ book }: { book: Book }) {
         ? book.narrator!
         : TYPECAST_VOICES.some((voice) => voice.id === book.narrator)
           ? book.narrator!
-          : PARENT_VOICE_PICKABLE && parentVoices.length > 0
+          : parentVoices.length > 0
             ? `parent:${parentVoices[0].role}`
             : "tc-booqoo"
       : book.narrators?.[0] ?? book.narrator ?? safeStored;
