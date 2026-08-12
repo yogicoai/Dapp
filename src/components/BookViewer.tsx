@@ -19,7 +19,6 @@ import {
   TEXT_SCALES,
   hotspotHintSeen,
   markHotspotHintSeen,
-  setBookShared,
   updateBookData,
   loadStoryFont,
   type StoryFont,
@@ -72,19 +71,10 @@ const SWIPE_THRESHOLD_PX = 50;
 const FREE_REDRAWS_PER_BOOK = 1;
 
 /**
- * 링크 공유 버튼을 화면에 낼지.
- *
- * false로 두면 버튼만 사라진다 — **이미 켜 둔 책은 계속 열린다.** DB의 shared
- * 값은 그대로이기 때문이다. 정말 닫으려면 켜 둔 책을 끄고 내려야 한다:
- *   update public.books set shared = false where shared = true;
- */
-const SHARE_ENABLED = true;
-
-/**
  * 성우 목록에 부모 목소리(엄마·아빠)를 낼지 — **지금은 숨김** (2026-08-10 사장님 요청).
  *
- * 기능은 그대로 살아 있다. 이미 만들어 둔 부모 목소리로 저장된 책은 계속 그
- * 목소리로 읽는다 — 고르는 칸에서만 내린다. 다시 열 때는 true 한 글자다.
+ * 기능은 그대로 살아 있다. 이미 부모 목소리로 저장된 책은 계속 그 목소리로 읽는다 —
+ * 고르는 칸에서만 내린다. 다시 열 때는 true 한 글자다.
  */
 const PARENT_VOICE_PICKABLE = false;
 
@@ -363,117 +353,22 @@ export function BookViewer({ book }: { book: Book }) {
    * 토큰과 그림이 통째로 날아가므로, 글만 고치는 길을 둔다.
    * (제공 동화는 파일로 관리하니 여기서 손대지 않는다.)
    */
-  /*
-   * 조작(글 고치기·그림 다시 그리기·공유)을 낼지.
-   *
-   * 예전에는 "my-로 시작하는 책이면" 냈다. 그런데 공유 링크가 생기면서, 주소만
-   * 알고 들어온 남에게도 그 버튼들이 보이게 됐다(실제로 그렇게 보였다).
-   * 그래서 **내가 만든 책일 때만** 낸다. 주인을 확인하기 전(isOwner=false)에는
-   * 아무것도 내지 않는다 — 잠깐 보였다 사라지는 편보다 늦게 나오는 편이 낫다.
-   *
-   * 만들기 직후 화면처럼 주인 id가 아직 없는 책은, 로그인만 되어 있으면 낸다.
-   * 그 화면은 방금 자기가 만든 책이라 주인이 확실하다.
-   */
-  const savedBook = book.id.startsWith("my-");
-  const [isOwner, setIsOwner] = useState(false);
-  const editable = savedBook && isOwner;
-  /**
-   * 공유 링크로 들어온 손님인가 — 남이 만든 동화를 주소만 알고 연 사람.
-   *
-   * 손님에게는 고르는 것을 하나도 내지 않는다. 글 고치기·그림 다시 그리기·공유는
-   * 남의 책을 건드리는 일이고, 성우 바꾸기는 누를 때마다 낭독을 새로 합성해
-   * **우리 크레딧이 나간다.** 링크는 여러 사람에게 퍼질 수 있으니 잠가 둔다.
-   * 읽고 듣는 것은 그대로 다 된다.
-   */
-  const guestReader = savedBook && !isOwner;
+  const editable = book.id.startsWith("my-");
   const [master, setMaster] = useState(false);
   /** 다시 그린 그림을 올릴 cafe24 폴더 이름 — 만들 때와 같이 회원 아이디로 나눈다. */
   const [redrawOwner, setRedrawOwner] = useState("guest");
   useEffect(() => {
-    if (!savedBook) return;
+    if (!editable) return;
     loadSession()
       .then((s) => {
         setMaster(s.isMaster);
         if (s.profile?.username) setRedrawOwner(s.profile.username);
-        // 주인 id가 실려 있으면 맞춰 보고, 없으면(만들기 직후) 로그인 여부로 본다.
-        setIsOwner(book.ownerId ? s.uid === book.ownerId : Boolean(s.uid));
       })
       .catch(() => {});
-  }, [savedBook, book.ownerId]);
+  }, [editable]);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
-
-  /*
-   * 공유 — 켜면 주소를 아는 사람이 로그인 없이 이 책을 읽는다.
-   *
-   * 기본은 꺼짐이다. 아이 이름과 아이를 닮은 그림이 들어 있는 책이라,
-   * 켜는 것은 부모가 한 번 더 누르는 일이어야 한다. 끄면 그 즉시 다시 안 열린다.
-   * 주소는 바뀌지 않으므로, 껐다 켜면 예전에 보낸 링크가 다시 살아난다.
-   */
-  const [shared, setShared] = useState(book.shared === true);
-  const [sharing, setSharing] = useState(false);
-  const [shareError, setShareError] = useState("");
-  const [copied, setCopied] = useState(false);
-  /** 링크 상자를 펼쳤는지 — 늘 펼쳐 두면 그림을 가린다. */
-  const [shareOpen, setShareOpen] = useState(false);
-  /** 주소는 브라우저에만 있다 — 서버 렌더와 어긋나지 않게 마운트 후에 채운다. */
-  const [shareUrl, setShareUrl] = useState("");
-  const shareInputRef = useRef<HTMLInputElement | null>(null);
-  useEffect(() => {
-    setShareUrl(`${window.location.origin}/book/${book.id}`);
-  }, [book.id]);
-
-  async function toggleShare() {
-    const next = !shared;
-    if (
-      next &&
-      !window.confirm(
-        "이 동화를 링크로 공유할까요?\n\n주소를 아는 사람은 로그인 없이 볼 수 있어요.\n아이 이름과 그림이 담겨 있으니 아는 분에게만 보내 주세요.\n\n언제든 다시 끌 수 있어요.",
-      )
-    ) {
-      return;
-    }
-    setSharing(true);
-    setShareError("");
-    try {
-      if (!(await setBookShared(book.id, next))) {
-        // 0줄이 돌아오는 경우는 대개 '내 책이 아닐 때'다(RLS는 오류가 아니라 0줄을 준다).
-        setShareError("내가 만든 동화만 공유할 수 있어요.");
-        return;
-      }
-      setShared(next);
-      setCopied(false);
-      setShareOpen(next); // 켠 직후엔 바로 보낼 참이니 펼쳐 준다. 끄면 닫는다.
-    } finally {
-      setSharing(false);
-    }
-  }
-
-  /*
-   * 링크 복사 — 누른 그 순간에 바로 부른다.
-   *
-   * 예전에는 공유를 켠 **뒤에** 이어서 복사했는데, 그 사이에 서버를 한 번 다녀오면
-   * 브라우저가 "사용자가 누른 게 아니다"로 보고 클립보드를 막는다. 그래서 복사가
-   * 실패하고, 대신 띄우던 prompt()마저 막힌 환경에서 오류로 터졌다.
-   *
-   * 이제 켜기와 복사를 갈라 놓고, 복사는 버튼을 누른 그 자리에서 한다.
-   * 그마저 막히면 주소 칸을 통째로 선택해 준다 — 손으로 복사할 수 있게.
-   */
-  function copyShareLink() {
-    if (!shareUrl) return;
-    const fallback = () => {
-      shareInputRef.current?.focus();
-      shareInputRef.current?.select();
-      setShareError("자동 복사가 막혔어요. 파랗게 칠해진 주소를 복사해 주세요.");
-    };
-    if (!navigator.clipboard?.writeText) return fallback();
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      setCopied(true);
-      setShareError("");
-      window.setTimeout(() => setCopied(false), 2000);
-    }, fallback);
-  }
 
   async function saveText() {
     setSaving(true);
@@ -507,6 +402,8 @@ export function BookViewer({ book }: { book: Book }) {
    * 예전 책은 그 재료가 없으므로 본문과 옆 쪽 그림만으로 최선을 다한다.
    */
   const [redrawing, setRedrawing] = useState(false);
+  /** 고치기 도구를 펼쳤는지 — 평소엔 접어 둬서 그림을 가리지 않는다. */
+  const [toolsOpen, setToolsOpen] = useState(false);
   /** 이 책에서 다시 그릴 수 있는 장수. 마스터는 제한 없음. */
   const redrawsLeft = master
     ? Number.POSITIVE_INFINITY
@@ -1734,9 +1631,7 @@ export function BookViewer({ book }: { book: Book }) {
             {bgmOn ? "♪" : "♪"}
           </span>
         </button>
-        {/* 나레이션 성우 바꾸기 — 읽다가 마음에 안 들면 여기서 바로 교체.
-            공유 링크로 온 손님에게는 내지 않는다(바꿀 때마다 합성 크레딧이 나간다). */}
-        {!guestReader && (
+        {/* 나레이션 성우 바꾸기 — 읽다가 마음에 안 들면 여기서 바로 교체. */}
         <button
           type="button"
           aria-label="읽어주는 성우 바꾸기"
@@ -1752,11 +1647,10 @@ export function BookViewer({ book }: { book: Book }) {
           </span>
           <span className="hidden text-xs font-extrabold sm:inline">성우</span>
         </button>
-        )}
       </div>
 
       {/* 성우 목록 — 상단 버튼 아래로 펼쳐진다. 길어서 안에서 스크롤된다. */}
-      {voiceMenu && !guestReader && (
+      {voiceMenu && (
         <div
           className="absolute right-4 z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur"
           style={{ top: "calc(3.75rem + env(safe-area-inset-top))" }}
@@ -1818,93 +1712,69 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 본문 고치기 (마스터 · 내가 만든 동화만).
           글자가 소실돼 ◆? 로 나오는 쪽은 사람이 다시 써 넣는 수밖에 없다.
           그 한 글자 때문에 동화를 다시 만들면 토큰과 그림이 통째로 날아간다. */}
+      {/*
+        * 고치는 도구는 평소엔 작은 아이콘 하나로 접어 둔다.
+        *
+        * 글자가 박힌 알약 두 개가 늘 떠 있으니 그림 왼쪽 위를 계속 덮었다. 이건
+        * 읽을 때 쓰는 것이 아니라 '어쩌다 한 번' 쓰는 것이라, 평소에 자리를 차지할
+        * 이유가 없다. 아이콘을 누르면 그때 펼쳐진다.
+        */}
       {editable && !editing && (
         <div className="absolute left-3 top-16 z-20 flex flex-col items-start gap-1.5">
-          {/* 글 고치기는 아직 마스터만 — 본문을 바꾸면 낭독 캐시와 어긋난다. */}
-          {master && (
-            <button
-              type="button"
-              onClick={() => {
-                setDraft(book.pages[index].text);
-                setEditing(true);
-              }}
-              className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/icons/func-edit.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
-              글 고치기
-            </button>
-          )}
-          {/* 이 쪽 그림 다시 그리기 — 삽화가 빠졌거나 마음에 안 드는 쪽을 그 쪽만 고친다.
-              그림이 없는 쪽은 문구를 바꿔, 비어 있다는 걸 먼저 알아채게 한다.
-              다 쓴 뒤에도 버튼은 남긴다 — 사라지면 "있었는데 없어졌다"가 더 헷갈린다. */}
           <button
             type="button"
-            onClick={redrawPage}
-            disabled={redrawing || redrawsLeft <= 0}
-            className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur disabled:opacity-50"
+            onClick={() => setToolsOpen((v) => !v)}
+            aria-label={toolsOpen ? "고치기 도구 접기" : "고치기 도구 펼치기"}
+            className={`flex h-9 w-9 items-center justify-center rounded-full shadow backdrop-blur transition ${
+              toolsOpen ? "bg-neutral-800" : "bg-white/85 hover:bg-white"
+            }`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/icons/func-remake.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
-            {redrawing
-              ? "그리는 중…"
-              : redrawsLeft <= 0
-                ? "다시 그리기를 다 썼어요"
-                : book.pages[index].image
-                  ? `이 쪽 그림 다시 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`
-                  : `이 쪽 그림 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`}
+            <img
+              src="/icons/func-remake.webp"
+              alt=""
+              aria-hidden
+              className={`h-6 w-6 object-contain ${toolsOpen ? "brightness-0 invert" : ""}`}
+            />
           </button>
-          {/* 링크 공유 — 켜면 주소를 아는 사람이 로그인 없이 읽는다. 켜져 있을 때만
-              '링크 복사'가 따로 뜬다(꺼진 링크를 보내는 헛수고를 막는다).
-              지금은 SHARE_ENABLED로 화면에서 내려 두었다. */}
-          {SHARE_ENABLED && (
-            <button
-              type="button"
-              onClick={() => (shared ? setShareOpen((v) => !v) : toggleShare())}
-              disabled={sharing}
-              className={`rounded-full px-3 py-1.5 text-xs font-extrabold shadow backdrop-blur disabled:opacity-60 ${
-                shared ? "bg-emerald-600/90 text-white" : "bg-white/85 text-neutral-700"
-              }`}
-            >
-              {sharing ? "바꾸는 중…" : shared ? `🔗 공유 켜짐 ${shareOpen ? "▲" : "▼"}` : "🔗 링크로 공유하기"}
-            </button>
-          )}
-          {/* 켜져 있으면 주소를 화면에 그대로 보여 준다 — 창을 띄우는 방식은
-              환경에 따라 막힌다(실제로 prompt()가 막혀 오류가 났다). 눈에 보이면
-              복사가 실패해도 손으로 가져갈 수 있다. */}
-          {SHARE_ENABLED && shared && shareOpen && !sharing && shareUrl && (
-            <div className="flex w-64 max-w-[70vw] flex-col gap-1 rounded-2xl bg-white/90 p-2 shadow backdrop-blur">
-              <input
-                ref={shareInputRef}
-                readOnly
-                value={shareUrl}
-                onFocus={(e) => e.currentTarget.select()}
-                className="w-full rounded-lg bg-neutral-100 px-2 py-1.5 text-[11px] font-bold text-neutral-600 outline-none"
-              />
-              <div className="flex gap-1.5">
+
+          {toolsOpen && (
+            <>
+              {/* 글 고치기는 아직 마스터만 — 본문을 바꾸면 낭독 캐시와 어긋난다. */}
+              {master && (
                 <button
                   type="button"
-                  onClick={copyShareLink}
-                  className="flex-1 rounded-full bg-neutral-800 px-3 py-1.5 text-xs font-extrabold text-white"
+                  onClick={() => {
+                    setDraft(book.pages[index].text);
+                    setEditing(true);
+                  }}
+                  className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
                 >
-                  {copied ? "복사했어요 ✓" : "링크 복사"}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/icons/func-edit.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
+                  글 고치기
                 </button>
-                {/* 끄기는 상자 안에 둔다 — 밖에 두면 여닫는 버튼과 헷갈려 실수로 꺼진다. */}
-                <button
-                  type="button"
-                  onClick={toggleShare}
-                  disabled={sharing}
-                  className="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-extrabold text-neutral-500 disabled:opacity-60"
-                >
-                  공유 끄기
-                </button>
-              </div>
-            </div>
-          )}
-          {SHARE_ENABLED && shareError && (
-            <p className="w-64 max-w-[70vw] break-keep rounded-xl bg-red-50/95 px-2.5 py-1.5 text-[11px] font-bold text-red-700 shadow backdrop-blur">
-              {shareError}
-            </p>
+              )}
+              {/* 이 쪽 그림 다시 그리기 — 삽화가 빠졌거나 마음에 안 드는 쪽을 그 쪽만 고친다.
+                  그림이 없는 쪽은 문구를 바꿔, 비어 있다는 걸 먼저 알아채게 한다.
+                  다 쓴 뒤에도 버튼은 남긴다 — 사라지면 "있었는데 없어졌다"가 더 헷갈린다. */}
+              <button
+                type="button"
+                onClick={redrawPage}
+                disabled={redrawing || redrawsLeft <= 0}
+                className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur disabled:opacity-50"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/icons/func-remake.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
+                {redrawing
+                  ? "그리는 중…"
+                  : redrawsLeft <= 0
+                    ? "다시 그리기를 다 썼어요"
+                    : book.pages[index].image
+                      ? `이 쪽 그림 다시 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`
+                      : `이 쪽 그림 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`}
+              </button>
+            </>
           )}
         </div>
       )}

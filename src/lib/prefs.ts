@@ -404,7 +404,7 @@ export function saveBookProgress(id: string, page: number): void {
  * /book/[id]가 JSON에 없는 id를 여기서 찾는다. 마스터는 RLS로 전 회원 책을 열람할 수 있다.
  * 삽화·음성은 무거우니 파일 자체는 cafe24 URL로 두고, 여기 data(jsonb)엔 그 URL만 들어간다.
  */
-type BookRow = { id: string; owner: string; title: string | null; data: Book; hidden: boolean; shared?: boolean };
+type BookRow = { id: string; owner: string; title: string | null; data: Book; hidden: boolean };
 
 /** DB 행 → Book 객체 (id·hidden은 컬럼 값으로 덮어써 항상 최신). */
 /**
@@ -427,8 +427,6 @@ function rowToBook(r: BookRow): Book {
     ...b,
     id: r.id,
     hidden: r.hidden,
-    shared: r.shared ?? false,
-    ownerId: r.owner,
     // 이미 저장된 책도 열 때 고쳐 보여 준다 — 다시 만들 필요 없이 바로 정상으로 보인다.
     title: toNfc(b.title),
     summary: toNfc(b.summary),
@@ -675,7 +673,7 @@ export async function loadAllBooksBrief(): Promise<BookBrief[]> {
 export async function loadMyBook(id: string): Promise<Book | null> {
   const sb = getSupabase();
   if (!sb) return null;
-  const { data } = await sb.from("books").select("id,owner,title,data,hidden,shared").eq("id", id).maybeSingle();
+  const { data } = await sb.from("books").select("id,owner,title,data,hidden").eq("id", id).maybeSingle();
   return data ? rowToBook(data as BookRow) : null;
 }
 
@@ -929,7 +927,7 @@ export async function countBooksWithEmbeddedArt(): Promise<number> {
 export async function loadBookWithOwner(id: string): Promise<{ book: Book; owner: string } | null> {
   const sb = getSupabase();
   if (!sb) return null;
-  const { data } = await sb.from("books").select("id,owner,title,data,hidden,shared").eq("id", id).maybeSingle();
+  const { data } = await sb.from("books").select("id,owner,title,data,hidden").eq("id", id).maybeSingle();
   if (!data) return null;
   const row = data as BookRow;
   return { book: rowToBook(row), owner: row.owner };
@@ -944,20 +942,6 @@ export async function loadBookWithOwner(id: string): Promise<{ book: Book; owner
  * RLS에 막히면 오류가 아니라 0줄이 돌아오므로(게시판에서 겪은 그 함정), 반드시
  * 바뀐 줄 수를 확인해서 성공 여부를 돌려준다.
  */
-/**
- * 공유를 켜고 끈다. 켜면 주소를 아는 사람이 로그인 없이 읽을 수 있다.
- *
- * 컬럼(shared)을 바꾸는 것이지 책 내용(data)을 건드리지 않는다.
- * RLS가 막으면 오류가 아니라 0줄이 돌아오므로 바뀐 줄 수로 성공을 판단한다.
- */
-export async function setBookShared(id: string, shared: boolean): Promise<boolean> {
-  const sb = getSupabase();
-  if (!sb) return false;
-  const { data, error } = await sb.from("books").update({ shared }).eq("id", id).select("id");
-  if (error) return false;
-  return (data?.length ?? 0) > 0;
-}
-
 export async function updateBookData(id: string, book: Book): Promise<boolean> {
   const sb = getSupabase();
   if (!sb) return false;
