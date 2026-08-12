@@ -1,7 +1,16 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { lowPass, resample, toneLevel } from "./voice-dsp.ts";
+import {
+  CLONE_MAX_SECONDS,
+  CLONE_SAMPLE_RATE,
+  cloneWavBytes,
+  lowPass,
+  resample,
+  toneLevel,
+  trimSilence,
+  UPLOAD_LIMIT_BYTES,
+} from "./voice-dsp.ts";
 
 const FROM = 44100;
 const TO = 16000;
@@ -69,5 +78,61 @@ describe("lowPass", () => {
     const before = toneLevel(x, 1000, FROM);
     const after = toneLevel(lowPass(x, FROM, 7200), 1000, FROM);
     assert.ok(after > before * 0.8, `1kHz가 깎였다: ${before.toFixed(3)} → ${after.toFixed(3)}`);
+  });
+});
+
+describe("클로닝 업로드 예산", () => {
+  it("가장 길게 읽어도 요청 한도 안에 들어온다", () => {
+    // 이걸 넘기면 413이 나서 목소리를 아예 못 만든다. 표본율이나 길이를 올릴 때
+    // 반드시 여기가 먼저 깨지도록 둔다.
+    const worst = cloneWavBytes(CLONE_MAX_SECONDS);
+    assert.ok(worst < UPLOAD_LIMIT_BYTES, `${(worst / 1048576).toFixed(2)}MB — 한도를 넘는다`);
+  });
+
+  it("한도의 90%도 넘지 않는다 — 헤더·전송 오버헤드 여유", () => {
+    assert.ok(cloneWavBytes(CLONE_MAX_SECONDS) < UPLOAD_LIMIT_BYTES * 0.9);
+  });
+
+  it("실제 녹음 길이(두 문장 × 35초)는 상한 안에 있다", () => {
+    assert.ok(35 * 2 < CLONE_MAX_SECONDS, "실제 녹음이 상한에 잘리면 안 된다");
+  });
+
+  it("공기감이 담기는 표본율이다 — 8kHz 위가 살아남는다", () => {
+    assert.ok(CLONE_SAMPLE_RATE / 2 > 8000, "나이퀴스트가 8kHz 이하면 공기감을 못 담는다");
+  });
+});
+
+describe("trimSilence — 조용히 녹음해도 말소리를 깎지 않는다", () => {
+  /** 말소리처럼 들쭉날쭉한 신호 + 앞뒤 침묵. */
+  function speech(amplitude: number, rate = 24000): Float32Array {
+    const n = rate * 3;
+    const x = new Float32Array(n);
+    for (let i = rate; i < rate * 2; i++) {
+      // 200Hz 기본음에 배음을 얹어 말소리 비슷하게
+      const t = i / rate;
+      x[i] = amplitude * (Math.sin(2 * Math.PI * 200 * t) + 0.4 * Math.sin(2 * Math.PI * 700 * t));
+    }
+    return x;
+  }
+
+  it("크게 녹음한 말소리를 지킨다", () => {
+    const out = trimSilence(speech(0.5), 24000);
+    assert.ok(out.length > 24000 * 0.9, `너무 많이 잘렸다: ${out.length}`);
+  });
+
+  it("작게 녹음한 말소리도 지킨다 — 예전에는 통째로 잘렸다", () => {
+    // 진폭 0.02는 옛 고정 기준(0.012)에 걸려 말소리가 침묵으로 오인되던 크기다.
+    const out = trimSilence(speech(0.02), 24000);
+    assert.ok(out.length > 24000 * 0.9, `작게 녹음한 말이 잘렸다: ${out.length}`);
+  });
+
+  it("앞뒤 침묵은 잘라낸다", () => {
+    const out = trimSilence(speech(0.5), 24000);
+    assert.ok(out.length < 24000 * 3, "침묵이 그대로 남았다");
+  });
+
+  it("전부 조용하면 손대지 않는다", () => {
+    const silent = new Float32Array(24000);
+    assert.equal(trimSilence(silent, 24000).length, silent.length);
   });
 });

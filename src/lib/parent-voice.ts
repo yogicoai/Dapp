@@ -6,7 +6,13 @@
  * 저장은 2단: ① 이 기기(localStorage) — 키만 넣으면 바로 테스트되게. ② Supabase(voice_clones)
  * — 여러 기기·재설치에도 남는 '정식' 저장(테이블 SQL을 돌리면 자동 사용, 없으면 로컬만).
  */
-import { resample } from "@/lib/voice-dsp";
+import {
+  CLONE_MAX_SECONDS,
+  CLONE_SAMPLE_RATE,
+  cloneWavBytes,
+  resample,
+  trimSilence,
+} from "@/lib/voice-dsp";
 import { currentUid, getSupabase } from "@/lib/supabase";
 import { capPieceLengths } from "@/lib/voice-trim";
 
@@ -95,46 +101,6 @@ function highPass(x: Float32Array, sampleRate: number): Float32Array {
   return y;
 }
 
-/**
- * 앞뒤 침묵을 잘라내고, 중간의 긴 침묵은 짧게 줄인다.
- * 말이 없는 구간까지 학습하면 클론이 늘어지고 어색해진다.
- */
-function trimSilence(x: Float32Array, sampleRate: number): Float32Array {
-  const win = Math.max(1, Math.floor(sampleRate * 0.02)); // 20ms 단위로 본다
-  const loud: boolean[] = [];
-  for (let i = 0; i < x.length; i += win) {
-    let s = 0;
-    const end = Math.min(x.length, i + win);
-    for (let j = i; j < end; j++) s += x[j] * x[j];
-    loud.push(Math.sqrt(s / (end - i)) > 0.012);
-  }
-  let first = loud.indexOf(true);
-  let last = loud.lastIndexOf(true);
-  if (first < 0) return x; // 전부 조용하면 손대지 않는다(품질 검사가 따로 잡는다)
-  // 말 앞뒤로 0.15초는 남긴다 — 딱 붙여 자르면 첫 소리가 잘려 들린다.
-  const pad = Math.ceil(0.15 / 0.02);
-  first = Math.max(0, first - pad);
-  last = Math.min(loud.length - 1, last + pad);
-
-  const maxGap = Math.ceil(0.8 / 0.02); // 0.8초 넘는 침묵은
-  const keepGap = Math.ceil(0.3 / 0.02); // 0.3초로 줄인다
-  const out: number[] = [];
-  let gap = 0;
-  for (let b = first; b <= last; b++) {
-    if (!loud[b]) {
-      gap++;
-      if (gap > maxGap) continue; // 너무 긴 침묵은 통째로 건너뛴다
-      if (gap > keepGap) continue;
-    } else {
-      gap = 0;
-    }
-    const s = b * win;
-    const e = Math.min(x.length, s + win);
-    for (let j = s; j < e; j++) out.push(x[j]);
-  }
-  return Float32Array.from(out);
-}
-
 /** 최대 크기를 0.9까지 끌어올린다. 작게 녹음된 목소리를 살리는 가장 큰 한 방. */
 function normalize(x: Float32Array): Float32Array {
   let peak = 0;
@@ -151,21 +117,7 @@ function normalize(x: Float32Array): Float32Array {
   return y;
 }
 
-/**
- * 클로닝용 표본율. 사람 목소리는 16kHz면 충분하다(광대역 음성 표준).
- *
- * 왜 낮추나: WAV는 압축이 없어서 44.1kHz로 보내면 40초가 3.4MB, 두 번 읽으면 6.7MB다.
- * 서버 함수의 요청 본문 한도(4.5MB)를 넘겨 413(용량 초과)이 났다(실제 발생).
- * 16kHz로 낮추면 두 번 읽어도 2.4MB — 넉넉히 들어가고, 목소리 특징은 그대로 남는다.
- */
-const CLONE_SAMPLE_RATE = 16000;
-/** 안전 상한 — 아무리 길게 읽어도 이보다 길게는 안 보낸다(한도 초과 방지). */
-const CLONE_MAX_SECONDS = 120;
-/**
- * 이 크기 안의 WAV면 이미 클로닝용으로 구워진 것으로 보고 그대로 보낸다.
- * (16-bit 모노 × 16kHz × 120초 + 헤더). 넘으면 다른 데서 온 파일이니 다시 굽는다.
- */
-const CLONE_WAV_MAX_BYTES = CLONE_SAMPLE_RATE * 2 * CLONE_MAX_SECONDS + 64;
+const CLONE_WAV_MAX_BYTES = cloneWavBytes(CLONE_MAX_SECONDS);
 
 /** 표본율 변환(선형 보간). 목소리 재료로는 이 정도면 충분하다. */
 
