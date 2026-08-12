@@ -6,6 +6,7 @@
  * 저장은 2단: ① 이 기기(localStorage) — 키만 넣으면 바로 테스트되게. ② Supabase(voice_clones)
  * — 여러 기기·재설치에도 남는 '정식' 저장(테이블 SQL을 돌리면 자동 사용, 없으면 로컬만).
  */
+import { resample } from "@/lib/voice-dsp";
 import { currentUid, getSupabase } from "@/lib/supabase";
 import { capPieceLengths } from "@/lib/voice-trim";
 
@@ -167,20 +168,7 @@ const CLONE_MAX_SECONDS = 120;
 const CLONE_WAV_MAX_BYTES = CLONE_SAMPLE_RATE * 2 * CLONE_MAX_SECONDS + 64;
 
 /** 표본율 변환(선형 보간). 목소리 재료로는 이 정도면 충분하다. */
-function resample(x: Float32Array, from: number, to: number): Float32Array {
-  if (from === to) return x;
-  const ratio = from / to;
-  const len = Math.floor(x.length / ratio);
-  const y = new Float32Array(len);
-  for (let i = 0; i < len; i++) {
-    const pos = i * ratio;
-    const i0 = Math.floor(pos);
-    const i1 = Math.min(x.length - 1, i0 + 1);
-    const t = pos - i0;
-    y[i] = x[i0] * (1 - t) + x[i1] * t;
-  }
-  return y;
-}
+
 
 /** AudioBuffer → 모노 Float32 (여러 채널이면 섞는다). */
 function toMono(buffer: AudioBuffer): Float32Array {
