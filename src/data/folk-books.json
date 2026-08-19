@@ -1598,7 +1598,6 @@
   },
   {
     "id": "folk-goldaxe",
-    "hidden": true,
     "lang": "ko",
     "title": "금도끼 은도끼",
     "summary": "연못에 도끼를 빠뜨린 정직한 나무꾼이 산신령님께 상을 받는 이야기",
@@ -1606,21 +1605,21 @@
     "pages": [
       {
         "text": "옛날 어느 산골에 부지런한 나무꾼이 살았어요.\n나무꾼은 홀어머니를 모시고\n날마다 산에 올라 열심히 나무를 했답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p1.webp?v=4",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p1.webp?v=5",
         "audio": "/folk/goldaxe/narr-p1.mp3"
       },
       {
         "text": "\"오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!\"\n나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만,\n나무꾼은 도끼를 보물처럼 아꼈어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p2.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p2.webp?v=5",
         "audio": "/folk/goldaxe/narr-p2.mp3",
         "hotspots": [
           {
             "label": "woodcutter",
             "box": [
-              300,
-              300,
-              850,
-              700
+              145,
+              379,
+              943,
+              583
             ],
             "audio": "/folk/goldaxe/say-p2-woodcutter.wav",
             "line": "오늘도 부지런히 나무하러 가자!"
@@ -1629,21 +1628,21 @@
       },
       {
         "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p3.webp?v=4",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p3.webp?v=5",
         "audio": "/folk/goldaxe/narr-p3.mp3"
       },
       {
         "text": "풍덩! 도끼가 깊은 연못 속으로 가라앉고 말았어요.\n\"아이고, 내 도끼! 하나뿐인 내 도끼!\"\n나무꾼은 연못가에 주저앉아 엉엉 울었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p4.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p4.webp?v=5",
         "audio": "/folk/goldaxe/narr-p4.mp3",
         "hotspots": [
           {
             "label": "woodcutter",
             "box": [
-              300,
-              300,
-              850,
-              700
+              279,
+              146,
+              893,
+              475
             ],
             "audio": "/folk/goldaxe/say-p4-woodcutter.wav",
             "line": "아이고, 내 도끼!"
@@ -1652,21 +1651,21 @@
       },
       {
         "text": "그때였어요. 연못 물이 반짝반짝 빛나더니\n하얀 수염을 길게 늘어뜨린 산신령님이 스르르 나타났어요.\n\"나무꾼아, 왜 그리 슬피 우느냐?\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p5.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p5.webp?v=5",
         "audio": "/folk/goldaxe/narr-p5.mp3"
       },
       {
         "text": "\"도끼를 연못에 빠뜨렸습니다.\n그 도끼가 없으면 나무를 할 수가 없어요.\"\n산신령님은 고개를 끄덕이더니 연못 속으로 사라졌지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p6.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p6.webp?v=5",
         "audio": "/folk/goldaxe/narr-p6.mp3",
         "hotspots": [
           {
             "label": "spirit",
             "box": [
-              150,
-              350,
-              800,
-              750
+              134,
+              583,
+              882,
+              842
             ],
             "audio": "/folk/goldaxe/say-p6-spirit.wav",
             "line": "나무꾼아, 왜 그리 슬피 우느냐?"
@@ -1675,21 +1674,21 @@
       },
       {
         "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요.\n\"이 금도끼가 네 도끼냐?\"\n\"아니요, 제 도끼가 아닙니다.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p7.webp?v=4",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p7.webp?v=5",
         "audio": "/folk/goldaxe/narr-p7.mp3"
       },
       {
         "text": "산신령님이 이번에는 은도끼를 들고 나왔어요.\n\"그럼 이 은도끼가 네 도끼냐?\"\n\"아니요, 그것도 제 것이 아닙니다.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p8.webp?v=4",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p8.webp?v=5",
         "audio": "/folk/goldaxe/narr-p8.mp3",
         "hotspots": [
           {
             "label": "spirit",
             "box": [
-              150,
-              350,
-              800,
-              750
+              145,
+              250,
+              848,
+              475
             ],
             "audio": "/folk/goldaxe/say-p8-spirit.wav",
             "line": "이 금도끼가 네 도끼냐?"
@@ -1697,10 +1696,10 @@
           {
             "label": "woodcutter",
             "box": [
-              400,
-              100,
-              900,
-              450
+              391,
+              608,
+              893,
+              792
             ],
             "audio": "/folk/goldaxe/say-p8-woodcutter.wav",
             "line": "아니요, 제 도끼가 아닙니다."
@@ -1709,21 +1708,21 @@
       },
       {
         "text": "마지막으로 낡은 쇠도끼를 들고 나오자\n나무꾼의 얼굴이 환해졌어요.\n\"맞아요! 그게 바로 제 도끼입니다!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p9.webp?v=4",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p9.webp?v=5",
         "audio": "/folk/goldaxe/narr-p9.mp3"
       },
       {
         "text": "산신령님이 껄껄 웃으며 말했어요.\n\"참으로 정직하구나. 네 정직한 마음에 감동했으니\n금도끼와 은도끼도 모두 너에게 주마!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=4",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=5",
         "audio": "/folk/goldaxe/narr-p10.mp3",
         "hotspots": [
           {
             "label": "woodcutter",
             "box": [
-              400,
-              100,
-              900,
-              450
+              391,
+              200,
+              882,
+              400
             ],
             "audio": "/folk/goldaxe/say-p10-woodcutter.wav",
             "line": "맞아요! 그게 제 도끼예요!"
@@ -1732,39 +1731,26 @@
       },
       {
         "text": "나무꾼은 도끼 세 자루를 안고 한달음에 집으로 갔어요.\n\"어머니! 산신령님이 이런 선물을 주셨어요!\"\n금도끼를 판 돈으로 어머니 약을 짓고,\n남은 것은 마을 사람들과 아낌없이 나누었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p11.webp?v=4",
-        "audio": "/folk/goldaxe/narr-p11.mp3",
-        "hotspots": [
-          {
-            "label": "spirit",
-            "box": [
-              150,
-              350,
-              800,
-              750
-            ],
-            "audio": "/folk/goldaxe/say-p11-spirit.wav",
-            "line": "참으로 정직하구나!"
-          }
-        ]
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p11.webp?v=5",
+        "audio": "/folk/goldaxe/narr-p11.mp3"
       },
       {
         "text": "이 소식을 들은 이웃 마을 욕심쟁이가 무릎을 탁 쳤어요.\n\"옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!\"\n욕심쟁이는 연못으로 달려가\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는 거짓 울음을 울었지요.\n\"아이고, 내 도끼야! 엉엉!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p12.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p12.webp?v=5",
         "audio": "/folk/goldaxe/narr-p12.mp3"
       },
       {
         "text": "연못이 반짝이더니 산신령님이 금도끼를 들고 나타났어요.\n\"이 금도끼가 네 도끼냐?\"\n\"맞아요, 맞아! 그 금도끼가 제 것입니다!\"\n욕심쟁이는 손을 뻗으며 냉큼 외쳤지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p13.webp?v=4",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p13.webp?v=5",
         "audio": "/folk/goldaxe/narr-p13.mp3",
         "hotspots": [
           {
             "label": "greedy",
             "box": [
-              300,
-              300,
-              850,
-              700
+              368,
+              533,
+              882,
+              917
             ],
             "audio": "/folk/goldaxe/say-p13-greedy.wav",
             "line": "아이고, 내 도끼야! 엉엉!"
@@ -1773,16 +1759,16 @@
       },
       {
         "text": "산신령님의 얼굴이 무섭게 굳어졌어요.\n\"네 도끼는 낡은 쇠도끼가 아니더냐.\n거짓말을 하는구나!\"\n산신령님은 연못 속으로 스르르 사라져 버렸지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p14.webp?v=4",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p14.webp?v=5",
         "audio": "/folk/goldaxe/narr-p14.mp3",
         "hotspots": [
           {
             "label": "spirit",
             "box": [
-              150,
-              350,
-              800,
-              750
+              279,
+              167,
+              781,
+              417
             ],
             "audio": "/folk/goldaxe/say-p14-spirit.wav",
             "line": "거짓말을 하는구나!"
@@ -1791,28 +1777,30 @@
       },
       {
         "text": "욕심쟁이는 해가 지도록 연못가에서 기다렸지만\n산신령님은 다시 나오지 않았어요.\n금도끼는커녕 제 쇠도끼까지 잃고\n터덜터덜 빈손으로 돌아갔답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p15.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p15.webp?v=5",
         "audio": "/folk/goldaxe/narr-p15.mp3"
       },
       {
         "text": "그날 저녁, 나무꾼은 마을 사람들과 잔치를 열고 풀 죽은 욕심쟁이에게도 따뜻하게 떡을 나눠 주었어요.\n\"괜찮아요. 우리 같이 나눠 먹어요.\"\n욕심쟁이는 부끄러워 얼굴이 빨개졌지만, 그날부터 정직하게 살기로 마음먹었답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p16.webp?v=4",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p16.webp?v=5",
         "audio": "/folk/goldaxe/narr-p16.mp3",
         "hotspots": [
           {
             "label": "woodcutter",
             "box": [
-              300,
-              300,
-              850,
-              700
+              257,
+              533,
+              938,
+              717
             ],
             "audio": "/folk/goldaxe/say-p16-woodcutter.wav",
             "line": "자, 같이 들어요!"
           }
         ]
       }
-    ]
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=5",
+    "hidden": true
   },
   {
     "id": "folk-patjuk",
