@@ -3200,12 +3200,16 @@ export default function CreatePage() {
                       이 글로 그림 그리기 🎨
                     </BigButton>
                   )}
-                  {/* 이미지 off일 때는 글 동화 버튼이 메인이 된다. */}
-                  {IMAGES_ENABLED ? (
-                    <BigButton tone="white" onClick={() => finish([])}>
-                      글 동화로 바로 보기 📖
-                    </BigButton>
-                  ) : (
+                  {/*
+                    * 글만 있는 동화로 끝내는 길은 내지 않는다.
+                    *
+                    * 그림 그리기 버튼 바로 옆에 있어서 잘못 눌러 그림 없는 책이
+                    * 만들어졌다(실제로 겪었다). 이 앱은 그림동화를 만들러 오는 곳이고,
+                    * 글만 남은 책을 원하는 사람은 사실상 없다.
+                    * 그림을 아예 끈 상태(IMAGES_ENABLED=false)에서만 이 길이 유일하므로
+                    * 그때는 그대로 낸다.
+                    */}
+                  {!IMAGES_ENABLED && (
                     <BigButton accent={accent} accentDark={accentDark} onClick={() => finish([])}>
                       이 이야기로 동화 보기 📖
                     </BigButton>
@@ -3218,7 +3222,7 @@ export default function CreatePage() {
                       (내 잔액 {tokens}개).
                       <br />
                       <span className="font-medium text-neutral-500">
-                        지금은 글 동화로 저장해 두고, 충전한 뒤에 그림을 붙일 수 있어요.
+                        이 이야기는 이레 동안 보관돼요. 충전한 뒤에 이어서 그리시면 돼요.
                       </span>
                     </p>
                   ) : (
@@ -3226,7 +3230,7 @@ export default function CreatePage() {
                       {master
                         ? "관리자는 토큰이 들지 않아요"
                         : `그림을 그리면 토큰 ${illustrationTokenCost(story.pages.length)}개가 더 들어요 (내 잔액 ${tokens}개)`}
-                      <br />그림은 1~2분 정도 걸려요 · 글 동화는 더 들지 않고 바로 읽을 수 있어요
+                      <br />그림은 1~2분 정도 걸려요
                     </p>
                   ))}
                 {/*
