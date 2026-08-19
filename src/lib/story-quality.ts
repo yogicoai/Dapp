@@ -40,26 +40,51 @@ const MOVE_PATTERN =
   /(가기로|가던|갔|가요|갑니다|도착|출발|나섰|나가|나와|나왔|들어갔|들어와|들어서|돌아왔|돌아가|돌아온|옮겼|이동|건너갔|향했|찾아갔|올라갔|내려갔|뛰어갔|달려갔|따라갔|데려갔|따라나|현관|문을\s*열|밖으로|안으로|집으로|로\s*가|에\s*가|다음\s*날|이튿날|그날\s*(아침|점심|오후|저녁|밤)|아침이\s*되|저녁이\s*되|밤이\s*되|사흘|일주일|여름이\s*되|겨울이\s*되|잠시\s*후|한참\s*뒤|얼마\s*뒤|집을\s*나서|차를\s*타|버스를\s*타|걸어서|디뎠|디디|오는\s*길|가는\s*길|저녁에|아침에|낮에|밤에|점심에)/;
 
 type LocationHint = { family: string; name: string; description: string; index: number };
+
+/*
+ * 본문에서 '어디인지'를 읽어 내는 목록.
+ *
+ * 여기 없는 곳은 못 알아본다. 그리고 못 알아보면 **앞 쪽 장소로 되돌려 버린다** —
+ * 이야기가 밖으로 나갔는데 그림은 계속 집 안이 되는 원인이다. 그래서 아이 동화에
+ * 실제로 나오는 곳을 넉넉히 적어 둔다.
+ *
+ * 설명은 요즘 한국 기준으로 쓴다. 예전에는 집이 "따뜻한 벽과 나무 바닥"뿐이라
+ * 모델이 그 빈 곳을 마당 있는 옛날 집으로 채웠다.
+ */
 function inferLocationFromText(text: string): LocationHint | null {
   const definitions = [
     {
       family: "home",
-      re: /([가-힣]{1,8}네\s*집|우리\s*집|집\s*(?:안|에서|으로|에)|거실|놀이방|침실|방\s*(?:안|에서|으로|에))/g,
       /*
-       * 요즘 아이가 사는 집으로 못박는다.
-       *
-       * 예전 설명은 "따뜻한 벽과 나무 바닥"뿐이라, 모델이 그 빈 곳을 마당 있는
-       * 옛날 집으로 채웠다. 특히 "친구 집에 놀러 간다"는 동화에 제일 자주 나오는
-       * 장면인데 거기서 툇마루와 대문이 나왔다. 아이가 아는 집이 아니다.
-       * 그래서 요즘 집에 실제로 있는 것들을 이름으로 적어 둔다.
+       * '방'은 앞글자를 봐야 한다. 그냥 /방/으로 잡으면 주방·가방·책방의 뒷글자까지
+       * 방(room)으로 읽어, 주방 장면이 거실로 되돌려졌다(실제로 시험에서 잡혔다).
+       * 그래서 방 앞에 다른 한글이 붙어 있으면 제외한다(안방·건넌방은 따로 적는다).
+       */
+      re: /([가-힣]{1,8}네\s*집|우리\s*집|집\s*(?:안|에서|으로|에)|거실|놀이방|침실|안방|건넌방|(?<![가-힣])방\s*(?:안|에서|으로|에))/g,
+      /*
+       * 요즘 아이가 사는 집으로 못박는다. '친구 집에 놀러 간다'는 동화에 제일 자주
+       * 나오는 장면인데, 설명이 비어 있으면 거기서 툇마루와 대문이 튀어나왔다.
        */
       description: "크림색 벽과 밝은 나무 마루, 큰 창과 커튼, 낮은 소파와 장난감 선반이 있는 요즘 아파트 거실",
     },
-    { family: "playground", re: /(놀이터|공원)/g, description: "노란 미끄럼틀과 둥근 모래밭, 나무 벤치" },
-    { family: "forest", re: /(숲길|숲속|숲|산길)/g, description: "키 큰 푸른 나무와 흙길, 낮은 꽃덤불" },
+    { family: "kitchen", re: /(주방|부엌|식탁)/g, description: "밝은 나무 식탁과 낮은 의자, 크림색 주방 수납장" },
+    { family: "entrance", re: /(현관|신발장)/g, description: "신발장과 낮은 문턱, 밝은 타일 바닥의 좁은 아파트 현관" },
+    { family: "veranda", re: /(베란다|발코니)/g, description: "큰 유리창과 빨래 건조대, 화분 몇 개가 놓인 베란다" },
+    { family: "corridor", re: /(복도|엘리베이터|계단참)/g, description: "밝은 조명과 회색 타일 바닥의 아파트 복도" },
+    { family: "playground", re: /(놀이터|공원|모래밭|그네|미끄럼틀)/g, description: "노란 미끄럼틀과 둥근 모래밭, 나무 벤치" },
+    { family: "street", re: /(골목|길가|동네|횡단보도|버스\s*정류장|단지)/g, description: "회색 아스팔트 길과 낮은 담, 가로수와 상가 간판 없는 건물" },
+    { family: "yard", re: /(마당|텃밭|화단)/g, description: "흙바닥과 낮은 화단, 담장 옆 작은 나무" },
+    { family: "forest", re: /(숲길|숲속|숲|산길|산속)/g, description: "키 큰 푸른 나무와 흙길, 낮은 꽃덤불" },
+    { family: "water", re: /(계곡|시냇물|개울|연못)/g, description: "맑은 물과 회색 자갈 바닥, 물가의 넓적한 바위" },
+    { family: "sea", re: /(바다|바닷가|해변|모래사장)/g, description: "푸른 바다와 하얀 파도, 밝은 모래사장" },
     { family: "school", re: /(유치원|어린이집|학교|교실)/g, description: "밝은 벽과 큰 창문, 낮은 책상과 장난감 수납장" },
-    { family: "shop", re: /(마트|가게|시장)/g, description: "정돈된 진열대와 넓은 통로, 밝은 실내 조명" },
-    { family: "hospital", re: /(병원|진료실)/g, description: "밝은 벽과 의자, 정돈된 진료 공간" },
+    { family: "library", re: /(도서관|서점)/g, description: "키 큰 나무 책장과 큰 창문, 낮은 열람 책상" },
+    { family: "shop", re: /(마트|가게|시장|편의점)/g, description: "정돈된 진열대와 넓은 통로, 밝은 실내 조명" },
+    { family: "restaurant", re: /(식당|고깃집|분식집|카페)/g, description: "나무 식탁과 의자, 따뜻한 조명이 걸린 실내" },
+    { family: "hospital", re: /(병원|진료실|치과)/g, description: "밝은 벽과 의자, 정돈된 진료 공간" },
+    { family: "zoo", re: /(동물원|수족관)/g, description: "울타리와 넓은 관람 통로, 푸른 나무" },
+    { family: "pool", re: /(수영장|물놀이장)/g, description: "파란 물과 흰 타일 바닥, 알록달록한 튜브" },
+    { family: "vehicle", re: /(버스\s*(?:안|에서)|차\s*(?:안|에서)|자동차\s*안|지하철)/g, description: "창밖 풍경이 흐르는 좌석과 손잡이" },
   ];
   const hints: LocationHint[] = [];
   for (const definition of definitions) {
@@ -119,7 +144,24 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
 
     const name = compact(location[1]);
     let clause = location[0];
-    if (previous && previous.name !== name && !MOVE_PATTERN.test(`${previous.text} ${page.text}`)) {
+    /*
+     * 앞 쪽으로 되돌릴지 정하는 자리.
+     *
+     * 예전에는 '이동을 뜻하는 낱말'이 있는지만 봤다. 낱말 목록은 아무리 넓혀도
+     * 새는 곳이 생기고, 새면 이야기가 밖으로 나갔는데 그림은 계속 집 안이 된다.
+     *
+     * 그래서 판단 근거를 하나 더 둔다 — **본문이 장소를 말하고 있으면 그것을 믿는다.**
+     * 본문에 "놀이터"라고 적혀 있는데 앞 쪽이 거실이었다는 이유로 거실로 되돌리는 건,
+     * 글을 무시하고 앞 그림을 따르는 셈이다. 글이 먼저다.
+     * 되돌리는 것은 **본문이 아무 장소도 말하지 않고, 이동 표현도 없을 때**뿐이다 —
+     * 그때만 '모델이 괜히 장소를 바꿨다'고 볼 수 있다.
+     */
+    if (
+      previous &&
+      previous.name !== name &&
+      !textLocation &&
+      !MOVE_PATTERN.test(`${previous.text} ${page.text}`)
+    ) {
       imagePrompt = imagePrompt.replace(location[0], previous.clause);
       clause = previous.clause;
       previous = { ...previous, text: page.text };

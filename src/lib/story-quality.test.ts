@@ -187,6 +187,49 @@ describe("validateStoryQuality", () => {
     assert.ok(repaired.pages[1].imagePrompt.includes("놀이방"), "이동이 없는데 장소가 바뀌었다");
   });
 
+  it("본문이 장소를 말하면 낱말 목록에 없어도 그 장소를 지킨다", () => {
+    /*
+     * 되돌리는 판단을 '이동 낱말'에만 걸면, 목록에 없는 표현에서 반드시 샌다.
+     * 본문에 "놀이터"라고 적혀 있는데 앞 쪽이 거실이라는 이유로 거실로 되돌리는 건
+     * 글을 무시하고 앞 그림을 따르는 것이다. 글이 먼저다.
+     */
+    const value = story([
+      "하온이는 거실에서 창밖을 보았어요. 눈이 소복소복 쌓여 있었어요.",
+      "놀이터에서 눈사람을 만들었어요. 아주 커다랬어요.",
+    ]);
+    value.pages[0].imagePrompt = "등장인물 1명: 하온. 장소: 거실 — 밝은 나무 마루. 하온이가 본다.";
+    value.pages[1].imagePrompt = "등장인물 1명: 하온. 장소: 놀이터 — 노란 미끄럼틀과 모래밭. 하온이가 만든다.";
+    const repaired = repairStoryContinuity(value);
+    assert.ok(repaired.pages[1].imagePrompt.includes("놀이터"), "본문이 말한 장소를 되돌렸다");
+  });
+
+  it("본문이 장소를 말하지 않으면 앞 장소를 지킨다", () => {
+    // 반대쪽도 지켜야 한다 — 근거가 없는데 모델이 괜히 바꾼 것은 되돌린다.
+    const value = story([
+      "하온이는 거실에서 블록을 쌓았어요. 높이높이 쌓았어요.",
+      "하온이는 두 손을 번쩍 들었어요. 아주 뿌듯했어요.",
+    ]);
+    value.pages[0].imagePrompt = "등장인물 1명: 하온. 장소: 거실 — 밝은 나무 마루. 하온이가 쌓는다.";
+    value.pages[1].imagePrompt = "등장인물 1명: 하온. 장소: 낯선 바닷가 — 파도와 모래. 하온이가 손을 든다.";
+    const repaired = repairStoryContinuity(value);
+    assert.ok(repaired.pages[1].imagePrompt.includes("거실"), "근거 없는 장소 변경을 안 막았다");
+  });
+
+  it("동화에 흔한 장소를 알아본다", () => {
+    // 여기 없는 곳은 못 알아보고, 못 알아보면 앞 장소로 되돌려진다.
+    const places = ["도서관", "동물원", "수영장", "바닷가", "계곡", "식당", "복도", "베란다", "주방", "마당"];
+    for (const place of places) {
+      const value = story([
+        "하온이는 거실에서 준비를 했어요. 마음이 설??어요.".replace("??", "렜"),
+        `${place}에 도착했어요. 하온이는 두리번거렸어요.`,
+      ]);
+      value.pages[0].imagePrompt = "등장인물 1명: 하온. 장소: 거실 — 밝은 나무 마루. 하온이가 준비한다.";
+      value.pages[1].imagePrompt = `등장인물 1명: 하온. 장소: ${place} — 그곳의 모습. 하온이가 본다.`;
+      const repaired = repairStoryContinuity(value);
+      assert.ok(!repaired.pages[1].imagePrompt.includes("거실"), `${place}을(를) 못 알아봐서 거실로 되돌렸다`);
+    }
+  });
+
   it("장소 권고는 제작을 막지 않고 안전·중복 오류만 막는다", () => {
     assert.equal(isBlockingStoryQualityIssue("2쪽 삽화에 고정 장소 설명이 없습니다."), false);
     assert.equal(isBlockingStoryQualityIssue("2쪽 본문이 다른 페이지와 중복됩니다."), true);
