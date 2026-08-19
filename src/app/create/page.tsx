@@ -2068,6 +2068,20 @@ export default function CreatePage() {
                     </div>
                   )}
 
+                  {/*
+                    * 직접 쓴 이야기에도 등장인물의 성별을 받는다.
+                    *
+                    * 글에 이름은 적혀 있으니 누가 나오는지는 알아낸다. 그런데 성별은
+                    * 이름만으로 알 수 없어서, 예전에 남자 친구가 여자로 그려졌다.
+                    * (그래서 다른 갈래에는 이미 이 칸이 있는데 여기만 빠져 있었다.)
+                    */}
+                  <div className="rounded-2xl bg-neutral-50 px-4 py-3">
+                    <p className="mb-1.5 break-keep text-xs font-bold text-neutral-500">
+                      이야기에 친구가 나오나요? 이름과 성별을 알려 주시면 그림에서 헷갈리지 않아요.
+                    </p>
+                    <FriendsInput friends={friends} onChange={setFriends} accent={accent} />
+                  </div>
+
                   <div className={`rounded-2xl px-4 py-3 text-sm font-bold leading-relaxed ${directFeedback.length > 0 ? "bg-amber-50 text-amber-800" : "bg-emerald-50 text-emerald-700"}`}>
                     {directFeedback.length > 0 ? (
                       <ul className="list-inside list-disc space-y-1">
