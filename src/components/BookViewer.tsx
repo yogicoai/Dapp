@@ -423,8 +423,19 @@ export function BookViewer({ book }: { book: Book }) {
 
     setRedrawing(true);
     try {
-      // 옆 쪽의 성공한 그림 — 화풍·장소가 이 책과 맞게 이어지도록 기준으로 보낸다.
-      const sibling = book.pages.find((p, i) => i !== index && p.image);
+      /*
+       * 참조로 보낼 옆 쪽 그림을 고른다.
+       *
+       * 예전에는 **그림이 있는 첫 쪽**을 그냥 집었다. 그래서 놀이터 쪽을 다시 그리는데
+       * 어린이집 현관 그림이 기준으로 갔고, 다시 그린 놀이터의 미끄럼틀 모양이 나머지
+       * 쪽과 달라졌다(실제로 났다). 같은 장소를 그린 쪽이 있으면 그쪽을 먼저 쓴다.
+       */
+      const placeOf = (prompt: string | undefined) =>
+        /장소\s*:\s*([^—\-\n.]+)/.exec(prompt ?? "")?.[1]?.replace(/\s+/g, "") ?? "";
+      const here = placeOf(page.imagePrompt);
+      const others = book.pages.filter((p, i) => i !== index && p.image);
+      const sibling =
+        (here ? others.find((p) => placeOf(p.imagePrompt) === here) : undefined) ?? others[0];
       const res = await fetch("/api/illustrate-page", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -432,6 +443,8 @@ export function BookViewer({ book }: { book: Book }) {
           scene,
           storyText: page.text,
           artStyleId: book.artStyleId,
+          // 얼굴의 기준 — 이게 빠지면 다시 그린 쪽만 옷과 얼굴이 달라진다.
+          characterSheet: book.characterSheet ?? "",
           styleReference: sibling?.image ?? "",
           styleReferenceScene: sibling?.imagePrompt ?? "",
           shape: book.shape,

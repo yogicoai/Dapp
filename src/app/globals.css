@@ -12,6 +12,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /*
+   * 이 앱은 밝은 화면 전용이다.
+   *
+   * 화면 곳곳이 bg-white·text-neutral-800처럼 밝은 배경을 전제로 짜여 있고,
+   * 다크 모드용 대비색(dark:)은 앱 전체에 단 한 군데도 없다.
+   * 이걸 못 박아 두지 않으면 노트북·PC를 어두운 테마로 쓰는 분에게
+   * 브라우저가 입력창·선택창·스크롤바를 제멋대로 어둡게 칠한다.
+   */
+  color-scheme: light;
 }
 
 @theme inline {
@@ -20,12 +29,14 @@
   --font-sans: "Pretendard Variable", Pretendard;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/*
+ * 예전에 여기 다크 모드 블록이 있었다(Next.js 기본 틀에 딸려 온 것).
+ *
+ * 그게 실제 사고를 냈다 — 노트북을 어두운 테마로 쓰면 글자색만 밝은 회색(#ededed)이
+ * 되는데, 입력창은 bg-white로 배경을 흰색에 못 박아 두어서 **흰 바탕에 밝은 회색 글씨**가
+ * 됐다. 아이 이름을 적어도 회색으로 흐릿하게 보였다.
+ * 앱에 다크 모드용 색이 아예 없으므로 반쪽짜리 다크 모드를 없애는 것이 맞다.
+ */
 
 body {
   background: var(--background);

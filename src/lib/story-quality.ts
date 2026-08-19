@@ -72,7 +72,7 @@ function inferLocationFromText(text: string): LocationHint | null {
     { family: "veranda", re: /(베란다|발코니)/g, description: "큰 유리창과 빨래 건조대, 화분 몇 개가 놓인 베란다" },
     { family: "corridor", re: /(복도|엘리베이터|계단참)/g, description: "밝은 조명과 회색 타일 바닥의 아파트 복도" },
     { family: "playground", re: /(놀이터|공원|모래밭|그네|미끄럼틀)/g, description: "노란 미끄럼틀과 둥근 모래밭, 나무 벤치" },
-    { family: "street", re: /(골목|길가|동네|횡단보도|버스\s*정류장|단지)/g, description: "회색 아스팔트 길과 낮은 담, 가로수와 상가 간판 없는 건물" },
+    { family: "street", re: /(골목|길가|가는\s*길|오는\s*길|길\s*(?:을|에서|에)|동네|횡단보도|버스\s*정류장|단지)/g, description: "회색 아스팔트 길과 낮은 담, 가로수와 상가 간판 없는 건물" },
     { family: "yard", re: /(마당|텃밭|화단)/g, description: "흙바닥과 낮은 화단, 담장 옆 작은 나무" },
     { family: "forest", re: /(숲길|숲속|숲|산길|산속)/g, description: "키 큰 푸른 나무와 흙길, 낮은 꽃덤불" },
     { family: "water", re: /(계곡|시냇물|개울|연못)/g, description: "맑은 물과 회색 자갈 바닥, 물가의 넓적한 바위" },
@@ -159,6 +159,16 @@ function inVenue(
  *   "~에는/~에도 … 있었어요"    → 그곳을 설명하는 것이다 (보이는 곳)
  */
 function locusScore(after: string): number {
+  /*
+   * 아직 가지 않은 곳은 '있는 곳'이 아니다.
+   *
+   * 실제 사고 — "집으로 가는 길, … 우리 놀이터 잠깐만 가면 안 돼?" 라고 조른 쪽의
+   * 그림이 이미 놀이터였다. 다음 쪽 첫 문장이 "놀이터에 도착하자"인데도 그렇다.
+   * 조르는 말·가자는 말 속의 장소는 **다음에 갈 곳**이지 지금 서 있는 곳이 아니다.
+   */
+  if (/^[^.!?\n]{0,8}(?:가면|가자|갈까|갈래|가고\s*싶|가 볼|가 보자)/.test(after)) return -3;
+  // "집으로 가는 길" — 집이 아니라 길 위에 있다.
+  if (/^\s*(?:가는|오는|가던|오던)\s*길/.test(after)) return -3;
   if (/^(?:에는|에도)/.test(after)) return -2; // 그곳을 '설명'하는 말
   if (/^(?:에\s*도착|에\s*들어|으로\s*가|로\s*가|에\s*갔|으로\s*나|에서\s*나)/.test(after)) return 2;
   if (/^(?:에서|에)/.test(after)) return 1; // 그 자리에서 무언가 한다

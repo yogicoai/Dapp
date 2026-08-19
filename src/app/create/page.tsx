@@ -499,7 +499,7 @@ function FriendsInput({
             onChange={(e) => patch(i, { name: e.target.value.slice(0, 20) })}
             maxLength={20}
             placeholder={`친구 ${i + 1} 이름`}
-            className="min-w-0 flex-1 rounded-2xl border-2 border-dashed border-neutral-200 bg-white px-3.5 py-2 text-sm font-bold outline-none focus:border-neutral-400"
+            className="min-w-0 flex-1 rounded-2xl border-2 border-dashed border-neutral-200 bg-white text-neutral-900 px-3.5 py-2 text-sm font-bold outline-none focus:border-neutral-400"
           />
           <GenderChips value={f.gender} onChange={(g) => patch(i, { gender: g })} accent={accent} />
           <button
@@ -564,7 +564,7 @@ function WhoNameInput({
         onChange={(e) => onChange(e.target.value.slice(0, 20))}
         maxLength={20}
         placeholder="이름만 적어요 (예: 토토, 민지)"
-        className="w-full rounded-2xl border-2 border-dashed border-neutral-200 bg-white px-4 py-2.5 text-sm font-bold outline-none focus:border-neutral-400"
+        className="w-full rounded-2xl border-2 border-dashed border-neutral-200 bg-white text-neutral-900 px-4 py-2.5 text-sm font-bold outline-none focus:border-neutral-400"
       />
       {askGender && (
         <div className="mt-1 flex items-center gap-1.5">
@@ -851,16 +851,19 @@ export default function CreatePage() {
     bookId: string,
     pageArt: (string | null)[],
     cover: string | null,
-  ): Promise<{ images: (string | null)[]; cover: string | null }> {
+    sheet: string | null = null,
+  ): Promise<{ images: (string | null)[]; cover: string | null; sheet: string | null }> {
     const jobs: { name: string; dataUrl: string; put: (url: string) => void }[] = [];
     const images = [...pageArt];
     let coverOut = cover;
+    let sheetOut = sheet;
 
     if (cover) jobs.push({ name: "cover", dataUrl: cover, put: (u) => (coverOut = u) });
+    if (sheet) jobs.push({ name: "sheet", dataUrl: sheet, put: (u) => (sheetOut = u) });
     pageArt.forEach((im, i) => {
       if (im) jobs.push({ name: `p${i + 1}`, dataUrl: im, put: (u) => (images[i] = u) });
     });
-    if (jobs.length === 0) return { images, cover: coverOut };
+    if (jobs.length === 0) return { images, cover: coverOut, sheet: sheetOut };
 
     setUploading({ done: 0, total: jobs.length });
     // 회원 아이디로 폴더를 나눈다 — 나중에 사람이 직접 찾아보거나 지울 수 있게.
@@ -883,7 +886,7 @@ export default function CreatePage() {
       setUploading({ done: i + 1, total: jobs.length });
     }
     setUploading(null);
-    return { images, cover: coverOut };
+    return { images, cover: coverOut, sheet: sheetOut };
   }
 
   /** 올린 그림을 캔버스로 줄여 data URL로 만든다 — 원본 사진은 몇 MB라 그대로 보내면 느리다. */
@@ -1068,6 +1071,8 @@ export default function CreatePage() {
    * (설정 화면의 아이 특징에서 똑같은 사고가 났던 적이 있다.)
    */
   const locationTouchedRef = useRef(false);
+  // 캐릭터 시트는 책에 함께 저장한다 — 나중에 한 쪽만 다시 그릴 때 얼굴 기준이 된다.
+  const sheetImageRef = useRef<string | null>(null);
 
   // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
   const [confirmMake, setConfirmMake] = useState(false);
@@ -1485,6 +1490,7 @@ export default function CreatePage() {
       }
       const sheet = sheetData.image;
       if (!sheet) throw new Error("캐릭터 그림을 받지 못했어요. 잠시 뒤 다시 시도해 주세요.");
+      sheetImageRef.current = sheet;
 
       // 삽화는 쪽마다 독립이다(캐릭터 일관성은 위에서 만든 캐릭터 시트가 잡아준다).
       // 예전엔 한 장씩 줄 세워 그려서 8쪽이면 '한 장 시간 × 8'을 기다려야 했다 —
@@ -1728,7 +1734,7 @@ export default function CreatePage() {
      * 동화가 통째로 날아간다. 그림은 이미 다 그려졌고 토큰도 이미 냈다.
      */
     const bookId = `my-${Date.now().toString(36)}`;
-    const hosted = await hostArtwork(bookId, slim, cover);
+    const hosted = await hostArtwork(bookId, slim, cover, sheetImageRef.current);
 
     const book: Book = {
       id: bookId,
@@ -1744,6 +1750,7 @@ export default function CreatePage() {
       // 그림만 화풍·인물·비율이 어긋나 오히려 더 눈에 띈다.
       artStyleId: artStyle,
       shape: screenShape,
+      characterSheet: hosted.sheet,
       locationDetail: locationDetail.trim() || undefined,
       cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
       pages: s.pages.map((p, i) => ({
@@ -1858,7 +1865,7 @@ export default function CreatePage() {
                   onChange={(e) => setName(e.target.value)}
                   maxLength={20}
                   placeholder="아이 이름"
-                  className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-lg font-bold outline-none focus:border-neutral-400"
+                  className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-lg font-bold outline-none focus:border-neutral-400"
                 />
               </div>
 
@@ -2046,7 +2053,7 @@ export default function CreatePage() {
                             onChange={(event) => part.set(event.target.value.slice(0, 800))}
                             rows={2}
                             placeholder={part.hint}
-                            className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-sm font-bold leading-relaxed outline-none focus:border-neutral-400"
+                            className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-sm font-bold leading-relaxed outline-none focus:border-neutral-400"
                           />
                         </label>
                       ))}
@@ -2062,7 +2069,7 @@ export default function CreatePage() {
                         onChange={(event) => setDirectText(event.target.value.slice(0, 5000))}
                         rows={10}
                         placeholder="완성한 이야기를 여기에 적거나 붙여넣어 주세요."
-                        className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-sm font-bold leading-relaxed outline-none focus:border-neutral-400"
+                        className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-sm font-bold leading-relaxed outline-none focus:border-neutral-400"
                       />
                       <p className="text-right text-[11px] font-bold text-neutral-400">{directText.length} / 5000자</p>
                     </div>
@@ -2157,7 +2164,7 @@ export default function CreatePage() {
                       onChange={(e) => setTodayEvent(e.target.value.slice(0, 200))}
                       rows={2}
                       placeholder="예: 그네를 타다가 넘어졌는데 친구가 일으켜 줬어요"
-                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
                     />
                   </div>
 
@@ -2285,7 +2292,7 @@ export default function CreatePage() {
                       onChange={(e) => setSituation(e.target.value.slice(0, 200))}
                       rows={2}
                       placeholder="예: 동생이 내 장난감을 가져갔을 때"
-                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
                     />
                   </div>
 
@@ -2462,7 +2469,7 @@ export default function CreatePage() {
                         THEME_GROUPS.find((g) => g.label === themeGroup)?.example ??
                         "예: 마법 숲에서 반짝이는 보물을 찾아요"
                       ).replace("OO", name.trim() || "우리 아이")}
-                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
                     />
                   </div>
 
@@ -2907,7 +2914,7 @@ export default function CreatePage() {
                       value={sceneDraft}
                       onChange={(e) => setSceneDraft(e.target.value.slice(0, 60))}
                       autoFocus
-                      className="w-full rounded-xl border-2 border-neutral-300 bg-white px-3 py-2 text-center text-lg font-extrabold outline-none focus:border-neutral-500"
+                      className="w-full rounded-xl border-2 border-neutral-300 bg-white text-neutral-900 px-3 py-2 text-center text-lg font-extrabold outline-none focus:border-neutral-500"
                     />
                     <div className="flex justify-center gap-2">
                       <button
@@ -2952,7 +2959,7 @@ export default function CreatePage() {
                             onChange={(e) => setSceneDraft(e.target.value)}
                             rows={3}
                             autoFocus
-                            className="w-full resize-y rounded-xl border-2 border-neutral-300 bg-white p-2.5 text-sm font-medium leading-relaxed outline-none focus:border-neutral-500"
+                            className="w-full resize-y rounded-xl border-2 border-neutral-300 bg-white text-neutral-900 p-2.5 text-sm font-medium leading-relaxed outline-none focus:border-neutral-500"
                           />
                           <div className="flex justify-end gap-2">
                             <button
