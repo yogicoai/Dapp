@@ -178,6 +178,14 @@ export async function POST(request: Request) {
      * 물건 잠금 — 장소와 같은 이유로 넣는다. 다만 요구는 반대다: 장소는 '더 구체적으로',
      * 물건은 '더 단순하게'. 물건은 꾸밀 거리를 줄여야 다음 쪽에서 같게 그려진다.
      */
+    /*
+     * 옷이 장소·날씨와 맞아야 한다.
+     *
+     * 캐릭터 시트의 옷을 그대로 베끼라는 규칙이 세다 보니, 잠옷 차림으로 시작한
+     * 아이가 눈밭까지 잠옷에 맨발로 나갔다(실제로 났다). 시트는 '누구인지'를
+     * 잠그는 것이지 '무엇을 입고 이 쪽에 있는지'까지 정하지 않는다.
+     */
+    "CLOTHING MUST FIT THIS PAGE. Keep the character's identity from the sheet (face, hair, body), but dress them for THIS scene's place and weather. Outdoors in snow or cold: coat, hat, scarf, gloves and proper shoes — never pajamas, never bare feet. In bed or just waking: pajamas. Indoors at home: everyday clothes and socks or slippers. If the scene text names what they wear, follow the text.",
     props.length
       ? [
           `PROP LOCK — ${props

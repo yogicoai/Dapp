@@ -230,6 +230,25 @@ describe("validateStoryQuality", () => {
     }
   });
 
+  it("창밖으로 보이는 곳을 '있는 곳'으로 착각하지 않는다", () => {
+    /*
+     * "집에 돌아와 창가에 앉았어요. 마당에는 눈사람이 서 있었어요."
+     * 아이는 집에 있고 마당은 창밖으로 보이는 곳일 뿐인데, 뒤에 나온다는 이유로
+     * 마당이 뽑혀 그림이 밖에서 그려질 뻔했다.
+     */
+    const value = story([
+      "하온이와 엄마는 눈사람을 다 만들었어요. 아주 커다랬어요.",
+      "집에 돌아와 하온이는 창가에 앉았어요. 마당에는 빨간 목도리를 두른 눈사람이 서 있었어요.",
+    ]);
+    value.pages[0].imagePrompt = "등장인물 2명: 하온, 엄마. 장소: 마당 — 하얀 눈 쌓인 바닥. 눈사람을 만든다.";
+    value.pages[1].imagePrompt = "등장인물 1명: 하온. 장소: 마당 — 하얀 눈 쌓인 바닥. 하온이가 앉는다.";
+    const repaired = repairStoryContinuity(value);
+    assert.ok(
+      /집|거실|마루|소파/.test(repaired.pages[1].imagePrompt),
+      `창밖의 마당을 있는 곳으로 골랐다: ${repaired.pages[1].imagePrompt}`,
+    );
+  });
+
   it("장소 권고는 제작을 막지 않고 안전·중복 오류만 막는다", () => {
     assert.equal(isBlockingStoryQualityIssue("2쪽 삽화에 고정 장소 설명이 없습니다."), false);
     assert.equal(isBlockingStoryQualityIssue("2쪽 본문이 다른 페이지와 중복됩니다."), true);

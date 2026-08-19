@@ -86,13 +86,42 @@ function inferLocationFromText(text: string): LocationHint | null {
     { family: "pool", re: /(수영장|물놀이장)/g, description: "파란 물과 흰 타일 바닥, 알록달록한 튜브" },
     { family: "vehicle", re: /(버스\s*(?:안|에서)|차\s*(?:안|에서)|자동차\s*안|지하철)/g, description: "창밖 풍경이 흐르는 좌석과 손잡이" },
   ];
-  const hints: LocationHint[] = [];
+  const hints: (LocationHint & { score: number })[] = [];
   for (const definition of definitions) {
     for (const match of text.matchAll(definition.re)) {
-      hints.push({ family: definition.family, name: match[0].replace(/\s+/g, " "), description: definition.description, index: match.index ?? 0 });
+      const at = match.index ?? 0;
+      const after = text.slice(at + match[0].length, at + match[0].length + 12);
+      hints.push({
+        family: definition.family,
+        name: match[0].replace(/\s+/g, " "),
+        description: definition.description,
+        index: at,
+        score: locusScore(after),
+      });
     }
   }
-  return hints.sort((a, b) => b.index - a.index)[0] ?? null;
+  // 점수가 높은 곳이 '지금 있는 곳'. 같으면 뒤에 나온 것을 쓴다(가다가 도착한 곳).
+  return hints.sort((a, b) => b.score - a.score || b.index - a.index)[0] ?? null;
+}
+
+/**
+ * 그 장소가 '지금 인물이 있는 곳'인지, '멀리서 이야기하는 곳'인지를 가른다.
+ *
+ * 한 쪽에 두 장소가 나오면 예전에는 무조건 **뒤에 나온 것**을 골랐다. 그런데
+ * 이런 문장에서 어긋난다:
+ *   "집에 돌아와 하온이는 창가에 앉았어요. 마당에는 눈사람이 서 있었어요."
+ * 아이는 집에 있고 마당은 창밖으로 보이는 곳일 뿐인데, 뒤에 있다는 이유로
+ * 마당이 뽑혔다. 그래서 그림이 밖에서 그려질 뻔했다.
+ *
+ * 뒤에 붙는 말이 단서다.
+ *   "~에 도착/에 들어/으로 갔"  → 거기로 간 것이다 (있는 곳)
+ *   "~에는/~에도 … 있었어요"    → 그곳을 설명하는 것이다 (보이는 곳)
+ */
+function locusScore(after: string): number {
+  if (/^(?:에는|에도)/.test(after)) return -2; // 그곳을 '설명'하는 말
+  if (/^(?:에\s*도착|에\s*들어|으로\s*가|로\s*가|에\s*갔|으로\s*나|에서\s*나)/.test(after)) return 2;
+  if (/^(?:에서|에)/.test(after)) return 1; // 그 자리에서 무언가 한다
+  return 0;
 }
 
 function locationFamily(text: string): string {
