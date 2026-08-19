@@ -1161,7 +1161,20 @@ export default function CreatePage() {
     setDraftReady(true);
   }
 
-  const child = { name: name.trim(), age: age ?? 0, gender };
+  /*
+   * 이야기·줄거리 요청에 넘길 아이 정보.
+   *
+   * 생김새(looks)까지 함께 보낸다. 예전에는 이 값이 그림 그리는 쪽에만 가서,
+   * 클로드가 생김새를 모른 채 인물 설명을 지어냈다("짧은 검정 곱슬머리"). 그 뒤
+   * 캐릭터 시트에서 부모가 고른 값과 부딪혀, 고른 대로 안 그려지는 원인이 됐다.
+   * 이제 이야기를 쓸 때부터 알려 줘서 인물 설명 자체가 이 값으로 나온다.
+   */
+  const child = {
+    name: name.trim(),
+    age: age ?? 0,
+    gender,
+    looks: looksToPrompt(loadChild()?.looks) || undefined,
+  };
 
   // '누구랑' 칩 — 아이 성별에 맞는 형제 호칭을 끼워 만든다.
   // 오늘의 이야기는 '혼자서'를 맨 끝에 두는 순서를 지킨다.

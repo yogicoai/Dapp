@@ -29,7 +29,10 @@ export function parseChild(value: unknown): ChildProfile {
     ? (c!.gender as Gender)
     : "unspecified";
 
-  return { name, age, gender };
+  // 부모가 고른 생김새 — 그림 프롬프트로 그대로 들어가므로 길이를 제한한다.
+  const looks = typeof c?.looks === "string" ? c.looks.trim().slice(0, 300) : "";
+
+  return { name, age, gender, ...(looks ? { looks } : {}) };
 }
 
 /**
