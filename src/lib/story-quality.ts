@@ -84,7 +84,23 @@ function inferLocationFromText(text: string): LocationHint | null {
     { family: "hospital", re: /(병원|진료실|치과)/g, description: "밝은 벽과 의자, 정돈된 진료 공간" },
     { family: "zoo", re: /(동물원|수족관)/g, description: "울타리와 넓은 관람 통로, 푸른 나무" },
     { family: "pool", re: /(수영장|물놀이장)/g, description: "파란 물과 흰 타일 바닥, 알록달록한 튜브" },
-    { family: "vehicle", re: /(버스\s*(?:안|에서)|차\s*(?:안|에서)|자동차\s*안|지하철)/g, description: "창밖 풍경이 흐르는 좌석과 손잡이" },
+    /*
+     * 차와 대중교통을 갈라 둔다.
+     *
+     * 예전엔 한 덩어리라 설명이 "좌석과 손잡이"였다. 손잡이는 버스·지하철 물건이라,
+     * 가족이 자기 차로 가는 장면에도 손잡이가 달린 통로가 그려졌다.
+     * 아이가 아는 "우리 차 뒷자리"와 전혀 다른 그림이 된다.
+     */
+    {
+      family: "car",
+      re: /(자동차\s*(?:안|에서)|(?<![기전마])차\s*(?:안|에서)|카시트|뒷자리|뒷좌석)/g,
+      description: "뒷좌석 안전벨트와 창문, 앞자리 등받이가 보이는 승용차 안, 창밖으로 흐르는 도시 풍경",
+    },
+    {
+      family: "transit",
+      re: /(버스\s*(?:안|에서)|지하철|전철|기차\s*(?:안|에서))/g,
+      description: "나란히 놓인 좌석과 천장 손잡이, 창밖 풍경이 흐르는 차량 안",
+    },
   ];
   const hints: (LocationHint & { score: number })[] = [];
   for (const definition of definitions) {
@@ -121,7 +137,7 @@ function inferLocationFromText(text: string): LocationHint | null {
 const VENUE_FAMILIES = new Set(["school", "library", "shop", "restaurant", "hospital", "zoo", "pool"]);
 const HOME_PART_FAMILIES = new Set(["home", "entrance", "corridor", "yard", "veranda", "kitchen"]);
 /** 여기로 옮기면 앞의 큰 장소를 떠난 것이다. */
-const LEAVES_VENUE = new Set(["vehicle", "home", "street"]);
+const LEAVES_VENUE = new Set(["car", "transit", "home", "street"]);
 const VENUE_PART: Record<string, Record<string, string>> = {
   school: {
     entrance: "나무 신발장이 줄지어 선 어린이집 현관, 낮은 문턱과 밝은 타일 바닥",
