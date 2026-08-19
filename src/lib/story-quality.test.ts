@@ -74,7 +74,7 @@ describe("validateStoryQuality", () => {
     ]);
     value.pages[1].imagePrompt = "등장인물 1명: 민이. 장소: 낯선 공원 — 큰 미끄럼틀. 민이가 손뼉을 친다.";
     const repaired = repairStoryContinuity(value);
-    assert.ok(repaired.pages[1].imagePrompt.includes("장소: 놀이방 — 따뜻한 벽과 나무 바닥"));
+    assert.ok(repaired.pages[1].imagePrompt.includes("장소: 놀이방 —"));
     assert.ok(!repaired.pages[1].imagePrompt.includes("낯선 공원"));
   });
 
@@ -88,8 +88,10 @@ describe("validateStoryQuality", () => {
 
     const repaired = repairStoryContinuity(value);
 
-    assert.match(repaired.pages[0].imagePrompt, /장소: 태이네 집 — 따뜻한 벽과 나무 바닥/);
-    assert.match(repaired.pages[1].imagePrompt, /장소: 태이네 집 — 따뜻한 벽과 나무 바닥/);
+    assert.match(repaired.pages[0].imagePrompt, /장소: 태이네 집 —/);
+    assert.match(repaired.pages[1].imagePrompt, /장소: 태이네 집 —/);
+    // 친구 집도 요즘 집이어야 한다 — '놀러 간다' 장면에서 옛날 집이 제일 잘 튀어나온다.
+    assert.match(repaired.pages[0].imagePrompt, /아파트|마루|소파/);
     assert.ok(repaired.pages.every((page) => !page.imagePrompt.includes("숲길")));
   });
 
@@ -150,6 +152,39 @@ describe("validateStoryQuality", () => {
     const repaired = repairStoryContinuity(value);
 
     assert.match(repaired.pages[1].imagePrompt, /물건: 풍선 — 빨간색 동그란 풍선 하나/);
+  });
+
+  it("자리를 옮긴 문장을 알아본다 — 못 알아보면 그림이 계속 앞 장소에 머문다", () => {
+    // 실제로 겪었다: 「하얀 고래 책」은 집 식탁 장면에서도 도서관을 그렸고,
+    // 「첫눈」은 눈사람을 만드는 쪽까지 거실이었다. 이동 표현을 못 잡아서다.
+    const moved = [
+      ["현관문을 열자 찬 바람이 들어왔어요.", "밖으로 나온 것"],
+      ["집에 들어와 창가에 앉았어요.", "안으로 들어온 것"],
+      ["저녁에 식탁에서 책을 펼쳤어요.", "때가 바뀐 것"],
+      ["집에 오는 길에 비가 내렸어요.", "오는 길"],
+      ["사흘이 지났어요.", "날이 지난 것"],
+    ] as const;
+    for (const [text, why] of moved) {
+      const value = story(["하온이는 도서관에서 책을 빌렸어요. 파란 표지였어요.", text]);
+      value.pages[0].imagePrompt = "등장인물 1명: 하온. 장소: 도서관 — 나무 책장과 큰 창문. 하온이가 책을 든다.";
+      value.pages[1].imagePrompt = "등장인물 1명: 하온. 장소: 집 — 따뜻한 벽과 나무 바닥. 하온이가 앉는다.";
+      const repaired = repairStoryContinuity(value);
+      assert.ok(
+        !repaired.pages[1].imagePrompt.includes("도서관"),
+        `${why}을 못 알아봐서 앞 장소로 되돌렸다: ${text}`,
+      );
+    }
+  });
+
+  it("자리를 안 옮긴 문장은 앞 장소를 그대로 지킨다", () => {
+    const value = story([
+      "하온이는 놀이방에서 블록을 쌓았어요. 높이높이 쌓았어요.",
+      "친구가 옆에 앉았어요. 둘이 함께 쌓았어요.",
+    ]);
+    value.pages[0].imagePrompt = "등장인물 1명: 하온. 장소: 놀이방 — 크림색 벽과 나무 마루. 하온이가 쌓는다.";
+    value.pages[1].imagePrompt = "등장인물 2명: 하온, 친구. 장소: 낯선 공원 — 큰 미끄럼틀. 둘이 쌓는다.";
+    const repaired = repairStoryContinuity(value);
+    assert.ok(repaired.pages[1].imagePrompt.includes("놀이방"), "이동이 없는데 장소가 바뀌었다");
   });
 
   it("장소 권고는 제작을 막지 않고 안전·중복 오류만 막는다", () => {
