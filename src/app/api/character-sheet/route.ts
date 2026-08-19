@@ -51,7 +51,12 @@ export async function POST(request: Request) {
       description: typeof c.description === "string" ? c.description.trim() : "",
     }))
     .filter((c) => c.name)
-    .slice(0, 4);
+    /*
+     * 상한 6 — 예전엔 4였다. 실제 책에서 아이 1 + 친구 3 + 선생님 = 5명이 나왔고,
+     * 다섯째(선생님)가 시트에서 잘려 매 쪽 새 얼굴로 그려졌다. 친구를 3명까지
+     * 넣을 수 있으니 어른 한둘을 더해도 6이면 덮인다.
+     */
+    .slice(0, 6);
 
   if (characters.length === 0) {
     return NextResponse.json({ error: "등장인물이 없습니다." }, { status: 400 });
@@ -97,6 +102,9 @@ export async function POST(request: Request) {
           "MAKE THEM UNMISTAKABLY DIFFERENT FROM EACH OTHER. This is the most important rule of this sheet.",
           "Give each character a clearly different hairstyle (length and shape) AND clearly different clothing colours. If two descriptions happen to be similar, push them apart — change one character's hair length and shirt colour so the two can never be confused.",
           "A reader glancing at this sheet must be able to tell instantly which character is which. Two characters that could be mistaken for the same child is a failure.",
+          "These are Korean children. ALL of them have black or dark brown hair. Never draw blonde, golden, yellow, red, ginger, silver or light-coloured hair on any child, even if a description hints at it — read such a hint as a dark shade, not a light one. Tell them apart by HAIRSTYLE and CLOTHING COLOUR only.",
+          "Follow each description's stated sex exactly. A character described as a boy is drawn as a boy with short hair; a character described as a girl is drawn as a girl. Never infer sex from the name.",
+          "Draw every face LARGE and clearly readable — this sheet is the identity reference for every page of the book, so each character's eyes, nose, mouth, hair shape and face shape must be sharp enough to copy. Do not shrink the characters to fit; crop the composition tighter if needed.",
         ].join("\n")
       : "",
     "Full body, front view, standing, simple plain white background.",
@@ -111,7 +119,13 @@ export async function POST(request: Request) {
     const image = await generateImage({
       prompt,
       references: drawing ? [drawing] : undefined,
-      aspectRatio: "1:1",
+      /*
+       * 인물이 셋 이상이면 가로로 넓은 4:3에 그린다.
+       * 정사각형 한 장에 넷을 나란히 세우면 얼굴 하나가 가로 1/4밖에 안 돼,
+       * 매 쪽 삽화가 참조하기엔 너무 흐릿한 기준이 된다(친구 얼굴이 쪽마다
+       * 달라지던 실제 원인 중 하나). 넓게 그리면 얼굴에 픽셀이 더 간다.
+       */
+      aspectRatio: characters.length >= 3 ? "4:3" : "1:1",
     });
     return NextResponse.json({ image: toDataUrl(image) });
   } catch (e) {

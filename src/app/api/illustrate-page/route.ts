@@ -171,9 +171,30 @@ export async function POST(request: Request) {
       "Never switch medium or rendering technique between pages. Do not turn watercolor into 3D, vector, crayon, anime, pencil, collage or a different kind of painting. Do not mix two styles in one page.",
     ].join("\n"),
     `Scene: ${scene}`,
+    /*
+     * 구도 — 아래가 텅 비지 않게.
+     *
+     * 세로 판형에서 인물을 화면 위쪽에 몰아 그리고 아래 1/3을 바닥(잔디·타일)으로만
+     * 채우는 그림이 반복해서 나왔다. 그림책으로 보면 허전하고, 아이 눈에는 인물이
+     * 멀리 있어 표정이 잘 안 보인다.
+     */
+    [
+      "COMPOSITION — fill the frame. Place the characters so they occupy the middle of the picture and reach comfortably into the lower half.",
+      "Never leave the bottom third of the picture as bare empty ground, floor or grass with nothing in it. If space is left over, move the characters closer to the viewer and draw them larger rather than adding filler.",
+      "Draw the characters large enough that a small child can read their faces and expressions clearly.",
+    ].join("\n"),
     currentLocation
       ? `LOCATION LOCK — this scene visibly takes place at "${currentLocation.name}": ${currentLocation.description}. Draw that setting, not a generic forest, park, hanok, classroom or another house.`
       : "",
+    /*
+     * 배경을 채울 때 한국 = 전통이라고 읽지 않게 한다.
+     *
+     * 실제로 동물원 장면(회색 보도블록, 기린 우리)의 배경에 기와 지붕 팔각정이
+     * 들어왔다. 장소 설명에 없는 건물인데, 모델이 "한국 공원"의 빈자리를 전통
+     * 건물로 메운 것이다. 우리 동화는 지금 여기, 요즘 한국이다.
+     */
+    "PRESENT-DAY KOREA — this book is set in Korea today. Backgrounds are modern: apartment blocks, concrete and paved walkways, metal or wooden fences, glass windows, ordinary city trees and lawns.",
+    "Do NOT add traditional Korean architecture that the scene did not ask for — no tiled-roof pavilion, no hanok, no thatched roof, no wooden gate, no paper-screen door, no stone jar terrace. If the location line does not name such a building, none appears in the picture.",
     /*
      * 물건 잠금 — 장소와 같은 이유로 넣는다. 다만 요구는 반대다: 장소는 '더 구체적으로',
      * 물건은 '더 단순하게'. 물건은 꾸밀 거리를 줄여야 다음 쪽에서 같게 그려진다.
@@ -193,6 +214,7 @@ export async function POST(request: Request) {
             .join("; ")}. These objects come back on other pages and must look IDENTICAL every time.`,
           "Draw each one as a SIMPLE, plain shape in flat color, exactly as described and nothing more. Do not add a second scoop, a different flavor, sprinkles, toppings, patterns, logos, sparkles, ribbons or decoration that is not in the description.",
           "Simplicity is the point: a plain shape is what lets a child recognize it as the same object on the next page. If you are unsure how detailed to make it, make it simpler.",
+          "The colour word in the description is EXACT, not a hint. A yellow hat is bright yellow, never straw, beige, tan or gold. A pink box is pink, never red or peach. Do not swap a stated colour for a more 'natural' material colour.",
         ].join("\n")
       : "",
     /*
@@ -268,6 +290,9 @@ export async function POST(request: Request) {
             ? [
                 "These are DIFFERENT people. They have different hair and different clothing colours — keep those differences obvious and never give one character another character's hair or outfit.",
                 "Do not make the friend, sibling or classmate look like a copy of the main child. If the descriptions read alike, differentiate them clearly in the drawing.",
+                "The reference sheet is the ONLY source of each face. Copy each named character's face, hair shape and hair length from the sheet exactly as drawn there — same eyes, same nose, same mouth, same face shape, same fringe. Never invent a new face for someone who is on the sheet, and never redesign a face because this page shows a different angle or mood.",
+                "These are Korean children. Every child has black or dark brown hair. Never draw blonde, golden, yellow, red, ginger or silver hair, whatever the wording of a description suggests.",
+                "Keep each character's sex as the sheet shows it. Do not give a boy long hair or a bob, and do not turn a girl into a boy, from one page to the next.",
               ].join("\n")
             : "",
         ]
@@ -277,6 +302,7 @@ export async function POST(request: Request) {
     [
       `HOW MANY PEOPLE — the exact answer is ${sceneCast.length}. Draw exactly ${sceneCast.length} visible people. No extra background children, no crowd filler, and never a second copy of someone already in the picture.`,
       "If the scene names only one character, exactly one person is in this picture.",
+      "Every named character — children AND adults such as a parent, teacher or shopkeeper — must be drawn with the face and hair the reference sheet gives them. An adult whose face changes from page to page reads as a different person to a child.",
       "Before drawing, assign each named character one position and one action from the Scene. Do not swap who performs an action, who has stopped, who leads, who follows, or which side of an object each person occupies.",
       "FINAL CHECK before you finish: look at every face you drew. If two figures share the same face, the same hair and the same clothes, that is the duplication error — remove one of them or redraw that figure as the correct, visibly different character.",
     ].join("\n"),

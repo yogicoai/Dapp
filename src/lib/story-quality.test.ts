@@ -254,3 +254,51 @@ describe("validateStoryQuality", () => {
     assert.equal(isBlockingStoryQualityIssue("2쪽 본문이 다른 페이지와 중복됩니다."), true);
   });
 });
+
+it("어린이집 이야기의 신발장을 아파트 현관으로 바꾸지 않는다", () => {
+  // 실제 사고: 1쪽 본문에 '어린이집 교실'과 '신발장'이 함께 나왔는데 뒤에 있다는
+  // 이유로 신발장이 뽑혀 장소가 "좁은 아파트 현관"이 됐고, 그림이 현관과 교실을
+  // 문틀로 갈라 붙인 이상한 장면이 됐다.
+  const story = {
+    title: "소풍 가는 날",
+    summary: "",
+    characters: [],
+    pages: [
+      {
+        text: "어린이집 교실이 아침부터 시끌시끌했어요. 신발장 앞도 북적북적했어요.",
+        imagePrompt: [
+          "등장인물 1명: 하온.",
+          "하온이는 교실 가운데 앉아 가방을 무릎에 올려놓는다.",
+          "장소: 신발장 — 신발장과 낮은 문턱, 밝은 타일 바닥의 좁은 아파트 현관.",
+        ].join("\n"),
+      },
+    ],
+  } as never as ParsedStory;
+  const line = repairStoryContinuity(story)
+    .pages[0].imagePrompt.split("\n")
+    .find((l) => l.startsWith("장소:"))!;
+  assert.ok(!line.includes("아파트"), line);
+  assert.ok(/교실|어린이집/.test(line), line);
+});
+
+it("장면 문장이 말하는 장소를 장소 줄보다 믿는다", () => {
+  const story = {
+    title: "도서관",
+    summary: "",
+    characters: [],
+    pages: [
+      {
+        text: "하온이는 조용히 앉아 있었어요.",
+        imagePrompt: [
+          "등장인물 1명: 하온.",
+          "하온이는 도서관 열람 책상에 앉아 그림책을 넘긴다.",
+          "장소: 거실 — 크림색 벽과 밝은 나무 마루의 요즘 아파트 거실.",
+        ].join("\n"),
+      },
+    ],
+  } as never as ParsedStory;
+  const line = repairStoryContinuity(story)
+    .pages[0].imagePrompt.split("\n")
+    .find((l) => l.startsWith("장소:"))!;
+  assert.ok(/도서관|책장/.test(line), line);
+});

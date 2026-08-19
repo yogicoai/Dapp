@@ -101,7 +101,48 @@ function inferLocationFromText(text: string): LocationHint | null {
     }
   }
   // 점수가 높은 곳이 '지금 있는 곳'. 같으면 뒤에 나온 것을 쓴다(가다가 도착한 곳).
-  return hints.sort((a, b) => b.score - a.score || b.index - a.index)[0] ?? null;
+  const best = hints.sort((a, b) => b.score - a.score || b.index - a.index)[0] ?? null;
+  return best ? inVenue(best, hints) : null;
+}
+
+/**
+ * '어디의' 신발장인지까지 본다.
+ *
+ * 실제로 이런 사고가 났다 — 어린이집 소풍 이야기의 1쪽 본문이
+ * "어린이집 교실이 시끌시끌했어요 … 신발장 앞도 북적북적했어요"인데,
+ * 뒤에 나온 '신발장'이 뽑혀 장소가 **"좁은 아파트 현관"**이 됐다.
+ * 그림은 아파트 현관과 어린이집 교실을 문틀로 갈라 붙인 이상한 그림이 나왔다.
+ *
+ * 현관·복도·마당·거실은 **건물의 부분**을 가리키는 말이라, 그 건물이 무엇인지가
+ * 정해지지 않으면 기본값(집=아파트)으로 떨어진다. 그래서 같은 글에 어린이집·학교
+ * 같은 **건물 이름**이 함께 있으면 그쪽을 먼저 세우고, 부분은 그 건물 안의 말로
+ * 바꿔 적는다.
+ */
+const VENUE_FAMILIES = new Set(["school", "library", "shop", "restaurant", "hospital", "zoo", "pool"]);
+const HOME_PART_FAMILIES = new Set(["home", "entrance", "corridor", "yard", "veranda", "kitchen"]);
+/** 여기로 옮기면 앞의 큰 장소를 떠난 것이다. */
+const LEAVES_VENUE = new Set(["vehicle", "home", "street"]);
+const VENUE_PART: Record<string, Record<string, string>> = {
+  school: {
+    entrance: "나무 신발장이 줄지어 선 어린이집 현관, 낮은 문턱과 밝은 타일 바닥",
+    corridor: "밝은 어린이집 복도, 아이 키 높이 옷걸이와 낮은 게시판",
+    yard: "어린이집 앞마당, 낮은 울타리와 작은 나무",
+    home: "밝은 벽과 큰 창문, 낮은 책상과 장난감 수납장이 있는 어린이집 교실",
+    kitchen: "낮은 식탁과 작은 의자가 줄지어 놓인 어린이집 급식실",
+  },
+};
+
+function inVenue(
+  best: LocationHint & { score: number },
+  hints: (LocationHint & { score: number })[],
+): LocationHint {
+  if (VENUE_FAMILIES.has(best.family)) return best;
+  const venue = hints.find((h) => VENUE_FAMILIES.has(h.family));
+  if (!venue) return best;
+  const override = VENUE_PART[venue.family]?.[best.family];
+  if (override) return { ...best, name: `${venue.name} ${best.name}`.trim(), description: override };
+  // 그 건물 안의 말이 마련돼 있지 않으면, 집 기본값으로 떨어지느니 건물 자체를 쓴다.
+  return HOME_PART_FAMILIES.has(best.family) ? venue : best;
 }
 
 /**
@@ -153,11 +194,33 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
   const fixedLocations = new Map<string, string>();
   const fixedProps = new Map<string, string>();
   let previous: { name: string; clause: string; text: string } | null = null;
+  /*
+   * '지금 어느 건물 안인가'를 쪽을 넘어 기억한다.
+   *
+   * 실제 사고 — 4쪽에서 동물원에 들어갔는데 5·6·7쪽 장소가 그냥 "잔디밭과 벤치"가
+   * 됐고, 그림은 동물원이 아니라 깊은 숲속 공터로 나왔다. 아이가 보기엔 소풍 가서
+   * 갑자기 숲에 온 것이다. 동물원·학교·도서관처럼 **큰 장소**는 그 안의 작은 장소
+   * (잔디밭·복도·벤치)로 옮겨도 사라지지 않는다.
+   *
+   * 버스를 타거나 집으로 가면 그 건물을 떠난 것이므로 잊는다.
+   */
+  let venue: LocationHint | null = null;
   const pages = story.pages.map((page) => {
     // 물건 잠금은 장소 손질과 얽히지 않는다 — 먼저 끝내 두면 아래 어느 갈래로 빠져도 적용된다.
     let imagePrompt = lockProps(page.imagePrompt, fixedProps);
     let location = LOCATION_PATTERN.exec(imagePrompt);
-    const textLocation = inferLocationFromText(page.text);
+    /*
+     * 장소 단서는 본문뿐 아니라 **장면 문장**에서도 읽는다.
+     *
+     * 장면 문장이 곧 그려질 그림이다. 실제로 1쪽 장면이 "하온이는 교실 가운데 앉아"
+     * 인데 장소 줄은 "아파트 현관"이었고, 둘이 어긋난 채로 그림이 나갔다.
+     * 어긋나는지 아무도 검사하지 않아 지금까지 그대로 통과했다.
+     */
+    const sceneOnly = imagePrompt
+      .split(/\r?\n/)
+      .filter((line) => !/^\s*(?:등장인물|장소\s*:|물건\s*:)/.test(line))
+      .join(" ");
+    const textLocation = inferLocationFromText(`${page.text} ${sceneOnly}`);
     if (location && textLocation && locationFamily(location[1]) !== textLocation.family) {
       const correctedClause = `장소: ${textLocation.name} — ${textLocation.description}`;
       imagePrompt = imagePrompt.replace(location[0], correctedClause);
@@ -202,6 +265,20 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
       imagePrompt = imagePrompt.replace(location[0], canonical);
       clause = canonical;
     } else {
+      const family = textLocation?.family ?? locationFamily(location[1]);
+      if (VENUE_FAMILIES.has(family)) {
+        venue = textLocation ?? { family, name, description: "", index: 0 };
+      } else if (LEAVES_VENUE.has(family)) {
+        venue = null;
+      } else if (venue && !MOVE_PATTERN.test(page.text) && !clause.includes(venue.name)) {
+        // 이 쪽에서 자리를 옮기는 말이 없으면 아직 그 건물 안이다.
+        // 큰 장소 안의 작은 자리다 — 이름과 설명 양쪽에 그 건물을 남긴다.
+        const withVenue = clause
+          .replace(/^장소:\s*/, `장소: ${venue.name} `)
+          .replace(/\.?$/, `, ${venue.name} 안`);
+        imagePrompt = imagePrompt.replace(location[0], withVenue);
+        clause = withVenue;
+      }
       fixedLocations.set(name, clause);
     }
     previous = { name, clause, text: page.text };
