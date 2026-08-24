@@ -556,16 +556,25 @@ function WhoNameInput({
   const askGender = !GENDER_KNOWN.has(term);
   return (
     <div className="flex flex-col gap-1">
+      {/*
+        여기가 '아이 이름' 칸으로 오해받았다(베타 제보).
+        아이 이름은 앞 화면에서 이미 받았고, 이 칸은 **함께 나오는 사람**의 이름이다.
+        라벨이 "아빠 이름"이라고만 떠 있고 예시가 '토토, 민지'라 아이 이름처럼 보였다.
+        그래서 ① 누구 이름인지 문장으로 밝히고 ② 안 적어도 된다는 것을 아래에 적는다.
+      */}
       <p className="text-xs font-bold text-neutral-400">
-        {term} 이름 <span className="font-medium">(선택)</span>
+        함께 나오는 {term} 이름 <span className="font-medium">(선택)</span>
       </p>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value.slice(0, 20))}
         maxLength={20}
-        placeholder="이름만 적어요 (예: 토토, 민지)"
+        placeholder={`${term}를 부르는 이름이 따로 있다면 적어요`}
         className="w-full rounded-2xl border-2 border-dashed border-neutral-200 bg-white text-neutral-900 px-4 py-2.5 text-sm font-bold outline-none focus:border-neutral-400"
       />
+      <p className="text-[11px] font-medium text-neutral-400">
+        아이 이름이 아니라 {term} 이름이에요. 안 적으면 동화에 그냥 &lsquo;{term}&rsquo;라고 나와요.
+      </p>
       {askGender && (
         <div className="mt-1 flex items-center gap-1.5">
           <span className="text-xs font-bold text-neutral-400">{term}는</span>
@@ -1468,6 +1477,15 @@ export default function CreatePage() {
     abortRef.current = ac;
     const images: (string | null)[] = [];
     const locationReferences = new Map<string, { image: string; scene: string }>();
+    /*
+     * 못 그린 이유를 모아 둔다.
+     *
+     * 예전에는 실패를 통째로 삼키고 images[i] = null 만 했다. 그래서 부모 화면에는
+     * 아무 말도 안 뜨고, 뷰어는 그림 없는 쪽을 앱 배경으로 채웠다 — 베타 제보
+     * "2페이지부터 전부 앱 배경 이미지로 나온다"가 바로 이것이다.
+     * 왜 안 됐는지를 알아야 기다렸다 다시 할지, 오늘은 그만둘지 정할 수 있다.
+     */
+    const drawFailures: string[] = [];
     try {
       const heroLooks = looksToPrompt(loadChild()?.looks);
       const sheetRes = await fetch("/api/character-sheet", {
@@ -1495,8 +1513,27 @@ export default function CreatePage() {
       // 삽화는 쪽마다 독립이다(캐릭터 일관성은 위에서 만든 캐릭터 시트가 잡아준다).
       // 예전엔 한 장씩 줄 세워 그려서 8쪽이면 '한 장 시간 × 8'을 기다려야 했다 —
       // 만들기가 느리다는 피드백(2번)의 가장 큰 원인이었다. 이제 여러 장을 동시에 그린다.
-      // 동시 3장: 더 늘리면 Gemini 쪽에서 몰아친다고 막을 수 있어 안전선을 둔다.
-      const CONCURRENT_IMAGES = 3;
+      /*
+       * 동시 2장.
+       *
+       * 예전엔 3장이었는데, 실패한 책들의 기록이 한 방향을 가리켰다 —
+       * **줄 세워 그린 쪽은 다 성공하고, 동시에 쏜 순간부터 무너졌다.**
+       * 6쪽짜리 두 권이 똑같이 `성공 성공 성공 성공 실패 실패`였는데,
+       * 앞 넷은 순서대로 그린 쪽(1쪽·장소별 첫 쪽)이고 뒤 둘이 동시 요청분이었다.
+       * Gemini의 분당 한도에 우리가 스스로 부딪히고 있었던 것이다.
+       */
+      const CONCURRENT_IMAGES = 2;
+      /*
+       * 한 번 몰림(429)을 만나면 그때부터는 띄엄띄엄 보낸다.
+       *
+       * 한도에 걸린 뒤에도 같은 속도로 계속 쏘면 남은 쪽이 줄줄이 다 실패한다
+       * (실제로 한 권의 2쪽 이후가 통째로 비었다). 한 번 데면 속도를 늦춘다.
+       */
+      let crowdedUntil = 0;
+      const pace = async () => {
+        const wait = crowdedUntil - Date.now();
+        if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
+      };
       images.length = s.pages.length;
       images.fill(null);
       /**
@@ -1547,6 +1584,7 @@ export default function CreatePage() {
               const styleReferenceScene =
                 sameLocationReference?.scene ??
                 (styleFallback && styleSeed >= 0 ? s.pages[styleSeed].imagePrompt : "");
+              await pace();
               const r = await fetch("/api/illustrate-page", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
@@ -1575,9 +1613,12 @@ export default function CreatePage() {
                 }),
                 signal: ac.signal,
               });
+              // 몰림을 만났다 — 남은 요청들의 속도를 늦춘다.
+              if (r.status === 429) crowdedUntil = Date.now() + 20_000;
               // ok 검사보다 .json()이 먼저면 HTML 오류 페이지에서 SyntaxError가 난다.
               const data = (await r.json().catch(() => ({}))) as {
                 image?: string;
+                error?: string;
                 qualityPassed?: boolean;
                 qualityWarning?: string;
                 qualityIssue?: "text" | "other";
@@ -1593,6 +1634,7 @@ export default function CreatePage() {
              * 이제 다시 그려 보되, 그것도 신통찮으면 처음 그림을 그대로 쓴다.
              */
             const first = await requestImage();
+            if (!first.ok && first.data.error) drawFailures.push(first.data.error);
             let image = first.ok ? (first.data.image ?? null) : null;
             let ok = first.ok && first.data.qualityPassed !== false && Boolean(image);
 
@@ -1637,6 +1679,9 @@ export default function CreatePage() {
           } catch (e) {
             if ((e as Error).name === "AbortError") return;
             // 한 장이 실패해도 나머지는 계속 그린다 — 그 쪽만 플레이스홀더가 된다.
+            // 다만 이유는 반드시 남긴다(예전엔 여기서 조용히 사라졌다).
+            console.warn("[illustrate] 쪽 그림 실패", i + 1, e);
+            drawFailures.push((e as Error).message || "알 수 없는 오류");
             images[i] = null;
           }
           done++;
@@ -1681,6 +1726,26 @@ export default function CreatePage() {
         setStep("story");
         return;
       }
+    }
+    /*
+     * 못 그린 쪽이 있으면 반드시 말해 준다.
+     *
+     * 책은 그대로 저장한다(이미 결제한 그림을 버리지 않는다는 원칙 그대로). 다만
+     * 아무 말 없이 넘어가면 부모는 "앱이 이상한 배경을 넣었다"고만 느낀다.
+     * 이유를 한 줄이라도 보여 줘야 기다렸다 다시 그릴지 판단할 수 있다.
+     */
+    const missing = images.filter((im) => !im).length;
+    if (missing > 0 && !ac.signal.aborted) {
+      // 같은 이유가 여러 번 쌓이므로 한 번씩만 보여 준다.
+      const reasons = [...new Set(drawFailures)].slice(0, 2);
+      window.alert(
+        [
+          `그림 ${missing}장을 못 그렸어요.`,
+          reasons.length ? `\n이유: ${reasons.join(" / ")}` : "",
+          "\n\n동화는 그대로 저장돼요. 못 그린 쪽은 글만 보이고,",
+          "\n책을 열어서 그 쪽만 다시 그릴 수 있어요.",
+        ].join(""),
+      );
     }
     // 취소했더라도 그때까지 그린 쪽으로 완성 화면을 보여준다 (나머지는 플레이스홀더).
     setPageImages(images);

@@ -3,6 +3,10 @@
  *
  * image: 선택 카드에 보여줄 견본(여우 그림). 인수인계 작업자가 만든 9종을
  *        style_01~09.webp로 받아 public/art-styles/에 넣었다. 순서는 화면 그대로.
+ *
+ * '종이접기 콜라주'(collage, style_06)는 뺐다 — 견본은 그럴듯한데 실제로 그리면
+ * 종이 질감 때문에 인물 얼굴이 뭉개져 나왔다. 아이 얼굴이 망가지는 건 이 앱에서
+ * 가장 속상한 오류라, 되는 그림체만 남긴다. 견본 파일은 지우지 않고 두었다.
  * prompt: 삽화 생성 때 Gemini 프롬프트에 붙는 영문 스타일 지시. 그림체 선택이
  *        실제 그림에 반영되는 지점이라 여기 같이 관리한다.
  */
@@ -50,13 +54,6 @@ export const ART_STYLES: ArtStyle[] = [
     emoji: "🧸",
     image: "/art-styles/style_05.webp",
     prompt: "modern 3D animated movie style, glossy soft-toy look, rounded shapes",
-  },
-  {
-    id: "collage",
-    label: "종이접기 콜라주",
-    emoji: "📄",
-    image: "/art-styles/style_06.webp",
-    prompt: "paper cutout collage style, layered torn paper textures",
   },
   {
     id: "vector",

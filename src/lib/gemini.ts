@@ -14,6 +14,14 @@ export class GeminiError extends Error {
   readonly status?: number;
   /** 서버가 "이만큼 뒤에 다시 오라"고 알려준 값(초). 재시도 간격에 쓴다. */
   retryAfter?: string | null;
+  /**
+   * 하루치 할당량을 다 쓴 경우.
+   *
+   * 같은 429라도 '지금 몰림(분당 한도)'은 조금 기다리면 되지만, '오늘 다 씀(일일 한도)'은
+   * 몇 번을 기다려도 안 된다. 구분하지 않으면 될 리 없는 재시도로 시간만 버리고,
+   * 부모에게는 "왜 안 되는지" 아무 말도 못 해 준다.
+   */
+  quotaExhausted?: boolean;
 
   constructor(message: string, status?: number) {
     super(message);
@@ -112,10 +120,19 @@ type Part = {
  * 그대로 실패했다. 동시에 세 장씩 요청하는 구조라 429는 드물지 않다.
  * 실패한 호출은 과금되지 않으므로, 다시 부르는 것은 비용이 늘지 않는다.
  */
-const IMAGE_ATTEMPTS = 3;
+const IMAGE_ATTEMPTS = 5;
 const RETRY_BASE_MS = 800;
 /** 한 장이 이보다 오래 붙들려 있지 않게 — 다시 시도하다 만들기가 통째로 늘어지면 안 된다. */
 const RETRY_DEADLINE_MS = 60_000;
+/*
+ * 몰림(429)은 따로 잰다.
+ *
+ * 예전엔 429도 0.8초 → 1.6초로 세 번 걸고 포기했다. 그런데 Gemini의 분당 한도는
+ * "30초쯤 뒤에 다시 오라"고 답한다 — 3초 만에 포기하니 될 일이 안 됐다.
+ * 실제로 이것 때문에 한 권의 2쪽 이후가 통째로 빈 채로 저장됐다.
+ */
+const RATE_LIMIT_MAX_WAIT_MS = 45_000;
+const RATE_LIMIT_DEADLINE_MS = 150_000;
 
 /**
  * 다시 걸어 볼 만한 실패인지.
@@ -134,14 +151,49 @@ export function isRetryableStatus(status: number): boolean {
  * 멈춘 것처럼 보인다). 없으면 0.8초에서 두 배씩 늘리고, 여러 장이 동시에 실패했을 때
  * 똑같은 순간에 다시 몰리지 않도록 ±30% 흔든다.
  */
-export function retryDelayMs(attempt: number, retryAfter?: string | null): number {
-  const told = Number(retryAfter);
-  if (Number.isFinite(told) && told > 0) return Math.min(told * 1000, 10_000);
+export function retryDelayMs(
+  attempt: number,
+  retryAfter?: string | null,
+  maxMs = 10_000,
+): number {
+  // Gemini는 Retry-After 헤더 대신 본문에 "35s" 꼴로 알려준다 — 그것도 받아들인다.
+  const told = parseFloat(String(retryAfter ?? ""));
+  if (Number.isFinite(told) && told > 0) return Math.min(told * 1000, maxMs);
   const base = RETRY_BASE_MS * 2 ** Math.max(0, attempt - 1);
   return Math.round(base * (0.7 + Math.random() * 0.6));
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * 429 응답 본문에서 "얼마나 기다려야 하는지"와 "하루치를 다 썼는지"를 읽는다.
+ *
+ * 구글은 이 정보를 헤더가 아니라 본문에 넣어 준다:
+ *   error.details[] 안에 RetryInfo(retryDelay: "35s")와
+ *   QuotaFailure(violations[].quotaId: "...PerMinute" / "...PerDay")가 들어 있다.
+ * 이걸 안 읽으면 "그냥 실패"로만 보여서, 기다리면 될 일과 오늘은 안 될 일을 못 가른다.
+ */
+export function readQuotaHint(body: string): { retryDelay?: string; daily: boolean } {
+  try {
+    const parsed = JSON.parse(body) as {
+      error?: { details?: Record<string, unknown>[] };
+    };
+    const details = parsed.error?.details ?? [];
+    const typeOf = (d: Record<string, unknown>) => String(d["@type"] ?? "");
+    const retryInfo = details.find((d) => typeOf(d).endsWith("RetryInfo"));
+    const retryDelay =
+      typeof retryInfo?.retryDelay === "string" ? retryInfo.retryDelay : undefined;
+    const quotaFailure = details.find((d) => typeOf(d).endsWith("QuotaFailure"));
+    const violations = (quotaFailure?.violations ?? []) as Record<string, unknown>[];
+    const daily = violations.some((v) =>
+      /per\s*day|perday/i.test(`${v.quotaId ?? ""} ${v.quotaMetric ?? ""}`),
+    );
+    return { retryDelay, daily };
+  } catch {
+    // 본문이 JSON이 아니면(프록시 오류 페이지 등) 판단하지 않는다 — 기본 재시도로 간다.
+    return { daily: false };
+  }
+}
 
 export async function generateImage(input: {
   prompt: string;
@@ -192,6 +244,25 @@ export async function generateImage(input: {
 
     if (!res.ok) {
       const body = await res.text().catch(() => "");
+      if (res.status === 429) {
+        /*
+         * 부모가 볼 말로 바꾼다.
+         *
+         * 예전엔 구글이 준 영어 JSON을 300자 잘라 그대로 올렸다. 어차피 화면에서는
+         * 통째로 삼켜져 아무 데도 안 보였고, 결국 "2쪽부터 그림이 안 나온다"는
+         * 제보만 남고 이유는 아무도 몰랐다.
+         */
+        const hint = readQuotaHint(body);
+        const err = new GeminiError(
+          hint.daily
+            ? "오늘 그릴 수 있는 그림 수를 다 썼어요. 내일 다시 하시거나 결제 설정을 확인해 주세요."
+            : "그림 요청이 한꺼번에 몰렸어요. 잠시 뒤 다시 그려 볼게요.",
+          429,
+        );
+        err.retryAfter = res.headers.get("retry-after") ?? hint.retryDelay ?? null;
+        err.quotaExhausted = hint.daily;
+        throw err;
+      }
       const err = new GeminiError(
         `Gemini 호출 실패 (HTTP ${res.status}): ${body.slice(0, 300)}`,
         res.status,
@@ -237,9 +308,17 @@ export async function generateImage(input: {
       lastError = e;
       const err = e instanceof GeminiError ? e : null;
       if (!err || err.status === undefined) break;
+      // 오늘치를 다 썼으면 기다려도 소용없다 — 바로 알리는 편이 낫다.
+      if (err.quotaExhausted) break;
       if (!isRetryableStatus(err.status) || attempt === IMAGE_ATTEMPTS) break;
-      const delay = retryDelayMs(attempt, err.retryAfter);
-      if (Date.now() - startedAt + delay > RETRY_DEADLINE_MS) break;
+      const crowded = err.status === 429;
+      const delay = retryDelayMs(
+        attempt,
+        err.retryAfter,
+        crowded ? RATE_LIMIT_MAX_WAIT_MS : 10_000,
+      );
+      const deadline = crowded ? RATE_LIMIT_DEADLINE_MS : RETRY_DEADLINE_MS;
+      if (Date.now() - startedAt + delay > deadline) break;
       await sleep(delay);
     }
   }

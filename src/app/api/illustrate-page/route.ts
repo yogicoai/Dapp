@@ -182,6 +182,8 @@ export async function POST(request: Request) {
       "COMPOSITION — fill the frame. Place the characters so they occupy the middle of the picture and reach comfortably into the lower half.",
       "Never leave the bottom third of the picture as bare empty ground, floor or grass with nothing in it. If space is left over, move the characters closer to the viewer and draw them larger rather than adding filler.",
       "Draw the characters large enough that a small child can read their faces and expressions clearly.",
+      "Every face must be cleanly and correctly drawn: two clear eyes, a nose and a mouth in the right places, no smeared, doubled, melted or distorted features. A child whose face came out broken is the single most upsetting error in this book.",
+      "Draw the expression the text asks for. If the child is looking up at something, their head is tilted back and their eyes point upward, not at the viewer.",
     ].join("\n"),
     currentLocation
       ? `LOCATION LOCK — this scene visibly takes place at "${currentLocation.name}": ${currentLocation.description}. Draw that setting, not a generic forest, park, hanok, classroom or another house.`
@@ -194,6 +196,21 @@ export async function POST(request: Request) {
      * 건물로 메운 것이다. 우리 동화는 지금 여기, 요즘 한국이다.
      */
     "PRESENT-DAY KOREA — this book is set in Korea today. Backgrounds are modern: apartment blocks, concrete and paved walkways, metal or wooden fences, glass windows, ordinary city trees and lawns.",
+    /*
+     * 아이 안전 — 그림책은 아이가 따라 한다.
+     *
+     * 실제로 이런 그림이 나왔다. 본문이 "안전벨트를 딸깍 채웠어요"인데 그림에서는
+     * 벨트 없이 뒷자리에서 무릎으로 서서 창문 쪽으로 몸을 돌리고 있었다.
+     * 또 "소파에서 벌떡 일어났어요"를 소파 **위에 올라선** 모습으로 그렸다.
+     * 네 살 아이가 보고 그대로 따라 하는 그림이라, 이건 품질이 아니라 안전 문제다.
+     */
+    [
+      "CHILD SAFETY — a small child copies what they see in a picture book. Never draw a child in a posture that would be dangerous in real life.",
+      "In a moving car the child is seated facing FORWARD in a rear seat with the seat belt clearly fastened across their chest and lap (or strapped into a child seat). Never draw a child kneeling, standing, turned backwards, leaning out, or without a visible belt while the car is moving. Adults in the car wear their belts too.",
+      "Never draw a child standing on a sofa, chair, table, window sill, railing or stair rail. If the text says they jumped up or sprang up, draw them standing on the floor or sitting up on the seat.",
+      "Korean cars are LEFT-hand drive: the steering wheel and the driver are on the LEFT side of the car.",
+      "Indoors at home Koreans do not wear shoes, and shoes are left at the entrance, not in the middle of the living room. Inside a car, shoes stay ON.",
+    ].join("\n"),
     "Do NOT add traditional Korean architecture that the scene did not ask for — no tiled-roof pavilion, no hanok, no thatched roof, no wooden gate, no paper-screen door, no stone jar terrace. If the location line does not name such a building, none appears in the picture.",
     /*
      * 물건 잠금 — 장소와 같은 이유로 넣는다. 다만 요구는 반대다: 장소는 '더 구체적으로',
@@ -413,6 +430,9 @@ export async function POST(request: Request) {
     });
   } catch (e) {
     if (e instanceof GeminiError) {
+      // 로그에 남겨야 "왜 그림이 안 나오지?"를 나중에 추적할 수 있다.
+      // 특히 429(몰림·할당량)는 화면만 봐서는 다른 실패와 구분되지 않는다.
+      console.error("[illustrate-page] Gemini", e.status, e.message);
       return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
     }
     console.error("[illustrate-page]", e);

@@ -4,6 +4,7 @@ import sharp from "sharp";
 import {
   detectBlankCanvasBorder,
   isRetryableStatus,
+  readQuotaHint,
   repairBlankCanvasBorder,
   retryDelayMs,
 } from "./gemini.ts";
@@ -72,5 +73,32 @@ describe("retryDelayMs", () => {
       const delay = retryDelayMs(1, bad);
       assert.ok(delay >= 560 && delay <= 1040, `${JSON.stringify(bad)} → ${delay}ms`);
     }
+  });
+});
+
+const MINUTE_BODY = '{"error":{"code":429,"status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"35s"}]}}';
+const DAY_BODY = '{"error":{"code":429,"status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaId":"GenerateRequestsPerDayPerProjectPerModel"}]}]}}';
+
+describe("readQuotaHint — 429가 '잠깐 몰림'인지 '오늘 다 씀'인지 가른다", () => {
+  it("분당 한도면 기다릴 시간을 읽고 daily는 아니다", () => {
+    const hint = readQuotaHint(MINUTE_BODY);
+    assert.equal(hint.retryDelay, "35s");
+    assert.equal(hint.daily, false);
+  });
+
+  it("일일 한도면 daily로 표시한다 — 기다려도 안 되는 경우다", () => {
+    assert.equal(readQuotaHint(DAY_BODY).daily, true);
+  });
+
+  it("JSON이 아니어도 터지지 않는다 (프록시 오류 페이지 등)", () => {
+    assert.deepEqual(readQuotaHint("<html>502</html>"), { daily: false });
+    assert.deepEqual(readQuotaHint(""), { daily: false });
+  });
+
+  it("구글이 주는 \"35s\" 꼴을 재시도 간격으로 쓸 수 있다", () => {
+    // 예전엔 Number("35s")가 NaN이라 이 값을 통째로 버리고 0.8초만 기다렸다.
+    assert.equal(retryDelayMs(1, "35s", 45_000), 35_000);
+    // 상한은 지킨다.
+    assert.equal(retryDelayMs(1, "600s", 45_000), 45_000);
   });
 });

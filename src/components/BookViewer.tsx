@@ -400,12 +400,20 @@ export function BookViewer({ book }: { book: Book }) {
   const redrawsLeft = master
     ? Number.POSITIVE_INFINITY
     : FREE_REDRAWS_PER_BOOK - (book.redrawsUsed ?? 0);
+  /*
+   * 그림이 아예 없는 쪽은 '다시 그리기'가 아니라 '못 받은 그림을 받는 것'이다.
+   *
+   * 만들 때 이미 그 쪽 값을 냈는데 Gemini 쪽 사정으로 못 받은 경우다. 여기에
+   * 한 권 1장 제한을 걸면, 다섯 쪽이 비어도 한 쪽밖에 못 채운다.
+   * 그래서 빈 쪽 채우기는 횟수에서 빼지 않는다.
+   */
+  const fillingBlank = !book.pages[index]?.image;
 
   async function redrawPage() {
     const page = book.pages[index];
     const scene = page.imagePrompt?.trim() || page.text;
     if (!scene) return;
-    if (redrawsLeft <= 0) {
+    if (redrawsLeft <= 0 && !fillingBlank) {
       window.alert(
         `그림 다시 그리기는 한 권에 ${FREE_REDRAWS_PER_BOOK}장까지예요.\n이 책은 이미 사용하셨어요.`,
       );
@@ -413,7 +421,9 @@ export function BookViewer({ book }: { book: Book }) {
     }
     if (
       !window.confirm(
-        master
+        fillingBlank
+          ? `${index + 1}쪽은 만들 때 그림을 못 받은 쪽이에요.\n지금 그려 드릴까요?\n\n다시 그리기 횟수는 쓰지 않아요.`
+          : master
           ? `${index + 1}쪽 그림을 다시 그릴까요?\n\n글과 목소리는 그대로예요.`
           : `${index + 1}쪽 그림을 다시 그릴까요?\n\n한 권에 ${FREE_REDRAWS_PER_BOOK}장까지 다시 그릴 수 있어요.\n이걸 쓰면 이 책에서는 더 못 바꿔요.\n글과 목소리는 그대로예요.`,
       )
@@ -490,7 +500,9 @@ export function BookViewer({ book }: { book: Book }) {
         // 표지가 비어 있던 책이면 이 그림으로 채워 준다 — 책장에서 무지개로 보이던 것.
         coverImage: book.coverImage ?? stored,
         // 마스터는 세지 않는다. 그림이 나온 뒤에 올린다 — 실패한 시도로 기회를 잃으면 안 된다.
-        redrawsUsed: master ? book.redrawsUsed : (book.redrawsUsed ?? 0) + 1,
+        // 빈 쪽을 채운 것은 횟수에서 빼지 않는다 — 못 받은 그림을 받은 것뿐이다.
+        redrawsUsed:
+          master || fillingBlank ? book.redrawsUsed : (book.redrawsUsed ?? 0) + 1,
       };
       if (!(await updateBookData(book.id, next))) {
         window.alert("그림은 그렸는데 저장하지 못했어요. 권한(SQL)을 확인해 주세요.");
