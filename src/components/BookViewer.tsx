@@ -834,12 +834,79 @@ export function BookViewer({ book }: { book: Book }) {
       el.onended = finishThen;
       el.play()
         .then(() => setPreparing(false))
-        .catch(() => {
+        .catch((e: unknown) => {
           // 자동재생 차단 등 — 읽기 중단으로 처리. 단, 넘김으로 갈아타며 생긴
           // 중단 오류(pause에 의한 취소)는 새 재생을 건드리면 안 된다.
           setPreparing(false);
+          if ((e as Error)?.name === "AbortError" || narrPausedRef.current) return;
           if (run === runIdRef.current) stopReading();
         });
+    };
+
+    /**
+     * 미리 구운 파일 여러 개를 차례로 튼다.
+     *
+     * 배역별로 나눠 구운 쪽(지문=나레이션 성우, 대사=배역 성우)을 위해서다.
+     * 글자 색칠은 조각의 글자 수로 나눠 이어 붙인다 — 통짜 하나를 시간 비례로
+     * 칠하는 것보다 정확하다.
+     */
+    const playFileSequence = (srcs: { src: string; chars: number }[]) => {
+      const el = audioRef.current ?? new Audio();
+      audioRef.current = el;
+      const all = srcs.reduce((n, s) => n + s.chars, 0) || 1;
+      let i = 0;
+      let before = 0; // 앞 조각들이 이미 칠한 글자 수
+      const next = () => {
+        if (run !== runIdRef.current || !readingRef.current) return;
+        if (i >= srcs.length) {
+          finishThen();
+          return;
+        }
+        const seg = srcs[i];
+        i += 1;
+        el.src = seg.src;
+        applyPlaybackRate(el, rateBoost);
+        el.ontimeupdate = () => {
+          if (el.duration > 0) {
+            const within = (el.currentTime / el.duration) * seg.chars;
+            setHighlight(Math.min(total, Math.round(((before + within) / all) * total)));
+          }
+        };
+        el.onended = () => {
+          before += seg.chars;
+          next();
+        };
+        /*
+         * 한 조각이 없거나 깨졌으면 거기서 멈추지 말고 다음 조각으로 넘어간다 —
+         * 굽다 만 파일 하나 때문에 쪽 전체가 조용해지면 안 된다.
+         *
+         * 다만 '지금 틀려던 그 파일'이 실패했을 때만 넘어간다. 대사 재생이나
+         * 쪽 넘김으로 src가 이미 바뀐 뒤 뒤늦게 날아온 오류까지 받아 주면,
+         * 멀쩡한 조각을 소리 없이 건너뛰어 문장이 통째로 사라진다.
+         */
+        el.onerror = () => {
+          if (!el.src.endsWith(seg.src)) return;
+          before += seg.chars;
+          next();
+        };
+        el.play()
+          .then(() => setPreparing(false))
+          .catch((e: unknown) => {
+            setPreparing(false);
+            /*
+             * 캐릭터를 눌러 대사가 나오는 동안은 낭독을 pause()로 멈춘다.
+             * 그런데 조각이 막 시작하는 순간에 누르면, 아직 끝나지 않은 play()가
+             * pause() 때문에 AbortError로 깨진다. 그걸 '재생 실패'로 보고 낭독을
+             * 통째로 멈춰 버리면, 대사가 끝나도 이어 읽지 않는다.
+             *
+             * 조각으로 나눈 뒤로 한 쪽에 play()가 서른 번 넘게 일어나서 이 틈이
+             * 훨씬 넓어졌다 — 그래서 여기서 확실히 갈라 준다.
+             */
+            if ((e as Error)?.name === "AbortError" || narrPausedRef.current) return;
+            if (run === runIdRef.current) stopReading();
+          });
+      };
+      next();
     };
 
     const bundled = page.audio ?? page.legacyAudio ?? null;
@@ -847,10 +914,29 @@ export function BookViewer({ book }: { book: Book }) {
     const tc = findTypecast(selectedId);
 
     // 이 책의 추천 성우(narrators) 중 하나를 골랐으면, 그 성우로 미리 구운 파일을
-    // 재생한다 — 파일 재생이라 크레딧 0·즉시. (narr-pN.mp3 → narr-{성우}-pN.mp3)
-    if (book.narrators?.includes(selectedId) && page.audio) {
-      playViaAudio(page.audio.replace("narr-", `narr-${selectedId}-`));
-      return;
+    // 재생한다 — 파일 재생이라 크레딧 0·즉시.
+    if (book.narrators?.includes(selectedId)) {
+      /*
+       * 배역별로 나눠 구운 쪽이면 조각을 이어서 튼다.
+       * 지문 조각만 고른 성우로 갈아 끼우고(seg-pN-i → seg-{성우}-pN-i),
+       * 대사 조각은 배역이 성우를 정하므로 그대로 둔다.
+       */
+      if (page.segments?.length) {
+        playFileSequence(
+          page.segments.map((seg) => ({
+            src:
+              seg.who === "narration"
+                ? seg.src.replace("seg-", `seg-${selectedId}-`)
+                : seg.src,
+            chars: seg.text.length,
+          })),
+        );
+        return;
+      }
+      if (page.audio) {
+        playViaAudio(page.audio.replace("narr-", `narr-${selectedId}-`));
+        return;
+      }
     }
 
     // 성우 음성 — 조각을 '오는 대로' 이어서 재생한다. 조각들은 이미 동시에 합성이
@@ -1910,19 +1996,31 @@ export function BookViewer({ book }: { book: Book }) {
                 const y =
                   speaking.box[0] > 180
                     ? {
-                        top: `${Math.min(94, Math.max(18, speaking.box[0] / 10))}%`,
+                        /*
+                         * 캐릭터 위에 띄울 때는 28% 아래로는 못 내려온다.
+                         *
+                         * -110%로 끌어올리는 구조라, 여기가 낮으면 말풍선이 그림
+                         * 위쪽 밖으로 삐져나간다(실제로 1쪽 토끼에서 그랬다).
+                         * 두 줄짜리 말풍선 높이를 견딜 만큼 여유를 둔다.
+                         */
+                        top: `${Math.min(94, Math.max(28, speaking.box[0] / 10))}%`,
                         ty: "-110%",
                       }
-                    : { top: `${Math.min(78, speaking.box[2] / 10 + 2)}%`, ty: "0%" };
+                    : { top: `${Math.min(74, speaking.box[2] / 10 + 2)}%`, ty: "0%" };
                 const below = y.ty === "0%"; // 말풍선이 캐릭터 아래에 뜬 경우
                 return (
                   // 바깥 = 위치(translate 앵커), 안쪽 = 통통 팝(scale). transform이
                   // 하나뿐이라 둘을 겹치면 서로 덮어써서 위치가 틀어진다 → 겹을 나눈다.
                   <div
-                    className="absolute z-[6] w-max max-w-[min(78vw,26rem)]"
+                    /*
+                     * 너비를 화면(vw)이 아니라 **그림 틀**에 맞춘다.
+                     * 예전엔 26rem 고정이라, 펼침면에서 그림이 화면 절반으로
+                     * 줄어도 말풍선만 그대로 커서 그림을 다 덮었다.
+                     */
+                    className="absolute z-[6] w-max max-w-[min(72%,22rem)]"
                     style={{ left: x.left, top: y.top, transform: `translate(${x.tx}, ${y.ty})` }}
                   >
-                    <div className="font-story relative animate-[bubble-pop_0.35s_cubic-bezier(0.34,1.56,0.64,1)] whitespace-normal break-keep rounded-[1.4rem] bg-white px-6 py-3.5 text-center text-[clamp(1.35rem,3vw,2.1rem)] font-bold leading-snug text-neutral-800 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
+                    <div className="font-story relative animate-[bubble-pop_0.35s_cubic-bezier(0.34,1.56,0.64,1)] whitespace-normal break-keep rounded-[1.2rem] bg-white px-4 py-2.5 text-center text-[clamp(0.95rem,1.7vw,1.5rem)] font-bold leading-snug text-neutral-800 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
                       {speaking.line}
                       {/* 꼬리 — 캐릭터를 가리킨다. 말풍선이 위에 있으면 아래로, 아래면 위로.
                           말풍선과 같은 순백이라 테두리 없이도 이어져 보인다. */}

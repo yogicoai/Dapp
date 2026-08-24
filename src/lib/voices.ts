@@ -9,7 +9,15 @@
  */
 
 import { acctKey } from "@/lib/supabase";
-import { segmentTones, type CastMember, type SpeakerTone } from "@/lib/speaker-tone";
+import {
+  segmentTones,
+  splitDialogue,
+  type CastMember,
+  type SpeakerTone,
+} from "@/lib/speaker-tone";
+// 대사/지문 쪼개기는 독립 모듈로 옮겼다 — 브라우저 것을 안 들고 있어야
+// 낭독을 미리 굽는 스크립트에서도 같은 함수를 쓸 수 있다(두 벌이 되면 어긋난다).
+export { splitDialogue } from "@/lib/speaker-tone";
 import type { VoiceDirection, VoicePace } from "@/lib/types";
 
 export type PresetVoice = {
@@ -502,35 +510,6 @@ export type PageAudioSegment = {
 };
 
 /** 조각이 합성하기에 너무 짧은지 — Typecast는 아주 짧은 감탄문을 거부한다(실측). */
-function tooShort(s: string): boolean {
-  return s.replace(/[\s"“”…!?,.~—-]/g, "").length < 5;
-}
-
-/**
- * 따옴표로 묶인 대사와 지문을 나눈다.
- * 이어 붙이면 원문과 정확히 같아야 한다 (색칠 동기화가 글자 수로 돌기 때문).
- */
-export function splitDialogue(text: string): { text: string; dialogue: boolean }[] {
-  const parts = text.split(/("[^"]*"|“[^”]*”)/).filter((s) => s.length > 0);
-  const segs = parts.map((s) => ({ text: s, dialogue: /^["“]/.test(s) }));
-
-  // 짧은 조각은 앞 조각에 붙인다. 맨 앞이 짧으면 뒤 조각에 붙인다.
-  const merged: { text: string; dialogue: boolean }[] = [];
-  for (const s of segs) {
-    const prev = merged[merged.length - 1];
-    if (prev && tooShort(s.text)) {
-      prev.text += s.text;
-      continue;
-    }
-    merged.push({ ...s });
-  }
-  while (merged.length >= 2 && tooShort(merged[0].text)) {
-    merged[1].text = merged[0].text + merged[1].text;
-    merged.shift();
-  }
-  return merged;
-}
-
 /**
  * 대사의 감정을 내용으로 추정한다. 확신이 없으면 원래 음색을 유지한다.
  */

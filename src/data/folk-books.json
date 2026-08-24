@@ -593,10 +593,7 @@
   {
     "id": "folk-tortoise",
     "narrators": [
-      "tc-dabin",
-      "tc-jungsoon",
-      "tc-gunseok",
-      "tc-miso"
+      "tc-dabin"
     ],
     "lang": "ko",
     "title": "토끼와 거북이",
@@ -619,6 +616,29 @@
             "audio": "/folk/tortoise/say-p1-rabbit.mp3",
             "line": "나보다 빠른 동물은 없지! 다들 비켜 비켜~"
           }
+        ],
+        "lines": [
+          {
+            "text": "이 숲에서 나보다 빠른 동물은 아무도 없지!",
+            "who": "rabbit"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p1-0.mp3",
+            "text": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/tortoise/seg-cast-p1-1.mp3",
+            "text": "\"이 숲에서 나보다 빠른 동물은 아무도 없지!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p1-2.mp3",
+            "text": "\n토끼는 만나는 친구마다 자랑을 늘어놓았지요."
+          }
         ]
       },
       {
@@ -636,6 +656,13 @@
             ],
             "audio": "/folk/tortoise/say-p2-tortoise.mp3",
             "line": "느려도 괜찮아. 나는 끝까지 해내거든!"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p2-0.mp3",
+            "text": "그 숲에는 느릿느릿 거북이도 살고 있었어요.\n거북이는 걸음은 느렸지만,\n무슨 일이든 끝까지 해내는 성실한 친구였답니다."
           }
         ]
       },
@@ -666,20 +693,38 @@
             "audio": "/folk/tortoise/say-p3-tortoise.mp3",
             "line": "괜찮아. 나는 내 걸음이 좋아."
           }
+        ],
+        "lines": [
+          {
+            "text": "거북아, 너는 세상에서 제일가는 느림보야! 그 걸음으로 어디를 간다는 거니?",
+            "who": "rabbit"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p3-0.mp3",
+            "text": "어느 날, 토끼가 거북이를 보고 깔깔 웃었어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/tortoise/seg-cast-p3-1.mp3",
+            "text": "\"거북아, 너는 세상에서 제일가는 느림보야!\n그 걸음으로 어디를 간다는 거니?\""
+          }
         ]
       },
       {
         "text": "거북이는 잠시 생각하더니 조용히 말했어요.\n\"토끼야, 그럼 나랑 달리기 시합을 해 볼래?\n저기 언덕 꼭대기의 큰 소나무까지 말이야.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p4.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p4.webp?v=2",
         "audio": "/folk/tortoise/narr-p4.mp3",
         "hotspots": [
           {
             "label": "rabbit",
             "box": [
-              266,
-              283,
-              693,
-              492
+              258,
+              291,
+              720,
+              508
             ],
             "audio": "/folk/tortoise/say-p4-rabbit.mp3",
             "line": "뭐라고? 재미있겠는걸?"
@@ -687,57 +732,94 @@
           {
             "label": "tortoise",
             "box": [
-              386,
-              519,
-              691,
-              792
+              393,
+              549,
+              718,
+              803
             ],
             "audio": "/folk/tortoise/say-p4-tortoise.mp3",
             "line": "토끼야, 나랑 달리기 시합 할래?"
+          }
+        ],
+        "lines": [
+          {
+            "text": "토끼야, 그럼 나랑 달리기 시합을 해 볼래? 저기 언덕 꼭대기의 큰 소나무까지 말이야.",
+            "who": "tortoise"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p4-0.mp3",
+            "text": "거북이는 잠시 생각하더니 조용히 말했어요.\n"
+          },
+          {
+            "who": "tortoise",
+            "src": "/folk/tortoise/seg-cast-p4-1.mp3",
+            "text": "\"토끼야, 그럼 나랑 달리기 시합을 해 볼래?\n저기 언덕 꼭대기의 큰 소나무까지 말이야.\""
           }
         ]
       },
       {
         "text": "\"뭐라고? 네가 나랑 시합을?\"\n토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p5.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p5.webp?v=2",
         "audio": "/folk/tortoise/narr-p5.mp3",
         "hotspots": [
           {
             "label": "rabbit",
             "box": [
-              265,
-              338,
-              693,
-              518
+              266,
+              350,
+              707,
+              524
             ],
             "audio": "/folk/tortoise/say-p5-rabbit.mp3",
-            "line": "네가 나랑 시합을? 하하하, 좋아!"
+            "line": "네가 나랑 시합을? 하하하, 좋아!",
+            "say": "네가 나랑 시합을? 하하, 좋아!"
           },
           {
             "label": "tortoise",
             "box": [
               382,
-              547,
-              691,
-              793
+              574,
+              694,
+              760
             ],
             "audio": "/folk/tortoise/say-p5-tortoise.mp3",
             "line": "언덕 위 소나무까지야. 준비됐어!"
+          }
+        ],
+        "lines": [
+          {
+            "text": "뭐라고? 네가 나랑 시합을?",
+            "who": "rabbit"
+          }
+        ],
+        "segments": [
+          {
+            "who": "rabbit",
+            "src": "/folk/tortoise/seg-cast-p5-0.mp3",
+            "text": "\"뭐라고? 네가 나랑 시합을?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p5-1.mp3",
+            "text": "\n토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요."
           }
         ]
       },
       {
         "text": "부엉이 할아버지가 심판을 맡았어요.\n\"자, 준비… 시작!\"\n외침과 함께 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p6.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p6.webp?v=2",
         "audio": "/folk/tortoise/narr-p6.mp3",
         "hotspots": [
           {
             "label": "tortoise",
             "box": [
-              412,
-              93,
-              679,
-              308
+              480,
+              203,
+              752,
+              448
             ],
             "audio": "/folk/tortoise/say-p6-tortoise.mp3",
             "line": "나도 출발! 엉금엉금."
@@ -745,60 +827,127 @@
           {
             "label": "owl",
             "box": [
-              206,
-              309,
-              580,
-              582
+              202,
+              659,
+              613,
+              853
             ],
             "audio": "/folk/tortoise/say-p6-owl.mp3",
-            "line": "자, 준비… 시작!"
+            "line": "자, 준비… 시작!",
+            "say": "자아, 준비이… 시자악!"
           },
           {
             "label": "rabbit",
             "box": [
-              321,
-              532,
-              711,
-              722
+              382,
+              473,
+              764,
+              642
             ],
             "audio": "/folk/tortoise/say-p6-rabbit.mp3",
             "line": "먼저 간다~! 씽씽!"
+          }
+        ],
+        "lines": [
+          {
+            "text": "자, 준비… 시작!",
+            "who": "owl",
+            "say": "자아, 준비이… 시자악!"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p6-0.mp3",
+            "text": "부엉이 할아버지가 심판을 맡았어요.\n"
+          },
+          {
+            "who": "owl",
+            "src": "/folk/tortoise/seg-cast-p6-1.mp3",
+            "text": "\"자, 준비… 시작!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p6-2.mp3",
+            "text": "\n외침과 함께 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요."
           }
         ]
       },
       {
         "text": "거북이는 한 걸음, 또 한 걸음. 엉금엉금 천천히 걸었어요.\n\"괜찮아. 나는 나의 걸음으로 가면 돼.\"\n거북이는 씩씩하게 앞만 보았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p7.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p7.webp?v=2",
         "audio": "/folk/tortoise/narr-p7.mp3",
         "hotspots": [
           {
             "label": "tortoise",
             "box": [
-              388,
-              620,
-              701,
-              874
+              365,
+              460,
+              718,
+              735
             ],
             "audio": "/folk/tortoise/say-p7-tortoise.mp3",
             "line": "괜찮아. 나는 나의 걸음으로 가면 돼."
+          }
+        ],
+        "lines": [
+          {
+            "text": "괜찮아. 나는 나의 걸음으로 가면 돼.",
+            "who": "tortoise"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p7-0.mp3",
+            "text": "거북이는 한 걸음, 또 한 걸음. 엉금엉금 천천히 걸었어요.\n"
+          },
+          {
+            "who": "tortoise",
+            "src": "/folk/tortoise/seg-cast-p7-1.mp3",
+            "text": "\"괜찮아. 나는 나의 걸음으로 가면 돼.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p7-2.mp3",
+            "text": "\n거북이는 씩씩하게 앞만 보았답니다."
           }
         ]
       },
       {
         "text": "한참을 달린 토끼가 뒤를 돌아보았어요.\n거북이는 점처럼 조그맣게 보였지요.\n\"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p8.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p8.webp?v=2",
         "audio": "/folk/tortoise/narr-p8.mp3",
         "hotspots": [
           {
             "label": "rabbit",
             "box": [
-              340,
-              219,
-              823,
-              441
+              336,
+              241,
+              845,
+              422
             ],
             "audio": "/folk/tortoise/say-p8-rabbit.mp3",
             "line": "하암~ 저 느림보 오려면 멀었네. 낮잠이나 자자."
+          }
+        ],
+        "lines": [
+          {
+            "text": "하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.",
+            "who": "rabbit",
+            "say": "하아암~ 저 느림보가 오려면 아지익 멀었네. 낮잠이나 한숨 자야겠다."
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p8-0.mp3",
+            "text": "한참을 달린 토끼가 뒤를 돌아보았어요.\n거북이는 점처럼 조그맣게 보였지요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/tortoise/seg-cast-p8-1.mp3",
+            "text": "\"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\""
           }
         ]
       },
@@ -806,20 +955,15 @@
         "text": "토끼는 시원한 나무 그늘에 벌렁 누웠어요.\n솔솔 부는 바람이 어찌나 시원한지,\n토끼는 금세 쿨쿨 잠이 들고 말았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p9.webp",
         "audio": "/folk/tortoise/narr-p9.mp3",
-        "hotspots": [
+        "hotspots": [],
+        "video": "/folk/tortoise/p9.mp4",
+        "segments": [
           {
-            "label": "rabbit",
-            "box": [
-              535,
-              219,
-              781,
-              595
-            ],
-            "audio": "/folk/tortoise/say-p9-rabbit.mp3",
-            "line": "쿨쿨… 드르렁… 새근새근…"
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p9-0.mp3",
+            "text": "토끼는 시원한 나무 그늘에 벌렁 누웠어요.\n솔솔 부는 바람이 어찌나 시원한지,\n토끼는 금세 쿨쿨 잠이 들고 말았답니다."
           }
-        ],
-        "video": "/folk/tortoise/p9.mp4"
+        ]
       },
       {
         "text": "그동안에도 거북이는 멈추지 않았어요.\n뜨거운 햇살 아래에서도, 가파른 오르막에서도,\n딱 한 번도 쉬지 않고 엉금엉금 걸어갔지요.",
@@ -837,49 +981,52 @@
             "audio": "/folk/tortoise/say-p10-tortoise.mp3",
             "line": "한 걸음, 또 한 걸음. 절대 포기하지 않아!"
           }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p10-0.mp3",
+            "text": "그동안에도 거북이는 멈추지 않았어요.\n뜨거운 햇살 아래에서도, 가파른 오르막에서도,\n딱 한 번도 쉬지 않고 엉금엉금 걸어갔지요."
+          }
         ]
       },
       {
         "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 깨우지 않고 묵묵히 언덕을 올라갔답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p11.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p11.webp?v=2",
         "audio": "/folk/tortoise/narr-p11.mp3",
         "hotspots": [
           {
-            "label": "rabbit",
-            "box": [
-              445,
-              187,
-              695,
-              502
-            ],
-            "audio": "/folk/tortoise/say-p11-rabbit.mp3",
-            "line": "드르렁… 쿨쿨…"
-          },
-          {
             "label": "tortoise",
             "box": [
-              393,
-              606,
-              701,
-              856
+              428,
+              566,
+              752,
+              773
             ],
             "audio": "/folk/tortoise/say-p11-tortoise.mp3",
             "line": "쉿! 토끼를 깨우지 말고 살금살금…"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p11-0.mp3",
+            "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 깨우지 않고 묵묵히 언덕을 올라갔답니다."
           }
         ]
       },
       {
         "text": "\"드르렁… 푸우…\"\n한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가 소스라치게 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p12.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p12.webp?v=2",
         "audio": "/folk/tortoise/narr-p12.mp3",
         "hotspots": [
           {
             "label": "rabbit",
             "box": [
-              245,
-              176,
-              686,
-              375
+              353,
+              190,
+              822,
+              397
             ],
             "audio": "/folk/tortoise/say-p12-rabbit.mp3",
             "line": "으악! 안 돼! 큰일 났다!"
@@ -887,28 +1034,46 @@
           {
             "label": "tortoise",
             "box": [
-              254,
-              649,
-              372,
-              745
+              237,
+              714,
+              359,
+              785
             ],
             "audio": "/folk/tortoise/say-p12-tortoise.mp3",
             "line": "조금만 더! 거의 다 왔어!"
+          }
+        ],
+        "lines": [
+          {
+            "text": "드르렁… 푸우…",
+            "who": "rabbit"
+          }
+        ],
+        "segments": [
+          {
+            "who": "rabbit",
+            "src": "/folk/tortoise/seg-cast-p12-0.mp3",
+            "text": "\"드르렁… 푸우…\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p12-1.mp3",
+            "text": "\n한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가 소스라치게 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!"
           }
         ]
       },
       {
         "text": "\"안 돼!\"\n토끼는 있는 힘껏 달렸지만 이미 늦었어요. 거북이가 한 발 먼저 큰 소나무를 짚었답니다.\n\"거북이 승리!\" 부엉이 할아버지가 크게 외쳤어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p13.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p13.webp?v=2",
         "audio": "/folk/tortoise/narr-p13.mp3",
         "hotspots": [
           {
             "label": "owl",
             "box": [
-              110,
-              580,
-              297,
-              758
+              45,
+              780,
+              235,
+              907
             ],
             "audio": "/folk/tortoise/say-p13-owl.mp3",
             "line": "거북이 승리! 부엉부엉!"
@@ -916,10 +1081,10 @@
           {
             "label": "rabbit",
             "box": [
-              380,
-              267,
-              720,
-              437
+              318,
+              199,
+              705,
+              384
             ],
             "audio": "/folk/tortoise/say-p13-rabbit.mp3",
             "line": "아이고, 늦어 버렸네…"
@@ -927,28 +1092,60 @@
           {
             "label": "tortoise",
             "box": [
-              449,
-              532,
-              725,
-              775
+              400,
+              519,
+              730,
+              720
             ],
             "audio": "/folk/tortoise/say-p13-tortoise.mp3",
             "line": "해냈다! 정말 기뻐!"
+          }
+        ],
+        "lines": [
+          {
+            "text": "안 돼!",
+            "who": "rabbit"
+          },
+          {
+            "text": "거북이 승리!",
+            "who": "owl"
+          }
+        ],
+        "segments": [
+          {
+            "who": "rabbit",
+            "src": "/folk/tortoise/seg-cast-p13-0.mp3",
+            "text": "\"안 돼!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p13-1.mp3",
+            "text": "\n토끼는 있는 힘껏 달렸지만 이미 늦었어요. 거북이가 한 발 먼저 큰 소나무를 짚었답니다.\n"
+          },
+          {
+            "who": "owl",
+            "src": "/folk/tortoise/seg-cast-p13-2.mp3",
+            "text": "\"거북이 승리!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p13-3.mp3",
+            "text": " 부엉이 할아버지가 크게 외쳤어요."
           }
         ]
       },
       {
         "text": "숲속 친구들이 우레 같은 박수를 보냈어요.\n\"거북아, 잘난 척해서 미안해.\" \"괜찮아, 우리 좋은 친구가 되자!\"\n느려도 포기하지 않는 마음이 결국 해낸답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p14.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p14.webp?v=2",
         "audio": "/folk/tortoise/narr-p14.mp3",
         "hotspots": [
           {
             "label": "rabbit",
             "box": [
-              261,
-              308,
-              709,
-              510
+              245,
+              320,
+              730,
+              512
             ],
             "audio": "/folk/tortoise/say-p14-rabbit.mp3",
             "line": "거북아, 잘난 척해서 미안해."
@@ -956,17 +1153,61 @@
           {
             "label": "tortoise",
             "box": [
-              379,
-              503,
-              703,
-              776
+              300,
+              522,
+              715,
+              707
             ],
             "audio": "/folk/tortoise/say-p14-tortoise.mp3",
             "line": "괜찮아! 우리 좋은 친구가 되자!"
           }
+        ],
+        "lines": [
+          {
+            "text": "거북아, 잘난 척해서 미안해.",
+            "who": "rabbit"
+          },
+          {
+            "text": "괜찮아, 우리 좋은 친구가 되자!",
+            "who": "tortoise"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p14-0.mp3",
+            "text": "숲속 친구들이 우레 같은 박수를 보냈어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/tortoise/seg-cast-p14-1.mp3",
+            "text": "\"거북아, 잘난 척해서 미안해.\" "
+          },
+          {
+            "who": "tortoise",
+            "src": "/folk/tortoise/seg-cast-p14-2.mp3",
+            "text": "\"괜찮아, 우리 좋은 친구가 되자!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/tortoise/seg-p14-3.mp3",
+            "text": "\n느려도 포기하지 않는 마음이 결국 해낸답니다."
+          }
         ]
       }
-    ]
+    ],
+    "voiceCast": {
+      "narration": "tc-dabin",
+      "rabbit": "tc-hamchu",
+      "tortoise": "tc-mongsil",
+      "owl": "tc-jungsoon"
+    },
+    "roleOf": {
+      "토끼": "rabbit",
+      "거북이": "tortoise",
+      "부엉이": "owl",
+      "할아버지": "owl"
+    }
   },
   {
     "id": "folk-kongjwi",
@@ -1047,16 +1288,16 @@
       },
       {
         "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n\"저도 잔치에 가고 싶어요!\"\n\"흥! 그럼 이 항아리에 물을 가득 채워 놓고 오너라!\"\n새어머니는 팥쥐만 데리고 고운 옷을 입고 먼저 떠나 버렸지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p4.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p4.webp?v=2",
         "audio": "/folk/kongjwi/narr-p4.wav",
         "hotspots": [
           {
             "label": "kongjwi",
             "box": [
-              330,
-              694,
-              725,
-              856
+              388,
+              359,
+              822,
+              524
             ],
             "audio": "/folk/kongjwi/say-p4-kongjwi.mp3",
             "line": "잔치에 꼭 가고 싶어!"
@@ -1276,16 +1517,16 @@
       },
       {
         "text": "'새어머니가 보시기 전에 얼른 집에 가야 해!'\n콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p10.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p10.webp?v=2",
         "audio": "/folk/kongjwi/narr-p10.wav",
         "hotspots": [
           {
             "label": "kongjwi",
             "box": [
-              253,
-              497,
-              672,
-              727
+              191,
+              532,
+              648,
+              735
             ],
             "audio": "/folk/kongjwi/say-p9-kongjwi.mp3",
             "line": "아앗! 내 꽃신!"
@@ -1294,16 +1535,16 @@
       },
       {
         "text": "콩쥐를 뒤따라 나온 원님은\n개울가에서 반짝이는 꽃신 한 짝을 발견했어요.\n\"이 신의 주인이 아까 그 아가씨로구나!\n온 마을을 뒤져서라도 꼭 찾아내야겠다.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p11.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p11.webp?v=2",
         "audio": "/folk/kongjwi/narr-p11.wav",
         "hotspots": [
           {
             "label": "magistrate",
             "box": [
-              141,
-              403,
-              748,
-              673
+              230,
+              600,
+              660,
+              790
             ],
             "audio": "/folk/kongjwi/say-p11-magistrate.wav",
             "line": "이 꽃신의 주인을 꼭 찾아내야겠다!"
@@ -1359,16 +1600,16 @@
       },
       {
         "text": "얼마 뒤, 원님과 콩쥐는 온 마을의 축복 속에 혼례를 올렸어요.\n새어머니와 팥쥐도 그동안의 잘못을 뉘우치고 사과했지요.\n\"콩쥐야, 미안했다.\"\n콩쥐는 활짝 웃으며 모두를 안아 주었고, 오래오래 행복하게 살았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p14.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p14.webp?v=2",
         "audio": "/folk/kongjwi/narr-p14.wav",
         "hotspots": [
           {
             "label": "kongjwi",
             "box": [
-              346,
-              483,
-              687,
-              642
+              285,
+              522,
+              800,
+              700
             ],
             "audio": "/folk/kongjwi/say-p14-kongjwi.mp3",
             "line": "우리 이제 사이좋게 지내요!"
@@ -1674,21 +1915,21 @@
       },
       {
         "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요.\n\"이 금도끼가 네 도끼냐?\"\n\"아니요, 제 도끼가 아닙니다.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p7.webp?v=5",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p7.webp?v=7",
         "audio": "/folk/goldaxe/narr-p7.mp3"
       },
       {
         "text": "산신령님이 이번에는 은도끼를 들고 나왔어요.\n\"그럼 이 은도끼가 네 도끼냐?\"\n\"아니요, 그것도 제 것이 아닙니다.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p8.webp?v=5",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p8.webp?v=7",
         "audio": "/folk/goldaxe/narr-p8.mp3",
         "hotspots": [
           {
             "label": "spirit",
             "box": [
-              145,
-              250,
-              848,
-              475
+              215,
+              330,
+              800,
+              545
             ],
             "audio": "/folk/goldaxe/say-p8-spirit.wav",
             "line": "이 금도끼가 네 도끼냐?"
@@ -1696,10 +1937,10 @@
           {
             "label": "woodcutter",
             "box": [
-              391,
-              608,
-              893,
-              792
+              455,
+              640,
+              855,
+              800
             ],
             "audio": "/folk/goldaxe/say-p8-woodcutter.wav",
             "line": "아니요, 제 도끼가 아닙니다."
@@ -1708,21 +1949,21 @@
       },
       {
         "text": "마지막으로 낡은 쇠도끼를 들고 나오자\n나무꾼의 얼굴이 환해졌어요.\n\"맞아요! 그게 바로 제 도끼입니다!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p9.webp?v=5",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p9.webp?v=7",
         "audio": "/folk/goldaxe/narr-p9.mp3"
       },
       {
         "text": "산신령님이 껄껄 웃으며 말했어요.\n\"참으로 정직하구나. 네 정직한 마음에 감동했으니\n금도끼와 은도끼도 모두 너에게 주마!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=5",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=7",
         "audio": "/folk/goldaxe/narr-p10.mp3",
         "hotspots": [
           {
             "label": "woodcutter",
             "box": [
-              391,
-              200,
-              882,
-              400
+              355,
+              630,
+              830,
+              800
             ],
             "audio": "/folk/goldaxe/say-p10-woodcutter.wav",
             "line": "맞아요! 그게 제 도끼예요!"
@@ -1731,26 +1972,26 @@
       },
       {
         "text": "나무꾼은 도끼 세 자루를 안고 한달음에 집으로 갔어요.\n\"어머니! 산신령님이 이런 선물을 주셨어요!\"\n금도끼를 판 돈으로 어머니 약을 짓고,\n남은 것은 마을 사람들과 아낌없이 나누었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p11.webp?v=5",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p11.webp?v=7",
         "audio": "/folk/goldaxe/narr-p11.mp3"
       },
       {
         "text": "이 소식을 들은 이웃 마을 욕심쟁이가 무릎을 탁 쳤어요.\n\"옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!\"\n욕심쟁이는 연못으로 달려가\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는 거짓 울음을 울었지요.\n\"아이고, 내 도끼야! 엉엉!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p12.webp?v=5",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p12.webp?v=7",
         "audio": "/folk/goldaxe/narr-p12.mp3"
       },
       {
         "text": "연못이 반짝이더니 산신령님이 금도끼를 들고 나타났어요.\n\"이 금도끼가 네 도끼냐?\"\n\"맞아요, 맞아! 그 금도끼가 제 것입니다!\"\n욕심쟁이는 손을 뻗으며 냉큼 외쳤지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p13.webp?v=5",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p13.webp?v=7",
         "audio": "/folk/goldaxe/narr-p13.mp3",
         "hotspots": [
           {
             "label": "greedy",
             "box": [
-              368,
-              533,
-              882,
-              917
+              340,
+              605,
+              830,
+              800
             ],
             "audio": "/folk/goldaxe/say-p13-greedy.wav",
             "line": "아이고, 내 도끼야! 엉엉!"
@@ -1759,16 +2000,16 @@
       },
       {
         "text": "산신령님의 얼굴이 무섭게 굳어졌어요.\n\"네 도끼는 낡은 쇠도끼가 아니더냐.\n거짓말을 하는구나!\"\n산신령님은 연못 속으로 스르르 사라져 버렸지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p14.webp?v=5",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p14.webp?v=7",
         "audio": "/folk/goldaxe/narr-p14.mp3",
         "hotspots": [
           {
             "label": "spirit",
             "box": [
-              279,
-              167,
-              781,
-              417
+              215,
+              145,
+              830,
+              400
             ],
             "audio": "/folk/goldaxe/say-p14-spirit.wav",
             "line": "거짓말을 하는구나!"
@@ -1777,30 +2018,29 @@
       },
       {
         "text": "욕심쟁이는 해가 지도록 연못가에서 기다렸지만\n산신령님은 다시 나오지 않았어요.\n금도끼는커녕 제 쇠도끼까지 잃고\n터덜터덜 빈손으로 돌아갔답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p15.webp?v=5",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p15.webp?v=7",
         "audio": "/folk/goldaxe/narr-p15.mp3"
       },
       {
-        "text": "그날 저녁, 나무꾼은 마을 사람들과 잔치를 열고 풀 죽은 욕심쟁이에게도 따뜻하게 떡을 나눠 주었어요.\n\"괜찮아요. 우리 같이 나눠 먹어요.\"\n욕심쟁이는 부끄러워 얼굴이 빨개졌지만, 그날부터 정직하게 살기로 마음먹었답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p16.webp?v=5",
+        "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요.\n\"어머니, 저는 도끼 한 자루면 넉넉해요.\"\n나무꾼과 어머니는 오래오래 행복하게 살았답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p16.webp?v=7",
         "audio": "/folk/goldaxe/narr-p16.mp3",
         "hotspots": [
           {
             "label": "woodcutter",
             "box": [
-              257,
-              533,
-              938,
-              717
+              280,
+              265,
+              940,
+              470
             ],
             "audio": "/folk/goldaxe/say-p16-woodcutter.wav",
-            "line": "자, 같이 들어요!"
+            "line": "저는 도끼 한 자루면 넉넉해요!"
           }
         ]
       }
     ],
-    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=5",
-    "hidden": true
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=5"
   },
   {
     "id": "folk-patjuk",

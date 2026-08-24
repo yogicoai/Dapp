@@ -1664,5 +1664,133 @@
         "audio": null
       }
     ]
+  },
+  {
+    "id": "classic-shepherdboy",
+    "lang": "ko",
+    "title": "양치기 소년",
+    "summary": "거짓말을 두 번 하고 나니, 진짜 말도 아무도 믿어 주지 않았어요",
+    "narrator": "tc-yejoon",
+    "pages": [
+      {
+        "text": "산 아래 마을에 양을 치는 소년이 살았어요.\n날마다 넓은 풀밭에서 양들을 돌보았지요.\n하지만 하루하루가 너무나 심심했어요.",
+        "image": "/books/classic-shepherdboy/p1.webp",
+        "audio": null
+      },
+      {
+        "text": "어느 날 소년의 머릿속에 장난이 하나 떠올랐어요.\n'내가 늑대가 나타났다고 하면 어떻게 될까?'\n소년은 씩 웃으며 크게 숨을 들이마셨어요.",
+        "image": "/books/classic-shepherdboy/p2.webp",
+        "audio": null
+      },
+      {
+        "text": "\"늑대다! 늑대가 나타났어요!\"\n마을 사람들이 몽둥이를 들고 헐레벌떡 달려왔어요.\n하지만 풀밭에는 양들만 한가로이 풀을 뜯고 있었지요.",
+        "image": "/books/classic-shepherdboy/p3.webp?v=2",
+        "audio": null
+      },
+      {
+        "text": "소년은 배를 잡고 깔깔 웃었어요.\n\"속았죠? 그냥 장난이었어요!\"\n사람들은 얼굴을 찌푸리며 마을로 돌아갔답니다.",
+        "image": "/books/classic-shepherdboy/p4.webp?v=2",
+        "audio": null
+      },
+      {
+        "text": "며칠 뒤, 소년은 또 심심해졌어요.\n\"늑대다! 이번엔 진짜예요!\"\n사람들이 또 달려왔지만 늑대는 어디에도 없었어요.",
+        "image": "/books/classic-shepherdboy/p5.webp?v=2",
+        "audio": null
+      },
+      {
+        "text": "\"두 번이나 우리를 속이다니!\"\n사람들은 몹시 화가 나서 소리쳤어요.\n\"다시는 네 말을 믿지 않을 테다!\"\n소년은 그래도 대수롭지 않게 여겼지요.",
+        "image": "/books/classic-shepherdboy/p6.webp?v=2",
+        "audio": null
+      },
+      {
+        "text": "그런데 며칠 뒤, 풀숲이 스스슥 흔들렸어요.\n번쩍이는 눈, 뾰족한 이빨 — 진짜 늑대였어요!\n소년은 온몸이 얼어붙었어요.",
+        "image": "/books/classic-shepherdboy/p7.webp?v=2",
+        "audio": null
+      },
+      {
+        "text": "\"늑대다! 이번엔 진짜 늑대예요!\"\n소년은 목이 터져라 외치고 또 외쳤어요.\n하지만 이번에는 아무도 오지 않았어요.",
+        "image": "/books/classic-shepherdboy/p8.webp?v=2",
+        "audio": null
+      },
+      {
+        "text": "늑대가 순식간에 양 두 마리를 잡아먹었어요.\n남은 양들은 뿔뿔이 흩어져 달아나 버렸지요.\n소년은 텅 빈 풀밭에 주저앉아 엉엉 울었어요.",
+        "image": "/books/classic-shepherdboy/p9.webp?v=3",
+        "audio": null
+      },
+      {
+        "text": "소년은 눈물을 닦고 마을로 내려가 어른들 앞에 섰어요.\n\"제가 거짓말을 했어요. 이제는 절대 안 그럴게요.\"\n그날부터 소년은 작은 말 하나도 사실대로만 했고,\n사람들의 믿음도 하루하루 다시 돌아왔답니다.\n한 번 잃은 믿음은 정직한 마음으로만 되찾을 수 있어요.",
+        "image": "/books/classic-shepherdboy/p10.webp?v=2",
+        "audio": null
+      }
+    ]
+  },
+  {
+    "id": "classic-emperor",
+    "lang": "ko",
+    "title": "벌거벗은 임금님",
+    "summary": "어른들이 모두 속아 넘어갈 때, 아이 하나가 본 대로 말했어요",
+    "narrator": "tc-daeun",
+    "pages": [
+      {
+        "text": "옛날 어느 나라에 옷을 아주 좋아하는 임금님이 살았어요.\n하루에도 몇 번씩 새 옷으로 갈아입었지요.\n나라 일보다 옷 생각이 먼저였답니다.",
+        "image": "/books/classic-emperor/p1.webp",
+        "audio": null
+      },
+      {
+        "text": "어느 날 낯선 두 사람이 임금님을 찾아왔어요.\n\"저희는 세상에서 가장 아름다운 옷을 짓습니다.\n어리석은 사람 눈에는 보이지 않는 신기한 옷이지요.\"",
+        "image": "/books/classic-emperor/p2.webp",
+        "audio": null
+      },
+      {
+        "text": "임금님은 눈이 번쩍 뜨였어요.\n'그 옷을 입으면 누가 어리석은지 알 수 있겠구나!'\n임금님은 큰돈을 내주며 어서 지으라고 했어요.",
+        "image": "/books/classic-emperor/p3.webp",
+        "audio": null
+      },
+      {
+        "text": "두 사람은 빈 베틀 앞에 앉았어요.\n실도 없고 천도 없는데 손만 부지런히 움직였지요.\n달그락달그락, 밤늦도록 소리만 났답니다.",
+        "image": "/books/classic-emperor/p4.webp",
+        "audio": null
+      },
+      {
+        "text": "임금님은 나이 많은 신하를 보내 보았어요.\n신하의 눈에는 아무것도 보이지 않았어요.\n'혹시 내가 어리석은 사람인가?'\n신하는 얼른 말했지요. \"참으로 훌륭합니다!\"",
+        "image": "/books/classic-emperor/p5.webp",
+        "audio": null
+      },
+      {
+        "text": "다음에 간 신하도 똑같았어요.\n텅 빈 베틀만 보이는데 차마 말할 수가 없었지요.\n\"빛깔이 곱기도 하지요!\"\n거짓말이 하나씩 쌓여 갔어요.",
+        "image": "/books/classic-emperor/p6.webp",
+        "audio": null
+      },
+      {
+        "text": "드디어 임금님이 옷을 보러 갔어요.\n아무것도, 정말 아무것도 보이지 않았어요.\n임금님은 깜짝 놀랐지만 이렇게 말했답니다.\n\"오, 참으로 멋지구나!\"",
+        "image": "/books/classic-emperor/p7.webp",
+        "audio": null
+      },
+      {
+        "text": "두 사람은 없는 옷을 입혀 주는 척했어요.\n\"팔을 드세요. 자, 다 되었습니다!\"\n거울 앞에 선 임금님은 속옷 차림이었지만\n고개를 끄덕이며 흐뭇하게 웃었어요.",
+        "image": "/books/classic-emperor/p8.webp",
+        "audio": null
+      },
+      {
+        "text": "임금님이 새 옷을 입고 거리로 나섰어요.\n길가에 모인 사람들이 입을 모아 외쳤지요.\n\"우아, 정말 훌륭한 옷이다!\"\n아무도 본 대로 말하지 않았어요.",
+        "image": "/books/classic-emperor/p9.webp",
+        "audio": null
+      },
+      {
+        "text": "그때 한 아이가 아빠 손을 잡고 말했어요.\n\"어? 임금님이 벌거벗었어요!\"\n맑고 또렷한 목소리가 거리에 울려 퍼졌어요.",
+        "image": "/books/classic-emperor/p10.webp",
+        "audio": null
+      },
+      {
+        "text": "사람들이 웅성거리기 시작했어요.\n\"그러고 보니… 정말 아무것도 안 입으셨네.\"\n여기저기서 웃음이 터져 나왔답니다.",
+        "image": "/books/classic-emperor/p11.webp",
+        "audio": null
+      },
+      {
+        "text": "임금님은 얼굴이 새빨개졌지만 끝까지 걸었어요.\n아이는 아빠를 올려다보며 물었어요.\n\"보이는 대로 말하면 되는 거 아니에요?\"\n그날 거리에서 가장 용감한 사람은 그 아이였어요.",
+        "image": "/books/classic-emperor/p12.webp",
+        "audio": null
+      }
+    ]
   }
 ]

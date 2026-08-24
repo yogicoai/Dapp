@@ -180,6 +180,35 @@ function firstSubject(text: string, candidates: string[]): string | null {
  *   `"하온이 왔구나." 할머니가 두 팔을 벌렸어요.`  ← 이건 뒤에 있다.
  * 순서를 뒤집으면 첫 예문에서 대사 속 '하온이'를 화자로 잡는다.
  */
+function tooShort(s: string): boolean {
+  return s.replace(/[\s"“”…!?,.~—-]/g, "").length < 5;
+}
+
+/**
+ * 따옴표로 묶인 대사와 지문을 나눈다.
+ * 이어 붙이면 원문과 정확히 같아야 한다 (색칠 동기화가 글자 수로 돌기 때문).
+ */
+export function splitDialogue(text: string): { text: string; dialogue: boolean }[] {
+  const parts = text.split(/("[^"]*"|“[^”]*”)/).filter((s) => s.length > 0);
+  const segs = parts.map((s) => ({ text: s, dialogue: /^["“]/.test(s) }));
+
+  // 짧은 조각은 앞 조각에 붙인다. 맨 앞이 짧으면 뒤 조각에 붙인다.
+  const merged: { text: string; dialogue: boolean }[] = [];
+  for (const s of segs) {
+    const prev = merged[merged.length - 1];
+    if (prev && tooShort(s.text)) {
+      prev.text += s.text;
+      continue;
+    }
+    merged.push({ ...s });
+  }
+  while (merged.length >= 2 && tooShort(merged[0].text)) {
+    merged[1].text = merged[0].text + merged[1].text;
+    merged.shift();
+  }
+  return merged;
+}
+
 export function attributeSpeakers(
   segments: DialogueSegment[],
   cast: CastMember[] = [],

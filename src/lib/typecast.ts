@@ -121,6 +121,14 @@ export async function synthesize(input: {
   /** 감정 프리셋(happy·sad·angry·toneup 등) — 대사 연기용. 음성이 지원할 때만 먹는다. */
   emotion?: string;
   intensity?: number;
+  /**
+   * 소리 형식. 기본은 mp3다.
+   *
+   * 예전엔 아무것도 안 보내서 wav가 왔는데, 같은 문장이 mp3 59KB / wav 142KB로
+   * 2.4배 차이가 난다. 실시간 낭독은 그때그때 흘려보내니 티가 안 나지만, 미리 구워
+   * 두는 전래동화·세계명작은 그 차이가 그대로 앱 용량이 된다(한 권에서 19MB → 8MB).
+   */
+  format?: "mp3" | "wav";
 }): Promise<{ audio: ArrayBuffer; contentType: string }> {
   // 과금 자동 차단 — 안전선(19만 자)에 닿으면 합성하지 않는다(무료 음성으로 폴백).
   const used = await usedCreditsThisMonth();
@@ -136,6 +144,7 @@ export async function synthesize(input: {
     text: input.text,
     model: input.model || "ssfm-v30",
     language: "kor",
+    output: { audio_format: input.format ?? "mp3" },
   };
   if (input.emotion && input.emotion !== "normal") {
     // ssfm-v30 감정 연기는 대사에만 낮게 적용한다. 높은 값은 음색까지 하이톤으로 바꾼다.
@@ -168,7 +177,7 @@ export async function synthesize(input: {
   localUsedSinceRefresh += input.text.length;
   return {
     audio: await res.arrayBuffer(),
-    contentType: res.headers.get("content-type") ?? "audio/wav",
+    contentType: res.headers.get("content-type") ?? "audio/mpeg",
   };
 }
 

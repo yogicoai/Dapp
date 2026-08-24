@@ -1,0 +1,320 @@
+{
+  "seg-tc-dabin-p1-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요."
+  },
+  "seg-cast-p1-1.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"이 숲에서 나보다 빠른 동물은 아무도 없지!\""
+  },
+  "seg-tc-dabin-p1-2.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 만나는 친구마다 자랑을 늘어놓았지요."
+  },
+  "say-p1-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "나보다 빠른 동물은 없지! 다들 비켜 비켜~"
+  },
+  "seg-tc-dabin-p2-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 숲에는 느릿느릿 거북이도 살고 있었어요.\n거북이는 걸음은 느렸지만,\n무슨 일이든 끝까지 해내는 성실한 친구였답니다."
+  },
+  "say-p2-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "느려도 괜찮아. 나는 끝까지 해내거든!"
+  },
+  "seg-tc-dabin-p3-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 날, 토끼가 거북이를 보고 깔깔 웃었어요."
+  },
+  "seg-cast-p3-1.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"거북아, 너는 세상에서 제일가는 느림보야!\n그 걸음으로 어디를 간다는 거니?\""
+  },
+  "say-p3-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북아, 넌 정말 느림보구나! 하하!"
+  },
+  "say-p3-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "괜찮아. 나는 내 걸음이 좋아."
+  },
+  "seg-tc-dabin-p4-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북이는 잠시 생각하더니 조용히 말했어요."
+  },
+  "seg-cast-p4-1.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"토끼야, 그럼 나랑 달리기 시합을 해 볼래?\n저기 언덕 꼭대기의 큰 소나무까지 말이야.\""
+  },
+  "say-p4-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "뭐라고? 재미있겠는걸?"
+  },
+  "say-p4-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼야, 나랑 달리기 시합 할래?"
+  },
+  "seg-cast-p5-0.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"뭐라고? 네가 나랑 시합을?\""
+  },
+  "seg-tc-dabin-p5-1.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요."
+  },
+  "say-p5-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "네가 나랑 시합을? 하하, 좋아!"
+  },
+  "say-p5-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "언덕 위 소나무까지야. 준비됐어!"
+  },
+  "seg-tc-dabin-p6-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "부엉이 할아버지가 심판을 맡았어요."
+  },
+  "seg-cast-p6-1.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "자아, 준비이… 시자악!"
+  },
+  "seg-tc-dabin-p6-2.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "외침과 함께 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요."
+  },
+  "say-p6-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "나도 출발! 엉금엉금."
+  },
+  "say-p6-owl.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "자아, 준비이… 시자악!"
+  },
+  "say-p6-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "먼저 간다~! 씽씽!"
+  },
+  "seg-tc-dabin-p7-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북이는 한 걸음, 또 한 걸음. 엉금엉금 천천히 걸었어요."
+  },
+  "seg-cast-p7-1.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"괜찮아. 나는 나의 걸음으로 가면 돼.\""
+  },
+  "seg-tc-dabin-p7-2.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북이는 씩씩하게 앞만 보았답니다."
+  },
+  "say-p7-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "괜찮아. 나는 나의 걸음으로 가면 돼."
+  },
+  "seg-tc-dabin-p8-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "한참을 달린 토끼가 뒤를 돌아보았어요.\n거북이는 점처럼 조그맣게 보였지요."
+  },
+  "seg-cast-p8-1.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하아암~ 저 느림보가 오려면 아지익 멀었네. 낮잠이나 한숨 자야겠다."
+  },
+  "say-p8-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하암~ 저 느림보 오려면 멀었네. 낮잠이나 자자."
+  },
+  "seg-tc-dabin-p9-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 시원한 나무 그늘에 벌렁 누웠어요.\n솔솔 부는 바람이 어찌나 시원한지,\n토끼는 금세 쿨쿨 잠이 들고 말았답니다."
+  },
+  "seg-tc-dabin-p10-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그동안에도 거북이는 멈추지 않았어요.\n뜨거운 햇살 아래에서도, 가파른 오르막에서도,\n딱 한 번도 쉬지 않고 엉금엉금 걸어갔지요."
+  },
+  "say-p10-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "한 걸음, 또 한 걸음. 절대 포기하지 않아!"
+  },
+  "seg-tc-dabin-p11-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 깨우지 않고 묵묵히 언덕을 올라갔답니다."
+  },
+  "say-p11-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쉿! 토끼를 깨우지 말고 살금살금…"
+  },
+  "seg-cast-p12-0.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"드르렁… 푸우…\""
+  },
+  "seg-tc-dabin-p12-1.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가 소스라치게 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!"
+  },
+  "say-p12-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "으악! 안 돼! 큰일 났다!"
+  },
+  "say-p12-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "조금만 더! 거의 다 왔어!"
+  },
+  "seg-cast-p13-0.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"안 돼!\""
+  },
+  "seg-tc-dabin-p13-1.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 있는 힘껏 달렸지만 이미 늦었어요. 거북이가 한 발 먼저 큰 소나무를 짚었답니다."
+  },
+  "seg-cast-p13-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"거북이 승리!\""
+  },
+  "seg-tc-dabin-p13-3.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "부엉이 할아버지가 크게 외쳤어요."
+  },
+  "say-p13-owl.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북이 승리! 부엉부엉!"
+  },
+  "say-p13-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아이고, 늦어 버렸네…"
+  },
+  "say-p13-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "해냈다! 정말 기뻐!"
+  },
+  "seg-tc-dabin-p14-0.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "숲속 친구들이 우레 같은 박수를 보냈어요."
+  },
+  "seg-cast-p14-1.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"거북아, 잘난 척해서 미안해.\""
+  },
+  "seg-cast-p14-2.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"괜찮아, 우리 좋은 친구가 되자!\""
+  },
+  "seg-tc-dabin-p14-3.mp3": {
+    "voice": "tc-dabin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "느려도 포기하지 않는 마음이 결국 해낸답니다."
+  },
+  "say-p14-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "거북아, 잘난 척해서 미안해."
+  },
+  "say-p14-tortoise.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "괜찮아! 우리 좋은 친구가 되자!"
+  }
+}

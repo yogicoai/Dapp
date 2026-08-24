@@ -1,0 +1,276 @@
+/**
+ * 배역별 낭독 굽기 — 지문은 나레이션 성우가, 대사는 그 배역 성우가 읽는다.
+ *
+ * 왜 미리 굽나 — 전래동화·세계명작은 모든 아이가 같은 글을 듣는다. 한 번 구워 두면
+ * 그 뒤로는 파일 재생이라 크레딧이 0이다. 실시간 합성으로 두면 아이가 책을 열 때마다
+ * 돈이 나간다.
+ *
+ * 쓰는 법:
+ *   node --experimental-strip-types scripts/bake-cast-narration.mts --dry   (리허설)
+ *   node --experimental-strip-types scripts/bake-cast-narration.mts         (진짜 굽기)
+ *
+ * 이미 있는 파일은 건너뛴다 — 중간에 끊겨도 다시 돌리면 이어서 굽고, 같은 문장에
+ * 두 번 과금되지 않는다.
+ */
+import fs from "node:fs";
+import path from "node:path";
+import { planPageVoices, unmatchedLines, unassignedDialogue, NARRATION } from "../src/lib/story-cast.ts";
+
+const DRY = process.argv.includes("--dry");
+/**
+ * --changed 를 주면 '연기가 달라진 줄'만 다시 굽는다.
+ * 감정 없이 구운 줄은 결과가 같아서 다시 부를 이유가 없다(크레딧 절약).
+ */
+const ONLY_CHANGED = process.argv.includes("--changed");
+/**
+ * --seed 는 아무것도 굽지 않고 '지금 파일이 어떤 조건으로 구워졌는지'만 기록한다.
+ * 규칙을 바꾸기 전에 한 번 찍어 두면, 그 뒤로는 정말 달라진 줄만 다시 굽는다.
+ */
+const SEED = process.argv.includes("--seed");
+/**
+ * 굽기 기록 — 파일마다 {성우, 감정, 세기, 읽은 글}을 남긴다.
+ *
+ * 이게 없으면 '다시 구울 줄'을 감정 규칙의 옛/새 비교로 짐작해야 하는데, 규칙을 두 번
+ * 바꾸면 그 짐작이 틀린다. 실제로 이미 고쳐 놓은 21개를 또 굽겠다고 나왔다(349자).
+ * 조건을 적어 두면 정확히 달라진 것만 고른다.
+ */
+const MANIFEST = "scripts/bake-manifest.json";
+type Recipe = { voice: string; emotion: string; intensity: number | null; text: string };
+const recorded: Record<string, Recipe> = fs.existsSync(MANIFEST)
+  ? JSON.parse(fs.readFileSync(MANIFEST, "utf8"))
+  : {};
+const fresh: Record<string, Recipe> = {};
+const same = (a: Recipe | undefined, b: Recipe) =>
+  Boolean(a) &&
+  a!.voice === b.voice &&
+  a!.emotion === b.emotion &&
+  a!.intensity === b.intensity &&
+  a!.text === b.text;
+const BASE = process.env.BAKE_BASE ?? "http://localhost:3000";
+const DATA = "src/data/folk-books.json";
+const TITLE = "토끼와 거북이";
+const DIR = "public/folk/tortoise";
+const URL_DIR = "/folk/tortoise";
+/** 미리 구울 나레이션 성우. 여기 없는 성우는 이 책의 고를 수 있는 목록에서도 뺀다. */
+const BAKED_NARRATORS = ["tc-dabin"];
+const CAST_NAMES = [{ name: "토끼" }, { name: "거북이" }, { name: "부엉이" }];
+
+/** voices.ts에서 성우 id → Typecast voiceId·모델을 읽어 온다(두 벌로 관리하지 않으려고). */
+function voiceTable(): Record<string, { voiceId: string; model: string }> {
+  const src = fs.readFileSync("src/lib/voices.ts", "utf8");
+  const table: Record<string, { voiceId: string; model: string }> = {};
+  const re = /id:\s*"(tc-[a-z0-9]+)"[\s\S]{0,240}?voiceId:\s*"(tc_[a-f0-9]+)"[\s\S]{0,80}?model:\s*"([^"]+)"/g;
+  for (const m of src.matchAll(re)) table[m[1]] = { voiceId: m[2], model: m[3] };
+  return table;
+}
+
+/**
+ * 감정 연기 세기.
+ *
+ * 0.6으로 구웠더니 음정이 깨져 나왔다. 특히 햄쭈처럼 원래 음높이가 높은 성우에
+ * 화남·기쁨을 세게 걸면 음색까지 하이톤으로 밀려 올라간다(typecast.ts에 같은
+ * 경고가 이미 적혀 있었는데 상한 0.65에 가까운 값을 넣은 게 화근이었다).
+ * 연기는 살고 목소리는 안 깨지는 선이 0.4다.
+ */
+const EMOTION_INTENSITY = 0.4;
+
+/**
+ * 웃음소리·잠자는 소리 같은 의성어가 든 줄.
+ *
+ * 여기에 감정 프리셋을 걸면 소리가 뭉개진다. 같은 글자인데 감정을 걸면 소리가
+ * 12% 길어지는데(136KB vs 121KB), 그 늘어난 만큼을 억지로 만들어 내면서 "하하하"가
+ * 지글거렸다. 의성어는 그 자체가 이미 소리라 연기를 얹을 자리가 없다.
+ *
+ * 늘어뜨려 읽는 것(say)도 의성어에는 쓰지 않는다 — "드르러엉"처럼 늘이면 더 뭉개진다.
+ * 늘어뜨리기가 먹히는 건 "자아, 준비이… 시자악!" 같은 **말**이다.
+ */
+const LAUGHTER =
+  /하하|호호|히히|헤헤|크크|푸하|껄껄|깔깔|부엉부엉|쿨쿨|드르렁|새근|코오|하암|스르르|푸우/;
+
+/** 대사에 얹을 감정 — 지문은 늘 담담하게 읽는다(voices.ts의 규칙과 같은 기준). */
+function emotionOf(line: string): string {
+  if (LAUGHTER.test(line)) return "normal";
+  if (/으악|살려|엉엉|훌쩍|눈물|슬퍼|무서|가엾|흑흑|어떡해|미안/.test(line)) return "sad";
+  // '뭐라고?'는 화난 게 아니라 어이없어하는 말이다 — 화남으로 걸었더니
+  // "뭐라고? 네가 나랑 시합을?"이 성난 고함처럼 깨져 나왔다.
+  if (/안 돼|잡아먹|버럭|어흥|호통|이놈/.test(line)) return "angry";
+  // '괜찮아'는 기쁨이 아니라 다독임이다 — 7쪽 "나는 나의 걸음으로 가면 돼"는
+  // 신나서 하는 말이 아니라 조용히 다짐하는 말이라, 담담하게 읽는 편이 맞다.
+  if (/만세|신나|와아|우와|기뻐|히히|하하|최고|고마워|승리/.test(line)) return "happy";
+  return "normal";
+}
+
+/**
+ * 지금 디스크에 있는 소리가 구워진 기준 — 씨앗(--seed)을 찍을 때만 쓴다.
+ *
+ * '웃음소리 줄은 감정을 걸지 않는다'는 규칙이 생기기 **직전**의 기준이다.
+ * 그래서 지금 규칙과 견주면 정확히 웃음 든 줄만 달라진 것으로 잡힌다.
+ * (막연히 '옛날 규칙'을 적어 두면 이미 고쳐 놓은 줄까지 또 굽는다 — 실제로 그랬다.)
+ */
+function oldEmotionOf(line: string): string {
+  if (/하하|호호|히히|헤헤|크크|푸하|껄껄|깔깔|부엉부엉/.test(line)) return "normal";
+  if (/으악|살려|엉엉|훌쩍|눈물|슬퍼|무서|가엾|흑흑|어떡해|미안/.test(line)) return "sad";
+  if (/안 돼|잡아먹|버럭|어흥|호통|이놈/.test(line)) return "angry";
+  if (/만세|신나|와아|우와|기뻐|최고|고마워|승리/.test(line)) return "happy";
+  return "normal";
+}
+
+/**
+ * 다시 구워야 하는 줄인가 — 감정이 바뀌었거나, 감정이 붙어 있어 세기가 달라졌거나.
+ * 감정 없이 구운 줄(normal → normal)은 결과가 같으므로 건드리지 않는다(크레딧 절약).
+ */
+export function needsRebake(line: string): boolean {
+  const now = emotionOf(line);
+  return now !== oldEmotionOf(line) || now !== "normal";
+}
+
+let spent = 0;
+let made = 0;
+let skipped = 0;
+
+/**
+ * 한 조각을 굽는다.
+ *
+ * force가 아니면 이미 있는 파일은 건너뛴다 — 중간에 끊겨도 다시 돌리면 이어서 굽고
+ * 같은 문장에 두 번 과금되지 않는다. 다시 구워야 할 때는 지우지 않고 **덮어쓴다**:
+ * 지웠다가 합성이 실패하면 멀쩡하던 소리까지 사라진다.
+ */
+async function bake(file: string, text: string, voice: string, emotion: string, force = false) {
+  const table = voiceTable();
+  const v = table[voice];
+  if (!v) throw new Error(`성우 ${voice}를 voices.ts에서 못 찾았습니다`);
+  const out = path.join(DIR, file);
+  const recipe: Recipe = {
+    voice,
+    emotion,
+    intensity: emotion === "normal" ? null : EMOTION_INTENSITY,
+    text,
+  };
+  fresh[file] = recipe;
+  // 기록만 남기는 모드 — 지금 파일을 그대로 인정하고 넘어간다.
+  if (SEED) {
+    skipped += 1;
+    return;
+  }
+  // 파일이 있고 조건도 똑같으면 다시 부를 이유가 없다.
+  if (!force && fs.existsSync(out) && same(recorded[file], recipe)) {
+    skipped += 1;
+    return;
+  }
+  spent += text.length;
+  if (DRY) {
+    made += 1;
+    console.log(`  [리허설] ${file}  ${voice}/${emotion}  ${text.length}자  ${text.slice(0, 30)}`);
+    return;
+  }
+  const res = await fetch(`${BASE}/api/tts`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      text,
+      voiceId: v.voiceId,
+      model: v.model,
+      emotion,
+      intensity: emotion === "normal" ? undefined : EMOTION_INTENSITY,
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`${file} 실패 (HTTP ${res.status}) ${body.slice(0, 200)}`);
+  }
+  fs.writeFileSync(out, Buffer.from(await res.arrayBuffer()));
+  made += 1;
+  console.log(`  구움 ${file}  ${voice}/${emotion}  ${text.length}자`);
+  // 몰아치지 않게 살짝 쉰다.
+  await new Promise((r) => setTimeout(r, 250));
+}
+
+const books = JSON.parse(fs.readFileSync(DATA, "utf8"));
+const book = books.find((b: { title: string }) => b.title === TITLE);
+if (!book) throw new Error(`${TITLE}를 못 찾았습니다`);
+const cast: Record<string, string> = book.voiceCast;
+if (!cast?.narration) throw new Error("voiceCast가 없습니다");
+
+// ── 굽기 전 점검: 대사집이 본문과 맞는지, 배역 없는 대사가 없는지
+const problems: string[] = [];
+for (const [i, p] of book.pages.entries()) {
+  for (const stale of unmatchedLines(String(p.text), p.lines)) {
+    problems.push(`${i + 1}쪽 대사집이 본문에 없음: ${stale.text}`);
+  }
+  const plan = planPageVoices({ text: String(p.text), lines: p.lines, cast: CAST_NAMES, roleOf: book.roleOf });
+  for (const s of unassignedDialogue(plan)) problems.push(`${i + 1}쪽 배역 미정: ${s.text.trim()}`);
+  for (const s of plan) {
+    if (s.who !== NARRATION && !cast[s.who]) problems.push(`${i + 1}쪽 배역 ${s.who}의 성우가 없음`);
+  }
+}
+if (problems.length) {
+  console.error("굽기 전 문제를 먼저 고쳐야 합니다:");
+  for (const p of problems) console.error("  ★ " + p);
+  process.exit(1);
+}
+
+fs.mkdirSync(DIR, { recursive: true });
+
+for (const [i, page] of book.pages.entries()) {
+  const n = i + 1;
+  const plan = planPageVoices({
+    text: String(page.text),
+    lines: page.lines,
+    cast: CAST_NAMES,
+    roleOf: book.roleOf,
+  });
+  console.log(`[${n}쪽]`);
+  const segments: { who: string; src: string; text: string }[] = [];
+  for (const [j, seg] of plan.entries()) {
+    const text = seg.text.trim();
+    if (!text) continue;
+    if (seg.who === NARRATION) {
+      // 지문은 고를 수 있는 성우마다 한 벌씩. 뷰어가 seg- 뒤에 성우를 끼워 넣는다.
+      for (const voice of BAKED_NARRATORS) {
+        await bake(`seg-${voice}-p${n}-${j}.mp3`, text, voice, "normal");
+      }
+      segments.push({ who: NARRATION, src: `${URL_DIR}/seg-p${n}-${j}.mp3`, text: seg.text });
+    } else {
+      // 대사는 배역이 성우를 정하므로 한 벌이면 된다.
+      // 읽기용 표기(say)가 있으면 화면 글 대신 그걸 읽는다 — "자아, 준비이… 시작!"
+      const file = `seg-cast-p${n}-${j}.mp3`;
+      // 조건이 달라졌는지는 bake()가 기록을 보고 판단한다. --changed가 아니면 전부 다시.
+      await bake(file, seg.say?.trim() || text, cast[seg.who], emotionOf(text), !ONLY_CHANGED);
+      segments.push({ who: seg.who, src: `${URL_DIR}/seg-cast-p${n}-${j}.mp3`, text: seg.text });
+    }
+  }
+  page.segments = segments;
+
+  // 말풍선(그림 속 캐릭터를 눌렀을 때) — 배역 목소리로 다시 굽는다.
+  for (const h of page.hotspots ?? []) {
+    const voice = cast[h.label];
+    if (!voice) {
+      console.log(`  (건너뜀) 말풍선 ${h.label} — 배역에 성우가 없음`);
+      continue;
+    }
+    const file = path.posix.basename(String(h.audio));
+    const line = String(h.line);
+    // 말풍선도 읽기용 표기를 따로 줄 수 있다(말풍선 글은 h.line 그대로 보인다).
+    const spoken = typeof h.say === "string" && h.say.trim() ? h.say.trim() : line;
+    await bake(file, spoken, voice, emotionOf(line), !ONLY_CHANGED);
+  }
+}
+
+// 미리 구운 성우만 고를 수 있게 목록을 줄인다 — 안 구운 성우를 고르면 조용해진다.
+book.narrators = BAKED_NARRATORS;
+book.narrator = BAKED_NARRATORS[0];
+
+if (!DRY) {
+  fs.writeFileSync(DATA, JSON.stringify(books, null, 2) + "\n", "utf8");
+  if (SEED) {
+    // 씨앗은 '옛 규칙'으로 찍는다 — 지금 디스크에 있는 소리가 그 규칙으로 구워졌다.
+    for (const [file, r] of Object.entries(fresh)) {
+      const old = oldEmotionOf(r.text);
+      fresh[file] = { ...r, emotion: old, intensity: old === "normal" ? null : EMOTION_INTENSITY };
+    }
+  }
+  console.log("\n책 데이터에 조각 목록을 기록했습니다.");
+  fs.writeFileSync(MANIFEST, JSON.stringify(fresh, null, 2) + "\n", "utf8");
+  console.log(`굽기 기록을 ${MANIFEST}에 남겼습니다 (${Object.keys(fresh).length}개).`);
+}
+console.log(`\n${DRY ? "[리허설] " : ""}만든 파일 ${made}개 · 건너뜀 ${skipped}개 · 합성 ${spent}자`);
