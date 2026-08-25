@@ -198,6 +198,80 @@ const TODAY_ENDINGS = [
 ];
 
 /**
+ * 「상상 동화」·「감정 동화」의 마무리 결.
+ *
+ * 오늘 이야기의 결말 칩은 **실제로 있었던 사실**이지만(혼났다·칭찬받았다), 상상과 감정에는
+ * 지켜야 할 사실이 없다. 그래서 여기 칩은 "어디로 데려다 놓을까"를 고르는 것이다.
+ *
+ * 왜 넣었나 — 마지막 쪽이 이 앱에서 가장 자주 무너지는 자리다. 재료를 안 주면 모델이
+ * "그래서 즐거운 하루였어요" 같은 아무 책에나 붙는 문장으로 닫아 버린다. 어디로 끝낼지
+ * 한 줄만 정해 줘도 마지막 쪽이 또렷해진다.
+ */
+/**
+ * 마무리 고르기 — 칩으로 고르거나 직접 적는다.
+ *
+ * 칩만 두면 네댓 가지 결말만 돌고 돌아 "또 같은 마무리"가 된다. 직접 적는 칸이 있어야
+ * 그 집만의 마무리가 나온다. 칩을 누르면 그 글이 칸에 채워지므로 이어서 고쳐 쓸 수 있다.
+ */
+function EndingPicker({
+  label,
+  hint,
+  chips,
+  value,
+  onChange,
+  placeholder,
+  accent,
+}: {
+  label: string;
+  hint: string;
+  chips: { t: string; e: string }[];
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+  accent: string;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="break-keep text-xs font-bold text-neutral-400">
+        {label} <span className="font-medium">(선택)</span>
+      </p>
+      <div className="flex flex-wrap justify-center gap-2">
+        {chips.map((it) => (
+          <button
+            key={it.t}
+            type="button"
+            onClick={() => onChange(value === it.t ? "" : it.t)}
+            style={value === it.t ? { background: accent } : undefined}
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+              value === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+            }`}
+          >
+            <ChipIcon emoji={it.e} />
+            {it.t}
+          </button>
+        ))}
+      </div>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value.slice(0, 120))}
+        placeholder={placeholder}
+        className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-base font-bold text-neutral-900 outline-none focus:border-neutral-400"
+      />
+      <p className="break-keep text-center text-xs font-medium text-neutral-400">{hint}</p>
+    </div>
+  );
+}
+
+const WISH_ENDINGS = [
+  { t: "스스로 해내고 뿌듯해져요", e: "💪" },
+  { t: "친구가 하나 생겨요", e: "🤝" },
+  { t: "집으로 돌아와 포근해져요", e: "🏡" },
+  { t: "마음이 스르르 풀려요", e: "🌈" },
+  { t: "다음에 또 만나기로 해요", e: "🌙" },
+  { t: "함께라서 해냈어요", e: "✨" },
+];
+
+/**
  * 「감정 동화」 — 그런 마음이 든 흔한 상황 칩. 자유입력의 백지 공포를 없애고,
  * 상황이 구체적일수록 감정동화의 위로가 정확해진다. 누르면 입력칸에 채워져 고칠 수 있다.
  */
@@ -680,6 +754,17 @@ export default function CreatePage() {
   }, [router]);
   // 베타 권수 제한(마스터 제외).
   const bookLimitReached = !master && bookCount >= MAX_BOOKS_PER_USER;
+  /*
+   * 갈래를 새로 고르면 결말을 비운다.
+   *
+   * 결말은 갈래마다 뜻이 다르다 — 오늘 이야기에서는 실제로 있었던 사실이고,
+   * 상상·감정에서는 부모가 바라는 마무리다. 안 비우면 오늘 이야기에서 고른
+   * "혼났어요"가 상상 동화까지 따라가 공룡 나라 이야기가 혼나는 것으로 끝난다.
+   */
+  const chooseStoryMode = (m: typeof storyMode) => {
+    setEnding("");
+    setStoryMode(m);
+  };
 
   // 설정(⚙️)에 아이 정보가 있으면 미리 채우고 아이정보 단계는 건너뛴다.
   // 주제가 첫 질문이다 — 아이가 고를 것부터. 형제 동화는 재료 화면의 "누구랑"에서 다룬다.
@@ -2026,7 +2111,7 @@ export default function CreatePage() {
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <button
                       type="button"
-                      onClick={() => setStoryMode("today")}
+                      onClick={() => chooseStoryMode("today")}
                       className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-200"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -2038,7 +2123,7 @@ export default function CreatePage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setStoryMode("imagine")}
+                      onClick={() => chooseStoryMode("imagine")}
                       className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-200"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -2050,7 +2135,7 @@ export default function CreatePage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setStoryMode("emotion")}
+                      onClick={() => chooseStoryMode("emotion")}
                       className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-200"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -2062,7 +2147,7 @@ export default function CreatePage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setStoryMode("direct")}
+                      onClick={() => chooseStoryMode("direct")}
                       className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-200"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -2265,27 +2350,15 @@ export default function CreatePage() {
                   </div>
 
                   {/* 어떻게 끝났나 — 이게 있어야 실제와 다른 결말(혼난 일을 칭찬으로 등)이 안 나온다. */}
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-neutral-400">
-                      일이 어떻게 끝났어요? <span className="font-medium">(선택)</span>
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {TODAY_ENDINGS.map((it) => (
-                        <button
-                          key={it.t}
-                          type="button"
-                          onClick={() => setEnding(ending === it.t ? "" : it.t)}
-                          style={ending === it.t ? { background: accent } : undefined}
-                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                            ending === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                          }`}
-                        >
-                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
-                          {it.t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  <EndingPicker
+                    label="일이 어떻게 끝났어요?"
+                    hint="있었던 그대로 적어 주세요. 속상하게 끝난 일도 미화하지 않고 담은 뒤 마음이 풀리게 마무리해요."
+                    chips={TODAY_ENDINGS}
+                    value={ending}
+                    onChange={setEnding}
+                    placeholder="예: 결국 사과하고 다시 같이 놀았어요"
+                    accent={accent}
+                  />
 
                   {seed && (
                     <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-center text-sm font-bold text-neutral-500">
@@ -2391,6 +2464,16 @@ export default function CreatePage() {
                     onGenderChange={setWhoGender}
                     friends={friends}
                     onFriendsChange={setFriends}
+                    accent={accent}
+                  />
+
+                  <EndingPicker
+                    label="어떻게 끝나면 좋을까요?"
+                    hint="마지막 쪽이 제일 밋밋해지기 쉬워요. 어디로 데려다 놓을지 한 줄만 정해 주면 훨씬 또렷하게 끝나요."
+                    chips={WISH_ENDINGS}
+                    value={ending}
+                    onChange={setEnding}
+                    placeholder="예: 무서워하던 그 방에서 혼자 잠들어요"
                     accent={accent}
                   />
 
@@ -2537,6 +2620,16 @@ export default function CreatePage() {
                       className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
                     />
                   </div>
+
+                  <EndingPicker
+                    label="어떻게 끝나면 좋을까요?"
+                    hint="마지막 쪽이 제일 밋밋해지기 쉬워요. 어디로 데려다 놓을지 한 줄만 정해 주면 훨씬 또렷하게 끝나요."
+                    chips={WISH_ENDINGS}
+                    value={ending}
+                    onChange={setEnding}
+                    placeholder="예: 무서워하던 그 방에서 혼자 잠들어요"
+                    accent={accent}
+                  />
 
                   {seed && (
                     <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-center text-sm font-bold text-neutral-500">
