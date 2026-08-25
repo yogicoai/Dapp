@@ -75,6 +75,21 @@ function voiceTable(): Record<string, { voiceId: string; model: string }> {
 const EMOTION_INTENSITY = 0.4;
 
 /**
+ * 배역마다 다르게 주는 감정 세기.
+ *
+ * 0.4는 햄쭈처럼 원래 음높이가 높은 성우가 안 깨지는 선이다. 그런데 어른 남자
+ * 목소리는 음역이 낮아 같은 값이면 연기가 밋밋하게 들린다 — 놀부가 다 잃고
+ * 우는 대목이 "그냥 담담하게 말하는" 소리로 나왔다.
+ * 그래서 깨질 걱정이 없는 배역만 따로 올린다.
+ */
+const ROLE_INTENSITY: Record<string, number> = {
+  nolbu: 0.6,
+  nolbuwife: 0.55,
+  heungbu: 0.5,
+};
+const intensityOf = (role: string) => ROLE_INTENSITY[role] ?? EMOTION_INTENSITY;
+
+/**
  * 웃음소리·잠자는 소리 같은 의성어가 든 줄.
  *
  * 여기에 감정 프리셋을 걸면 소리가 뭉개진다. 같은 글자인데 감정을 걸면 소리가
