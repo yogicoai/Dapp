@@ -617,12 +617,6 @@
             "line": "나보다 빠른 동물은 없지! 다들 비켜 비켜~"
           }
         ],
-        "lines": [
-          {
-            "text": "이 숲에서 나보다 빠른 동물은 아무도 없지!",
-            "who": "rabbit"
-          }
-        ],
         "segments": [
           {
             "who": "narration",
@@ -638,6 +632,12 @@
             "who": "narration",
             "src": "/folk/tortoise/seg-p1-2.mp3",
             "text": "\n토끼는 만나는 친구마다 자랑을 늘어놓았지요."
+          }
+        ],
+        "lines": [
+          {
+            "text": "이 숲에서 나보다 빠른 동물은 아무도 없지!",
+            "who": "rabbit"
           }
         ]
       },
@@ -694,12 +694,6 @@
             "line": "괜찮아. 나는 내 걸음이 좋아."
           }
         ],
-        "lines": [
-          {
-            "text": "거북아, 너는 세상에서 제일가는 느림보야! 그 걸음으로 어디를 간다는 거니?",
-            "who": "rabbit"
-          }
-        ],
         "segments": [
           {
             "who": "narration",
@@ -710,6 +704,12 @@
             "who": "rabbit",
             "src": "/folk/tortoise/seg-cast-p3-1.mp3",
             "text": "\"거북아, 너는 세상에서 제일가는 느림보야!\n그 걸음으로 어디를 간다는 거니?\""
+          }
+        ],
+        "lines": [
+          {
+            "text": "거북아, 너는 세상에서 제일가는 느림보야! 그 걸음으로 어디를 간다는 거니?",
+            "who": "rabbit"
           }
         ]
       },
@@ -741,12 +741,6 @@
             "line": "토끼야, 나랑 달리기 시합 할래?"
           }
         ],
-        "lines": [
-          {
-            "text": "토끼야, 그럼 나랑 달리기 시합을 해 볼래? 저기 언덕 꼭대기의 큰 소나무까지 말이야.",
-            "who": "tortoise"
-          }
-        ],
         "segments": [
           {
             "who": "narration",
@@ -757,6 +751,12 @@
             "who": "tortoise",
             "src": "/folk/tortoise/seg-cast-p4-1.mp3",
             "text": "\"토끼야, 그럼 나랑 달리기 시합을 해 볼래?\n저기 언덕 꼭대기의 큰 소나무까지 말이야.\""
+          }
+        ],
+        "lines": [
+          {
+            "text": "토끼야, 그럼 나랑 달리기 시합을 해 볼래? 저기 언덕 꼭대기의 큰 소나무까지 말이야.",
+            "who": "tortoise"
           }
         ]
       },
@@ -789,12 +789,6 @@
             "line": "언덕 위 소나무까지야. 준비됐어!"
           }
         ],
-        "lines": [
-          {
-            "text": "뭐라고? 네가 나랑 시합을?",
-            "who": "rabbit"
-          }
-        ],
         "segments": [
           {
             "who": "rabbit",
@@ -805,6 +799,12 @@
             "who": "narration",
             "src": "/folk/tortoise/seg-p5-1.mp3",
             "text": "\n토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요."
+          }
+        ],
+        "lines": [
+          {
+            "text": "뭐라고? 네가 나랑 시합을?",
+            "who": "rabbit"
           }
         ]
       },
@@ -848,13 +848,6 @@
             "line": "먼저 간다~! 씽씽!"
           }
         ],
-        "lines": [
-          {
-            "text": "자, 준비… 시작!",
-            "who": "owl",
-            "say": "자아, 준비이… 시자악!"
-          }
-        ],
         "segments": [
           {
             "who": "narration",
@@ -870,6 +863,13 @@
             "who": "narration",
             "src": "/folk/tortoise/seg-p6-2.mp3",
             "text": "\n외침과 함께 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요."
+          }
+        ],
+        "lines": [
+          {
+            "text": "자, 준비… 시작!",
+            "who": "owl",
+            "say": "자아, 준비이… 시자악!"
           }
         ]
       },
@@ -890,12 +890,6 @@
             "line": "괜찮아. 나는 나의 걸음으로 가면 돼."
           }
         ],
-        "lines": [
-          {
-            "text": "괜찮아. 나는 나의 걸음으로 가면 돼.",
-            "who": "tortoise"
-          }
-        ],
         "segments": [
           {
             "who": "narration",
@@ -911,6 +905,12 @@
             "who": "narration",
             "src": "/folk/tortoise/seg-p7-2.mp3",
             "text": "\n거북이는 씩씩하게 앞만 보았답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "괜찮아. 나는 나의 걸음으로 가면 돼.",
+            "who": "tortoise"
           }
         ]
       },
@@ -931,13 +931,6 @@
             "line": "하암~ 저 느림보 오려면 멀었네. 낮잠이나 자자."
           }
         ],
-        "lines": [
-          {
-            "text": "하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.",
-            "who": "rabbit",
-            "say": "하아암~ 저 느림보가 오려면 아지익 멀었네. 낮잠이나 한숨 자야겠다."
-          }
-        ],
         "segments": [
           {
             "who": "narration",
@@ -948,6 +941,12 @@
             "who": "rabbit",
             "src": "/folk/tortoise/seg-cast-p8-1.mp3",
             "text": "\"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\""
+          }
+        ],
+        "lines": [
+          {
+            "text": "하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.",
+            "who": "rabbit"
           }
         ]
       },
@@ -1043,12 +1042,6 @@
             "line": "조금만 더! 거의 다 왔어!"
           }
         ],
-        "lines": [
-          {
-            "text": "드르렁… 푸우…",
-            "who": "rabbit"
-          }
-        ],
         "segments": [
           {
             "who": "rabbit",
@@ -1059,6 +1052,12 @@
             "who": "narration",
             "src": "/folk/tortoise/seg-p12-1.mp3",
             "text": "\n한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가 소스라치게 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!"
+          }
+        ],
+        "lines": [
+          {
+            "text": "드르렁… 푸우…",
+            "who": "rabbit"
           }
         ]
       },
@@ -1101,16 +1100,6 @@
             "line": "해냈다! 정말 기뻐!"
           }
         ],
-        "lines": [
-          {
-            "text": "안 돼!",
-            "who": "rabbit"
-          },
-          {
-            "text": "거북이 승리!",
-            "who": "owl"
-          }
-        ],
         "segments": [
           {
             "who": "rabbit",
@@ -1131,6 +1120,16 @@
             "who": "narration",
             "src": "/folk/tortoise/seg-p13-3.mp3",
             "text": " 부엉이 할아버지가 크게 외쳤어요."
+          }
+        ],
+        "lines": [
+          {
+            "text": "안 돼!",
+            "who": "rabbit"
+          },
+          {
+            "text": "거북이 승리!",
+            "who": "owl"
           }
         ]
       },
@@ -1162,16 +1161,6 @@
             "line": "괜찮아! 우리 좋은 친구가 되자!"
           }
         ],
-        "lines": [
-          {
-            "text": "거북아, 잘난 척해서 미안해.",
-            "who": "rabbit"
-          },
-          {
-            "text": "괜찮아, 우리 좋은 친구가 되자!",
-            "who": "tortoise"
-          }
-        ],
         "segments": [
           {
             "who": "narration",
@@ -1193,14 +1182,24 @@
             "src": "/folk/tortoise/seg-p14-3.mp3",
             "text": "\n느려도 포기하지 않는 마음이 결국 해낸답니다."
           }
+        ],
+        "lines": [
+          {
+            "text": "거북아, 잘난 척해서 미안해.",
+            "who": "rabbit"
+          },
+          {
+            "text": "괜찮아, 우리 좋은 친구가 되자!",
+            "who": "tortoise"
+          }
         ]
       }
     ],
     "voiceCast": {
       "narration": "tc-dabin",
       "rabbit": "tc-hamchu",
-      "tortoise": "tc-mongsil",
-      "owl": "tc-jungsoon"
+      "tortoise": "tc-taeji",
+      "owl": "tc-goat"
     },
     "roleOf": {
       "토끼": "rabbit",
@@ -1616,7 +1615,31 @@
           }
         ]
       }
-    ]
+    ],
+    "voiceCast": {
+      "narration": "tc-jungsoon",
+      "kongjwi": "tc-mongsil",
+      "patjwi": "tc-gahee",
+      "stepmom": "tc-sookhee",
+      "magistrate": "tc-tian",
+      "fairy": "tc-chungah",
+      "ox": "tc-monggun",
+      "toad": "tc-kijang",
+      "sparrow": "tc-sua"
+    },
+    "roleOf": {
+      "콩쥐": "kongjwi",
+      "팥쥐": "patjwi",
+      "새어머니": "stepmom",
+      "원님": "magistrate",
+      "선녀": "fairy",
+      "선녀님": "fairy",
+      "황소": "ox",
+      "소": "ox",
+      "두꺼비": "toad",
+      "참새": "sparrow",
+      "참새들": "sparrow"
+    }
   },
   {
     "id": "folk-haedal",
@@ -1629,7 +1652,7 @@
     "lang": "ko",
     "title": "해님 달님",
     "summary": "호랑이를 피해 하늘로 올라간 오누이가 해님과 달님이 된 이야기",
-    "narrator": "tc-sua",
+    "narrator": "tc-jungsoon",
     "pages": [
       {
         "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다.",
@@ -1835,7 +1858,25 @@
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p15.webp",
         "audio": "/folk/haedal/narr-p15.mp3"
       }
-    ]
+    ],
+    "voiceCast": {
+      "narration": "tc-jungsoon",
+      "brother": "tc-siwoo",
+      "sister": "tc-booqoo",
+      "mother": "tc-najin",
+      "tiger": "tc-hakchul",
+      "king": "tc-kwonil"
+    },
+    "roleOf": {
+      "오빠": "brother",
+      "누이": "sister",
+      "동생": "sister",
+      "어머니": "mother",
+      "엄마": "mother",
+      "호랑이": "tiger",
+      "임금님": "king",
+      "하늘나라 임금님": "king"
+    }
   },
   {
     "id": "folk-goldaxe",
@@ -2040,7 +2081,22 @@
         ]
       }
     ],
-    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=5"
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=5",
+    "voiceCast": {
+      "narration": "tc-hosun",
+      "woodcutter": "tc-gunseok",
+      "spirit": "tc-kwonil",
+      "greedy": "tc-sullock",
+      "mother": "tc-jungsoon"
+    },
+    "roleOf": {
+      "나무꾼": "woodcutter",
+      "산신령": "spirit",
+      "산신령님": "spirit",
+      "욕심쟁이": "greedy",
+      "어머니": "mother",
+      "홀어머니": "mother"
+    }
   },
   {
     "id": "folk-patjuk",

@@ -101,6 +101,60 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-hajun", label: "하준", emoji: "🐯", voiceId: "tc_60db308484130840f23e6ca0", model: "ssfm-v30", desc: "남자 어린이 · 명랑한 친구", sample: "오늘 이야기 진짜 기대돼!" },
   { kind: "tc", id: "tc-yejoon", label: "예준", emoji: "🎮", voiceId: "tc_63edf3d68aab086d6b782a55", model: "ssfm-v30", desc: "남자 청소년 · 듬직한 형", sample: "형이 재미있게 읽어줄게!" },
   { kind: "tc", id: "tc-kwonil", label: "이야기 할아버지", emoji: "📖", voiceId: "tc_675a73eb789ff3ea6cc80235", model: "ssfm-v30", desc: "남자 · 옛날이야기 전문 할아버지", sample: "허허, 옛날 옛적 이야기를 들려주마." },
+  /*
+   * 도깨비·호랑이·늑대처럼 무섭고 굵은 배역용.
+   *
+   * 지금까지 남자 목소리가 건석(다정한 아빠)·창수(활달한 삼촌)·예준(친절한 형)·
+   * 이야기 할아버지뿐이라, 놀부 박에서 나오는 도깨비를 맡길 목소리가 없었다.
+   * 학철은 감정이 7종(속삭임·톤다운까지)이라 저음을 깔 수 있다.
+   */
+  { kind: "tc", id: "tc-hakchul", label: "학철", emoji: "👹", voiceId: "tc_63a3d9d14b235ddd6541a78e", model: "ssfm-v30", desc: "남자 · 굵고 묵직한 목소리", sample: "허허, 나는 도깨비다! 네 욕심을 벌하러 왔다!" },
+  /*
+   * 놀부처럼 얄밉고 심술궂은 어른 남자 배역용 둘.
+   *
+   * 놀부는 무서운 인물이 아니라 얄미운 인물이라, 도깨비(학철)만큼 묵직하면 안 되고
+   * 흥부(건석)처럼 다정해도 안 된다. 그 사이를 메우려고 데려왔다.
+   * 15쪽에서 뉘우치며 우는 대목이 있어 슬픔 연기가 되는 성우여야 한다(둘 다 7종).
+   */
+  { kind: "tc", id: "tc-sullock", label: "홍설록", emoji: "🎩", voiceId: "tc_63da42a2dbbf266ceb0b0fb2", model: "ssfm-v30", desc: "남자 · 능청스러운 어른", sample: "흥! 나는 이 마을 제일가는 부자란다!" },
+  { kind: "tc", id: "tc-kijang", label: "김반장", emoji: "🧢", voiceId: "tc_63da4298fec1d339dd0f4e65", model: "ssfm-v30", desc: "남자 · 걸걸한 동네 아저씨", sample: "흥! 나는 이 마을 제일가는 부자란다!" },
+  /*
+   * 놀부 아내(형수)처럼 쌀쌀맞은 어른 여자 배역용.
+   *
+   * 여자 어른 목소리가 미소(포근한 엄마)·정순(정겨운 할머니)·이나(다정한)처럼
+   * 전부 따뜻한 쪽뿐이라, 밥 얻으러 온 시동생을 주걱으로 때리는 형수를 맡길
+   * 목소리가 없었다.
+   */
+  { kind: "tc", id: "tc-sookhee", label: "숙희", emoji: "🥢", voiceId: "tc_61c2f70c343884babeed840b", model: "ssfm-v30", desc: "여자 · 쌀쌀맞고 야무진 목소리", sample: "흥, 밥 한 술도 아깝지." },
+  /*
+   * 흥부 아내처럼 고생하는 살림꾼 어른 여자 배역용.
+   *
+   * 미소(포근한 엄마)는 너무 다정해서 사흘 굶은 절박함이 안 들리고,
+   * 숙희(쌀쌀맞음)는 형수 자리다. 그 사이의 담담하고 단단한 목소리가 없었다.
+   */
+  { kind: "tc", id: "tc-najin", label: "나진", emoji: "🧺", voiceId: "tc_5ebea185728f5b00075e61e3", model: "ssfm-v30", desc: "여자 · 담담하고 단단한 어른", sample: "여보, 아이들이 배가 고프대요." },
+  /*
+   * 거북이·심판처럼 느긋하고 묵직한 배역용.
+   *
+   * 토끼(햄쭈)가 톡톡 튀는 목소리라, 거북이가 비슷한 결이면 둘이 구분되지 않는다.
+   * 달리기 시합 이야기에서는 두 목소리의 **속도감이 반대**여야 한다.
+   */
+  { kind: "tc", id: "tc-monggun", label: "몽군", emoji: "🐢", voiceId: "tc_6731b32e075b04a9446441a0", model: "ssfm-v30", desc: "남자 · 느긋하고 단단한 목소리", sample: "괜찮아. 나는 나의 걸음으로 가면 돼." },
+  { kind: "tc", id: "tc-goat", label: "김고트", emoji: "🦉", voiceId: "tc_6747f7c4b4470b54ab8a06bc", model: "ssfm-v30", desc: "남자 · 크고 또렷한 목소리", sample: "자, 준비… 시작!" },
+  /*
+   * 콩쥐 팥쥐에서 사장님이 직접 고르신 둘.
+   * 티안 — 젊은 원님. 여태 남자 어른이 학철·홍설록·김반장뿐이라 다 나이 든 쪽이었다.
+   * 가희 — 팥쥐. 숙희(새어머니 쪽)보다 젊고 앙칼져야 자매로 갈린다.
+   */
+  { kind: "tc", id: "tc-tian", label: "티안", emoji: "🎎", voiceId: "tc_676cda634571635588f87804", model: "ssfm-v30", desc: "남자 · 젊고 반듯한 목소리", sample: "이 꽃신의 주인을 꼭 찾아내야겠다." },
+  /*
+   * 태지 — 토끼와 거북이의 거북이. 몽군(어른)에서 아이 목소리로 바꾼 자리다.
+   * 느긋함을 나이로 내지 않고 또박또박한 아이 말투로 낸다.
+   */
+  /* 호선 — 금도끼 은도끼 나레이션. 건석(듬직한 아빠)보다 담백해서 옛이야기 지문에 맞는다. */
+  { kind: "tc", id: "tc-hosun", label: "호선", emoji: "🪓", voiceId: "tc_65a0e1eb23a607b9906c0154", model: "ssfm-v30", desc: "남자 · 담백하고 반듯한 목소리", sample: "옛날 어느 산골에 부지런한 나무꾼이 살았어요." },
+  { kind: "tc", id: "tc-taeji", label: "태지", emoji: "🐢", voiceId: "tc_660645fb8db3e2c06ff7070b", model: "ssfm-v30", desc: "남자 어린이 · 또박또박 단단한 목소리", sample: "괜찮아. 나는 나의 걸음으로 가면 돼." },
+  { kind: "tc", id: "tc-gahee", label: "가희", emoji: "💅", voiceId: "tc_624ccc04adcd568510764d3f", model: "ssfm-v30", desc: "여자 · 새침하고 앙칼진 목소리", sample: "언니는 집이나 지켜. 잔치는 우리끼리 갈 거야!" },
 ];
 
 export function findTypecast(id: string): TypecastPreset | null {

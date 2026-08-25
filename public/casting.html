@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>전래동화 성우 캐스팅 현황</title>
+<style>
+:root{
+  --ground:#f6f3ed; --surface:#fffdf9; --sunken:#efeae1; --rule:#ded6c8;
+  --ink:#2c2620; --muted:#7a6f60; --accent:#8a5a2b; --ok:#4f7a4a; --wait:#b07b2c;
+  --shadow:0 1px 2px rgba(60,45,25,.06),0 8px 24px rgba(60,45,25,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#17150f; --surface:#211e17; --sunken:#1a1811; --rule:#3a352a;
+    --ink:#ece6da; --muted:#a2988a; --accent:#d6a570; --ok:#8fbd88; --wait:#e0b46a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#17150f; --surface:#211e17; --sunken:#1a1811; --rule:#3a352a;
+  --ink:#ece6da; --muted:#a2988a; --accent:#d6a570; --ok:#8fbd88; --wait:#e0b46a;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  line-height:1.65; word-break:keep-all;
+}
+.wrap{max-width:60rem; margin:0 auto; padding:2.5rem 1.25rem 5rem}
+header{margin:0 0 2rem}
+h1{margin:0 0 .4rem; font-size:clamp(1.5rem,4vw,2.1rem); letter-spacing:-.02em; text-wrap:balance}
+.sub{margin:0; color:var(--muted); font-size:.95rem}
+.totals{display:flex; flex-wrap:wrap; gap:.5rem; margin:1.25rem 0 0}
+.pill{
+  padding:.35rem .8rem; border-radius:999px; background:var(--surface);
+  border:1px solid var(--rule); font-size:.85rem; font-variant-numeric:tabular-nums;
+}
+.pill b{color:var(--accent)}
+.book{
+  background:var(--surface); border:1px solid var(--rule); border-radius:14px;
+  padding:1.3rem 1.35rem; margin:0 0 1.1rem; box-shadow:var(--shadow);
+}
+.bhead{display:flex; flex-wrap:wrap; align-items:baseline; gap:.6rem .8rem; margin:0 0 1rem}
+h2{margin:0; font-size:1.2rem; letter-spacing:-.01em}
+.meta{color:var(--muted); font-size:.85rem; font-variant-numeric:tabular-nums}
+.tags{display:flex; gap:.4rem; margin-left:auto}
+.tag{font-size:.75rem; padding:.2rem .55rem; border-radius:999px; border:1px solid currentColor; white-space:nowrap}
+.tag.ok{color:var(--ok)} .tag.wait{color:var(--wait)}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(15.5rem,1fr)); gap:.55rem}
+.row{
+  display:flex; align-items:center; gap:.7rem;
+  padding:.6rem .7rem; border-radius:10px; background:var(--sunken);
+}
+.row.narr{background:transparent; border:1px dashed var(--rule)}
+.emo{font-size:1.35rem; line-height:1; flex:none}
+.who{flex:1; min-width:0}
+.role{font-size:.75rem; color:var(--muted); letter-spacing:.02em}
+.name{font-weight:650; font-size:.95rem}
+.desc{font-size:.75rem; color:var(--muted); margin-top:.1rem}
+.play{
+  flex:none; width:2rem; height:2rem; border-radius:999px; cursor:pointer;
+  border:1px solid var(--rule); background:var(--surface); color:var(--accent);
+  font-size:.8rem; line-height:1; display:grid; place-items:center;
+}
+.play:hover{background:var(--accent); color:var(--surface); border-color:var(--accent)}
+.play.on{background:var(--accent); color:var(--surface); border-color:var(--accent)}
+.play:disabled{opacity:.3; cursor:default}
+footer{margin:2.5rem 0 0; padding:1.1rem 1.25rem; border-radius:12px;
+  background:var(--sunken); border:1px solid var(--rule); font-size:.85rem; color:var(--muted)}
+footer b{color:var(--ink)}
+</style>
+</head><body>
+<div class="wrap">
+<header>
+  <h1>전래동화 성우 캐스팅 현황</h1>
+  <p class="sub">배역마다 성우를 정하고, 이야기를 다시 짠 결과입니다. &#9654; 를 누르면 그 성우 목소리가 들립니다.</p>
+  <div class="totals">
+    <span class="pill">책 <b>6</b>권</span>
+    <span class="pill">배역 <b>36</b>자리</span>
+    <span class="pill">성우 확정 <b>4</b>권</span>
+    <span class="pill">이야기 확정 <b>5</b>권</span>
+  </div>
+</header>
+<section class="book"><div class="bhead"><h2>콩쥐 팥쥐</h2><span class="meta"> · 14쪽 → <b style="color:var(--accent)">20쪽</b> · 2,177자</span><span class="tags"><span class="tag ok">이야기 확정</span><span class="tag ok">성우 확정</span></span></div><div class="grid"><div class="row narr"><span class="emo">👵</span><span class="who"><span class="role">나레이션</span><div class="name">정순</div><div class="desc">여자 · 정겨운 할머니</div></span><button class="play" data-v="tc-jungsoon" aria-label="정순 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🌿</span><span class="who"><span class="role">선녀</span><div class="name">청아</div><div class="desc">여자 · 맑고 청아한 목소리</div></span><button class="play" data-v="tc-chungah" aria-label="청아 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🐑</span><span class="who"><span class="role">콩쥐</span><div class="name">뭉실이</div><div class="desc">여자 청소년 · 몽실몽실 다정한 목소리</div></span><button class="play" data-v="tc-mongsil" aria-label="뭉실이 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🎎</span><span class="who"><span class="role">원님</span><div class="name">티안</div><div class="desc">남자 · 젊고 반듯한 목소리</div></span><button class="play" data-v="tc-tian" aria-label="티안 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🐢</span><span class="who"><span class="role">황소</span><div class="name">몽군</div><div class="desc">남자 · 느긋하고 단단한 목소리</div></span><button class="play" data-v="tc-monggun" aria-label="몽군 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">💅</span><span class="who"><span class="role">팥쥐</span><div class="name">가희</div><div class="desc">여자 · 새침하고 앙칼진 목소리</div></span><button class="play" data-v="tc-gahee" aria-label="가희 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🎀</span><span class="who"><span class="role">참새</span><div class="name">수아</div><div class="desc">여자 어린이 · 밝고 명랑한 친구</div></span><button class="play" data-v="tc-sua" aria-label="수아 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🥢</span><span class="who"><span class="role">새어머니</span><div class="name">숙희</div><div class="desc">여자 · 쌀쌀맞고 야무진 목소리</div></span><button class="play" data-v="tc-sookhee" aria-label="숙희 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🧢</span><span class="who"><span class="role">두꺼비</span><div class="name">김반장</div><div class="desc">남자 · 걸걸한 동네 아저씨</div></span><button class="play" data-v="tc-kijang" aria-label="김반장 목소리 듣기">&#9654;</button></div></div></section>
+<section class="book"><div class="bhead"><h2>해님 달님</h2><span class="meta"> · 15쪽 → <b style="color:var(--accent)">20쪽</b> · 1,936자</span><span class="tags"><span class="tag ok">이야기 확정</span><span class="tag ok">성우 확정</span></span></div><div class="grid"><div class="row narr"><span class="emo">👵</span><span class="who"><span class="role">나레이션</span><div class="name">정순</div><div class="desc">여자 · 정겨운 할머니</div></span><button class="play" data-v="tc-jungsoon" aria-label="정순 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🧒</span><span class="who"><span class="role">오빠</span><div class="name">시우</div><div class="desc">남자 어린이 · 씩씩한 친구</div></span><button class="play" data-v="tc-siwoo" aria-label="시우 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">📖</span><span class="who"><span class="role">하늘나라 임금님</span><div class="name">이야기 할아버지</div><div class="desc">남자 · 옛날이야기 전문 할아버지</div></span><button class="play" data-v="tc-kwonil" aria-label="이야기 할아버지 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🧺</span><span class="who"><span class="role">어머니</span><div class="name">나진</div><div class="desc">여자 · 담담하고 단단한 어른</div></span><button class="play" data-v="tc-najin" aria-label="나진 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">😳</span><span class="who"><span class="role">누이</span><div class="name">부끄</div><div class="desc">여자 어린이 · 수줍은 친구</div></span><button class="play" data-v="tc-booqoo" aria-label="부끄 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">👹</span><span class="who"><span class="role">호랑이</span><div class="name">학철</div><div class="desc">남자 · 굵고 묵직한 목소리</div></span><button class="play" data-v="tc-hakchul" aria-label="학철 목소리 듣기">&#9654;</button></div></div></section>
+<section class="book"><div class="bhead"><h2>금도끼 은도끼</h2><span class="meta"> · 16쪽 → <b style="color:var(--accent)">17쪽</b> · 1,459자</span><span class="tags"><span class="tag ok">이야기 확정</span><span class="tag ok">성우 확정</span></span></div><div class="grid"><div class="row narr"><span class="emo">🪓</span><span class="who"><span class="role">나레이션</span><div class="name">호선</div><div class="desc">남자 · 담백하고 반듯한 목소리</div></span><button class="play" data-v="tc-hosun" aria-label="호선 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🎩</span><span class="who"><span class="role">욕심쟁이 혹부리 영감</span><div class="name">홍설록</div><div class="desc">남자 · 능청스러운 어른</div></span><button class="play" data-v="tc-sullock" aria-label="홍설록 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">👵</span><span class="who"><span class="role">어머니</span><div class="name">정순</div><div class="desc">여자 · 정겨운 할머니</div></span><button class="play" data-v="tc-jungsoon" aria-label="정순 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">📖</span><span class="who"><span class="role">산신령</span><div class="name">이야기 할아버지</div><div class="desc">남자 · 옛날이야기 전문 할아버지</div></span><button class="play" data-v="tc-kwonil" aria-label="이야기 할아버지 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">👨</span><span class="who"><span class="role">나무꾼</span><div class="name">남성</div><div class="desc">듬직한 남성 목소리</div></span><button class="play" data-v="tc-gunseok" aria-label="남성 목소리 듣기">&#9654;</button></div></div></section>
+<section class="book"><div class="bhead"><h2>팥죽 할머니와 호랑이</h2><span class="meta"> · 12쪽 → <b style="color:var(--accent)">15쪽</b> · 1,439자</span><span class="tags"><span class="tag ok">이야기 확정</span><span class="tag wait">성우 정하는 중</span></span></div><div class="grid"><div class="row narr"><span class="emo">🌷</span><span class="who"><span class="role">나레이션</span><div class="name">지영</div><div class="desc">여자 · 밝은 선생님</div></span><button class="play" data-v="tc-jiyoung" aria-label="지영 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">👵</span><span class="who"><span class="role">할머니</span><div class="name">정순</div><div class="desc">여자 · 정겨운 할머니</div></span><button class="play" data-v="tc-jungsoon" aria-label="정순 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">👹</span><span class="who"><span class="role">호랑이</span><div class="name">학철</div><div class="desc">남자 · 굵고 묵직한 목소리</div></span><button class="play" data-v="tc-hakchul" aria-label="학철 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">😳</span><span class="who"><span class="role">알밤</span><div class="name">부끄</div><div class="desc">여자 어린이 · 수줍은 친구</div></span><button class="play" data-v="tc-booqoo" aria-label="부끄 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🐢</span><span class="who"><span class="role">자라</span><div class="name">몽군</div><div class="desc">남자 · 느긋하고 단단한 목소리</div></span><button class="play" data-v="tc-monggun" aria-label="몽군 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🧢</span><span class="who"><span class="role">쇠똥</span><div class="name">김반장</div><div class="desc">남자 · 걸걸한 동네 아저씨</div></span><button class="play" data-v="tc-kijang" aria-label="김반장 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🐹</span><span class="who"><span class="role">멍석</span><div class="name">햄쭈</div><div class="desc">여자 · 톡톡 튀는 귀여운 목소리</div></span><button class="play" data-v="tc-hamchu" aria-label="햄쭈 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🦉</span><span class="who"><span class="role">지게</span><div class="name">김고트</div><div class="desc">남자 · 크고 또렷한 목소리</div></span><button class="play" data-v="tc-goat" aria-label="김고트 목소리 듣기">&#9654;</button></div></div></section>
+<section class="book"><div class="bhead"><h2>혹부리 영감</h2><span class="meta"> · 10쪽 · 1,171자</span><span class="tags"><span class="tag ok">이야기 확정</span><span class="tag wait">성우 정하는 중</span></span></div><div class="grid"><div class="row narr"><span class="emo">☁️</span><span class="who"><span class="role">나레이션</span><div class="name">지윤</div><div class="desc">여자 · 차분한 목소리</div></span><button class="play" data-v="tc-jiyoon" aria-label="지윤 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">📖</span><span class="who"><span class="role">혹부리 영감</span><div class="name">이야기 할아버지</div><div class="desc">남자 · 옛날이야기 전문 할아버지</div></span><button class="play" data-v="tc-kwonil" aria-label="이야기 할아버지 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🎩</span><span class="who"><span class="role">욕심쟁이 혹부리 영감</span><div class="name">홍설록</div><div class="desc">남자 · 능청스러운 어른</div></span><button class="play" data-v="tc-sullock" aria-label="홍설록 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">👹</span><span class="who"><span class="role">도깨비</span><div class="name">학철</div><div class="desc">남자 · 굵고 묵직한 목소리</div></span><button class="play" data-v="tc-hakchul" aria-label="학철 목소리 듣기">&#9654;</button></div></div></section>
+<section class="book"><div class="bhead"><h2>토끼와 거북이</h2><span class="meta"> · 14쪽 · 1,193자</span><span class="tags"><span class="tag wait">이야기 검토 전</span><span class="tag ok">성우 확정</span></span></div><div class="grid"><div class="row narr"><span class="emo">💜</span><span class="who"><span class="role">나레이션</span><div class="name">다빈</div><div class="desc">여자 청소년 · 상냥한 언니</div></span><button class="play" data-v="tc-dabin" aria-label="다빈 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🦉</span><span class="who"><span class="role">부엉이</span><div class="name">김고트</div><div class="desc">남자 · 크고 또렷한 목소리</div></span><button class="play" data-v="tc-goat" aria-label="김고트 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🐹</span><span class="who"><span class="role">토끼</span><div class="name">햄쭈</div><div class="desc">여자 · 톡톡 튀는 귀여운 목소리</div></span><button class="play" data-v="tc-hamchu" aria-label="햄쭈 목소리 듣기">&#9654;</button></div><div class="row"><span class="emo">🐢</span><span class="who"><span class="role">거북이</span><div class="name">태지</div><div class="desc">남자 어린이 · 또박또박 단단한 목소리</div></span><button class="play" data-v="tc-taeji" aria-label="태지 목소리 듣기">&#9654;</button></div></div></section>
+<footer>
+  낭독은 아직 굽지 않았습니다 &mdash; 여섯 권이 모두 확정된 뒤 한 번에 굽습니다.
+  지금 앱에서 들리는 소리는 <b>예전 성우</b>이고, 여기 적힌 성우로 바뀌는 것은 굽는 날입니다.
+</footer>
+</div>
+<script>
+(function(){
+  var audio=null, cur=null;
+  document.querySelectorAll(".play").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var src="/casting/preview-"+btn.dataset.v+".mp3";
+      if(audio && !audio.paused){
+        audio.pause();
+        if(cur===btn){ reset(btn); cur=null; return; }
+      }
+      if(cur) reset(cur);
+      audio = audio || new Audio();
+      audio.src=src; audio.currentTime=0;
+      cur=btn; btn.classList.add("on"); btn.innerHTML="&#9632;";
+      audio.onended=audio.onerror=function(){ reset(btn); cur=null; };
+      audio.play().catch(function(){ reset(btn); cur=null; });
+    });
+  });
+  function reset(b){ b.classList.remove("on"); b.innerHTML="&#9654;"; }
+})();
+</script>
+</body></html>
