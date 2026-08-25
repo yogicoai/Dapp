@@ -360,18 +360,28 @@ export function BookViewer({ book }: { book: Book }) {
    * 주의 — master 는 위에서 선언한 뒤에 읽어야 한다. 순서가 뒤집히면
    * "Cannot access 'master' before initialization" 으로 뷰어가 통째로 죽는다.
    */
-  const editable = master && book.id.startsWith("my-");
+  /**
+   * 내가 만든 동화인가 — 세션을 볼지 말지 정하는 값. master 와 달리 곧바로 안다.
+   *
+   * 세션 조회를 이 값으로만 막는다. editable(마스터까지 본 값)로 막으면 고리가 생긴다:
+   * editable 이 master 에 기대는데 master 를 정해 주는 것이 그 효과라, 처음 false 인
+   * master 때문에 효과가 그대로 빠져나가고 master 는 영영 false 로 남는다
+   * — 마스터가 로그인해도 도구가 안 뜬다.
+   */
+  const mine = book.id.startsWith("my-");
   /** 다시 그린 그림을 올릴 cafe24 폴더 이름 — 만들 때와 같이 회원 아이디로 나눈다. */
   const [redrawOwner, setRedrawOwner] = useState("guest");
   useEffect(() => {
-    if (!editable) return;
+    if (!mine) return;
     loadSession()
       .then((s) => {
         setMaster(s.isMaster);
         if (s.profile?.username) setRedrawOwner(s.profile.username);
       })
       .catch(() => {});
-  }, [editable]);
+  }, [mine]);
+  /** 고치기 도구(글 고치기 · 그림 다시 그리기)를 띄울지 — 마스터만. */
+  const editable = mine && master;
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
@@ -1879,13 +1889,13 @@ export function BookViewer({ book }: { book: Book }) {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/icons/func-remake.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
+                {/* 도구가 마스터 전용이 된 뒤로 남은 장수 표시는 죽은 분기다 —
+                    마스터는 무제한(redrawsLeft = Infinity)이라 늘 그릴 수 있다. */}
                 {redrawing
                   ? "그리는 중…"
-                  : redrawsLeft <= 0
-                    ? "다시 그리기를 다 썼어요"
-                    : book.pages[index].image
-                      ? `이 쪽 그림 다시 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`
-                      : `이 쪽 그림 그리기${master ? "" : ` (${redrawsLeft}장 남음)`}`}
+                  : book.pages[index].image
+                    ? "이 쪽 그림 다시 그리기"
+                    : "이 쪽 그림 그리기"}
               </button>
             </>
           )}
