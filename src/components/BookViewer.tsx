@@ -345,8 +345,22 @@ export function BookViewer({ book }: { book: Book }) {
    * 토큰과 그림이 통째로 날아가므로, 글만 고치는 길을 둔다.
    * (제공 동화는 파일로 관리하니 여기서 손대지 않는다.)
    */
-  const editable = book.id.startsWith("my-");
   const [master, setMaster] = useState(false);
+  /*
+   * 고치기 도구를 띄울 조건 — 내가 만든 동화이고, 마스터일 때만.
+   *
+   * 예전엔 '이 쪽 그림 다시 그리기'가 모든 회원에게 보였다(한 권에 한 장까지).
+   * 사장님 지시로 일단 감춘다 — 그림 생성이 요즘 자주 실패하고 할당량도 빠듯한데,
+   * 다시 그리기는 눌러 놓고 기다리다 실패하면 오히려 기분이 상하는 자리다.
+   * 마스터에게는 그대로 남겨 둔다(글 고치기와 같은 자리).
+   *
+   * 이걸 감추면 **만들 때 그림을 못 받은 빈 쪽을 회원이 스스로 채울 길도 없어진다**
+   * — 그 쪽은 문의를 받아 마스터가 채워 줘야 한다.
+   *
+   * 주의 — master 는 위에서 선언한 뒤에 읽어야 한다. 순서가 뒤집히면
+   * "Cannot access 'master' before initialization" 으로 뷰어가 통째로 죽는다.
+   */
+  const editable = master && book.id.startsWith("my-");
   /** 다시 그린 그림을 올릴 cafe24 폴더 이름 — 만들 때와 같이 회원 아이디로 나눈다. */
   const [redrawOwner, setRedrawOwner] = useState("guest");
   useEffect(() => {
@@ -1841,21 +1855,19 @@ export function BookViewer({ book }: { book: Book }) {
 
           {toolsOpen && (
             <>
-              {/* 글 고치기는 아직 마스터만 — 본문을 바꾸면 낭독 캐시와 어긋난다. */}
-              {master && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDraft(book.pages[index].text);
-                    setEditing(true);
-                  }}
-                  className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/icons/func-edit.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
-                  글 고치기
-                </button>
-              )}
+              {/* 글 고치기 — 본문을 바꾸면 낭독 캐시와 어긋나서 마스터만 쓴다(editable 에서 이미 거른다). */}
+              <button
+                type="button"
+                onClick={() => {
+                  setDraft(book.pages[index].text);
+                  setEditing(true);
+                }}
+                className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-extrabold text-neutral-700 shadow backdrop-blur"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/icons/func-edit.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.3em]" />
+                글 고치기
+              </button>
               {/* 이 쪽 그림 다시 그리기 — 삽화가 빠졌거나 마음에 안 드는 쪽을 그 쪽만 고친다.
                   그림이 없는 쪽은 문구를 바꿔, 비어 있다는 걸 먼저 알아채게 한다.
                   다 쓴 뒤에도 버튼은 남긴다 — 사라지면 "있었는데 없어졌다"가 더 헷갈린다. */}
