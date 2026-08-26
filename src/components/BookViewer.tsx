@@ -29,6 +29,7 @@ import {
   storyWeightForFont,
 } from "@/lib/prefs";
 import { loadSession } from "@/lib/auth";
+import { fitScale } from "@/lib/fit-text";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
@@ -120,22 +121,18 @@ function AutoFitStoryText({
        */
       const availableHeight = Math.min(box.clientHeight, window.innerHeight * 0.76);
       const availableWidth = box.clientWidth;
-      const clipped = () =>
-        text.scrollHeight > text.clientHeight + 1 || text.scrollWidth > text.clientWidth + 1;
-      const fits = () =>
-        !clipped() && text.scrollHeight <= availableHeight + 1 && text.scrollWidth <= availableWidth + 1;
-      if (fits()) return;
-
-      // 42%까지 이분 탐색한다. 일반적인 150~300자 본문은 대개 65~90%에서 들어온다.
-      let low = 0.42;
-      let high = 1;
-      for (let n = 0; n < 9; n++) {
-        const mid = (low + high) / 2;
-        text.style.setProperty("--story-fit", String(mid));
-        if (fits()) low = mid;
-        else high = mid;
-      }
-      text.style.setProperty("--story-fit", String(low));
+      const fitsAt = (scale: number) => {
+        text.style.setProperty("--story-fit", String(scale));
+        const clipped =
+          text.scrollHeight > text.clientHeight + 1 || text.scrollWidth > text.clientWidth + 1;
+        return (
+          !clipped &&
+          text.scrollHeight <= availableHeight + 1 &&
+          text.scrollWidth <= availableWidth + 1
+        );
+      };
+      // 얼마나 줄일지 고르는 셈법은 fit-text.ts 에 떼어 두고 테스트로 지킨다.
+      text.style.setProperty("--story-fit", String(fitScale(fitsAt)));
     };
 
     fit();
