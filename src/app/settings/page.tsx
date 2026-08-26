@@ -38,13 +38,11 @@ import {
   saveShelfCols,
   SHELF_COLS,
   type ShelfCols,
-  loadTextPos,
   looksToPrompt,
   type ChildLooks,
   saveBookLayout,
   saveChild,
   saveLang,
-  saveTextPos,
   type BookLayout,
   setMyBookHidden,
   type BookBrief,
@@ -203,8 +201,6 @@ export default function SettingsPage() {
   // 목소리 — 프리셋 선택 + 엄마·아빠 녹음 관리
   const [voiceId, setVoiceId] = useState("basic");
   const [voiceRate, setVoiceRate] = useState(DEFAULT_VOICE_RATE);
-  // 책 화면 — 글자 위치(위/아래)
-  const [textPos, setTextPos] = useState<ReturnType<typeof loadTextPos>>("bottom");
   // 책 보는 방식 — 가로에서 '꽉 찬 그림' / '펼침면(그림|글 반반)'.
   const [bookLayout, setBookLayout] = useState<BookLayout>("full");
   // 책장 한 줄 권수(넓은 화면 전용).
@@ -272,7 +268,6 @@ export default function SettingsPage() {
     setLang(loadLang());
     setVoiceId(loadSelectedVoiceId());
     setVoiceRate(loadVoiceRate());
-    setTextPos(loadTextPos());
     setBookLayout(loadBookLayout());
     setShelfCols(loadShelfCols());
     const savedFont = loadStoryFont();
@@ -1300,43 +1295,14 @@ export default function SettingsPage() {
               그림 아래에 글자가 놓여요.
             </p>
 
-            <h2 className="mt-1 text-sm font-extrabold text-neutral-400">책 글자 위치</h2>
-            <div className="flex flex-wrap gap-2">
-              {(
-                [
-                  { value: "bottom", label: "아래쪽", icon: "/icons/textpos-bottom.webp" },
-                  { value: "top", label: "위쪽", icon: "/icons/textpos-top.webp" },
-                  { value: "center", label: "가운데", icon: "/icons/textpos-center.webp" },
-                  { value: "left", label: "왼쪽 가운데", icon: "/icons/textpos-left.webp" },
-                  { value: "right", label: "오른쪽 가운데", icon: "/icons/textpos-right.webp" },
-                ] as const
-              ).map((p) => {
-                const active = textPos === p.value;
-                return (
-                  <button
-                    key={p.value}
-                    type="button"
-                    onClick={() => {
-                      setTextPos(p.value);
-                      saveTextPos(p.value);
-                      flashSaved();
-                    }}
-                    aria-pressed={active}
-                    style={active ? { background: accent } : undefined}
-                    className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold transition ${
-                      active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                    }`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.icon} alt="" aria-hidden className="h-7 w-7 shrink-0 object-contain" />
-                    {p.label}
-                  </button>
-                );
-              })}
-            </div>
-            <p className="text-[11px] font-medium text-neutral-400">
-              동화책에서 글이 그림의 어느 쪽에 얹힐지 골라요.
-            </p>
+            {/*
+              책 글자 위치(아래/위/가운데/왼쪽/오른쪽) 고르기 — 숨김.
+              읽어주기가 글자를 따라가며 짚어 주게 된 뒤로, 글이 어디 놓이든
+              지금 어디를 읽는지 알 수 있어 고를 이유가 없어졌다(사장님 지시).
+              값과 뷰어 동작은 그대로 둔다 — 이미 고르신 분의 책이 갑자기 바뀌면 안 되고,
+              되살릴 때도 이 주석만 걷어내면 된다. prefs.ts의 loadTextPos/saveTextPos,
+              BookViewer의 textPos 갈래는 손대지 않았다.
+            */}
 
             {/* 책장 한 줄 권수 — 넓은 화면에서만 의미가 있다.
                 폰은 화면이 좁아 어차피 2권으로 맞춰지므로, 헷갈리지 않게 그 말을 적어 둔다. */}
