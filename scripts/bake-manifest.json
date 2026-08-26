@@ -36,10 +36,10 @@
     "text": "그래도 흥부네 집에는 웃음이 끊이지 않았어요."
   },
   "seg-cast-p4-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-taeji",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"아버지, 오늘은 무슨 이야기 들려주실 거예요?\""
+    "text": "\"토끼야, 그럼 나랑 달리기 시합을 해 볼래?\n저기 언덕 꼭대기의 큰 소나무까지 말이야.\""
   },
   "seg-tc-kwonil-p4-2.mp3": {
     "voice": "tc-kwonil",
@@ -48,10 +48,10 @@
     "text": "아이들이 조르면, 흥부는 허허 웃으며 재미난 이야기를 들려주었답니다."
   },
   "seg-cast-p5-0.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"여보, 쌀독이 비었어요. 아이들이 사흘째 굶었는데…\""
+    "text": "\"뭐라고? 네가 나랑 시합을?\""
   },
   "seg-tc-kwonil-p5-1.mp3": {
     "voice": "tc-kwonil",
@@ -78,10 +78,10 @@
     "text": "\"형수님, 밥 한 술만 주세요. 아이들이 사흘을 굶었어요.\""
   },
   "seg-cast-p6-1.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-goat",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"흥, 밥 한 술도 아까워! 썩 물러가라!\""
+    "text": "자아, 준비이… 시자악!"
   },
   "seg-tc-kwonil-p6-2.mp3": {
     "voice": "tc-kwonil",
@@ -96,10 +96,10 @@
     "text": "흥부는 뺨이 얼얼했지만, 거기 붙은 밥알을 보고 눈이 번쩍 뜨였어요."
   },
   "seg-cast-p7-1.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-taeji",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.\""
+    "text": "\"괜찮아. 나는 나의 걸음으로 가면 돼.\""
   },
   "seg-cast-p7-2.mp3": {
     "voice": "tc-sookhee",
@@ -120,10 +120,10 @@
     "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요."
   },
   "seg-cast-p8-1.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"어서 오렴, 제비들아. 우리 집이 좁아도 함께 지내자꾸나.\""
+    "text": "\"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\""
   },
   "seg-tc-kwonil-p8-2.mp3": {
     "voice": "tc-kwonil",
@@ -168,10 +168,10 @@
     "text": "소리를 듣고 흥부가 한달음에 달려 나왔지요."
   },
   "seg-cast-p12-0.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"저런, 다리가 부러졌구나!\""
+    "text": "\"드르렁… 푸우…\""
   },
   "seg-tc-kwonil-p12-1.mp3": {
     "voice": "tc-kwonil",
@@ -666,10 +666,10 @@
     "text": "숲속 친구들이 우레 같은 박수를 보냈어요."
   },
   "seg-cast-p14-1.mp3": {
-    "voice": "tc-sua",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"짹짹!\""
+    "voice": "tc-hamchu",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"거북아, 잘난 척해서 미안해.\""
   },
   "seg-cast-p14-2.mp3": {
     "voice": "tc-taeji",
@@ -736,5 +736,119 @@
     "emotion": "normal",
     "intensity": null,
     "text": "제비는 박씨를 흥부 손바닥에 톡 떨어뜨렸답니다."
+  },
+  "seg-tc-arin-p1-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요."
+  },
+  "seg-tc-arin-p1-2.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 만나는 친구마다 자랑을 늘어놓았지요."
+  },
+  "seg-tc-arin-p2-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 숲에는 느릿느릿 거북이도 살고 있었어요.\n거북이는 걸음은 느렸지만,\n무슨 일이든 끝까지 해내는 성실한 친구였답니다."
+  },
+  "seg-tc-arin-p3-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 날, 토끼가 거북이를 보고 깔깔 웃었어요."
+  },
+  "seg-tc-arin-p4-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북이는 잠시 생각하더니 조용히 말했어요."
+  },
+  "seg-tc-arin-p5-1.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요."
+  },
+  "seg-tc-arin-p6-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "부엉이 할아버지가 심판을 맡았어요."
+  },
+  "seg-tc-arin-p6-2.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "외침과 함께 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요."
+  },
+  "seg-tc-arin-p7-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북이는 한 걸음, 또 한 걸음. 엉금엉금 천천히 걸었어요."
+  },
+  "seg-tc-arin-p7-2.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북이는 씩씩하게 앞만 보았답니다."
+  },
+  "seg-tc-arin-p8-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "한참을 달린 토끼가 뒤를 돌아보았어요.\n거북이는 점처럼 조그맣게 보였지요."
+  },
+  "seg-tc-arin-p9-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 시원한 나무 그늘에 벌렁 누웠어요.\n솔솔 부는 바람이 어찌나 시원한지,\n토끼는 금세 쿨쿨 잠이 들고 말았답니다."
+  },
+  "seg-tc-arin-p10-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그동안에도 거북이는 멈추지 않았어요.\n뜨거운 햇살 아래에서도, 가파른 오르막에서도,\n딱 한 번도 쉬지 않고 엉금엉금 걸어갔지요."
+  },
+  "seg-tc-arin-p11-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 깨우지 않고 묵묵히 언덕을 올라갔답니다."
+  },
+  "seg-tc-arin-p12-1.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가 소스라치게 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!"
+  },
+  "seg-tc-arin-p13-1.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 있는 힘껏 달렸지만 이미 늦었어요. 거북이가 한 발 먼저 큰 소나무를 짚었답니다."
+  },
+  "seg-tc-arin-p13-3.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "부엉이 할아버지가 크게 외쳤어요."
+  },
+  "seg-tc-arin-p14-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "숲속 친구들이 우레 같은 박수를 보냈어요."
+  },
+  "seg-tc-arin-p14-3.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "느려도 포기하지 않는 마음이 결국 해낸답니다."
   }
 }

@@ -662,12 +662,13 @@
   {
     "id": "folk-tortoise",
     "narrators": [
-      "tc-dabin"
+      "tc-dabin",
+      "tc-arin"
     ],
     "lang": "ko",
     "title": "토끼와 거북이",
     "summary": "느려도 한 번도 멈추지 않은 거북이가 달리기 시합에서 이기는 이야기",
-    "narrator": "tc-dabin",
+    "narrator": "tc-arin",
     "pages": [
       {
         "text": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요.\n\"이 숲에서 나보다 빠른 동물은 아무도 없지!\"\n토끼는 만나는 친구마다 자랑을 늘어놓았지요.",
@@ -1265,7 +1266,7 @@
       }
     ],
     "voiceCast": {
-      "narration": "tc-dabin",
+      "narration": "tc-arin",
       "rabbit": "tc-hamchu",
       "tortoise": "tc-taeji",
       "owl": "tc-goat"

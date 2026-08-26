@@ -60,13 +60,23 @@ type BookSpec = {
   dir: string;
   /** 미리 구울 나레이션 성우. 여기 없는 성우는 이 책의 고를 수 있는 목록에서도 뺀다. */
   narrators: string[];
+  /**
+   * 책을 열었을 때 기본으로 읽어 주는 성우. 안 적으면 narrators 의 첫 번째.
+   *
+   * 예전엔 첫 번째가 곧 대표였는데, 그러면 "다빈은 이미 구워 뒀으니 남겨 두고
+   * 아린이를 대표로" 같은 걸 목록 순서로만 표현해야 한다. 숨은 결합이라 실제로
+   * 한 번 걸렸다 — 아린이로 바꿔 놨더니 굽고 나서 다빈으로 되돌아갔다.
+   */
+  defaultNarrator?: string;
   /** 자동 배정에 쓸 등장인물 이름 — 본문에 나오는 그대로. */
   cast: { name: string }[];
 };
 const BOOKS: Record<string, BookSpec> = {
   "토끼와 거북이": {
     dir: "tortoise",
-    narrators: ["tc-dabin"],
+    // 다빈은 이미 구워 뒀다 — 아린이를 더해 둘 중에 고르게 한다.
+    narrators: ["tc-dabin", "tc-arin"],
+    defaultNarrator: "tc-arin",
     cast: [{ name: "토끼" }, { name: "거북이" }, { name: "부엉이" }],
   },
   "흥부와 놀부": {
@@ -89,6 +99,10 @@ if (!SPEC) throw new Error(`${TITLE} 는 BOOKS 에 등록되어 있지 않습니
 const DIR = `public/folk/${SPEC.dir}`;
 const URL_DIR = `/folk/${SPEC.dir}`;
 const BAKED_NARRATORS = SPEC.narrators;
+const DEFAULT_NARRATOR = SPEC.defaultNarrator ?? SPEC.narrators[0];
+if (!BAKED_NARRATORS.includes(DEFAULT_NARRATOR)) {
+  throw new Error(`대표 성우 ${DEFAULT_NARRATOR} 가 굽는 목록에 없습니다 — 골라도 조용해집니다`);
+}
 const CAST_NAMES = SPEC.cast;
 
 /** voices.ts에서 성우 id → Typecast voiceId·모델을 읽어 온다(두 벌로 관리하지 않으려고). */
@@ -309,7 +323,7 @@ for (const [i, page] of book.pages.entries()) {
 
 // 미리 구운 성우만 고를 수 있게 목록을 줄인다 — 안 구운 성우를 고르면 조용해진다.
 book.narrators = BAKED_NARRATORS;
-book.narrator = BAKED_NARRATORS[0];
+book.narrator = DEFAULT_NARRATOR;
 
 if (!DRY) {
   fs.writeFileSync(DATA, JSON.stringify(books, null, 2) + "\n", "utf8");
