@@ -11,6 +11,7 @@ import {
   CLONE_SAMPLE_RATE,
   cloneWavBytes,
   resample,
+  noiseGate,
   trimSilence,
 } from "@/lib/voice-dsp";
 import { currentUid, getSupabase } from "@/lib/supabase";
@@ -138,7 +139,13 @@ function toMono(buffer: AudioBuffer): Float32Array {
  * 여러 개를 주면 이어 붙인다(같은 문장을 두 번 읽으면 재료가 두 배가 되어 더 닮는다).
  * 각 녹음은 하이패스 → 침묵 정리를 거치고, 마지막에 전체를 한 번 정규화한다.
  */
-export async function prepareVoiceWav(blobs: Blob[]): Promise<Blob> {
+/**
+ * 녹음들을 클로닝용 WAV 한 덩어리로.
+ *
+ * @param roomNoise 녹음 전에 잰 방 소음(RMS). 넘기면 말 사이 잡음을 눌러 준다.
+ *                  안 넘기면 그 단계만 건너뛴다 — 예전 호출부도 그대로 돈다.
+ */
+export async function prepareVoiceWav(blobs: Blob[], roomNoise = 0): Promise<Blob> {
   const AC =
     window.AudioContext ??
     (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -151,7 +158,17 @@ export async function prepareVoiceWav(blobs: Blob[]): Promise<Blob> {
       try {
         const audio = await ctx.decodeAudioData(await b.arrayBuffer());
         // 다듬기는 원본 표본율에서 하고, 마지막에 16kHz로 낮춰 보낸다(용량 절약).
-        const cleaned = trimSilence(highPass(toMono(audio), audio.sampleRate), audio.sampleRate);
+        /*
+         * 낮은 웅웅거림을 걷어내고 → 말 사이 잡음을 누르고 → 앞뒤 무음을 자른다.
+         *
+         * 게이트를 하이패스 뒤에 두는 이유: 에어컨 같은 저주파가 남아 있으면 그것이
+         * 세기에 잡혀 '말하는 중'으로 오판된다. 먼저 걷어내야 문턱이 제대로 먹는다.
+         * 자르기(trimSilence) 앞에 두는 이유: 눌러 놓아야 어디가 무음인지 더 잘 보인다.
+         */
+        const cleaned = trimSilence(
+          noiseGate(highPass(toMono(audio), audio.sampleRate), audio.sampleRate, roomNoise),
+          audio.sampleRate,
+        );
         pieces.push(resample(cleaned, audio.sampleRate, CLONE_SAMPLE_RATE));
       } catch (e) {
         console.warn("[prepareVoiceWav] 녹음 하나를 열지 못했어요 — 건너뜁니다", e);

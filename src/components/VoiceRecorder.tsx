@@ -113,6 +113,13 @@ export function VoiceRecorder({
   const closedRef = useRef(false);
   // 소음 검사에 연달아 걸린 횟수 — 두 번 걸리면 그냥 진행할 수 있게 열어 준다.
   const noiseRejectsRef = useRef(0);
+  /*
+   * 마지막으로 잰 방 소음. 저장할 때 노이즈 게이트의 문턱이 된다.
+   *
+   * 브라우저 소음 제거(noiseSuppression)는 일부러 꺼 둔다 — 사람 목소리까지 깎아서
+   * 클론이 덜 닮아진다. 대신 이 값으로 '말할 때는 손대지 않고 말 사이만' 누른다.
+   */
+  const roomNoiseRef = useRef(0);
   const [skipNoiseCheck, setSkipNoiseCheck] = useState(false);
   /**
    * 녹음 조작(소리 막대·시간·끝내기) 자리.
@@ -255,6 +262,7 @@ export function VoiceRecorder({
       if (!skipNoiseCheck) {
         setPhase("checking");
         const roomNoise = await measureRoomNoise(stream);
+        roomNoiseRef.current = roomNoise;
         if (closedRef.current) {
           stream.getTracks().forEach((t) => t.stop());
           return;
@@ -447,7 +455,10 @@ export function VoiceRecorder({
     // 여기서 잘 다듬을수록 복제된 목소리가 더 닮는다.
     let audio: Blob;
     try {
-      audio = await prepareVoiceWav(filled.map((take) => take.blob));
+      audio = await prepareVoiceWav(
+        filled.map((take) => take.blob),
+        roomNoiseRef.current,
+      );
     } catch {
       // 녹음은 그대로 둔다 — 여기서 자리를 비우면 애써 읽은 걸 잃는다.
       setError("녹음을 음성 학습용 파일로 정리하지 못했어요. 잠시 뒤 저장을 다시 눌러 주세요.");

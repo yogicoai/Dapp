@@ -165,3 +165,55 @@ export function trimSilence(x: Float32Array, sampleRate: number): Float32Array {
   }
   return Float32Array.from(out);
 }
+
+/**
+ * 노이즈 게이트 — 말하지 않는 사이의 잡음만 눌러 준다.
+ *
+ * 왜 브라우저 소음 제거를 안 쓰나. getUserMedia 의 noiseSuppression 은 사람 목소리
+ * 자체도 깎는다. 목소리 복제는 "얼마나 똑같은가"가 전부라, 음색이 뭉개지면
+ * 엄마 목소리인데 엄마 같지 않은 클론이 나온다. 그래서 그건 꺼 두고, 대신
+ * **말할 때는 손대지 않고 말 사이만** 누른다.
+ *
+ * 기준은 녹음 전에 2초간 잰 방 소음이다. 그 방에서 실제로 깔린 소리보다 조금 위를
+ * 문턱으로 삼아야, 조용한 방에서는 거의 아무 일도 안 하고 시끄러운 방에서만 일한다.
+ *
+ * 딱 자르지 않고 서서히 여닫는다(attack/release). 문턱을 넘자마자 소리를 켜면
+ * 말 첫소리가 잘려 "ㅏ녕하세요"처럼 들리고, 끝나자마자 끄면 말꼬리가 뚝 끊긴다.
+ *
+ * @param roomNoise 녹음 전에 잰 방 소음(RMS). 0이면 아무것도 하지 않는다.
+ */
+export function noiseGate(
+  x: Float32Array,
+  sampleRate: number,
+  roomNoise: number,
+): Float32Array {
+  // 방 소음을 못 쟀거나 아주 조용하면 건드리지 않는다 — 안 건드리는 게 늘 안전하다.
+  if (!(roomNoise > 0.0015)) return x;
+
+  /** 방 소음의 이 배수를 넘으면 '말하는 중'으로 본다. 2.5배면 숨소리는 통과한다. */
+  const threshold = roomNoise * 2.5;
+  /** 문턱 아래에서 남길 크기. 0으로 만들면 무음이 뚝 끊겨 되레 티가 난다. */
+  const floor = 0.18;
+
+  const win = Math.max(1, Math.floor(sampleRate * 0.01)); // 10ms 마다 세기를 잰다
+  const attack = Math.max(1, Math.floor(sampleRate * 0.005) / win); // 5ms 만에 열고
+  const release = Math.max(1, Math.floor(sampleRate * 0.12) / win); // 120ms 에 걸쳐 닫는다
+
+  const y = new Float32Array(x.length);
+  let gain = 1;
+  for (let s = 0; s < x.length; s += win) {
+    const e = Math.min(x.length, s + win);
+    let sum = 0;
+    for (let i = s; i < e; i++) sum += x[i] * x[i];
+    const rms = Math.sqrt(sum / (e - s));
+
+    const target = rms > threshold ? 1 : floor;
+    // 여는 건 빠르게, 닫는 건 천천히 — 말꼬리를 물지 않게.
+    const step = target > gain ? 1 / attack : 1 / release;
+    for (let i = s; i < e; i++) {
+      gain += (target - gain) * Math.min(1, step);
+      y[i] = x[i] * gain;
+    }
+  }
+  return y;
+}
