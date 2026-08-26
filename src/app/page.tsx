@@ -24,6 +24,7 @@ import {
 } from "@/lib/prefs";
 import { currentUid } from "@/lib/supabase";
 import type { Book } from "@/lib/types";
+import { asBooks } from "@/lib/types";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -86,7 +87,7 @@ export default function Home() {
   }, [router]);
 
   // 언어는 설정(⚙️)에서 고른다. 메인은 아이가 보는 화면이라 컨트롤을 두지 않는다.
-  const all = books as Book[];
+  const all = asBooks(books);
   // 저장된 언어는 서버 렌더 이후에 읽어 첫 HTML과 클라이언트 첫 렌더를 맞춘다.
   const [lang, setLang] = useState("ko");
   // eslint-disable-next-line react-hooks/set-state-in-effect -- 하이드레이션 안전: 저장 언어를 마운트 후 반영
@@ -125,8 +126,8 @@ export default function Home() {
     if (guest) setShelf("folk");
   }, [guest]);
   // hidden 책은 서가에서만 내린다 (주소로는 열림) — 다듬는 중인 책 보관용.
-  const folk = (folkBooksJson as Book[]).filter((b) => !b.hidden);
-  const classics = (classicBooksJson as Book[]).filter((b) => !b.hidden);
+  const folk = asBooks(folkBooksJson).filter((b) => !b.hidden);
+  const classics = asBooks(classicBooksJson).filter((b) => !b.hidden);
   const shown = shelf === "mine" ? mine : shelf === "folk" ? folk : classics;
 
   // 준비 화면 — 로그인 확인과 책장 데이터가 '둘 다' 끝날 때까지 붙잡아 둔다.

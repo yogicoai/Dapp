@@ -3112,200 +3112,382 @@
     "lang": "ko",
     "title": "금도끼 은도끼",
     "summary": "연못에 도끼를 빠뜨린 정직한 나무꾼이 산신령님께 상을 받는 이야기",
-    "narrator": "tc-gunseok",
+    "narrator": "tc-hosun",
     "pages": [
       {
         "text": "옛날 어느 산골에 부지런한 나무꾼이 살았어요.\n나무꾼은 홀어머니를 모시고\n날마다 산에 올라 열심히 나무를 했답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p1.webp?v=5",
-        "audio": "/folk/goldaxe/narr-p1.mp3"
+        "hotspots": [
+          {
+            "label": "woodcutter",
+            "line": "오늘도 나무하러 갑니다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p1-woodcutter.mp3"
+          }
+        ]
       },
       {
         "text": "\"오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!\"\n나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만,\n나무꾼은 도끼를 보물처럼 아꼈어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p2.webp?v=5",
-        "audio": "/folk/goldaxe/narr-p2.mp3",
         "hotspots": [
           {
             "label": "woodcutter",
+            "line": "오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!",
             "box": [
-              145,
-              379,
-              943,
-              583
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/goldaxe/say-p2-woodcutter.wav",
-            "line": "오늘도 부지런히 나무하러 가자!"
+            "audio": "/folk/goldaxe/say-p2-woodcutter.mp3"
           }
         ]
       },
       {
         "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p3.webp?v=5",
-        "audio": "/folk/goldaxe/narr-p3.mp3"
-      },
-      {
-        "text": "풍덩! 도끼가 깊은 연못 속으로 가라앉고 말았어요.\n\"아이고, 내 도끼! 하나뿐인 내 도끼!\"\n나무꾼은 연못가에 주저앉아 엉엉 울었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p4.webp?v=5",
-        "audio": "/folk/goldaxe/narr-p4.mp3",
         "hotspots": [
           {
             "label": "woodcutter",
+            "line": "이 나무만 하면 오늘 몫은 끝이다!",
             "box": [
-              279,
-              146,
-              893,
-              475
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/goldaxe/say-p4-woodcutter.wav",
-            "line": "아이고, 내 도끼!"
+            "audio": "/folk/goldaxe/say-p3-woodcutter.mp3"
+          }
+        ]
+      },
+      {
+        "text": "풍덩! 도끼가 깊은 연못 속으로 가라앉고 말았어요.\n\"아이고, 하나뿐인 내 도끼!\"\n\"이제 어머니 약값은 어떻게 벌지…\"\n나무꾼은 연못가에 주저앉아 엉엉 울었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p4.webp?v=5",
+        "hotspots": [
+          {
+            "label": "woodcutter",
+            "line": "아이고, 하나뿐인 내 도끼!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p4-woodcutter.mp3"
+          },
+          {
+            "label": "woodcutter",
+            "line": "이제 어머니 약값은 어떻게 벌지…",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p4-woodcutter.mp3"
           }
         ]
       },
       {
         "text": "그때였어요. 연못 물이 반짝반짝 빛나더니\n하얀 수염을 길게 늘어뜨린 산신령님이 스르르 나타났어요.\n\"나무꾼아, 왜 그리 슬피 우느냐?\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p5.webp?v=5",
-        "audio": "/folk/goldaxe/narr-p5.mp3"
-      },
-      {
-        "text": "\"도끼를 연못에 빠뜨렸습니다.\n그 도끼가 없으면 나무를 할 수가 없어요.\"\n산신령님은 고개를 끄덕이더니 연못 속으로 사라졌지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p6.webp?v=5",
-        "audio": "/folk/goldaxe/narr-p6.mp3",
         "hotspots": [
           {
             "label": "spirit",
+            "line": "나무꾼아, 왜 그리 슬피 우느냐?",
             "box": [
-              134,
-              583,
-              882,
-              842
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/goldaxe/say-p6-spirit.wav",
-            "line": "나무꾼아, 왜 그리 슬피 우느냐?"
+            "audio": "/folk/goldaxe/say-p5-spirit.mp3"
           }
         ]
       },
       {
-        "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요.\n\"이 금도끼가 네 도끼냐?\"\n\"아니요, 제 도끼가 아닙니다.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p7.webp?v=7",
-        "audio": "/folk/goldaxe/narr-p7.mp3"
+        "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\"\n산신령님은 고개를 끄덕이더니 연못 속으로 사라졌지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p6.webp?v=5",
+        "hotspots": [
+          {
+            "label": "woodcutter",
+            "line": "어머니 약도 지어 드릴 수가 없어요.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p6-woodcutter.mp3"
+          }
+        ]
       },
       {
-        "text": "산신령님이 이번에는 은도끼를 들고 나왔어요.\n\"그럼 이 은도끼가 네 도끼냐?\"\n\"아니요, 그것도 제 것이 아닙니다.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p8.webp?v=7",
-        "audio": "/folk/goldaxe/narr-p8.mp3",
+        "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요.\n\"이 금도끼가 네 도끼냐?\"\n\"아니요, 제 도끼가 아닙니다.\"\n산신령님은 슬며시 웃으며 다시 물속으로 들어갔지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p7.webp?v=7",
         "hotspots": [
           {
             "label": "spirit",
+            "line": "이 금도끼가 네 도끼냐?",
             "box": [
-              215,
-              330,
-              800,
-              545
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/goldaxe/say-p8-spirit.wav",
-            "line": "이 금도끼가 네 도끼냐?"
+            "audio": "/folk/goldaxe/say-p7-spirit.mp3"
           },
           {
             "label": "woodcutter",
+            "line": "아니요, 제 도끼가 아닙니다.",
             "box": [
-              455,
-              640,
-              855,
-              800
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/goldaxe/say-p8-woodcutter.wav",
-            "line": "아니요, 제 도끼가 아닙니다."
+            "audio": "/folk/goldaxe/say-p7-woodcutter.mp3"
+          }
+        ]
+      },
+      {
+        "text": "이번에는 산신령님이 은도끼를 들고 나왔어요.\n\"그럼 이 은도끼가 네 도끼냐?\"\n\"아니요, 그것도 제 것이 아닙니다.\"\n나무꾼은 고개를 살래살래 저었어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p8.webp?v=7",
+        "hotspots": [
+          {
+            "label": "spirit",
+            "line": "그럼 이 은도끼가 네 도끼냐?",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p8-spirit.mp3"
+          },
+          {
+            "label": "woodcutter",
+            "line": "아니요, 그것도 제 것이 아닙니다.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p8-woodcutter.mp3"
           }
         ]
       },
       {
         "text": "마지막으로 낡은 쇠도끼를 들고 나오자\n나무꾼의 얼굴이 환해졌어요.\n\"맞아요! 그게 바로 제 도끼입니다!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p9.webp?v=7",
-        "audio": "/folk/goldaxe/narr-p9.mp3"
-      },
-      {
-        "text": "산신령님이 껄껄 웃으며 말했어요.\n\"참으로 정직하구나. 네 정직한 마음에 감동했으니\n금도끼와 은도끼도 모두 너에게 주마!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=7",
-        "audio": "/folk/goldaxe/narr-p10.mp3",
         "hotspots": [
           {
-            "label": "woodcutter",
+            "label": "spirit",
+            "line": "그럼 이건 어떠냐?",
             "box": [
-              355,
-              630,
-              830,
-              800
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/goldaxe/say-p10-woodcutter.wav",
-            "line": "맞아요! 그게 제 도끼예요!"
+            "audio": "/folk/goldaxe/say-p9-spirit.mp3"
+          },
+          {
+            "label": "woodcutter",
+            "line": "맞아요! 그게 바로 제 도끼입니다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p9-woodcutter.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "맞아요! 그게 바로 제 도끼입니다!",
+            "who": "woodcutter"
           }
         ]
       },
       {
-        "text": "나무꾼은 도끼 세 자루를 안고 한달음에 집으로 갔어요.\n\"어머니! 산신령님이 이런 선물을 주셨어요!\"\n금도끼를 판 돈으로 어머니 약을 짓고,\n남은 것은 마을 사람들과 아낌없이 나누었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p11.webp?v=7",
-        "audio": "/folk/goldaxe/narr-p11.mp3"
+        "text": "산신령님이 껄껄 웃으며 말했어요.\n\"참으로 정직하구나. 네 정직한 마음에 감동했으니\n금도끼와 은도끼도 모두 너에게 주마!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=7",
+        "hotspots": [
+          {
+            "label": "spirit",
+            "line": "금도끼와 은도끼도 모두 너에게 주마!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p10-spirit.mp3"
+          }
+        ]
       },
       {
-        "text": "이 소식을 들은 이웃 마을 욕심쟁이가 무릎을 탁 쳤어요.\n\"옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!\"\n욕심쟁이는 연못으로 달려가\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는 거짓 울음을 울었지요.\n\"아이고, 내 도끼야! 엉엉!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p12.webp?v=7",
-        "audio": "/folk/goldaxe/narr-p12.mp3"
+        "text": "나무꾼은 도끼 세 자루를 안고 한달음에 집으로 갔어요.\n\"어머니! 산신령님이 이런 선물을 주셨어요!\"\n\"네가 바르게 살아 준 덕이구나.\"\n어머니는 아들의 손을 오래오래 쓸어 주었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p11.webp?v=7",
+        "hotspots": [
+          {
+            "label": "woodcutter",
+            "line": "어머니! 산신령님이 이런 선물을 주셨어요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p11-woodcutter.mp3"
+          },
+          {
+            "label": "mother",
+            "line": "네가 바르게 살아 준 덕이구나.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p11-mother.mp3"
+          }
+        ]
+      },
+      {
+        "text": "나무꾼이 금도끼를 받았다는 소문은 이웃 마을까지 퍼졌어요.\n그 말을 들은 욕심쟁이가 무릎을 탁 쳤지요.\n\"옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!\"\n욕심쟁이는 그날 밤 잠도 이루지 못했답니다.",
+        "hotspots": [
+          {
+            "label": "greedy",
+            "line": "옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p12-greedy.mp3"
+          }
+        ]
+      },
+      {
+        "text": "이튿날 아침, 욕심쟁이는 연못으로 달려갔어요.\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는\n손등으로 눈을 비비며 거짓 울음을 울었지요.\n\"아이고, 내 도끼야! 엉엉!\"",
+        "hotspots": [
+          {
+            "label": "greedy",
+            "line": "아이고, 내 도끼야! 엉엉!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p13-greedy.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "아이고, 내 도끼야! 엉엉!",
+            "who": "greedy"
+          }
+        ],
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p12.webp?v=7"
       },
       {
         "text": "연못이 반짝이더니 산신령님이 금도끼를 들고 나타났어요.\n\"이 금도끼가 네 도끼냐?\"\n\"맞아요, 맞아! 그 금도끼가 제 것입니다!\"\n욕심쟁이는 손을 뻗으며 냉큼 외쳤지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p13.webp?v=7",
-        "audio": "/folk/goldaxe/narr-p13.mp3",
         "hotspots": [
           {
-            "label": "greedy",
+            "label": "spirit",
+            "line": "이 금도끼가 네 도끼냐?",
             "box": [
-              340,
-              605,
-              830,
-              800
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/goldaxe/say-p13-greedy.wav",
-            "line": "아이고, 내 도끼야! 엉엉!"
+            "audio": "/folk/goldaxe/say-p14-spirit.mp3"
+          },
+          {
+            "label": "greedy",
+            "line": "맞아요, 맞아! 그 금도끼가 제 것입니다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p14-greedy.mp3"
           }
         ]
       },
       {
         "text": "산신령님의 얼굴이 무섭게 굳어졌어요.\n\"네 도끼는 낡은 쇠도끼가 아니더냐.\n거짓말을 하는구나!\"\n산신령님은 연못 속으로 스르르 사라져 버렸지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p14.webp?v=7",
-        "audio": "/folk/goldaxe/narr-p14.mp3",
         "hotspots": [
           {
             "label": "spirit",
+            "line": "거짓말을 하는구나!",
             "box": [
-              215,
-              145,
-              830,
-              400
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/goldaxe/say-p14-spirit.wav",
-            "line": "거짓말을 하는구나!"
+            "audio": "/folk/goldaxe/say-p15-spirit.mp3"
           }
         ]
       },
       {
         "text": "욕심쟁이는 해가 지도록 연못가에서 기다렸지만\n산신령님은 다시 나오지 않았어요.\n금도끼는커녕 제 쇠도끼까지 잃고\n터덜터덜 빈손으로 돌아갔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p15.webp?v=7",
-        "audio": "/folk/goldaxe/narr-p15.mp3"
+        "hotspots": [
+          {
+            "label": "greedy",
+            "line": "산신령님… 제 도끼라도 돌려주세요…",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p16-greedy.mp3"
+          }
+        ]
       },
       {
         "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요.\n\"어머니, 저는 도끼 한 자루면 넉넉해요.\"\n나무꾼과 어머니는 오래오래 행복하게 살았답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p16.webp?v=7",
-        "audio": "/folk/goldaxe/narr-p16.mp3",
         "hotspots": [
           {
             "label": "woodcutter",
+            "line": "어머니, 저는 도끼 한 자루면 넉넉해요.",
             "box": [
-              280,
-              265,
-              940,
-              470
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/goldaxe/say-p16-woodcutter.wav",
-            "line": "저는 도끼 한 자루면 넉넉해요!"
+            "audio": "/folk/goldaxe/say-p17-woodcutter.mp3"
+          },
+          {
+            "label": "mother",
+            "line": "그럼, 그게 제일이지.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/goldaxe/say-p17-mother.mp3"
           }
         ]
       }
@@ -3337,68 +3519,436 @@
     "pages": [
       {
         "text": "옛날 어느 산골에, 팥 농사를 짓는 할머니가 살았어요.\n어느 날 밭을 매는데, 커다란 호랑이가 어흥! 하고 나타났지요.\n\"할멈, 널 잡아먹어야겠다!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p01.png",
-        "audio": "/folk/patjuk/narr-p1.mp3"
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "할멈, 널 잡아먹어야겠다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p1-tiger.mp3"
+          }
+        ]
       },
       {
         "text": "할머니는 깜짝 놀랐지만 꾀를 냈어요.\n\"호랑이야, 가을에 팥이 익으면 팥죽을 쒀 줄게.\n그때 배불리 먹고 나서 나를 잡아먹으렴.\"\n\"좋아! 그럼 그때 다시 오마.\" 호랑이는 어슬렁어슬렁 돌아갔어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p02.png",
-        "audio": "/folk/patjuk/narr-p2.mp3"
+        "hotspots": [
+          {
+            "label": "granny",
+            "line": "가을에 팥이 익으면 팥죽을 쒀 줄게.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p2-granny.mp3"
+          },
+          {
+            "label": "tiger",
+            "line": "좋아! 그럼 그때 다시 오마.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p2-tiger.mp3"
+          }
+        ]
       },
       {
         "text": "가을이 되어 팥이 빨갛게 익었어요.\n할머니는 솥 가득 팥죽을 쒔지요.\n하지만 호랑이가 올 생각을 하니 눈물이 주르륵.\n\"흑흑, 이제 나는 잡아먹히고 마는구나.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p03.png",
-        "audio": "/folk/patjuk/narr-p3.mp3"
+        "hotspots": [
+          {
+            "label": "granny",
+            "line": "흑흑, 이제 나는 잡아먹히고 마는구나.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p3-granny.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "흑흑, 이제 나는 잡아먹히고 마는구나.",
+            "who": "granny"
+          }
+        ]
       },
       {
-        "text": "그때 부엌 아궁이에서 알밤이 톡 튀어나왔어요.\n\"할머니, 왜 울어요?\"\n\"호랑이가 날 잡아먹으러 온단다.\"\n\"팥죽 한 그릇 주시면 제가 도와드릴게요!\"\n알밤은 냠냠 팥죽을 먹고 아궁이 속에 쏙 숨었어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p04.png",
-        "audio": "/folk/patjuk/narr-p4.mp3"
+        "text": "그때 부엌 아궁이에서 알밤이 톡 튀어나왔어요.\n\"할머니, 왜 울어요?\"\n\"호랑이가 날 잡아먹으러 온단다.\"\n\"팥죽 한 그릇 주시면 제가 아궁이에 숨어 있을게요!\"\n알밤은 냠냠 팥죽을 먹고 아궁이 속에 쏙 숨었어요.",
+        "hotspots": [
+          {
+            "label": "chestnut",
+            "line": "할머니, 왜 울어요?",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p4-chestnut.mp3"
+          },
+          {
+            "label": "granny",
+            "line": "호랑이가 날 잡아먹으러 온단다.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p4-granny.mp3"
+          },
+          {
+            "label": "chestnut",
+            "line": "제가 아궁이에 숨어 있을게요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p4-chestnut.mp3"
+          }
+        ]
       },
       {
-        "text": "이번엔 물동이에서 자라가 엉금엉금 기어 나왔어요.\n\"할머니, 저도 팥죽 주시면 도와드릴게요!\"\n자라는 팥죽을 먹고 물동이 속에 풍덩 숨었지요.\n뒤이어 쇠똥도, 멍석도, 지게도 하나씩 나타났어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p05.png",
-        "audio": "/folk/patjuk/narr-p5.mp3"
+        "text": "이번엔 물동이에서 자라가 엉금엉금 기어 나왔어요.\n\"할머니, 저도 팥죽 한 그릇만 주신다면\n물동이 속에 숨어 있다가\n호랑이 손을 꽉 물어 줄게요!\"\n자라는 팥죽을 먹고 물동이 속으로 풍덩 들어갔지요.",
+        "hotspots": [
+          {
+            "label": "turtle",
+            "line": "호랑이 손을 꽉 물어 줄게요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p5-turtle.mp3"
+          }
+        ]
       },
       {
-        "text": "\"저희도 팥죽 주시면 힘을 보탤게요!\"\n다들 팥죽을 배불리 먹고 저마다 자리를 잡았어요.\n쇠똥은 마당 한가운데, 멍석은 마루에,\n지게는 문 뒤에 살그머니 숨었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p06.png",
-        "audio": "/folk/patjuk/narr-p6.mp3"
+        "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아와 입을 모았어요.\n\"저희들도 할머니를 도와드릴게요!\"\n\"나는 미끄럽지! 밟기만 해 보라지.\"\n\"나는 둘둘 말 줄 알아!\"\n\"나는 지고 갈 힘이 있소!\"",
+        "hotspots": [
+          {
+            "label": "mat",
+            "line": "저희들도 할머니를 도와드릴게요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p6-mat.mp3"
+          },
+          {
+            "label": "dung",
+            "line": "나는 미끄럽지! 밟기만 해 보라지.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p6-dung.mp3"
+          },
+          {
+            "label": "mat",
+            "line": "나는 둘둘 말 줄 알아!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p6-mat.mp3"
+          },
+          {
+            "label": "carrier",
+            "line": "나는 지고 갈 힘이 있소!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p6-carrier.mp3"
+          }
+        ]
       },
       {
-        "text": "깜깜한 밤, 드디어 호랑이가 어슬렁 찾아왔어요.\n\"할멈, 팥죽 잘 익었느냐? 어디 있느냐?\"\n\"부엌 아궁이에 있으니 직접 꺼내 먹으렴.\"\n호랑이는 어슬렁어슬렁 부엌으로 갔지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p07.png",
-        "audio": "/folk/patjuk/narr-p7.mp3"
+        "text": "다들 팥죽을 배불리 먹고 저마다 자리를 잡았어요.\n쇠똥은 마당 한가운데, 멍석은 마루에,\n지게는 문 뒤에 살그머니 숨었답니다.\n\"할머니, 우리만 믿으세요!\"",
+        "hotspots": [
+          {
+            "label": "mat",
+            "line": "할머니, 우리만 믿으세요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p7-mat.mp3"
+          },
+          {
+            "label": "granny",
+            "line": "고맙구나, 얘들아…",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p7-granny.mp3"
+          }
+        ]
       },
       {
-        "text": "호랑이가 아궁이를 들여다보는 순간 —\n뜨겁게 달궈진 알밤이 탁! 튀어 호랑이 눈을 때렸어요.\n\"아야! 내 눈!\"\n호랑이가 물동이로 눈을 씻으러 달려갔지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p08.png",
-        "audio": "/folk/patjuk/narr-p8.mp3"
+        "text": "깜깜한 밤, 드디어 호랑이가 어슬렁어슬렁 찾아왔어요.\n\"할멈, 약속대로 왔다! 팥죽은 다 익었느냐?\"\n\"부엌 아궁이에 있으니 직접 꺼내 먹으렴.\"\n호랑이는 침을 꿀꺽 삼키며 부엌으로 갔지요.",
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "할멈, 약속대로 왔다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p8-tiger.mp3"
+          },
+          {
+            "label": "granny",
+            "line": "부엌 아궁이에 있으니 직접 꺼내 먹으렴.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p8-granny.mp3"
+          }
+        ]
       },
       {
-        "text": "물동이에 손을 넣자, 자라가 콱! 손을 물었어요.\n\"아이고 아파!\"\n놀란 호랑이가 뒷걸음질 치다가 —\n마당의 쇠똥을 밟고 주르륵 미끄러졌지요. 쿵!",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p09.png",
-        "audio": "/folk/patjuk/narr-p9.mp3"
+        "text": "호랑이가 아궁이를 들여다보는 순간 —\n\"지금이다!\"\n뜨겁게 달궈진 알밤이 탁! 튀어 호랑이 눈을 때렸어요.\n\"아야! 내 눈!\"",
+        "hotspots": [
+          {
+            "label": "chestnut",
+            "line": "지금이다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p9-chestnut.mp3"
+          },
+          {
+            "label": "tiger",
+            "line": "아야! 내 눈!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p9-tiger.mp3"
+          }
+        ]
       },
       {
-        "text": "넘어진 호랑이 위로 마루의 멍석이 데굴데굴 굴러와\n호랑이를 둘둘 말아 버렸어요.\n그러자 문 뒤의 지게가 성큼 다가와\n멍석에 싸인 호랑이를 번쩍 짊어졌답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p10.png",
-        "audio": "/folk/patjuk/narr-p10.mp3"
+        "text": "호랑이가 물동이로 눈을 씻으러 달려갔어요.\n물에 손을 넣는 순간, 자라가 콱!\n\"약속대로 꽉 물었지!\"\n\"아이고 아파!\"",
+        "hotspots": [
+          {
+            "label": "turtle",
+            "line": "약속대로 꽉 물었지!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p10-turtle.mp3"
+          },
+          {
+            "label": "tiger",
+            "line": "아이고 아파!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p10-tiger.mp3"
+          }
+        ]
       },
       {
-        "text": "지게는 멍석에 싸인 호랑이를 등에 짊어지고 강가로 갔어요.\n호랑이는 물에 풍덩 빠졌다가 고개를 내밀었지요.\n\"어푸어푸! 다시는 마을에 오지 않을게!\"\n호랑이는 강 건너 산 너머로 서둘러 도망쳤답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p11.png",
-        "audio": "/folk/patjuk/narr-p11.mp3"
+        "text": "놀란 호랑이가 뒷걸음질을 쳤어요.\n\"밟았구나! 내가 말했지, 밟기만 해 보라고!\"\n마당 한가운데 쇠똥을 밟고 주르륵 — 쿵!\n호랑이가 벌러덩 나자빠졌지요.",
+        "hotspots": [
+          {
+            "label": "dung",
+            "line": "내가 말했지, 밟기만 해 보라고!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p11-dung.mp3"
+          },
+          {
+            "label": "tiger",
+            "line": "어이쿠!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p11-tiger.mp3"
+          }
+        ]
       },
       {
-        "text": "호랑이가 떠나자, 할머니는 친구들을 마당에 불러 모았어요.\n그리고 따끈한 팥죽을 한 그릇씩 나누어 주었지요.\n\"정말 고맙구나. 너희가 곁에 있어 주어서 하나도 무섭지 않았단다.\"\n친구들은 팥죽을 호호 불어 먹으며 빙그레 웃었어요.\n그날 밤, 산골 오두막에는 따뜻한 웃음소리가 오래오래 이어졌답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p12.png",
-        "audio": "/folk/patjuk/narr-p12.mp3"
+        "text": "그때 마루에 있던 멍석이 데굴데굴 굴러왔어요.\n\"자, 둘둘 말아 주마!\"\n멍석은 넘어진 호랑이를 순식간에 둘둘 말아 버렸답니다.\n\"어푸! 꼼짝도 못 하겠다!\"",
+        "hotspots": [
+          {
+            "label": "mat",
+            "line": "자, 둘둘 말아 주마!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p12-mat.mp3"
+          },
+          {
+            "label": "tiger",
+            "line": "꼼짝도 못 하겠다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p12-tiger.mp3"
+          }
+        ]
+      },
+      {
+        "text": "문 뒤에서 지게가 성큼성큼 걸어 나왔어요.\n\"이제 내 차례군. 어디 한번 업혀 보시오!\"\n지게는 멍석에 싸인 호랑이를 번쩍 짊어졌지요.",
+        "hotspots": [
+          {
+            "label": "carrier",
+            "line": "이제 내 차례군!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p13-carrier.mp3"
+          }
+        ]
+      },
+      {
+        "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n\"어푸어푸! 아이고 무서워라, 얼른 달아나야겠다!\"\n호랑이는 강 건너 산 너머로 걸음아 날 살려라 도망쳤답니다.",
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "아이고 무서워라, 얼른 달아나야겠다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p14-tiger.mp3"
+          },
+          {
+            "label": "carrier",
+            "line": "다시는 얼씬도 마시오!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p14-carrier.mp3"
+          }
+        ]
+      },
+      {
+        "text": "할머니는 남은 팥죽을 다시 데웠어요.\n알밤도 자라도, 쇠똥도 멍석도 지게도 마당에 둘러앉았지요.\n\"너희가 아니었으면 할미가 어쩔 뻔했니. 정말 고맙구나.\"\n\"할머니 팥죽이 세상에서 제일 맛있어요!\"\n그날 밤, 오두막에는 웃음소리가 오래오래 이어졌답니다.",
+        "hotspots": [
+          {
+            "label": "granny",
+            "line": "너희가 아니었으면 할미가 어쩔 뻔했니.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p15-granny.mp3"
+          },
+          {
+            "label": "chestnut",
+            "line": "할머니 팥죽이 세상에서 제일 맛있어요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p15-chestnut.mp3"
+          },
+          {
+            "label": "turtle",
+            "line": "우리 또 놀러 올게요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/patjuk-halmae-tiger/say-p15-turtle.mp3"
+          }
+        ]
       }
     ],
-    "narrators": [
-      "tc-jiyoung"
-    ]
+    "voiceCast": {
+      "narration": "tc-jiyoung",
+      "granny": "tc-jungsoon",
+      "tiger": "tc-hakchul",
+      "chestnut": "tc-booqoo",
+      "turtle": "tc-monggun",
+      "dung": "tc-kijang",
+      "mat": "tc-hamchu",
+      "carrier": "tc-goat"
+    },
+    "roleOf": {
+      "할머니": "granny",
+      "호랑이": "tiger",
+      "알밤": "chestnut",
+      "밤": "chestnut",
+      "자라": "turtle",
+      "쇠똥": "dung",
+      "멍석": "mat",
+      "지게": "carrier"
+    }
   },
   {
     "id": "folk-hokburi",

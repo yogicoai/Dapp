@@ -3,10 +3,11 @@ import classicBooks from "@/data/classic-books.json";
 import folkBooks from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
 import type { Book } from "@/lib/types";
+import { asBooks } from "@/lib/types";
 import { SavedBook } from "./SavedBook";
 
 // 샘플(추후 회원 책) + 제공 서가(전래동화·세계명작).
-const ALL = [...(books as Book[]), ...(folkBooks as Book[]), ...(classicBooks as Book[])];
+const ALL = [...asBooks(books), ...asBooks(folkBooks), ...asBooks(classicBooks)];
 
 export function generateStaticParams() {
   return ALL.map((book) => ({ id: book.id }));

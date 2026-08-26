@@ -152,3 +152,18 @@ export type Book = {
   locationDetail?: string;
   pages: BookPage[];
 };
+
+/**
+ * 책 JSON을 Book[]으로 읽는다.
+ *
+ * JSON을 곧바로 `as Book[]`로 캐스팅하면 타입이 막는다 — 책마다 voiceCast의 키가 달라
+ * (흥부는 heungbu·nolbu…, 팥죽은 granny·tiger…) TypeScript가 그것들을 합집합으로 보고
+ * 없는 키를 `undefined`로 채운 모양을 만든다. 그게 `Record<string, string>`과 안 맞는다고
+ * 한다. 데이터는 멀쩡하다 — 없는 키는 `undefined`가 아니라 그냥 없다.
+ *
+ * 캐스팅을 여기 한 곳에 모아 두고 까닭을 적어 둔다. 부르는 쪽마다 `as unknown as Book[]`을
+ * 흩뿌리면, 나중에 진짜 타입이 어긋났을 때 그것까지 조용히 삼킨다.
+ */
+export function asBooks(json: unknown): Book[] {
+  return json as Book[];
+}

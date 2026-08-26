@@ -80,6 +80,23 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-arin",
     cast: [{ name: "토끼" }, { name: "거북이" }, { name: "부엉이" }],
   },
+  "팥죽 할머니와 호랑이": {
+    dir: "patjuk-halmae-tiger",
+    narrators: ["tc-jiyoung"],
+    defaultNarrator: "tc-jiyoung",
+    cast: [
+      { name: "할머니" }, { name: "호랑이" }, { name: "알밤" },
+      { name: "자라" }, { name: "쇠똥" }, { name: "멍석" }, { name: "지게" },
+    ],
+  },
+  "금도끼 은도끼": {
+    dir: "goldaxe",
+    narrators: ["tc-hosun"],
+    defaultNarrator: "tc-hosun",
+    cast: [
+      { name: "나무꾼" }, { name: "산신령" }, { name: "욕심쟁이" }, { name: "어머니" },
+    ],
+  },
   "해님 달님": {
     dir: "haedal",
     // 나레이션은 정순 — 앱에 있던 수아는 여자 어린이라 누이와 목소리가 겹쳤다.

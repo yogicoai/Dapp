@@ -34,6 +34,7 @@ import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
+import { asBooks } from "@/lib/types";
 import {
   applyPlaybackRate,
   buildPresetUtterance,
@@ -572,9 +573,9 @@ export function BookViewer({ book }: { book: Book }) {
         return at >= 0 && at + 1 < shown.length ? shown[at + 1] : null;
       };
       if (book.id.startsWith("folk-")) {
-        setNextBook(pickNext(folkBooksJson as Book[]));
+        setNextBook(pickNext(asBooks(folkBooksJson)));
       } else if (book.id.startsWith("classic-")) {
-        setNextBook(pickNext(classicBooksJson as Book[]));
+        setNextBook(pickNext(asBooks(classicBooksJson)));
       } else if (book.id.startsWith("my-")) {
         // 내가 만든 책은 계정에서 목록을 가져온다(제목·id만이라 가볍다).
         const mine = await loadMyBooksBrief().catch(() => []);

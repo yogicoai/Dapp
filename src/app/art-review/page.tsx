@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import folkBooksJson from "@/data/folk-books.json";
 import type { Book } from "@/lib/types";
+import { asBooks } from "@/lib/types";
 
 /**
  * 삽화 검수실 (개발용 — 주소로만 접근).
@@ -12,7 +13,7 @@ import type { Book } from "@/lib/types";
  * "3번, 7번 별로"라고 지목하면 그 쪽만 다시 생성한다 (쪽당 약 ₩55).
  */
 export default function ArtReviewPage() {
-  const books = (folkBooksJson as Book[]).filter((b) =>
+  const books = asBooks(folkBooksJson).filter((b) =>
     b.pages.some((p) => p.image),
   );
   const [bookId, setBookId] = useState(books[0]?.id ?? "");
