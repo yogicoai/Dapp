@@ -2583,7 +2583,7 @@
       },
       {
         "text": "쿵! 쿵! 문이 마구 흔들렸어요.\n오누이는 숨을 죽이고 뒷문으로 살금살금 빠져나갔지요.\n마당을 가로질러, 우물가 큰 나무 위로 쑥쑥.\n그때 뒤에서 문이 와장창 열리는 소리가 났답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p9.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p9.webp?v=4",
         "hotspots": [
           {
             "label": "brother",
@@ -2707,7 +2707,7 @@
       },
       {
         "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요.\n\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n\"앗, 안 돼!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p12.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p12.webp?v=4",
         "hotspots": [
           {
             "label": "sister",
@@ -2793,7 +2793,7 @@
       },
       {
         "text": "오누이는 두 손을 꼭 모으고 하늘을 올려다보았어요.\n\"하느님, 저희를 살려 주시려거든\n튼튼한 동아줄을 내려 주세요!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p14.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p14.webp?v=4",
         "hotspots": [
           {
             "label": "brother",
@@ -3376,7 +3376,8 @@
             ],
             "audio": "/folk/goldaxe/say-p12-greedy.mp3"
           }
-        ]
+        ],
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p12.webp?v=2"
       },
       {
         "text": "이튿날 아침, 욕심쟁이는 연못으로 달려갔어요.\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는\n손등으로 눈을 비비며 거짓 울음을 울었지요.\n\"아이고, 내 도끼야! 엉엉!\"",
