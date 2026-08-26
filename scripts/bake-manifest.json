@@ -51,7 +51,7 @@
     "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"뭐라고? 네가 나랑 시합을?\""
+    "text": "\"뭐라고? 네가 나랑 시합을 하자고?\""
   },
   "seg-tc-kwonil-p5-1.mp3": {
     "voice": "tc-kwonil",
@@ -501,7 +501,7 @@
     "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
-    "text": "네가 나랑 시합을? 하하, 좋아!"
+    "text": "네가 나랑 시합을 하자고? 하하, 좋아!"
   },
   "say-p5-tortoise.mp3": {
     "voice": "tc-taeji",

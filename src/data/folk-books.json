@@ -831,7 +831,7 @@
         ]
       },
       {
-        "text": "\"뭐라고? 네가 나랑 시합을?\"\n토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요.",
+        "text": "\"뭐라고? 네가 나랑 시합을 하자고?\"\n토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p5.webp?v=2",
         "audio": "/folk/tortoise/narr-p5.mp3",
         "hotspots": [
@@ -844,8 +844,8 @@
               524
             ],
             "audio": "/folk/tortoise/say-p5-rabbit.mp3",
-            "line": "네가 나랑 시합을? 하하하, 좋아!",
-            "say": "네가 나랑 시합을? 하하, 좋아!"
+            "line": "네가 나랑 시합을 하자고? 하하하, 좋아!",
+            "say": "네가 나랑 시합을 하자고? 하하, 좋아!"
           },
           {
             "label": "tortoise",
@@ -859,22 +859,22 @@
             "line": "언덕 위 소나무까지야. 준비됐어!"
           }
         ],
+        "lines": [
+          {
+            "text": "뭐라고? 네가 나랑 시합을 하자고?",
+            "who": "rabbit"
+          }
+        ],
         "segments": [
           {
             "who": "rabbit",
             "src": "/folk/tortoise/seg-cast-p5-0.mp3",
-            "text": "\"뭐라고? 네가 나랑 시합을?\""
+            "text": "\"뭐라고? 네가 나랑 시합을 하자고?\""
           },
           {
             "who": "narration",
             "src": "/folk/tortoise/seg-p5-1.mp3",
             "text": "\n토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요."
-          }
-        ],
-        "lines": [
-          {
-            "text": "뭐라고? 네가 나랑 시합을?",
-            "who": "rabbit"
           }
         ]
       },
