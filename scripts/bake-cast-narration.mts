@@ -28,6 +28,13 @@ const ONLY_CHANGED = process.argv.includes("--changed");
  */
 const SEED = process.argv.includes("--seed");
 /**
+ * --adopt 는 굽지 않고, **지금 디스크에 있는 파일**을 지금 규칙 그대로 기록만 한다.
+ *
+ * --seed 와 다른 점: seed 는 '옛 감정 규칙'으로 찍는다(규칙을 바꾸기 직전에 쓰던 것).
+ * adopt 는 손대지 않는다 — 기록만 잃어버렸을 때 되살리는 용도다.
+ */
+const ADOPT = process.argv.includes("--adopt");
+/**
  * 굽기 기록 — 파일마다 {성우, 감정, 세기, 읽은 글}을 남긴다.
  *
  * 이게 없으면 '다시 구울 줄'을 감정 규칙의 옛/새 비교로 짐작해야 하는데, 규칙을 두 번
@@ -35,6 +42,14 @@ const SEED = process.argv.includes("--seed");
  * 조건을 적어 두면 정확히 달라진 것만 고른다.
  */
 const MANIFEST = "scripts/bake-manifest.json";
+/*
+ * 기록의 열쇠는 **책 폴더까지 붙인다** — 파일 이름만으로는 책이 겹친다.
+ *
+ * seg-cast-p2-1.mp3 는 흥부에도 팥죽에도 금도끼에도 있다. 이름만 열쇠로 쓰면
+ * 나중에 구운 책이 앞 책의 기록을 덮어써서, --changed 를 줘도 "달라졌다"로 잘못
+ * 읽고 멀쩡한 조각을 다시 굽는다(실제로 흥부에서 21개·450자가 그렇게 잡혔다).
+ */
+const keyOf = (file: string) => `${SPEC.dir}/${file}`;
 type Recipe = { voice: string; emotion: string; intensity: number | null; text: string };
 const recorded: Record<string, Recipe> = fs.existsSync(MANIFEST)
   ? JSON.parse(fs.readFileSync(MANIFEST, "utf8"))
@@ -255,14 +270,20 @@ async function bake(file: string, text: string, voice: string, emotion: string, 
     intensity: emotion === "normal" ? null : EMOTION_INTENSITY,
     text,
   };
-  fresh[file] = recipe;
+  fresh[keyOf(file)] = recipe;
   // 기록만 남기는 모드 — 지금 파일을 그대로 인정하고 넘어간다.
   if (SEED) {
     skipped += 1;
     return;
   }
+  if (ADOPT) {
+    // 파일이 없으면 인정할 것도 없다 — 기록에서 빼서 다음에 굽게 둔다.
+    if (!fs.existsSync(out)) delete fresh[keyOf(file)];
+    skipped += 1;
+    return;
+  }
   // 파일이 있고 조건도 똑같으면 다시 부를 이유가 없다.
-  if (!force && fs.existsSync(out) && same(recorded[file], recipe)) {
+  if (!force && fs.existsSync(out) && same(recorded[keyOf(file)], recipe)) {
     skipped += 1;
     return;
   }
@@ -373,9 +394,9 @@ if (!DRY) {
   fs.writeFileSync(DATA, JSON.stringify(books, null, 2) + "\n", "utf8");
   if (SEED) {
     // 씨앗은 '옛 규칙'으로 찍는다 — 지금 디스크에 있는 소리가 그 규칙으로 구워졌다.
-    for (const [file, r] of Object.entries(fresh)) {
+    for (const [key, r] of Object.entries(fresh)) {
       const old = oldEmotionOf(r.text);
-      fresh[file] = { ...r, emotion: old, intensity: old === "normal" ? null : EMOTION_INTENSITY };
+      fresh[key] = { ...r, emotion: old, intensity: old === "normal" ? null : EMOTION_INTENSITY };
     }
   }
   console.log("\n책 데이터에 조각 목록을 기록했습니다.");
