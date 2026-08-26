@@ -80,6 +80,16 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-arin",
     cast: [{ name: "토끼" }, { name: "거북이" }, { name: "부엉이" }],
   },
+  "해님 달님": {
+    dir: "haedal",
+    // 나레이션은 정순 — 앱에 있던 수아는 여자 어린이라 누이와 목소리가 겹쳤다.
+    narrators: ["tc-jungsoon"],
+    defaultNarrator: "tc-jungsoon",
+    cast: [
+      { name: "오빠" }, { name: "누이" }, { name: "동생" },
+      { name: "어머니" }, { name: "호랑이" }, { name: "임금님" },
+    ],
+  },
   "콩쥐 팥쥐": {
     dir: "kongjwi",
     narrators: ["tc-jungsoon"],

@@ -36,10 +36,10 @@
     "text": "그래도 흥부네 집에는 웃음이 끊이지 않았어요."
   },
   "seg-cast-p4-1.mp3": {
-    "voice": "tc-gahee",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"저도 잔치에 가고 싶어요!\""
+    "voice": "tc-hakchul",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"떡 하나 주면 안 잡아먹지!\""
   },
   "seg-tc-kwonil-p4-2.mp3": {
     "voice": "tc-kwonil",
@@ -78,10 +78,10 @@
     "text": "\"형수님, 밥 한 술만 주세요. 아이들이 사흘을 굶었어요.\""
   },
   "seg-cast-p6-1.mp3": {
-    "voice": "tc-mongsil",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이 밭을 언제 다 매지…\""
+    "text": "\"이제… 줄 떡이 없구나.\""
   },
   "seg-tc-kwonil-p6-2.mp3": {
     "voice": "tc-kwonil",
@@ -96,16 +96,16 @@
     "text": "흥부는 뺨이 얼얼했지만, 거기 붙은 밥알을 보고 눈이 번쩍 뜨였어요."
   },
   "seg-cast-p7-1.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"괜찮아. 나는 나의 걸음으로 가면 돼.\""
+    "text": "\"얘들아, 엄마 왔단다. 문 열어 주렴.\""
   },
   "seg-cast-p7-2.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"애앰~ 애앰~ 노래야 나와라~\""
+    "text": "\"어? 우리 엄마 목소리가 아닌데?\""
   },
   "seg-tc-kwonil-p7-3.mp3": {
     "voice": "tc-kwonil",
@@ -156,10 +156,10 @@
     "text": "화들짝 놀란 아기 제비 한 마리가 그만 둥지 밖으로 뚝 떨어지고 말았어요."
   },
   "seg-cast-p11-1.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"네가 나누어 준 마음을 하늘이 다 보고 있었단다.\""
+    "text": "\"얘들아, 거기는 어떻게 올라갔니?\""
   },
   "seg-tc-kwonil-p11-2.mp3": {
     "voice": "tc-kwonil",
@@ -246,10 +246,10 @@
     "text": "\"슬근슬근, 톱질하세!\""
   },
   "seg-cast-p16-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"그 신은 제 거예요!\""
+    "text": "\"아이고, 엉덩이야!\""
   },
   "seg-tc-kwonil-p16-2.mp3": {
     "voice": "tc-kwonil",
@@ -264,10 +264,10 @@
     "text": "두 번째 박을 가르자 금은보화가 와르르 쏟아졌어요."
   },
   "seg-cast-p17-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"아버지, 이게 다 우리 거예요?\""
+    "text": "\"착하고 지혜로운 아이들아, 소원이 있느냐?\""
   },
   "seg-tc-kwonil-p17-2.mp3": {
     "voice": "tc-kwonil",
@@ -276,10 +276,10 @@
     "text": "세 번째 박에서는 고운 비단과 번쩍번쩍한 새 기와집까지 나왔답니다."
   },
   "seg-cast-p17-3.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"제비야, 고맙다!\""
+    "text": "\"굴에 갇힌 우리 엄마를 구해 주세요!\""
   },
   "seg-tc-kwonil-p17-4.mp3": {
     "voice": "tc-kwonil",
@@ -294,10 +294,10 @@
     "text": "이 소식을 들은 놀부는 샘이 나서 견딜 수가 없었어요."
   },
   "seg-cast-p18-1.mp3": {
-    "voice": "tc-mongsil",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"저… 저도 신어 봐도 될까요?\""
+    "voice": "tc-najin",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"우리 아가들… 얼마나 무서웠니.\""
   },
   "seg-tc-kwonil-p19-0.mp3": {
     "voice": "tc-kwonil",
@@ -306,10 +306,10 @@
     "text": "놀부는 처마 밑 제비를 잡아 다리를 뚝 부러뜨리고는,\n대충 싸매 주며 히죽 웃었어요."
   },
   "seg-cast-p19-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이제 저와 함께 가시겠습니까?\""
+    "text": "\"너희가 세상을 밝혀 주겠니?\""
   },
   "seg-tc-kwonil-p20-0.mp3": {
     "voice": "tc-kwonil",
@@ -456,10 +456,10 @@
     "text": "어느 날, 토끼가 거북이를 보고 깔깔 웃었어요."
   },
   "seg-cast-p3-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-booqoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"나는 조금만 먹어도 괜찮아.\""
+    "text": "\"오빠, 엄마 왜 이렇게 안 오지?\""
   },
   "say-p3-rabbit.mp3": {
     "voice": "tc-hamchu",
@@ -666,10 +666,10 @@
     "text": "숲속 친구들이 우레 같은 박수를 보냈어요."
   },
   "seg-cast-p14-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "\"거북아, 잘난 척해서 미안해.\""
+    "text": "\"하느님, 저희를 살려 주시려거든\n튼튼한 동아줄을 내려 주세요!\""
   },
   "seg-cast-p14-2.mp3": {
     "voice": "tc-taeji",
@@ -720,10 +720,10 @@
     "text": "그런데 박 속에서 나온 건 시커먼 도깨비들이었어요."
   },
   "seg-cast-p13-1.mp3": {
-    "voice": "tc-tian",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"저 아가씨는 뉘 집 사람일까?\""
+    "voice": "tc-booqoo",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"오빠, 어떡해!\""
   },
   "seg-tc-kwonil-p13-2.mp3": {
     "voice": "tc-kwonil",
@@ -918,10 +918,10 @@
     "text": "할아버지는 얼떨결에 볼에 달린 혹을 가리켰어요."
   },
   "seg-cast-p5-1.mp3": {
-    "voice": "tc-gahee",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"엄마, 이걸로 주면 딱 좋겠는데.\""
+    "voice": "tc-hakchul",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"떡 하나 주면 안 잡아먹지!\""
   },
   "seg-tc-jiyoon-p5-3.mp3": {
     "voice": "tc-jiyoon",
@@ -1044,10 +1044,10 @@
     "text": "착한 할아버지는 보물을 혼자 갖지 않고 이웃들과 사이좋게 나누었어요."
   },
   "seg-cast-p10-1.mp3": {
-    "voice": "tc-mongsil",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"…다 해냈는데.\""
+    "text": "\"옳지, 너희 우물 속에 숨었구나!\""
   },
   "seg-tc-jiyoon-p10-2.mp3": {
     "voice": "tc-jiyoon",
@@ -1065,7 +1065,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니를 일찍 여읜 콩쥐는 새어머니, 동생 팥쥐와 함께 살았지요."
+    "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다."
   },
   "say-p1-kongjwi.mp3": {
     "voice": "tc-mongsil",
@@ -1113,7 +1113,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지,\n배고픈 참새들에게는 제 몫의 낟알 한 줌."
+    "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌지요."
   },
   "seg-tc-jungsoon-p3-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1131,7 +1131,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n새어머니와 팥쥐는 아침부터 고운 옷을 꺼내 입었지요."
+    "text": "해가 뉘엿뉘엿 지는 고갯길,\n커다란 호랑이가 어흥! 하고 나타났어요."
   },
   "seg-cast-p4-2.mp3": {
     "voice": "tc-gahee",
@@ -1155,13 +1155,13 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "그때 팥쥐가 헛간에서 항아리를 하나 골라 왔어요."
+    "text": "그런데 다음 고개에서도 호랑이가 또 나타났어요."
   },
   "seg-tc-jungsoon-p5-2.mp3": {
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았지요."
+    "text": "그다음 고개에서도, 또 그다음 고개에서도.\n어머니의 떡 광주리는 점점 가벼워졌지요."
   },
   "seg-cast-p5-3.mp3": {
     "voice": "tc-gahee",
@@ -1191,7 +1191,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자 그만 주저앉고 말았지요."
+    "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요."
   },
   "seg-tc-jungsoon-p6-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1215,7 +1215,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다."
+    "text": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요.\n똑똑똑."
   },
   "say-p7-kongjwi.mp3": {
     "voice": "tc-mongsil",
@@ -1251,7 +1251,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "항아리를 다 채우고 나니, 이번에는 마당 가득 쌓인 볏단이 보였어요."
+    "text": "쿵! 쿵! 문이 마구 흔들렸어요.\n오누이는 숨을 죽이고 뒷문으로 살금살금 빠져나갔지요.\n마당을 가로질러, 우물가 큰 나무 위로 쑥쑥.\n그때 뒤에서 문이 와장창 열리는 소리가 났답니다."
   },
   "seg-tc-jungsoon-p9-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1287,7 +1287,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "세 가지 일을 다 마쳤지만, 콩쥐는 마당에 우두커니 서 있었어요.\n잔치에 입고 갈 옷도, 신고 갈 신도 없었으니까요."
+    "text": "집 안을 다 뒤진 호랑이가 우물가로 어슬렁어슬렁 왔어요.\n우물 속에 비친 오누이를 보고 소리쳤지요."
   },
   "seg-tc-jungsoon-p10-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1305,19 +1305,19 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "그때 마당이 환해지더니 하늘에서 선녀님이 사뿐히 내려왔어요."
+    "text": "웃음소리에 위를 올려다본 호랑이가 물었어요."
   },
   "seg-tc-jungsoon-p11-2.mp3": {
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "선녀님은 고운 비단 치마와 반짝이는 꽃신 한 켤레를 건네주었지요."
+    "text": "오빠가 꾀를 내어 대답했지요."
   },
   "seg-cast-p11-3.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"어서 가렴. 오늘은 네 날이란다.\""
+    "text": "\"손에 참기름을 바르고 올라왔지요!\""
   },
   "say-p11-kongjwi.mp3": {
     "voice": "tc-mongsil",
@@ -1335,13 +1335,13 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n떡이며 과일이며, 콩쥐는 난생처음 보는 것투성이였지요."
+    "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요."
   },
   "seg-cast-p12-1.mp3": {
-    "voice": "tc-mongsil",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"내가… 여기 있어도 되는 걸까?\""
+    "voice": "tc-booqoo",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n\"앗, 안 돼!\""
   },
   "seg-tc-jungsoon-p12-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1359,7 +1359,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았지요."
+    "text": "쿵! 쿵! 호랑이가 도끼로 나무를 찍으며 올라오기 시작했어요.\n나무가 휘청휘청 흔들렸지요.\n오누이는 더 올라갈 데가 없었어요."
   },
   "seg-tc-jungsoon-p13-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1395,13 +1395,13 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "콩쥐를 뒤따라 나온 원님은\n개울가에서 반짝이는 꽃신 한 짝을 발견했어요."
+    "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n그걸 본 호랑이가 나무 아래에서 발을 동동 굴렀어요."
   },
   "seg-cast-p15-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이 신의 주인이 아까 그 아가씨로구나!\n온 마을을 뒤져서라도 꼭 찾아내야겠다.\""
+    "text": "\"저 아이들처럼 하면 되는 거지? 동아줄! 동아줄 내놔라!\""
   },
   "say-p15-magistrate.mp3": {
     "voice": "tc-tian",
@@ -1413,13 +1413,13 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요."
+    "text": "하늘에서 또 하나의 동아줄이 스르르 내려왔어요.\n그런데 이번 것은 여기저기 삭아 버린 썩은 동아줄이었지요.\n신이 난 호랑이가 줄을 잡고 반쯤 올라갔을 때 — 뚝!"
   },
   "seg-tc-jungsoon-p16-2.mp3": {
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "팥쥐가 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다."
+    "text": "호랑이가 떨어진 수숫대 밭은 그때부터 빨갛게 물들었대요."
   },
   "say-p16-magistrate.mp3": {
     "voice": "tc-tian",
@@ -1467,13 +1467,13 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "원님이 헛간 문을 열자 콩쥐가 서 있었어요."
+    "text": "임금님이 손을 들자 어머니가 사뿐히 내려왔어요."
   },
   "seg-tc-jungsoon-p18-2.mp3": {
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요!"
+    "text": "셋은 오래오래 서로를 꼭 안았답니다."
   },
   "seg-cast-p18-3.mp3": {
     "voice": "tc-tian",
@@ -1497,13 +1497,13 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "원님은 콩쥐에게 손을 내밀었어요."
+    "text": "임금님이 말했어요."
   },
   "seg-tc-jungsoon-p19-2.mp3": {
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "콩쥐는 헛간 문턱을 넘어 마당으로 걸어 나왔지요.\n새어머니와 팥쥐는 아무 말도 하지 못했답니다."
+    "text": "처음엔 오빠가 해님, 동생이 달님이 되기로 했어요.\n그런데 동생이 소곤소곤."
   },
   "say-p19-magistrate.mp3": {
     "voice": "tc-tian",
@@ -1515,7 +1515,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "얼마 뒤, 원님과 콩쥐는 온 마을의 축복 속에 혼례를 올렸어요.\n새어머니와 팥쥐는 잔칫날 마당 끝에 서서 고개를 들지 못했지요."
+    "text": "그 뒤로 낮에는 동생 해님이 세상을 따뜻하게 비추고,\n밤에는 오빠 달님이 어두운 길을 밝혀 주어요.\n어머니는 포근한 저녁노을이 되어 두 아이를 지켜본답니다.\n오늘 밤 달님을 보면 손을 흔들어 주세요. 오빠가 웃고 있을 거예요."
   },
   "seg-tc-jungsoon-p20-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1546,5 +1546,317 @@
     "emotion": "sad",
     "intensity": 0.4,
     "text": "언니, 나도 미안해…"
+  },
+  "seg-cast-p2-0.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 된다!\""
+  },
+  "seg-tc-jungsoon-p2-1.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요."
+  },
+  "say-p2-mother.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "문 꼭 잠그고 있으렴!"
+  },
+  "seg-cast-p3-2.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"조금만 더 기다려 보자. 곧 오실 거야.\""
+  },
+  "seg-tc-jungsoon-p3-3.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "누이는 오빠 옆에 바짝 붙어 앉았답니다."
+  },
+  "say-p3-sister.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오빠, 엄마 왜 이렇게 안 오지?"
+  },
+  "say-p3-brother.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "조금만 더 기다려 보자."
+  },
+  "seg-tc-jungsoon-p4-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어머니는 얼른 떡을 하나 던져 주고 달아났지요."
+  },
+  "say-p4-tiger.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "떡 하나 주면 안 잡아먹지!"
+  },
+  "say-p5-tiger.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "떡 하나 주면 안 잡아먹지!"
+  },
+  "say-p5-mother.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이것도 가져가렴… 우리 아이들이 기다린단다."
+  },
+  "seg-cast-p6-2.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"그럼 널 잡아먹어야겠다!\""
+  },
+  "seg-tc-jungsoon-p6-3.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 어머니의 옷과 광주리를 빼앗고\n어머니를 깊은 굴에 가둬 버렸답니다."
+  },
+  "say-p6-mother.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이제… 줄 떡이 없구나."
+  },
+  "say-p6-tiger.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "그럼 널 잡아먹어야겠다!"
+  },
+  "seg-tc-jungsoon-p7-3.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오누이는 고개를 갸웃했지요."
+  },
+  "say-p7-tiger.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "얘들아, 엄마 왔단다~"
+  },
+  "say-p7-brother.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어? 우리 엄마 목소리가 아닌데?"
+  },
+  "seg-cast-p8-0.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그럼 문틈으로 손을 보여 주세요.\""
+  },
+  "seg-tc-jungsoon-p8-1.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "문틈으로 쑥 들어온 손은 털이 북슬북슬!"
+  },
+  "seg-cast-p8-2.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"호, 호랑이다!\""
+  },
+  "seg-tc-jungsoon-p8-3.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오누이는 서로 손을 꼭 잡았어요."
+  },
+  "say-p8-brother.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그럼 문틈으로 손을 보여 주세요."
+  },
+  "say-p8-sister.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호, 호랑이다!"
+  },
+  "say-p9-brother.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쉿… 뒷문으로 나가자."
+  },
+  "say-p9-sister.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "오빠, 무서워…"
+  },
+  "seg-cast-p10-2.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"호호, 바보 호랑이!\""
+  },
+  "seg-tc-jungsoon-p10-3.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 소리에 동생이 그만 웃음을 터뜨리고 말았답니다."
+  },
+  "say-p10-tiger.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옳지, 너희 우물 속에 숨었구나!"
+  },
+  "say-p10-sister.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호호, 바보 호랑이!"
+  },
+  "say-p11-brother.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "참기름을 바르고 올라왔지요!"
+  },
+  "say-p12-sister.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "바보 호랑이! 도끼로 찍으면서 올라와야지!"
+  },
+  "say-p12-brother.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "앗, 안 돼!"
+  },
+  "say-p13-sister.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "오빠, 어떡해!"
+  },
+  "say-p13-tiger.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이제 내려올 데도 없겠구나!"
+  },
+  "seg-tc-jungsoon-p14-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오누이는 두 손을 꼭 모으고 하늘을 올려다보았어요."
+  },
+  "say-p14-brother.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하느님, 동아줄을 내려 주세요!"
+  },
+  "say-p14-sister.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "저희를 살려 주세요!"
+  },
+  "say-p15-tiger.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "동아줄! 동아줄 내놔라!"
+  },
+  "say-p16-tiger.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아이고, 엉덩이야!"
+  },
+  "seg-tc-jungsoon-p17-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하늘나라 임금님이 오누이를 반겨 주었어요."
+  },
+  "seg-tc-jungsoon-p17-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오누이는 망설임 없이 대답했지요."
+  },
+  "say-p17-king.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "착하고 지혜로운 아이들아, 소원이 있느냐?"
+  },
+  "say-p17-brother.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "굴에 갇힌 우리 엄마를 구해 주세요!"
+  },
+  "say-p18-mother.mp3": {
+    "voice": "tc-najin",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "우리 아가들… 얼마나 무서웠니."
+  },
+  "say-p18-sister.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마!"
+  },
+  "seg-cast-p19-3.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"오빠… 나 깜깜한 밤은 무서워.\""
+  },
+  "seg-cast-p19-4.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그럼 우리 바꾸자!\""
+  },
+  "seg-tc-jungsoon-p19-5.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오빠는 웃으며 달님이 되어 주었답니다."
+  },
+  "say-p19-king.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "너희가 세상을 밝혀 주겠니?"
+  },
+  "say-p19-sister.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "오빠… 나 깜깜한 밤은 무서워."
+  },
+  "say-p19-brother.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그럼 우리 바꾸자!"
   }
 }

@@ -2230,12 +2230,6 @@
   },
   {
     "id": "folk-haedal",
-    "narrators": [
-      "tc-sua",
-      "tc-jungsoon",
-      "tc-gunseok",
-      "tc-miso"
-    ],
     "lang": "ko",
     "title": "해님 달님",
     "summary": "호랑이를 피해 하늘로 올라간 오누이가 해님과 달님이 된 이야기",
@@ -2243,207 +2237,844 @@
     "pages": [
       {
         "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p1.webp",
-        "audio": "/folk/haedal/narr-p1.mp3"
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p1.webp?v=2",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p1-0.mp3",
+            "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다."
+          }
+        ]
       },
       {
         "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 된다!\"\n어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p2.webp",
-        "audio": "/folk/haedal/narr-p2.mp3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p2.webp?v=2",
         "hotspots": [
           {
             "label": "mother",
+            "line": "문 꼭 잠그고 있으렴!",
             "box": [
-              250,
-              150,
-              850,
-              500
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/haedal/say-p2-mother.wav",
-            "line": "문 꼭 잠그고 있으렴!"
+            "audio": "/folk/haedal/say-p2-mother.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "mother",
+            "src": "/folk/haedal/seg-cast-p2-0.mp3",
+            "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 된다!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p2-1.mp3",
+            "text": "\n어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요."
+          }
+        ]
+      },
+      {
+        "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌지요.\n\"오빠, 엄마 왜 이렇게 안 오지?\"\n\"조금만 더 기다려 보자. 곧 오실 거야.\"\n누이는 오빠 옆에 바짝 붙어 앉았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p3.webp?v=2",
+        "hotspots": [
+          {
+            "label": "sister",
+            "line": "오빠, 엄마 왜 이렇게 안 오지?",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p3-sister.mp3"
+          },
+          {
+            "label": "brother",
+            "line": "조금만 더 기다려 보자.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p3-brother.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p3-0.mp3",
+            "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌지요.\n"
+          },
+          {
+            "who": "sister",
+            "src": "/folk/haedal/seg-cast-p3-1.mp3",
+            "text": "\"오빠, 엄마 왜 이렇게 안 오지?\"\n"
+          },
+          {
+            "who": "sister",
+            "src": "/folk/haedal/seg-cast-p3-2.mp3",
+            "text": "\"조금만 더 기다려 보자. 곧 오실 거야.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p3-3.mp3",
+            "text": "\n누이는 오빠 옆에 바짝 붙어 앉았답니다."
           }
         ]
       },
       {
         "text": "해가 뉘엿뉘엿 지는 고갯길,\n커다란 호랑이가 어흥! 하고 나타났어요.\n\"떡 하나 주면 안 잡아먹지!\"\n어머니는 얼른 떡을 하나 던져 주고 달아났지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p3.webp",
-        "audio": "/folk/haedal/narr-p3.mp3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p4.webp?v=2",
         "hotspots": [
           {
             "label": "tiger",
+            "line": "떡 하나 주면 안 잡아먹지!",
             "box": [
-              250,
-              450,
-              850,
-              900
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/haedal/say-p3-tiger.wav",
-            "line": "떡 하나 주면 안 잡아먹지!"
+            "audio": "/folk/haedal/say-p4-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p4-0.mp3",
+            "text": "해가 뉘엿뉘엿 지는 고갯길,\n커다란 호랑이가 어흥! 하고 나타났어요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p4-1.mp3",
+            "text": "\"떡 하나 주면 안 잡아먹지!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p4-2.mp3",
+            "text": "\n어머니는 얼른 떡을 하나 던져 주고 달아났지요."
           }
         ]
       },
       {
-        "text": "그런데 고개를 넘을 때마다 호랑이가 또 나타났어요.\n\"떡 하나 주면 안 잡아먹지!\"\n마지막 고개에서 떡이 다 떨어지자, 심술 난 호랑이는\n어머니의 옷과 광주리를 빼앗고 어머니를 깊은 굴에 가둬 버렸답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p4.webp",
-        "audio": "/folk/haedal/narr-p4.mp3"
+        "text": "그런데 다음 고개에서도 호랑이가 또 나타났어요.\n\"떡 하나 주면 안 잡아먹지!\"\n그다음 고개에서도, 또 그다음 고개에서도.\n어머니의 떡 광주리는 점점 가벼워졌지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p5.webp?v=2",
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "떡 하나 주면 안 잡아먹지!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p5-tiger.mp3"
+          },
+          {
+            "label": "mother",
+            "line": "이것도 가져가렴… 우리 아이들이 기다린단다.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p5-mother.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p5-0.mp3",
+            "text": "그런데 다음 고개에서도 호랑이가 또 나타났어요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p5-1.mp3",
+            "text": "\"떡 하나 주면 안 잡아먹지!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p5-2.mp3",
+            "text": "\n그다음 고개에서도, 또 그다음 고개에서도.\n어머니의 떡 광주리는 점점 가벼워졌지요."
+          }
+        ]
+      },
+      {
+        "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요.\n\"이제… 줄 떡이 없구나.\"\n\"그럼 널 잡아먹어야겠다!\"\n호랑이는 어머니의 옷과 광주리를 빼앗고\n어머니를 깊은 굴에 가둬 버렸답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p6.webp?v=2",
+        "hotspots": [
+          {
+            "label": "mother",
+            "line": "이제… 줄 떡이 없구나.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p6-mother.mp3"
+          },
+          {
+            "label": "tiger",
+            "line": "그럼 널 잡아먹어야겠다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p6-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p6-0.mp3",
+            "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p6-1.mp3",
+            "text": "\"이제… 줄 떡이 없구나.\"\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p6-2.mp3",
+            "text": "\"그럼 널 잡아먹어야겠다!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p6-3.mp3",
+            "text": "\n호랑이는 어머니의 옷과 광주리를 빼앗고\n어머니를 깊은 굴에 가둬 버렸답니다."
+          }
+        ]
       },
       {
         "text": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요.\n똑똑똑. \"얘들아, 엄마 왔단다. 문 열어 주렴.\"\n\"어? 우리 엄마 목소리가 아닌데?\"\n오누이는 고개를 갸웃했지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p5.webp",
-        "audio": "/folk/haedal/narr-p5.mp3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p7.webp?v=2",
         "hotspots": [
           {
             "label": "tiger",
+            "line": "얘들아, 엄마 왔단다~",
             "box": [
-              250,
-              350,
-              850,
-              750
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/haedal/say-p5-tiger.wav",
-            "line": "얘들아, 엄마 왔단다~"
+            "audio": "/folk/haedal/say-p7-tiger.mp3"
+          },
+          {
+            "label": "brother",
+            "line": "어? 우리 엄마 목소리가 아닌데?",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p7-brother.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "얘들아, 엄마 왔단다. 문 열어 주렴.",
+            "who": "tiger"
+          },
+          {
+            "text": "어? 우리 엄마 목소리가 아닌데?",
+            "who": "brother"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p7-0.mp3",
+            "text": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요.\n똑똑똑. "
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p7-1.mp3",
+            "text": "\"얘들아, 엄마 왔단다. 문 열어 주렴.\"\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/haedal/seg-cast-p7-2.mp3",
+            "text": "\"어? 우리 엄마 목소리가 아닌데?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p7-3.mp3",
+            "text": "\n오누이는 고개를 갸웃했지요."
           }
         ]
       },
       {
-        "text": "\"그럼 문틈으로 손을 보여 주세요.\"\n문틈으로 쑥 들어온 손은 털이 북슬북슬!\n\"호, 호랑이다!\"\n오누이는 살그머니 뒷문으로 빠져나가 우물가 큰 나무 위로 올라갔어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p6.webp",
-        "audio": "/folk/haedal/narr-p6.mp3",
+        "text": "\"그럼 문틈으로 손을 보여 주세요.\"\n문틈으로 쑥 들어온 손은 털이 북슬북슬!\n\"호, 호랑이다!\"\n오누이는 서로 손을 꼭 잡았어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p8.webp?v=2",
         "hotspots": [
           {
             "label": "brother",
+            "line": "그럼 문틈으로 손을 보여 주세요.",
             "box": [
-              300,
-              550,
-              800,
-              900
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/haedal/say-p6-brother.wav",
-            "line": "우리 엄마 목소리가 아닌데?"
+            "audio": "/folk/haedal/say-p8-brother.mp3"
+          },
+          {
+            "label": "sister",
+            "line": "호, 호랑이다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p8-sister.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "그럼 문틈으로 손을 보여 주세요.",
+            "who": "brother"
+          },
+          {
+            "text": "호, 호랑이다!",
+            "who": "sister"
+          }
+        ],
+        "segments": [
+          {
+            "who": "brother",
+            "src": "/folk/haedal/seg-cast-p8-0.mp3",
+            "text": "\"그럼 문틈으로 손을 보여 주세요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p8-1.mp3",
+            "text": "\n문틈으로 쑥 들어온 손은 털이 북슬북슬!\n"
+          },
+          {
+            "who": "sister",
+            "src": "/folk/haedal/seg-cast-p8-2.mp3",
+            "text": "\"호, 호랑이다!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p8-3.mp3",
+            "text": "\n오누이는 서로 손을 꼭 잡았어요."
           }
         ]
       },
       {
-        "text": "집 안을 다 뒤진 호랑이가 우물가로 어슬렁어슬렁 왔어요.\n우물 속에 비친 오누이를 보고 소리쳤지요.\n\"옳지, 너희 우물 속에 숨었구나!\"\n그 모습이 우스워서 동생이 그만 킥킥 웃고 말았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p7.webp",
-        "audio": "/folk/haedal/narr-p7.mp3",
+        "text": "쿵! 쿵! 문이 마구 흔들렸어요.\n오누이는 숨을 죽이고 뒷문으로 살금살금 빠져나갔지요.\n마당을 가로질러, 우물가 큰 나무 위로 쑥쑥.\n그때 뒤에서 문이 와장창 열리는 소리가 났답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p9.webp?v=2",
         "hotspots": [
           {
-            "label": "sister",
+            "label": "brother",
+            "line": "쉿… 뒷문으로 나가자.",
             "box": [
-              200,
-              550,
-              650,
-              900
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/haedal/say-p7-sister.wav",
-            "line": "호호, 바보 호랑이!"
+            "audio": "/folk/haedal/say-p9-brother.mp3"
+          },
+          {
+            "label": "sister",
+            "line": "오빠, 무서워…",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p9-sister.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p9-0.mp3",
+            "text": "쿵! 쿵! 문이 마구 흔들렸어요.\n오누이는 숨을 죽이고 뒷문으로 살금살금 빠져나갔지요.\n마당을 가로질러, 우물가 큰 나무 위로 쑥쑥.\n그때 뒤에서 문이 와장창 열리는 소리가 났답니다."
+          }
+        ]
+      },
+      {
+        "text": "집 안을 다 뒤진 호랑이가 우물가로 어슬렁어슬렁 왔어요.\n우물 속에 비친 오누이를 보고 소리쳤지요.\n\"옳지, 너희 우물 속에 숨었구나!\"\n\"호호, 바보 호랑이!\"\n그 소리에 동생이 그만 웃음을 터뜨리고 말았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p10.webp?v=2",
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "옳지, 너희 우물 속에 숨었구나!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p10-tiger.mp3"
+          },
+          {
+            "label": "sister",
+            "line": "호호, 바보 호랑이!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p10-sister.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p10-0.mp3",
+            "text": "집 안을 다 뒤진 호랑이가 우물가로 어슬렁어슬렁 왔어요.\n우물 속에 비친 오누이를 보고 소리쳤지요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p10-1.mp3",
+            "text": "\"옳지, 너희 우물 속에 숨었구나!\"\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p10-2.mp3",
+            "text": "\"호호, 바보 호랑이!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p10-3.mp3",
+            "text": "\n그 소리에 동생이 그만 웃음을 터뜨리고 말았답니다."
           }
         ]
       },
       {
         "text": "웃음소리에 위를 올려다본 호랑이가 물었어요.\n\"얘들아, 거기는 어떻게 올라갔니?\"\n오빠가 꾀를 내어 대답했지요.\n\"손에 참기름을 바르고 올라왔지요!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p8.webp",
-        "audio": "/folk/haedal/narr-p8.mp3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p11.webp?v=2",
         "hotspots": [
           {
             "label": "brother",
+            "line": "참기름을 바르고 올라왔지요!",
             "box": [
-              200,
-              550,
-              650,
-              900
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/haedal/say-p8-brother.wav",
-            "line": "참기름을 바르고 올라왔지요!"
+            "audio": "/folk/haedal/say-p11-brother.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p11-0.mp3",
+            "text": "웃음소리에 위를 올려다본 호랑이가 물었어요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p11-1.mp3",
+            "text": "\"얘들아, 거기는 어떻게 올라갔니?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p11-2.mp3",
+            "text": "\n오빠가 꾀를 내어 대답했지요.\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/haedal/seg-cast-p11-3.mp3",
+            "text": "\"손에 참기름을 바르고 올라왔지요!\""
           }
         ]
       },
       {
         "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요.\n\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n\"앗, 안 돼!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p9.webp",
-        "audio": "/folk/haedal/narr-p9.mp3"
-      },
-      {
-        "text": "호랑이가 도끼로 쿵! 쿵! 나무를 찍으며 올라오기 시작했어요.\n오누이는 두 손을 꼭 모으고 하늘에 빌었답니다.\n\"하느님, 저희를 살려 주시려거든 튼튼한 동아줄을 내려 주세요!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p10.webp",
-        "audio": "/folk/haedal/narr-p10.mp3",
-        "hotspots": [
-          {
-            "label": "brother",
-            "box": [
-              150,
-              300,
-              600,
-              700
-            ],
-            "audio": "/folk/haedal/say-p10-brother.wav",
-            "line": "하느님, 동아줄을 내려 주세요!"
-          }
-        ]
-      },
-      {
-        "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n호랑이도 얼른 따라 빌었어요.\n\"나도 동아줄을 내려 다오!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p11.webp",
-        "video": "/folk/haedal/p11.mp4",
-        "audio": "/folk/haedal/narr-p11.mp3"
-      },
-      {
-        "text": "하늘은 호랑이에게 썩은 동아줄을 내려 주었어요.\n신이 나서 올라가던 호랑이는 — 뚝!\n줄이 끊어져 수숫대 밭에 쿵 떨어지고 말았지요.\n\"아이고 엉덩이야!\" 그래서 수숫대가 빨갛게 물들었다지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p12.webp",
-        "audio": "/folk/haedal/narr-p12.mp3",
-        "hotspots": [
-          {
-            "label": "tiger",
-            "box": [
-              300,
-              300,
-              850,
-              700
-            ],
-            "audio": "/folk/haedal/say-p12-tiger.wav",
-            "line": "아이고 엉덩이야!"
-          }
-        ]
-      },
-      {
-        "text": "하늘나라 임금님이 오누이를 반겨 주었어요.\n\"착하고 지혜로운 아이들아, 소원이 있느냐?\"\n\"굴에 갇힌 우리 엄마를 구해 주세요!\"\n임금님은 어머니도 하늘로 데려와 셋을 꼭 안아 주었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p13.webp",
-        "audio": "/folk/haedal/narr-p13.mp3"
-      },
-      {
-        "text": "임금님이 말했어요. \"너희가 세상을 밝혀 주겠니?\"\n처음엔 오빠가 해님, 동생이 달님이 되기로 했어요.\n그런데 동생이 소곤소곤. \"오빠… 나 깜깜한 밤은 무서워.\"\n\"그럼 우리 바꾸자!\" 오빠는 웃으며 달님이 되어 주었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p14.webp",
-        "audio": "/folk/haedal/narr-p14.mp3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p12.webp?v=2",
         "hotspots": [
           {
             "label": "sister",
+            "line": "바보 호랑이! 도끼로 찍으면서 올라와야지!",
             "box": [
-              300,
-              550,
-              800,
-              850
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/haedal/say-p14-sister.wav",
-            "line": "오빠, 나 밤은 무서워…"
+            "audio": "/folk/haedal/say-p12-sister.mp3"
           },
           {
             "label": "brother",
+            "line": "앗, 안 돼!",
             "box": [
-              300,
-              150,
-              800,
-              500
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/haedal/say-p14-brother.wav",
-            "line": "그럼 우리 바꾸자!"
+            "audio": "/folk/haedal/say-p12-brother.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p12-0.mp3",
+            "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요.\n"
+          },
+          {
+            "who": "sister",
+            "src": "/folk/haedal/seg-cast-p12-1.mp3",
+            "text": "\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n\"앗, 안 돼!\""
+          }
+        ]
+      },
+      {
+        "text": "쿵! 쿵! 호랑이가 도끼로 나무를 찍으며 올라오기 시작했어요.\n나무가 휘청휘청 흔들렸지요.\n오누이는 더 올라갈 데가 없었어요.\n\"오빠, 어떡해!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p13.webp?v=2",
+        "hotspots": [
+          {
+            "label": "sister",
+            "line": "오빠, 어떡해!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p13-sister.mp3"
+          },
+          {
+            "label": "tiger",
+            "line": "이제 내려올 데도 없겠구나!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p13-tiger.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "오빠, 어떡해!",
+            "who": "sister"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p13-0.mp3",
+            "text": "쿵! 쿵! 호랑이가 도끼로 나무를 찍으며 올라오기 시작했어요.\n나무가 휘청휘청 흔들렸지요.\n오누이는 더 올라갈 데가 없었어요.\n"
+          },
+          {
+            "who": "sister",
+            "src": "/folk/haedal/seg-cast-p13-1.mp3",
+            "text": "\"오빠, 어떡해!\""
+          }
+        ]
+      },
+      {
+        "text": "오누이는 두 손을 꼭 모으고 하늘을 올려다보았어요.\n\"하느님, 저희를 살려 주시려거든\n튼튼한 동아줄을 내려 주세요!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p14.webp?v=2",
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "하느님, 동아줄을 내려 주세요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p14-brother.mp3"
+          },
+          {
+            "label": "sister",
+            "line": "저희를 살려 주세요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p14-sister.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "하느님, 저희를 살려 주시려거든\n튼튼한 동아줄을 내려 주세요!",
+            "who": "brother"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p14-0.mp3",
+            "text": "오누이는 두 손을 꼭 모으고 하늘을 올려다보았어요.\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/haedal/seg-cast-p14-1.mp3",
+            "text": "\"하느님, 저희를 살려 주시려거든\n튼튼한 동아줄을 내려 주세요!\""
+          }
+        ]
+      },
+      {
+        "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n그걸 본 호랑이가 나무 아래에서 발을 동동 굴렀어요.\n\"저 아이들처럼 하면 되는 거지? 동아줄! 동아줄 내놔라!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p15.webp?v=2",
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "동아줄! 동아줄 내놔라!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p15-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p15-0.mp3",
+            "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n그걸 본 호랑이가 나무 아래에서 발을 동동 굴렀어요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p15-1.mp3",
+            "text": "\"저 아이들처럼 하면 되는 거지? 동아줄! 동아줄 내놔라!\""
+          }
+        ]
+      },
+      {
+        "text": "하늘에서 또 하나의 동아줄이 스르르 내려왔어요.\n그런데 이번 것은 여기저기 삭아 버린 썩은 동아줄이었지요.\n신이 난 호랑이가 줄을 잡고 반쯤 올라갔을 때 — 뚝!\n\"아이고, 엉덩이야!\"\n호랑이가 떨어진 수숫대 밭은 그때부터 빨갛게 물들었대요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p16.webp?v=2",
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "아이고, 엉덩이야!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p16-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p16-0.mp3",
+            "text": "하늘에서 또 하나의 동아줄이 스르르 내려왔어요.\n그런데 이번 것은 여기저기 삭아 버린 썩은 동아줄이었지요.\n신이 난 호랑이가 줄을 잡고 반쯤 올라갔을 때 — 뚝!\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p16-1.mp3",
+            "text": "\"아이고, 엉덩이야!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p16-2.mp3",
+            "text": "\n호랑이가 떨어진 수숫대 밭은 그때부터 빨갛게 물들었대요."
+          }
+        ]
+      },
+      {
+        "text": "하늘나라 임금님이 오누이를 반겨 주었어요.\n\"착하고 지혜로운 아이들아, 소원이 있느냐?\"\n오누이는 망설임 없이 대답했지요.\n\"굴에 갇힌 우리 엄마를 구해 주세요!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p17.webp?v=2",
+        "hotspots": [
+          {
+            "label": "king",
+            "line": "착하고 지혜로운 아이들아, 소원이 있느냐?",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p17-king.mp3"
+          },
+          {
+            "label": "brother",
+            "line": "굴에 갇힌 우리 엄마를 구해 주세요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p17-brother.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "굴에 갇힌 우리 엄마를 구해 주세요!",
+            "who": "brother"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p17-0.mp3",
+            "text": "하늘나라 임금님이 오누이를 반겨 주었어요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/haedal/seg-cast-p17-1.mp3",
+            "text": "\"착하고 지혜로운 아이들아, 소원이 있느냐?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p17-2.mp3",
+            "text": "\n오누이는 망설임 없이 대답했지요.\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/haedal/seg-cast-p17-3.mp3",
+            "text": "\"굴에 갇힌 우리 엄마를 구해 주세요!\""
+          }
+        ]
+      },
+      {
+        "text": "임금님이 손을 들자 어머니가 사뿐히 내려왔어요.\n\"우리 아가들… 얼마나 무서웠니.\"\n셋은 오래오래 서로를 꼭 안았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p18.webp?v=2",
+        "hotspots": [
+          {
+            "label": "mother",
+            "line": "우리 아가들… 얼마나 무서웠니.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p18-mother.mp3"
+          },
+          {
+            "label": "sister",
+            "line": "엄마!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p18-sister.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p18-0.mp3",
+            "text": "임금님이 손을 들자 어머니가 사뿐히 내려왔어요.\n"
+          },
+          {
+            "who": "mother",
+            "src": "/folk/haedal/seg-cast-p18-1.mp3",
+            "text": "\"우리 아가들… 얼마나 무서웠니.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p18-2.mp3",
+            "text": "\n셋은 오래오래 서로를 꼭 안았답니다."
+          }
+        ]
+      },
+      {
+        "text": "임금님이 말했어요. \"너희가 세상을 밝혀 주겠니?\"\n처음엔 오빠가 해님, 동생이 달님이 되기로 했어요.\n그런데 동생이 소곤소곤. \"오빠… 나 깜깜한 밤은 무서워.\"\n\"그럼 우리 바꾸자!\" 오빠는 웃으며 달님이 되어 주었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p19.webp?v=2",
+        "hotspots": [
+          {
+            "label": "king",
+            "line": "너희가 세상을 밝혀 주겠니?",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p19-king.mp3"
+          },
+          {
+            "label": "sister",
+            "line": "오빠… 나 깜깜한 밤은 무서워.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p19-sister.mp3"
+          },
+          {
+            "label": "brother",
+            "line": "그럼 우리 바꾸자!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/haedal/say-p19-brother.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p19-0.mp3",
+            "text": "임금님이 말했어요. "
+          },
+          {
+            "who": "king",
+            "src": "/folk/haedal/seg-cast-p19-1.mp3",
+            "text": "\"너희가 세상을 밝혀 주겠니?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p19-2.mp3",
+            "text": "\n처음엔 오빠가 해님, 동생이 달님이 되기로 했어요.\n그런데 동생이 소곤소곤. "
+          },
+          {
+            "who": "sister",
+            "src": "/folk/haedal/seg-cast-p19-3.mp3",
+            "text": "\"오빠… 나 깜깜한 밤은 무서워.\"\n"
+          },
+          {
+            "who": "sister",
+            "src": "/folk/haedal/seg-cast-p19-4.mp3",
+            "text": "\"그럼 우리 바꾸자!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p19-5.mp3",
+            "text": " 오빠는 웃으며 달님이 되어 주었답니다."
           }
         ]
       },
       {
         "text": "그 뒤로 낮에는 동생 해님이 세상을 따뜻하게 비추고,\n밤에는 오빠 달님이 어두운 길을 밝혀 주어요.\n어머니는 포근한 저녁노을이 되어 두 아이를 지켜본답니다.\n오늘 밤 달님을 보면 손을 흔들어 주세요. 오빠가 웃고 있을 거예요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p15.webp",
-        "audio": "/folk/haedal/narr-p15.mp3"
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p20.webp?v=2",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/haedal/seg-p20-0.mp3",
+            "text": "그 뒤로 낮에는 동생 해님이 세상을 따뜻하게 비추고,\n밤에는 오빠 달님이 어두운 길을 밝혀 주어요.\n어머니는 포근한 저녁노을이 되어 두 아이를 지켜본답니다.\n오늘 밤 달님을 보면 손을 흔들어 주세요. 오빠가 웃고 있을 거예요."
+          }
+        ]
       }
     ],
     "voiceCast": {
@@ -2463,7 +3094,11 @@
       "호랑이": "tiger",
       "임금님": "king",
       "하늘나라 임금님": "king"
-    }
+    },
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p1.webp?v=2",
+    "narrators": [
+      "tc-jungsoon"
+    ]
   },
   {
     "id": "folk-goldaxe",
