@@ -298,6 +298,33 @@ export function VoiceRecorder({
             return { blob, url, verdict: null };
           }),
         );
+        /*
+         * 들어보기는 **보낼 소리 그대로** 들려준다.
+         *
+         * 저장할 때만 손질(하이패스·노이즈 게이트·크기 고르기)을 하면, 화면에서 들어본
+         * 소리와 실제로 클로닝에 가는 소리가 달라진다. 부모가 "괜찮네" 하고 저장했는데
+         * 정작 다른 소리가 갔거나, 반대로 잡음이 그대로 들려 잘 된 녹음을 지우고 다시
+         * 읽는 일이 생긴다. 손질에 실패하면 원본을 그대로 둔다 — 들어보기가 막히느니
+         * 손질 전 소리라도 들리는 편이 낫다.
+         */
+        void prepareVoiceWav([blob], roomNoiseRef.current)
+          .then((clean) => {
+            const cleanUrl = URL.createObjectURL(clean);
+            setTakes((prev) =>
+              prev.map((take, i) => {
+                if (i !== index || !take || take.blob !== blob) {
+                  // 그 사이에 다시 읽었으면 이 결과는 버린다.
+                  if (i === index) URL.revokeObjectURL(cleanUrl);
+                  return take;
+                }
+                URL.revokeObjectURL(take.url);
+                return { ...take, url: cleanUrl };
+              }),
+            );
+          })
+          .catch(() => {
+            /* 손질 실패 — 원본 그대로 들려준다 */
+          });
         setReviewIndex(index);
         stream.getTracks().forEach((t) => t.stop());
         streamRef.current = null;
