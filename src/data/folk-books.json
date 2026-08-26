@@ -1280,408 +1280,922 @@
   },
   {
     "id": "folk-kongjwi",
-    "narrators": [
-      "tc-jungsoon",
-      "tc-gunseok",
-      "tc-miso"
-    ],
     "lang": "ko",
     "title": "콩쥐 팥쥐",
     "summary": "동물 친구들과 선녀님의 도움으로 잔치에 간 콩쥐와 꽃신 이야기",
     "narrator": "tc-jungsoon",
     "pages": [
       {
-        "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n콩쥐는 일찍 어머니를 여의고,\n아버지가 새로 맞이한 새어머니, 동생 팥쥐와 함께 살게 되었지요.",
+        "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니를 일찍 여읜 콩쥐는 새어머니, 동생 팥쥐와 함께 살았지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p1.webp",
-        "audio": "/folk/kongjwi/narr-p1.mp3",
         "hotspots": [
           {
             "label": "kongjwi",
+            "line": "안녕! 나는 콩쥐야. 만나서 반가워!",
             "box": [
-              334,
-              755,
-              694,
-              903
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p1-kongjwi.mp3",
-            "line": "안녕! 나는 콩쥐야. 만나서 반가워!"
+            "audio": "/folk/kongjwi/say-p1-kongjwi.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p1-0.mp3",
+            "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니를 일찍 여읜 콩쥐는 새어머니, 동생 팥쥐와 함께 살았지요."
           }
         ]
       },
       {
-        "text": "그런데 새어머니는 콩쥐에게만 힘든 일을 잔뜩 시켰어요.\n\"콩쥐야! 밭을 매고, 물도 길어 오너라!\"\n팥쥐는 그늘에서 놀기만 하는데 말이에요.",
+        "text": "새어머니는 팥쥐만 예뻐하고, 힘든 일은 모두 콩쥐에게 시켰어요.\n\"콩쥐야! 밭을 매고, 물도 길어 오너라!\"\n\"엄마, 나는 그늘에서 좀 쉴래.\"\n팥쥐는 부채질을 하며 콩쥐를 흘겨보았지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p2.webp",
-        "audio": "/folk/kongjwi/narr-p2.mp3",
         "hotspots": [
           {
             "label": "kongjwi",
+            "line": "괜찮아. 열심히 하다 보면 좋은 일이 올 거야.",
             "box": [
-              226,
-              630,
-              706,
-              900
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p2-kongjwi.mp3",
-            "line": "괜찮아. 열심히 하다 보면 좋은 일이 올 거야."
+            "audio": "/folk/kongjwi/say-p2-kongjwi.mp3"
+          },
+          {
+            "label": "stepmom",
+            "line": "콩쥐야! 아직 멀었느냐!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p2-stepmom.mp3"
+          },
+          {
+            "label": "patjwi",
+            "line": "히히, 나는 놀 거야!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p2-patjwi.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p2-0.mp3",
+            "text": "새어머니는 팥쥐만 예뻐하고, 힘든 일은 모두 콩쥐에게 시켰어요.\n"
+          },
+          {
+            "who": "stepmom",
+            "src": "/folk/kongjwi/seg-cast-p2-1.mp3",
+            "text": "\"콩쥐야! 밭을 매고, 물도 길어 오너라!\"\n"
+          },
+          {
+            "who": "stepmom",
+            "src": "/folk/kongjwi/seg-cast-p2-2.mp3",
+            "text": "\"엄마, 나는 그늘에서 좀 쉴래.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p2-3.mp3",
+            "text": "\n팥쥐는 부채질을 하며 콩쥐를 흘겨보았지요."
           }
         ]
       },
       {
-        "text": "그래도 콩쥐는 불평 한마디 없이 일했어요.\n나무 호미가 뚝 부러져 눈물이 날 때면,\n어디선가 검은 소가 나타나 밭을 갈아 주었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p3.webp",
-        "audio": "/folk/kongjwi/narr-p3.mp3",
+        "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지,\n배고픈 참새들에게는 제 몫의 낟알 한 줌.\n\"나는 조금만 먹어도 괜찮아.\"\n물동이에 빠져 허우적대던 두꺼비는 두 손으로 건져 주었답니다.",
         "hotspots": [
           {
             "label": "kongjwi",
+            "line": "나는 조금만 먹어도 괜찮아.",
             "box": [
-              283,
-              166,
-              672,
-              321
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p3-kongjwi.mp3",
-            "line": "소야, 고마워! 덕분에 힘이 나!"
+            "audio": "/folk/kongjwi/say-p3-kongjwi.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p3-0.mp3",
+            "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지,\n배고픈 참새들에게는 제 몫의 낟알 한 줌.\n"
+          },
+          {
+            "who": "sparrow",
+            "src": "/folk/kongjwi/seg-cast-p3-1.mp3",
+            "text": "\"나는 조금만 먹어도 괜찮아.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p3-2.mp3",
+            "text": "\n물동이에 빠져 허우적대던 두꺼비는 두 손으로 건져 주었답니다."
+          }
+        ]
+      },
+      {
+        "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n새어머니와 팥쥐는 아침부터 고운 옷을 꺼내 입었지요.\n\"저도 잔치에 가고 싶어요!\"\n\"흥! 그럼 밭을 다 매고, 이 항아리에 물도 가득 채워 놓고 오너라.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p4.webp?v=2",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "line": "저도 잔치에 가고 싶어요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p4-kongjwi.mp3"
+          },
+          {
+            "label": "stepmom",
+            "line": "물을 다 채우기 전엔 못 온다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p4-stepmom.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p4-0.mp3",
+            "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n새어머니와 팥쥐는 아침부터 고운 옷을 꺼내 입었지요.\n"
+          },
+          {
+            "who": "patjwi",
+            "src": "/folk/kongjwi/seg-cast-p4-1.mp3",
+            "text": "\"저도 잔치에 가고 싶어요!\"\n"
+          },
+          {
+            "who": "patjwi",
+            "src": "/folk/kongjwi/seg-cast-p4-2.mp3",
+            "text": "\"흥! 그럼 밭을 다 매고, 이 항아리에 물도 가득 채워 놓고 오너라.\""
+          }
+        ]
+      },
+      {
+        "text": "그때 팥쥐가 헛간에서 항아리를 하나 골라 왔어요.\n\"엄마, 이걸로 주면 딱 좋겠는데.\"\n팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았지요.\n\"참, 저 볏단도 다 찧어 놓으라고 해요. 언니는 집이나 지켜!\"\n둘이 떠난 마당에는 항아리와 볏단만 덩그러니 남았답니다.",
+        "hotspots": [
+          {
+            "label": "patjwi",
+            "line": "엄마, 이걸로 주면 딱 좋겠는데.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p5-patjwi.mp3"
+          },
+          {
+            "label": "stepmom",
+            "line": "옳지, 그걸로 하렴.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p5-stepmom.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p5-0.mp3",
+            "text": "그때 팥쥐가 헛간에서 항아리를 하나 골라 왔어요.\n"
+          },
+          {
+            "who": "patjwi",
+            "src": "/folk/kongjwi/seg-cast-p5-1.mp3",
+            "text": "\"엄마, 이걸로 주면 딱 좋겠는데.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p5-2.mp3",
+            "text": "\n팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았지요.\n"
+          },
+          {
+            "who": "patjwi",
+            "src": "/folk/kongjwi/seg-cast-p5-3.mp3",
+            "text": "\"참, 저 볏단도 다 찧어 놓으라고 해요. 언니는 집이나 지켜!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p5-4.mp3",
+            "text": "\n둘이 떠난 마당에는 항아리와 볏단만 덩그러니 남았답니다."
+          }
+        ]
+      },
+      {
+        "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자 그만 주저앉고 말았지요.\n\"이 밭을 언제 다 매지…\"\n그때 물을 나눠 받았던 검은 소가 저벅저벅 걸어와 밭을 갈아 주었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p3.webp",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "line": "이 밭을 언제 다 매지…",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p6-kongjwi.mp3"
           },
           {
             "label": "ox",
+            "line": "음머~ 착한 콩쥐야, 내가 도와주마.",
             "box": [
-              183,
-              313,
-              642,
-              792
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p3-ox.mp3",
-            "line": "음머~ 착한 콩쥐야, 내가 도와주마."
+            "audio": "/folk/kongjwi/say-p6-ox.mp3"
           }
-        ]
-      },
-      {
-        "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n\"저도 잔치에 가고 싶어요!\"\n\"흥! 그럼 이 항아리에 물을 가득 채워 놓고 오너라!\"\n새어머니는 팥쥐만 데리고 고운 옷을 입고 먼저 떠나 버렸지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p4.webp?v=2",
-        "audio": "/folk/kongjwi/narr-p4.wav",
-        "hotspots": [
+        ],
+        "lines": [
           {
-            "label": "kongjwi",
-            "box": [
-              388,
-              359,
-              822,
-              524
-            ],
-            "audio": "/folk/kongjwi/say-p4-kongjwi.mp3",
-            "line": "잔치에 꼭 가고 싶어!"
+            "text": "이 밭을 언제 다 매지…",
+            "who": "kongjwi"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p6-0.mp3",
+            "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자 그만 주저앉고 말았지요.\n"
+          },
+          {
+            "who": "kongjwi",
+            "src": "/folk/kongjwi/seg-cast-p6-1.mp3",
+            "text": "\"이 밭을 언제 다 매지…\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p6-2.mp3",
+            "text": "\n그때 물을 나눠 받았던 검은 소가 저벅저벅 걸어와 밭을 갈아 주었답니다."
           }
         ]
       },
       {
-        "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 새어머니가 준 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.",
+        "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p5.webp",
-        "audio": "/folk/kongjwi/narr-p5.wav",
         "hotspots": [
           {
             "label": "kongjwi",
+            "line": "항아리에 구멍이… 어쩌지?",
             "box": [
-              147,
-              454,
-              755,
-              733
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p5-kongjwi.mp3",
-            "line": "항아리에 구멍이… 어쩌지?"
+            "audio": "/folk/kongjwi/say-p7-kongjwi.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p7-0.mp3",
+            "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다."
           }
         ]
       },
       {
-        "text": "그때 두꺼비가 엉금엉금 기어 나왔어요.\n\"콩쥐야, 울지 마. 내가 구멍을 막아 줄게!\"\n두꺼비가 구멍을 막자 항아리에 금세 물이 가득 찼답니다.",
+        "text": "그때 물동이에서 건져 주었던 두꺼비가 엉금엉금 기어 나왔어요.\n\"콩쥐야, 울지 마. 이번엔 내가 도와줄게!\"\n두꺼비는 항아리 속으로 쏙 들어가 제 몸으로 구멍을 막았지요.\n그러자 항아리에 물이 금세 가득 찼답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p6.webp",
-        "audio": "/folk/kongjwi/narr-p6.mp3",
         "hotspots": [
           {
             "label": "kongjwi",
+            "line": "고마워, 두꺼비야!",
             "box": [
-              153,
-              508,
-              736,
-              764
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p6-kongjwi.mp3",
-            "line": "고마워, 두꺼비야!"
+            "audio": "/folk/kongjwi/say-p8-kongjwi.mp3"
           },
           {
             "label": "toad",
+            "line": "이번엔 내가 도와줄게!",
             "box": [
-              520,
-              301,
-              678,
-              421
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p6-toad.mp3",
-            "line": "걱정 마, 콩쥐야! 내가 막아 줄게!"
+            "audio": "/folk/kongjwi/say-p8-toad.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p8-0.mp3",
+            "text": "그때 물동이에서 건져 주었던 두꺼비가 엉금엉금 기어 나왔어요.\n"
+          },
+          {
+            "who": "toad",
+            "src": "/folk/kongjwi/seg-cast-p8-1.mp3",
+            "text": "\"콩쥐야, 울지 마. 이번엔 내가 도와줄게!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p8-2.mp3",
+            "text": "\n두꺼비는 항아리 속으로 쏙 들어가 제 몸으로 구멍을 막았지요.\n그러자 항아리에 물이 금세 가득 찼답니다."
           }
         ]
       },
       {
-        "text": "항아리를 다 채우고 나니, 이번에는 마당 가득 쌓인 벼가 보였어요.\n\"이 벼까지 다 찧어 놓으라고 하셨는데…\"\n그러자 참새 떼가 포르르 날아왔지요.\n\"짹짹! 우리가 도와줄게!\" 참새들은 순식간에 벼를 다듬어 주었답니다.",
+        "text": "항아리를 다 채우고 나니, 이번에는 마당 가득 쌓인 볏단이 보였어요.\n\"이걸 다 찧으려면 밤을 새워도 모자랄 텐데…\"\n그러자 낟알을 나눠 받았던 참새 떼가 포르르 날아왔지요.\n\"짹짹! 이번엔 우리가 도와줄게!\"\n참새들은 순식간에 벼를 다듬어 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p7.webp",
-        "audio": "/folk/kongjwi/narr-p7.wav",
         "hotspots": [
           {
             "label": "kongjwi",
+            "line": "이걸 다 찧으려면 밤을 새워도…",
             "box": [
-              496,
-              194,
-              885,
-              401
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p7-kongjwi.mp3",
-            "line": "참새들아, 고마워!"
+            "audio": "/folk/kongjwi/say-p9-kongjwi.mp3"
           },
           {
             "label": "sparrow",
+            "line": "짹짹! 이번엔 우리가 도와줄게!",
             "box": [
-              358,
-              348,
-              412,
-              402
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
-            "line": "짹짹! 우리가 도와줄게!"
+            "audio": "/folk/kongjwi/say-p9-sparrow.mp3"
           },
           {
             "label": "sparrow",
+            "line": "낟알 나눠 줘서 고마웠어!",
             "box": [
-              255,
-              349,
-              313,
-              404
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
-            "line": "짹짹! 우리가 도와줄게!"
+            "audio": "/folk/kongjwi/say-p9-sparrow.mp3"
           },
           {
             "label": "sparrow",
+            "line": "우리한테 맡겨!",
             "box": [
-              163,
-              370,
-              221,
-              415
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
-            "line": "짹짹! 우리가 도와줄게!"
+            "audio": "/folk/kongjwi/say-p9-sparrow.mp3"
           },
           {
             "label": "sparrow",
+            "line": "금방 끝날 거야!",
             "box": [
-              105,
-              442,
-              159,
-              495
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
-            "line": "짹짹! 우리가 도와줄게!"
+            "audio": "/folk/kongjwi/say-p9-sparrow.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "이걸 다 찧으려면 밤을 새워도 모자랄 텐데…",
+            "who": "kongjwi"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p9-0.mp3",
+            "text": "항아리를 다 채우고 나니, 이번에는 마당 가득 쌓인 볏단이 보였어요.\n"
           },
           {
-            "label": "sparrow",
-            "box": [
-              98,
-              535,
-              149,
-              586
-            ],
-            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
-            "line": "짹짹! 우리가 도와줄게!"
+            "who": "kongjwi",
+            "src": "/folk/kongjwi/seg-cast-p9-1.mp3",
+            "text": "\"이걸 다 찧으려면 밤을 새워도 모자랄 텐데…\""
           },
           {
-            "label": "sparrow",
-            "box": [
-              142,
-              606,
-              194,
-              663
-            ],
-            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
-            "line": "짹짹! 우리가 도와줄게!"
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p9-2.mp3",
+            "text": "\n그러자 낟알을 나눠 받았던 참새 떼가 포르르 날아왔지요.\n"
           },
           {
-            "label": "sparrow",
-            "box": [
-              206,
-              631,
-              273,
-              684
-            ],
-            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
-            "line": "짹짹! 우리가 도와줄게!"
+            "who": "sparrow",
+            "src": "/folk/kongjwi/seg-cast-p9-3.mp3",
+            "text": "\"짹짹! 이번엔 우리가 도와줄게!\""
           },
           {
-            "label": "sparrow",
-            "box": [
-              358,
-              627,
-              411,
-              682
-            ],
-            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
-            "line": "짹짹! 우리가 도와줄게!"
-          },
-          {
-            "label": "sparrow",
-            "box": [
-              432,
-              633,
-              492,
-              689
-            ],
-            "audio": "/folk/kongjwi/say-p7-sparrow.mp3",
-            "line": "짹짹! 우리가 도와줄게!"
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p9-4.mp3",
+            "text": "\n참새들은 순식간에 벼를 다듬어 주었답니다."
           }
         ]
       },
       {
-        "text": "\"착한 콩쥐야, 이제 잔치에 갈 시간이야.\"\n하늘에서 선녀님이 사뿐히 내려와\n고운 비단 치마와 반짝이는 꽃신 한 켤레를 주었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p8.webp",
-        "audio": "/folk/kongjwi/narr-p8.mp3",
+        "text": "세 가지 일을 다 마쳤지만, 콩쥐는 마당에 우두커니 서 있었어요.\n잔치에 입고 갈 옷도, 신고 갈 신도 없었으니까요.\n\"…다 해냈는데.\"\n소와 두꺼비와 참새들이 가만히 콩쥐를 올려다보았지요.",
         "hotspots": [
           {
             "label": "kongjwi",
+            "line": "…다 해냈는데.",
             "box": [
-              393,
-              263,
-              742,
-              411
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p8-kongjwi.mp3",
-            "line": "우와, 예쁜 꽃신! 감사합니다!"
+            "audio": "/folk/kongjwi/say-p10-kongjwi.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p10-0.mp3",
+            "text": "세 가지 일을 다 마쳤지만, 콩쥐는 마당에 우두커니 서 있었어요.\n잔치에 입고 갈 옷도, 신고 갈 신도 없었으니까요.\n"
+          },
+          {
+            "who": "kongjwi",
+            "src": "/folk/kongjwi/seg-cast-p10-1.mp3",
+            "text": "\"…다 해냈는데.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p10-2.mp3",
+            "text": "\n소와 두꺼비와 참새들이 가만히 콩쥐를 올려다보았지요."
+          }
+        ]
+      },
+      {
+        "text": "그때 마당이 환해지더니 하늘에서 선녀님이 사뿐히 내려왔어요.\n\"네가 나누어 준 마음을 하늘이 다 보고 있었단다.\"\n선녀님은 고운 비단 치마와 반짝이는 꽃신 한 켤레를 건네주었지요.\n\"어서 가렴. 오늘은 네 날이란다.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p8.webp",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "line": "우와, 예쁜 꽃신! 감사합니다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p11-kongjwi.mp3"
           },
           {
             "label": "fairy",
+            "line": "어서 가렴. 오늘은 네 날이란다.",
             "box": [
-              137,
-              497,
-              521,
-              764
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p8-fairy.mp3",
-            "line": "착한 콩쥐야, 어서 잔치에 가 보렴."
+            "audio": "/folk/kongjwi/say-p11-fairy.mp3"
           }
-        ]
-      },
-      {
-        "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n콩쥐도 오랜만에 마음껏 웃으며 즐거웠지요.\n그때, 잔치를 연 젊은 원님이\n환하게 웃는 콩쥐를 보고 한눈에 반하고 말았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p9-feast.webp",
-        "audio": "/folk/kongjwi/narr-p9.wav",
-        "hotspots": [
+        ],
+        "lines": [
           {
-            "label": "magistrate",
-            "box": [
-              310,
-              730,
-              700,
-              860
-            ],
-            "audio": "/folk/kongjwi/say-p9-magistrate.wav",
-            "line": "저기 환하게 웃는 아가씨는 누구지? 참으로 곱구나."
+            "text": "네가 나누어 준 마음을 하늘이 다 보고 있었단다.",
+            "who": "fairy"
+          },
+          {
+            "text": "어서 가렴. 오늘은 네 날이란다.",
+            "who": "fairy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p11-0.mp3",
+            "text": "그때 마당이 환해지더니 하늘에서 선녀님이 사뿐히 내려왔어요.\n"
+          },
+          {
+            "who": "fairy",
+            "src": "/folk/kongjwi/seg-cast-p11-1.mp3",
+            "text": "\"네가 나누어 준 마음을 하늘이 다 보고 있었단다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p11-2.mp3",
+            "text": "\n선녀님은 고운 비단 치마와 반짝이는 꽃신 한 켤레를 건네주었지요.\n"
+          },
+          {
+            "who": "fairy",
+            "src": "/folk/kongjwi/seg-cast-p11-3.mp3",
+            "text": "\"어서 가렴. 오늘은 네 날이란다.\""
           }
         ]
       },
       {
-        "text": "'새어머니가 보시기 전에 얼른 집에 가야 해!'\n콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p10.webp?v=2",
-        "audio": "/folk/kongjwi/narr-p10.wav",
+        "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n떡이며 과일이며, 콩쥐는 난생처음 보는 것투성이였지요.\n\"내가… 여기 있어도 되는 걸까?\"\n그래도 콩쥐는 오랜만에 마음껏 웃었답니다.",
         "hotspots": [
           {
             "label": "kongjwi",
+            "line": "내가… 여기 있어도 되는 걸까?",
             "box": [
-              191,
-              532,
-              648,
-              735
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p9-kongjwi.mp3",
-            "line": "아앗! 내 꽃신!"
+            "audio": "/folk/kongjwi/say-p12-kongjwi.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "내가… 여기 있어도 되는 걸까?",
+            "who": "kongjwi"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p12-0.mp3",
+            "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n떡이며 과일이며, 콩쥐는 난생처음 보는 것투성이였지요.\n"
+          },
+          {
+            "who": "kongjwi",
+            "src": "/folk/kongjwi/seg-cast-p12-1.mp3",
+            "text": "\"내가… 여기 있어도 되는 걸까?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p12-2.mp3",
+            "text": "\n그래도 콩쥐는 오랜만에 마음껏 웃었답니다."
+          }
+        ]
+      },
+      {
+        "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았지요.\n\"저 아가씨는 뉘 집 사람일까?\"\n원님이 다가가려는데, 콩쥐는 벌써 자리에서 일어서고 있었어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p9-feast.webp",
+        "hotspots": [
+          {
+            "label": "magistrate",
+            "line": "저 아가씨는 뉘 집 사람일까?",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p13-magistrate.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p13-0.mp3",
+            "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았지요.\n"
+          },
+          {
+            "who": "magistrate",
+            "src": "/folk/kongjwi/seg-cast-p13-1.mp3",
+            "text": "\"저 아가씨는 뉘 집 사람일까?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p13-2.mp3",
+            "text": "\n원님이 다가가려는데, 콩쥐는 벌써 자리에서 일어서고 있었어요."
+          }
+        ]
+      },
+      {
+        "text": "'새어머니와 팥쥐가 나를 알아보기 전에 얼른 가야 해!'\n콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p10.webp?v=2",
+        "hotspots": [
+          {
+            "label": "kongjwi",
+            "line": "아앗! 내 꽃신!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p14-kongjwi.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "kongjwi",
+            "src": "/folk/kongjwi/seg-cast-p14-0.mp3",
+            "text": "'새어머니와 팥쥐가 나를 알아보기 전에 얼른 가야 해!'"
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p14-1.mp3",
+            "text": "\n콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요."
           }
         ]
       },
       {
         "text": "콩쥐를 뒤따라 나온 원님은\n개울가에서 반짝이는 꽃신 한 짝을 발견했어요.\n\"이 신의 주인이 아까 그 아가씨로구나!\n온 마을을 뒤져서라도 꼭 찾아내야겠다.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p11.webp?v=2",
-        "audio": "/folk/kongjwi/narr-p11.wav",
         "hotspots": [
           {
             "label": "magistrate",
+            "line": "이 꽃신의 주인을 꼭 찾아내야겠다!",
             "box": [
-              230,
-              600,
-              660,
-              790
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p11-magistrate.wav",
-            "line": "이 꽃신의 주인을 꼭 찾아내야겠다!"
+            "audio": "/folk/kongjwi/say-p15-magistrate.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "이 신의 주인이 아까 그 아가씨로구나!\n온 마을을 뒤져서라도 꼭 찾아내야겠다.",
+            "who": "magistrate"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p15-0.mp3",
+            "text": "콩쥐를 뒤따라 나온 원님은\n개울가에서 반짝이는 꽃신 한 짝을 발견했어요.\n"
+          },
+          {
+            "who": "magistrate",
+            "src": "/folk/kongjwi/seg-cast-p15-1.mp3",
+            "text": "\"이 신의 주인이 아까 그 아가씨로구나!\n온 마을을 뒤져서라도 꼭 찾아내야겠다.\""
           }
         ]
       },
       {
-        "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요.\n콩쥐네 집에서는 팥쥐가 냉큼 발을 들이밀었지요.\n하지만 아무리 용을 써도 발이 들어가지 않았답니다.",
+        "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요.\n\"그 신은 제 거예요!\"\n팥쥐가 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p12.webp",
-        "audio": "/folk/kongjwi/narr-p12.wav",
         "hotspots": [
           {
             "label": "magistrate",
+            "line": "이 꽃신의 주인을 찾습니다!",
             "box": [
-              209,
-              368,
-              611,
-              576
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p12-magistrate.wav",
-            "line": "이 꽃신의 주인을 찾습니다!"
+            "audio": "/folk/kongjwi/say-p16-magistrate.mp3"
+          },
+          {
+            "label": "patjwi",
+            "line": "그 신은 제 거예요! 어서 신겨 주세요!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p16-patjwi.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p16-0.mp3",
+            "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요.\n"
+          },
+          {
+            "who": "magistrate",
+            "src": "/folk/kongjwi/seg-cast-p16-1.mp3",
+            "text": "\"그 신은 제 거예요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p16-2.mp3",
+            "text": "\n팥쥐가 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다."
           }
         ]
       },
       {
-        "text": "\"저… 저도 신어 봐도 될까요?\"\n콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요!\n\"아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!\"\n원님의 얼굴에 환한 웃음이 번졌지요.",
+        "text": "\"우리 집 딸은 팥쥐 하나뿐입니다!\"\n새어머니는 콩쥐를 헛간으로 밀어 넣고 문을 닫아 버렸어요.\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했지요.\n\"짹짹! 여기예요, 여기! 헛간 안이에요!\"",
+        "hotspots": [
+          {
+            "label": "stepmom",
+            "line": "우리 집 딸은 팥쥐 하나뿐입니다!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p17-stepmom.mp3"
+          },
+          {
+            "label": "sparrow",
+            "line": "짹짹! 여기예요, 여기!",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p17-sparrow.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "stepmom",
+            "src": "/folk/kongjwi/seg-cast-p17-0.mp3",
+            "text": "\"우리 집 딸은 팥쥐 하나뿐입니다!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p17-1.mp3",
+            "text": "\n새어머니는 콩쥐를 헛간으로 밀어 넣고 문을 닫아 버렸어요.\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했지요.\n"
+          },
+          {
+            "who": "stepmom",
+            "src": "/folk/kongjwi/seg-cast-p17-2.mp3",
+            "text": "\"짹짹! 여기예요, 여기! 헛간 안이에요!\""
+          }
+        ]
+      },
+      {
+        "text": "원님이 헛간 문을 열자 콩쥐가 서 있었어요.\n\"저… 저도 신어 봐도 될까요?\"\n콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요!\n\"아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p13.webp",
-        "audio": "/folk/kongjwi/narr-p13.wav",
         "hotspots": [
           {
             "label": "kongjwi",
+            "line": "저… 저도 신어 봐도 될까요?",
             "box": [
-              358,
-              393,
-              702,
-              534
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p13-kongjwi.mp3",
-            "line": "네, 제 신이에요!"
+            "audio": "/folk/kongjwi/say-p18-kongjwi.mp3"
           },
           {
             "label": "magistrate",
+            "line": "드디어 찾았습니다!",
             "box": [
-              346,
-              552,
-              703,
-              720
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p13-magistrate.wav",
-            "line": "드디어 찾았습니다! 꽃신의 주인님!"
+            "audio": "/folk/kongjwi/say-p18-magistrate.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "저… 저도 신어 봐도 될까요?",
+            "who": "kongjwi"
+          },
+          {
+            "text": "아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!",
+            "who": "magistrate"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p18-0.mp3",
+            "text": "원님이 헛간 문을 열자 콩쥐가 서 있었어요.\n"
+          },
+          {
+            "who": "kongjwi",
+            "src": "/folk/kongjwi/seg-cast-p18-1.mp3",
+            "text": "\"저… 저도 신어 봐도 될까요?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p18-2.mp3",
+            "text": "\n콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요!\n"
+          },
+          {
+            "who": "magistrate",
+            "src": "/folk/kongjwi/seg-cast-p18-3.mp3",
+            "text": "\"아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!\""
           }
         ]
       },
       {
-        "text": "얼마 뒤, 원님과 콩쥐는 온 마을의 축복 속에 혼례를 올렸어요.\n새어머니와 팥쥐도 그동안의 잘못을 뉘우치고 사과했지요.\n\"콩쥐야, 미안했다.\"\n콩쥐는 활짝 웃으며 모두를 안아 주었고, 오래오래 행복하게 살았답니다.",
+        "text": "원님은 콩쥐에게 손을 내밀었어요.\n\"이제 저와 함께 가시겠습니까?\"\n콩쥐는 헛간 문턱을 넘어 마당으로 걸어 나왔지요.\n새어머니와 팥쥐는 아무 말도 하지 못했답니다.",
+        "hotspots": [
+          {
+            "label": "magistrate",
+            "line": "이제 저와 함께 가시겠습니까?",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p19-magistrate.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p19-0.mp3",
+            "text": "원님은 콩쥐에게 손을 내밀었어요.\n"
+          },
+          {
+            "who": "magistrate",
+            "src": "/folk/kongjwi/seg-cast-p19-1.mp3",
+            "text": "\"이제 저와 함께 가시겠습니까?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p19-2.mp3",
+            "text": "\n콩쥐는 헛간 문턱을 넘어 마당으로 걸어 나왔지요.\n새어머니와 팥쥐는 아무 말도 하지 못했답니다."
+          }
+        ]
+      },
+      {
+        "text": "얼마 뒤, 원님과 콩쥐는 온 마을의 축복 속에 혼례를 올렸어요.\n새어머니와 팥쥐는 잔칫날 마당 끝에 서서 고개를 들지 못했지요.\n\"콩쥐야… 그동안 미안했다.\"\n콩쥐는 두 사람에게 다가가 손을 잡아 주었답니다.\n\"들어와서 같이 드세요. 오늘은 잔칫날인걸요.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p14.webp?v=2",
-        "audio": "/folk/kongjwi/narr-p14.wav",
         "hotspots": [
           {
             "label": "kongjwi",
+            "line": "들어와서 같이 드세요. 오늘은 잔칫날인걸요.",
             "box": [
-              285,
-              522,
-              800,
-              700
+              0,
+              0,
+              0,
+              0
             ],
-            "audio": "/folk/kongjwi/say-p14-kongjwi.mp3",
-            "line": "우리 이제 사이좋게 지내요!"
+            "audio": "/folk/kongjwi/say-p20-kongjwi.mp3"
+          },
+          {
+            "label": "stepmom",
+            "line": "콩쥐야… 그동안 미안했다.",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p20-stepmom.mp3"
+          },
+          {
+            "label": "patjwi",
+            "line": "언니, 나도 미안해…",
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "audio": "/folk/kongjwi/say-p20-patjwi.mp3"
+          }
+        ],
+        "lines": [
+          {
+            "text": "콩쥐야… 그동안 미안했다.",
+            "who": "stepmom"
+          },
+          {
+            "text": "들어와서 같이 드세요. 오늘은 잔칫날인걸요.",
+            "who": "kongjwi"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p20-0.mp3",
+            "text": "얼마 뒤, 원님과 콩쥐는 온 마을의 축복 속에 혼례를 올렸어요.\n새어머니와 팥쥐는 잔칫날 마당 끝에 서서 고개를 들지 못했지요.\n"
+          },
+          {
+            "who": "stepmom",
+            "src": "/folk/kongjwi/seg-cast-p20-1.mp3",
+            "text": "\"콩쥐야… 그동안 미안했다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p20-2.mp3",
+            "text": "\n콩쥐는 두 사람에게 다가가 손을 잡아 주었답니다.\n"
+          },
+          {
+            "who": "kongjwi",
+            "src": "/folk/kongjwi/seg-cast-p20-3.mp3",
+            "text": "\"들어와서 같이 드세요. 오늘은 잔칫날인걸요.\""
           }
         ]
       }
@@ -1709,7 +2223,10 @@
       "두꺼비": "toad",
       "참새": "sparrow",
       "참새들": "sparrow"
-    }
+    },
+    "narrators": [
+      "tc-jungsoon"
+    ]
   },
   {
     "id": "folk-haedal",

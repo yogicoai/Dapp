@@ -12,10 +12,10 @@
     "text": "어느 날 놀부는 흥부네 식구를 마당으로 불러냈어요."
   },
   "seg-cast-p2-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-sookhee",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"오늘 밤은 여기서 자야겠구나.\""
+    "text": "\"콩쥐야! 밭을 매고, 물도 길어 오너라!\""
   },
   "seg-tc-kwonil-p2-2.mp3": {
     "voice": "tc-kwonil",
@@ -36,10 +36,10 @@
     "text": "그래도 흥부네 집에는 웃음이 끊이지 않았어요."
   },
   "seg-cast-p4-1.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-gahee",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"영감! 그 고운 노래는 어디서 나오는 거냐?\""
+    "text": "\"저도 잔치에 가고 싶어요!\""
   },
   "seg-tc-kwonil-p4-2.mp3": {
     "voice": "tc-kwonil",
@@ -78,10 +78,10 @@
     "text": "\"형수님, 밥 한 술만 주세요. 아이들이 사흘을 굶었어요.\""
   },
   "seg-cast-p6-1.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-mongsil",
     "emotion": "normal",
     "intensity": null,
-    "text": "자아, 준비이… 시자악!"
+    "text": "\"이 밭을 언제 다 매지…\""
   },
   "seg-tc-kwonil-p6-2.mp3": {
     "voice": "tc-kwonil",
@@ -120,10 +120,10 @@
     "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요."
   },
   "seg-cast-p8-1.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-kijang",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이 혹에서 고운 노래가 나온다오! 어서 보물을 주고 사 가시오!\""
+    "text": "\"콩쥐야, 울지 마. 이번엔 내가 도와줄게!\""
   },
   "seg-tc-kwonil-p8-2.mp3": {
     "voice": "tc-kwonil",
@@ -138,10 +138,10 @@
     "text": "알에서 깬 아기 제비들은 노래하듯 지저귀며 무럭무럭 자랐어요.\n아이들은 날마다 둥지를 올려다보며 인사했지요."
   },
   "seg-cast-p9-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-mongsil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"안녕, 아기 제비야! 오늘도 잘 잤니?\""
+    "text": "\"이걸 다 찧으려면 밤을 새워도 모자랄 텐데…\""
   },
   "seg-tc-kwonil-p10-0.mp3": {
     "voice": "tc-kwonil",
@@ -156,10 +156,10 @@
     "text": "화들짝 놀란 아기 제비 한 마리가 그만 둥지 밖으로 뚝 떨어지고 말았어요."
   },
   "seg-cast-p11-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-chungah",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"짹짹! 아파요, 아파!\""
+    "text": "\"네가 나누어 준 마음을 하늘이 다 보고 있었단다.\""
   },
   "seg-tc-kwonil-p11-2.mp3": {
     "voice": "tc-kwonil",
@@ -246,10 +246,10 @@
     "text": "\"슬근슬근, 톱질하세!\""
   },
   "seg-cast-p16-1.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"영차영차, 톱질하세!\""
+    "text": "\"그 신은 제 거예요!\""
   },
   "seg-tc-kwonil-p16-2.mp3": {
     "voice": "tc-kwonil",
@@ -294,10 +294,10 @@
     "text": "이 소식을 들은 놀부는 샘이 나서 견딜 수가 없었어요."
   },
   "seg-cast-p18-1.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-mongsil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"흥부는 다친 제비를 고쳐 주고 부자가 됐다지?\n그럼 나도 다친 제비만 있으면 되겠구나!\""
+    "text": "\"저… 저도 신어 봐도 될까요?\""
   },
   "seg-tc-kwonil-p19-0.mp3": {
     "voice": "tc-kwonil",
@@ -306,10 +306,10 @@
     "text": "놀부는 처마 밑 제비를 잡아 다리를 뚝 부러뜨리고는,\n대충 싸매 주며 히죽 웃었어요."
   },
   "seg-cast-p19-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"짹… 왜 일부러 아프게 하는 거예요…\""
+    "text": "\"이제 저와 함께 가시겠습니까?\""
   },
   "seg-tc-kwonil-p20-0.mp3": {
     "voice": "tc-kwonil",
@@ -318,10 +318,10 @@
     "text": "이듬해 봄, 놀부네 제비도 박씨를 물어다 주었어요."
   },
   "seg-cast-p20-1.mp3": {
-    "voice": "tc-sullock",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"옳지! 이제 나도 부자가 되겠구나!\""
+    "voice": "tc-sookhee",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"콩쥐야… 그동안 미안했다.\""
   },
   "seg-tc-kwonil-p20-2.mp3": {
     "voice": "tc-kwonil",
@@ -456,10 +456,10 @@
     "text": "어느 날, 토끼가 거북이를 보고 깔깔 웃었어요."
   },
   "seg-cast-p3-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-sua",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\""
+    "text": "\"나는 조금만 먹어도 괜찮아.\""
   },
   "say-p3-rabbit.mp3": {
     "voice": "tc-hamchu",
@@ -720,10 +720,10 @@
     "text": "그런데 박 속에서 나온 건 시커먼 도깨비들이었어요."
   },
   "seg-cast-p13-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"짹짹! 짹짹!\""
+    "text": "\"저 아가씨는 뉘 집 사람일까?\""
   },
   "seg-tc-kwonil-p13-2.mp3": {
     "voice": "tc-kwonil",
@@ -918,10 +918,10 @@
     "text": "할아버지는 얼떨결에 볼에 달린 혹을 가리켰어요."
   },
   "seg-cast-p5-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-gahee",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이... 이 혹에서 노래가 술술 나온다오.\""
+    "text": "\"엄마, 이걸로 주면 딱 좋겠는데.\""
   },
   "seg-tc-jiyoon-p5-3.mp3": {
     "voice": "tc-jiyoon",
@@ -1044,10 +1044,10 @@
     "text": "착한 할아버지는 보물을 혼자 갖지 않고 이웃들과 사이좋게 나누었어요."
   },
   "seg-cast-p10-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-mongsil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"같이 나누면 기쁨이 두 배가 된다오.\""
+    "text": "\"…다 해냈는데.\""
   },
   "seg-tc-jiyoon-p10-2.mp3": {
     "voice": "tc-jiyoon",
@@ -1060,5 +1060,491 @@
     "emotion": "normal",
     "intensity": null,
     "text": "같이 나누면 기쁨이 두 배가 된다오."
+  },
+  "seg-tc-jungsoon-p1-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니를 일찍 여읜 콩쥐는 새어머니, 동생 팥쥐와 함께 살았지요."
+  },
+  "say-p1-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "안녕! 나는 콩쥐야. 만나서 반가워!"
+  },
+  "seg-tc-jungsoon-p2-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "새어머니는 팥쥐만 예뻐하고, 힘든 일은 모두 콩쥐에게 시켰어요."
+  },
+  "seg-cast-p2-2.mp3": {
+    "voice": "tc-sookhee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"엄마, 나는 그늘에서 좀 쉴래.\""
+  },
+  "seg-tc-jungsoon-p2-3.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "팥쥐는 부채질을 하며 콩쥐를 흘겨보았지요."
+  },
+  "say-p2-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "괜찮아. 열심히 하다 보면 좋은 일이 올 거야."
+  },
+  "say-p2-stepmom.mp3": {
+    "voice": "tc-sookhee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "콩쥐야! 아직 멀었느냐!"
+  },
+  "say-p2-patjwi.mp3": {
+    "voice": "tc-gahee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "히히, 나는 놀 거야!"
+  },
+  "seg-tc-jungsoon-p3-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지,\n배고픈 참새들에게는 제 몫의 낟알 한 줌."
+  },
+  "seg-tc-jungsoon-p3-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "물동이에 빠져 허우적대던 두꺼비는 두 손으로 건져 주었답니다."
+  },
+  "say-p3-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "나는 조금만 먹어도 괜찮아."
+  },
+  "seg-tc-jungsoon-p4-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n새어머니와 팥쥐는 아침부터 고운 옷을 꺼내 입었지요."
+  },
+  "seg-cast-p4-2.mp3": {
+    "voice": "tc-gahee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"흥! 그럼 밭을 다 매고, 이 항아리에 물도 가득 채워 놓고 오너라.\""
+  },
+  "say-p4-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "저도 잔치에 가고 싶어요!"
+  },
+  "say-p4-stepmom.mp3": {
+    "voice": "tc-sookhee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "물을 다 채우기 전엔 못 온다!"
+  },
+  "seg-tc-jungsoon-p5-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 팥쥐가 헛간에서 항아리를 하나 골라 왔어요."
+  },
+  "seg-tc-jungsoon-p5-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았지요."
+  },
+  "seg-cast-p5-3.mp3": {
+    "voice": "tc-gahee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"참, 저 볏단도 다 찧어 놓으라고 해요. 언니는 집이나 지켜!\""
+  },
+  "seg-tc-jungsoon-p5-4.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "둘이 떠난 마당에는 항아리와 볏단만 덩그러니 남았답니다."
+  },
+  "say-p5-patjwi.mp3": {
+    "voice": "tc-gahee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마, 이걸로 주면 딱 좋겠는데."
+  },
+  "say-p5-stepmom.mp3": {
+    "voice": "tc-sookhee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옳지, 그걸로 하렴."
+  },
+  "seg-tc-jungsoon-p6-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자 그만 주저앉고 말았지요."
+  },
+  "seg-tc-jungsoon-p6-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 물을 나눠 받았던 검은 소가 저벅저벅 걸어와 밭을 갈아 주었답니다."
+  },
+  "say-p6-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이 밭을 언제 다 매지…"
+  },
+  "say-p6-ox.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "음머~ 착한 콩쥐야, 내가 도와주마."
+  },
+  "seg-tc-jungsoon-p7-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다."
+  },
+  "say-p7-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "항아리에 구멍이… 어쩌지?"
+  },
+  "seg-tc-jungsoon-p8-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 물동이에서 건져 주었던 두꺼비가 엉금엉금 기어 나왔어요."
+  },
+  "seg-tc-jungsoon-p8-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "두꺼비는 항아리 속으로 쏙 들어가 제 몸으로 구멍을 막았지요.\n그러자 항아리에 물이 금세 가득 찼답니다."
+  },
+  "say-p8-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "고마워, 두꺼비야!"
+  },
+  "say-p8-toad.mp3": {
+    "voice": "tc-kijang",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이번엔 내가 도와줄게!"
+  },
+  "seg-tc-jungsoon-p9-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "항아리를 다 채우고 나니, 이번에는 마당 가득 쌓인 볏단이 보였어요."
+  },
+  "seg-tc-jungsoon-p9-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러자 낟알을 나눠 받았던 참새 떼가 포르르 날아왔지요."
+  },
+  "seg-cast-p9-3.mp3": {
+    "voice": "tc-sua",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"짹짹! 이번엔 우리가 도와줄게!\""
+  },
+  "seg-tc-jungsoon-p9-4.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "참새들은 순식간에 벼를 다듬어 주었답니다."
+  },
+  "say-p9-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이걸 다 찧으려면 밤을 새워도…"
+  },
+  "say-p9-sparrow.mp3": {
+    "voice": "tc-sua",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "금방 끝날 거야!"
+  },
+  "seg-tc-jungsoon-p10-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "세 가지 일을 다 마쳤지만, 콩쥐는 마당에 우두커니 서 있었어요.\n잔치에 입고 갈 옷도, 신고 갈 신도 없었으니까요."
+  },
+  "seg-tc-jungsoon-p10-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "소와 두꺼비와 참새들이 가만히 콩쥐를 올려다보았지요."
+  },
+  "say-p10-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "…다 해냈는데."
+  },
+  "seg-tc-jungsoon-p11-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 마당이 환해지더니 하늘에서 선녀님이 사뿐히 내려왔어요."
+  },
+  "seg-tc-jungsoon-p11-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "선녀님은 고운 비단 치마와 반짝이는 꽃신 한 켤레를 건네주었지요."
+  },
+  "seg-cast-p11-3.mp3": {
+    "voice": "tc-chungah",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"어서 가렴. 오늘은 네 날이란다.\""
+  },
+  "say-p11-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "우와, 예쁜 꽃신! 감사합니다!"
+  },
+  "say-p11-fairy.mp3": {
+    "voice": "tc-chungah",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어서 가렴. 오늘은 네 날이란다."
+  },
+  "seg-tc-jungsoon-p12-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n떡이며 과일이며, 콩쥐는 난생처음 보는 것투성이였지요."
+  },
+  "seg-cast-p12-1.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"내가… 여기 있어도 되는 걸까?\""
+  },
+  "seg-tc-jungsoon-p12-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그래도 콩쥐는 오랜만에 마음껏 웃었답니다."
+  },
+  "say-p12-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "내가… 여기 있어도 되는 걸까?"
+  },
+  "seg-tc-jungsoon-p13-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았지요."
+  },
+  "seg-tc-jungsoon-p13-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "원님이 다가가려는데, 콩쥐는 벌써 자리에서 일어서고 있었어요."
+  },
+  "say-p13-magistrate.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "저 아가씨는 뉘 집 사람일까?"
+  },
+  "seg-cast-p14-0.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'새어머니와 팥쥐가 나를 알아보기 전에 얼른 가야 해!'"
+  },
+  "seg-tc-jungsoon-p14-1.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요."
+  },
+  "say-p14-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아앗! 내 꽃신!"
+  },
+  "seg-tc-jungsoon-p15-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "콩쥐를 뒤따라 나온 원님은\n개울가에서 반짝이는 꽃신 한 짝을 발견했어요."
+  },
+  "seg-cast-p15-1.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"이 신의 주인이 아까 그 아가씨로구나!\n온 마을을 뒤져서라도 꼭 찾아내야겠다.\""
+  },
+  "say-p15-magistrate.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이 꽃신의 주인을 꼭 찾아내야겠다!"
+  },
+  "seg-tc-jungsoon-p16-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요."
+  },
+  "seg-tc-jungsoon-p16-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "팥쥐가 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다."
+  },
+  "say-p16-magistrate.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이 꽃신의 주인을 찾습니다!"
+  },
+  "say-p16-patjwi.mp3": {
+    "voice": "tc-gahee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 신은 제 거예요! 어서 신겨 주세요!"
+  },
+  "seg-cast-p17-0.mp3": {
+    "voice": "tc-sookhee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"우리 집 딸은 팥쥐 하나뿐입니다!\""
+  },
+  "seg-tc-jungsoon-p17-1.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "새어머니는 콩쥐를 헛간으로 밀어 넣고 문을 닫아 버렸어요.\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했지요."
+  },
+  "seg-cast-p17-2.mp3": {
+    "voice": "tc-sookhee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"짹짹! 여기예요, 여기! 헛간 안이에요!\""
+  },
+  "say-p17-stepmom.mp3": {
+    "voice": "tc-sookhee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "우리 집 딸은 팥쥐 하나뿐입니다!"
+  },
+  "say-p17-sparrow.mp3": {
+    "voice": "tc-sua",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "짹짹! 여기예요, 여기!"
+  },
+  "seg-tc-jungsoon-p18-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "원님이 헛간 문을 열자 콩쥐가 서 있었어요."
+  },
+  "seg-tc-jungsoon-p18-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요!"
+  },
+  "seg-cast-p18-3.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!\""
+  },
+  "say-p18-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "저… 저도 신어 봐도 될까요?"
+  },
+  "say-p18-magistrate.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "드디어 찾았습니다!"
+  },
+  "seg-tc-jungsoon-p19-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "원님은 콩쥐에게 손을 내밀었어요."
+  },
+  "seg-tc-jungsoon-p19-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "콩쥐는 헛간 문턱을 넘어 마당으로 걸어 나왔지요.\n새어머니와 팥쥐는 아무 말도 하지 못했답니다."
+  },
+  "say-p19-magistrate.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이제 저와 함께 가시겠습니까?"
+  },
+  "seg-tc-jungsoon-p20-0.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "얼마 뒤, 원님과 콩쥐는 온 마을의 축복 속에 혼례를 올렸어요.\n새어머니와 팥쥐는 잔칫날 마당 끝에 서서 고개를 들지 못했지요."
+  },
+  "seg-tc-jungsoon-p20-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "콩쥐는 두 사람에게 다가가 손을 잡아 주었답니다."
+  },
+  "seg-cast-p20-3.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"들어와서 같이 드세요. 오늘은 잔칫날인걸요.\""
+  },
+  "say-p20-kongjwi.mp3": {
+    "voice": "tc-mongsil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "들어와서 같이 드세요. 오늘은 잔칫날인걸요."
+  },
+  "say-p20-stepmom.mp3": {
+    "voice": "tc-sookhee",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "콩쥐야… 그동안 미안했다."
+  },
+  "say-p20-patjwi.mp3": {
+    "voice": "tc-gahee",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "언니, 나도 미안해…"
   }
 }
