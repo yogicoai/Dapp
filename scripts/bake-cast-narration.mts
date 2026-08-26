@@ -6,8 +6,8 @@
  * 돈이 나간다.
  *
  * 쓰는 법:
- *   node --experimental-strip-types scripts/bake-cast-narration.mts --dry   (리허설)
- *   node --experimental-strip-types scripts/bake-cast-narration.mts         (진짜 굽기)
+ *   node --experimental-strip-types --env-file=.env.local \n *        scripts/bake-cast-narration.mts --book "흥부와 놀부" --dry   (리허설)
+ *   같은 명령에서 --dry 를 빼면 진짜로 굽는다. --book 을 빼면 토끼와 거북이.
  *
  * 이미 있는 파일은 건너뛴다 — 중간에 끊겨도 다시 돌리면 이어서 굽고, 같은 문장에
  * 두 번 과금되지 않는다.
@@ -48,12 +48,48 @@ const same = (a: Recipe | undefined, b: Recipe) =>
   a!.text === b.text;
 const BASE = process.env.BAKE_BASE ?? "http://localhost:3000";
 const DATA = "src/data/folk-books.json";
-const TITLE = "토끼와 거북이";
-const DIR = "public/folk/tortoise";
-const URL_DIR = "/folk/tortoise";
-/** 미리 구울 나레이션 성우. 여기 없는 성우는 이 책의 고를 수 있는 목록에서도 뺀다. */
-const BAKED_NARRATORS = ["tc-dabin"];
-const CAST_NAMES = [{ name: "토끼" }, { name: "거북이" }, { name: "부엉이" }];
+
+/*
+ * 어느 책을 구울지 --book 으로 고른다.
+ *
+ * 예전엔 책 이름과 폴더가 파일 안에 박혀 있어서, 다른 책을 구우려면 스크립트를
+ * 고쳐야 했다. 이제 책마다 한 줄만 등록해 두고 골라 쓴다.
+ *   node --experimental-strip-types --env-file=.env.local  *        scripts/bake-cast-narration.mts --book "흥부와 놀부" --dry
+ */
+type BookSpec = {
+  dir: string;
+  /** 미리 구울 나레이션 성우. 여기 없는 성우는 이 책의 고를 수 있는 목록에서도 뺀다. */
+  narrators: string[];
+  /** 자동 배정에 쓸 등장인물 이름 — 본문에 나오는 그대로. */
+  cast: { name: string }[];
+};
+const BOOKS: Record<string, BookSpec> = {
+  "토끼와 거북이": {
+    dir: "tortoise",
+    narrators: ["tc-dabin"],
+    cast: [{ name: "토끼" }, { name: "거북이" }, { name: "부엉이" }],
+  },
+  "흥부와 놀부": {
+    dir: "heungbu",
+    narrators: ["tc-kwonil"],
+    cast: [
+      { name: "흥부" }, { name: "놀부" }, { name: "형" }, { name: "형수" },
+      { name: "아내" }, { name: "제비" }, { name: "도깨비" }, { name: "아이들" },
+    ],
+  },
+};
+
+function arg(name: string): string | undefined {
+  const i = process.argv.indexOf(`--${name}`);
+  return i >= 0 ? process.argv[i + 1] : undefined;
+}
+const TITLE = arg("book") ?? "토끼와 거북이";
+const SPEC = BOOKS[TITLE];
+if (!SPEC) throw new Error(`${TITLE} 는 BOOKS 에 등록되어 있지 않습니다`);
+const DIR = `public/folk/${SPEC.dir}`;
+const URL_DIR = `/folk/${SPEC.dir}`;
+const BAKED_NARRATORS = SPEC.narrators;
+const CAST_NAMES = SPEC.cast;
 
 /** voices.ts에서 성우 id → Typecast voiceId·모델을 읽어 온다(두 벌로 관리하지 않으려고). */
 function voiceTable(): Record<string, { voiceId: string; model: string }> {
@@ -285,7 +321,19 @@ if (!DRY) {
     }
   }
   console.log("\n책 데이터에 조각 목록을 기록했습니다.");
-  fs.writeFileSync(MANIFEST, JSON.stringify(fresh, null, 2) + "\n", "utf8");
-  console.log(`굽기 기록을 ${MANIFEST}에 남겼습니다 (${Object.keys(fresh).length}개).`);
+  /*
+   * 기록은 **덮어쓰지 않고 합친다**.
+   *
+   * 예전엔 이번 책 것(fresh)만 통째로 써서, 흥부와 놀부를 구우면 토끼와 거북이
+   * 기록이 지워졌다. 그러면 다음에 --changed 를 줘도 “기록에 없다 → 다 새로 굽자”가
+   * 되어 이미 구운 것을 또 굽는다 — 실제로 374자면 될 것을 1,438자 썼다.
+   * 기록 파일은 모든 책이 함께 쓰므로 다른 책 줄을 남겨 둔다.
+   */
+  const merged = { ...recorded, ...fresh };
+  fs.writeFileSync(MANIFEST, JSON.stringify(merged, null, 2) + "\n", "utf8");
+  console.log(
+    `굽기 기록을 ${MANIFEST}에 남겼습니다 ` +
+      `(이번 책 ${Object.keys(fresh).length}개 · 전체 ${Object.keys(merged).length}개).`,
+  );
 }
 console.log(`\n${DRY ? "[리허설] " : ""}만든 파일 ${made}개 · 건너뜀 ${skipped}개 · 합성 ${spent}자`);
