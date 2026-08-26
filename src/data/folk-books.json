@@ -159,7 +159,17 @@
           {
             "who": "narration",
             "src": "/folk/heungbu/seg-p7-3.mp3",
-            "text": "\n형수는 반대쪽 뺨도 철썩 때리고는 문을 쾅 닫아 버렸지요.\n'이만하면 우리 아이들 저녁은 먹이겠구나.'\n흥부는 밥알을 손에 꼭 쥐고 집으로 돌아갔어요."
+            "text": "\n형수는 반대쪽 뺨도 철썩 때리고는 문을 쾅 닫아 버렸지요.\n"
+          },
+          {
+            "who": "heungbu",
+            "src": "/folk/heungbu/seg-cast-p7-4.mp3",
+            "text": "'이만하면 우리 아이들 저녁은 먹이겠구나.'"
+          },
+          {
+            "who": "narration",
+            "src": "/folk/heungbu/seg-p7-5.mp3",
+            "text": "\n흥부는 밥알을 손에 꼭 쥐고 집으로 돌아갔어요."
           }
         ],
         "lines": [
@@ -488,7 +498,17 @@
           {
             "who": "narration",
             "src": "/folk/heungbu/seg-p21-2.mp3",
-            "text": "\n놀부와 놀부 부인은 신이 나서 커다란 박을 갈랐어요.\n'이제 금은보화가 쏟아지겠지!'\n그런데 박 속에서 나온 건 시커먼 도깨비들이었어요."
+            "text": "\n놀부와 놀부 부인은 신이 나서 커다란 박을 갈랐어요.\n"
+          },
+          {
+            "who": "nolbu",
+            "src": "/folk/heungbu/seg-cast-p21-3.mp3",
+            "text": "'이제 금은보화가 쏟아지겠지!'"
+          },
+          {
+            "who": "narration",
+            "src": "/folk/heungbu/seg-p21-4.mp3",
+            "text": "\n그런데 박 속에서 나온 건 시커먼 도깨비들이었어요."
           }
         ],
         "lines": [
@@ -499,6 +519,10 @@
           {
             "text": "어기여차, 톱질하세!",
             "who": "nolbuwife"
+          },
+          {
+            "text": "'이제 금은보화가 쏟아지겠지!'",
+            "who": "nolbu"
           }
         ]
       },

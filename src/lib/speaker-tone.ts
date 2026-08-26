@@ -188,9 +188,32 @@ function tooShort(s: string): boolean {
  * 따옴표로 묶인 대사와 지문을 나눈다.
  * 이어 붙이면 원문과 정확히 같아야 한다 (색칠 동기화가 글자 수로 돌기 때문).
  */
+/*
+ * 속마음도 그 인물이 읽는다 — 작은따옴표로 감싼 문장.
+ *
+ * 아이 책은 소리 내어 하는 말은 큰따옴표, 마음속으로 하는 말은 작은따옴표로 쓴다.
+ * 예전엔 큰따옴표만 대사로 쳐서, 흥부의 '이만하면 우리 아이들 저녁은 먹이겠구나.'
+ * 같은 속마음이 통째로 나레이션 목소리로 나갔다. 그림 속에서 흥부가 생각하는데
+ * 소리는 이야기 할아버지인 셈이다.
+ *
+ * 다만 작은따옴표를 전부 대사로 치면 안 된다 — 이름을 감쌀 때도 쓴다
+ * (사람들은 '혹부리 영감'이라고 불렀어요). 그래서 **문장으로 끝나는 것만** 대사로 본다:
+ * 속마음은 . ! ? … 로 닫히고, 이름은 그렇지 않다. 실제 19권을 훑어 아홉 곳 중
+ * 일곱이 속마음, 둘이 이름이었고 이 규칙으로 정확히 갈렸다.
+ */
+const QUOTED_SPLIT = /("[^"]*"|“[^”]*”|'[^']*'|‘[^’]*’)/;
+
+/** 이 조각이 대사인가 — 큰따옴표는 늘, 작은따옴표는 문장으로 끝날 때만. */
+export function isQuotedLine(s: string): boolean {
+  if (/^["“]/.test(s)) return true;
+  if (!/^['‘]/.test(s)) return false;
+  const inner = s.slice(1, -1).trim();
+  return /[.!?…]$/.test(inner);
+}
+
 export function splitDialogue(text: string): { text: string; dialogue: boolean }[] {
-  const parts = text.split(/("[^"]*"|“[^”]*”)/).filter((s) => s.length > 0);
-  const segs = parts.map((s) => ({ text: s, dialogue: /^["“]/.test(s) }));
+  const parts = text.split(QUOTED_SPLIT).filter((s) => s.length > 0);
+  const segs = parts.map((s) => ({ text: s, dialogue: isQuotedLine(s) }));
 
   // 짧은 조각은 앞 조각에 붙인다. 맨 앞이 짧으면 뒤 조각에 붙인다.
   const merged: { text: string; dialogue: boolean }[] = [];

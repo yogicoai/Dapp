@@ -36,10 +36,10 @@
     "text": "그래도 흥부네 집에는 웃음이 끊이지 않았어요."
   },
   "seg-cast-p4-1.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"토끼야, 그럼 나랑 달리기 시합을 해 볼래?\n저기 언덕 꼭대기의 큰 소나무까지 말이야.\""
+    "text": "\"아버지, 오늘은 무슨 이야기 들려주실 거예요?\""
   },
   "seg-tc-kwonil-p4-2.mp3": {
     "voice": "tc-kwonil",
@@ -48,10 +48,10 @@
     "text": "아이들이 조르면, 흥부는 허허 웃으며 재미난 이야기를 들려주었답니다."
   },
   "seg-cast-p5-0.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-najin",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"뭐라고? 네가 나랑 시합을?\""
+    "text": "\"여보, 쌀독이 비었어요. 아이들이 사흘째 굶었는데…\""
   },
   "seg-tc-kwonil-p5-1.mp3": {
     "voice": "tc-kwonil",
@@ -78,10 +78,10 @@
     "text": "\"형수님, 밥 한 술만 주세요. 아이들이 사흘을 굶었어요.\""
   },
   "seg-cast-p6-1.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-sookhee",
     "emotion": "normal",
     "intensity": null,
-    "text": "자아, 준비이… 시자악!"
+    "text": "\"흥, 밥 한 술도 아까워! 썩 물러가라!\""
   },
   "seg-tc-kwonil-p6-2.mp3": {
     "voice": "tc-kwonil",
@@ -96,10 +96,10 @@
     "text": "흥부는 뺨이 얼얼했지만, 거기 붙은 밥알을 보고 눈이 번쩍 뜨였어요."
   },
   "seg-cast-p7-1.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"괜찮아. 나는 나의 걸음으로 가면 돼.\""
+    "text": "\"형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.\""
   },
   "seg-cast-p7-2.mp3": {
     "voice": "tc-sookhee",
@@ -111,7 +111,7 @@
     "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
-    "text": "형수는 반대쪽 뺨도 철썩 때리고는 문을 쾅 닫아 버렸지요.\n'이만하면 우리 아이들 저녁은 먹이겠구나.'\n흥부는 밥알을 손에 꼭 쥐고 집으로 돌아갔어요."
+    "text": "형수는 반대쪽 뺨도 철썩 때리고는 문을 쾅 닫아 버렸지요."
   },
   "seg-tc-kwonil-p8-0.mp3": {
     "voice": "tc-kwonil",
@@ -120,10 +120,10 @@
     "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요."
   },
   "seg-cast-p8-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\""
+    "text": "\"어서 오렴, 제비들아. 우리 집이 좁아도 함께 지내자꾸나.\""
   },
   "seg-tc-kwonil-p8-2.mp3": {
     "voice": "tc-kwonil",
@@ -168,10 +168,10 @@
     "text": "소리를 듣고 흥부가 한달음에 달려 나왔지요."
   },
   "seg-cast-p12-0.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"드르렁… 푸우…\""
+    "text": "\"저런, 다리가 부러졌구나!\""
   },
   "seg-tc-kwonil-p12-1.mp3": {
     "voice": "tc-kwonil",
@@ -345,7 +345,7 @@
     "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
-    "text": "놀부와 놀부 부인은 신이 나서 커다란 박을 갈랐어요.\n'이제 금은보화가 쏟아지겠지!'\n그런데 박 속에서 나온 건 시커먼 도깨비들이었어요."
+    "text": "놀부와 놀부 부인은 신이 나서 커다란 박을 갈랐어요."
   },
   "seg-cast-p22-0.mp3": {
     "voice": "tc-hakchul",
@@ -694,5 +694,29 @@
     "emotion": "normal",
     "intensity": null,
     "text": "괜찮아! 우리 좋은 친구가 되자!"
+  },
+  "seg-cast-p7-4.mp3": {
+    "voice": "tc-gunseok",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'이만하면 우리 아이들 저녁은 먹이겠구나.'"
+  },
+  "seg-tc-kwonil-p7-5.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "흥부는 밥알을 손에 꼭 쥐고 집으로 돌아갔어요."
+  },
+  "seg-cast-p21-3.mp3": {
+    "voice": "tc-sullock",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'이제 금은보화가 쏟아지겠지!'"
+  },
+  "seg-tc-kwonil-p21-4.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그런데 박 속에서 나온 건 시커먼 도깨비들이었어요."
   }
 }
