@@ -135,7 +135,7 @@
     "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
-    "text": "알에서 깬 아기 제비들은 짹짹짹 노래하며 무럭무럭 자랐어요.\n아이들은 날마다 둥지를 올려다보며 인사했지요."
+    "text": "알에서 깬 아기 제비들은 노래하듯 지저귀며 무럭무럭 자랐어요.\n아이들은 날마다 둥지를 올려다보며 인사했지요."
   },
   "seg-cast-p9-1.mp3": {
     "voice": "tc-hamchu",
@@ -189,7 +189,7 @@
     "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
-    "text": "흥부네 아이들은 날마다 아기 제비에게 좁쌀을 물어다 주었어요.\n다리가 나은 제비는 마당을 한 바퀴, 두 바퀴 돌며 날갯짓을 익혔지요.\n가을바람이 불자 제비들은 먼 길을 떠날 채비를 했어요.\n\"짹짹! 짹짹!\""
+    "text": "흥부네 아이들은 날마다 아기 제비에게 좁쌀을 물어다 주었어요.\n다리가 나은 제비는 마당을 한 바퀴, 두 바퀴 돌며 날갯짓을 익혔지요.\n가을바람이 불자 제비들은 먼 길을 떠날 채비를 했어요."
   },
   "seg-tc-kwonil-p13-1.mp3": {
     "voice": "tc-kwonil",
@@ -201,7 +201,7 @@
     "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
-    "text": "이듬해 봄, 제비가 돌아왔어요!\n흥부네 처마 밑을 빙글빙글 돌더니 흥부 앞에 사뿐 내려앉았지요.\n입에는 조그만 박씨 하나가 물려 있었어요.\n\"짹짹!\""
+    "text": "이듬해 봄, 제비가 돌아왔어요!\n흥부네 처마 밑을 빙글빙글 돌더니 흥부 앞에 사뿐 내려앉았지요.\n입에는 조그만 박씨 하나가 물려 있었어요."
   },
   "seg-tc-kwonil-p14-1.mp3": {
     "voice": "tc-kwonil",
@@ -666,10 +666,10 @@
     "text": "숲속 친구들이 우레 같은 박수를 보냈어요."
   },
   "seg-cast-p14-1.mp3": {
-    "voice": "tc-hamchu",
-    "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"거북아, 잘난 척해서 미안해.\""
+    "voice": "tc-sua",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"짹짹!\""
   },
   "seg-cast-p14-2.mp3": {
     "voice": "tc-taeji",
@@ -718,5 +718,23 @@
     "emotion": "normal",
     "intensity": null,
     "text": "그런데 박 속에서 나온 건 시커먼 도깨비들이었어요."
+  },
+  "seg-cast-p13-1.mp3": {
+    "voice": "tc-sua",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"짹짹! 짹짹!\""
+  },
+  "seg-tc-kwonil-p13-2.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아기 제비는 흥부네 지붕 위를 몇 번이고 맴돌다 날아갔답니다."
+  },
+  "seg-tc-kwonil-p14-2.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "제비는 박씨를 흥부 손바닥에 톡 떨어뜨렸답니다."
   }
 }

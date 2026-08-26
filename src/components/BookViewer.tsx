@@ -79,6 +79,7 @@ const FALLBACK_CHARS_PER_SEC = 5.5;
  */
 function AutoFitStoryText({
   children,
+  fitKey,
   baseSize,
   textScale,
   fontScale,
@@ -86,6 +87,13 @@ function AutoFitStoryText({
   className,
 }: {
   children: React.ReactNode;
+  /**
+   * 이 글이 바뀌면 다시 재라는 표시 — 보통 그 쪽 본문.
+   *
+   * 없으면 쪽을 넘겨도 다시 재지 않는다. 글꼴·글자 크기가 그대로면 효과가 다시 돌지
+   * 않아서, 짧은 쪽에서 정한 배율(1)이 긴 쪽에 그대로 남아 글이 잘렸다.
+   */
+  fitKey: string;
   baseSize: string;
   textScale: number;
   fontScale: number;
@@ -101,10 +109,21 @@ function AutoFitStoryText({
 
     const fit = () => {
       text.style.setProperty("--story-fit", "1");
+      /*
+       * 두 가지를 함께 본다.
+       *
+       * ① 부모 칸을 넘는가 — 펼침면 종이처럼 높이가 정해진 칸에서 쓴다.
+       * ② 스스로 잘리는가(scrollHeight > clientHeight) — 그림 위 자막처럼 부모가
+       *    글에 맞춰 늘어나는 칸에서는 ①이 늘 통과해 버린다. 그 칸은 부모가 아니라
+       *    본문에 걸린 max-h 가 자르므로, 잘리는지는 글 자신에게 물어야 한다.
+       *    이걸 빠뜨려서 긴 쪽 마지막 줄이 뭉텅 잘려 나갔다.
+       */
       const availableHeight = Math.min(box.clientHeight, window.innerHeight * 0.76);
       const availableWidth = box.clientWidth;
+      const clipped = () =>
+        text.scrollHeight > text.clientHeight + 1 || text.scrollWidth > text.clientWidth + 1;
       const fits = () =>
-        text.scrollHeight <= availableHeight + 1 && text.scrollWidth <= availableWidth + 1;
+        !clipped() && text.scrollHeight <= availableHeight + 1 && text.scrollWidth <= availableWidth + 1;
       if (fits()) return;
 
       // 42%까지 이분 탐색한다. 일반적인 150~300자 본문은 대개 65~90%에서 들어온다.
@@ -124,7 +143,7 @@ function AutoFitStoryText({
     observer.observe(box);
     void document.fonts?.ready.then(fit);
     return () => observer.disconnect();
-  }, [baseSize, fontScale, fontWeight, textScale]);
+  }, [baseSize, fitKey, fontScale, fontWeight, textScale]);
 
   return (
     <p
@@ -1477,6 +1496,7 @@ export function BookViewer({ book }: { book: Book }) {
               } ${display}`}
             >
               <AutoFitStoryText
+                fitKey={page.text}
                 baseSize={size}
                 textScale={textScale}
                 fontScale={font.scale}
@@ -1646,6 +1666,7 @@ export function BookViewer({ book }: { book: Book }) {
                       // 넘쳐 스크롤바가 생긴다 — 그림책에 스크롤바가 보이면 책이 아니게 된다.
                       // 길면 AutoFitStoryText가 실제 칸을 재서 스크롤 없이 자동 축소한다.
                       <AutoFitStoryText
+                        fitKey={page.text}
                         baseSize="clamp(0.95rem,1.85vw,1.45rem)"
                         textScale={textScale}
                         fontScale={font.scale}
