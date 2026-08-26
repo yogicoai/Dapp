@@ -74,8 +74,9 @@ type BookSpec = {
 const BOOKS: Record<string, BookSpec> = {
   "토끼와 거북이": {
     dir: "tortoise",
-    // 다빈은 이미 구워 뒀다 — 아린이를 더해 둘 중에 고르게 한다.
-    narrators: ["tc-dabin", "tc-arin"],
+    // 순서가 곧 화면에 뜨는 순서다 — 대표(아린이)를 맨 위에.
+    // 다빈은 이미 구워 뒀으니 남겨서 둘 중에 고르게 한다(전환은 파일 재생이라 무료).
+    narrators: ["tc-arin", "tc-dabin"],
     defaultNarrator: "tc-arin",
     cast: [{ name: "토끼" }, { name: "거북이" }, { name: "부엉이" }],
   },
