@@ -12,10 +12,10 @@
     "text": "어느 날 놀부는 흥부네 식구를 마당으로 불러냈어요."
   },
   "seg-cast-p2-1.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이 집도 논밭도 다 내 거야. 당장 나가!\""
+    "text": "\"오늘 밤은 여기서 자야겠구나.\""
   },
   "seg-tc-kwonil-p2-2.mp3": {
     "voice": "tc-kwonil",
@@ -36,10 +36,10 @@
     "text": "그래도 흥부네 집에는 웃음이 끊이지 않았어요."
   },
   "seg-cast-p4-1.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"토끼야, 그럼 나랑 달리기 시합을 해 볼래?\n저기 언덕 꼭대기의 큰 소나무까지 말이야.\""
+    "text": "\"영감! 그 고운 노래는 어디서 나오는 거냐?\""
   },
   "seg-tc-kwonil-p4-2.mp3": {
     "voice": "tc-kwonil",
@@ -60,10 +60,10 @@
     "text": "흥부는 한참을 말없이 앉아 있었어요."
   },
   "seg-cast-p5-2.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"내가 형님한테 한번 가 보겠구려.\""
+    "text": "\"오오! 그 노래 주머니를 나에게 팔아라!\""
   },
   "seg-tc-kwonil-p5-3.mp3": {
     "voice": "tc-kwonil",
@@ -102,10 +102,10 @@
     "text": "\"괜찮아. 나는 나의 걸음으로 가면 돼.\""
   },
   "seg-cast-p7-2.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-sullock",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"별 미친 사람 다 보겠네!\""
+    "text": "\"애앰~ 애앰~ 노래야 나와라~\""
   },
   "seg-tc-kwonil-p7-3.mp3": {
     "voice": "tc-kwonil",
@@ -120,10 +120,10 @@
     "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요."
   },
   "seg-cast-p8-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-sullock",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\""
+    "text": "\"이 혹에서 고운 노래가 나온다오! 어서 보물을 주고 사 가시오!\""
   },
   "seg-tc-kwonil-p8-2.mp3": {
     "voice": "tc-kwonil",
@@ -456,10 +456,10 @@
     "text": "어느 날, 토끼가 거북이를 보고 깔깔 웃었어요."
   },
   "seg-cast-p3-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"거북아, 너는 세상에서 제일가는 느림보야!\n그 걸음으로 어디를 간다는 거니?\""
+    "text": "\"얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\""
   },
   "say-p3-rabbit.mp3": {
     "voice": "tc-hamchu",
@@ -850,5 +850,215 @@
     "emotion": "normal",
     "intensity": null,
     "text": "느려도 포기하지 않는 마음이 결국 해낸답니다."
+  },
+  "seg-tc-jiyoon-p1-0.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 옛날 어느 산골 마을에, 볼에 커다란 혹이 달린 할아버지가 살았어요.\n사람들은"
+  },
+  "seg-tc-jiyoon-p1-1.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'혹부리 영감'"
+  },
+  "seg-tc-jiyoon-p1-2.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이라고 불렀어요.\n할아버지는 놀림을 받아도 씩 웃으며 노래를 불렀지요."
+  },
+  "seg-tc-jiyoon-p2-0.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 날 할아버지는 산에 나무를 하러 갔다가 그만 날이 저물고 말았어요.\n깜깜한 밤, 바람은 쌩쌩!\n할아버지는 낡은 빈 오두막을 찾아 들어갔지요."
+  },
+  "say-p2-oldman.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오늘 밤은 여기서 자야겠구나."
+  },
+  "seg-tc-jiyoon-p3-0.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "캄캄한 오두막은 조금 무서웠어요. 가슴이 콩닥콩닥.\n그럴 때마다 할아버지는 노래를 불렀어요."
+  },
+  "seg-tc-jiyoon-p3-2.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "고운 노랫소리가 밤하늘에 울려 퍼졌지요."
+  },
+  "say-p3-oldman.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "얼씨구나 좋구나~ 달님도 별님도 내 친구라네!"
+  },
+  "seg-tc-jiyoon-p4-0.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때였어요! 쿵! 쿵! 쿵!\n문이 벌컥 열리더니 도깨비들이 우르르 몰려왔어요.\n할아버지는 깜짝 놀랐지만, 용기를 내어 노래를 멈추지 않았어요.\n도깨비 대장이 눈을 반짝이며 물었지요."
+  },
+  "say-p4-dokkaebi.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "영감! 그 고운 노래는 어디서 나오는 거냐?"
+  },
+  "seg-tc-jiyoon-p5-0.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "할아버지는 얼떨결에 볼에 달린 혹을 가리켰어요."
+  },
+  "seg-cast-p5-1.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"이... 이 혹에서 노래가 술술 나온다오.\""
+  },
+  "seg-tc-jiyoon-p5-3.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "도깨비들은 혹을 쏙 떼어 가고, 반짝반짝 금은보화를 잔뜩 안겨 주었어요."
+  },
+  "say-p5-oldman.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이… 이 혹에서 노래가 술술 나온다오."
+  },
+  "say-p5-dokkaebi.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오오! 그 노래 주머니를 나에게 팔아라!"
+  },
+  "seg-tc-jiyoon-p6-0.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "혹도 떼고 보물도 얻은 할아버지!\n덩실덩실 춤을 추며 집으로 돌아왔어요.\n이 소문은 바람처럼 온 마을에 쫙 퍼졌답니다.\n이웃 마을의 욕심쟁이 영감도 소문을 들었지요.\n욕심쟁이 영감의 볼에도 큰 혹이 달려 있었거든요."
+  },
+  "say-p6-oldman.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "혹도 떼고 보물도 얻었구나!"
+  },
+  "seg-cast-p7-0.mp3": {
+    "voice": "tc-sullock",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야지!\""
+  },
+  "seg-tc-jiyoon-p7-1.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자 억지로 목청을 높였지요."
+  },
+  "seg-tc-jiyoon-p7-3.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "듣기 싫은 노랫소리가 삐걱삐걱 울렸어요."
+  },
+  "say-p7-greedy.mp3": {
+    "voice": "tc-sullock",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "애앰~ 애앰~ 노래야 나와라~"
+  },
+  "seg-tc-jiyoon-p8-0.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요."
+  },
+  "seg-tc-jiyoon-p8-2.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "욕심쟁이 영감이 냉큼 소리쳤지요.\n그러자 도깨비 대장이 버럭 화를 냈어요."
+  },
+  "seg-cast-p8-3.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"거짓말! 지난번 혹에서도 노래는 나오지 않았다!\""
+  },
+  "say-p8-greedy.mp3": {
+    "voice": "tc-sullock",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이 혹에서 고운 노래가 나온다오! 어서 보물을 주고 사 가시오!"
+  },
+  "say-p8-dokkaebi.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거짓말! 지난번 혹에서도 노래는 나오지 않았다!"
+  },
+  "seg-cast-p9-0.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"너도 거짓말쟁이구나! 이 혹, 도로 가져가라!\""
+  },
+  "seg-tc-jiyoon-p9-1.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은 엉엉 울며 집으로 돌아갔지요."
+  },
+  "seg-cast-p9-2.mp3": {
+    "voice": "tc-sullock",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"아이고, 욕심을 부리다가 혹만 하나 더 붙였구나...\""
+  },
+  "say-p9-dokkaebi.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "너도 거짓말쟁이구나! 이 혹, 도로 가져가라!"
+  },
+  "say-p9-greedy.mp3": {
+    "voice": "tc-sullock",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…"
+  },
+  "seg-tc-jiyoon-p10-0.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "착한 할아버지는 보물을 혼자 갖지 않고 이웃들과 사이좋게 나누었어요."
+  },
+  "seg-cast-p10-1.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"같이 나누면 기쁨이 두 배가 된다오.\""
+  },
+  "seg-tc-jiyoon-p10-2.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그날부터 마을엔 할아버지의 웃음소리가 가득했답니다.\n정직한 마음과 나누는 마음이 가장 큰 보물이에요."
+  },
+  "say-p10-oldman.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "같이 나누면 기쁨이 두 배가 된다오."
   }
 }

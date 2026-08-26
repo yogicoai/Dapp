@@ -80,6 +80,13 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-arin",
     cast: [{ name: "토끼" }, { name: "거북이" }, { name: "부엉이" }],
   },
+  "혹부리 영감": {
+    dir: "hokburi",
+    // 나레이션은 지윤 — 이야기 할아버지를 쓰면 나레이션과 주인공이 같은 목소리가 된다.
+    narrators: ["tc-jiyoon"],
+    defaultNarrator: "tc-jiyoon",
+    cast: [{ name: "할아버지" }, { name: "욕심쟁이" }, { name: "도깨비" }],
+  },
   "흥부와 놀부": {
     dir: "heungbu",
     narrators: ["tc-kwonil"],
