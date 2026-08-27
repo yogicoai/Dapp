@@ -3660,5 +3660,143 @@
     "emotion": "normal",
     "intensity": null,
     "text": "엄마는 셋을 폭 안아 주었답니다."
+  },
+  "classic/threepigs/say-p1-mompig.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이제 너희도 다 컸구나. 각자 집을 지어 보렴."
+  },
+  "classic/threepigs/say-p2-pig1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "집은 후딱 짓고 놀아야지!"
+  },
+  "classic/threepigs/say-p3-pig2.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이 정도면 됐지 뭐. 형아, 나도 다 했어!"
+  },
+  "classic/threepigs/say-p4-pig3.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "난 튼튼한 집을 짓고 싶어."
+  },
+  "classic/threepigs/say-p5-pig1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "야, 뭐하러 그렇게 힘들게 짓냐?"
+  },
+  "classic/threepigs/say-p5-pig2.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "우리처럼 뚝딱 짓고 놀자! 히히."
+  },
+  "classic/threepigs/say-p6-pig3.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그래도 난, 튼튼한 집을 짓고 싶어."
+  },
+  "classic/threepigs/say-p7-pig3.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "…다 지었다."
+  },
+  "classic/threepigs/say-p8-wolf.mp3": {
+    "voice": "tc-shotgun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오늘은 운이 좋은걸.",
+    "tempo": 1.15
+  },
+  "classic/threepigs/say-p9-wolf.mp3": {
+    "voice": "tc-shotgun",
+    "emotion": "whisper",
+    "intensity": 0.4,
+    "text": "…엄마야.",
+    "tempo": 1.15
+  },
+  "classic/threepigs/say-p9-pig1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어? 우리 엄마 아닌데?"
+  },
+  "classic/threepigs/say-p10-pig1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "둘째야! 문 열어 줘, 늑대가 나타났어!"
+  },
+  "classic/threepigs/say-p11-wolf.mp3": {
+    "voice": "tc-shotgun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거기 있는 거 다 안다!",
+    "tempo": 1.15
+  },
+  "classic/threepigs/say-p12-pig1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "막내야! 늑대가 나타났어, 문 열어 줘!"
+  },
+  "classic/threepigs/say-p12-pig3.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "빨리 들어와!"
+  },
+  "classic/threepigs/say-p13-wolf.mp3": {
+    "voice": "tc-shotgun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어? 왜 안 넘어가는 거지?",
+    "tempo": 1.15
+  },
+  "classic/threepigs/say-p14-wolf.mp3": {
+    "voice": "tc-shotgun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "굴뚝으로 들어가면 되겠다!",
+    "tempo": 1.15
+  },
+  "classic/threepigs/say-p15-wolf.mp3": {
+    "voice": "tc-shotgun",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "으악! 뜨거워!",
+    "tempo": 1.15
+  },
+  "classic/threepigs/say-p17-pig1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "막내야… 아까 놀려서 미안해."
+  },
+  "classic/threepigs/say-p17-pig2.mp3": {
+    "voice": "tc-arin",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "우리가 게을렀어. 정말 고마워."
+  },
+  "classic/threepigs/say-p18-mompig.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어머, 셋이 같이 지었구나?"
+  },
+  "classic/threepigs/say-p18-pig1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "응! 막내가 가르쳐 줬어."
   }
 }

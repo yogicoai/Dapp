@@ -420,7 +420,8 @@ for (const [i, page] of book.pages.entries()) {
     const line = String(h.line);
     // 말풍선도 읽기용 표기를 따로 줄 수 있다(말풍선 글은 h.line 그대로 보인다).
     const spoken = typeof h.say === "string" && h.say.trim() ? h.say.trim() : line;
-    await bake(file, spoken, voice, emotionOf(line), !ONLY_CHANGED, book.voiceTempo?.[h.label]);
+    // 말풍선도 대사집처럼 연기를 못 박을 수 있다(h.feel) — 자동 판정이 틀리는 줄용.
+    await bake(file, spoken, voice, h.feel ?? emotionOf(line), !ONLY_CHANGED, book.voiceTempo?.[h.label]);
   }
 }
 

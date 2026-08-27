@@ -115,6 +115,19 @@
             "src": "/classic/threepigs/seg-p1-2.mp3",
             "text": "\n셋은 신이 나서 언덕을 내려갔답니다."
           }
+        ],
+        "hotspots": [
+          {
+            "label": "mompig",
+            "line": "이제 너희도 다 컸구나. 각자 집을 지어 보렴.",
+            "box": [
+              61,
+              85,
+              824,
+              409
+            ],
+            "audio": "/classic/threepigs/say-p1-mompig.mp3"
+          }
         ]
       },
       {
@@ -142,6 +155,19 @@
             "who": "narration",
             "src": "/classic/threepigs/seg-p2-2.mp3",
             "text": "\n지푸라기를 슥슥 모아 쌓으니 금세 집 한 채가 되었어요.\n바람이 불자 벽이 살랑 흔들렸지만\n첫째는 벌써 뛰어나가 버렸답니다."
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "pig1",
+            "line": "집은 후딱 짓고 놀아야지!",
+            "box": [
+              318,
+              97,
+              769,
+              398
+            ],
+            "audio": "/classic/threepigs/say-p2-pig1.mp3"
           }
         ]
       },
@@ -171,6 +197,19 @@
             "src": "/classic/threepigs/seg-p3-2.mp3",
             "text": "\n둘째도 곧장 놀러 나갔답니다."
           }
+        ],
+        "hotspots": [
+          {
+            "label": "pig2",
+            "line": "이 정도면 됐지 뭐. 형아, 나도 다 했어!",
+            "box": [
+              256,
+              500,
+              684,
+              733
+            ],
+            "audio": "/classic/threepigs/say-p3-pig2.mp3"
+          }
         ]
       },
       {
@@ -198,6 +237,19 @@
             "who": "narration",
             "src": "/classic/threepigs/seg-p4-2.mp3",
             "text": "\n형들은 벌써 놀러 갔지만\n막내는 해가 기울도록 벽돌을 날랐답니다."
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "pig3",
+            "line": "난 튼튼한 집을 짓고 싶어.",
+            "box": [
+              217,
+              341,
+              785,
+              625
+            ],
+            "audio": "/classic/threepigs/say-p4-pig3.mp3"
           }
         ]
       },
@@ -236,6 +288,30 @@
             "src": "/classic/threepigs/seg-p5-3.mp3",
             "text": "\n막내는 들고 있던 벽돌을 슬며시 내려놓았어요.\n손바닥이 벌겋게 부어 있었지요."
           }
+        ],
+        "hotspots": [
+          {
+            "label": "pig1",
+            "line": "야, 뭐하러 그렇게 힘들게 짓냐?",
+            "box": [
+              53,
+              34,
+              878,
+              341
+            ],
+            "audio": "/classic/threepigs/say-p5-pig1.mp3"
+          },
+          {
+            "label": "pig2",
+            "line": "우리처럼 뚝딱 짓고 놀자! 히히.",
+            "box": [
+              201,
+              352,
+              762,
+              568
+            ],
+            "audio": "/classic/threepigs/say-p5-pig2.mp3"
+          }
         ]
       },
       {
@@ -263,6 +339,19 @@
             "who": "pig3",
             "src": "/classic/threepigs/seg-cast-p6-2.mp3",
             "text": "\"그래도 난, 튼튼한 집을 짓고 싶어.\""
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "pig3",
+            "line": "그래도 난, 튼튼한 집을 짓고 싶어.",
+            "box": [
+              217,
+              472,
+              730,
+              733
+            ],
+            "audio": "/classic/threepigs/say-p6-pig3.mp3"
           }
         ]
       },
@@ -292,6 +381,19 @@
             "src": "/classic/threepigs/seg-p7-2.mp3",
             "text": "\n막내는 제 집을 올려다보며 뿌듯하게 웃었답니다."
           }
+        ],
+        "hotspots": [
+          {
+            "label": "pig3",
+            "line": "…다 지었다.",
+            "box": [
+              450,
+              80,
+              956,
+              307
+            ],
+            "audio": "/classic/threepigs/say-p7-pig3.mp3"
+          }
         ]
       },
       {
@@ -319,6 +421,19 @@
             "who": "narration",
             "src": "/classic/threepigs/seg-p8-2.mp3",
             "text": "\n늑대는 침을 꿀꺽 삼켰답니다."
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "wolf",
+            "line": "오늘은 운이 좋은걸.",
+            "box": [
+              201,
+              85,
+              769,
+              409
+            ],
+            "audio": "/classic/threepigs/say-p8-wolf.mp3"
           }
         ]
       },
@@ -380,6 +495,31 @@
             "src": "/classic/threepigs/seg-cast-p9-7.mp3",
             "text": "\"들켰구나.\""
           }
+        ],
+        "hotspots": [
+          {
+            "label": "wolf",
+            "line": "…엄마야.",
+            "box": [
+              40,
+              59,
+              937,
+              527
+            ],
+            "audio": "/classic/threepigs/say-p9-wolf.mp3",
+            "feel": "whisper"
+          },
+          {
+            "label": "pig1",
+            "line": "어? 우리 엄마 아닌데?",
+            "box": [
+              121,
+              625,
+              830,
+              977
+            ],
+            "audio": "/classic/threepigs/say-p9-pig1.mp3"
+          }
         ]
       },
       {
@@ -408,6 +548,19 @@
             "src": "/classic/threepigs/seg-p10-2.mp3",
             "text": "\n첫째가 뛰어들자 나무 집 문이 쾅 닫혔답니다."
           }
+        ],
+        "hotspots": [
+          {
+            "label": "pig1",
+            "line": "둘째야! 문 열어 줘, 늑대가 나타났어!",
+            "box": [
+              403,
+              540,
+              910,
+              812
+            ],
+            "audio": "/classic/threepigs/say-p10-pig1.mp3"
+          }
         ]
       },
       {
@@ -435,6 +588,19 @@
             "who": "narration",
             "src": "/classic/threepigs/seg-p11-2.mp3",
             "text": "\n후욱! 후우욱! 우지끈 와르르!\n나뭇가지가 사방으로 튀고 집이 폭삭 무너졌지요.\n형제는 서로 손을 잡고 달렸답니다."
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "wolf",
+            "line": "거기 있는 거 다 안다!",
+            "box": [
+              121,
+              107,
+              910,
+              352
+            ],
+            "audio": "/classic/threepigs/say-p11-wolf.mp3"
           }
         ]
       },
@@ -473,6 +639,30 @@
             "src": "/classic/threepigs/seg-p12-3.mp3",
             "text": "\n형들이 뛰어 들어오자 문이 쿵 닫혔답니다."
           }
+        ],
+        "hotspots": [
+          {
+            "label": "pig1",
+            "line": "막내야! 늑대가 나타났어, 문 열어 줘!",
+            "box": [
+              310,
+              170,
+              878,
+              432
+            ],
+            "audio": "/classic/threepigs/say-p12-pig1.mp3"
+          },
+          {
+            "label": "pig3",
+            "line": "빨리 들어와!",
+            "box": [
+              349,
+              636,
+              824,
+              886
+            ],
+            "audio": "/classic/threepigs/say-p12-pig3.mp3"
+          }
         ]
       },
       {
@@ -495,6 +685,19 @@
             "who": "wolf",
             "src": "/classic/threepigs/seg-cast-p13-1.mp3",
             "text": "\"어? 왜 안 넘어가는 거지?\""
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "wolf",
+            "line": "어? 왜 안 넘어가는 거지?",
+            "box": [
+              170,
+              80,
+              878,
+              432
+            ],
+            "audio": "/classic/threepigs/say-p13-wolf.mp3"
           }
         ]
       },
@@ -524,6 +727,19 @@
             "src": "/classic/threepigs/seg-p14-2.mp3",
             "text": "\n늑대가 지붕으로 기어오르는 소리를 듣고\n막내는 벽난로에 장작을 한 아름 넣었지요.\n불꽃이 활활 타올랐답니다."
           }
+        ],
+        "hotspots": [
+          {
+            "label": "wolf",
+            "line": "굴뚝으로 들어가면 되겠다!",
+            "box": [
+              23,
+              275,
+              342,
+              650
+            ],
+            "audio": "/classic/threepigs/say-p14-wolf.mp3"
+          }
         ]
       },
       {
@@ -552,6 +768,20 @@
             "who": "narration",
             "src": "/classic/threepigs/seg-p15-2.mp3",
             "text": "\n늑대는 화들짝 놀라 발을 뺐어요.\n그 바람에 지붕에서 주르륵 미끄러졌지요."
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "wolf",
+            "line": "으악! 뜨거워!",
+            "box": [
+              53,
+              148,
+              544,
+              625
+            ],
+            "audio": "/classic/threepigs/say-p15-wolf.mp3",
+            "feel": "toneup"
           }
         ]
       },
@@ -602,6 +832,30 @@
             "src": "/classic/threepigs/seg-p17-3.mp3",
             "text": "\n막내는 대답 대신 형들을 벽난로 앞에 앉혔어요."
           }
+        ],
+        "hotspots": [
+          {
+            "label": "pig1",
+            "line": "막내야… 아까 놀려서 미안해.",
+            "box": [
+              240,
+              159,
+              878,
+              398
+            ],
+            "audio": "/classic/threepigs/say-p17-pig1.mp3"
+          },
+          {
+            "label": "pig2",
+            "line": "우리가 게을렀어. 정말 고마워.",
+            "box": [
+              279,
+              403,
+              839,
+              585
+            ],
+            "audio": "/classic/threepigs/say-p17-pig2.mp3"
+          }
         ]
       },
       {
@@ -638,6 +892,30 @@
             "who": "narration",
             "src": "/classic/threepigs/seg-p18-3.mp3",
             "text": "\n엄마는 셋을 폭 안아 주었답니다."
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "mompig",
+            "line": "어머, 셋이 같이 지었구나?",
+            "box": [
+              139,
+              398,
+              466,
+              670
+            ],
+            "audio": "/classic/threepigs/say-p18-mompig.mp3"
+          },
+          {
+            "label": "pig1",
+            "line": "응! 막내가 가르쳐 줬어.",
+            "box": [
+              474,
+              205,
+              808,
+              386
+            ],
+            "audio": "/classic/threepigs/say-p18-pig1.mp3"
           }
         ]
       }
