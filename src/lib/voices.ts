@@ -95,6 +95,9 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-hamchu", label: "햄쭈", emoji: "🐹", voiceId: "tc_632293ed2f894f2211e8c597", model: "ssfm-v30", desc: "여자 · 톡톡 튀는 귀여운 목소리", sample: "햄쭈랑 신나는 동화 여행 가자!" },
   { kind: "tc", id: "tc-arin", label: "아린이", emoji: "🧸", voiceId: "tc_67513c3cf30802da48949a14", model: "ssfm-v30", desc: "여자 · 밝고 사랑스러운 목소리", sample: "아린이가 재미있게 읽어줄게!" },
   { kind: "tc", id: "tc-gaeul", label: "가을", emoji: "🍂", voiceId: "tc_60f7a217279ffba711ce2958", model: "ssfm-v30", desc: "여자 · 차분하고 포근한 목소리", sample: "가을처럼 포근하게 들려줄게요." },
+  // 사장님 지정(2026-08-27) — 타입캐스트에 용도가 "Audiobook/Storytelling"으로
+  // 등록된 목소리다. 지문 읽기 전용으로 데려왔다.
+  { kind: "tc", id: "tc-minjung", label: "민정", emoji: "📚", voiceId: "tc_6699eb0f10b8e361d6a9aba1", model: "ssfm-v30", desc: "여자 · 책 읽어 주는 목소리", sample: "옛날 옛적, 어느 마을에 살았답니다." },
   { kind: "tc", id: "tc-gunseok", label: "건석", emoji: "🧔", voiceId: "tc_6731b2e0855f351b98d30c48", model: "ssfm-v30", desc: "남자 · 듬직한 아빠", sample: "아빠가 재미있게 읽어줄게." },
   { kind: "tc", id: "tc-changsu", label: "창수", emoji: "⚡", voiceId: "tc_6059dad0b83880769a50502f", model: "ssfm-v30", desc: "남자 · 활기찬 형아", sample: "형아랑 신나는 이야기 가자!" },
   { kind: "tc", id: "tc-siwoo", label: "시우", emoji: "🧒", voiceId: "tc_6699eb3849dfac016c29444c", model: "ssfm-v30", desc: "남자 어린이 · 씩씩한 친구", sample: "나랑 같이 모험 떠나자!" },
