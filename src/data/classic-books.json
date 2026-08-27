@@ -946,212 +946,553 @@
   {
     "id": "classic-uglyduckling",
     "narrators": [
-      "tc-sua",
-      "tc-jungsoon",
-      "tc-gunseok",
-      "tc-miso"
+      "tc-minjung"
     ],
     "lang": "ko",
     "title": "미운오리새끼",
-    "summary": "남들과 다르다고 놀림받던 아기 오리가 아름다운 백조로 자라나는 이야기",
-    "narrator": "tc-sua",
+    "summary": "혼자 지켜낸 물구멍 위에서 — 잿빛 아기 오리가 제 자리를 찾습니다.",
+    "narrator": "tc-minjung",
     "pages": [
       {
-        "text": "따뜻한 봄날, 연못가 둥지에서\n엄마 오리가 알을 품고 있었어요.\n그중에 유난히 크고 회색빛인 알이 하나 있었지요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p1.webp",
-        "audio": "/classic/uglyduckling/narr-p1.mp3"
-      },
-      {
-        "text": "톡, 토독! 알들이 하나씩 깨어났어요.\n노랗고 보송보송한 아기 오리들 사이에서\n마지막 큰 알에서는 잿빛 아기가 나왔답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p2.webp",
-        "audio": "/classic/uglyduckling/narr-p2.mp3",
+        "n": 1,
+        "text": "따뜻한 봄날, 연못가 둥지에서\n엄마 오리가 알을 품고 있었어요.\n\"어서 나오렴, 우리 아가들.\"\n그중에 유난히 크고 회색빛인 알이 하나 있었지요.\n엄마는 그 알도 똑같이 품어 주었답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p1.webp?v=2",
+        "lines": [
+          {
+            "text": "어서 나오렴, 우리 아가들.",
+            "who": "duckmom"
+          }
+        ],
         "hotspots": [
           {
             "label": "duckmom",
+            "line": "어서 나오렴, 우리 아가들.",
             "box": [
-              150,
-              300,
-              650,
-              700
+              431,
+              124,
+              970,
+              732
             ],
-            "audio": "/classic/uglyduckling/say-p2-duckmom.wav",
-            "line": "어서 오렴, 우리 아가들!"
+            "audio": "/classic/uglyduckling/say-p1-duckmom.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p1-0.mp3",
+            "text": "따뜻한 봄날, 연못가 둥지에서\n엄마 오리가 알을 품고 있었어요.\n"
+          },
+          {
+            "who": "duckmom",
+            "src": "/classic/uglyduckling/seg-cast-p1-1.mp3",
+            "text": "\"어서 나오렴, 우리 아가들.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p1-2.mp3",
+            "text": "\n그중에 유난히 크고 회색빛인 알이 하나 있었지요.\n엄마는 그 알도 똑같이 품어 주었답니다."
           }
         ]
       },
       {
-        "text": "\"쟤는 왜 우리랑 다르게 생겼지?\"\n\"회색이잖아. 미운 오리 새끼야!\"\n형제들은 잿빛 아기 오리를 자꾸만 놀렸어요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p3.webp",
-        "audio": "/classic/uglyduckling/narr-p3.mp3",
+        "n": 2,
+        "text": "톡, 토독! 알들이 하나씩 깨어났어요.\n노랗고 보송보송한 아기 오리들 사이에서\n마지막 큰 알에서는 잿빛 아기가 나왔지요.\n\"안녕! 나도 나왔어요!\"\n엄마 오리는 그 아이도 꼭 안아 주었답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p2.webp?v=2",
+        "lines": [
+          {
+            "text": "안녕! 나도 나왔어요!",
+            "who": "duckling"
+          }
+        ],
         "hotspots": [
           {
             "label": "duckling",
+            "line": "안녕! 나도 나왔어요!",
             "box": [
-              300,
-              350,
-              800,
-              650
+              478,
+              297,
+              838,
+              532
             ],
-            "audio": "/classic/uglyduckling/say-p3-duckling.wav",
-            "line": "왜 다들 나를 미워할까…"
+            "audio": "/classic/uglyduckling/say-p2-duckling.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p2-0.mp3",
+            "text": "톡, 토독! 알들이 하나씩 깨어났어요.\n노랗고 보송보송한 아기 오리들 사이에서\n마지막 큰 알에서는 잿빛 아기가 나왔지요.\n"
+          },
+          {
+            "who": "duckling",
+            "src": "/classic/uglyduckling/seg-cast-p2-1.mp3",
+            "text": "\"안녕! 나도 나왔어요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p2-2.mp3",
+            "text": "\n엄마 오리는 그 아이도 꼭 안아 주었답니다."
           }
         ]
       },
       {
-        "text": "연못의 다른 오리들도 수군수군,\n닭들도 꼬꼬댁 흉을 봤어요.\n아기 오리는 너무너무 슬펐지요.\n\"아무도 나를 좋아하지 않아…\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p4.webp",
-        "audio": "/classic/uglyduckling/narr-p4.mp3",
+        "n": 3,
+        "text": "\"쟤는 왜 우리랑 다르게 생겼지?\"\n\"회색이잖아. 미운 오리 새끼야!\"\n형제들은 잿빛 아기 오리를 자꾸만 놀렸어요.\n아기 오리는 고개를 푹 숙였어요.\n아무 말도 나오지 않았지요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p3.webp?v=2",
+        "lines": [
+          {
+            "text": "쟤는 왜 우리랑 다르게 생겼지?",
+            "who": "siblings"
+          },
+          {
+            "text": "회색이잖아. 미운 오리 새끼야!",
+            "who": "siblings"
+          }
+        ],
         "hotspots": [
           {
-            "label": "duckling",
+            "label": "siblings",
+            "line": "회색이잖아. 미운 오리 새끼야!",
             "box": [
-              400,
-              550,
-              850,
-              850
+              327,
+              41,
+              876,
+              428
             ],
-            "audio": "/classic/uglyduckling/say-p4-duckling.wav",
-            "line": "아무도 나를 좋아하지 않아…"
+            "audio": "/classic/uglyduckling/say-p3-siblings.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "siblings",
+            "src": "/classic/uglyduckling/seg-cast-p3-0.mp3",
+            "text": "\"쟤는 왜 우리랑 다르게 생겼지?\"\n"
+          },
+          {
+            "who": "siblings",
+            "src": "/classic/uglyduckling/seg-cast-p3-1.mp3",
+            "text": "\"회색이잖아. 미운 오리 새끼야!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p3-2.mp3",
+            "text": "\n형제들은 잿빛 아기 오리를 자꾸만 놀렸어요.\n아기 오리는 고개를 푹 숙였어요.\n아무 말도 나오지 않았지요."
           }
         ]
       },
       {
-        "text": "어느 날 밤, 아기 오리는 조용히 둥지를 떠났어요.\n\"내가 없어지면 다들 편해질 거야.\"\n달빛 아래 홀로 뒤뚱뒤뚱 걸어갔답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p5.webp",
-        "audio": "/classic/uglyduckling/narr-p5.mp3",
+        "n": 4,
+        "text": "연못의 다른 오리들도 수군수군,\n닭들도 꼬꼬댁 흉을 봤어요.\n\"우리 아가는 아무 데도 이상하지 않아.\"\n엄마 오리가 날개로 감싸 주었지만\n아기 오리 마음은 자꾸만 작아졌답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p4.webp?v=2",
+        "lines": [
+          {
+            "text": "우리 아가는 아무 데도 이상하지 않아.",
+            "who": "duckmom"
+          }
+        ],
         "hotspots": [
           {
-            "label": "duckling",
+            "label": "duckmom",
+            "line": "우리 아가는 아무 데도 이상하지 않아.",
             "box": [
-              300,
-              300,
-              800,
-              700
+              194,
+              483,
+              970,
+              967
             ],
-            "audio": "/classic/uglyduckling/say-p5-duckling.wav",
-            "line": "내가 없어지면 다들 편해질 거야…"
+            "audio": "/classic/uglyduckling/say-p4-duckmom.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p4-0.mp3",
+            "text": "연못의 다른 오리들도 수군수군,\n닭들도 꼬꼬댁 흉을 봤어요.\n"
+          },
+          {
+            "who": "duckmom",
+            "src": "/classic/uglyduckling/seg-cast-p4-1.mp3",
+            "text": "\"우리 아가는 아무 데도 이상하지 않아.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p4-2.mp3",
+            "text": "\n엄마 오리가 날개로 감싸 주었지만\n아기 오리 마음은 자꾸만 작아졌답니다."
           }
         ]
       },
       {
-        "text": "넓은 늪에 도착했지만\n그곳의 새들도 아기 오리를 반겨 주지 않았어요.\n\"넌 참 이상하게 생겼구나.\"\n아기 오리는 갈대숲에 혼자 숨어 지냈지요.",
+        "n": 5,
+        "text": "어느 날 밤, 아기 오리는 조용히 둥지를 떠났어요.\n'내가 없어지면 다들 편해질 거야.'\n달빛 아래 홀로 뒤뚱뒤뚱 걸어갔지요.\n뒤도 한 번 돌아보지 않았답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p5.webp?v=2",
+        "lines": [
+          {
+            "text": "'내가 없어지면 다들 편해질 거야.'",
+            "who": "duckling"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p5-0.mp3",
+            "text": "어느 날 밤, 아기 오리는 조용히 둥지를 떠났어요.\n"
+          },
+          {
+            "who": "duckling",
+            "src": "/classic/uglyduckling/seg-cast-p5-1.mp3",
+            "text": "'내가 없어지면 다들 편해질 거야.'"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p5-2.mp3",
+            "text": "\n달빛 아래 홀로 뒤뚱뒤뚱 걸어갔지요.\n뒤도 한 번 돌아보지 않았답니다."
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "text": "넓은 늪에 닿으니 해가 저물었어요.\n늙은 기러기가 아기 오리를 힐끗 보았지요.\n\"넌 참 이상하게 생겼구나. 어디서 왔니?\"\n대답하려는데 기러기는 벌써 고개를 돌렸어요.\n아기 오리는 갈대숲에 숨었답니다.",
         "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p6.webp?v=2",
-        "audio": "/classic/uglyduckling/narr-p6.mp3"
-      },
-      {
-        "text": "가을이 되던 어느 날, 하늘 위로\n눈처럼 하얗고 커다란 새들이 날아갔어요.\n\"우와… 정말 아름다운 새들이다.\"\n아기 오리는 한참 동안 하늘만 바라보았답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p7.webp",
-        "audio": "/classic/uglyduckling/narr-p7.mp3",
+        "lines": [
+          {
+            "text": "넌 참 이상하게 생겼구나. 어디서 왔니?",
+            "who": "goose"
+          }
+        ],
         "hotspots": [
           {
-            "label": "duckling",
+            "label": "goose",
+            "line": "넌 참 이상하게 생겼구나. 어디서 왔니?",
             "box": [
-              550,
-              300,
-              900,
-              700
+              100,
+              677,
+              876,
+              925
             ],
-            "audio": "/classic/uglyduckling/say-p7-duckling.wav",
-            "line": "우와… 정말 아름다운 새들이다."
+            "audio": "/classic/uglyduckling/say-p6-goose.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p6-0.mp3",
+            "text": "넓은 늪에 닿으니 해가 저물었어요.\n늙은 기러기가 아기 오리를 힐끗 보았지요.\n"
+          },
+          {
+            "who": "goose",
+            "src": "/classic/uglyduckling/seg-cast-p6-1.mp3",
+            "text": "\"넌 참 이상하게 생겼구나. 어디서 왔니?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p6-2.mp3",
+            "text": "\n대답하려는데 기러기는 벌써 고개를 돌렸어요.\n아기 오리는 갈대숲에 숨었답니다."
           }
         ]
       },
       {
-        "text": "곧 차가운 겨울이 왔어요.\n호수가 꽁꽁 얼고 눈보라가 몰아쳤지요.\n아기 오리는 갈대숲에서 몸을 웅크리고\n춥고 긴 겨울을 꿋꿋이 견뎠어요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p8.webp",
-        "audio": "/classic/uglyduckling/narr-p8.mp3",
+        "n": 7,
+        "text": "가을 어느 날, 하늘 위로\n눈처럼 하얗고 커다란 새들이 날아갔어요.\n\"우와… 정말 아름다운 새들이다.\"\n아기 오리는 한참 동안 하늘만 바라보았지요.\n저 새들은 어디로 가는 걸까요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p7.webp?v=2",
+        "lines": [
+          {
+            "text": "우와… 정말 아름다운 새들이다.",
+            "who": "duckling"
+          }
+        ],
         "hotspots": [
           {
             "label": "duckling",
+            "line": "우와… 정말 아름다운 새들이다.",
             "box": [
-              400,
-              300,
-              850,
-              700
+              554,
+              138,
+              970,
+              366
             ],
-            "audio": "/classic/uglyduckling/say-p8-duckling.wav",
-            "line": "춥지만 꾹 참을 수 있어!"
+            "audio": "/classic/uglyduckling/say-p7-duckling.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p7-0.mp3",
+            "text": "가을 어느 날, 하늘 위로\n눈처럼 하얗고 커다란 새들이 날아갔어요.\n"
+          },
+          {
+            "who": "duckling",
+            "src": "/classic/uglyduckling/seg-cast-p7-1.mp3",
+            "text": "\"우와… 정말 아름다운 새들이다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p7-2.mp3",
+            "text": "\n아기 오리는 한참 동안 하늘만 바라보았지요.\n저 새들은 어디로 가는 걸까요."
           }
         ]
       },
       {
-        "text": "드디어 얼음이 녹고 봄이 왔어요!\n따뜻한 햇살에 아기 오리는 기지개를 켰지요.\n날개를 펼치자 — 어라?\n몸이 가뿐하게 하늘로 떠올랐어요!",
-        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p9.webp",
-        "audio": "/classic/uglyduckling/narr-p9.mp3",
-        "hotspots": [
+        "n": 8,
+        "text": "곧 겨울이 왔어요. 호수가 하루하루 얼어붙었지요.\n갈대는 마르고 바람은 칼처럼 불었어요.\n아기 오리는 부리를 날개에 파묻었어요.\n'여기서 나는 어떻게 되는 걸까.'",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p8.webp?v=2",
+        "lines": [
           {
-            "label": "duckling",
-            "box": [
-              300,
-              300,
-              800,
-              700
-            ],
-            "audio": "/classic/uglyduckling/say-p9-duckling.wav",
-            "line": "어라? 몸이 두둥실 떠올라!"
+            "text": "'여기서 나는 어떻게 되는 걸까.'",
+            "who": "duckling"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p8-0.mp3",
+            "text": "곧 겨울이 왔어요. 호수가 하루하루 얼어붙었지요.\n갈대는 마르고 바람은 칼처럼 불었어요.\n아기 오리는 부리를 날개에 파묻었어요.\n"
+          },
+          {
+            "who": "duckling",
+            "src": "/classic/uglyduckling/seg-cast-p8-1.mp3",
+            "text": "'여기서 나는 어떻게 되는 걸까.'"
           }
         ]
       },
       {
-        "text": "호수에 내려앉으니, 저 멀리서\n그 아름다운 하얀 새들이 헤엄쳐 왔어요.\n\"나 같은 미운 오리를 쫓아내면 어떡하지…\"\n그래도 용기를 내어 천천히 다가갔지요.",
+        "n": 9,
+        "text": "아기 오리는 발을 멈추지 않았어요.\n얼음이 얼려 하면 그 자리를 빙빙 돌았지요.\n동그란 물구멍 하나가 밤새 얼지 않았어요.\n\"여기는… 내가 지킬 거야.\"\n그렇게 긴 겨울을 하루씩 건넜답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p9.webp?v=2",
+        "lines": [
+          {
+            "text": "여기는… 내가 지킬 거야.",
+            "who": "duckling"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "duckling",
+            "line": "여기는… 내가 지킬 거야.",
+            "box": [
+              355,
+              338,
+              677,
+              628
+            ],
+            "audio": "/classic/uglyduckling/say-p9-duckling.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p9-0.mp3",
+            "text": "아기 오리는 발을 멈추지 않았어요.\n얼음이 얼려 하면 그 자리를 빙빙 돌았지요.\n동그란 물구멍 하나가 밤새 얼지 않았어요.\n"
+          },
+          {
+            "who": "duckling",
+            "src": "/classic/uglyduckling/seg-cast-p9-1.mp3",
+            "text": "\"여기는… 내가 지킬 거야.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p9-2.mp3",
+            "text": "\n그렇게 긴 겨울을 하루씩 건넜답니다."
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "드디어 봄이 왔어요. 얼음이 사르르 녹았지요.\n아기 오리가 지킨 물구멍은 넓은 호수가 되었어요.\n기지개를 켜고 날개를 펼치자 — 어라?\n몸이 가뿐하게 하늘로 떠올랐답니다!",
         "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p10.webp?v=2",
-        "audio": "/classic/uglyduckling/narr-p10.mp3"
-      },
-      {
-        "text": "그때, 맑은 물에 비친 자기 모습을 본 순간 —\n\"이게… 나라고?\"\n물속에는 눈처럼 하얗고 우아한\n백조 한 마리가 있었답니다!",
-        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p11.webp",
-        "audio": "/classic/uglyduckling/narr-p11.mp3",
-        "hotspots": [
+        "segments": [
           {
-            "label": "duckling",
-            "box": [
-              250,
-              300,
-              800,
-              700
-            ],
-            "audio": "/classic/uglyduckling/say-p11-duckling.wav",
-            "line": "이게 나라고? 내가 백조였어!"
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p10-0.mp3",
+            "text": "드디어 봄이 왔어요. 얼음이 사르르 녹았지요.\n아기 오리가 지킨 물구멍은 넓은 호수가 되었어요.\n기지개를 켜고 날개를 펼치자 — 어라?\n몸이 가뿐하게 하늘로 떠올랐답니다!"
           }
         ]
       },
       {
-        "text": "\"어서 와, 우리랑 똑같은 백조구나!\"\n백조들이 다정하게 아기 백조를 감쌌어요.\n호숫가 아이들도 소리쳤지요.\n\"저기 새로 온 백조가 제일 예쁘다!\"",
+        "n": 11,
+        "text": "호수에 내려앉으니, 저 멀리서\n그 아름다운 하얀 새들이 헤엄쳐 왔어요.\n'나 같은 걸 쫓아내면 어떡하지…'\n그래도 아기 오리는 천천히 다가갔어요.\n겨울을 견딘 발이 물살을 갈랐지요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p11.webp?v=2",
+        "lines": [
+          {
+            "text": "'나 같은 걸 쫓아내면 어떡하지…'",
+            "who": "duckling"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p11-0.mp3",
+            "text": "호수에 내려앉으니, 저 멀리서\n그 아름다운 하얀 새들이 헤엄쳐 왔어요.\n"
+          },
+          {
+            "who": "duckling",
+            "src": "/classic/uglyduckling/seg-cast-p11-1.mp3",
+            "text": "'나 같은 걸 쫓아내면 어떡하지…'"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p11-2.mp3",
+            "text": "\n그래도 아기 오리는 천천히 다가갔어요.\n겨울을 견딘 발이 물살을 갈랐지요."
+          }
+        ]
+      },
+      {
+        "n": 12,
+        "text": "그때, 맑은 물에 비친 자기 모습을 본 순간 —\n\"이게… 나라고?\"\n물속에는 눈처럼 하얗고 우아한\n백조 한 마리가 있었어요.\n아기 오리는 눈을 몇 번이나 깜박였답니다.",
         "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p12.webp?v=2",
-        "audio": "/classic/uglyduckling/narr-p12.mp3",
+        "lines": [
+          {
+            "text": "이게… 나라고?",
+            "who": "duckling"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "duckling",
+            "line": "이게… 나라고?",
+            "box": [
+              71,
+              297,
+              649,
+              732
+            ],
+            "audio": "/classic/uglyduckling/say-p12-duckling.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p12-0.mp3",
+            "text": "그때, 맑은 물에 비친 자기 모습을 본 순간 —\n"
+          },
+          {
+            "who": "duckling",
+            "src": "/classic/uglyduckling/seg-cast-p12-1.mp3",
+            "text": "\"이게… 나라고?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p12-2.mp3",
+            "text": "\n물속에는 눈처럼 하얗고 우아한\n백조 한 마리가 있었어요.\n아기 오리는 눈을 몇 번이나 깜박였답니다."
+          }
+        ]
+      },
+      {
+        "n": 13,
+        "text": "\"어서 와! 우리랑 같이 헤엄칠래?\"\n백조 한 마리가 날개를 벌려 자리를 내주었어요.\n아기 백조는 조심조심 그 곁으로 갔지요.\n호숫가 아이들이 손을 흔들었어요.\n\"저기 봐, 백조가 한 마리 더 왔어!\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p13.webp?v=2",
+        "lines": [
+          {
+            "text": "어서 와! 우리랑 같이 헤엄칠래?",
+            "who": "swan"
+          },
+          {
+            "text": "저기 봐, 백조가 한 마리 더 왔어!",
+            "who": "children"
+          }
+        ],
         "hotspots": [
           {
             "label": "swan",
+            "line": "어서 와! 우리랑 같이 헤엄칠래?",
             "box": [
-              300,
-              250,
-              750,
-              650
+              261,
+              41,
+              743,
+              504
             ],
-            "audio": "/classic/uglyduckling/say-p12-swan.wav",
-            "line": "어서 와, 우리랑 똑같은 백조구나!"
+            "audio": "/classic/uglyduckling/say-p13-swan.mp3"
+          },
+          {
+            "label": "children",
+            "line": "저기 봐, 백조가 한 마리 더 왔어!",
+            "box": [
+              251,
+              732,
+              421,
+              870
+            ],
+            "audio": "/classic/uglyduckling/say-p13-children.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "swan",
+            "src": "/classic/uglyduckling/seg-cast-p13-0.mp3",
+            "text": "\"어서 와! 우리랑 같이 헤엄칠래?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p13-1.mp3",
+            "text": "\n백조 한 마리가 날개를 벌려 자리를 내주었어요.\n아기 백조는 조심조심 그 곁으로 갔지요.\n호숫가 아이들이 손을 흔들었어요.\n"
+          },
+          {
+            "who": "children",
+            "src": "/classic/uglyduckling/seg-cast-p13-2.mp3",
+            "text": "\"저기 봐, 백조가 한 마리 더 왔어!\""
           }
         ]
       },
       {
-        "text": "미운 오리 새끼는 이제 알았어요.\n다르게 생긴 게 아니라, 특별하게 태어난 거였다는 걸요.\n아기 백조는 눈부신 날개를 활짝 펴고\n파란 하늘을 훨훨 날았답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p13.webp",
-        "audio": "/classic/uglyduckling/narr-p13.mp3",
+        "n": 14,
+        "text": "미운 오리 새끼는 이제 알았어요.\n다르게 생긴 게 아니라, 특별하게 태어난 거였다는 걸요.\n\"이제 여기가 내 자리야.\"\n아기 백조는 눈부신 날개를 활짝 펴고\n파란 하늘을 훨훨 날았답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/uglyduckling/p14.webp?v=2",
+        "lines": [
+          {
+            "text": "이제 여기가 내 자리야.",
+            "who": "duckling"
+          }
+        ],
         "hotspots": [
           {
             "label": "duckling",
+            "line": "이제 여기가 내 자리야.",
             "box": [
-              250,
-              300,
-              750,
-              700
+              138,
+              173,
+              573,
+              815
             ],
-            "audio": "/classic/uglyduckling/say-p13-duckling.wav",
-            "line": "나는 특별하게 태어난 거였어!"
+            "audio": "/classic/uglyduckling/say-p14-duckling.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p14-0.mp3",
+            "text": "미운 오리 새끼는 이제 알았어요.\n다르게 생긴 게 아니라, 특별하게 태어난 거였다는 걸요.\n"
+          },
+          {
+            "who": "duckling",
+            "src": "/classic/uglyduckling/seg-cast-p14-1.mp3",
+            "text": "\"이제 여기가 내 자리야.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/uglyduckling/seg-p14-2.mp3",
+            "text": "\n아기 백조는 눈부신 날개를 활짝 펴고\n파란 하늘을 훨훨 날았답니다."
           }
         ]
       }
-    ]
+    ],
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "duckmom": "tc-najin",
+      "duckling": "tc-sua",
+      "siblings": "tc-gahee",
+      "goose": "tc-yubin",
+      "swan": "tc-jiyoung",
+      "children": "tc-siwoo"
+    },
+    "roleOf": {
+      "엄마 오리": "duckmom",
+      "엄마": "duckmom",
+      "아기 오리": "duckling",
+      "형제들": "siblings",
+      "기러기": "goose",
+      "백조": "swan",
+      "아이들": "children",
+      "호숫가 아이들": "children"
+    }
   },
   {
     "id": "classic-redridinghood",

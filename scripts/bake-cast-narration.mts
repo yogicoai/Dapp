@@ -97,6 +97,17 @@ type BookSpec = {
   cast: { name: string }[];
 };
 const BOOKS: Record<string, BookSpec> = {
+  "미운오리새끼": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "uglyduckling",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [
+      { name: "엄마 오리" }, { name: "아기 오리" }, { name: "형제들" },
+      { name: "기러기" }, { name: "백조" }, { name: "아이들" },
+    ],
+  },
   // 세계명작 첫 책 — 원고는 classic-books.json, 소리는 public/classic/threepigs.
   "돼지 삼형제": {
     data: "src/data/classic-books.json",
