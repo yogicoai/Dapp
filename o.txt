@@ -1,0 +1,26 @@
+신데렐라             14 pages   962 chars(spaces incl)  68.7/page
+돼지 삼형제           13 pages  1042 chars(spaces incl)  80.2/page
+미운오리새끼           13 pages   944 chars(spaces incl)  72.6/page
+빨간 모자            13 pages   999 chars(spaces incl)  76.8/page
+브레멘 음악대          13 pages  1118 chars(spaces incl)  86.0/page
+개미와 베짱이          12 pages   914 chars(spaces incl)  76.2/page
+시골 쥐와 도시 쥐       12 pages   894 chars(spaces incl)  74.5/page
+커다란 순무            9 pages   750 chars(spaces incl)  83.3/page
+골디락스와 곰 세 마리      9 pages   813 chars(spaces incl)  90.3/page
+사자와 생쥐            7 pages   675 chars(spaces incl)  96.4/page
+양치기 소년           10 pages   755 chars(spaces incl)  75.5/page
+벌거벗은 임금님         12 pages   916 chars(spaces incl)  76.3/page
+---- 미운오리새끼 per page ----
+ 1쪽  61자 dq=0
+ 2쪽  66자 dq=0
+ 3쪽  62자 dq=0
+ 4쪽  66자 dq=0
+ 5쪽  69자 dq=0
+ 6쪽  76자 dq=0
+ 7쪽  84자 dq=0
+ 8쪽  73자 dq=0
+ 9쪽  73자 dq=0
+10쪽  83자 dq=0
+11쪽  67자 dq=0
+12쪽  79자 dq=0
+13쪽  85자 dq=0
