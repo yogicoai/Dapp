@@ -1497,258 +1497,729 @@
   {
     "id": "classic-redridinghood",
     "narrators": [
-      "tc-mongsil",
-      "tc-jungsoon",
-      "tc-gunseok",
-      "tc-miso"
+      "tc-jiyoung"
     ],
     "lang": "ko",
     "title": "빨간 모자",
-    "summary": "숲속에서 만난 수상한 늑대와 씩씩한 빨간 모자 이야기",
-    "narrator": "tc-mongsil",
+    "summary": "귀도 눈도 손도 입도 — 빨간 모자가 할머니 곁으로 돌아가는 길.",
+    "narrator": "tc-jiyoung",
     "pages": [
       {
-        "text": "옛날 어느 마을에 귀여운 여자아이가 살았어요.\n할머니가 만들어 주신 빨간 모자를 늘 쓰고 다녀서\n다들 '빨간 모자'라고 불렀답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p1.webp",
-        "audio": "/classic/redridinghood/narr-p1.mp3",
-        "hotspots": [
+        "n": 1,
+        "text": "옛날 어느 마을에 귀여운 여자아이가 살았어요.\n할머니가 떠 주신 빨간 모자가 어찌나 잘 어울리는지,\n다들 '빨간 모자'라고 불렀지요.\n아이도 그 모자를 제일 아꼈답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p1.webp?v=2",
+        "segments": [
           {
-            "label": "redhood",
-            "box": [
-              300,
-              300,
-              850,
-              700
-            ],
-            "audio": "/classic/redridinghood/say-p1-redhood.wav",
-            "line": "안녕! 나는 빨간 모자야!"
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p1-0.mp3",
+            "text": "옛날 어느 마을에 귀여운 여자아이가 살았어요.\n할머니가 떠 주신 빨간 모자가 어찌나 잘 어울리는지,\n다들 "
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p1-1.mp3",
+            "text": "'빨간 모자'"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p1-2.mp3",
+            "text": "라고 불렀지요.\n아이도 그 모자를 제일 아꼈답니다."
           }
         ]
       },
       {
-        "text": "어느 날 엄마가 바구니를 건네며 말했어요.\n\"숲 건너 할머니 댁에 이 빵과 수프를 갖다 드리렴.\n길에서 한눈팔지 말고, 곧장 가야 한다!\"\n\"네, 엄마! 다녀올게요!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p2.webp",
-        "audio": "/classic/redridinghood/narr-p2.mp3",
+        "n": 2,
+        "text": "어느 날 엄마가 바구니를 건네며 말했어요.\n\"할머니 댁에 이 빵과 수프를 갖다 드리렴.\n길에서 한눈팔지 말고, 곧장 가야 한다.\"\n\"네, 엄마! 금방 다녀올게요!\"\n빨간 모자는 폴짝 길을 나섰답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p2.webp?v=2",
+        "lines": [
+          {
+            "text": "할머니 댁에 이 빵과 수프를 갖다 드리렴.\n길에서 한눈팔지 말고, 곧장 가야 한다.",
+            "who": "mother"
+          },
+          {
+            "text": "네, 엄마! 금방 다녀올게요!",
+            "who": "girl"
+          }
+        ],
         "hotspots": [
           {
             "label": "mother",
+            "line": "할머니 댁에 이 빵과 수프를 갖다 드리렴.\n길에서 한눈팔지 말고, 곧장 가야 한다.",
             "box": [
-              250,
-              150,
-              800,
-              520
+              100,
+              166,
+              932,
+              511
             ],
-            "audio": "/classic/redridinghood/say-p2-mother.wav",
-            "line": "길에서 한눈팔면 안 된다!"
-          }
-        ]
-      },
-      {
-        "text": "숲길을 걷던 빨간 모자 앞에\n커다란 늑대가 스윽 나타났어요.\n\"안녕, 꼬마야. 어디 가는 길이니?\"\n\"숲 건너 할머니 댁에 가요.\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p3.webp",
-        "audio": "/classic/redridinghood/narr-p3.mp3",
-        "hotspots": [
-          {
-            "label": "wolf",
-            "box": [
-              250,
-              500,
-              850,
-              900
-            ],
-            "audio": "/classic/redridinghood/say-p3-wolf.wav",
-            "line": "안녕, 꼬마야. 어디 가는 길이니?"
+            "audio": "/classic/redridinghood/say-p2-mother.mp3"
           },
           {
-            "label": "redhood",
+            "label": "girl",
+            "line": "네, 엄마! 금방 다녀올게요!",
             "box": [
-              350,
-              100,
-              850,
-              450
+              204,
+              552,
+              942,
+              780
             ],
-            "audio": "/classic/redridinghood/say-p3-redhood.wav",
-            "line": "숲 건너 할머니 댁에 가요!"
+            "audio": "/classic/redridinghood/say-p2-girl.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p2-0.mp3",
+            "text": "어느 날 엄마가 바구니를 건네며 말했어요.\n"
+          },
+          {
+            "who": "mother",
+            "src": "/classic/redridinghood/seg-cast-p2-1.mp3",
+            "text": "\"할머니 댁에 이 빵과 수프를 갖다 드리렴.\n길에서 한눈팔지 말고, 곧장 가야 한다.\"\n"
+          },
+          {
+            "who": "girl",
+            "src": "/classic/redridinghood/seg-cast-p2-2.mp3",
+            "text": "\"네, 엄마! 금방 다녀올게요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p2-3.mp3",
+            "text": "\n빨간 모자는 폴짝 길을 나섰답니다."
           }
         ]
       },
       {
-        "text": "늑대는 음흉하게 씩 웃으며 말했지요.\n\"저기 예쁜 꽃이 많던데,\n할머니께 꽃다발도 만들어 가면 어떠니?\"\n\"어머, 좋은 생각이에요!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p4.webp",
-        "audio": "/classic/redridinghood/narr-p4.mp3",
+        "n": 3,
+        "text": "숲 건너 오두막에서는 할머니가 뜨개질을 하고 있었어요.\n\"우리 강아지, 올 때가 됐는데.\"\n할머니는 창밖 숲길을 자꾸 내다보았지요.\n감기에 걸려 며칠째 콜록콜록했거든요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p3.webp?v=2",
+        "lines": [
+          {
+            "text": "우리 강아지, 올 때가 됐는데.",
+            "who": "granny"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "granny",
+            "line": "우리 강아지, 올 때가 됐는데.",
+            "box": [
+              242,
+              407,
+              838,
+              732
+            ],
+            "audio": "/classic/redridinghood/say-p3-granny.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p3-0.mp3",
+            "text": "숲 건너 오두막에서는 할머니가 뜨개질을 하고 있었어요.\n"
+          },
+          {
+            "who": "granny",
+            "src": "/classic/redridinghood/seg-cast-p3-1.mp3",
+            "text": "\"우리 강아지, 올 때가 됐는데.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p3-2.mp3",
+            "text": "\n할머니는 창밖 숲길을 자꾸 내다보았지요.\n감기에 걸려 며칠째 콜록콜록했거든요."
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "숲길을 걷던 빨간 모자 앞에\n커다란 늑대가 스윽 나타났어요.\n\"안녕, 꼬마야. 어디 가는 길이니?\"\n\"숲 건너 할머니 댁에 가요.\"\n늑대의 눈이 반짝 빛났지요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p4.webp?v=2",
+        "lines": [
+          {
+            "text": "안녕, 꼬마야. 어디 가는 길이니?",
+            "who": "wolf"
+          },
+          {
+            "text": "숲 건너 할머니 댁에 가요.",
+            "who": "girl"
+          }
+        ],
         "hotspots": [
           {
             "label": "wolf",
+            "line": "안녕, 꼬마야. 어디 가는 길이니?",
             "box": [
-              250,
-              500,
-              850,
-              900
+              62,
+              186,
+              516,
+              504
             ],
-            "audio": "/classic/redridinghood/say-p4-wolf.wav",
-            "line": "예쁜 꽃도 꺾어 가면 어떠니?"
+            "audio": "/classic/redridinghood/say-p4-wolf.mp3"
+          },
+          {
+            "label": "girl",
+            "line": "숲 건너 할머니 댁에 가요.",
+            "box": [
+              289,
+              642,
+              914,
+              891
+            ],
+            "audio": "/classic/redridinghood/say-p4-girl.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p4-0.mp3",
+            "text": "숲길을 걷던 빨간 모자 앞에\n커다란 늑대가 스윽 나타났어요.\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/redridinghood/seg-cast-p4-1.mp3",
+            "text": "\"안녕, 꼬마야. 어디 가는 길이니?\"\n"
+          },
+          {
+            "who": "girl",
+            "src": "/classic/redridinghood/seg-cast-p4-2.mp3",
+            "text": "\"숲 건너 할머니 댁에 가요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p4-3.mp3",
+            "text": "\n늑대의 눈이 반짝 빛났지요."
           }
         ]
       },
       {
-        "text": "빨간 모자가 꽃을 꺾는 사이,\n늑대는 지름길로 쌩 달려가\n할머니 집 문을 똑똑 두드렸어요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p5.webp",
-        "audio": "/classic/redridinghood/narr-p5.mp3"
-      },
-      {
-        "text": "\"할머니, 저예요. 빨간 모자예요.\"\n늑대가 가는 목소리를 흉내 내자 문이 열렸지요.\n늑대는 할머니를 한입에 꿀꺽 삼키고는\n할머니 옷을 입고 침대에 쏙 누웠답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p6.webp",
-        "audio": "/classic/redridinghood/narr-p6.mp3",
+        "n": 5,
+        "text": "\"저기 예쁜 꽃이 많던데,\n할머니께 꽃다발도 만들어 가면 어떠니?\"\n빨간 모자는 잠깐 멈칫했어요.\n'엄마가 곧장 가라고 했는데…'\n\"조금만… 조금만 꺾어 갈게요!\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p5.webp?v=2",
+        "lines": [
+          {
+            "text": "저기 예쁜 꽃이 많던데,\n할머니께 꽃다발도 만들어 가면 어떠니?",
+            "who": "wolf"
+          },
+          {
+            "text": "'엄마가 곧장 가라고 했는데…'",
+            "who": "girl"
+          },
+          {
+            "text": "조금만… 조금만 꺾어 갈게요!",
+            "who": "girl"
+          }
+        ],
         "hotspots": [
           {
             "label": "wolf",
+            "line": "저기 예쁜 꽃이 많던데,\n할머니께 꽃다발도 만들어 가면 어떠니?",
             "box": [
-              250,
-              350,
-              850,
-              750
+              119,
+              159,
+              705,
+              470
             ],
-            "audio": "/classic/redridinghood/say-p6-wolf.wav",
-            "line": "할머니, 저예요. 빨간 모자예요~"
+            "audio": "/classic/redridinghood/say-p5-wolf.mp3"
+          },
+          {
+            "label": "girl",
+            "line": "조금만… 조금만 꺾어 갈게요!",
+            "box": [
+              308,
+              711,
+              923,
+              919
+            ],
+            "audio": "/classic/redridinghood/say-p5-girl.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "wolf",
+            "src": "/classic/redridinghood/seg-cast-p5-0.mp3",
+            "text": "\"저기 예쁜 꽃이 많던데,\n할머니께 꽃다발도 만들어 가면 어떠니?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p5-1.mp3",
+            "text": "\n빨간 모자는 잠깐 멈칫했어요.\n"
+          },
+          {
+            "who": "girl",
+            "src": "/classic/redridinghood/seg-cast-p5-2.mp3",
+            "text": "'엄마가 곧장 가라고 했는데…'\n"
+          },
+          {
+            "who": "girl",
+            "src": "/classic/redridinghood/seg-cast-p5-3.mp3",
+            "text": "\"조금만… 조금만 꺾어 갈게요!\""
           }
         ]
       },
       {
-        "text": "잠시 후, 빨간 모자가 도착했어요.\n\"할머니, 저 왔어요!\"\n침대에 누운 할머니가 어쩐지 이상해 보였지요.\n빨간 모자는 고개를 갸웃갸웃했어요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p7.webp",
-        "audio": "/classic/redridinghood/narr-p7.mp3"
-      },
-      {
-        "text": "\"할머니, 귀가 왜 이렇게 커요?\"\n\"네 말을 잘 들으려고 그렇지.\"\n\"할머니, 눈은 왜 이렇게 커요?\"\n\"너를 잘 보려고 그렇지.\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p8.webp",
-        "audio": "/classic/redridinghood/narr-p8.mp3",
+        "n": 6,
+        "text": "빨간 모자가 꽃을 고르는 사이,\n늑대는 지름길로 쌩 달려갔어요.\n나뭇가지를 헤치고, 개울을 폴짝 뛰어넘고!\n\"할머니가 혼자 있겠지? 히히.\"\n늑대는 오두막 문을 똑똑 두드렸답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p6.webp?v=2",
+        "lines": [
+          {
+            "text": "할머니가 혼자 있겠지? 히히.",
+            "who": "wolf"
+          }
+        ],
         "hotspots": [
           {
-            "label": "redhood",
+            "label": "wolf",
+            "line": "할머니가 혼자 있겠지? 히히.",
             "box": [
-              300,
-              100,
-              850,
-              450
+              346,
+              428,
+              809,
+              898
             ],
-            "audio": "/classic/redridinghood/say-p8-redhood.wav",
-            "line": "할머니, 귀가 왜 이렇게 커요?"
+            "audio": "/classic/redridinghood/say-p6-wolf.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p6-0.mp3",
+            "text": "빨간 모자가 꽃을 고르는 사이,\n늑대는 지름길로 쌩 달려갔어요.\n나뭇가지를 헤치고, 개울을 폴짝 뛰어넘고!\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/redridinghood/seg-cast-p6-1.mp3",
+            "text": "\"할머니가 혼자 있겠지? 히히.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p6-2.mp3",
+            "text": "\n늑대는 오두막 문을 똑똑 두드렸답니다."
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "\"할머니, 저예요. 빨간 모자예요.\"\n늑대가 가늘게 목소리를 꾸미자 문이 열렸지요.\n늑대는 할머니를 한입에 꿀꺽 삼키고는\n할머니 옷을 입고 침대에 쏙 누웠답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p7.webp?v=2",
+        "lines": [
+          {
+            "text": "할머니, 저예요. 빨간 모자예요.",
+            "who": "wolf",
+            "feel": "whisper"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "wolf",
+            "line": "할머니, 저예요. 빨간 모자예요.",
+            "box": [
+              119,
+              311,
+              885,
+              622
+            ],
+            "audio": "/classic/redridinghood/say-p7-wolf.mp3",
+            "feel": "whisper"
+          }
+        ],
+        "segments": [
+          {
+            "who": "wolf",
+            "src": "/classic/redridinghood/seg-cast-p7-0.mp3",
+            "text": "\"할머니, 저예요. 빨간 모자예요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p7-1.mp3",
+            "text": "\n늑대가 가늘게 목소리를 꾸미자 문이 열렸지요.\n늑대는 할머니를 한입에 꿀꺽 삼키고는\n할머니 옷을 입고 침대에 쏙 누웠답니다."
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "잠시 후, 빨간 모자가 도착했어요.\n\"할머니, 저 왔어요!\"\n그런데 침대에 누운 할머니가 어쩐지 이상했지요.\n이불을 코끝까지 끌어올리고 있었거든요.\n빨간 모자는 조심조심 다가갔어요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p8.webp?v=2",
+        "lines": [
+          {
+            "text": "할머니, 저 왔어요!",
+            "who": "girl"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "girl",
+            "line": "할머니, 저 왔어요!",
+            "box": [
+              270,
+              110,
+              876,
+              325
+            ],
+            "audio": "/classic/redridinghood/say-p8-girl.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p8-0.mp3",
+            "text": "잠시 후, 빨간 모자가 도착했어요.\n"
+          },
+          {
+            "who": "girl",
+            "src": "/classic/redridinghood/seg-cast-p8-1.mp3",
+            "text": "\"할머니, 저 왔어요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p8-2.mp3",
+            "text": "\n그런데 침대에 누운 할머니가 어쩐지 이상했지요.\n이불을 코끝까지 끌어올리고 있었거든요.\n빨간 모자는 조심조심 다가갔어요."
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "\"할머니, 귀가 왜 이렇게 커요?\"\n이불 밖으로 뾰족한 귀가 삐죽 나와 있었어요.\n\"네 말을 잘 들으려고 그렇지.\"\n\"할머니, 눈은 왜 이렇게 커요?\"\n\"너를 잘 보려고 그렇지.\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p9.webp?v=2",
+        "lines": [
+          {
+            "text": "할머니, 귀가 왜 이렇게 커요?",
+            "who": "girl"
+          },
+          {
+            "text": "네 말을 잘 들으려고 그렇지.",
+            "who": "wolf",
+            "feel": "whisper"
+          },
+          {
+            "text": "할머니, 눈은 왜 이렇게 커요?",
+            "who": "girl"
+          },
+          {
+            "text": "너를 잘 보려고 그렇지.",
+            "who": "wolf",
+            "feel": "whisper"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "girl",
+            "line": "할머니, 귀가 왜 이렇게 커요?",
+            "box": [
+              128,
+              41,
+              838,
+              387
+            ],
+            "audio": "/classic/redridinghood/say-p9-girl.mp3"
           },
           {
             "label": "wolf",
+            "line": "네 말을 잘 들으려고 그렇지.",
             "box": [
-              200,
-              550,
-              750,
-              950
+              43,
+              566,
+              431,
+              981
             ],
-            "audio": "/classic/redridinghood/say-p8-wolf.wav",
-            "line": "네 말을 잘 들으려고 그렇지."
+            "audio": "/classic/redridinghood/say-p9-wolf.mp3",
+            "feel": "whisper"
+          }
+        ],
+        "segments": [
+          {
+            "who": "girl",
+            "src": "/classic/redridinghood/seg-cast-p9-0.mp3",
+            "text": "\"할머니, 귀가 왜 이렇게 커요?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p9-1.mp3",
+            "text": "\n이불 밖으로 뾰족한 귀가 삐죽 나와 있었어요.\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/redridinghood/seg-cast-p9-2.mp3",
+            "text": "\"네 말을 잘 들으려고 그렇지.\"\n"
+          },
+          {
+            "who": "girl",
+            "src": "/classic/redridinghood/seg-cast-p9-3.mp3",
+            "text": "\"할머니, 눈은 왜 이렇게 커요?\"\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/redridinghood/seg-cast-p9-4.mp3",
+            "text": "\"너를 잘 보려고 그렇지.\""
           }
         ]
       },
       {
-        "text": "\"그런데… 입은 왜 이렇게 커요?\"\n\"그야 너를 꿀꺽 삼키려고 그렇지!\"\n늑대가 벌떡 일어나 빨간 모자도\n한입에 꿀꺽 삼켜 버렸어요!",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p9.webp",
-        "audio": "/classic/redridinghood/narr-p9.mp3",
+        "n": 10,
+        "text": "\"할머니, 손은 왜 이렇게 커요?\"\n\"너를 꼭 안아 주려고 그렇지.\"\n\"그런데… 입은 왜 이렇게 커요?\"\n\"그야 너를 꿀꺽 삼키려고 그렇지!\"\n늑대가 벌떡 일어나 빨간 모자도 꿀꺽 삼켜 버렸어요!",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p10.webp?v=2",
+        "lines": [
+          {
+            "text": "할머니, 손은 왜 이렇게 커요?",
+            "who": "girl"
+          },
+          {
+            "text": "너를 꼭 안아 주려고 그렇지.",
+            "who": "wolf",
+            "feel": "whisper"
+          },
+          {
+            "text": "그런데… 입은 왜 이렇게 커요?",
+            "who": "girl"
+          },
+          {
+            "text": "그야 너를 꿀꺽 삼키려고 그렇지!",
+            "who": "wolf",
+            "feel": "toneup"
+          }
+        ],
         "hotspots": [
           {
             "label": "wolf",
+            "line": "그야 너를 꿀꺽 삼키려고 그렇지!",
             "box": [
-              200,
-              400,
-              850,
-              900
+              71,
+              193,
+              431,
+              587
             ],
-            "audio": "/classic/redridinghood/say-p9-wolf.wav",
-            "line": "너를 꿀꺽 삼키려고 그렇지!"
+            "audio": "/classic/redridinghood/say-p10-wolf.mp3",
+            "feel": "toneup"
+          },
+          {
+            "label": "girl",
+            "line": "그런데… 입은 왜 이렇게 커요?",
+            "box": [
+              346,
+              615,
+              932,
+              919
+            ],
+            "audio": "/classic/redridinghood/say-p10-girl.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "girl",
+            "src": "/classic/redridinghood/seg-cast-p10-0.mp3",
+            "text": "\"할머니, 손은 왜 이렇게 커요?\"\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/redridinghood/seg-cast-p10-1.mp3",
+            "text": "\"너를 꼭 안아 주려고 그렇지.\"\n"
+          },
+          {
+            "who": "girl",
+            "src": "/classic/redridinghood/seg-cast-p10-2.mp3",
+            "text": "\"그런데… 입은 왜 이렇게 커요?\"\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/redridinghood/seg-cast-p10-3.mp3",
+            "text": "\"그야 너를 꿀꺽 삼키려고 그렇지!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p10-4.mp3",
+            "text": "\n늑대가 벌떡 일어나 빨간 모자도 꿀꺽 삼켜 버렸어요!"
           }
         ]
       },
       {
-        "text": "배가 빵빵해진 늑대는\n침대에 벌렁 누워 드르렁드르렁 잠이 들었어요.\n마침 숲을 지나던 사냥꾼 아저씨가\n요란한 코골이 소리를 듣고 집 안을 들여다봤지요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p10.webp",
-        "audio": "/classic/redridinghood/narr-p10.mp3",
+        "n": 11,
+        "text": "배가 빵빵해진 늑대는\n드르렁드르렁 코를 골며 잠이 들었어요.\n마침 숲을 지나던 사냥꾼 아저씨가\n요란한 소리에 걸음을 멈췄지요.\n\"할머니 댁에서 웬 코골이 소리지?\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p11.webp?v=2",
+        "lines": [
+          {
+            "text": "할머니 댁에서 웬 코골이 소리지?",
+            "who": "hunter"
+          }
+        ],
         "hotspots": [
           {
             "label": "hunter",
+            "line": "할머니 댁에서 웬 코골이 소리지?",
             "box": [
-              200,
-              600,
-              800,
-              950
+              213,
+              104,
+              942,
+              504
             ],
-            "audio": "/classic/redridinghood/say-p10-hunter.wav",
-            "line": "아니, 배가 저렇게 빵빵한 늑대라니!"
+            "audio": "/classic/redridinghood/say-p11-hunter.mp3"
           }
-        ]
-      },
-      {
-        "text": "\"아니, 배가 저렇게 빵빵한 늑대라니!\"\n사냥꾼 아저씨가 늑대의 배를 살살 열어 보니 —\n할머니와 빨간 모자가 폴짝 뛰어나왔어요!\n\"아이고, 살았다! 고맙습니다!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p11.webp",
-        "audio": "/classic/redridinghood/narr-p11.mp3",
-        "hotspots": [
+        ],
+        "segments": [
           {
-            "label": "grandma",
-            "box": [
-              300,
-              350,
-              850,
-              700
-            ],
-            "audio": "/classic/redridinghood/say-p11-grandma.wav",
-            "line": "아이고, 고마워요. 사냥꾼 양반!"
-          }
-        ]
-      },
-      {
-        "text": "잠에서 깬 늑대는 사냥꾼 아저씨의 호통에\n걸음아 나 살려라 하고 숲 저 멀리 도망쳤어요.\n그 뒤로 다시는 마을 근처에 얼씬도 못 했답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p12.webp",
-        "audio": "/classic/redridinghood/narr-p12.mp3",
-        "hotspots": [
-          {
-            "label": "wolf",
-            "box": [
-              250,
-              100,
-              700,
-              500
-            ],
-            "audio": "/classic/redridinghood/say-p12-wolf.wav",
-            "line": "걸음아 나 살려라!"
-          }
-        ]
-      },
-      {
-        "text": "빨간 모자는 할머니와 따뜻한 수프를 나눠 먹으며 약속했어요.\n\"이제 길에서 한눈팔지 않을게요.\n모르는 사람 말도 함부로 믿지 않을 거예요!\"\n할머니는 빨간 모자를 꼭 안아 주었답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p13.webp",
-        "audio": "/classic/redridinghood/narr-p13.mp3",
-        "hotspots": [
-          {
-            "label": "grandma",
-            "box": [
-              250,
-              500,
-              850,
-              850
-            ],
-            "audio": "/classic/redridinghood/say-p13-grandma.wav",
-            "line": "우리 강아지, 이제 안심이구나."
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p11-0.mp3",
+            "text": "배가 빵빵해진 늑대는\n드르렁드르렁 코를 골며 잠이 들었어요.\n마침 숲을 지나던 사냥꾼 아저씨가\n요란한 소리에 걸음을 멈췄지요.\n"
           },
           {
-            "label": "redhood",
+            "who": "hunter",
+            "src": "/classic/redridinghood/seg-cast-p11-1.mp3",
+            "text": "\"할머니 댁에서 웬 코골이 소리지?\""
+          }
+        ]
+      },
+      {
+        "n": 12,
+        "text": "\"아니, 배가 저렇게 빵빵한 늑대라니!\"\n사냥꾼 아저씨가 늑대의 배를 살살 열어 보니 —\n할머니와 빨간 모자가 폴짝 뛰어나왔어요!\n\"아이고, 살았다! 고맙습니다!\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p12.webp?v=2",
+        "lines": [
+          {
+            "text": "아니, 배가 저렇게 빵빵한 늑대라니!",
+            "who": "hunter"
+          },
+          {
+            "text": "아이고, 살았다! 고맙습니다!",
+            "who": "granny"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "hunter",
+            "line": "아니, 배가 저렇게 빵빵한 늑대라니!",
             "box": [
-              300,
-              100,
-              850,
-              500
+              43,
+              69,
+              677,
+              345
             ],
-            "audio": "/classic/redridinghood/say-p13-redhood.wav",
-            "line": "모르는 사람 말은 함부로 믿지 않을 거예요!"
+            "audio": "/classic/redridinghood/say-p12-hunter.mp3"
+          },
+          {
+            "label": "granny",
+            "line": "아이고, 살았다! 고맙습니다!",
+            "box": [
+              242,
+              428,
+              942,
+              698
+            ],
+            "audio": "/classic/redridinghood/say-p12-granny.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "hunter",
+            "src": "/classic/redridinghood/seg-cast-p12-0.mp3",
+            "text": "\"아니, 배가 저렇게 빵빵한 늑대라니!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p12-1.mp3",
+            "text": "\n사냥꾼 아저씨가 늑대의 배를 살살 열어 보니 —\n할머니와 빨간 모자가 폴짝 뛰어나왔어요!\n"
+          },
+          {
+            "who": "granny",
+            "src": "/classic/redridinghood/seg-cast-p12-2.mp3",
+            "text": "\"아이고, 살았다! 고맙습니다!\""
+          }
+        ]
+      },
+      {
+        "n": 13,
+        "text": "잠에서 깬 늑대는 깜짝 놀라 달아났어요.\n\"다시는 이 숲에 얼씬도 마라!\"\n사냥꾼 아저씨의 호통이 쩌렁쩌렁 울렸지요.\n늑대는 산 너머로 사라져 버렸답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p13.webp?v=2",
+        "lines": [
+          {
+            "text": "다시는 이 숲에 얼씬도 마라!",
+            "who": "hunter"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "hunter",
+            "line": "다시는 이 숲에 얼씬도 마라!",
+            "box": [
+              62,
+              104,
+              791,
+              428
+            ],
+            "audio": "/classic/redridinghood/say-p13-hunter.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p13-0.mp3",
+            "text": "잠에서 깬 늑대는 깜짝 놀라 달아났어요.\n"
+          },
+          {
+            "who": "hunter",
+            "src": "/classic/redridinghood/seg-cast-p13-1.mp3",
+            "text": "\"다시는 이 숲에 얼씬도 마라!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p13-2.mp3",
+            "text": "\n사냥꾼 아저씨의 호통이 쩌렁쩌렁 울렸지요.\n늑대는 산 너머로 사라져 버렸답니다."
+          }
+        ]
+      },
+      {
+        "n": 14,
+        "text": "빨간 모자는 할머니와 따뜻한 수프를 나눠 먹으며 약속했어요.\n\"이제 길에서 한눈팔지 않을게요.\n모르는 사람 말도 함부로 믿지 않을 거예요!\"\n할머니는 빨간 모자를 꼭 안아 주었답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/redridinghood/p14.webp?v=2",
+        "lines": [
+          {
+            "text": "이제 길에서 한눈팔지 않을게요.\n모르는 사람 말도 함부로 믿지 않을 거예요!",
+            "who": "girl"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "girl",
+            "line": "이제 길에서 한눈팔지 않을게요.\n모르는 사람 말도 함부로 믿지 않을 거예요!",
+            "box": [
+              194,
+              525,
+              904,
+              732
+            ],
+            "audio": "/classic/redridinghood/say-p14-girl.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p14-0.mp3",
+            "text": "빨간 모자는 할머니와 따뜻한 수프를 나눠 먹으며 약속했어요.\n"
+          },
+          {
+            "who": "girl",
+            "src": "/classic/redridinghood/seg-cast-p14-1.mp3",
+            "text": "\"이제 길에서 한눈팔지 않을게요.\n모르는 사람 말도 함부로 믿지 않을 거예요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/redridinghood/seg-p14-2.mp3",
+            "text": "\n할머니는 빨간 모자를 꼭 안아 주었답니다."
           }
         ]
       }
-    ]
+    ],
+    "voiceCast": {
+      "narration": "tc-jiyoung",
+      "girl": "tc-arin",
+      "mother": "tc-najin",
+      "granny": "tc-juha",
+      "wolf": "tc-homun",
+      "hunter": "tc-kijang"
+    },
+    "roleOf": {
+      "빨간 모자": "girl",
+      "엄마": "mother",
+      "어머니": "mother",
+      "할머니": "granny",
+      "늑대": "wolf",
+      "사냥꾼": "hunter",
+      "사냥꾼 아저씨": "hunter"
+    }
   },
   {
     "id": "classic-bremen",

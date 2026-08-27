@@ -97,6 +97,17 @@ type BookSpec = {
   cast: { name: string }[];
 };
 const BOOKS: Record<string, BookSpec> = {
+  "빨간 모자": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "redridinghood",
+    narrators: ["tc-jiyoung"],
+    defaultNarrator: "tc-jiyoung",
+    cast: [
+      { name: "빨간 모자" }, { name: "엄마" }, { name: "할머니" },
+      { name: "늑대" }, { name: "사냥꾼" },
+    ],
+  },
   "미운오리새끼": {
     data: "src/data/classic-books.json",
     root: "classic",
