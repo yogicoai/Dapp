@@ -3300,7 +3300,7 @@
     "text": "첫째는 언덕에 눕더니 크게 하품을 했어요."
   },
   "classic/threepigs/seg-cast-p2-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-dukgu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"집은 후딱 짓고 놀아야지!\""
@@ -3336,7 +3336,7 @@
     "text": "막내는 언덕 아래에서 벽돌을 골랐어요.\n한 장, 두 장, 진흙을 발라 차곡차곡."
   },
   "classic/threepigs/seg-cast-p4-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-taeji",
     "emotion": "normal",
     "intensity": null,
     "text": "\"난 튼튼한 집을 짓고 싶어.\""
@@ -3354,7 +3354,7 @@
     "text": "형들이 지나가다 킥킥 웃었어요."
   },
   "classic/threepigs/seg-cast-p5-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-dukgu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"야, 뭐하러 그렇게 힘들게 짓냐?\""
@@ -3372,7 +3372,7 @@
     "text": "막내는 들고 있던 벽돌을 슬며시 내려놓았어요.\n손바닥이 벌겋게 부어 있었지요."
   },
   "classic/threepigs/seg-cast-p6-0.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-taeji",
     "emotion": "normal",
     "intensity": null,
     "text": "'…나도 그냥 놀까?'"
@@ -3384,7 +3384,7 @@
     "text": "막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n반듯했어요. 아주 반듯했어요."
   },
   "classic/threepigs/seg-cast-p6-2.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-taeji",
     "emotion": "normal",
     "intensity": null,
     "text": "\"그래도 난, 튼튼한 집을 짓고 싶어.\""
@@ -3396,7 +3396,7 @@
     "text": "멀리서 형들 웃는 소리가 들려왔어요.\n막내는 마지막 벽돌을 얹고 벽난로에 불을 지폈지요.\n해가 지자 굴뚝에서 연기가 폴폴 올랐어요."
   },
   "classic/threepigs/seg-cast-p7-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-taeji",
     "emotion": "normal",
     "intensity": null,
     "text": "\"…다 지었다.\""
@@ -3432,7 +3432,7 @@
     "text": "똑, 똑, 똑. 지푸라기 집 문을 누가 두드렸어요."
   },
   "classic/threepigs/seg-cast-p9-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-dukgu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"누구세요?\""
@@ -3450,7 +3450,7 @@
     "text": "\"…엄마야.\""
   },
   "classic/threepigs/seg-cast-p9-5.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-dukgu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"어? 우리 엄마 아닌데?\""
@@ -3474,7 +3474,7 @@
     "text": "후우우욱!\n지푸라기가 눈처럼 흩날리고, 집이 폭삭 주저앉았어요.\n첫째는 넘어질 듯 언덕을 달려 내려갔지요."
   },
   "classic/threepigs/seg-cast-p10-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-dukgu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"둘째야! 문 열어 줘, 늑대가 나타났어!\""
@@ -3495,16 +3495,16 @@
     "voice": "tc-shotgun",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"거기 있는 거 다 안다. 후우우우욱!\""
+    "text": "\"거기 있는 거 다 안다!\""
   },
   "classic/threepigs/seg-tc-minjung-p11-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "우지끈, 와르르!\n나뭇가지가 사방으로 튀고 집이 폭삭 무너졌지요.\n형제는 서로 손을 잡고 달렸답니다."
+    "text": "후우우우욱! 우지끈, 와르르!\n나뭇가지가 사방으로 튀고 집이 폭삭 무너졌지요.\n형제는 서로 손을 잡고 달렸답니다."
   },
   "classic/threepigs/seg-cast-p12-0.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-dukgu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"막내야! 늑대가 나타났어, 문 열어 줘!\""
@@ -3516,7 +3516,7 @@
     "text": "첫째가 문을 쾅쾅 두드렸어요.\n막내는 벌떡 일어났어요.\n빗장이 덜컹, 문이 활짝."
   },
   "classic/threepigs/seg-cast-p12-2.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-taeji",
     "emotion": "normal",
     "intensity": null,
     "text": "\"빨리 들어와!\""
@@ -3531,13 +3531,13 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "늑대는 벽돌집 앞에서 숨을 크게 들이마셨어요."
+    "text": "늑대는 벽돌집 앞에서 숨을 크게 들이마셨어요.\n후욱! 후우욱! 후우우우욱!\n창문이 조금 떨렸을 뿐, 벽돌집은 꿈쩍도 하지 않았지요.\n늑대는 어지러워 비틀거렸어요."
   },
   "classic/threepigs/seg-cast-p13-1.mp3": {
     "voice": "tc-shotgun",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"후욱! 후우욱! 후우우우욱!\""
+    "text": "\"어? 왜 안 넘어가는 거지?\""
   },
   "classic/threepigs/seg-tc-minjung-p13-2.mp3": {
     "voice": "tc-minjung",
@@ -3612,7 +3612,7 @@
     "text": "한참 뒤, 방 안이 조용해졌어요.\n첫째가 먼저 입을 열었지요."
   },
   "classic/threepigs/seg-cast-p17-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-dukgu",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"막내야… 아까 놀려서 미안해.\""
@@ -3642,7 +3642,7 @@
     "text": "\"어머, 셋이 같이 지었구나?\""
   },
   "classic/threepigs/seg-cast-p18-2.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-dukgu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"응! 막내가 가르쳐 줬어.\""
