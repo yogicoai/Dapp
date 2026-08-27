@@ -537,7 +537,7 @@
     "voice": "tc-sookhee",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"별 미친 사람 다 보겠네!\""
+    "text": "\"별 이상한 사람을 다 보겠네!\""
   },
   "heungbu/seg-tc-kwonil-p7-3.mp3": {
     "voice": "tc-kwonil",
@@ -3147,7 +3147,7 @@
     "voice": "tc-sookhee",
     "emotion": "normal",
     "intensity": null,
-    "text": "별 미친 사람 다 보겠네!"
+    "text": "별 이상한 사람을 다 보겠네!"
   },
   "heungbu/say-p7-heungbu.mp3": {
     "voice": "tc-gunseok",
