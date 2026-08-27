@@ -557,30 +557,13 @@
       },
       {
         "n": 16,
-        "text": "늑대는 마당으로 툭 떨어졌어요.\n\"아이고 뜨거워라!\"\n그러고는 산 너머로 달아나 버렸지요.\n셋은 창문에 붙어 그 모습을 지켜보았어요.\n늑대가 보이지 않자 그제야 안심했답니다.",
+        "text": "늑대는 마당으로 툭 떨어졌어요.\n그러고는 걸음아 날 살려라, 산 너머로 달아나 버렸지요.\n셋은 창문에 붙어 그 모습을 지켜보았어요.\n늑대가 보이지 않자 그제야 안심했답니다.",
         "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p16.webp?v=2",
-        "lines": [
-          {
-            "text": "아이고 뜨거워라!",
-            "who": "wolf",
-            "feel": "toneup"
-          }
-        ],
         "segments": [
           {
             "who": "narration",
             "src": "/classic/threepigs/seg-p16-0.mp3",
-            "text": "늑대는 마당으로 툭 떨어졌어요.\n"
-          },
-          {
-            "who": "wolf",
-            "src": "/classic/threepigs/seg-cast-p16-1.mp3",
-            "text": "\"아이고 뜨거워라!\""
-          },
-          {
-            "who": "narration",
-            "src": "/classic/threepigs/seg-p16-2.mp3",
-            "text": "\n그러고는 산 너머로 달아나 버렸지요.\n셋은 창문에 붙어 그 모습을 지켜보았어요.\n늑대가 보이지 않자 그제야 안심했답니다."
+            "text": "늑대는 마당으로 툭 떨어졌어요.\n그러고는 걸음아 날 살려라, 산 너머로 달아나 버렸지요.\n셋은 창문에 붙어 그 모습을 지켜보았어요.\n늑대가 보이지 않자 그제야 안심했답니다."
           }
         ]
       },
