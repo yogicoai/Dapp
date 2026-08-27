@@ -345,6 +345,23 @@ export function BookViewer({ book }: { book: Book }) {
   const [rate, setRate] = useState(DEFAULT_VOICE_RATE);
   const rateRef = useRef(DEFAULT_VOICE_RATE);
   const [speedMenu, setSpeedMenu] = useState(false);
+  /*
+   * 읽어주는 동안에는 조작 단추를 감춘다.
+   *
+   * 단추가 네 귀퉁이를 다 차지해서 정작 그림과 글이 가린다는 지적이 있었다
+   * (2026-08-27). 읽기를 시작하면 사라지고, 멈추면 스스로 돌아온다.
+   * 읽는 도중에 손대고 싶으면 왼쪽 위 손잡이를 누른다.
+   *
+   * 상태를 따로 두지 않고 reading 에서 끌어낸다 — 효과 안에서 상태를 바꾸면
+   * 읽기 시작과 감추기가 두 번에 나뉘어 한 박자 깜빡인다.
+   * 멈춤 단추는 감추지 않는다 — 그걸 감추면 읽기를 멈출 방법이 없어진다.
+   */
+  const [chromeShown, setChromeShown] = useState(false);
+  const chromeOff = reading && !chromeShown;
+  /* 감출 때는 눌리지도 않게 한다 — 안 보이는 단추가 눌리면 더 당황스럽다. */
+  const chromeCls = chromeOff
+    ? "opacity-0 pointer-events-none transition-opacity duration-500"
+    : "opacity-100 transition-opacity duration-300";
   useEffect(() => {
     const r = loadVoiceRate();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 저장된 속도를 마운트 후 반영
@@ -1180,6 +1197,12 @@ export function BookViewer({ book }: { book: Book }) {
 
   const startReading = () => {
     setEnded(false);
+    // 지난번에 손잡이로 꺼내 뒀더라도, 새로 읽을 때는 다시 감춘다.
+    // 열려 있던 메뉴도 같이 닫는다 — 단추만 사라지고 메뉴가 남으면 붕 뜬다.
+    setChromeShown(false);
+    setSizeMenu(false);
+    setSpeedMenu(false);
+    setVoiceMenu(false);
     // 정지했던 자리가 살아 있으면(같은 쪽·같은 재생) 처음부터가 아니라 그 지점부터 잇는다.
     // 오디오 엘리먼트가 멈춘 위치와 핸들러를 그대로 들고 있어서 play()만 하면 이어진다.
     const p = pausedRef.current;
@@ -1493,13 +1516,22 @@ export function BookViewer({ book }: { book: Book }) {
                     }[position]
               } ${display}`}
             >
-              <AutoFitStoryText
-                fitKey={page.text}
-                baseSize={size}
-                textScale={textScale}
-                fontScale={font.scale}
-                fontWeight={storyWeightForFont(font, weight)}
-                className={`font-story max-h-[76dvh] whitespace-pre-line break-keep text-pretty text-center drop-shadow-md ${
+              {/*
+               * 그림 위 자막은 **줄이지 않는다**.
+               *
+               * 예전엔 칸을 재서 글자를 자동으로 축소했다. 그런데 쪽마다 글자
+               * 크기가 들쭉날쭉해 읽기 불편하다는 지적이 있었다(2026-08-27).
+               * 쪽당 90~110자로 짧아진 지금은 줄일 일이 거의 없다.
+               * 대신 max-h 와 overflow-hidden 을 걷어내 칸이 글에 맞춰 늘어나게
+               * 둔다 — 줄이지도, 자르지도 않는다. 긴 쪽에서는 자막 띠가 조금 더
+               * 올라올 뿐이다. 종이 펼침면은 칸 높이가 고정이라 그대로 줄인다.
+               */}
+              <p
+                style={{
+                  fontSize: `calc(${size} * ${textScale} * ${font.scale})`,
+                  fontWeight: storyWeightForFont(font, weight),
+                }}
+                className={`font-story whitespace-pre-line break-keep text-pretty text-center drop-shadow-md ${
                   focusCurrent && position === "bottom"
                     ? "mx-auto w-full max-w-[min(46rem,82vw)] [text-shadow:0_1px_2px_rgba(0,0,0,0.7),0_3px_7px_rgba(0,0,0,0.5)]"
                     : position === "bottom" || position === "top"
@@ -1508,7 +1540,7 @@ export function BookViewer({ book }: { book: Book }) {
                 } ${position === "center" ? "max-w-[max(20rem,55vw)]" : ""}`}
               >
                 {renderRuns(false, focusCurrent)}
-              </AutoFitStoryText>
+              </p>
             </div>
           );
           return (
@@ -1694,7 +1726,7 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 아래 가운데 넘김 바 — 우측 상단 ◀▶는 작고 눈에 잘 안 띄어서, 크고 분명한
           '다음 장'을 아래에 하나 더 둔다. 지금 몇 쪽인지도 같이 보여 준다
           (아이는 "얼마나 남았어?"를 자주 묻는다). 마지막 쪽에선 다음이 잠긴다. */}
-      <div className="absolute bottom-4 left-1/2 z-10 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 flex-nowrap items-center gap-0 rounded-full bg-black/45 px-1 py-1 backdrop-blur sm:bottom-6 sm:gap-2 sm:px-2 sm:py-1.5">
+      <div className={`absolute bottom-4 left-1/2 z-10 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 flex-nowrap items-center gap-0 rounded-full bg-black/45 px-1 py-1 backdrop-blur sm:bottom-6 sm:gap-2 sm:px-2 sm:py-1.5 ${chromeCls}`}>
         <button
           type="button"
           aria-label="이전 장"
@@ -1733,7 +1765,7 @@ export function BookViewer({ book }: { book: Book }) {
       {/* 넘김은 우측 상단 전용 버튼(◀ ▶) — 화면 절반 탭 방식은 캐릭터 클릭
           대사와 겹쳐 오작동해서 걷어냈다. 스와이프와 키보드 ←→는 그대로 산다. */}
       <div
-        className="absolute right-3 z-10 flex gap-1.5 sm:right-4 sm:gap-2"
+        className={`absolute right-3 z-10 flex gap-1.5 sm:right-4 sm:gap-2 ${chromeCls}`}
         style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
       >
         <button
@@ -2092,7 +2124,7 @@ export function BookViewer({ book }: { book: Book }) {
       )}
 
       <div
-        className="absolute left-3 z-10 flex items-center gap-1.5 sm:left-4 sm:gap-2"
+        className={`absolute left-3 z-10 flex items-center gap-1.5 sm:left-4 sm:gap-2 ${chromeCls}`}
         style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
       >
         <Link
@@ -2164,7 +2196,7 @@ export function BookViewer({ book }: { book: Book }) {
 
       {/* 글자 크기 — 배속 버튼 위. "보다가 작네" 싶을 때 책 안에서 바로 키운다.
           기본값(화면 크기 따라 자동)에 배율을 곱하는 방식이라 어느 기기에서도 자연스럽다. */}
-      <div className="absolute bottom-4 left-3 z-10 sm:bottom-[4.75rem] sm:left-5">
+      <div className={`absolute bottom-4 left-3 z-10 sm:bottom-[4.75rem] sm:left-5 ${chromeCls}`}>
         {sizeMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
             <p className="px-5 pt-2.5 text-[11px] font-extrabold text-white/50">
@@ -2203,7 +2235,7 @@ export function BookViewer({ book }: { book: Book }) {
       </div>
 
       {/* 재생 속도 (유튜브식) — 왼쪽 아래. 눌러서 배속을 고른다. 재생 중이면 즉시 반영. */}
-      <div className="absolute bottom-4 left-[3.75rem] z-10 sm:bottom-5 sm:left-5">
+      <div className={`absolute bottom-4 left-[3.75rem] z-10 sm:bottom-5 sm:left-5 ${chromeCls}`}>
         {speedMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
             {[0.75, 1, 1.25, 1.5, 2].map((s) => (
@@ -2236,6 +2268,20 @@ export function BookViewer({ book }: { book: Book }) {
           <span>{rate}<span className="sm:hidden">×</span><span className="hidden sm:inline">배속</span></span>
         </button>
       </div>
+
+      {/* 손잡이 — 단추가 감춰졌을 때만 뜬다. 누르면 다시 나오고, 그 뒤로는
+          읽기가 끝날 때까지 그대로 있는다(읽는 내내 깜빡이면 더 거슬린다). */}
+      {chromeOff && (
+        <button
+          type="button"
+          aria-label="조작 단추 보이기"
+          onClick={() => setChromeShown(true)}
+          className="absolute left-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-black/30 text-white/70 backdrop-blur transition hover:bg-black/50 hover:text-white outline-none focus:outline-none sm:left-4"
+          style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
+        >
+          <span aria-hidden className="text-lg leading-none">⋯</span>
+        </button>
+      )}
 
       {/* 읽어주기 — 재생 버튼임이 한눈에 보이게 ①색이 도는 원 ②흰 재생 세모(▶)
           ③평소엔 "읽어주기" 라벨을 위에 띄운다. 읽는 중엔 정지(⏸) 막대로 바뀐다. */}
