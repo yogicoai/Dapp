@@ -108,6 +108,8 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-yubin", label: "유빈", emoji: "🪶", voiceId: "tc_64818789444a9ae3e2e9f89d", model: "ssfm-v30", desc: "여자 · 차분한 이야기 목소리", sample: "넌 참 이상하게 생겼구나. 어디서 왔니?" },
   // 빨간 모자 할머니(2026-08-27 사장님 지정). elder · Audiobook/Storytelling.
   { kind: "tc", id: "tc-juha", label: "주하", emoji: "🧶", voiceId: "tc_5d01a52563338e00072b8c9c", model: "ssfm-v30", desc: "여자 · 포근한 할머니", sample: "아이고, 우리 강아지 왔니?" },
+  // 빨간 모자 사냥꾼 교체(2026-08-27 사장님 지정).
+  { kind: "tc", id: "tc-babilon", label: "바빌론", emoji: "🪓", voiceId: "tc_677628030c63239147ab40c6", model: "ssfm-v30", desc: "남자 · 우렁찬 목소리", sample: "다시는 이 숲에 얼씬도 마라!" },
   { kind: "tc", id: "tc-gunseok", label: "건석", emoji: "🧔", voiceId: "tc_6731b2e0855f351b98d30c48", model: "ssfm-v30", desc: "남자 · 듬직한 아빠", sample: "아빠가 재미있게 읽어줄게." },
   { kind: "tc", id: "tc-changsu", label: "창수", emoji: "⚡", voiceId: "tc_6059dad0b83880769a50502f", model: "ssfm-v30", desc: "남자 · 활기찬 형아", sample: "형아랑 신나는 이야기 가자!" },
   { kind: "tc", id: "tc-siwoo", label: "시우", emoji: "🧒", voiceId: "tc_6699eb3849dfac016c29444c", model: "ssfm-v30", desc: "남자 어린이 · 씩씩한 친구", sample: "나랑 같이 모험 떠나자!" },

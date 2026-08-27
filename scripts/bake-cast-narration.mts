@@ -97,6 +97,17 @@ type BookSpec = {
   cast: { name: string }[];
 };
 const BOOKS: Record<string, BookSpec> = {
+  "브레멘 음악대": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "bremen",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [
+      { name: "당나귀" }, { name: "개" }, { name: "고양이" },
+      { name: "수탉" }, { name: "도둑 두목" },
+    ],
+  },
   "빨간 모자": {
     data: "src/data/classic-books.json",
     root: "classic",

@@ -2209,7 +2209,7 @@
       "mother": "tc-najin",
       "granny": "tc-juha",
       "wolf": "tc-homun",
-      "hunter": "tc-kijang"
+      "hunter": "tc-babilon"
     },
     "roleOf": {
       "빨간 모자": "girl",
@@ -2225,208 +2225,735 @@
     "id": "classic-bremen",
     "lang": "ko",
     "title": "브레멘 음악대",
-    "summary": "늙었다고 쫓겨난 네 동물 친구가 힘을 합쳐 도둑을 물리치는 유쾌한 이야기",
-    "narrator": "tc-hamchu",
+    "summary": "쫓겨난 넷이 목소리를 모아 — 여기가 우리의 브레멘이야.",
+    "narrator": "tc-minjung",
     "pages": [
       {
-        "text": "옛날 어느 마을에 늙은 당나귀가 살았어요.\n오랫동안 열심히 일했지만, 주인은 이제 늙었다며\n당나귀를 내쫓으려 했지요.\n\"흥, 그렇다면 브레멘에 가서 음악가가 될 테야!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p1.webp?v=2",
-        "audio": "/classic/bremen/narr-p1.mp3",
+        "n": 1,
+        "text": "옛날 어느 마을에 늙은 당나귀가 살았어요.\n오랫동안 짐을 날랐지만, 주인은 늙었다며 내쫓았지요.\n당나귀는 귀를 쫑긋 세우고 말했어요.\n\"흥! 그럼 브레멘에 가서 음악가가 될 테야!\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p1.webp?v=3",
+        "lines": [
+          {
+            "text": "흥! 그럼 브레멘에 가서 음악가가 될 테야!",
+            "who": "donkey"
+          }
+        ],
         "hotspots": [
           {
             "label": "donkey",
+            "line": "흥! 그럼 브레멘에 가서 음악가가 될 테야!",
             "box": [
-              300,
-              150,
-              850,
-              600
+              147,
+              186,
+              914,
+              698
             ],
-            "audio": "/classic/bremen/say-p1-donkey.wav",
-            "line": "브레멘에 가서 음악가가 될 테야!"
+            "audio": "/classic/bremen/say-p1-donkey.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p1-0.mp3",
+            "text": "옛날 어느 마을에 늙은 당나귀가 살았어요.\n오랫동안 짐을 날랐지만, 주인은 늙었다며 내쫓았지요.\n당나귀는 귀를 쫑긋 세우고 말했어요.\n"
+          },
+          {
+            "who": "donkey",
+            "src": "/classic/bremen/seg-cast-p1-1.mp3",
+            "text": "\"흥! 그럼 브레멘에 가서 음악가가 될 테야!\""
           }
         ]
       },
       {
-        "text": "길을 가던 당나귀는 축 처진 사냥개를 만났어요.\n\"나는 늙어서 사냥을 못 한다고 쫓겨났어…\"\n\"잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!\" \"멍멍! 좋아!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p2.webp",
-        "audio": "/classic/bremen/narr-p2.mp3",
+        "n": 2,
+        "text": "길을 가다 축 처진 사냥개를 만났어요.\n\"나는 늙어서 사냥을 못 한다고 쫓겨났어…\"\n\"잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!\"\n개의 꼬리가 살랑살랑 움직이기 시작했지요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p2.webp?v=3",
+        "lines": [
+          {
+            "text": "나는 늙어서 사냥을 못 한다고 쫓겨났어…",
+            "who": "dog"
+          },
+          {
+            "text": "잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!",
+            "who": "donkey"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "donkey",
+            "line": "잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!",
+            "box": [
+              62,
+              297,
+              497,
+              919
+            ],
+            "audio": "/classic/bremen/say-p2-donkey.mp3"
+          },
+          {
+            "label": "dog",
+            "line": "나는 늙어서 사냥을 못 한다고 쫓겨났어…",
+            "box": [
+              535,
+              110,
+              980,
+              511
+            ],
+            "audio": "/classic/bremen/say-p2-dog.mp3",
+            "feel": "sad"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p2-0.mp3",
+            "text": "길을 가다 축 처진 사냥개를 만났어요.\n"
+          },
+          {
+            "who": "dog",
+            "src": "/classic/bremen/seg-cast-p2-1.mp3",
+            "text": "\"나는 늙어서 사냥을 못 한다고 쫓겨났어…\"\n"
+          },
+          {
+            "who": "donkey",
+            "src": "/classic/bremen/seg-cast-p2-2.mp3",
+            "text": "\"잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p2-3.mp3",
+            "text": "\n개의 꼬리가 살랑살랑 움직이기 시작했지요."
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "담벼락 위에는 시무룩한 고양이가 있었어요.\n\"쥐를 못 잡는다고 집에서 쫓겨났어…\"\n\"우리랑 같이 가자! 너는 노래를 하면 되겠어!\"\n고양이가 폴짝 뛰어내려 셋이 되었답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p3.webp?v=3",
+        "lines": [
+          {
+            "text": "쥐를 못 잡는다고 집에서 쫓겨났어…",
+            "who": "cat"
+          },
+          {
+            "text": "우리랑 같이 가자! 너는 노래를 하면 되겠어!",
+            "who": "donkey"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "cat",
+            "line": "쥐를 못 잡는다고 집에서 쫓겨났어…",
+            "box": [
+              43,
+              684,
+              431,
+              905
+            ],
+            "audio": "/classic/bremen/say-p3-cat.mp3",
+            "feel": "sad"
+          },
+          {
+            "label": "donkey",
+            "line": "우리랑 같이 가자! 너는 노래를 하면 되겠어!",
+            "box": [
+              242,
+              138,
+              932,
+              483
+            ],
+            "audio": "/classic/bremen/say-p3-donkey.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p3-0.mp3",
+            "text": "담벼락 위에는 시무룩한 고양이가 있었어요.\n"
+          },
+          {
+            "who": "cat",
+            "src": "/classic/bremen/seg-cast-p3-1.mp3",
+            "text": "\"쥐를 못 잡는다고 집에서 쫓겨났어…\"\n"
+          },
+          {
+            "who": "donkey",
+            "src": "/classic/bremen/seg-cast-p3-2.mp3",
+            "text": "\"우리랑 같이 가자! 너는 노래를 하면 되겠어!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p3-3.mp3",
+            "text": "\n고양이가 폴짝 뛰어내려 셋이 되었답니다."
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "농장 앞에서는 수탉이 목청껏 울고 있었어요.\n\"나는 내일 국거리가 될 신세라고!\"\n\"그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 악단의 나팔이야!\"\n그렇게 넷이 되었지요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p4.webp?v=3",
+        "lines": [
+          {
+            "text": "나는 내일 국거리가 될 신세라고!",
+            "who": "rooster"
+          },
+          {
+            "text": "그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 악단의 나팔이야!",
+            "who": "donkey"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "rooster",
+            "line": "나는 내일 국거리가 될 신세라고!",
+            "box": [
+              43,
+              497,
+              459,
+              849
+            ],
+            "audio": "/classic/bremen/say-p4-rooster.mp3"
+          },
+          {
+            "label": "donkey",
+            "line": "그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 악단의 나팔이야!",
+            "box": [
+              119,
+              166,
+              961,
+              483
+            ],
+            "audio": "/classic/bremen/say-p4-donkey.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p4-0.mp3",
+            "text": "농장 앞에서는 수탉이 목청껏 울고 있었어요.\n"
+          },
+          {
+            "who": "rooster",
+            "src": "/classic/bremen/seg-cast-p4-1.mp3",
+            "text": "\"나는 내일 국거리가 될 신세라고!\"\n"
+          },
+          {
+            "who": "donkey",
+            "src": "/classic/bremen/seg-cast-p4-2.mp3",
+            "text": "\"그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 악단의 나팔이야!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p4-3.mp3",
+            "text": "\n그렇게 넷이 되었지요."
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "당나귀, 개, 고양이, 수탉.\n넷은 신이 나서 숲길을 걸었어요.\n하지만 해가 지고 배가 고파졌지요.\n\"오늘 밤은 어디서 자지?\"\n그때 저 멀리 불빛이 반짝였어요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p5.webp?v=3",
+        "lines": [
+          {
+            "text": "오늘 밤은 어디서 자지?",
+            "who": "dog"
+          }
+        ],
         "hotspots": [
           {
             "label": "dog",
+            "line": "오늘 밤은 어디서 자지?",
             "box": [
-              400,
-              550,
-              850,
-              900
+              516,
+              345,
+              772,
+              608
             ],
-            "audio": "/classic/bremen/say-p2-dog.wav",
-            "line": "나는 늙어서 쫓겨났어… 멍멍."
+            "audio": "/classic/bremen/say-p5-dog.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p5-0.mp3",
+            "text": "당나귀, 개, 고양이, 수탉.\n넷은 신이 나서 숲길을 걸었어요.\n하지만 해가 지고 배가 고파졌지요.\n"
+          },
+          {
+            "who": "dog",
+            "src": "/classic/bremen/seg-cast-p5-1.mp3",
+            "text": "\"오늘 밤은 어디서 자지?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p5-2.mp3",
+            "text": "\n그때 저 멀리 불빛이 반짝였어요."
           }
         ]
       },
       {
-        "text": "조금 더 가니 담벼락 위에 시무룩한 고양이가 있었어요.\n\"쥐를 못 잡는다고 집에서 쫓겨났다냥…\"\n\"우리랑 같이 가자! 너는 노래를 하면 되겠어!\"\n\"야옹~ 나 노래 잘한다냥!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p3.webp",
-        "audio": "/classic/bremen/narr-p3.mp3",
+        "n": 6,
+        "text": "불빛을 따라가니 작은 오두막이 나왔어요.\n창문으로 들여다보니 — 세상에!\n험상궂은 도둑들이 훔친 보따리를 쌓아 놓고\n음식을 잔뜩 차려 먹고 있었지요.\n\"나쁜 도둑들이야. 우리가 쫓아내자!\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p6.webp?v=3",
+        "lines": [
+          {
+            "text": "나쁜 도둑들이야. 우리가 쫓아내자!",
+            "who": "cat"
+          }
+        ],
         "hotspots": [
           {
             "label": "cat",
+            "line": "나쁜 도둑들이야. 우리가 쫓아내자!",
             "box": [
-              250,
-              500,
-              700,
-              900
+              431,
+              269,
+              828,
+              421
             ],
-            "audio": "/classic/bremen/say-p3-cat.wav",
-            "line": "야옹~ 나 노래 잘한다냥!"
+            "audio": "/classic/bremen/say-p6-cat.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p6-0.mp3",
+            "text": "불빛을 따라가니 작은 오두막이 나왔어요.\n창문으로 들여다보니 — 세상에!\n험상궂은 도둑들이 훔친 보따리를 쌓아 놓고\n음식을 잔뜩 차려 먹고 있었지요.\n"
+          },
+          {
+            "who": "cat",
+            "src": "/classic/bremen/seg-cast-p6-1.mp3",
+            "text": "\"나쁜 도둑들이야. 우리가 쫓아내자!\""
           }
         ]
       },
       {
-        "text": "농장 앞을 지나는데 수탉이 목청껏 울고 있었어요.\n\"꼬끼오! 나는 내일 국거리가 될 신세라고!\"\n\"그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 악단의 나팔이야!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p4.webp",
-        "audio": "/classic/bremen/narr-p4.mp3",
+        "n": 7,
+        "text": "도둑들을 쫓아낼 꾀를 당나귀가 냈어요.\n\"우리 다 같이 무대에 서는 거야!\"\n당나귀 위에 개가, 개 위에 고양이가,\n고양이 위에 수탉이 차곡차곡 올라탔지요.\n\"자, 브레멘 음악대 첫 공연이다!\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p7.webp?v=3",
+        "lines": [
+          {
+            "text": "우리 다 같이 무대에 서는 거야!",
+            "who": "donkey"
+          },
+          {
+            "text": "자, 브레멘 음악대 첫 공연이다!",
+            "who": "donkey"
+          }
+        ],
         "hotspots": [
+          {
+            "label": "donkey",
+            "line": "자, 브레멘 음악대 첫 공연이다!",
+            "box": [
+              488,
+              193,
+              961,
+              622
+            ],
+            "audio": "/classic/bremen/say-p7-donkey.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p7-0.mp3",
+            "text": "도둑들을 쫓아낼 꾀를 당나귀가 냈어요.\n"
+          },
+          {
+            "who": "donkey",
+            "src": "/classic/bremen/seg-cast-p7-1.mp3",
+            "text": "\"우리 다 같이 무대에 서는 거야!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p7-2.mp3",
+            "text": "\n당나귀 위에 개가, 개 위에 고양이가,\n고양이 위에 수탉이 차곡차곡 올라탔지요.\n"
+          },
+          {
+            "who": "donkey",
+            "src": "/classic/bremen/seg-cast-p7-3.mp3",
+            "text": "\"자, 브레멘 음악대 첫 공연이다!\""
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "하나, 둘, 셋!\n히호! 멍멍! 야옹! 꼬끼오!\n넷이 한꺼번에 목청껏 노래하며\n창문을 와장창 뚫고 뛰어들었어요!\n접시가 튀고 촛불이 흔들리고,\n오두막이 쩌렁쩌렁 울렸지요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p8.webp?v=3",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p8-0.mp3",
+            "text": "하나, 둘, 셋!\n히호! 멍멍! 야옹! 꼬끼오!\n넷이 한꺼번에 목청껏 노래하며\n창문을 와장창 뚫고 뛰어들었어요!\n접시가 튀고 촛불이 흔들리고,\n오두막이 쩌렁쩌렁 울렸지요."
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "도둑들은 혼비백산했어요.\n\"으악! 괴물이다! 도망쳐라!\"\n도둑 두목이 제일 먼저 문을 박차고 달아났지요.\n도둑들은 신발도 못 신고\n깜깜한 숲으로 사라져 버렸답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p9.webp?v=3",
+        "lines": [
+          {
+            "text": "으악! 괴물이다! 도망쳐라!",
+            "who": "thief"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "thief",
+            "line": "으악! 괴물이다! 도망쳐라!",
+            "box": [
+              100,
+              428,
+              961,
+              891
+            ],
+            "audio": "/classic/bremen/say-p9-thief.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p9-0.mp3",
+            "text": "도둑들은 혼비백산했어요.\n"
+          },
+          {
+            "who": "thief",
+            "src": "/classic/bremen/seg-cast-p9-1.mp3",
+            "text": "\"으악! 괴물이다! 도망쳐라!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p9-2.mp3",
+            "text": "\n도둑 두목이 제일 먼저 문을 박차고 달아났지요.\n도둑들은 신발도 못 신고\n깜깜한 숲으로 사라져 버렸답니다."
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "\"공연 대성공!\"\n도둑들이 도망간 식탁에는\n맛있는 음식이 그대로 남아 있었어요.\n넷은 둘러앉아 배가 빵빵해지도록 먹었지요.\n\"이렇게 배부른 건 정말 오랜만이야.\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p10.webp?v=3",
+        "lines": [
+          {
+            "text": "공연 대성공!",
+            "who": "rooster"
+          },
+          {
+            "text": "이렇게 배부른 건 정말 오랜만이야.",
+            "who": "dog"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "dog",
+            "line": "이렇게 배부른 건 정말 오랜만이야.",
+            "box": [
+              242,
+              41,
+              961,
+              325
+            ],
+            "audio": "/classic/bremen/say-p10-dog.mp3"
+          },
           {
             "label": "rooster",
+            "line": "공연 대성공!",
             "box": [
-              200,
-              450,
-              700,
-              850
+              251,
+              421,
+              601,
+              698
             ],
-            "audio": "/classic/bremen/say-p4-rooster.wav",
-            "line": "꼬끼오! 나도 데려가 줘!"
+            "audio": "/classic/bremen/say-p10-rooster.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "rooster",
+            "src": "/classic/bremen/seg-cast-p10-0.mp3",
+            "text": "\"공연 대성공!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p10-1.mp3",
+            "text": "\n도둑들이 도망간 식탁에는\n맛있는 음식이 그대로 남아 있었어요.\n넷은 둘러앉아 배가 빵빵해지도록 먹었지요.\n"
+          },
+          {
+            "who": "dog",
+            "src": "/classic/bremen/seg-cast-p10-2.mp3",
+            "text": "\"이렇게 배부른 건 정말 오랜만이야.\""
           }
         ]
       },
       {
-        "text": "당나귀, 개, 고양이, 수탉.\n넷은 신이 나서 숲길을 걸었어요.\n하지만 날이 저물고 배가 고파졌지요.\n그때 멀리서 반짝, 불빛이 보였어요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p5.webp?v=2",
-        "audio": "/classic/bremen/narr-p5.mp3"
-      },
-      {
-        "text": "불빛을 따라가니 작은 오두막이 나왔어요.\n창문 안을 들여다보니 — 세상에!\n식탁 가득 맛있는 음식이 차려져 있고,\n무섭게 생긴 도둑들이 둘러앉아 있었지요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p6.webp?v=2",
-        "audio": "/classic/bremen/narr-p6.mp3"
-      },
-      {
-        "text": "\"저 음식을 어떻게 먹지?\"\n당나귀가 꾀를 냈어요.\n\"우리 다 같이 무대에 서는 거야!\"\n당나귀 위에 개가, 개 위에 고양이가,\n고양이 위에 수탉이 차곡차곡 올라탔지요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p7.webp?v=2",
-        "audio": "/classic/bremen/narr-p7.mp3",
+        "n": 11,
+        "text": "당나귀는 마당 짚더미에,\n개는 문 뒤에, 고양이는 따뜻한 아궁이 곁에,\n수탉은 지붕 꼭대기에 자리를 잡았어요.\n\"잘 자, 얘들아.\"\n오두막에 불이 하나둘 꺼졌답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p11.webp?v=3",
+        "lines": [
+          {
+            "text": "잘 자, 얘들아.",
+            "who": "donkey"
+          }
+        ],
         "hotspots": [
           {
             "label": "donkey",
+            "line": "잘 자, 얘들아.",
             "box": [
-              450,
-              300,
-              900,
-              700
+              554,
+              21,
+              932,
+              318
             ],
-            "audio": "/classic/bremen/say-p7-donkey.wav",
-            "line": "자, 내 등 위로 올라와!"
+            "audio": "/classic/bremen/say-p11-donkey.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p11-0.mp3",
+            "text": "당나귀는 마당 짚더미에,\n개는 문 뒤에, 고양이는 따뜻한 아궁이 곁에,\n수탉은 지붕 꼭대기에 자리를 잡았어요.\n"
+          },
+          {
+            "who": "donkey",
+            "src": "/classic/bremen/seg-cast-p11-1.mp3",
+            "text": "\"잘 자, 얘들아.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p11-2.mp3",
+            "text": "\n오두막에 불이 하나둘 꺼졌답니다."
           }
         ]
       },
       {
-        "text": "\"자, 브레멘 음악대 첫 공연이다! 하나, 둘, 셋!\"\n히호! 멍멍! 야옹! 꼬끼오오!\n넷이 한꺼번에 목청껏 노래하며\n창문을 와장창 뚫고 뛰어들었어요!",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p8.webp?v=2",
-        "audio": "/classic/bremen/narr-p8.mp3",
+        "n": 12,
+        "text": "한밤중, 도둑 두목이 살금살금 돌아왔어요.\n두고 온 보물 보따리가 아까웠거든요.\n\"무, 무섭지만… 보물은 찾아와야지.\"\n두목은 발끝으로 부엌에 들어갔지요.\n어둠 속에서 무언가 반짝, 빛나고 있었어요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p12.webp?v=3",
+        "lines": [
+          {
+            "text": "무, 무섭지만… 보물은 찾아와야지.",
+            "who": "thief",
+            "feel": "whisper"
+          }
+        ],
         "hotspots": [
           {
-            "label": "donkey",
+            "label": "thief",
+            "line": "무, 무섭지만… 보물은 찾아와야지.",
             "box": [
-              250,
-              250,
-              850,
-              750
+              156,
+              297,
+              980,
+              801
             ],
-            "audio": "/classic/bremen/say-p8-donkey.wav",
-            "line": "히호! 멍멍! 야옹! 꼬끼오!"
+            "audio": "/classic/bremen/say-p12-thief.mp3",
+            "feel": "whisper"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p12-0.mp3",
+            "text": "한밤중, 도둑 두목이 살금살금 돌아왔어요.\n두고 온 보물 보따리가 아까웠거든요.\n"
+          },
+          {
+            "who": "thief",
+            "src": "/classic/bremen/seg-cast-p12-1.mp3",
+            "text": "\"무, 무섭지만… 보물은 찾아와야지.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p12-2.mp3",
+            "text": "\n두목은 발끝으로 부엌에 들어갔지요.\n어둠 속에서 무언가 반짝, 빛나고 있었어요."
           }
         ]
       },
       {
-        "text": "\"으악! 괴물이다!\"\n\"도깨비가 나타났다아!\"\n도둑들은 혼비백산해서\n신발도 못 신고 숲으로 도망쳤답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p9.webp?v=2",
-        "audio": "/classic/bremen/narr-p9.mp3",
+        "n": 13,
+        "text": "반짝이는 건 고양이의 눈이었어요!\n고양이가 발톱으로 확 할퀴고,\n문 뒤의 개가 다리를 덥석 물고,\n당나귀가 뒷발로 뻥 차 버렸지요.\n지붕 위 수탉까지 꼬끼오오 울었답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p13.webp?v=3",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p13-0.mp3",
+            "text": "반짝이는 건 고양이의 눈이었어요!\n고양이가 발톱으로 확 할퀴고,\n문 뒤의 개가 다리를 덥석 물고,\n당나귀가 뒷발로 뻥 차 버렸지요.\n지붕 위 수탉까지 꼬끼오오 울었답니다."
+          }
+        ]
+      },
+      {
+        "n": 14,
+        "text": "두목은 걸음아 날 살려라 도망치며 외쳤어요.\n\"저 집엔 무서운 괴물이 산다!\n손톱으로 할퀴고, 이빨로 물고, 방망이로 때리고,\n지붕에서 소리까지 질러!\"\n도둑들은 두 번 다시 오지 않았답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p14.webp?v=3",
+        "lines": [
+          {
+            "text": "저 집엔 무서운 괴물이 산다!\n손톱으로 할퀴고, 이빨로 물고, 방망이로 때리고,\n지붕에서 소리까지 질러!",
+            "who": "thief",
+            "feel": "toneup"
+          }
+        ],
         "hotspots": [
           {
-            "label": "robber",
+            "label": "thief",
+            "line": "저 집엔 무서운 괴물이 산다!\n손톱으로 할퀴고, 이빨로 물고, 방망이로 때리고,\n지붕에서 소리까지 질러!",
             "box": [
-              300,
-              300,
-              850,
-              700
+              100,
+              62,
+              980,
+              539
             ],
-            "audio": "/classic/bremen/say-p9-robber.wav",
-            "line": "으악! 괴물이다! 도망쳐!"
+            "audio": "/classic/bremen/say-p14-thief.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p14-0.mp3",
+            "text": "두목은 걸음아 날 살려라 도망치며 외쳤어요.\n"
+          },
+          {
+            "who": "thief",
+            "src": "/classic/bremen/seg-cast-p14-1.mp3",
+            "text": "\"저 집엔 무서운 괴물이 산다!\n손톱으로 할퀴고, 이빨로 물고, 방망이로 때리고,\n지붕에서 소리까지 질러!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p14-2.mp3",
+            "text": "\n도둑들은 두 번 다시 오지 않았답니다."
           }
         ]
       },
       {
-        "text": "\"공연 대성공!\"\n네 친구는 식탁에 둘러앉아\n배가 빵빵해지도록 맛있게 먹었어요.\n그리고 각자 편한 자리에서 쿨쿨 잠이 들었지요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p10.webp?v=2",
-        "audio": "/classic/bremen/narr-p10.mp3"
-      },
-      {
-        "text": "한밤중, 도둑 하나가 살금살금 돌아왔어요.\n어둠 속에서 고양이 눈이 반짝!\n\"할퀴어라!\" \"물어라!\" \"뒷발질!\"\n\"꼬끼오오오!\" 수탉의 나팔 소리까지!",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p11.webp",
-        "audio": "/classic/bremen/narr-p11.mp3",
+        "n": 15,
+        "text": "아침 해가 뜨자 넷은 마당에 모였지요.\n햇살에 오두막이 반짝반짝 빛났지요.\n\"얘들아, 우리 여기서 사는 건 어떨 것 같아?\"\n\"좋아!\" \"좋아!\" 다들 끄덕였어요.\n수탉이 지붕에서 힘차게 울었답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p15.webp?v=3",
+        "lines": [
+          {
+            "text": "얘들아, 우리 여기서 사는 건 어떨 것 같아?",
+            "who": "donkey"
+          },
+          {
+            "text": "좋아!",
+            "who": "dog"
+          },
+          {
+            "text": "좋아!",
+            "who": "cat"
+          }
+        ],
         "hotspots": [
           {
             "label": "cat",
+            "line": "좋아!",
             "box": [
-              250,
-              300,
-              800,
-              700
+              478,
+              76,
+              895,
+              311
             ],
-            "audio": "/classic/bremen/say-p11-cat.wav",
-            "line": "감히 우리 집에 들어와? 냐아옹!"
+            "audio": "/classic/bremen/say-p15-cat.mp3"
+          },
+          {
+            "label": "donkey",
+            "line": "얘들아, 우리 여기서 사는 건 어떨 것 같아?",
+            "box": [
+              71,
+              318,
+              876,
+              566
+            ],
+            "audio": "/classic/bremen/say-p15-donkey.mp3"
+          },
+          {
+            "label": "dog",
+            "line": "좋아!",
+            "box": [
+              384,
+              573,
+              914,
+              801
+            ],
+            "audio": "/classic/bremen/say-p15-dog.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p15-0.mp3",
+            "text": "아침 해가 뜨자 넷은 마당에 모였지요.\n햇살에 오두막이 반짝반짝 빛났지요.\n"
+          },
+          {
+            "who": "rooster",
+            "src": "/classic/bremen/seg-cast-p15-1.mp3",
+            "text": "\"얘들아, 우리 여기서 사는 건 어떨 것 같아?\"\n\"좋아!\" \"좋아!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p15-2.mp3",
+            "text": " 다들 끄덕였어요.\n수탉이 지붕에서 힘차게 울었답니다."
           }
         ]
       },
       {
-        "text": "도둑은 걸음아 나 살려라 도망치며 외쳤어요.\n\"저 집엔 무서운 괴물이 산다!\n손톱으로 할퀴고, 이빨로 물고, 방망이로 때리고,\n지붕에서 소리까지 질러!\" 도둑들은 다시는 오지 않았답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p12.webp",
-        "audio": "/classic/bremen/narr-p12.mp3",
-        "hotspots": [
+        "n": 16,
+        "text": "그날부터 저녁마다 오두막 앞은 무대가 되었어요.\n히호! 멍멍! 야옹! 꼬끼오!\n숲속 동물들이 모여들어 손뼉을 쳤지요.\n당나귀가 씩 웃으며 말했답니다.\n\"여기가 우리의 브레멘이야.\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p16.webp?v=3",
+        "lines": [
           {
-            "label": "robber",
-            "box": [
-              300,
-              300,
-              850,
-              700
-            ],
-            "audio": "/classic/bremen/say-p12-robber.wav",
-            "line": "저 집엔 무서운 괴물이 산다!"
+            "text": "여기가 우리의 브레멘이야.",
+            "who": "donkey"
           }
-        ]
-      },
-      {
-        "text": "네 친구는 그 오두막이 아주 마음에 들었어요.\n브레멘까지 갈 필요도 없어졌지요.\n낮에는 햇볕을 쬐고, 저녁이면 다 같이 —\n히호! 멍멍! 야옹! 꼬끼오!\n숲속 음악회를 열며 오래오래 행복하게 살았답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/bremen/p13.webp",
-        "audio": "/classic/bremen/narr-p13.mp3",
+        ],
         "hotspots": [
           {
-            "label": "rooster",
+            "label": "donkey",
+            "line": "여기가 우리의 브레멘이야.",
             "box": [
-              200,
-              300,
-              750,
-              750
+              440,
+              290,
+              876,
+              746
             ],
-            "audio": "/classic/bremen/say-p13-rooster.wav",
-            "line": "브레멘 음악대, 오늘도 공연 시작!"
+            "audio": "/classic/bremen/say-p16-donkey.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/bremen/seg-p16-0.mp3",
+            "text": "그날부터 저녁마다 오두막 앞은 무대가 되었어요.\n히호! 멍멍! 야옹! 꼬끼오!\n숲속 동물들이 모여들어 손뼉을 쳤지요.\n당나귀가 씩 웃으며 말했답니다.\n"
+          },
+          {
+            "who": "donkey",
+            "src": "/classic/bremen/seg-cast-p16-1.mp3",
+            "text": "\"여기가 우리의 브레멘이야.\""
           }
         ]
       }
     ],
     "narrators": [
-      "tc-hamchu"
-    ]
+      "tc-minjung"
+    ],
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "donkey": "tc-dukgu",
+      "dog": "tc-homun",
+      "cat": "tc-hamchu",
+      "rooster": "tc-guri",
+      "thief": "tc-hakchul"
+    },
+    "roleOf": {
+      "당나귀": "donkey",
+      "개": "dog",
+      "사냥개": "dog",
+      "고양이": "cat",
+      "수탉": "rooster",
+      "도둑": "thief",
+      "도둑 두목": "thief",
+      "두목": "thief"
+    }
   },
   {
     "id": "classic-antgrasshopper",
