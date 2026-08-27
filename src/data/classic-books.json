@@ -2959,190 +2959,415 @@
     "id": "classic-antgrasshopper",
     "lang": "ko",
     "title": "개미와 베짱이",
-    "summary": "여름 내내 일한 개미와 노래한 베짱이가 함께 겨울을 나는 이야기",
-    "narrator": "tc-arin",
+    "summary": "노래도 일이었다는 걸 — 겨울 개미집의 작은 음악회.",
+    "narrator": "tc-minjung",
     "pages": [
       {
-        "text": "쨍쨍한 여름날, 개미들은 부지런히 일했어요.\n영차, 영차. 줄지어 낟알을 나르고\n땀을 뻘뻘 흘리며 곳간을 채웠지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p1.webp?v=2",
-        "audio": "/classic/antgrasshopper/narr-p1.mp3",
+        "n": 1,
+        "text": "쨍쨍한 여름날, 개미들은 부지런히 일했어요.\n영차, 영차. 줄지어 낟알을 나르고\n땀을 뻘뻘 흘리며 곳간을 채웠지요.\n제일 작은 꼬마 개미도 제 몫을 날랐답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p1.webp?v=3",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p1-0.mp3",
+            "text": "쨍쨍한 여름날, 개미들은 부지런히 일했어요.\n영차, 영차. 줄지어 낟알을 나르고\n땀을 뻘뻘 흘리며 곳간을 채웠지요.\n제일 작은 꼬마 개미도 제 몫을 날랐답니다."
+          }
+        ]
+      },
+      {
+        "n": 2,
+        "text": "풀잎 위에서는 베짱이가 바이올린을 켜고 있었어요.\n\"개미야, 이 좋은 여름에 왜 일만 하니?\"\n\"겨울이 오면 먹을 게 없어지거든.\n미리미리 모아 두는 거야.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p2.webp?v=3",
+        "lines": [
+          {
+            "text": "개미야, 이 좋은 여름에 왜 일만 하니?",
+            "who": "grasshopper"
+          },
+          {
+            "text": "겨울이 오면 먹을 게 없어지거든.\n미리미리 모아 두는 거야.",
+            "who": "ant"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "grasshopper",
+            "line": "개미야, 이 좋은 여름에 왜 일만 하니?",
+            "box": [
+              43,
+              262,
+              431,
+              546
+            ],
+            "audio": "/classic/antgrasshopper/say-p2-grasshopper.mp3"
+          },
+          {
+            "label": "ant",
+            "line": "겨울이 오면 먹을 게 없어지거든.\n미리미리 모아 두는 거야.",
+            "box": [
+              639,
+              573,
+              942,
+              898
+            ],
+            "audio": "/classic/antgrasshopper/say-p2-ant.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p2-0.mp3",
+            "text": "풀잎 위에서는 베짱이가 바이올린을 켜고 있었어요.\n"
+          },
+          {
+            "who": "grasshopper",
+            "src": "/classic/antgrasshopper/seg-cast-p2-1.mp3",
+            "text": "\"개미야, 이 좋은 여름에 왜 일만 하니?\"\n"
+          },
+          {
+            "who": "ant",
+            "src": "/classic/antgrasshopper/seg-cast-p2-2.mp3",
+            "text": "\"겨울이 오면 먹을 게 없어지거든.\n미리미리 모아 두는 거야.\""
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "\"에이, 겨울은 아직 멀었는걸!\"\n베짱이는 시원한 그늘에서 신나게 연주했어요.\n숲 친구들이 모여들어 어깨를 들썩였고,\n달팽이도 느릿느릿 박자를 맞췄답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p3.webp?v=3",
+        "lines": [
+          {
+            "text": "에이, 겨울은 아직 멀었는걸!",
+            "who": "grasshopper"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "grasshopper",
+            "line": "에이, 겨울은 아직 멀었는걸!",
+            "box": [
+              204,
+              269,
+              885,
+              594
+            ],
+            "audio": "/classic/antgrasshopper/say-p3-grasshopper.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "grasshopper",
+            "src": "/classic/antgrasshopper/seg-cast-p3-0.mp3",
+            "text": "\"에이, 겨울은 아직 멀었는걸!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p3-1.mp3",
+            "text": "\n베짱이는 시원한 그늘에서 신나게 연주했어요.\n숲 친구들이 모여들어 어깨를 들썩였고,\n달팽이도 느릿느릿 박자를 맞췄답니다."
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "어느새 가을이 왔어요.\n나뭇잎이 한 장, 두 장 떨어졌지요.\n개미들의 곳간은 낟알로 가득 찼어요.\n베짱이는 문득 서늘한 바람에 몸을 떨었지만,\n\"아직 괜찮아!\"\n하고 또 노래를 불렀답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p4.webp?v=3",
+        "lines": [
+          {
+            "text": "아직 괜찮아!",
+            "who": "grasshopper"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "grasshopper",
+            "line": "아직 괜찮아!",
+            "box": [
+              100,
+              573,
+              866,
+              919
+            ],
+            "audio": "/classic/antgrasshopper/say-p4-grasshopper.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p4-0.mp3",
+            "text": "어느새 가을이 왔어요.\n나뭇잎이 한 장, 두 장 떨어졌지요.\n개미들의 곳간은 낟알로 가득 찼어요.\n베짱이는 문득 서늘한 바람에 몸을 떨었지만,\n"
+          },
+          {
+            "who": "grasshopper",
+            "src": "/classic/antgrasshopper/seg-cast-p4-1.mp3",
+            "text": "\"아직 괜찮아!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p4-2.mp3",
+            "text": "\n하고 또 노래를 불렀답니다."
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "드디어 하얀 겨울이 왔어요.\n쌩쌩 눈보라가 몰아치고 온 세상이 꽁꽁 얼었지요.\n먹을 것도, 따뜻한 집도 없는 베짱이는\n바이올린을 안고 덜덜 떨었어요.\n입김이 하얗게 피어올랐지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p5.webp?v=3",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p5-0.mp3",
+            "text": "드디어 하얀 겨울이 왔어요.\n쌩쌩 눈보라가 몰아치고 온 세상이 꽁꽁 얼었지요.\n먹을 것도, 따뜻한 집도 없는 베짱이는\n바이올린을 안고 덜덜 떨었어요.\n입김이 하얗게 피어올랐지요."
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "text": "베짱이는 눈길을 헤치고 개미집을 찾아갔어요.\n똑, 똑, 똑.\n\"개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?\"\n문 앞에서 목소리가 자꾸 작아졌지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p6.webp?v=3",
+        "lines": [
+          {
+            "text": "개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?",
+            "who": "grasshopper",
+            "feel": "sad"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "grasshopper",
+            "line": "개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?",
+            "box": [
+              242,
+              414,
+              847,
+              684
+            ],
+            "audio": "/classic/antgrasshopper/say-p6-grasshopper.mp3",
+            "feel": "sad"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p6-0.mp3",
+            "text": "베짱이는 눈길을 헤치고 개미집을 찾아갔어요.\n똑, 똑, 똑.\n"
+          },
+          {
+            "who": "grasshopper",
+            "src": "/classic/antgrasshopper/seg-cast-p6-1.mp3",
+            "text": "\"개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p6-2.mp3",
+            "text": "\n문 앞에서 목소리가 자꾸 작아졌지요."
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "문이 활짝 열렸어요.\n\"어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!\"\n개미들은 따뜻한 수프를 끓여 주고\n난롯가 제일 좋은 자리를 내주었지요.\n난롯불이 탁탁 소리를 냈답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p7.webp?v=3",
+        "lines": [
+          {
+            "text": "어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!",
+            "who": "ant"
+          }
+        ],
         "hotspots": [
           {
             "label": "ant",
+            "line": "어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!",
             "box": [
-              400,
-              200,
-              850,
-              600
+              232,
+              325,
+              753,
+              552
             ],
-            "audio": "/classic/antgrasshopper/say-p1-ant.wav",
-            "line": "영차, 영차! 겨울을 준비하자!"
+            "audio": "/classic/antgrasshopper/say-p7-ant.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p7-0.mp3",
+            "text": "문이 활짝 열렸어요.\n"
+          },
+          {
+            "who": "ant",
+            "src": "/classic/antgrasshopper/seg-cast-p7-1.mp3",
+            "text": "\"어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p7-2.mp3",
+            "text": "\n개미들은 따뜻한 수프를 끓여 주고\n난롯가 제일 좋은 자리를 내주었지요.\n난롯불이 탁탁 소리를 냈답니다."
           }
         ]
       },
       {
-        "text": "풀잎 위에서는 베짱이가 바이올린을 켜고 있었어요.\n\"찌르르 찌르르~ 개미야, 이 좋은 여름에 왜 일만 하니?\"\n\"겨울이 오면 먹을 게 없어지거든.\n미리미리 모아 두는 거야.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p2.webp",
-        "audio": "/classic/antgrasshopper/narr-p2.mp3",
+        "n": 8,
+        "text": "베짱이는 고개를 푹 숙였어요.\n\"너희가 일할 때 나는 놀기만 했는걸…\n이 수프를 얻어먹을 자격이 없어.\"\n수프에서 김이 모락모락 올라왔지요.\n개미들은 가만히 기다려 주었어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p8.webp?v=3",
+        "lines": [
+          {
+            "text": "너희가 일할 때 나는 놀기만 했는걸…\n이 수프를 얻어먹을 자격이 없어.",
+            "who": "grasshopper",
+            "feel": "sad"
+          }
+        ],
         "hotspots": [
           {
             "label": "grasshopper",
+            "line": "너희가 일할 때 나는 놀기만 했는걸…\n이 수프를 얻어먹을 자격이 없어.",
             "box": [
-              200,
-              400,
-              700,
-              850
+              270,
+              166,
+              838,
+              539
             ],
-            "audio": "/classic/antgrasshopper/say-p2-grasshopper.wav",
-            "line": "이 좋은 여름에 왜 일만 하니?"
+            "audio": "/classic/antgrasshopper/say-p8-grasshopper.mp3",
+            "feel": "sad"
           }
-        ]
-      },
-      {
-        "text": "\"에이, 겨울은 아직 멀었는걸!\"\n베짱이는 시원한 그늘에서 신나게 연주했어요.\n찌르르 찌르르~ 숲 친구들이 모여들어\n베짱이의 노래를 듣고 어깨를 들썩였지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p3.webp",
-        "audio": "/classic/antgrasshopper/narr-p3.mp3",
-        "hotspots": [
+        ],
+        "segments": [
           {
-            "label": "grasshopper",
-            "box": [
-              250,
-              300,
-              800,
-              700
-            ],
-            "audio": "/classic/antgrasshopper/say-p3-grasshopper.wav",
-            "line": "찌르르 찌르르~ 랄랄라~"
-          }
-        ]
-      },
-      {
-        "text": "어느새 가을이 왔어요.\n개미들의 곳간은 낟알로 가득 찼지요.\n베짱이는 문득 서늘한 바람에 몸을 떨었지만,\n\"아직 괜찮아!\" 하고 또 노래를 불렀답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p4.webp",
-        "audio": "/classic/antgrasshopper/narr-p4.mp3"
-      },
-      {
-        "text": "드디어 하얀 겨울이 왔어요.\n쌩쌩 눈보라가 몰아치고 온 세상이 꽁꽁 얼었지요.\n먹을 것도, 따뜻한 집도 없는 베짱이는\n바이올린을 안고 덜덜 떨었어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p5.webp",
-        "audio": "/classic/antgrasshopper/narr-p5.mp3",
-        "hotspots": [
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p8-0.mp3",
+            "text": "베짱이는 고개를 푹 숙였어요.\n"
+          },
           {
-            "label": "grasshopper",
-            "box": [
-              300,
-              300,
-              850,
-              700
-            ],
-            "audio": "/classic/antgrasshopper/say-p5-grasshopper.wav",
-            "line": "너무 춥고 배가 고파…"
-          }
-        ]
-      },
-      {
-        "text": "베짱이는 눈길을 헤치고 개미집을 찾아갔어요.\n똑, 똑, 똑.\n\"개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p6.webp",
-        "audio": "/classic/antgrasshopper/narr-p6.mp3",
-        "hotspots": [
+            "who": "grasshopper",
+            "src": "/classic/antgrasshopper/seg-cast-p8-1.mp3",
+            "text": "\"너희가 일할 때 나는 놀기만 했는걸…\n이 수프를 얻어먹을 자격이 없어.\""
+          },
           {
-            "label": "grasshopper",
-            "box": [
-              300,
-              400,
-              850,
-              800
-            ],
-            "audio": "/classic/antgrasshopper/say-p6-grasshopper.wav",
-            "line": "개미야, 하룻밤만 재워 줄 수 있니?"
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p8-2.mp3",
+            "text": "\n수프에서 김이 모락모락 올라왔지요.\n개미들은 가만히 기다려 주었어요."
           }
         ]
       },
       {
-        "text": "문이 활짝 열렸어요.\n\"어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!\"\n개미들은 따뜻한 수프를 내어 주고\n난롯가 제일 좋은 자리를 내주었지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p7.webp",
-        "audio": "/classic/antgrasshopper/narr-p7.mp3",
-        "hotspots": [
+        "n": 9,
+        "text": "그러자 꼬마 개미가 말했어요.\n\"무슨 소리야! 여름에 낟알을 나를 때\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?\"\n베짱이가 천천히 고개를 들었지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p9.webp?v=3",
+        "lines": [
           {
-            "label": "ant",
-            "box": [
-              300,
-              150,
-              800,
-              550
-            ],
-            "audio": "/classic/antgrasshopper/say-p7-ant.wav",
-            "line": "어서 들어와! 몸이 꽁꽁 얼었네!"
+            "text": "무슨 소리야! 여름에 낟알을 나를 때\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?",
+            "who": "littleant"
           }
-        ]
-      },
-      {
-        "text": "베짱이는 고개를 푹 숙였어요.\n\"너희가 일할 때 나는 놀기만 했는걸…\n이 수프를 얻어먹을 자격이 없어.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p8.webp?v=2",
-        "audio": "/classic/antgrasshopper/narr-p8.mp3"
-      },
-      {
-        "text": "그러자 꼬마 개미가 말했어요.\n\"무슨 소리야! 여름에 낟알을 나를 때\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p9.webp?v=2",
-        "audio": "/classic/antgrasshopper/narr-p9.mp3",
+        ],
         "hotspots": [
           {
             "label": "littleant",
+            "line": "무슨 소리야! 여름에 낟알을 나를 때\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?",
             "box": [
-              400,
-              200,
-              850,
-              550
-            ],
-            "audio": "/classic/antgrasshopper/say-p9-littleant.wav",
-            "line": "베짱이 아저씨, 연주해 줄래요?"
-          }
-        ]
-      },
-      {
-        "text": "베짱이는 눈물을 닦고 바이올린을 들었어요.\n찌르르 찌르르~ 랄랄라~\n개미집에서 겨울 음악회가 열렸지요.\n개미들은 밤늦도록 덩실덩실 춤을 추었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p10.webp",
-        "audio": "/classic/antgrasshopper/narr-p10.mp3",
-        "hotspots": [
-          {
-            "label": "grasshopper",
-            "box": [
-              250,
+              430,
               300,
-              800,
-              700
+              830,
+              540
             ],
-            "audio": "/classic/antgrasshopper/say-p10-grasshopper.wav",
-            "line": "자, 겨울 음악회를 시작할게!"
+            "audio": "/classic/antgrasshopper/say-p9-littleant.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p9-0.mp3",
+            "text": "그러자 꼬마 개미가 말했어요.\n"
+          },
+          {
+            "who": "littleant",
+            "src": "/classic/antgrasshopper/seg-cast-p9-1.mp3",
+            "text": "\"무슨 소리야! 여름에 낟알을 나를 때\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p9-2.mp3",
+            "text": "\n베짱이가 천천히 고개를 들었지요."
           }
         ]
       },
       {
+        "n": 10,
+        "text": "베짱이는 눈물을 닦고 바이올린을 들었어요.\n신나는 바이올린 소리가 울려 퍼졌지요.\n개미집에서 겨울 음악회가 열렸지요.\n개미들은 밤늦도록 덩실덩실 춤을 추었고,\n꼬마 개미가 제일 신나게 굴렀답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p10.webp?v=3",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p10-0.mp3",
+            "text": "베짱이는 눈물을 닦고 바이올린을 들었어요.\n신나는 바이올린 소리가 울려 퍼졌지요.\n개미집에서 겨울 음악회가 열렸지요.\n개미들은 밤늦도록 덩실덩실 춤을 추었고,\n꼬마 개미가 제일 신나게 굴렀답니다."
+          }
+        ]
+      },
+      {
+        "n": 11,
         "text": "봄이 오자 베짱이가 말했어요.\n\"올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘.\"\n개미들과 베짱이는 함께 낟알을 나르고,\n쉬는 시간이면 다 같이 노래를 불렀지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p11.webp",
-        "audio": "/classic/antgrasshopper/narr-p11.mp3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p11.webp?v=3",
+        "lines": [
+          {
+            "text": "올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘.",
+            "who": "grasshopper"
+          }
+        ],
         "hotspots": [
           {
             "label": "grasshopper",
+            "line": "올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘.",
             "box": [
-              300,
-              300,
-              850,
-              700
+              204,
+              41,
+              724,
+              304
             ],
-            "audio": "/classic/antgrasshopper/say-p11-grasshopper.wav",
-            "line": "일하는 것도 신나는걸!"
+            "audio": "/classic/antgrasshopper/say-p11-grasshopper.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p11-0.mp3",
+            "text": "봄이 오자 베짱이가 말했어요.\n"
+          },
+          {
+            "who": "grasshopper",
+            "src": "/classic/antgrasshopper/seg-cast-p11-1.mp3",
+            "text": "\"올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p11-2.mp3",
+            "text": "\n개미들과 베짱이는 함께 낟알을 나르고,\n쉬는 시간이면 다 같이 노래를 불렀지요."
           }
         ]
       },
       {
-        "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 음악이 흘러나왔답니다.\n찌르르 찌르르~ 랄랄라~",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p12.webp",
-        "audio": "/classic/antgrasshopper/narr-p12.mp3"
+        "n": 12,
+        "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 바이올린 소리가 흘러나왔답니다.\n창밖에는 함박눈이 소복소복 쌓였지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p12.webp?v=3",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/antgrasshopper/seg-p12-0.mp3",
+            "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 바이올린 소리가 흘러나왔답니다.\n창밖에는 함박눈이 소복소복 쌓였지요."
+          }
+        ]
       }
     ],
     "narrators": [
-      "tc-arin"
-    ]
+      "tc-minjung"
+    ],
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "ant": "tc-siwoo",
+      "littleant": "tc-hamchu",
+      "grasshopper": "tc-guri"
+    },
+    "roleOf": {
+      "개미": "ant",
+      "꼬마 개미": "littleant",
+      "아기 개미": "littleant",
+      "베짱이": "grasshopper"
+    }
   },
   {
     "id": "classic-twomice",

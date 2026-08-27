@@ -4884,5 +4884,221 @@
     "emotion": "normal",
     "intensity": null,
     "text": "여기가 우리의 브레멘이야."
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쨍쨍한 여름날, 개미들은 부지런히 일했어요.\n영차, 영차. 줄지어 낟알을 나르고\n땀을 뻘뻘 흘리며 곳간을 채웠지요.\n제일 작은 꼬마 개미도 제 몫을 날랐답니다."
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "풀잎 위에서는 베짱이가 바이올린을 켜고 있었어요."
+  },
+  "classic/antgrasshopper/seg-cast-p2-1.mp3": {
+    "voice": "tc-guri",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"개미야, 이 좋은 여름에 왜 일만 하니?\""
+  },
+  "classic/antgrasshopper/seg-cast-p2-2.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"겨울이 오면 먹을 게 없어지거든.\n미리미리 모아 두는 거야.\""
+  },
+  "classic/antgrasshopper/say-p2-grasshopper.mp3": {
+    "voice": "tc-guri",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "개미야, 이 좋은 여름에 왜 일만 하니?"
+  },
+  "classic/antgrasshopper/say-p2-ant.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "겨울이 오면 먹을 게 없어지거든.\n미리미리 모아 두는 거야."
+  },
+  "classic/antgrasshopper/seg-cast-p3-0.mp3": {
+    "voice": "tc-guri",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"에이, 겨울은 아직 멀었는걸!\""
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p3-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "베짱이는 시원한 그늘에서 신나게 연주했어요.\n숲 친구들이 모여들어 어깨를 들썩였고,\n달팽이도 느릿느릿 박자를 맞췄답니다."
+  },
+  "classic/antgrasshopper/say-p3-grasshopper.mp3": {
+    "voice": "tc-guri",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "에이, 겨울은 아직 멀었는걸!"
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느새 가을이 왔어요.\n나뭇잎이 한 장, 두 장 떨어졌지요.\n개미들의 곳간은 낟알로 가득 찼어요.\n베짱이는 문득 서늘한 바람에 몸을 떨었지만,"
+  },
+  "classic/antgrasshopper/seg-cast-p4-1.mp3": {
+    "voice": "tc-guri",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"아직 괜찮아!\""
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p4-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하고 또 노래를 불렀답니다."
+  },
+  "classic/antgrasshopper/say-p4-grasshopper.mp3": {
+    "voice": "tc-guri",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아직 괜찮아!"
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "드디어 하얀 겨울이 왔어요.\n쌩쌩 눈보라가 몰아치고 온 세상이 꽁꽁 얼었지요.\n먹을 것도, 따뜻한 집도 없는 베짱이는\n바이올린을 안고 덜덜 떨었어요.\n입김이 하얗게 피어올랐지요."
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "베짱이는 눈길을 헤치고 개미집을 찾아갔어요.\n똑, 똑, 똑."
+  },
+  "classic/antgrasshopper/seg-cast-p6-1.mp3": {
+    "voice": "tc-guri",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?\""
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p6-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "문 앞에서 목소리가 자꾸 작아졌지요."
+  },
+  "classic/antgrasshopper/say-p6-grasshopper.mp3": {
+    "voice": "tc-guri",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?"
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "문이 활짝 열렸어요."
+  },
+  "classic/antgrasshopper/seg-cast-p7-1.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!\""
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p7-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "개미들은 따뜻한 수프를 끓여 주고\n난롯가 제일 좋은 자리를 내주었지요.\n난롯불이 탁탁 소리를 냈답니다."
+  },
+  "classic/antgrasshopper/say-p7-ant.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!"
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "베짱이는 고개를 푹 숙였어요."
+  },
+  "classic/antgrasshopper/seg-cast-p8-1.mp3": {
+    "voice": "tc-guri",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"너희가 일할 때 나는 놀기만 했는걸…\n이 수프를 얻어먹을 자격이 없어.\""
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p8-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "수프에서 김이 모락모락 올라왔지요.\n개미들은 가만히 기다려 주었어요."
+  },
+  "classic/antgrasshopper/say-p8-grasshopper.mp3": {
+    "voice": "tc-guri",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "너희가 일할 때 나는 놀기만 했는걸…\n이 수프를 얻어먹을 자격이 없어."
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러자 꼬마 개미가 말했어요."
+  },
+  "classic/antgrasshopper/seg-cast-p9-1.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"무슨 소리야! 여름에 낟알을 나를 때\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?\""
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p9-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "베짱이가 천천히 고개를 들었지요."
+  },
+  "classic/antgrasshopper/say-p9-littleant.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "무슨 소리야! 여름에 낟알을 나를 때\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?"
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "베짱이는 눈물을 닦고 바이올린을 들었어요.\n신나는 바이올린 소리가 울려 퍼졌지요.\n개미집에서 겨울 음악회가 열렸지요.\n개미들은 밤늦도록 덩실덩실 춤을 추었고,\n꼬마 개미가 제일 신나게 굴렀답니다."
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "봄이 오자 베짱이가 말했어요."
+  },
+  "classic/antgrasshopper/seg-cast-p11-1.mp3": {
+    "voice": "tc-guri",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘.\""
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p11-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "개미들과 베짱이는 함께 낟알을 나르고,\n쉬는 시간이면 다 같이 노래를 불렀지요."
+  },
+  "classic/antgrasshopper/say-p11-grasshopper.mp3": {
+    "voice": "tc-guri",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘."
+  },
+  "classic/antgrasshopper/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 바이올린 소리가 흘러나왔답니다.\n창밖에는 함박눈이 소복소복 쌓였지요."
   }
 }
