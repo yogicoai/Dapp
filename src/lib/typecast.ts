@@ -129,6 +129,13 @@ export async function synthesize(input: {
    * 두는 전래동화·세계명작은 그 차이가 그대로 앱 용량이 된다(한 권에서 19MB → 8MB).
    */
   format?: "mp3" | "wav";
+  /**
+   * 말 빠르기(1 = 원래대로). API 의 output.audio_tempo 로 간다.
+   *
+   * speed·tempo 같은 최상위 필드는 조용히 무시된다 — 실측으로 audio_tempo 만
+   * 실제 길이를 바꿨다(1.3에서 -19%). 배역별 연출용: 늑대는 말이 빨라야 산다.
+   */
+  tempo?: number;
 }): Promise<{ audio: ArrayBuffer; contentType: string }> {
   // 과금 자동 차단 — 안전선(19만 자)에 닿으면 합성하지 않는다(무료 음성으로 폴백).
   const used = await usedCreditsThisMonth();
@@ -144,7 +151,10 @@ export async function synthesize(input: {
     text: input.text,
     model: input.model || "ssfm-v30",
     language: "kor",
-    output: { audio_format: input.format ?? "mp3" },
+    output: {
+      audio_format: input.format ?? "mp3",
+      ...(input.tempo && input.tempo !== 1 ? { audio_tempo: input.tempo } : {}),
+    },
   };
   if (input.emotion && input.emotion !== "normal") {
     // ssfm-v30 감정 연기는 대사에만 낮게 적용한다. 높은 값은 음색까지 하이톤으로 바꾼다.

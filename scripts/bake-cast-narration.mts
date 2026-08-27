@@ -50,7 +50,7 @@ const MANIFEST = "scripts/bake-manifest.json";
  * 읽고 멀쩡한 조각을 다시 굽는다(실제로 흥부에서 21개·450자가 그렇게 잡혔다).
  */
 const keyOf = (file: string) => `${SPEC.root ?? "folk"}/${SPEC.dir}/${file}`;
-type Recipe = { voice: string; emotion: string; intensity: number | null; text: string };
+type Recipe = { voice: string; emotion: string; intensity: number | null; text: string; tempo?: number };
 const recorded: Record<string, Recipe> = fs.existsSync(MANIFEST)
   ? JSON.parse(fs.readFileSync(MANIFEST, "utf8"))
   : {};
@@ -60,6 +60,7 @@ const same = (a: Recipe | undefined, b: Recipe) =>
   a!.voice === b.voice &&
   a!.emotion === b.emotion &&
   a!.intensity === b.intensity &&
+  (a!.tempo ?? 1) === (b.tempo ?? 1) &&
   a!.text === b.text;
 const BASE = process.env.BAKE_BASE ?? "http://localhost:3000";
 
@@ -282,7 +283,7 @@ let skipped = 0;
  * 같은 문장에 두 번 과금되지 않는다. 다시 구워야 할 때는 지우지 않고 **덮어쓴다**:
  * 지웠다가 합성이 실패하면 멀쩡하던 소리까지 사라진다.
  */
-async function bake(file: string, text: string, voice: string, emotion: string, force = false) {
+async function bake(file: string, text: string, voice: string, emotion: string, force = false, tempo?: number) {
   const table = voiceTable();
   const v = table[voice];
   if (!v) throw new Error(`성우 ${voice}를 voices.ts에서 못 찾았습니다`);
@@ -292,6 +293,7 @@ async function bake(file: string, text: string, voice: string, emotion: string, 
     emotion,
     intensity: emotion === "normal" ? null : EMOTION_INTENSITY,
     text,
+    ...(tempo && tempo !== 1 ? { tempo } : {}),
   };
   fresh[keyOf(file)] = recipe;
   // 기록만 남기는 모드 — 지금 파일을 그대로 인정하고 넘어간다.
@@ -325,6 +327,7 @@ async function bake(file: string, text: string, voice: string, emotion: string, 
       model: v.model,
       emotion,
       intensity: emotion === "normal" ? undefined : EMOTION_INTENSITY,
+      tempo,
     }),
   });
   if (!res.ok) {
@@ -400,7 +403,7 @@ for (const [i, page] of book.pages.entries()) {
       // 읽기용 표기(say)가 있으면 화면 글 대신 그걸 읽는다 — "자아, 준비이… 시작!"
       const file = `seg-cast-p${n}-${j}.mp3`;
       // 조건이 달라졌는지는 bake()가 기록을 보고 판단한다. --changed가 아니면 전부 다시.
-      await bake(file, seg.say?.trim() || text, cast[seg.who], seg.feel ?? emotionOf(text), !ONLY_CHANGED);
+      await bake(file, seg.say?.trim() || text, cast[seg.who], seg.feel ?? emotionOf(text), !ONLY_CHANGED, book.voiceTempo?.[seg.who]);
       segments.push({ who: seg.who, src: `${URL_DIR}/seg-cast-p${n}-${j}.mp3`, text: seg.text });
     }
   }
@@ -417,7 +420,7 @@ for (const [i, page] of book.pages.entries()) {
     const line = String(h.line);
     // 말풍선도 읽기용 표기를 따로 줄 수 있다(말풍선 글은 h.line 그대로 보인다).
     const spoken = typeof h.say === "string" && h.say.trim() ? h.say.trim() : line;
-    await bake(file, spoken, voice, emotionOf(line), !ONLY_CHANGED);
+    await bake(file, spoken, voice, emotionOf(line), !ONLY_CHANGED, book.voiceTempo?.[h.label]);
   }
 }
 

@@ -19,12 +19,16 @@ export async function POST(request: Request) {
     model?: unknown;
     emotion?: unknown;
     intensity?: unknown;
+    tempo?: unknown;
   };
   const text = typeof input.text === "string" ? input.text.trim() : "";
   const voiceId = typeof input.voiceId === "string" ? input.voiceId.trim() : "";
   const model = typeof input.model === "string" ? input.model.trim() : undefined;
   const emotion =
     typeof input.emotion === "string" ? input.emotion.trim().slice(0, 20) : undefined;
+  const rawTempo = Number(input.tempo);
+  // 0.5~2 밖은 말이 아니라 사고다 — 조용히 무시한다.
+  const tempo = Number.isFinite(rawTempo) && rawTempo >= 0.5 && rawTempo <= 2 ? rawTempo : undefined;
   const rawIntensity = Number(input.intensity);
   const intensity = Number.isFinite(rawIntensity)
     ? Math.min(1.2, Math.max(0.3, rawIntensity))
@@ -38,7 +42,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { audio, contentType } = await synthesize({ text, voiceId, model, emotion, intensity });
+    const { audio, contentType } = await synthesize({ text, voiceId, model, emotion, intensity, tempo });
     return new Response(audio, {
       headers: { "Content-Type": contentType, "Cache-Control": "no-store" },
     });

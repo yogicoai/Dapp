@@ -3417,7 +3417,8 @@
     "voice": "tc-shotgun",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"오늘은 운이 좋은걸.\""
+    "text": "\"오늘은 운이 좋은걸.\"",
+    "tempo": 1.15
   },
   "classic/threepigs/seg-tc-minjung-p8-2.mp3": {
     "voice": "tc-minjung",
@@ -3447,7 +3448,8 @@
     "voice": "tc-shotgun",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"…엄마야.\""
+    "text": "\"…엄마야.\"",
+    "tempo": 1.15
   },
   "classic/threepigs/seg-cast-p9-5.mp3": {
     "voice": "tc-dukgu",
@@ -3465,7 +3467,8 @@
     "voice": "tc-shotgun",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"들켰구나.\""
+    "text": "\"들켰구나.\"",
+    "tempo": 1.15
   },
   "classic/threepigs/seg-tc-minjung-p10-0.mp3": {
     "voice": "tc-minjung",
@@ -3495,7 +3498,8 @@
     "voice": "tc-shotgun",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"거기 있는 거 다 안다!\""
+    "text": "\"거기 있는 거 다 안다!\"",
+    "tempo": 1.15
   },
   "classic/threepigs/seg-tc-minjung-p11-2.mp3": {
     "voice": "tc-minjung",
@@ -3537,7 +3541,8 @@
     "voice": "tc-shotgun",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"어? 왜 안 넘어가는 거지?\""
+    "text": "\"어? 왜 안 넘어가는 거지?\"",
+    "tempo": 1.15
   },
   "classic/threepigs/seg-tc-minjung-p13-2.mp3": {
     "voice": "tc-minjung",
@@ -3561,7 +3566,8 @@
     "voice": "tc-shotgun",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"굴뚝으로 들어가면 되겠다!\""
+    "text": "\"굴뚝으로 들어가면 되겠다!\"",
+    "tempo": 1.15
   },
   "classic/threepigs/seg-tc-minjung-p14-2.mp3": {
     "voice": "tc-minjung",
@@ -3579,7 +3585,8 @@
     "voice": "tc-shotgun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"으악! 뜨거워!\""
+    "text": "\"으악! 뜨거워!\"",
+    "tempo": 1.15
   },
   "classic/threepigs/seg-tc-minjung-p15-2.mp3": {
     "voice": "tc-minjung",
@@ -3597,7 +3604,8 @@
     "voice": "tc-shotgun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"아이고 뜨거워라!\""
+    "text": "\"아이고 뜨거워라!\"",
+    "tempo": 1.15
   },
   "classic/threepigs/seg-tc-minjung-p16-2.mp3": {
     "voice": "tc-minjung",
