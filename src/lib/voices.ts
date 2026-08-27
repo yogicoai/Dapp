@@ -98,6 +98,9 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   // 사장님 지정(2026-08-27) — 타입캐스트에 용도가 "Audiobook/Storytelling"으로
   // 등록된 목소리다. 지문 읽기 전용으로 데려왔다.
   { kind: "tc", id: "tc-minjung", label: "민정", emoji: "📚", voiceId: "tc_6699eb0f10b8e361d6a9aba1", model: "ssfm-v30", desc: "여자 · 책 읽어 주는 목소리", sample: "옛날 옛적, 어느 마을에 살았답니다." },
+  // 사장님이 늑대 후보로 지목(2026-08-27). 둘 다 중년 남자 · ssfm-v30.
+  { kind: "tc", id: "tc-homun", label: "심호문", emoji: "🐺", voiceId: "tc_63622aaa4109052e8067e303", model: "ssfm-v30", desc: "남자 · 능청스럽고 낮은 목소리", sample: "흥, 그렇게는 안 되지." },
+  { kind: "tc", id: "tc-shotgun", label: "샷건", emoji: "💥", voiceId: "tc_62df8e39067dcda7c2b34347", model: "ssfm-v30", desc: "남자 · 굵고 힘 있는 목소리", sample: "거기 있는 거 다 안다." },
   { kind: "tc", id: "tc-gunseok", label: "건석", emoji: "🧔", voiceId: "tc_6731b2e0855f351b98d30c48", model: "ssfm-v30", desc: "남자 · 듬직한 아빠", sample: "아빠가 재미있게 읽어줄게." },
   { kind: "tc", id: "tc-changsu", label: "창수", emoji: "⚡", voiceId: "tc_6059dad0b83880769a50502f", model: "ssfm-v30", desc: "남자 · 활기찬 형아", sample: "형아랑 신나는 이야기 가자!" },
   { kind: "tc", id: "tc-siwoo", label: "시우", emoji: "🧒", voiceId: "tc_6699eb3849dfac016c29444c", model: "ssfm-v30", desc: "남자 어린이 · 씩씩한 친구", sample: "나랑 같이 모험 떠나자!" },
