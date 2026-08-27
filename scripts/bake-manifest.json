@@ -3577,7 +3577,7 @@
   },
   "classic/threepigs/seg-cast-p15-1.mp3": {
     "voice": "tc-shotgun",
-    "emotion": "sad",
+    "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"으악! 뜨거워!\""
   },
@@ -3595,8 +3595,8 @@
   },
   "classic/threepigs/seg-cast-p16-1.mp3": {
     "voice": "tc-shotgun",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "toneup",
+    "intensity": 0.4,
     "text": "\"아이고 뜨거워라!\""
   },
   "classic/threepigs/seg-tc-minjung-p16-2.mp3": {

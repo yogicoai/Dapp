@@ -400,7 +400,7 @@ for (const [i, page] of book.pages.entries()) {
       // 읽기용 표기(say)가 있으면 화면 글 대신 그걸 읽는다 — "자아, 준비이… 시작!"
       const file = `seg-cast-p${n}-${j}.mp3`;
       // 조건이 달라졌는지는 bake()가 기록을 보고 판단한다. --changed가 아니면 전부 다시.
-      await bake(file, seg.say?.trim() || text, cast[seg.who], emotionOf(text), !ONLY_CHANGED);
+      await bake(file, seg.say?.trim() || text, cast[seg.who], seg.feel ?? emotionOf(text), !ONLY_CHANGED);
       segments.push({ who: seg.who, src: `${URL_DIR}/seg-cast-p${n}-${j}.mp3`, text: seg.text });
     }
   }

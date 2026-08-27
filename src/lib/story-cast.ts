@@ -34,6 +34,14 @@ export type CastLine = {
    * 맞춤법이 틀린 글을 아이에게 보여주지 않으면서 연기를 살리는 방법이다.
    */
   say?: string;
+  /**
+   * 이 줄의 연기(감정 프리셋). 안 적으면 굽는 쪽이 글자를 보고 정한다(emotionOf).
+   *
+   * 글자만 보는 자동 판정은 "으악! 뜨거워!" 같은 우스운 비명을 슬픔으로 잡는다 —
+   * '으악'이 슬픔 신호라서다. 놀라 호들갑 떠는 줄은 여기 "toneup" 처럼 못 박는다.
+   * (2026-08-27 사장님: 뜨거워 비명 둘이 너무 천천히 나온다)
+   */
+  feel?: string;
 };
 
 export type PlannedSegment = {
@@ -44,6 +52,8 @@ export type PlannedSegment = {
   dialogue: boolean;
   /** 성우가 실제로 읽을 글(대사집의 say). 없으면 text를 읽는다. */
   say?: string;
+  /** 이 줄에 못 박은 연기(대사집의 feel). 없으면 굽는 쪽이 정한다. */
+  feel?: string;
 };
 
 /** 대사집과 견주기 위해 따옴표·공백·문장부호를 털어낸다. */
@@ -89,7 +99,7 @@ export function planPageVoices(input: {
     }
     const told = script.get(normalize(segment.text));
     if (told) {
-      planned.push({ who: told.who, text: segment.text, dialogue: true, say: told.say });
+      planned.push({ who: told.who, text: segment.text, dialogue: true, say: told.say, feel: told.feel });
       return;
     }
     const name = guessed[i];
@@ -126,7 +136,7 @@ function rescueShortLines(text: string, script: Map<string, CastLine>): PlannedS
     if (!told) continue;
     const start = match.index ?? 0;
     if (start > at) out.push({ who: NARRATION, text: text.slice(at, start), dialogue: false });
-    out.push({ who: told.who, text: match[0], dialogue: true, say: told.say });
+    out.push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel });
     at = start + match[0].length;
   }
   if (out.length === 0) return [{ who: NARRATION, text, dialogue: false }];

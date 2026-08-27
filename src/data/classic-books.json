@@ -533,7 +533,8 @@
         "lines": [
           {
             "text": "으악! 뜨거워!",
-            "who": "wolf"
+            "who": "wolf",
+            "feel": "toneup"
           }
         ],
         "segments": [
@@ -561,7 +562,8 @@
         "lines": [
           {
             "text": "아이고 뜨거워라!",
-            "who": "wolf"
+            "who": "wolf",
+            "feel": "toneup"
           }
         ],
         "segments": [
