@@ -82,395 +82,614 @@
   {
     "id": "classic-threepigs",
     "narrators": [
-      "tc-ina",
-      "tc-jungsoon",
-      "tc-gunseok",
-      "tc-miso"
+      "tc-minjung"
     ],
     "lang": "ko",
     "title": "돼지 삼형제",
-    "summary": "지푸라기 집, 나무 집, 벽돌 집 — 부지런한 막내 돼지가 늑대를 물리치는 이야기",
-    "narrator": "tc-ina",
+    "summary": "느리지만 끝까지 — 막내가 지은 벽돌집이 세 형제를 지킵니다.",
+    "narrator": "tc-minjung",
     "pages": [
       {
-        "text": "옛날 옛적, 아기 돼지 삼형제가 살았어요.\n어느 날 엄마 돼지가 말했지요.\n\"이제 너희도 다 컸으니, 각자 집을 짓고 살아 보렴!\"",
+        "n": 1,
+        "text": "옛날 옛적, 아기 돼지 삼형제가 살았어요.\n어느 봄날 아침, 엄마 돼지가 셋을 불러 모았지요.\n\"이제 너희도 다 컸구나. 각자 집을 지어 보렴.\"\n셋은 신이 나서 언덕을 내려갔답니다.",
         "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p1.webp",
-        "audio": "/classic/threepigs/narr-p1.mp3",
-        "hotspots": [
+        "lines": [
           {
-            "label": "mompig",
-            "box": [
-              300,
-              150,
-              850,
-              500
-            ],
-            "audio": "/classic/threepigs/say-p1-mompig.wav",
-            "line": "이제 너희도 다 컸으니, 각자 집을 짓고 살아 보렴!"
-          }
-        ]
-      },
-      {
-        "text": "첫째 돼지는 놀고 싶은 마음에\n지푸라기를 슥슥 쌓아 금세 집을 지었어요.\n\"히히, 벌써 다 지었다! 이제 신나게 놀아야지!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p2.webp",
-        "audio": "/classic/threepigs/narr-p2.mp3",
-        "hotspots": [
-          {
-            "label": "pig1",
-            "box": [
-              330,
-              230,
-              780,
-              490
-            ],
-            "audio": "/classic/threepigs/say-p2-pig1.wav",
-            "line": "히히, 벌써 다 지었다! 이제 신나게 놀아야지!"
-          }
-        ]
-      },
-      {
-        "text": "둘째 돼지는 나뭇가지를 뚝딱뚝딱 엮어 집을 지었어요.\n\"이 정도면 튼튼하지 뭐!\n형아, 나도 다 지었어! 같이 놀자!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p3.webp",
-        "audio": "/classic/threepigs/narr-p3.mp3",
-        "hotspots": [
-          {
-            "label": "pig2",
-            "box": [
-              380,
-              470,
-              790,
-              700
-            ],
-            "audio": "/classic/threepigs/say-p3-pig2.wav",
-            "line": "이 정도면 튼튼하지 뭐! 나도 다 지었다!"
-          }
-        ]
-      },
-      {
-        "text": "막내 돼지는 벽돌을 한 장 한 장 정성껏 쌓았어요.\n형들이 지나가다 킥킥 놀렸지요.\n\"야, 뭐하러 그렇게 힘들게 짓는 거야?\"\n\"우리처럼 뚝딱 짓고 노는 게 최고라구! 히히!\"\n\"난 놀기 전에 튼튼한 집부터 지을 거야.\"\n막내는 땀을 뻘뻘 흘리며 꿋꿋이 벽돌을 쌓았답니다.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p4.webp",
-        "audio": "/classic/threepigs/narr-p4.mp3",
-        "hotspots": [
-          {
-            "label": "pig1",
-            "box": [
-              330,
-              430,
-              780,
-              640
-            ],
-            "audio": "/classic/threepigs/say-p4-pig1.wav",
-            "line": "야, 뭐하러 그렇게 힘들게 짓는 거야?"
-          },
-          {
-            "label": "pig3",
-            "box": [
-              400,
-              150,
-              830,
-              430
-            ],
-            "audio": "/classic/threepigs/say-p4-pig3.wav",
-            "line": "난 놀기 전에 튼튼한 집부터 지을 거야."
-          }
-        ]
-      },
-      {
-        "text": "그러던 어느 날, 배고픈 늑대가 나타났어요!\n늑대는 첫째네 지푸라기 집 앞에서 소리쳤지요.\n\"아기 돼지야, 문 열어라! 안 열면 집을 날려 버리겠다!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p5.webp",
-        "audio": "/classic/threepigs/narr-p5.mp3",
-        "hotspots": [
-          {
-            "label": "wolf",
-            "box": [
-              280,
-              600,
-              860,
-              950
-            ],
-            "audio": "/classic/threepigs/say-p5-wolf.wav",
-            "line": "아기 돼지야, 문 열어라! 안 열면 집을 날려 버리겠다!"
-          },
-          {
-            "label": "pig1",
-            "box": [
-              290,
-              110,
-              560,
-              340
-            ],
-            "audio": "/classic/threepigs/say-p5-pig1.wav",
-            "line": "싫어! 절대 안 열어 줄 거야!"
-          }
-        ]
-      },
-      {
-        "text": "\"싫어! 절대 안 열어 줄 거야!\"\n그러자 늑대가 숨을 크게 들이마시고 — 후우우욱!\n지푸라기 집이 폭삭 날아가 버렸어요!",
-        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p6.webp",
-        "audio": "/classic/threepigs/narr-p6.mp3",
-        "hotspots": [
-          {
-            "label": "wolf",
-            "box": [
-              300,
-              610,
-              840,
-              960
-            ],
-            "audio": "/classic/threepigs/say-p6-wolf.wav",
-            "line": "후우우우욱! 집아, 날아가 버려라!"
-          },
-          {
-            "label": "pig1",
-            "box": [
-              360,
-              260,
-              660,
-              530
-            ],
-            "audio": "/classic/threepigs/say-p6-pig1.wav",
-            "line": "으악! 살려 줘! 내 집이 날아갔어!"
-          }
-        ]
-      },
-      {
-        "text": "\"으악! 살려 줘!\"\n첫째 돼지는 둘째네 나무 집으로 쌩 도망쳤어요.\n하지만 늑대도 성큼성큼 쫓아왔지요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p7.webp",
-        "audio": "/classic/threepigs/narr-p7.mp3",
-        "hotspots": [
-          {
-            "label": "pig1",
-            "box": [
-              420,
-              330,
-              810,
-              610
-            ],
-            "audio": "/classic/threepigs/say-p7-pig1.wav",
-            "line": "둘째야, 나 좀 살려 줘! 늑대가 쫓아와!"
-          },
-          {
-            "label": "pig2",
-            "box": [
-              420,
-              580,
-              760,
-              790
-            ],
-            "audio": "/classic/threepigs/say-p7-pig2.wav",
-            "line": "형아, 빨리 이리 들어와!"
-          }
-        ]
-      },
-      {
-        "text": "\"아기 돼지들아, 문 열어라!\"\n\"싫어, 싫어! 절대 안 돼!\"\n늑대가 다시 숨을 들이마시고 — 후우우우욱!\n우지끈! 나무 집도 와르르 무너졌어요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p8.webp",
-        "audio": "/classic/threepigs/narr-p8.mp3",
-        "hotspots": [
-          {
-            "label": "wolf",
-            "box": [
-              270,
-              630,
-              860,
-              960
-            ],
-            "audio": "/classic/threepigs/say-p8-wolf.wav",
-            "line": "아기 돼지들아, 문 열어라!"
-          },
-          {
-            "label": "pig2",
-            "box": [
-              470,
-              200,
-              870,
-              410
-            ],
-            "audio": "/classic/threepigs/say-p8-pig2.wav",
-            "line": "싫어, 싫어! 절대 안 돼!"
-          },
-          {
-            "label": "pig1",
-            "box": [
-              450,
-              30,
-              860,
-              240
-            ],
-            "audio": "/classic/threepigs/say-p8-pig1.wav",
-            "line": "우리 집이 무너진다! 도망가자!"
-          }
-        ]
-      },
-      {
-        "text": "첫째와 둘째는 막내네 벽돌 집으로 달려갔어요.\n\"막내야, 살려 줘! 늑대가 와!\"\n막내는 얼른 문을 열어 형들을 숨겨 주었지요.",
-        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p9.webp",
-        "audio": "/classic/threepigs/narr-p9.mp3",
-        "hotspots": [
-          {
-            "label": "pig1",
-            "box": [
-              470,
-              290,
-              840,
-              520
-            ],
-            "audio": "/classic/threepigs/say-p9-pig1.wav",
-            "line": "막내야, 살려 줘! 늑대가 와!"
-          },
-          {
-            "label": "pig3",
-            "box": [
-              420,
-              680,
-              790,
-              850
-            ],
-            "audio": "/classic/threepigs/say-p9-pig3.wav",
-            "line": "형들아, 얼른 들어와!"
-          }
-        ]
-      },
-      {
-        "text": "늑대는 벽돌 집 앞에서 있는 힘껏 바람을 불었어요.\n후욱! 후우욱! 후우우우욱!\n하지만 벽돌 집은 꿈쩍도 하지 않았답니다.\n\"아니, 이 집은 왜 안 무너지는 거야?!\"",
-        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p10-bg.webp",
-        "audio": "/classic/threepigs/narr-p10.mp3",
-        "hotspots": [
-          {
-            "label": "wolf",
-            "box": [
-              360,
-              120,
-              840,
-              430
-            ],
-            "audio": "/classic/threepigs/say-p10-wolf.wav",
-            "line": "아니, 이 집은 왜 안 무너지는 거야?!"
-          },
-          {
-            "label": "pigs",
-            "box": [
-              420,
-              460,
-              670,
-              710
-            ],
-            "audio": "/classic/threepigs/say-p10-pigs.wav",
-            "line": "우리 막내 집은 끄떡없지롱!"
+            "text": "이제 너희도 다 컸구나. 각자 집을 지어 보렴.",
+            "who": "mompig"
           }
         ],
-        "actors": [
+        "segments": [
           {
-            "src": "https://yogibo.kr/app/img/dapp/classic/threepigs/actor-wolf.webp",
-            "box": [
-              520,
-              140,
-              820,
-              509
-            ],
-            "anim": "waddle"
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p1-0.mp3",
+            "text": "옛날 옛적, 아기 돼지 삼형제가 살았어요.\n어느 봄날 아침, 엄마 돼지가 셋을 불러 모았지요.\n"
+          },
+          {
+            "who": "mompig",
+            "src": "/classic/threepigs/seg-cast-p1-1.mp3",
+            "text": "\"이제 너희도 다 컸구나. 각자 집을 지어 보렴.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p1-2.mp3",
+            "text": "\n셋은 신이 나서 언덕을 내려갔답니다."
           }
         ]
       },
       {
-        "text": "약이 오른 늑대는 지붕 위로 기어올라갔어요.\n\"흥, 굴뚝으로 들어가면 되지!\"\n그 소리를 들은 막내 돼지는 얼른 벽난로에\n커다란 솥을 걸고 물을 펄펄 끓였지요.",
+        "n": 2,
+        "text": "첫째는 언덕에 눕더니 크게 하품을 했어요.\n\"집은 후딱 짓고 놀아야지!\"\n지푸라기를 슥슥 모아 쌓으니 금세 집 한 채가 되었어요.\n바람이 불자 벽이 살랑 흔들렸지만\n첫째는 벌써 뛰어나가 버렸답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p2.webp",
+        "lines": [
+          {
+            "text": "집은 후딱 짓고 놀아야지!",
+            "who": "pig1"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p2-0.mp3",
+            "text": "첫째는 언덕에 눕더니 크게 하품을 했어요.\n"
+          },
+          {
+            "who": "pig1",
+            "src": "/classic/threepigs/seg-cast-p2-1.mp3",
+            "text": "\"집은 후딱 짓고 놀아야지!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p2-2.mp3",
+            "text": "\n지푸라기를 슥슥 모아 쌓으니 금세 집 한 채가 되었어요.\n바람이 불자 벽이 살랑 흔들렸지만\n첫째는 벌써 뛰어나가 버렸답니다."
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "둘째는 형이 노는 걸 보고 슬쩍 따라 하고 싶었어요.\n그래도 지푸라기보다는 낫겠다 싶어\n나뭇가지를 뚝딱뚝딱 엮었지요.\n\"이 정도면 됐지 뭐. 형아, 나도 다 했어!\"\n둘째도 곧장 놀러 나갔답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p3.webp",
+        "lines": [
+          {
+            "text": "이 정도면 됐지 뭐. 형아, 나도 다 했어!",
+            "who": "pig2"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p3-0.mp3",
+            "text": "둘째는 형이 노는 걸 보고 슬쩍 따라 하고 싶었어요.\n그래도 지푸라기보다는 낫겠다 싶어\n나뭇가지를 뚝딱뚝딱 엮었지요.\n"
+          },
+          {
+            "who": "pig2",
+            "src": "/classic/threepigs/seg-cast-p3-1.mp3",
+            "text": "\"이 정도면 됐지 뭐. 형아, 나도 다 했어!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p3-2.mp3",
+            "text": "\n둘째도 곧장 놀러 나갔답니다."
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "막내는 언덕 아래에서 벽돌을 골랐어요.\n한 장, 두 장, 진흙을 발라 차곡차곡.\n\"난 튼튼한 집을 짓고 싶어.\"\n형들은 벌써 놀러 갔지만\n막내는 해가 기울도록 벽돌을 날랐답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p4.webp",
+        "lines": [
+          {
+            "text": "난 튼튼한 집을 짓고 싶어.",
+            "who": "pig3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p4-0.mp3",
+            "text": "막내는 언덕 아래에서 벽돌을 골랐어요.\n한 장, 두 장, 진흙을 발라 차곡차곡.\n"
+          },
+          {
+            "who": "pig3",
+            "src": "/classic/threepigs/seg-cast-p4-1.mp3",
+            "text": "\"난 튼튼한 집을 짓고 싶어.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p4-2.mp3",
+            "text": "\n형들은 벌써 놀러 갔지만\n막내는 해가 기울도록 벽돌을 날랐답니다."
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "형들이 지나가다 킥킥 웃었어요.\n\"야, 뭐하러 그렇게 힘들게 짓냐?\"\n\"우리처럼 뚝딱 짓고 놀자! 히히.\"\n막내는 들고 있던 벽돌을 슬며시 내려놓았어요.\n손바닥이 벌겋게 부어 있었지요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p5.webp",
+        "lines": [
+          {
+            "text": "야, 뭐하러 그렇게 힘들게 짓냐?",
+            "who": "pig1"
+          },
+          {
+            "text": "우리처럼 뚝딱 짓고 놀자! 히히.",
+            "who": "pig2"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p5-0.mp3",
+            "text": "형들이 지나가다 킥킥 웃었어요.\n"
+          },
+          {
+            "who": "pig1",
+            "src": "/classic/threepigs/seg-cast-p5-1.mp3",
+            "text": "\"야, 뭐하러 그렇게 힘들게 짓냐?\"\n"
+          },
+          {
+            "who": "pig2",
+            "src": "/classic/threepigs/seg-cast-p5-2.mp3",
+            "text": "\"우리처럼 뚝딱 짓고 놀자! 히히.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p5-3.mp3",
+            "text": "\n막내는 들고 있던 벽돌을 슬며시 내려놓았어요.\n손바닥이 벌겋게 부어 있었지요."
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "text": "'…나도 그냥 놀까?'\n막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n반듯했어요. 아주 반듯했어요.\n\"그래도 난, 튼튼한 집을 짓고 싶어.\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p6.webp",
+        "lines": [
+          {
+            "text": "그래도 난, 튼튼한 집을 짓고 싶어.",
+            "who": "pig3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "pig3",
+            "src": "/classic/threepigs/seg-cast-p6-0.mp3",
+            "text": "'…나도 그냥 놀까?'"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p6-1.mp3",
+            "text": "\n막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n반듯했어요. 아주 반듯했어요.\n"
+          },
+          {
+            "who": "pig3",
+            "src": "/classic/threepigs/seg-cast-p6-2.mp3",
+            "text": "\"그래도 난, 튼튼한 집을 짓고 싶어.\""
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "멀리서 형들 웃는 소리가 들려왔어요.\n막내는 마지막 벽돌을 얹고 벽난로에 불을 지폈지요.\n해가 지자 굴뚝에서 연기가 폴폴 올랐어요.\n\"…다 지었다.\"\n막내는 제 집을 올려다보며 뿌듯하게 웃었답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p7.webp",
+        "lines": [
+          {
+            "text": "…다 지었다.",
+            "who": "pig3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p7-0.mp3",
+            "text": "멀리서 형들 웃는 소리가 들려왔어요.\n막내는 마지막 벽돌을 얹고 벽난로에 불을 지폈지요.\n해가 지자 굴뚝에서 연기가 폴폴 올랐어요.\n"
+          },
+          {
+            "who": "pig3",
+            "src": "/classic/threepigs/seg-cast-p7-1.mp3",
+            "text": "\"…다 지었다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p7-2.mp3",
+            "text": "\n막내는 제 집을 올려다보며 뿌듯하게 웃었답니다."
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "그때 숲에서 늑대가 어슬렁어슬렁 내려왔어요.\n사흘을 굶어 배에서 꼬르륵 소리가 났지요.\n언덕 위 지푸라기 집에서 아기 돼지를 발견했어요.\n\"오늘은 운이 좋은걸.\"\n늑대는 침을 꿀꺽 삼켰답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p8.webp",
+        "lines": [
+          {
+            "text": "오늘은 운이 좋은걸.",
+            "who": "wolf"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p8-0.mp3",
+            "text": "그때 숲에서 늑대가 어슬렁어슬렁 내려왔어요.\n사흘을 굶어 배에서 꼬르륵 소리가 났지요.\n언덕 위 지푸라기 집에서 아기 돼지를 발견했어요.\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/threepigs/seg-cast-p8-1.mp3",
+            "text": "\"오늘은 운이 좋은걸.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p8-2.mp3",
+            "text": "\n늑대는 침을 꿀꺽 삼켰답니다."
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "똑, 똑, 똑. 지푸라기 집 문을 누가 두드렸어요.\n\"누구세요?\"\n늑대는 목소리를 가늘게 꾸몄지요.\n\"…엄마야.\"\n\"어? 우리 엄마 아닌데?\"\n늑대는 머리를 긁적였어요.\n\"들켰구나.\"",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p9.webp",
+        "lines": [
+          {
+            "text": "누구세요?",
+            "who": "pig1"
+          },
+          {
+            "text": "…엄마야.",
+            "who": "wolf"
+          },
+          {
+            "text": "어? 우리 엄마 아닌데?",
+            "who": "pig1"
+          },
+          {
+            "text": "들켰구나.",
+            "who": "wolf"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p9-0.mp3",
+            "text": "똑, 똑, 똑. 지푸라기 집 문을 누가 두드렸어요.\n"
+          },
+          {
+            "who": "pig1",
+            "src": "/classic/threepigs/seg-cast-p9-1.mp3",
+            "text": "\"누구세요?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p9-2.mp3",
+            "text": "\n늑대는 목소리를 가늘게 꾸몄지요.\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/threepigs/seg-cast-p9-3.mp3",
+            "text": "\"…엄마야.\"\n"
+          },
+          {
+            "who": "pig1",
+            "src": "/classic/threepigs/seg-cast-p9-5.mp3",
+            "text": "\"어? 우리 엄마 아닌데?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p9-6.mp3",
+            "text": "\n늑대는 머리를 긁적였어요.\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/threepigs/seg-cast-p9-7.mp3",
+            "text": "\"들켰구나.\""
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "후우우욱!\n지푸라기가 눈처럼 흩날리고, 집이 폭삭 주저앉았어요.\n첫째는 넘어질 듯 언덕을 달려 내려갔지요.\n\"둘째야! 문 열어 줘, 늑대가 나타났어!\"\n첫째가 뛰어들자 나무 집 문이 쾅 닫혔답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p10.webp",
+        "lines": [
+          {
+            "text": "둘째야! 문 열어 줘, 늑대가 나타났어!",
+            "who": "pig1"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p10-0.mp3",
+            "text": "후우우욱!\n지푸라기가 눈처럼 흩날리고, 집이 폭삭 주저앉았어요.\n첫째는 넘어질 듯 언덕을 달려 내려갔지요.\n"
+          },
+          {
+            "who": "pig1",
+            "src": "/classic/threepigs/seg-cast-p10-1.mp3",
+            "text": "\"둘째야! 문 열어 줘, 늑대가 나타났어!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p10-2.mp3",
+            "text": "\n첫째가 뛰어들자 나무 집 문이 쾅 닫혔답니다."
+          }
+        ]
+      },
+      {
+        "n": 11,
+        "text": "늑대는 나무 집 앞에 우뚝 서서 숨을 크게 들이마셨어요.\n\"거기 있는 거 다 안다. 후우우우욱!\"\n우지끈, 와르르!\n나뭇가지가 사방으로 튀고 집이 폭삭 무너졌지요.\n형제는 서로 손을 잡고 달렸답니다.",
         "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p11.webp",
-        "audio": "/classic/threepigs/narr-p11.mp3",
-        "hotspots": [
+        "lines": [
           {
-            "label": "wolf",
-            "box": [
-              80,
-              320,
-              430,
-              600
-            ],
-            "audio": "/classic/threepigs/say-p11-wolf.wav",
-            "line": "흥, 굴뚝으로 들어가면 되지!"
+            "text": "거기 있는 거 다 안다. 후우우우욱!",
+            "who": "wolf"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p11-0.mp3",
+            "text": "늑대는 나무 집 앞에 우뚝 서서 숨을 크게 들이마셨어요.\n"
           },
           {
-            "label": "pig3",
-            "box": [
-              520,
-              130,
-              780,
-              370
-            ],
-            "audio": "/classic/threepigs/say-p11-pig3.wav",
-            "line": "어디 한번 들어와 보시지!"
+            "who": "wolf",
+            "src": "/classic/threepigs/seg-cast-p11-1.mp3",
+            "text": "\"거기 있는 거 다 안다. 후우우우욱!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p11-2.mp3",
+            "text": "\n우지끈, 와르르!\n나뭇가지가 사방으로 튀고 집이 폭삭 무너졌지요.\n형제는 서로 손을 잡고 달렸답니다."
           }
         ]
       },
       {
-        "text": "늑대가 굴뚝으로 미끄러져 내려온 순간 —\n풍덩! 뜨거운 솥 속에 빠지고 말았어요!\n\"앗, 뜨거뜨거뜨거!\"\n늑대는 꽁지가 빠지게 산 너머로 도망쳤답니다.",
+        "n": 12,
+        "text": "\"막내야! 늑대가 나타났어, 문 열어 줘!\"\n첫째가 문을 쾅쾅 두드렸어요.\n막내는 벌떡 일어났어요.\n빗장이 덜컹, 문이 활짝.\n\"빨리 들어와!\"\n형들이 뛰어 들어오자 문이 쿵 닫혔답니다.",
         "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p12.webp",
-        "audio": "/classic/threepigs/narr-p12.mp3",
-        "hotspots": [
+        "lines": [
           {
-            "label": "wolf",
-            "box": [
-              110,
-              280,
-              620,
-              650
-            ],
-            "audio": "/classic/threepigs/say-p12-wolf.wav",
-            "line": "앗, 뜨거뜨거뜨거! 나 살려라!"
+            "text": "막내야! 늑대가 나타났어, 문 열어 줘!",
+            "who": "pig1"
           },
           {
-            "label": "pig1",
-            "box": [
-              350,
-              30,
-              840,
-              260
-            ],
-            "audio": "/classic/threepigs/say-p12-pig1.wav",
-            "line": "늑대가 도망간다! 신난다!"
+            "text": "빨리 들어와!",
+            "who": "pig3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "pig1",
+            "src": "/classic/threepigs/seg-cast-p12-0.mp3",
+            "text": "\"막내야! 늑대가 나타났어, 문 열어 줘!\""
           },
           {
-            "label": "pigs",
-            "box": [
-              390,
-              580,
-              860,
-              970
-            ],
-            "audio": "/classic/threepigs/say-p12-pigs.wav",
-            "line": "만세! 우리가 이겼다!"
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p12-1.mp3",
+            "text": "\n첫째가 문을 쾅쾅 두드렸어요.\n막내는 벌떡 일어났어요.\n빗장이 덜컹, 문이 활짝.\n"
+          },
+          {
+            "who": "pig3",
+            "src": "/classic/threepigs/seg-cast-p12-2.mp3",
+            "text": "\"빨리 들어와!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p12-3.mp3",
+            "text": "\n형들이 뛰어 들어오자 문이 쿵 닫혔답니다."
           }
         ]
       },
       {
-        "text": "\"막내야, 고마워. 우리가 게을렀어.\"\n형들은 막내에게 벽돌 쌓는 법을 배워\n튼튼한 벽돌 집을 나란히 지었어요.\n돼지 삼형제는 오래오래 사이좋게 살았답니다.",
+        "n": 13,
+        "text": "늑대는 벽돌집 앞에서 숨을 크게 들이마셨어요.\n\"후욱! 후우욱! 후우우우욱!\"\n창문이 조금 떨렸을 뿐, 벽돌집은 꿈쩍도 하지 않았지요.\n늑대는 어지러워 비틀거렸어요.\n\"어? 왜 안 넘어가는 거지?\"",
         "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p13.webp",
-        "audio": "/classic/threepigs/narr-p13.mp3",
-        "hotspots": [
+        "lines": [
           {
-            "label": "pig1",
-            "box": [
-              480,
-              190,
-              840,
-              360
-            ],
-            "audio": "/classic/threepigs/say-p13-pig1.wav",
-            "line": "막내야, 고마워. 우리가 게을렀어."
+            "text": "후욱! 후우욱! 후우우우욱!",
+            "who": "wolf"
           },
           {
-            "label": "pig3",
-            "box": [
-              520,
-              590,
-              860,
-              780
-            ],
-            "audio": "/classic/threepigs/say-p13-pig3.wav",
-            "line": "이제 다 같이 튼튼한 집에서 살자!"
+            "text": "어? 왜 안 넘어가는 거지?",
+            "who": "wolf"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p13-0.mp3",
+            "text": "늑대는 벽돌집 앞에서 숨을 크게 들이마셨어요.\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/threepigs/seg-cast-p13-1.mp3",
+            "text": "\"후욱! 후우욱! 후우우우욱!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p13-2.mp3",
+            "text": "\n창문이 조금 떨렸을 뿐, 벽돌집은 꿈쩍도 하지 않았지요.\n늑대는 어지러워 비틀거렸어요.\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/threepigs/seg-cast-p13-3.mp3",
+            "text": "\"어? 왜 안 넘어가는 거지?\""
+          }
+        ]
+      },
+      {
+        "n": 14,
+        "text": "그때 늑대 눈에 굴뚝이 보였어요.\n\"굴뚝으로 들어가면 되겠다!\"\n늑대가 지붕으로 기어오르는 소리를 듣고\n막내는 벽난로에 장작을 한 아름 넣었지요.\n불꽃이 활활 타올랐답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p14.webp",
+        "lines": [
+          {
+            "text": "굴뚝으로 들어가면 되겠다!",
+            "who": "wolf"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p14-0.mp3",
+            "text": "그때 늑대 눈에 굴뚝이 보였어요.\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/threepigs/seg-cast-p14-1.mp3",
+            "text": "\"굴뚝으로 들어가면 되겠다!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p14-2.mp3",
+            "text": "\n늑대가 지붕으로 기어오르는 소리를 듣고\n막내는 벽난로에 장작을 한 아름 넣었지요.\n불꽃이 활활 타올랐답니다."
+          }
+        ]
+      },
+      {
+        "n": 15,
+        "text": "늑대가 굴뚝에 발을 쑥 넣으려던 순간 —\n굴뚝에서 뜨거운 김이 훅 올라왔어요.\n\"으악! 뜨거워!\"\n늑대는 화들짝 놀라 발을 뺐어요.\n그 바람에 지붕에서 주르륵 미끄러졌지요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p15.webp",
+        "lines": [
+          {
+            "text": "으악! 뜨거워!",
+            "who": "wolf"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p15-0.mp3",
+            "text": "늑대가 굴뚝에 발을 쑥 넣으려던 순간 —\n굴뚝에서 뜨거운 김이 훅 올라왔어요.\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/threepigs/seg-cast-p15-1.mp3",
+            "text": "\"으악! 뜨거워!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p15-2.mp3",
+            "text": "\n늑대는 화들짝 놀라 발을 뺐어요.\n그 바람에 지붕에서 주르륵 미끄러졌지요."
+          }
+        ]
+      },
+      {
+        "n": 16,
+        "text": "늑대는 마당으로 툭 떨어졌어요.\n\"아이고 뜨거워라!\"\n그러고는 산 너머로 달아나 버렸지요.\n셋은 창문에 붙어 그 모습을 지켜보았어요.\n늑대가 보이지 않자 그제야 안심했답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p16.webp",
+        "lines": [
+          {
+            "text": "아이고 뜨거워라!",
+            "who": "wolf"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p16-0.mp3",
+            "text": "늑대는 마당으로 툭 떨어졌어요.\n"
+          },
+          {
+            "who": "wolf",
+            "src": "/classic/threepigs/seg-cast-p16-1.mp3",
+            "text": "\"아이고 뜨거워라!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p16-2.mp3",
+            "text": "\n그러고는 산 너머로 달아나 버렸지요.\n셋은 창문에 붙어 그 모습을 지켜보았어요.\n늑대가 보이지 않자 그제야 안심했답니다."
+          }
+        ]
+      },
+      {
+        "n": 17,
+        "text": "한참 뒤, 방 안이 조용해졌어요.\n첫째가 먼저 입을 열었지요.\n\"막내야… 아까 놀려서 미안해.\"\n\"우리가 게을렀어. 정말 고마워.\"\n막내는 대답 대신 형들을 벽난로 앞에 앉혔어요.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p17.webp",
+        "lines": [
+          {
+            "text": "막내야… 아까 놀려서 미안해.",
+            "who": "pig1"
+          },
+          {
+            "text": "우리가 게을렀어. 정말 고마워.",
+            "who": "pig2"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p17-0.mp3",
+            "text": "한참 뒤, 방 안이 조용해졌어요.\n첫째가 먼저 입을 열었지요.\n"
+          },
+          {
+            "who": "pig1",
+            "src": "/classic/threepigs/seg-cast-p17-1.mp3",
+            "text": "\"막내야… 아까 놀려서 미안해.\"\n"
+          },
+          {
+            "who": "pig2",
+            "src": "/classic/threepigs/seg-cast-p17-2.mp3",
+            "text": "\"우리가 게을렀어. 정말 고마워.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p17-3.mp3",
+            "text": "\n막내는 대답 대신 형들을 벽난로 앞에 앉혔어요."
+          }
+        ]
+      },
+      {
+        "n": 18,
+        "text": "며칠 뒤, 엄마 돼지가 언덕에 올라왔어요.\n벽돌집 세 채가 나란히 서 있었지요.\n\"어머, 셋이 같이 지었구나?\"\n\"응! 막내가 가르쳐 줬어.\"\n엄마는 셋을 폭 안아 주었답니다.",
+        "image": "https://yogibo.kr/app/img/dapp/classic/threepigs/p18.webp",
+        "lines": [
+          {
+            "text": "어머, 셋이 같이 지었구나?",
+            "who": "mompig"
+          },
+          {
+            "text": "응! 막내가 가르쳐 줬어.",
+            "who": "pig1"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p18-0.mp3",
+            "text": "며칠 뒤, 엄마 돼지가 언덕에 올라왔어요.\n벽돌집 세 채가 나란히 서 있었지요.\n"
+          },
+          {
+            "who": "mompig",
+            "src": "/classic/threepigs/seg-cast-p18-1.mp3",
+            "text": "\"어머, 셋이 같이 지었구나?\"\n"
+          },
+          {
+            "who": "pig1",
+            "src": "/classic/threepigs/seg-cast-p18-2.mp3",
+            "text": "\"응! 막내가 가르쳐 줬어.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/threepigs/seg-p18-3.mp3",
+            "text": "\n엄마는 셋을 폭 안아 주었답니다."
           }
         ]
       }
-    ]
+    ],
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "mompig": "tc-najin",
+      "pig1": "tc-sua",
+      "pig2": "tc-arin",
+      "pig3": "tc-hamchu",
+      "wolf": "tc-shotgun"
+    },
+    "roleOf": {
+      "엄마 돼지": "mompig",
+      "엄마": "mompig",
+      "첫째 돼지": "pig1",
+      "첫째": "pig1",
+      "둘째 돼지": "pig2",
+      "둘째": "pig2",
+      "막내 돼지": "pig3",
+      "막내": "pig3",
+      "늑대": "wolf"
+    }
   },
   {
     "id": "classic-uglyduckling",

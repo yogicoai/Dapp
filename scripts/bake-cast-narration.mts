@@ -49,7 +49,7 @@ const MANIFEST = "scripts/bake-manifest.json";
  * 나중에 구운 책이 앞 책의 기록을 덮어써서, --changed 를 줘도 "달라졌다"로 잘못
  * 읽고 멀쩡한 조각을 다시 굽는다(실제로 흥부에서 21개·450자가 그렇게 잡혔다).
  */
-const keyOf = (file: string) => `${SPEC.dir}/${file}`;
+const keyOf = (file: string) => `${SPEC.root ?? "folk"}/${SPEC.dir}/${file}`;
 type Recipe = { voice: string; emotion: string; intensity: number | null; text: string };
 const recorded: Record<string, Recipe> = fs.existsSync(MANIFEST)
   ? JSON.parse(fs.readFileSync(MANIFEST, "utf8"))
@@ -62,7 +62,7 @@ const same = (a: Recipe | undefined, b: Recipe) =>
   a!.intensity === b.intensity &&
   a!.text === b.text;
 const BASE = process.env.BAKE_BASE ?? "http://localhost:3000";
-const DATA = "src/data/folk-books.json";
+
 
 /*
  * 어느 책을 구울지 --book 으로 고른다.
@@ -73,6 +73,15 @@ const DATA = "src/data/folk-books.json";
  */
 type BookSpec = {
   dir: string;
+  /**
+   * 원고가 든 파일. 안 적으면 전래동화.
+   *
+   * 세계명작은 classic-books.json 에 살고 소리도 public/classic/ 아래에 둔다.
+   * 예전엔 두 경로가 스크립트에 박혀 있어서 전래동화만 구울 수 있었다.
+   */
+  data?: string;
+  /** 소리를 둘 뿌리 폴더(public/<root>/<dir>). 안 적으면 "folk". */
+  root?: string;
   /** 미리 구울 나레이션 성우. 여기 없는 성우는 이 책의 고를 수 있는 목록에서도 뺀다. */
   narrators: string[];
   /**
@@ -87,6 +96,18 @@ type BookSpec = {
   cast: { name: string }[];
 };
 const BOOKS: Record<string, BookSpec> = {
+  // 세계명작 첫 책 — 원고는 classic-books.json, 소리는 public/classic/threepigs.
+  "돼지 삼형제": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "threepigs",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [
+      { name: "엄마 돼지" }, { name: "첫째" }, { name: "둘째" },
+      { name: "막내" }, { name: "늑대" },
+    ],
+  },
   "토끼와 거북이": {
     dir: "tortoise",
     // 순서가 곧 화면에 뜨는 순서다 — 대표(아린이)를 맨 위에.
@@ -155,8 +176,10 @@ function arg(name: string): string | undefined {
 const TITLE = arg("book") ?? "토끼와 거북이";
 const SPEC = BOOKS[TITLE];
 if (!SPEC) throw new Error(`${TITLE} 는 BOOKS 에 등록되어 있지 않습니다`);
-const DIR = `public/folk/${SPEC.dir}`;
-const URL_DIR = `/folk/${SPEC.dir}`;
+const DATA = SPEC.data ?? "src/data/folk-books.json";
+const ROOT = SPEC.root ?? "folk";
+const DIR = `public/${ROOT}/${SPEC.dir}`;
+const URL_DIR = `/${ROOT}/${SPEC.dir}`;
 const BAKED_NARRATORS = SPEC.narrators;
 const DEFAULT_NARRATOR = SPEC.defaultNarrator ?? SPEC.narrators[0];
 if (!BAKED_NARRATORS.includes(DEFAULT_NARRATOR)) {
@@ -353,7 +376,19 @@ for (const [i, page] of book.pages.entries()) {
   const segments: { who: string; src: string; text: string }[] = [];
   for (const [j, seg] of plan.entries()) {
     const text = seg.text.trim();
-    if (!text) continue;
+    if (!text) {
+      /*
+       * 공백뿐인 조각 — 소리로 만들 것은 없지만 **글자는 잃으면 안 된다**.
+       *
+       * 대사가 연달아 나오면 그 사이 줄바꿈이 홀로 한 조각이 된다. 예전엔 그냥
+       * 건너뛰어서 조각을 이어 붙여도 본문과 한 글자가 어긋났다(돼지 삼형제 9쪽).
+       * 색칠은 조각의 글자 수를 세어 따라가므로, 한 글자만 밀려도 그 뒤가 다 밀린다.
+       * 앞 조각의 글에 붙여 둔다 — 읽는 글은 trim 해서 넘기므로 소리는 그대로다.
+       */
+      const prev = segments[segments.length - 1];
+      if (prev) prev.text += seg.text;
+      continue;
+    }
     if (seg.who === NARRATION) {
       // 지문은 고를 수 있는 성우마다 한 벌씩. 뷰어가 seg- 뒤에 성우를 끼워 넣는다.
       for (const voice of BAKED_NARRATORS) {
