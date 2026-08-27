@@ -120,10 +120,11 @@ export default function Home() {
   const [shelfCols, setShelfCols] = useState(5);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용
   useEffect(() => setShelfCols(loadShelfCols()), []);
-  // 게스트는 "우리 가족 책장"이 로그인 안내라, 콘텐츠가 있는 전래동화 탭을 먼저 보여준다.
+  // 게스트는 "우리 가족 책장"이 로그인 안내라, 콘텐츠가 있는 서가를 먼저 보여준다.
+  // 탭 순서가 우리 가족 → 세계명작 → 전래동화 가 되면서(사장님 지시) 기본도 세계명작.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 게스트 판별 후 기본 탭 전환
-    if (guest) setShelf("folk");
+    if (guest) setShelf("classic");
   }, [guest]);
   // hidden 책은 서가에서만 내린다 (주소로는 열림) — 다듬는 중인 책 보관용.
   const folk = asBooks(folkBooksJson).filter((b) => !b.hidden);
@@ -315,8 +316,8 @@ export default function Home() {
             {(
               [
                 { key: "mine", label: "우리 가족 책장", icon: "/icons/tab-mine.webp" },
-                { key: "folk", label: "전래동화", icon: "/icons/tab-folk.webp" },
                 { key: "classic", label: "세계명작", icon: "/icons/tab-classic.webp" },
+                { key: "folk", label: "전래동화", icon: "/icons/tab-folk.webp" },
               ] as const
             ).map((t) => {
               const active = shelf === t.key;
