@@ -1889,6 +1889,7 @@ export default function CreatePage() {
               const data = (await r.json().catch(() => ({}))) as {
                 image?: string;
                 error?: string;
+                qualityChecked?: boolean;
                 qualityPassed?: boolean;
                 qualityWarning?: string;
                 qualityIssue?: "text" | "other";
@@ -1907,7 +1908,18 @@ export default function CreatePage() {
             if (first.ok && first.data.image) counts.pages += 1;
             if (!first.ok && first.data.error) drawFailures.push(first.data.error);
             let image = first.ok ? (first.data.image ?? null) : null;
-            let ok = first.ok && first.data.qualityPassed !== false && Boolean(image);
+            /*
+             * '검사 통과'와 '검사 못 함'을 가른다.
+             *
+             * 예전엔 검사기가 장애를 만나도 통과로 돌려줘서, 검사 안 된 그림이 책 전체의
+             * 그림체·장소 기준 그림(styleSeed·locationReferences)이 됐다. 이제 실제로
+             * 검사돼 통과한 그림만 기준으로 쓴다.
+             */
+            let ok =
+              first.ok &&
+              Boolean(image) &&
+              first.data.qualityPassed === true &&
+              first.data.qualityChecked !== false;
 
             /*
              * 그림 안에 글자가 그려진 경우는 예산과 따로 센다.
@@ -1921,7 +1933,8 @@ export default function CreatePage() {
               ? textRedrawsUsed < MAX_TEXT_REDRAWS_PER_BOOK
               : qaRedrawsUsed < MAX_QA_REDRAWS_PER_BOOK;
 
-            if (image && !ok && canRedraw) {
+            // 검사를 못 한 그림으로 다시 그리기 예산을 태우지 않는다 — 잘못이 있는지조차 모른다.
+            if (image && !ok && first.data.qualityChecked !== false && canRedraw) {
               // 증분은 await 전에 동기적으로 실행돼 동시 worker끼리도 예산을 넘기지 않는다.
               if (isTextIssue) textRedrawsUsed++;
               else qaRedrawsUsed++;
@@ -1931,7 +1944,12 @@ export default function CreatePage() {
                   : (first.data.qualityWarning ?? "Character mismatch"),
               );
               if (second.ok && second.data.image) counts.redraws += 1;
-              if (second.ok && second.data.image && second.data.qualityPassed !== false) {
+              if (
+                second.ok &&
+                second.data.image &&
+                second.data.qualityPassed === true &&
+                second.data.qualityChecked !== false
+              ) {
                 image = second.data.image;
                 ok = true;
               } else if (isTextIssue && second.ok && second.data.image && second.data.qualityIssue !== "text") {

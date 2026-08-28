@@ -175,12 +175,29 @@ export async function POST(request: Request) {
     .slice(0, 6);
 
   /**
-   * 책 전체 인물 중 이 장면에 이름이 실제로 적힌 사람만 보낸다.
-   * 전체 cast를 보내면 참조 시트에 있는 친구를 Gemini가 배경 인물로 임의 추가한다.
+   * 이 쪽에 **보이는** 사람 — `등장인물 N명: 이름…` 줄이 유일한 출처다.
+   *
+   * 예전엔 장면 문장이든 본문이든 이름이 스치기만 하면 등장인물로 넣었다. 그런데
+   * "엄마가 싸 준 김밥", "서연이를 떠올렸어요", "아빠한테 보여 줄 거예요"처럼 **이름만
+   * 나오고 그 자리에는 없는** 문장이 유아 동화에는 매 쪽 있다. 그래서 교실 장면에
+   * 엄마가 서 있는 그림이 나왔고, 검사(validateIllustration)도 같은 인원을 정답으로
+   * 받아 그대로 통과시켰다.
+   *
+   * 이제 클로드가 적은 등장인물 줄을 그대로 쓴다(그 줄을 쓰는 규칙은 anthropic.ts에
+   * 자세히 박혀 있다). 장면 문장이 그 줄과 어긋나게 다른 인물의 행동을 적었으면 그건
+   * 그리라는 뜻이므로 보탠다. 본문(storyText)은 등장인물 줄이 아예 없을 때만 쓴다.
    */
-  // 모델이 @@IMG@@에서 친구 이름을 실수로 빠뜨려도, 실제 본문에 이름이 나오면
-  // 꽃이나 소품으로 대신하지 못하게 등장인물로 다시 잠근다.
-  const sceneCast = cast.filter((c) => scene.includes(c.name) || storyText.includes(c.name));
+  const castLine = /등장인물\s*(\d+)\s*명(?:\s*:\s*([^\n.]*))?/.exec(scene);
+  // 잠금 줄(등장인물·장소·물건)을 뺀 '장면 문장'만 — 장소 이름에 든 사람 이름에 안 걸리게.
+  const sceneBody = scene
+    .split(/\r?\n/)
+    .filter((line) => !/^\s*(?:등장인물|장소\s*:|물건\s*:)/.test(line))
+    .join(" ")
+    .replace(/등장인물\s*\d+\s*명(?:\s*:[^.\n]*)?\.?/g, "")
+    .replace(/(?:장소|물건)\s*:[^.\n]*\.?/g, "");
+  const sceneCast = castLine
+    ? cast.filter((c) => (castLine[2] ?? "").includes(c.name) || sceneBody.includes(c.name))
+    : cast.filter((c) => scene.includes(c.name) || storyText.includes(c.name));
 
   const prompt = [
     knownStyle
@@ -497,11 +514,21 @@ export async function POST(request: Request) {
      * 언제나 잘못이고 한눈에 보인다. 부르는 쪽이 이것만 따로 다뤄 꼭 다시 그리게
      * 구분해서 알려 준다.
      */
+    /*
+     * 낱말 끝에도 경계를 둔다. 예전엔 앞쪽 경계만 있어서 'texture'(질감)·'letterbox'·
+     * 'labelled'가 전부 '글자 불량'으로 분류됐다 — 글자 전용 예산(권당 2회)이
+     * 엉뚱한 곳에 쓰여, 정작 진짜 글자가 박힌 쪽은 못 고쳤다.
+     */
     const textIssue =
-      !check.ok && /\b(text|writing|caption|letter|word|subtitle|script|signage|label)/i.test(check.issues);
+      !check.ok &&
+      /\b(text|texts|writing|caption|captions|letter|letters|word|words|subtitle|subtitles|script|signage|label|labels|watermark|signature)\b/i.test(
+        check.issues,
+      );
     return NextResponse.json({
       image: toDataUrl(image),
       corrected: Boolean(borderIssue),
+      // 검사를 실제로 했는지 — 부르는 쪽이 '통과'와 '검사 못 함'을 갈라 쓴다.
+      qualityChecked: check.checked,
       qualityPassed: check.ok,
       ...(check.ok ? {} : { qualityWarning: check.issues, qualityIssue: textIssue ? "text" : "other" }),
     });

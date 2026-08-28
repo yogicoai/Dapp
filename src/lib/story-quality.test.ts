@@ -365,6 +365,19 @@ describe("isIndoorPlace — 실내를 알아본다", () => {
     assert.equal(isIndoorPlace("마트 앞 주차장", "회색 아스팔트"), false);
   });
 
+  it("글자 조각에 걸리지 않는다 — 계산대의 '산', 하늘색의 '하늘', 먹거리의 '거리'", () => {
+    // 실제 사고: '마트 계산대'가 실외로 판정돼 길거리 배경 지시가 들어갔다.
+    assert.equal(isIndoorPlace("마트 계산대", "밝은 조명과 진열대"), true);
+    assert.equal(isIndoorPlace("거실", "하늘색 소파와 밝은 나무 마루"), true);
+    assert.equal(isIndoorPlace("하온이 방", "하늘색 벽과 나무 책상"), true);
+    assert.equal(isIndoorPlace("어린이집 급식실", "먹거리가 놓인 배식대"), true);
+  });
+
+  it("'야외'가 붙으면 실내 낱말이라도 밖", () => {
+    assert.equal(isIndoorPlace("야외 수영장", "파란 물과 흰 타일"), false);
+    assert.equal(isIndoorPlace("뒷산 산책로", "흙길과 나무"), false);
+  });
+
   it("모르는 곳은 null — 억지로 정하지 않는다", () => {
     assert.equal(isIndoorPlace("별빛 나라", "반짝이는 것들"), null);
   });

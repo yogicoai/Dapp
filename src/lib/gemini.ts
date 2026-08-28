@@ -37,7 +37,16 @@ export type GeneratedImage = {
 };
 
 export type IllustrationCheck = {
+  /** 검사에서 잘못을 찾지 못했나. checked=false면 이 값은 '모름'이라는 뜻이다. */
   ok: boolean;
+  /**
+   * 검사를 **실제로 했나**.
+   *
+   * 예전엔 키가 없거나·서버가 5xx를 주거나·답을 못 읽어도 `ok: true`로 돌려줘서
+   * '검사 통과'와 '검사 못 함'이 구분되지 않았다. 그 그림이 책 전체의 그림체·장소
+   * 기준이 되어 오류가 6쪽으로 번졌다. 이제 못 한 것은 못 했다고 말한다.
+   */
+  checked: boolean;
   issues: string;
 };
 
@@ -92,14 +101,42 @@ export async function detectBlankCanvasBorder(image: GeneratedImage): Promise<st
   }
 }
 
-/** 감지된 흰 테두리를 잘라낸 뒤 원래 픽셀 크기와 비율로 복원한다. 추가 AI 호출은 없다. */
+/**
+ * 감지된 흰 테두리를 잘라낸 뒤 원래 픽셀 크기와 비율로 복원한다. 추가 AI 호출은 없다.
+ *
+ * **얼마나 잘렸는지에 상한을 둔다.** 감지기(detectBlankCanvasBorder)는 가장자리 12%까지만
+ * 세는데 trim은 멈추지 않는다 — 밝은 크림색 벽이나 흐린 하늘이 이어지면 그림의 30%를
+ * 잘라내고 남은 부분을 확대해서, 가장자리에 서 있던 아이가 통째로 사라졌다(실제로 났다).
+ * 진짜 두꺼운 여백은 AI 품질검사가 잡아 다시 그리게 하는 편이 안전하다.
+ */
+const MAX_BORDER_TRIM_RATIO = 0.12;
+
 export async function repairBlankCanvasBorder(image: GeneratedImage): Promise<GeneratedImage> {
   try {
     const source = Buffer.from(image.data, "base64");
     const metadata = await sharp(source).metadata();
     if (!metadata.width || !metadata.height) return image;
-    const repaired = await sharp(source)
+    // 먼저 잘라만 보고 '얼마나 없어졌는지'를 잰다.
+    const { data: trimmed, info } = await sharp(source)
       .trim({ background: "#ffffff", threshold: 20 })
+      .toBuffer({ resolveWithObject: true });
+    const cutX = metadata.width - info.width;
+    const cutY = metadata.height - info.height;
+    if (cutX <= 0 && cutY <= 0) return image; // 자를 게 없었다
+    if (
+      cutX > metadata.width * MAX_BORDER_TRIM_RATIO ||
+      cutY > metadata.height * MAX_BORDER_TRIM_RATIO
+    ) {
+      // 밝은 벽·하늘을 여백으로 오인한 경우다 — 손대지 않는다.
+      console.warn("[repairBlankCanvasBorder] 잘림이 너무 커서 원본 유지", {
+        cutX,
+        cutY,
+        width: metadata.width,
+        height: metadata.height,
+      });
+      return image;
+    }
+    const repaired = await sharp(trimmed)
       .resize(metadata.width, metadata.height, { fit: "cover", position: "centre" })
       .png()
       .toBuffer();
@@ -343,7 +380,7 @@ export async function validateIllustration(input: {
   stylePrompt: string;
 }): Promise<IllustrationCheck> {
   const key = process.env.GEMINI_API_KEY;
-  if (!key) return { ok: true, issues: "" };
+  if (!key) return { ok: true, checked: false, issues: "" };
 
   const model = process.env.GEMINI_VISION_MODEL ?? "gemini-2.5-flash";
   const expected = input.cast.length;
@@ -398,25 +435,65 @@ export async function validateIllustration(input: {
     },
   ];
 
-  try {
-    const res = await fetch(`${API_BASE}/${model}:generateContent`, {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-goog-api-key": key },
-      body: JSON.stringify({ contents: [{ parts }], generationConfig: { temperature: 0 } }),
-    });
-    if (!res.ok) return { ok: true, issues: "" }; // 검수 장애가 책 생성을 막지는 않는다.
-    const json = (await res.json()) as { candidates?: { content?: { parts?: Part[] } }[] };
-    const answer = (json.candidates?.[0]?.content?.parts ?? [])
-      .map((p) => p.text ?? "")
-      .join(" ")
-      .trim();
-    if (/^FAIL\s*:/i.test(answer)) {
-      return { ok: false, issues: answer.replace(/^FAIL\s*:\s*/i, "").slice(0, 500) };
+  /*
+   * 검사도 다시 걸어 본다. 그림 그리기(generateImage)에는 5회 재시도가 있는데 검사는
+   * 한 번뿐이라, 몰림(429)이나 서버 문제 한 번에 '검사 못 함'이 됐다. 여기서 몇 번만
+   * 더 해 보면 대부분 실제로 검사된다.
+   */
+  const VALIDATE_ATTEMPTS = 3;
+  let unchecked: IllustrationCheck = { ok: true, checked: false, issues: "" };
+  for (let attempt = 1; attempt <= VALIDATE_ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(`${API_BASE}/${model}:generateContent`, {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-goog-api-key": key },
+        body: JSON.stringify({ contents: [{ parts }], generationConfig: { temperature: 0 } }),
+      });
+      if (!res.ok) {
+        // 검수 장애가 책 생성을 막지는 않는다 — 다만 '통과'라고 하지도 않는다.
+        if (isRetryableStatus(res.status) && attempt < VALIDATE_ATTEMPTS) {
+          await sleep(retryDelayMs(attempt, res.headers.get("retry-after"), 8_000));
+          continue;
+        }
+        console.warn("[validateIllustration] 검사 못 함", { status: res.status, attempt });
+        return unchecked;
+      }
+      const json = (await res.json()) as {
+        candidates?: { content?: { parts?: Part[] }; finishReason?: string }[];
+      };
+      const candidate = json.candidates?.[0];
+      // 안전필터 등으로 잘린 답은 판정으로 쓸 수 없다.
+      if (candidate?.finishReason && candidate.finishReason !== "STOP") {
+        console.warn("[validateIllustration] 검사 못 함", { finishReason: candidate.finishReason });
+        return unchecked;
+      }
+      const answer = (candidate?.content?.parts ?? [])
+        .map((p) => p.text ?? "")
+        .join(" ")
+        .trim();
+      // 모델이 "**FAIL:**", "FAIL —", "> FAIL:" 처럼 꾸며서 답하는 일이 잦다 — 장식을 걷어낸다.
+      const verdict = answer.replace(/^[\s*#>_`-]+/, "");
+      if (/^FAIL\b/i.test(verdict)) {
+        return {
+          ok: false,
+          checked: true,
+          issues: verdict.replace(/^FAIL\s*[:\-—]*\s*/i, "").slice(0, 500),
+        };
+      }
+      if (/^PASS\b/i.test(verdict)) return { ok: true, checked: true, issues: "" };
+      // PASS도 FAIL도 아닌 답 — 읽지 못한 것이지 통과가 아니다.
+      console.warn("[validateIllustration] 판정을 읽지 못함", { head: verdict.slice(0, 80) });
+      return unchecked;
+    } catch (e) {
+      if (attempt < VALIDATE_ATTEMPTS) {
+        await sleep(retryDelayMs(attempt, null, 8_000));
+        continue;
+      }
+      console.warn("[validateIllustration] 검사 못 함", { error: (e as Error).message });
+      unchecked = { ok: true, checked: false, issues: "" };
     }
-    return { ok: true, issues: "" };
-  } catch {
-    return { ok: true, issues: "" };
   }
+  return unchecked;
 }
 
 export function toDataUrl(img: GeneratedImage): string {
