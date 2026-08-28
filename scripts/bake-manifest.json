@@ -4406,19 +4406,19 @@
     "text": "배가 빵빵해진 늑대는\n드르렁드르렁 코를 골며 잠이 들었어요.\n마침 숲을 지나던 사냥꾼 아저씨가\n요란한 소리에 걸음을 멈췄지요."
   },
   "classic/redridinghood/seg-cast-p11-1.mp3": {
-    "voice": "tc-babilon",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "\"할머니 댁에서 웬 코골이 소리지?\""
   },
   "classic/redridinghood/say-p11-hunter.mp3": {
-    "voice": "tc-babilon",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "할머니 댁에서 웬 코골이 소리지?"
   },
   "classic/redridinghood/seg-cast-p12-0.mp3": {
-    "voice": "tc-babilon",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아니, 배가 저렇게 빵빵한 늑대라니!\""
@@ -4436,7 +4436,7 @@
     "text": "\"아이고, 살았다! 고맙습니다!\""
   },
   "classic/redridinghood/say-p12-hunter.mp3": {
-    "voice": "tc-babilon",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "아니, 배가 저렇게 빵빵한 늑대라니!"
@@ -4454,7 +4454,7 @@
     "text": "잠에서 깬 늑대는 깜짝 놀라 달아났어요."
   },
   "classic/redridinghood/seg-cast-p13-1.mp3": {
-    "voice": "tc-babilon",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "\"다시는 이 숲에 얼씬도 마라!\""
@@ -4466,7 +4466,7 @@
     "text": "사냥꾼 아저씨의 호통이 쩌렁쩌렁 울렸지요.\n늑대는 산 너머로 사라져 버렸답니다."
   },
   "classic/redridinghood/say-p13-hunter.mp3": {
-    "voice": "tc-babilon",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "다시는 이 숲에 얼씬도 마라!"
