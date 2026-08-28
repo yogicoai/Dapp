@@ -4233,7 +4233,7 @@
     "title": "팥죽 할머니와 호랑이",
     "summary": "호랑이를 물리치려는 할머니를 알밤·자라·똥·멍석·지게가 힘을 모아 돕는 이야기",
     "narrator": "tc-jiyoung",
-    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p07.png",
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p15.webp?v=4",
     "pages": [
       {
         "text": "옛날 어느 산골에, 팥 농사를 짓는 할머니가 살았어요.\n어느 날 밭을 매는데, 커다란 호랑이가 어흥! 하고 나타났지요.\n\"할멈, 널 잡아먹어야겠다!\"",
@@ -4966,7 +4966,7 @@
       },
       {
         "text": "할머니는 남은 팥죽을 다시 데웠어요.\n알밤도 자라도, 쇠똥도 멍석도 지게도 마당에 둘러앉았지요.\n\"너희가 아니었으면 할미가 어쩔 뻔했니. 정말 고맙구나.\"\n\"할머니 팥죽이 세상에서 제일 맛있어요!\"\n그날 밤, 오두막에는 웃음소리가 오래오래 이어졌답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p15.webp",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p15.webp?v=4",
         "lines": [
           {
             "text": "너희가 아니었으면 할미가 어쩔 뻔했니. 정말 고맙구나.",
@@ -4982,10 +4982,10 @@
             "label": "granny",
             "line": "너희가 아니었으면 할미가 어쩔 뻔했니.",
             "box": [
-              382,
-              333,
-              696,
-              467
+              347,
+              287,
+              718,
+              473
             ],
             "audio": "/folk/patjuk-halmae-tiger/say-p15-granny.mp3"
           },
@@ -4993,10 +4993,10 @@
             "label": "chestnut",
             "line": "할머니 팥죽이 세상에서 제일 맛있어요!",
             "box": [
-              611,
-              196,
-              762,
-              288
+              544,
+              160,
+              718,
+              279
             ],
             "audio": "/folk/patjuk-halmae-tiger/say-p15-chestnut.mp3"
           },
@@ -5004,10 +5004,10 @@
             "label": "turtle",
             "line": "우리 또 놀러 올게요!",
             "box": [
-              771,
-              279,
-              908,
-              438
+              718,
+              169,
+              961,
+              397
             ],
             "audio": "/folk/patjuk-halmae-tiger/say-p15-turtle.mp3"
           }
