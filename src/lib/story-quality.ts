@@ -37,7 +37,7 @@ const PROP_SOURCE = "물건\\s*:\\s*([^\\n—.-]+?)\\s*[—-]\\s*([^\\n.]+)";
  * 못 잡으면 그림이 통째로 딴 곳이 된다.
  */
 const MOVE_PATTERN =
-  /(가기로|가던|갔|가요|갑니다|도착|출발|나섰|나가|나와|나왔|들어갔|들어와|들어서|돌아왔|돌아가|돌아온|옮겼|이동|건너갔|향했|찾아갔|올라갔|내려갔|뛰어갔|달려갔|따라갔|데려갔|따라나|현관|문을\s*열|밖으로|안으로|집으로|로\s*가|에\s*가|다음\s*날|이튿날|그날\s*(아침|점심|오후|저녁|밤)|아침이\s*되|저녁이\s*되|밤이\s*되|사흘|일주일|여름이\s*되|겨울이\s*되|잠시\s*후|한참\s*뒤|얼마\s*뒤|집을\s*나서|차를\s*타|버스를\s*타|걸어서|디뎠|디디|오는\s*길|가는\s*길|저녁에|아침에|낮에|밤에|점심에)/;
+  /(가기로|가던|갔|가요|갑니다|도착|출발|나섰|나가|나와|나왔|들어갔|들어와|들어서|돌아왔|돌아와|돌아오|돌아가|돌아온|옮겼|이동|건너갔|향했|찾아갔|올라갔|내려갔|뛰어갔|달려갔|따라갔|데려갔|따라나|현관|문을\s*열|밖으로|안으로|집으로|로\s*가|에\s*가|다음\s*날|이튿날|그날\s*(아침|점심|오후|저녁|밤)|아침이\s*되|저녁이\s*되|밤이\s*되|사흘|일주일|여름이\s*되|겨울이\s*되|잠시\s*후|한참\s*뒤|얼마\s*뒤|집을\s*나서|차를\s*타|버스를\s*타|걸어서|디뎠|디디|오는\s*길|가는\s*길|저녁에|아침에|낮에|밤에|점심에)/;
 
 type LocationHint = { family: string; name: string; description: string; index: number };
 
@@ -54,7 +54,8 @@ type LocationHint = { family: string; name: string; description: string; index: 
 function inferLocationFromText(text: string): LocationHint | null {
   const hints = locationHints(text);
   // 점수가 높은 곳이 '지금 있는 곳'. 같으면 뒤에 나온 것을 쓴다(가다가 도착한 곳).
-  const best = hints.sort((a, b) => b.score - a.score || b.index - a.index)[0] ?? null;
+  // 음수는 '아직 안 간 곳'이나 '물건을 보낼 곳'이라 있는 곳이 아니다 — 고르지 않는다.
+  const best = hints.filter((h) => h.score >= 0).sort((a, b) => b.score - a.score || b.index - a.index)[0] ?? null;
   return best ? inVenue(best, hints) : null;
 }
 
@@ -80,7 +81,12 @@ function locationHints(text: string): (LocationHint & { score: number })[] {
     { family: "veranda", re: /(베란다|발코니)/g, description: "큰 유리창과 빨래 건조대, 화분 몇 개가 놓인 베란다" },
     { family: "corridor", re: /(복도|엘리베이터|계단참)/g, description: "밝은 조명과 회색 타일 바닥의 아파트 복도" },
     { family: "playground", re: /(놀이터|공원|모래밭|그네|미끄럼틀)/g, description: "노란 미끄럼틀과 둥근 모래밭, 나무 벤치" },
-    { family: "street", re: /(골목|길가|가는\s*길|오는\s*길|길\s*(?:을|에서|에)|동네|횡단보도|버스\s*정류장|단지)/g, description: "회색 아스팔트 길과 낮은 담, 가로수와 상가 간판 없는 건물" },
+    /*
+     * '길'은 조심한다 — "물감이 흘러가는 길을 따라가"의 '가는 길'을 길거리로 읽어 교실 장면이
+     * 아스팔트 길이 됐다(실제로 났다). '가는 길'은 앞에 다른 한글이 없을 때만(집으로 가는 길),
+     * '길을'(목적어)은 빼고 '길에서·길에'만 본다.
+     */
+    { family: "street", re: /(골목|길가|(?<![가-힣])가는\s*길|(?<![가-힣])오는\s*길|(?<![가-힣])길\s*(?:에서|에)|동네|횡단보도|버스\s*정류장|단지)/g, description: "회색 아스팔트 길과 낮은 담, 가로수와 상가 간판 없는 건물" },
     { family: "yard", re: /(마당|텃밭|화단)/g, description: "흙바닥과 낮은 화단, 담장 옆 작은 나무" },
     { family: "forest", re: /(숲길|숲속|숲|산길|산속)/g, description: "키 큰 푸른 나무와 흙길, 낮은 꽃덤불" },
     { family: "water", re: /(계곡|시냇물|개울|연못)/g, description: "맑은 물과 회색 자갈 바닥, 물가의 넓적한 바위" },
@@ -260,7 +266,9 @@ function locusScore(after: string): number {
    * 그림이 이미 놀이터였다. 다음 쪽 첫 문장이 "놀이터에 도착하자"인데도 그렇다.
    * 조르는 말·가자는 말 속의 장소는 **다음에 갈 곳**이지 지금 서 있는 곳이 아니다.
    */
-  if (/^[^.!?\n]{0,8}(?:가면|가자|갈까|갈래|가고\s*싶|가 볼|가 보자)/.test(after)) return -3;
+  if (/^[^.!?\n]{0,8}(?:가면|가자|갈까|갈래|가고\s*싶|가 볼|가 보자|갈\s*거|갈게|가야)/.test(after)) return -3;
+  // "집에 가져 갈거예요" — 물건을 보낼 곳이지 서 있는 곳이 아니다(실제로 교실이 거실이 됐다).
+  if (/^\s*(?:가져|갖다|가지고|보내|데려|두고)/.test(after)) return -3;
   // "집으로 가는 길" — 집이 아니라 길 위에 있다.
   if (/^\s*(?:가는|오는|가던|오던)\s*길/.test(after)) return -3;
   if (/^(?:에는|에도)/.test(after)) return -2; // 그곳을 '설명'하는 말
@@ -338,7 +346,19 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
     const claudeFamily = location ? knownPlaceFamily(location[1]) : null;
     /** 목록엔 없지만 본문이 그 이름을 부르는 곳(캠핑장·목욕탕) — 클로드가 맞다. */
     const unknownButNamed = claudeFamily === null && nameInText;
-    if (location && textLocation && claudeFamily && claudeFamily !== textLocation.family) {
+    /*
+     * 앞 쪽과 같은 곳을 클로드가 적었는데 본문 낱말 하나로 딴 곳으로 바꾸는 건 위험하다 —
+     * 그림책은 한 자리에서 이야기가 깊어진다. 이동 표현이 있을 때만 바꾼다.
+     */
+    const sameAsPrevious = Boolean(location && previous && locationKeyOf(location[1]) === previous.name);
+    const moved = MOVE_PATTERN.test(page.text);
+    if (
+      location &&
+      textLocation &&
+      claudeFamily &&
+      claudeFamily !== textLocation.family &&
+      !(sameAsPrevious && !moved)
+    ) {
       const correctedClause = `장소: ${textLocation.name} — ${textLocation.description}`;
       imagePrompt = imagePrompt.replace(location[0], correctedClause);
       location = LOCATION_PATTERN.exec(imagePrompt);

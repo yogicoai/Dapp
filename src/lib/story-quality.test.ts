@@ -425,3 +425,39 @@ it("장면 문장이 말하는 장소를 장소 줄보다 믿는다", () => {
     .find((l) => l.startsWith("장소:"))!;
   assert.ok(/도서관|책장/.test(line), line);
 });
+
+describe("비유·미래 표현으로 장소를 바꾸지 않는다 — 자동차 저금통 책", () => {
+  function two(text1: string, prompt1: string, text2: string, prompt2: string): ParsedStory {
+    return { title: "t", summary: "", characters: [], pages: [
+      { pageNo: 1, text: text1, imagePrompt: prompt1, voiceDirection: direction },
+      { pageNo: 2, text: text2, imagePrompt: prompt2, voiceDirection: direction },
+    ] };
+  }
+  const CLASS = "장소: 어린이집 교실 — 밝은 나무 책상, 크림색 벽에 큰 창문, 낮의 밝은 햇빛.";
+
+  it("'물감이 흘러가는 길을 따라가'는 길거리가 아니다", () => {
+    const v = two("하온이는 교실에서 물감을 부었어요.", "등장인물 1명: 하온. " + CLASS + " 하온이가 붓는다.",
+      "핑크색 물감이 흘러내렸어요. 하온이는 물감이 흘러가는 길을 손가락으로 따라가 보았어요.",
+      "등장인물 1명: 하온. " + CLASS + " 하온이가 따라간다.");
+    const r = repairStoryContinuity(v);
+    assert.match(r.pages[1].imagePrompt, /장소: 어린이집 교실/, r.pages[1].imagePrompt);
+    assert.ok(!r.pages[1].imagePrompt.includes("아스팔트"));
+  });
+
+  it("'집에 가져 갈거예요'는 집에 있는 것이 아니다", () => {
+    const v = two("하온이는 교실에서 자동차를 칠했어요.", "등장인물 1명: 하온. " + CLASS + " 하온이가 칠한다.",
+      "드디어 자동차가 완성됐어요. \"다 마르면 집에 가져 갈거예요!\" 하온이가 말했어요.",
+      "등장인물 1명: 하온. " + CLASS + " 하온이가 든다.");
+    const r = repairStoryContinuity(v);
+    assert.match(r.pages[1].imagePrompt, /장소: 어린이집 교실/, r.pages[1].imagePrompt);
+    assert.ok(!r.pages[1].imagePrompt.includes("거실"));
+  });
+
+  it("정말 이동하면(집으로 돌아왔어요) 바꾼다", () => {
+    const v = two("하온이는 교실에서 자동차를 칠했어요.", "등장인물 1명: 하온. " + CLASS + " 하온이가 칠한다.",
+      "하온이는 집으로 돌아왔어요. 거실에서 자동차를 자랑했어요.",
+      "등장인물 1명: 하온. " + CLASS + " 하온이가 자랑한다.");
+    const r = repairStoryContinuity(v);
+    assert.ok(/거실|집/.test(r.pages[1].imagePrompt), r.pages[1].imagePrompt);
+  });
+});
