@@ -368,21 +368,14 @@ function locationKeyFromImagePrompt(prompt: string): string {
 /** 만들 때 그린 장소 기준 그림 한 장. */
 type LocationSheet = { key: string; name: string; description: string; image: string };
 
-/** 장면(쪽) 수 선택지 3~8. 삽화를 켜면 쪽수가 곧 그림 장수(=크레딧)라 8이 상한. */
-const PAGE_OPTIONS = [3, 4, 5, 6, 7, 8];
-
 /**
- * 나이에 맞는 장면 수를 추천한다 — 어린 아이는 짧게, 큰 아이는 넉넉히.
- * 강제는 아니고 별표(추천)로만 표시한다.
+ * 장면(쪽) 수는 6으로 고정한다 (사장님 결정, 2026-08-28).
+ *
+ * 예전엔 3~8 가운데 고르게 했다. 쪽수가 곧 그림 장수(=크레딧)라, 장수를 고르게
+ * 두면 책마다 값이 달라져 크레딧을 셈하고 안내하기가 어려워진다. 한 권 = 6쪽 =
+ * 늘 같은 값이면 부모도 우리도 헷갈리지 않는다. 길이 조절은 '넉넉하게' 스위치로 한다.
  */
-function recommendedPages(age: number | null): number {
-  if (age === null) return 6;
-  // 1~2세는 이야기를 따라가기보다 그림을 보는 나이라 짧게 시작한다.
-  if (age <= 2) return 3;
-  if (age <= 4) return 4;
-  if (age <= 6) return 6;
-  return 8;
-}
+const FIXED_PAGE_COUNT = 6;
 
 /** 조사를 떼어 지칭어를 만든다 — "친구랑"→"친구", "동생이랑"→"동생". */
 function companionTerm(who: string): string {
@@ -757,7 +750,7 @@ export default function CreatePage() {
         setAge(remoteChild.age);
         setGender(remoteChild.gender);
         if (remoteChild.name && remoteChild.age !== null) setStep("theme");
-        setPageCount(recommendedPages(remoteChild.age));
+        setPageCount(FIXED_PAGE_COUNT);
       }
       if (alive) {
         const savedDraft = loadCreateDraft(s.uid);
@@ -868,7 +861,7 @@ export default function CreatePage() {
     setAge(saved.age);
     setGender(saved.gender);
     if (saved.name && saved.age !== null) setStep("theme");
-    setPageCount(recommendedPages(saved.age));
+    setPageCount(FIXED_PAGE_COUNT);
   }, []);
 
   // 재료 미리보기 겸 "다음" 버튼 활성 조건. 갈래마다 다른 재료를 이어 붙인다.
@@ -1081,8 +1074,8 @@ export default function CreatePage() {
       /* 무시 */
     }
   }
-  // 장면(쪽) 수 3~8. 나이에 맞는 추천값으로 시작한다(부모가 바꿀 수 있다).
-  const [pageCount, setPageCount] = useState(() => recommendedPages(null));
+  // 장면(쪽) 수 — 6으로 고정(FIXED_PAGE_COUNT). 화면에서 고르지 않는다.
+  const [pageCount, setPageCount] = useState(FIXED_PAGE_COUNT);
   /*
    * 값은 두 번에 나눠 받는다 — 대본을 만들 때 글 값, 그림을 붙일 때 그림 값.
    * 둘을 더하면 예전과 같다(쪽당 2토큰). 나누기만 한 것이지 올린 게 아니다.
@@ -1273,7 +1266,8 @@ export default function CreatePage() {
     setNarratorVoice(draft.narratorVoice);
     setNarrationStyle(draft.narrationStyle ?? "natural");
     setLongerStory(draft.longerStory);
-    setPageCount(Math.min(8, Math.max(3, draft.pageCount)));
+    // 예전 초안에 다른 쪽수가 남아 있어도 고정값으로 — 값이 책마다 달라지지 않게.
+    setPageCount(FIXED_PAGE_COUNT);
     setOutline(draft.outline);
     setStory(draft.story);
     setStep(draft.step);
@@ -2865,42 +2859,18 @@ export default function CreatePage() {
                 </div>
               </div>
 
-              {/* 장면 수 — 이야기를 몇 쪽으로 나눌지. 나이 추천값을 별로 표시한다.
-                  글만 받는 지금은 장수와 상관없이 무료, 삽화를 켜면 장면당 과금. */}
+              {/* 장면 수 — 6쪽 고정. 고르는 칸 대신 값만 알려 준다(쪽수 = 그림 장수 = 크레딧이라
+                  고르게 두면 책마다 값이 달라져 크레딧 안내가 어려웠다). */}
               <div>
                 <p className="mb-1.5 text-xs font-bold text-neutral-400">
-                  몇 장면으로 만들까요?
+                  한 권의 길이
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {PAGE_OPTIONS.map((n) => {
-                    const active = pageCount === n;
-                    const rec = n === recommendedPages(age);
-                    return (
-                      <button
-                        key={n}
-                        type="button"
-                        onClick={() => setPageCount(n)}
-                        style={active ? { background: accent } : undefined}
-                        className={`relative h-11 min-w-[3.4rem] rounded-full px-3 text-sm font-extrabold transition ${
-                          active
-                            ? "scale-105 text-white shadow"
-                            : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                        }`}
-                      >
-                        {n}장
-                        {rec && (
-                          <span className="absolute -right-1 -top-1.5 text-sm leading-none">
-                            ⭐
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
-                  ⭐ {age ?? "우리 아이"}세에게 알맞은 길이예요 · 이 장수면{" "}
-                  <b className="text-neutral-600">대본 {scriptCost}개</b>
-                  {IMAGES_ENABLED ? ` + 그림 ${imageCost}개` : ""} 토큰이 들어요
+                <p className="rounded-2xl bg-neutral-100 px-4 py-3 text-sm font-extrabold text-neutral-700">
+                  {pageCount}장면으로 만들어요
+                  <span className="ml-2 text-[11px] font-bold text-neutral-400">
+                    · <b className="text-neutral-600">대본 {scriptCost}개</b>
+                    {IMAGES_ENABLED ? ` + 그림 ${imageCost}개` : ""} 토큰
+                  </span>
                 </p>
               </div>
 
