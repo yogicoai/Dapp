@@ -97,6 +97,14 @@ type BookSpec = {
   cast: { name: string }[];
 };
 const BOOKS: Record<string, BookSpec> = {
+  "시골 쥐와 도시 쥐": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "twomice",
+    narrators: ["tc-gaeul"],
+    defaultNarrator: "tc-gaeul",
+    cast: [{ name: "시골 쥐" }, { name: "도시 쥐" }],
+  },
   "개미와 베짱이": {
     data: "src/data/classic-books.json",
     root: "classic",

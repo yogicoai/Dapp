@@ -5100,5 +5100,275 @@
     "emotion": "normal",
     "intensity": null,
     "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 바이올린 소리가 흘러나왔답니다.\n창밖에는 함박눈이 소복소복 쌓였지요."
+  },
+  "classic/twomice/seg-tc-gaeul-p1-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "보리밭 옆 아늑한 굴속에 시골 쥐가 살았어요.\n어느 날 도시에 사는 사촌에게 편지를 썼지요."
+  },
+  "classic/twomice/seg-cast-p1-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"사촌아, 놀러 오렴! 맛있는 저녁을 대접할게.\""
+  },
+  "classic/twomice/seg-tc-gaeul-p1-2.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "답장을 기다리는 마음이 콩닥콩닥했답니다."
+  },
+  "classic/twomice/say-p1-country.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "사촌아, 놀러 오렴! 맛있는 저녁을 대접할게."
+  },
+  "classic/twomice/seg-tc-gaeul-p2-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "도시 쥐가 시골에 도착했어요.\n시골 쥐는 정성껏 밥상을 차렸지요.\n고소한 도토리, 따끈한 보리죽, 달콤한 산딸기.\n숟가락도 제일 예쁜 것으로 놓았지요."
+  },
+  "classic/twomice/seg-cast-p2-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"차린 건 없지만 많이 먹으렴!\""
+  },
+  "classic/twomice/say-p2-country.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "차린 건 없지만 많이 먹으렴!"
+  },
+  "classic/twomice/seg-tc-gaeul-p3-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "도시 쥐는 깨작깨작 먹더니 한숨을 쉬었어요."
+  },
+  "classic/twomice/seg-cast-p3-1.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 진수성찬이 가득한데!\n나랑 같이 가 보자!\""
+  },
+  "classic/twomice/say-p3-city.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 진수성찬이 가득한데!\n나랑 같이 가 보자!"
+  },
+  "classic/twomice/seg-tc-gaeul-p4-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "둘은 함께 도시로 갔어요.\n마차 바퀴 소리가 덜컹덜컹 울렸지요."
+  },
+  "classic/twomice/seg-cast-p4-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"우와아…\""
+  },
+  "classic/twomice/seg-tc-gaeul-p4-2.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "반짝반짝 불빛이 가득한 커다란 저택!\n시골 쥐의 눈이 휘둥그레졌지요."
+  },
+  "classic/twomice/seg-cast-p4-3.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"따라와. 좋은 건 이제부터야.\""
+  },
+  "classic/twomice/say-p4-country.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "우와아…"
+  },
+  "classic/twomice/say-p4-city.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "따라와. 좋은 건 이제부터야."
+  },
+  "classic/twomice/seg-tc-gaeul-p5-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "식탁 위에는 정말 잔칫상이 차려져 있었어요.\n폭신한 케이크, 노란 치즈, 보랏빛 포도!"
+  },
+  "classic/twomice/seg-cast-p5-1.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"자, 마음껏 먹으렴!\""
+  },
+  "classic/twomice/seg-tc-gaeul-p5-2.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "냄새만으로도 배가 부를 것 같았어요.\n시골 쥐는 침이 꼴깍 넘어갔답니다."
+  },
+  "classic/twomice/say-p5-city.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "자, 마음껏 먹으렴!"
+  },
+  "classic/twomice/seg-tc-gaeul-p6-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그런데 케이크를 한 입 베어 물려는 순간 —\n쿵! 쿵! 문소리와 함께 사람이 들어왔어요!"
+  },
+  "classic/twomice/seg-cast-p6-1.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"숨어!\""
+  },
+  "classic/twomice/seg-tc-gaeul-p6-2.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "둘은 후다닥 식탁 밑으로 뛰어내렸지요.\n심장이 쿵쾅쿵쾅 뛰었어요."
+  },
+  "classic/twomice/say-p6-city.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "숨어!"
+  },
+  "classic/twomice/seg-tc-gaeul-p7-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "사람이 나가고, 살금살금 다시 식탁 위로.\n치즈를 막 집었는데 이번에는 —\n야아옹!\n번쩍이는 눈의 고양이가 나타났어요!\n둘은 숨도 못 쉬고 얼어붙었지요.\n수염이 바들바들 떨렸답니다."
+  },
+  "classic/twomice/seg-tc-gaeul-p8-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "둘은 쥐구멍으로 쏙 숨었어요.\n시골 쥐의 가슴이 콩닥콩닥 뛰었지요."
+  },
+  "classic/twomice/seg-cast-p8-1.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"괜찮아, 늘 있는 일이야. 금방 익숙해져.\""
+  },
+  "classic/twomice/seg-tc-gaeul-p8-2.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "도시 쥐는 아무렇지 않게 수염을 다듬었답니다."
+  },
+  "classic/twomice/say-p8-city.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "괜찮아, 늘 있는 일이야. 금방 익숙해져."
+  },
+  "classic/twomice/seg-tc-gaeul-p9-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "시골 쥐는 곰곰이 생각했어요."
+  },
+  "classic/twomice/seg-cast-p9-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'케이크는 정말 달콤해.\n하지만 한 입 먹을 때마다 가슴이 조마조마한걸…'"
+  },
+  "classic/twomice/seg-tc-gaeul-p9-2.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "곁에서 도시 쥐는 쌔근쌔근 잠들어 있었어요.\n쥐구멍 틈으로 달빛이 스며들었지요."
+  },
+  "classic/twomice/say-p9-country.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'케이크는 정말 달콤해.\n하지만 한 입 먹을 때마다 가슴이 조마조마한걸…'"
+  },
+  "classic/twomice/seg-cast-p10-0.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"사촌아, 초대해 줘서 정말 고마워.\n그런데 나는 마음 편히 먹는 보리죽이 더 좋아.\n우리 집 별빛이 그리워졌어.\""
+  },
+  "classic/twomice/seg-tc-gaeul-p10-1.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "시골 쥐는 도시 쥐를 꼭 안아 주었어요."
+  },
+  "classic/twomice/say-p10-country.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "사촌아, 초대해 줘서 정말 고마워.\n그런데 나는 마음 편히 먹는 보리죽이 더 좋아.\n우리 집 별빛이 그리워졌어."
+  },
+  "classic/twomice/seg-tc-gaeul-p11-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "시골로 돌아온 시골 쥐는\n보리죽을 한 그릇 가득 끓였어요.\n풀벌레 소리, 반짝이는 별빛.\n바람이 보리 이삭을 살랑살랑 흔들었지요."
+  },
+  "classic/twomice/seg-cast-p11-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"아아, 역시 우리 집이 최고야.\""
+  },
+  "classic/twomice/say-p11-country.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "아아, 역시 우리 집이 최고야."
+  },
+  "classic/twomice/seg-tc-gaeul-p12-0.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 뒤로 두 쥐는 자주 편지를 주고받았어요."
+  },
+  "classic/twomice/seg-cast-p12-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"여름엔 시골로 산딸기 먹으러 오렴!\""
+  },
+  "classic/twomice/seg-cast-p12-2.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"겨울엔 도시 구경 시켜 줄게!\""
+  },
+  "classic/twomice/seg-tc-gaeul-p12-3.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "서로 다른 집에서, 둘은 각자 행복했답니다."
+  },
+  "classic/twomice/say-p12-country.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "여름엔 시골로 산딸기 먹으러 오렴!"
+  },
+  "classic/twomice/say-p12-city.mp3": {
+    "voice": "tc-taeji",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "겨울엔 도시 구경 시켜 줄게!"
   }
 }

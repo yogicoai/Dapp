@@ -3373,177 +3373,507 @@
     "id": "classic-twomice",
     "lang": "ko",
     "title": "시골 쥐와 도시 쥐",
-    "summary": "화려한 도시와 포근한 시골 — 서로 다른 두 쥐의 즐거운 초대 이야기",
+    "summary": "달콤한 케이크보다 마음 편한 보리죽 — 서로 다른 집에서 각자 행복한 두 쥐.",
     "narrator": "tc-gaeul",
     "pages": [
       {
-        "text": "보리밭 옆 아늑한 굴속에 시골 쥐가 살았어요.\n어느 날 도시에 사는 사촌에게 편지를 썼지요.\n\"사촌아, 놀러 오렴! 맛있는 저녁을 대접할게.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p1.webp?v=2",
-        "audio": "/classic/twomice/narr-p1.mp3",
+        "n": 1,
+        "text": "보리밭 옆 아늑한 굴속에 시골 쥐가 살았어요.\n어느 날 도시에 사는 사촌에게 편지를 썼지요.\n\"사촌아, 놀러 오렴! 맛있는 저녁을 대접할게.\"\n답장을 기다리는 마음이 콩닥콩닥했답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p1.webp?v=3",
+        "lines": [
+          {
+            "text": "사촌아, 놀러 오렴! 맛있는 저녁을 대접할게.",
+            "who": "country"
+          }
+        ],
         "hotspots": [
           {
-            "label": "countrymouse",
+            "label": "country",
+            "line": "사촌아, 놀러 오렴! 맛있는 저녁을 대접할게.",
             "box": [
-              300,
-              300,
-              850,
-              700
+              240,
+              275,
+              879,
+              667
             ],
-            "audio": "/classic/twomice/say-p1-countrymouse.wav",
-            "line": "사촌아, 놀러 오렴!"
+            "audio": "/classic/twomice/say-p1-country.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p1-0.mp3",
+            "text": "보리밭 옆 아늑한 굴속에 시골 쥐가 살았어요.\n어느 날 도시에 사는 사촌에게 편지를 썼지요.\n"
+          },
+          {
+            "who": "country",
+            "src": "/classic/twomice/seg-cast-p1-1.mp3",
+            "text": "\"사촌아, 놀러 오렴! 맛있는 저녁을 대접할게.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p1-2.mp3",
+            "text": "\n답장을 기다리는 마음이 콩닥콩닥했답니다."
           }
         ]
       },
       {
-        "text": "도시 쥐가 시골에 도착했어요.\n시골 쥐는 정성껏 밥상을 차렸지요.\n고소한 도토리, 따끈한 보리죽, 달콤한 산딸기.\n\"차린 건 없지만 많이 먹으렴!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p2.webp",
-        "audio": "/classic/twomice/narr-p2.mp3"
+        "n": 2,
+        "text": "도시 쥐가 시골에 도착했어요.\n시골 쥐는 정성껏 밥상을 차렸지요.\n고소한 도토리, 따끈한 보리죽, 달콤한 산딸기.\n숟가락도 제일 예쁜 것으로 놓았지요.\n\"차린 건 없지만 많이 먹으렴!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p2.webp?v=3",
+        "lines": [
+          {
+            "text": "차린 건 없지만 많이 먹으렴!",
+            "who": "country"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "country",
+            "line": "차린 건 없지만 많이 먹으렴!",
+            "box": [
+              251,
+              167,
+              731,
+              400
+            ],
+            "audio": "/classic/twomice/say-p2-country.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p2-0.mp3",
+            "text": "도시 쥐가 시골에 도착했어요.\n시골 쥐는 정성껏 밥상을 차렸지요.\n고소한 도토리, 따끈한 보리죽, 달콤한 산딸기.\n숟가락도 제일 예쁜 것으로 놓았지요.\n"
+          },
+          {
+            "who": "country",
+            "src": "/classic/twomice/seg-cast-p2-1.mp3",
+            "text": "\"차린 건 없지만 많이 먹으렴!\""
+          }
+        ]
       },
       {
+        "n": 3,
         "text": "도시 쥐는 깨작깨작 먹더니 한숨을 쉬었어요.\n\"넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 진수성찬이 가득한데!\n나랑 같이 가 보자!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p3.webp",
-        "audio": "/classic/twomice/narr-p3.mp3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p3.webp?v=3",
+        "lines": [
+          {
+            "text": "넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 진수성찬이 가득한데!\n나랑 같이 가 보자!",
+            "who": "city"
+          }
+        ],
         "hotspots": [
           {
-            "label": "citymouse",
+            "label": "city",
+            "line": "넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 진수성찬이 가득한데!\n나랑 같이 가 보자!",
             "box": [
-              300,
-              150,
-              800,
-              550
+              205,
+              583,
+              685,
+              842
             ],
-            "audio": "/classic/twomice/say-p3-citymouse.wav",
-            "line": "도시에 가면 진수성찬이 가득해!"
+            "audio": "/classic/twomice/say-p3-city.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p3-0.mp3",
+            "text": "도시 쥐는 깨작깨작 먹더니 한숨을 쉬었어요.\n"
+          },
+          {
+            "who": "city",
+            "src": "/classic/twomice/seg-cast-p3-1.mp3",
+            "text": "\"넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 진수성찬이 가득한데!\n나랑 같이 가 보자!\""
           }
         ]
       },
       {
-        "text": "둘은 함께 도시로 갔어요.\n\"우와아…\"\n반짝반짝 불빛이 가득한 커다란 저택!\n시골 쥐의 눈이 휘둥그레졌지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p4.webp",
-        "audio": "/classic/twomice/narr-p4.mp3"
-      },
-      {
-        "text": "식탁 위에는 정말 잔칫상이 차려져 있었어요.\n폭신한 케이크, 노란 치즈, 보랏빛 포도!\n\"자, 마음껏 먹으렴!\"\n시골 쥐는 침이 꼴깍 넘어갔답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p5.webp",
-        "audio": "/classic/twomice/narr-p5.mp3",
+        "n": 4,
+        "text": "둘은 함께 도시로 갔어요.\n마차 바퀴 소리가 덜컹덜컹 울렸지요.\n\"우와아…\"\n반짝반짝 불빛이 가득한 커다란 저택!\n시골 쥐의 눈이 휘둥그레졌지요.\n\"따라와. 좋은 건 이제부터야.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p4.webp?v=3",
+        "lines": [
+          {
+            "text": "우와아…",
+            "who": "country"
+          },
+          {
+            "text": "따라와. 좋은 건 이제부터야.",
+            "who": "city"
+          }
+        ],
         "hotspots": [
           {
-            "label": "countrymouse",
+            "label": "country",
+            "line": "우와아…",
             "box": [
-              400,
-              150,
-              900,
-              500
+              514,
+              233,
+              925,
+              433
             ],
-            "audio": "/classic/twomice/say-p5-countrymouse.wav",
-            "line": "우와, 정말 굉장한 잔칫상이다!"
+            "audio": "/classic/twomice/say-p4-country.mp3"
+          },
+          {
+            "label": "city",
+            "line": "따라와. 좋은 건 이제부터야.",
+            "box": [
+              502,
+              517,
+              925,
+              692
+            ],
+            "audio": "/classic/twomice/say-p4-city.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p4-0.mp3",
+            "text": "둘은 함께 도시로 갔어요.\n마차 바퀴 소리가 덜컹덜컹 울렸지요.\n"
+          },
+          {
+            "who": "country",
+            "src": "/classic/twomice/seg-cast-p4-1.mp3",
+            "text": "\"우와아…\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p4-2.mp3",
+            "text": "\n반짝반짝 불빛이 가득한 커다란 저택!\n시골 쥐의 눈이 휘둥그레졌지요.\n"
+          },
+          {
+            "who": "city",
+            "src": "/classic/twomice/seg-cast-p4-3.mp3",
+            "text": "\"따라와. 좋은 건 이제부터야.\""
           }
         ]
       },
       {
-        "text": "그런데 케이크를 한 입 베어 물려는 순간 —\n쿵! 쿵! 문소리와 함께 사람이 들어왔어요!\n\"숨어!\"\n둘은 후다닥 식탁 밑으로 뛰어내렸지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p6.webp",
-        "audio": "/classic/twomice/narr-p6.mp3",
+        "n": 5,
+        "text": "식탁 위에는 정말 잔칫상이 차려져 있었어요.\n폭신한 케이크, 노란 치즈, 보랏빛 포도!\n\"자, 마음껏 먹으렴!\"\n냄새만으로도 배가 부를 것 같았어요.\n시골 쥐는 침이 꼴깍 넘어갔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p5.webp?v=3",
+        "lines": [
+          {
+            "text": "자, 마음껏 먹으렴!",
+            "who": "city"
+          }
+        ],
         "hotspots": [
           {
-            "label": "citymouse",
+            "label": "city",
+            "line": "자, 마음껏 먹으렴!",
             "box": [
-              300,
-              500,
-              850,
-              850
+              365,
+              600,
+              811,
+              792
             ],
-            "audio": "/classic/twomice/say-p6-citymouse.wav",
-            "line": "숨어! 사람이 왔어!"
+            "audio": "/classic/twomice/say-p5-city.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p5-0.mp3",
+            "text": "식탁 위에는 정말 잔칫상이 차려져 있었어요.\n폭신한 케이크, 노란 치즈, 보랏빛 포도!\n"
+          },
+          {
+            "who": "city",
+            "src": "/classic/twomice/seg-cast-p5-1.mp3",
+            "text": "\"자, 마음껏 먹으렴!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p5-2.mp3",
+            "text": "\n냄새만으로도 배가 부를 것 같았어요.\n시골 쥐는 침이 꼴깍 넘어갔답니다."
           }
         ]
       },
       {
-        "text": "사람이 나가고, 살금살금 다시 식탁 위로.\n치즈를 막 집었는데 이번에는 —\n\"야아옹!\"\n번쩍이는 눈의 고양이가 나타났어요!",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p7.webp",
-        "audio": "/classic/twomice/narr-p7.mp3",
+        "n": 6,
+        "text": "그런데 케이크를 한 입 베어 물려는 순간 —\n쿵! 쿵! 문소리와 함께 사람이 들어왔어요!\n\"숨어!\"\n둘은 후다닥 식탁 밑으로 뛰어내렸지요.\n심장이 쿵쾅쿵쾅 뛰었어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p6.webp?v=3",
+        "lines": [
+          {
+            "text": "숨어!",
+            "who": "city",
+            "feel": "toneup"
+          }
+        ],
         "hotspots": [
           {
-            "label": "countrymouse",
+            "label": "city",
+            "line": "숨어!",
             "box": [
-              400,
-              500,
-              900,
-              850
+              365,
+              692,
+              696,
+              908
             ],
-            "audio": "/classic/twomice/say-p7-countrymouse.wav",
-            "line": "으악! 고양이다!"
+            "audio": "/classic/twomice/say-p6-city.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p6-0.mp3",
+            "text": "그런데 케이크를 한 입 베어 물려는 순간 —\n쿵! 쿵! 문소리와 함께 사람이 들어왔어요!\n"
+          },
+          {
+            "who": "city",
+            "src": "/classic/twomice/seg-cast-p6-1.mp3",
+            "text": "\"숨어!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p6-2.mp3",
+            "text": "\n둘은 후다닥 식탁 밑으로 뛰어내렸지요.\n심장이 쿵쾅쿵쾅 뛰었어요."
           }
         ]
       },
       {
+        "n": 7,
+        "text": "사람이 나가고, 살금살금 다시 식탁 위로.\n치즈를 막 집었는데 이번에는 —\n야아옹!\n번쩍이는 눈의 고양이가 나타났어요!\n둘은 숨도 못 쉬고 얼어붙었지요.\n수염이 바들바들 떨렸답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p7.webp?v=3",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p7-0.mp3",
+            "text": "사람이 나가고, 살금살금 다시 식탁 위로.\n치즈를 막 집었는데 이번에는 —\n야아옹!\n번쩍이는 눈의 고양이가 나타났어요!\n둘은 숨도 못 쉬고 얼어붙었지요.\n수염이 바들바들 떨렸답니다."
+          }
+        ]
+      },
+      {
+        "n": 8,
         "text": "둘은 쥐구멍으로 쏙 숨었어요.\n시골 쥐의 가슴이 콩닥콩닥 뛰었지요.\n\"괜찮아, 늘 있는 일이야. 금방 익숙해져.\"\n도시 쥐는 아무렇지 않게 수염을 다듬었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p8.webp?v=2",
-        "audio": "/classic/twomice/narr-p8.mp3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p8.webp?v=3",
+        "lines": [
+          {
+            "text": "괜찮아, 늘 있는 일이야. 금방 익숙해져.",
+            "who": "city"
+          }
+        ],
         "hotspots": [
           {
-            "label": "citymouse",
+            "label": "city",
+            "line": "괜찮아, 늘 있는 일이야. 금방 익숙해져.",
             "box": [
-              350,
-              500,
-              850,
-              850
+              300,
+              600,
+              830,
+              940
             ],
-            "audio": "/classic/twomice/say-p8-citymouse.wav",
-            "line": "괜찮아, 금방 익숙해져."
+            "audio": "/classic/twomice/say-p8-city.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p8-0.mp3",
+            "text": "둘은 쥐구멍으로 쏙 숨었어요.\n시골 쥐의 가슴이 콩닥콩닥 뛰었지요.\n"
+          },
+          {
+            "who": "city",
+            "src": "/classic/twomice/seg-cast-p8-1.mp3",
+            "text": "\"괜찮아, 늘 있는 일이야. 금방 익숙해져.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p8-2.mp3",
+            "text": "\n도시 쥐는 아무렇지 않게 수염을 다듬었답니다."
           }
         ]
       },
       {
-        "text": "시골 쥐는 곰곰이 생각했어요.\n'케이크는 정말 달콤해.\n하지만 한 입 먹을 때마다 가슴이 조마조마한걸…'",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p9.webp?v=2",
-        "audio": "/classic/twomice/narr-p9.mp3"
+        "n": 9,
+        "text": "시골 쥐는 곰곰이 생각했어요.\n'케이크는 정말 달콤해.\n하지만 한 입 먹을 때마다 가슴이 조마조마한걸…'\n곁에서 도시 쥐는 쌔근쌔근 잠들어 있었어요.\n쥐구멍 틈으로 달빛이 스며들었지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p9.webp?v=3",
+        "lines": [
+          {
+            "text": "'케이크는 정말 달콤해.\n하지만 한 입 먹을 때마다 가슴이 조마조마한걸…'",
+            "who": "country"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "country",
+            "line": "'케이크는 정말 달콤해.\n하지만 한 입 먹을 때마다 가슴이 조마조마한걸…'",
+            "box": [
+              365,
+              667,
+              902,
+              908
+            ],
+            "audio": "/classic/twomice/say-p9-country.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p9-0.mp3",
+            "text": "시골 쥐는 곰곰이 생각했어요.\n"
+          },
+          {
+            "who": "country",
+            "src": "/classic/twomice/seg-cast-p9-1.mp3",
+            "text": "'케이크는 정말 달콤해.\n하지만 한 입 먹을 때마다 가슴이 조마조마한걸…'"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p9-2.mp3",
+            "text": "\n곁에서 도시 쥐는 쌔근쌔근 잠들어 있었어요.\n쥐구멍 틈으로 달빛이 스며들었지요."
+          }
+        ]
       },
       {
+        "n": 10,
         "text": "\"사촌아, 초대해 줘서 정말 고마워.\n그런데 나는 마음 편히 먹는 보리죽이 더 좋아.\n우리 집 별빛이 그리워졌어.\"\n시골 쥐는 도시 쥐를 꼭 안아 주었어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p10.webp",
-        "audio": "/classic/twomice/narr-p10.mp3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p10.webp?v=3",
+        "lines": [
+          {
+            "text": "사촌아, 초대해 줘서 정말 고마워.\n그런데 나는 마음 편히 먹는 보리죽이 더 좋아.\n우리 집 별빛이 그리워졌어.",
+            "who": "country"
+          }
+        ],
         "hotspots": [
           {
-            "label": "countrymouse",
+            "label": "country",
+            "line": "사촌아, 초대해 줘서 정말 고마워.\n그런데 나는 마음 편히 먹는 보리죽이 더 좋아.\n우리 집 별빛이 그리워졌어.",
             "box": [
-              300,
-              150,
-              850,
-              550
+              310,
+              330,
+              790,
+              560
             ],
-            "audio": "/classic/twomice/say-p10-countrymouse.wav",
-            "line": "나는 마음 편한 우리 집이 좋아."
+            "audio": "/classic/twomice/say-p10-country.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "country",
+            "src": "/classic/twomice/seg-cast-p10-0.mp3",
+            "text": "\"사촌아, 초대해 줘서 정말 고마워.\n그런데 나는 마음 편히 먹는 보리죽이 더 좋아.\n우리 집 별빛이 그리워졌어.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p10-1.mp3",
+            "text": "\n시골 쥐는 도시 쥐를 꼭 안아 주었어요."
           }
         ]
       },
       {
-        "text": "시골로 돌아온 시골 쥐는\n보리죽을 한 그릇 가득 끓였어요.\n풀벌레 소리, 반짝이는 별빛.\n\"아아, 역시 우리 집이 최고야.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p11.webp",
-        "audio": "/classic/twomice/narr-p11.mp3",
+        "n": 11,
+        "text": "시골로 돌아온 시골 쥐는\n보리죽을 한 그릇 가득 끓였어요.\n풀벌레 소리, 반짝이는 별빛.\n바람이 보리 이삭을 살랑살랑 흔들었지요.\n\"아아, 역시 우리 집이 최고야.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p11.webp?v=3",
+        "lines": [
+          {
+            "text": "아아, 역시 우리 집이 최고야.",
+            "who": "country"
+          }
+        ],
         "hotspots": [
           {
-            "label": "countrymouse",
+            "label": "country",
+            "line": "아아, 역시 우리 집이 최고야.",
             "box": [
-              300,
-              300,
-              850,
-              700
+              320,
+              517,
+              776,
+              750
             ],
-            "audio": "/classic/twomice/say-p11-countrymouse.wav",
-            "line": "역시 우리 집이 최고야!"
+            "audio": "/classic/twomice/say-p11-country.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p11-0.mp3",
+            "text": "시골로 돌아온 시골 쥐는\n보리죽을 한 그릇 가득 끓였어요.\n풀벌레 소리, 반짝이는 별빛.\n바람이 보리 이삭을 살랑살랑 흔들었지요.\n"
+          },
+          {
+            "who": "country",
+            "src": "/classic/twomice/seg-cast-p11-1.mp3",
+            "text": "\"아아, 역시 우리 집이 최고야.\""
           }
         ]
       },
       {
+        "n": 12,
         "text": "그 뒤로 두 쥐는 자주 편지를 주고받았어요.\n\"여름엔 시골로 산딸기 먹으러 오렴!\"\n\"겨울엔 도시 구경 시켜 줄게!\"\n서로 다른 집에서, 둘은 각자 행복했답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p12.webp",
-        "audio": "/classic/twomice/narr-p12.mp3"
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/twomice/p12.webp?v=3",
+        "lines": [
+          {
+            "text": "여름엔 시골로 산딸기 먹으러 오렴!",
+            "who": "country"
+          },
+          {
+            "text": "겨울엔 도시 구경 시켜 줄게!",
+            "who": "city"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "country",
+            "line": "여름엔 시골로 산딸기 먹으러 오렴!",
+            "box": [
+              217,
+              92,
+              788,
+              433
+            ],
+            "audio": "/classic/twomice/say-p12-country.mp3"
+          },
+          {
+            "label": "city",
+            "line": "겨울엔 도시 구경 시켜 줄게!",
+            "box": [
+              217,
+              600,
+              788,
+              917
+            ],
+            "audio": "/classic/twomice/say-p12-city.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p12-0.mp3",
+            "text": "그 뒤로 두 쥐는 자주 편지를 주고받았어요.\n"
+          },
+          {
+            "who": "country",
+            "src": "/classic/twomice/seg-cast-p12-1.mp3",
+            "text": "\"여름엔 시골로 산딸기 먹으러 오렴!\"\n"
+          },
+          {
+            "who": "city",
+            "src": "/classic/twomice/seg-cast-p12-2.mp3",
+            "text": "\"겨울엔 도시 구경 시켜 줄게!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/twomice/seg-p12-3.mp3",
+            "text": "\n서로 다른 집에서, 둘은 각자 행복했답니다."
+          }
+        ]
       }
     ],
     "narrators": [
       "tc-gaeul"
-    ]
+    ],
+    "voiceCast": {
+      "narration": "tc-gaeul",
+      "country": "tc-dukgu",
+      "city": "tc-taeji"
+    },
+    "roleOf": {
+      "시골 쥐": "country",
+      "도시 쥐": "city"
+    }
   },
   {
     "id": "classic-turnip",
