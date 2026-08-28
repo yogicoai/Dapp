@@ -71,7 +71,7 @@ function topicParticle(word: string): string {
  *
  * 장소는 앞의 둘, 물건도 앞의 둘까지만 담는다. 길어지면 어차피 안 읽는다.
  */
-export function suggestLocationDetail(imagePrompts: string[], maxLength = 120): string {
+export function suggestLocationDetail(imagePrompts: string[], maxLength = 300): string {
   const places = new Map<string, string>();
   const props = new Map<string, string>();
 
@@ -91,7 +91,8 @@ export function suggestLocationDetail(imagePrompts: string[], maxLength = 120): 
     for (const prop of source.matchAll(PROP_LINE)) take(props, prop[0]);
   }
 
-  const parts = [...[...places].slice(0, 2), ...[...props].slice(0, 2)].map(
+  // 장소 셋·물건 둘까지 — 칸이 300자로 넓어져 세 장소도 들어간다.
+  const parts = [...[...places].slice(0, 3), ...[...props].slice(0, 2)].map(
     ([name, description]) => `${name}${topicParticle(name)} ${description}`,
   );
   if (parts.length === 0) return "";

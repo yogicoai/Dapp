@@ -56,7 +56,7 @@ export async function POST(request: Request) {
    * 한 줄만 적어 주면 모든 쪽이 같은 곳을 그린다. 한국어 그대로 넘긴다.
    */
   const locationDetail =
-    typeof input.locationDetail === "string" ? input.locationDetail.trim().slice(0, 200) : "";
+    typeof input.locationDetail === "string" ? input.locationDetail.trim().slice(0, 300) : "";
   const storyText = typeof input.storyText === "string" ? input.storyText.trim().slice(0, 1200) : "";
   /*
    * 상한을 500 → 700으로 올렸다.

@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "장소 이름이 없습니다." }, { status: 400 });
   }
   // 부모가 적어 준 이 장소의 자세한 모습(선택). 모델이 상상한 것보다 우선한다.
-  const detail = typeof input.detail === "string" ? input.detail.trim().slice(0, 200) : "";
+  const detail = typeof input.detail === "string" ? input.detail.trim().slice(0, 300) : "";
   const style = ART_STYLES.find((s) => s.id === input.artStyleId) ?? ART_STYLES[0];
   const phone = input.shape === "phone";
   const indoor = isIndoorPlace(name, description);

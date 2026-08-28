@@ -3067,7 +3067,8 @@ export default function CreatePage() {
                   같은 시간도 훨씬 짧게 느껴진다(피드백 2번). */}
               <p className="break-keep text-center text-sm font-bold text-neutral-500">
                 {uploading ? (
-                  `그림 ${uploading.done} / ${uploading.total} 장 저장했어요`
+                  // '그림 N장'이라고 하면 그린 장수로 읽힌다 — 이건 표지 썸네일·시트까지 포함한 파일 수다.
+                  `파일 ${uploading.done} / ${uploading.total} 올리는 중 (표지·시트 포함)`
                 ) : (
                   <>
                     {drawn} / {story.pages.length} 쪽
@@ -3431,15 +3432,18 @@ export default function CreatePage() {
                     그림 속 장소나 물건을 좀 더 알려 주실래요?{" "}
                     <span className="font-bold text-neutral-400">(안 쓰셔도 돼요)</span>
                   </label>
-                  <input
+                  {/* 한 줄(120자)에서 세 줄(300자)로 — 장소마다 바닥·큰 물체·색·가구·빛까지
+                      담기게 자동으로 채워 두고, 부모는 고치기만 하면 된다(사장님 제안). */}
+                  <textarea
                     id="location-detail"
+                    rows={3}
                     value={locationDetail}
                     onChange={(e) => {
                       locationTouchedRef.current = true;
-                      setLocationDetail(e.target.value.slice(0, 120));
+                      setLocationDetail(e.target.value.slice(0, 300));
                     }}
-                    placeholder="예: 계곡은 회색 자갈 바닥에 넓적한 바위 하나, 아이스크림은 분홍색 한 덩이"
-                    className="mt-2 w-full rounded-xl border-2 border-neutral-100 bg-neutral-50 px-3 py-2.5 text-sm font-medium text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-200"
+                    placeholder="예: 계곡은 회색 자갈 바닥에 넓적한 바위 하나, 짙은 초록 나무 · 거실은 크림색 벽과 밝은 나무 마루, 하늘색 소파 · 아이스크림은 분홍색 한 덩이"
+                    className="mt-2 w-full resize-none rounded-xl border-2 border-neutral-100 bg-neutral-50 px-3 py-2.5 text-sm font-medium leading-relaxed text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-200"
                   />
                   <p className="mt-1.5 break-keep text-[11px] font-medium text-neutral-400">
                     {locationDetail && !locationTouchedRef.current
