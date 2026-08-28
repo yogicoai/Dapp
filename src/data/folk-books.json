@@ -1662,6 +1662,16 @@
       {
         "text": "새어머니는 팥쥐만 예뻐하고, 힘든 일은 모두 콩쥐에게 시켰어요.\n\"콩쥐야! 밭을 매고, 물도 길어 오너라!\"\n\"엄마, 나는 그늘에서 좀 쉴래.\"\n팥쥐는 부채질을 하며 콩쥐를 흘겨보았지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p2.webp?v=3",
+        "lines": [
+          {
+            "text": "콩쥐야! 밭을 매고, 물도 길어 오너라!",
+            "who": "stepmom"
+          },
+          {
+            "text": "엄마, 나는 그늘에서 좀 쉴래.",
+            "who": "patjwi"
+          }
+        ],
         "hotspots": [
           {
             "label": "kongjwi",
@@ -1709,7 +1719,7 @@
             "text": "\"콩쥐야! 밭을 매고, 물도 길어 오너라!\"\n"
           },
           {
-            "who": "stepmom",
+            "who": "patjwi",
             "src": "/folk/kongjwi/seg-cast-p2-2.mp3",
             "text": "\"엄마, 나는 그늘에서 좀 쉴래.\""
           },
@@ -1722,6 +1732,13 @@
       },
       {
         "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지,\n배고픈 참새들에게는 제 몫의 낟알 한 줌.\n\"나는 조금만 먹어도 괜찮아.\"\n물동이에 빠져 허우적대던 두꺼비는 두 손으로 건져 주었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p3.webp?v=3",
+        "lines": [
+          {
+            "text": "나는 조금만 먹어도 괜찮아.",
+            "who": "kongjwi"
+          }
+        ],
         "hotspots": [
           {
             "label": "kongjwi",
@@ -1742,7 +1759,7 @@
             "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지,\n배고픈 참새들에게는 제 몫의 낟알 한 줌.\n"
           },
           {
-            "who": "sparrow",
+            "who": "kongjwi",
             "src": "/folk/kongjwi/seg-cast-p3-1.mp3",
             "text": "\"나는 조금만 먹어도 괜찮아.\""
           },
@@ -1751,12 +1768,21 @@
             "src": "/folk/kongjwi/seg-p3-2.mp3",
             "text": "\n물동이에 빠져 허우적대던 두꺼비는 두 손으로 건져 주었답니다."
           }
-        ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p3.webp?v=3"
+        ]
       },
       {
         "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n새어머니와 팥쥐는 아침부터 고운 옷을 꺼내 입었지요.\n\"저도 잔치에 가고 싶어요!\"\n\"흥! 그럼 밭을 다 매고, 이 항아리에 물도 가득 채워 놓고 오너라.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p4.webp?v=3",
+        "lines": [
+          {
+            "text": "저도 잔치에 가고 싶어요!",
+            "who": "kongjwi"
+          },
+          {
+            "text": "흥! 그럼 밭을 다 매고, 이 항아리에 물도 가득 채워 놓고 오너라.",
+            "who": "stepmom"
+          }
+        ],
         "hotspots": [
           {
             "label": "kongjwi",
@@ -1788,12 +1814,12 @@
             "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n새어머니와 팥쥐는 아침부터 고운 옷을 꺼내 입었지요.\n"
           },
           {
-            "who": "patjwi",
+            "who": "kongjwi",
             "src": "/folk/kongjwi/seg-cast-p4-1.mp3",
             "text": "\"저도 잔치에 가고 싶어요!\"\n"
           },
           {
-            "who": "patjwi",
+            "who": "stepmom",
             "src": "/folk/kongjwi/seg-cast-p4-2.mp3",
             "text": "\"흥! 그럼 밭을 다 매고, 이 항아리에 물도 가득 채워 놓고 오너라.\""
           }
@@ -2270,6 +2296,12 @@
       {
         "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요.\n\"그 신은 제 거예요!\"\n팥쥐가 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p16.webp?v=3",
+        "lines": [
+          {
+            "text": "그 신은 제 거예요!",
+            "who": "patjwi"
+          }
+        ],
         "hotspots": [
           {
             "label": "magistrate",
@@ -2301,7 +2333,7 @@
             "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요.\n"
           },
           {
-            "who": "magistrate",
+            "who": "patjwi",
             "src": "/folk/kongjwi/seg-cast-p16-1.mp3",
             "text": "\"그 신은 제 거예요!\""
           },
@@ -2314,6 +2346,17 @@
       },
       {
         "text": "\"우리 집 딸은 팥쥐 하나뿐입니다!\"\n새어머니는 콩쥐를 헛간으로 밀어 넣고 문을 닫아 버렸어요.\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했지요.\n\"짹짹! 여기예요, 여기! 헛간 안이에요!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p17.webp?v=3",
+        "lines": [
+          {
+            "text": "우리 집 딸은 팥쥐 하나뿐입니다!",
+            "who": "stepmom"
+          },
+          {
+            "text": "짹짹! 여기예요, 여기! 헛간 안이에요!",
+            "who": "sparrow"
+          }
+        ],
         "hotspots": [
           {
             "label": "stepmom",
@@ -2350,12 +2393,11 @@
             "text": "\n새어머니는 콩쥐를 헛간으로 밀어 넣고 문을 닫아 버렸어요.\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했지요.\n"
           },
           {
-            "who": "stepmom",
+            "who": "sparrow",
             "src": "/folk/kongjwi/seg-cast-p17-2.mp3",
             "text": "\"짹짹! 여기예요, 여기! 헛간 안이에요!\""
           }
-        ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p17.webp?v=3"
+        ]
       },
       {
         "text": "원님이 헛간 문을 열자 콩쥐가 서 있었어요.\n\"저… 저도 신어 봐도 될까요?\"\n콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요!\n\"아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!\"",

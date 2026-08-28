@@ -316,7 +316,7 @@
       },
       {
         "n": 6,
-        "text": "'…나도 그냥 놀까?'\n막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n반듯했어요. 아주 반듯했어요.\n\"그래도 난, 튼튼한 집을 짓고 싶어.\"",
+        "text": "'…나도 그냥 놀까?'\n막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n아주 반듯했어요.\n\"그래도 난, 튼튼한 집을 짓고 싶어.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p6.webp?v=2",
         "lines": [
           {
@@ -333,7 +333,7 @@
           {
             "who": "narration",
             "src": "/classic/threepigs/seg-p6-1.mp3",
-            "text": "\n막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n반듯했어요. 아주 반듯했어요.\n"
+            "text": "\n막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n아주 반듯했어요.\n"
           },
           {
             "who": "pig3",
@@ -1297,13 +1297,13 @@
       },
       {
         "n": 10,
-        "text": "드디어 봄이 왔어요. 얼음이 사르르 녹았지요.\n아기 오리가 지킨 물구멍은 넓은 호수가 되었어요.\n기지개를 켜고 날개를 펼치자 — 어라?\n몸이 가뿐하게 하늘로 떠올랐답니다!",
+        "text": "드디어 봄이 왔어요. 얼음이 사르르 녹았지요.\n아기 오리가 지킨 물구멍은 넓은 호수가 되었어요.\n기지개를 켜고 날개를 활짝 펼치자,\n몸이 가뿐하게 하늘로 떠올랐답니다!",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p10.webp?v=3",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/uglyduckling/seg-p10-0.mp3",
-            "text": "드디어 봄이 왔어요. 얼음이 사르르 녹았지요.\n아기 오리가 지킨 물구멍은 넓은 호수가 되었어요.\n기지개를 켜고 날개를 펼치자 — 어라?\n몸이 가뿐하게 하늘로 떠올랐답니다!"
+            "text": "드디어 봄이 왔어요. 얼음이 사르르 녹았지요.\n아기 오리가 지킨 물구멍은 넓은 호수가 되었어요.\n기지개를 켜고 날개를 활짝 펼치자,\n몸이 가뿐하게 하늘로 떠올랐답니다!"
           }
         ]
       },
@@ -1506,23 +1506,13 @@
     "pages": [
       {
         "n": 1,
-        "text": "옛날 어느 마을에 귀여운 여자아이가 살았어요.\n할머니가 떠 주신 빨간 모자가 어찌나 잘 어울리는지,\n다들 '빨간 모자'라고 불렀지요.\n아이도 그 모자를 제일 아꼈답니다.",
+        "text": "옛날 어느 마을에 귀여운 여자아이가 살았어요.\n할머니가 떠 주신 빨간 모자가 어찌나 잘 어울리는지,\n다들 빨간 모자라고 불렀지요.\n아이도 그 모자를 제일 아꼈답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p1.webp?v=2",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/redridinghood/seg-p1-0.mp3",
-            "text": "옛날 어느 마을에 귀여운 여자아이가 살았어요.\n할머니가 떠 주신 빨간 모자가 어찌나 잘 어울리는지,\n다들 "
-          },
-          {
-            "who": "narration",
-            "src": "/classic/redridinghood/seg-p1-1.mp3",
-            "text": "'빨간 모자'"
-          },
-          {
-            "who": "narration",
-            "src": "/classic/redridinghood/seg-p1-2.mp3",
-            "text": "라고 불렀지요.\n아이도 그 모자를 제일 아꼈답니다."
+            "text": "옛날 어느 마을에 귀여운 여자아이가 살았어요.\n할머니가 떠 주신 빨간 모자가 어찌나 잘 어울리는지,\n다들 빨간 모자라고 불렀지요.\n아이도 그 모자를 제일 아꼈답니다."
           }
         ]
       },
@@ -3342,13 +3332,13 @@
       },
       {
         "n": 12,
-        "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 바이올린 소리가 흘러나왔답니다.\n창밖에는 함박눈이 소복소복 쌓였지요.",
+        "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 바이올린 소리가 흘러나왔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/antgrasshopper/p12.webp?v=3",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/antgrasshopper/seg-p12-0.mp3",
-            "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 바이올린 소리가 흘러나왔답니다.\n창밖에는 함박눈이 소복소복 쌓였지요."
+            "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다\n따뜻한 수프와 즐거운 바이올린 소리가 흘러나왔답니다."
           }
         ]
       }
@@ -3374,7 +3364,7 @@
     "lang": "ko",
     "title": "시골 쥐와 도시 쥐",
     "summary": "달콤한 케이크보다 마음 편한 보리죽 — 서로 다른 집에서 각자 행복한 두 쥐.",
-    "narrator": "tc-gaeul",
+    "narrator": "tc-minjung",
     "pages": [
       {
         "n": 1,
@@ -3863,10 +3853,10 @@
       }
     ],
     "narrators": [
-      "tc-gaeul"
+      "tc-minjung"
     ],
     "voiceCast": {
-      "narration": "tc-gaeul",
+      "narration": "tc-minjung",
       "country": "tc-dukgu",
       "city": "tc-taeji"
     },

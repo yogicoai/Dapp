@@ -101,8 +101,8 @@ const BOOKS: Record<string, BookSpec> = {
     data: "src/data/classic-books.json",
     root: "classic",
     dir: "twomice",
-    narrators: ["tc-gaeul"],
-    defaultNarrator: "tc-gaeul",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
     cast: [{ name: "시골 쥐" }, { name: "도시 쥐" }],
   },
   "개미와 베짱이": {
