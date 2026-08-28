@@ -53,6 +53,7 @@ import { COST_PARENT_VOICE, TOKEN_PRICE_KRW } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import {
   PRESET_VOICES,
+  NARRATOR_PRESETS,
   TYPECAST_VOICES,
   DEFAULT_VOICE_RATE,
   VOICE_RATES,
@@ -1028,7 +1029,8 @@ export default function SettingsPage() {
               눌러서 들어보고 마음에 드는 성우를 골라요 (들어보기는 무료) · 동화별 성우는 만들 때 골라요
             </p>
             <div className="flex flex-wrap gap-2">
-              {TYPECAST_VOICES.map((v) => {
+              {/* 나레이션용 16명만 — 배역용 성우(늑대·도깨비…)는 여기 보이지 않는다(사장님 지시, 2026-08-28). */}
+              {NARRATOR_PRESETS.map((v) => {
                 const active = voiceId === v.id;
                 return (
                   <button

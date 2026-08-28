@@ -52,6 +52,7 @@ import {
   saveSelectedVoiceId,
   saveVoiceRate,
   startTypecastPageAudio,
+  NARRATOR_PRESETS,
   TYPECAST_VOICES,
   warmUpVoices,
   type PendingSegment,
@@ -691,7 +692,7 @@ export function BookViewer({ book }: { book: Book }) {
       ? (book.narrators
           .map((id) => TYPECAST_VOICES.find((v) => v.id === id))
           .filter(Boolean) as typeof TYPECAST_VOICES)
-      : TYPECAST_VOICES;
+      : NARRATOR_PRESETS; // 추천 목록이 없는 옛 책도 나레이션용 16명만
   useEffect(() => {
     // 추천 성우가 있으면 그 첫 번째, 아니면 만든 동화의 성우(book.narrator), 아니면 설정값.
     // 단, 저장된 설정값이 부모 목소리(parent:)면 '내가 만든 동화'에서만 잇는다 —
