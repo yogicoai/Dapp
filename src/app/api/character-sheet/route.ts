@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ART_STYLES } from "@/lib/art-styles";
-import { GeminiError, fromDataUrl, generateImage, toDataUrl } from "@/lib/gemini";
+import { GeminiError, fromDataUrl, generateImage, loadReferenceImage, toDataUrl } from "@/lib/gemini";
 import { heroIdentity } from "@/lib/child-looks";
 
 /**
@@ -60,6 +60,18 @@ export async function POST(request: Request) {
 
   const style =
     ART_STYLES.find((s) => s.id === input.artStyleId) ?? ART_STYLES[0];
+  /*
+   * 그림체 견본을 참조로 붙인다.
+   *
+   * 시트는 책 전체의 그림체 기준인데, 정작 시트 자신은 한 줄짜리 영어 문구로만
+   * 그렸다. 문구는 해석이 갈린다 — 같은 "따뜻한 수채화"가 어느 날은 진하고 어느 날은
+   * 흐리게 나오고, 그 시트를 따라 책 전체가 흔들렸다. 부모가 화면에서 고른 견본
+   * (public/art-styles/여우 그림)이 바로 그 그림체의 실물이라 이것을 함께 준다.
+   * 요청의 origin으로 받아 온다 — Vercel 서버 함수 안에는 public 파일이 없을 수 있다.
+   */
+  const styleSample = style.image
+    ? await loadReferenceImage(new URL(style.image, request.url).toString()).catch(() => null)
+    : null;
 
   const characters = (input.characters ?? [])
     .map((c) => ({
@@ -84,8 +96,18 @@ export async function POST(request: Request) {
 
   // "wholesome, fully clothed"는 인수인계 문서의 함정 메모 — 유아 장면이 안전필터에
   // 과잉 차단되는 걸 이 순화 문구가 풀어준다.
+  // 붙이는 그림 순서: 그림체 견본 → 아이 그림. 문장이 "몇 번째"를 말하게 한다.
+  const attached = [styleSample ? "sample" : "", drawing ? "drawing" : ""].filter(Boolean);
+  const nth = (k: string) => ["FIRST", "SECOND"][attached.indexOf(k)] ?? "attached";
+
   const prompt = [
     `Character reference sheet for a children's picture book, ${style.prompt}.`,
+    styleSample
+      ? [
+          `The ${nth("sample")} attached image is the STYLE SAMPLE for this whole book. Copy its rendering exactly: medium, brush or line quality, edge softness, colour palette and saturation, shading method, paper/texture and finish.`,
+          "It is a style reference ONLY — do NOT draw the fox, do NOT copy its subject, pose or composition. Only the way it is painted carries over.",
+        ].join("\n")
+      : "",
     `Characters:\n${cast}`,
     // 주인공(첫 번째 인물)은 나이·성별을 못박고, 생김새는 부모가 고른 특징을 그대로 따른다.
     `The FIRST character is the child hero: ${hero}. Draw a child of exactly that age — a small child's proportions and face, never older.`,
@@ -96,7 +118,7 @@ export async function POST(request: Request) {
     // 눈에 띄는 특징(머리 모양·옷 색·좋아하는 물건)을 반드시 살린다.
     drawing
       ? [
-          "The attached image is a CHILD'S OWN DRAWING of the first character. Treat it as a design brief, NOT as art to copy.",
+          `The ${nth("drawing")} attached image is a CHILD'S OWN DRAWING of the first character. Treat it as a design brief, NOT as art to copy.`,
           "COPY these identifying traits exactly so the child recognizes their character: hair color and hairstyle, clothing type and colors, any accessory or object they drew, and any other standout detail.",
           "DO NOT copy the drawing's crude execution: no stick-figure limbs, no triangle body, no flat shapes, no childlike scrawl, no traced outlines.",
           "Instead draw a fully realized, professional picture-book character with natural body proportions for their age, real arms and legs, expressive face, and properly drawn clothing — as a skilled illustrator would when handed a child's sketch and asked to turn it into a real storybook hero.",
@@ -124,7 +146,17 @@ export async function POST(request: Request) {
           "Draw every face LARGE and clearly readable — this sheet is the identity reference for every page of the book, so each character's eyes, nose, mouth, hair shape and face shape must be sharp enough to copy. Do not shrink the characters to fit; crop the composition tighter if needed.",
         ].join("\n")
       : "",
-    "Full body, front view, standing, simple plain white background.",
+    /*
+     * 얼굴을 크게 — 시트는 매 쪽이 베끼는 원본인데, 전신만 세우면 얼굴이 가로의
+     * 1/4~1/6밖에 안 돼 눈·코·입이 흐릿하다. 그래서 쪽마다 얼굴이 조금씩 달라졌다.
+     * 위 줄엔 전신, 아래 줄엔 같은 인물의 얼굴 클로즈업을 크게 둔다.
+     */
+    [
+      "LAYOUT — two rows on one simple plain white background.",
+      "TOP ROW: each character full body, front view, standing, in the listed order.",
+      "BOTTOM ROW: directly under each figure, a LARGE head-and-shoulders close-up of the SAME character (same face, same hair, same expression neutral-friendly), big enough that eyes, nose, mouth, eyebrows, face shape and fringe are sharp and easy to copy.",
+      "The close-up must be the same person as the figure above it — identical design, just closer.",
+    ].join("\n"),
     "Consistent character design to be reused across every page of the book.",
     "Wholesome, innocent, fully clothed, child-friendly.",
     "NO text, no letters, no labels in the image.",
@@ -135,7 +167,8 @@ export async function POST(request: Request) {
   try {
     const image = await generateImage({
       prompt,
-      references: drawing ? [drawing] : undefined,
+      // 순서 = 프롬프트의 '몇 번째': 그림체 견본 → 아이 그림
+      references: [styleSample, drawing].filter(Boolean) as NonNullable<typeof drawing>[],
       /*
        * 인물이 셋 이상이면 가로로 넓은 4:3에 그린다.
        * 정사각형 한 장에 넷을 나란히 세우면 얼굴 하나가 가로 1/4밖에 안 돼,

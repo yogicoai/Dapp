@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ART_STYLES } from "@/lib/art-styles";
-import { GeminiError, generateImage, toDataUrl } from "@/lib/gemini";
+import { GeminiError, generateImage, loadReferenceImage, toDataUrl } from "@/lib/gemini";
 import { isIndoorPlace } from "@/lib/story-quality";
 
 /**
@@ -39,9 +39,19 @@ export async function POST(request: Request) {
   const style = ART_STYLES.find((s) => s.id === input.artStyleId) ?? ART_STYLES[0];
   const phone = input.shape === "phone";
   const indoor = isIndoorPlace(name, description);
+  // 부모가 고른 그림체 견본(여우 그림)을 참조로 — 문구만으로는 그림체가 매번 조금씩 다르다.
+  const styleSample = style.image
+    ? await loadReferenceImage(new URL(style.image, request.url).toString()).catch(() => null)
+    : null;
 
   const prompt = [
     `Children's picture book BACKGROUND illustration (an establishing shot of a place), ${style.prompt}.`,
+    styleSample
+      ? [
+          "The attached image is the STYLE SAMPLE for this whole book. Copy its rendering exactly: medium, brush or line quality, edge softness, colour palette and saturation, shading method, paper/texture and finish.",
+          "It is a style reference ONLY — do NOT draw the fox or any animal, do NOT copy its subject or composition. Draw the place described below in that painting style.",
+        ].join("\n")
+      : "",
     "ABSOLUTE RULE — THIS IS A WORDLESS PICTURE. Draw ZERO writing of any kind: no captions, no letters, no numbers, no signs, no labels, no logos, no watermarks, in any script.",
     `STYLE LOCK — render the entire page ONLY as: ${style.prompt}. This image will be the reference for every page set in this place, so the medium, line quality, texture, saturation and finish must be the book's style exactly.`,
     `THIS IS A LOCATION REFERENCE SHEET for the place called "${name}".`,
@@ -79,7 +89,11 @@ export async function POST(request: Request) {
     .join("\n");
 
   try {
-    const image = await generateImage({ prompt, aspectRatio: phone ? "3:4" : "4:3" });
+    const image = await generateImage({
+      prompt,
+      references: styleSample ? [styleSample] : undefined,
+      aspectRatio: phone ? "3:4" : "4:3",
+    });
     return NextResponse.json({ image: toDataUrl(image) });
   } catch (e) {
     if (e instanceof GeminiError) {
