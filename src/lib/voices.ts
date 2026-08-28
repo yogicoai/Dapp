@@ -175,6 +175,25 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-gahee", label: "가희", emoji: "💅", voiceId: "tc_624ccc04adcd568510764d3f", model: "ssfm-v30", desc: "여자 · 새침하고 앙칼진 목소리", sample: "언니는 집이나 지켜. 잔치는 우리끼리 갈 거야!" },
 ];
 
+/**
+ * 동화 만들기의 '읽어줄 성우'에 보여 줄 목록 — 이 순서대로 (사장님 지시, 2026-08-28).
+ *
+ * TYPECAST_VOICES에는 배역용 성우(늑대·도깨비·새어머니…)까지 40명 가까이 들어 있어
+ * 나레이션을 고르는 화면에 다 보이면 부모가 못 고른다. 나레이션에 어울리는 것만 남기고
+ * 나머지는 숨긴다 — 배역 캐스팅(제공 책)에는 그대로 쓴다.
+ */
+export const NARRATOR_VOICE_IDS = [
+  "tc-booqoo", "tc-sua", "tc-chungah", "tc-mongsil", "tc-hamchu", "tc-arin",
+  "tc-minjung", "tc-gaeul", "tc-siwoo", "tc-kwonil", "tc-tian", "tc-hosun",
+  "tc-taeji", "tc-jungsoon", "tc-gunseok", "tc-jiyoung",
+] as const;
+
+export const NARRATOR_PRESETS: TypecastPreset[] = NARRATOR_VOICE_IDS.map((id) => {
+  const v = TYPECAST_VOICES.find((x) => x.id === id);
+  if (!v) throw new Error(`NARRATOR_VOICE_IDS에 없는 성우: ${id}`);
+  return v;
+});
+
 export function findTypecast(id: string): TypecastPreset | null {
   return TYPECAST_VOICES.find((v) => v.id === id) ?? null;
 }

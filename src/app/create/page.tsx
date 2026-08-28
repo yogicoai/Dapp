@@ -38,7 +38,7 @@ import {
 } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
 import type { Book, NarrationStyle, VoiceDirection } from "@/lib/types";
-import { fetchTypecastVoiceAudio, findTypecast, prewarmBookAudio, TYPECAST_VOICES } from "@/lib/voices";
+import { fetchTypecastVoiceAudio, findTypecast, NARRATOR_PRESETS, prewarmBookAudio, TYPECAST_VOICES } from "@/lib/voices";
 import { loadParentVoices, PARENT_VOICE_TEST_TEXT, type ParentVoice } from "@/lib/parent-voice";
 
 type Gender = "girl" | "boy" | "unspecified";
@@ -1039,13 +1039,14 @@ export default function CreatePage() {
   }
 
   /*
-   * 그림 비율은 항상 4:3(가로) — 사장님 결정(2026-08-28).
-   *
-   * 예전엔 만든 기기 폭으로 3:4(폰)·4:3(태블릿)을 갈랐다. 폰으로 만들고 태블릿·TV로
-   * 보면 양옆이 비었고, 제공 책들은 전부 4:3이라 서가에서도 혼자 달라 보였다.
-   * 옛 책은 저장된 shape를 그대로 쓰므로(다시 그리기) 여기만 고정하면 된다.
+   * 그림 비율 — 핸드폰(3:4 세로) / 태블릿·PC(4:3 가로) 중 부모가 고른다(사장님 결정, 2026-08-28).
+   * 처음 값은 만드는 기기 폭으로 잡아 주고, 화면에서 바꿀 수 있다.
    */
-  const screenShape: "tablet" | "phone" = "tablet";
+  const [screenShape, setScreenShape] = useState<"tablet" | "phone">("tablet");
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 화면 크기는 클라 전용, 마운트 후 판별
+    setScreenShape(window.innerWidth < 700 ? "phone" : "tablet");
+  }, []);
   const mood = deriveAutomaticMood({
     storyMode, emotion, theme, happening, todayEvent, feeling,
     directStory: directMode === "full" ? directText : `${directOpening} ${directDevelopment} ${directCrisis} ${directEnding}`,
@@ -1305,7 +1306,7 @@ export default function CreatePage() {
     // 적어 둔 것이 있으면 손댄 것으로 본다 — 이어서 만들 때 덮어쓰지 않게.
     locationTouchedRef.current = Boolean(draft.locationDetail);
     setArtStyle(ART_STYLES.some((style) => style.id === draft.artStyle) ? draft.artStyle : ART_STYLES[0].id);
-    // 비율은 4:3 고정 — 초안의 값은 쓰지 않는다.
+    setScreenShape(draft.screenShape === "phone" ? "phone" : "tablet");
     setNarratorVoice(draft.narratorVoice);
     // 낭독 느낌은 늘 '자연스럽게' — 초안 값은 쓰지 않는다.
     // 길이는 늘 '넉넉하게' — 초안 값은 쓰지 않는다.
@@ -2946,7 +2947,46 @@ export default function CreatePage() {
                 </p>
               </div>
 
-              {/* 화면 비율 선택은 없앴다 — 항상 4:3 가로(FIXED, screenShape 참고). */}
+              {/* 어느 화면에서 볼지 — 삽화를 그 비율로 그린다. 핸드폰은 세로,
+                  태블릿은 가로. 기기에 맞춰 그려야 그림이 화면을 꽉 채운다. */}
+              <div className="flex flex-col gap-2">
+                <p className="break-keep text-center text-sm font-bold text-neutral-500">
+                  어디에서 볼 동화인가요?
+                </p>
+                <div className="flex flex-wrap justify-center gap-2.5">
+                  {(
+                    [
+                      { id: "phone", label: "핸드폰", hint: "세로 그림", icon: "/icons/shape-phone.webp" },
+                      { id: "tablet", label: "태블릿·PC", hint: "가로 그림", icon: "/icons/shape-tablet.webp" },
+                    ] as const
+                  ).map((o) => {
+                    const active = screenShape === o.id;
+                    return (
+                      <button
+                        key={o.id}
+                        type="button"
+                        onClick={() => setScreenShape(o.id)}
+                        aria-pressed={active}
+                        style={active ? { borderColor: accent, background: accentSoft } : undefined}
+                        className={`flex items-center gap-2 rounded-2xl border-[3px] px-4 py-2.5 transition ${
+                          active ? "shadow" : "border-transparent bg-neutral-100 hover:bg-neutral-200"
+                        }`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={o.icon} alt="" aria-hidden className="h-9 w-9 shrink-0 object-contain" />
+                        <span className="flex flex-col items-start leading-tight">
+                          <span className="break-keep text-sm font-extrabold text-neutral-700">
+                            {o.label}
+                          </span>
+                          <span className="break-keep text-[11px] font-bold text-neutral-400">
+                            {o.hint}
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
               {/* 장면 수 — 6쪽 고정. 고르는 칸 대신 값만 알려 준다(쪽수 = 그림 장수 = 크레딧이라
                   고르게 두면 책마다 값이 달라져 크레딧 안내가 어려웠다). */}
@@ -2991,7 +3031,8 @@ export default function CreatePage() {
                       </button>
                     );
                   })}
-                  {TYPECAST_VOICES.map((v) => {
+                  {/* 나레이션용으로 고른 성우만, 정해진 순서로 — 배역용 성우는 숨긴다. */}
+                  {NARRATOR_PRESETS.map((v) => {
                     const active = narratorVoice === v.id;
                     return (
                       <button
