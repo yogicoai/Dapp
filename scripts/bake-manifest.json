@@ -1734,7 +1734,7 @@
     "text": "\"오빠, 엄마 왜 이렇게 안 오지?\""
   },
   "folk/haedal/seg-cast-p3-2.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"조금만 더 기다려 보자. 곧 오실 거야.\""
@@ -1818,7 +1818,7 @@
     "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요."
   },
   "folk/haedal/seg-cast-p6-1.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-najin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이제… 줄 떡이 없구나.\""
@@ -1950,7 +1950,7 @@
     "text": "\"옳지, 너희 우물 속에 숨었구나!\""
   },
   "folk/haedal/seg-cast-p10-2.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-booqoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"호호, 바보 호랑이!\""
@@ -2011,9 +2011,9 @@
   },
   "folk/haedal/seg-cast-p12-1.mp3": {
     "voice": "tc-booqoo",
-    "emotion": "angry",
-    "intensity": 0.4,
-    "text": "\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n\"앗, 안 돼!\""
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"바보 호랑이! 도끼로 찍으면서 올라와야지!\""
   },
   "folk/haedal/say-p12-sister.mp3": {
     "voice": "tc-booqoo",
@@ -2208,7 +2208,7 @@
     "text": "\"오빠… 나 깜깜한 밤은 무서워.\""
   },
   "folk/haedal/seg-cast-p19-4.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"그럼 우리 바꾸자!\""
@@ -2334,7 +2334,7 @@
     "text": "나무꾼아, 왜 그리 슬피 우느냐?"
   },
   "folk/goldaxe/seg-cast-p6-0.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\""
@@ -2364,7 +2364,7 @@
     "text": "\"이 금도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p7-2.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아니요, 제 도끼가 아닙니다.\""
@@ -2400,7 +2400,7 @@
     "text": "\"그럼 이 은도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p8-2.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아니요, 그것도 제 것이 아닙니다.\""
@@ -2478,7 +2478,7 @@
     "text": "\"어머니! 산신령님이 이런 선물을 주셨어요!\""
   },
   "folk/goldaxe/seg-cast-p11-2.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"네가 바르게 살아 준 덕이구나.\""
@@ -2556,7 +2556,7 @@
     "text": "\"이 금도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p14-2.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-sullock",
     "emotion": "normal",
     "intensity": null,
     "text": "\"맞아요, 맞아! 그 금도끼가 제 것입니다!\""
@@ -2622,7 +2622,7 @@
     "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요."
   },
   "folk/goldaxe/seg-cast-p17-1.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "\"어머니, 저는 도끼 한 자루면 넉넉해요.\""
@@ -2676,7 +2676,7 @@
     "text": "\"호랑이야, 가을에 팥이 익으면 팥죽을 쒀 줄게.\n그때 배불리 먹고 나서 나를 잡아먹으렴.\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p2-2.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
     "text": "\"좋아! 그럼 그때 다시 오마.\""
@@ -2730,8 +2730,8 @@
     "text": "\"할머니, 왜 울어요?\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p4-2.mp3": {
-    "voice": "tc-booqoo",
-    "emotion": "angry",
+    "voice": "tc-jungsoon",
+    "emotion": "sad",
     "intensity": 0.4,
     "text": "\"호랑이가 날 잡아먹으러 온단다.\""
   },
@@ -2790,19 +2790,19 @@
     "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아와 입을 모았어요."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p6-1.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"저희들도 할머니를 도와드릴게요!\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p6-2.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-kijang",
     "emotion": "normal",
     "intensity": null,
     "text": "\"나는 미끄럽지! 밟기만 해 보라지.\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p6-3.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"나는 둘둘 말 줄 알아!\""
@@ -2838,7 +2838,7 @@
     "text": "다들 팥죽을 배불리 먹고 저마다 자리를 잡았어요.\n쇠똥은 마당 한가운데, 멍석은 마루에,\n지게는 문 뒤에 살그머니 숨었답니다."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p7-1.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"할머니, 우리만 믿으세요!\""
@@ -2868,7 +2868,7 @@
     "text": "\"할멈, 약속대로 왔다! 팥죽은 다 익었느냐?\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p8-2.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"부엌 아궁이에 있으니 직접 꺼내 먹으렴.\""
@@ -2895,7 +2895,7 @@
     "voice": "tc-jiyoung",
     "emotion": "normal",
     "intensity": null,
-    "text": "호랑이가 아궁이를 들여다보는 순간 —\n\"지금이다!\""
+    "text": "호랑이가 아궁이를 들여다보는 순간 —"
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p9-1.mp3": {
     "voice": "tc-jiyoung",
@@ -2928,7 +2928,7 @@
     "text": "\"약속대로 꽉 물었지!\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p10-2.mp3": {
-    "voice": "tc-monggun",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아이고 아파!\""
@@ -2952,7 +2952,7 @@
     "text": "놀란 호랑이가 뒷걸음질을 쳤어요."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p11-1.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-kijang",
     "emotion": "normal",
     "intensity": null,
     "text": "\"밟았구나! 내가 말했지, 밟기만 해 보라고!\""
@@ -2994,7 +2994,7 @@
     "text": "멍석은 넘어진 호랑이를 순식간에 둘둘 말아 버렸답니다."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p12-3.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
     "text": "\"어푸! 꼼짝도 못 하겠다!\""
@@ -3042,7 +3042,7 @@
     "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!"
   },
   "folk/patjuk-halmae-tiger/seg-cast-p14-1.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-hakchul",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"어푸어푸! 아이고 무서워라, 얼른 달아나야겠다!\""
@@ -3072,13 +3072,13 @@
     "text": "할머니는 남은 팥죽을 다시 데웠어요.\n알밤도 자라도, 쇠똥도 멍석도 지게도 마당에 둘러앉았지요."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p15-1.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"너희가 아니었으면 할미가 어쩔 뻔했니. 정말 고맙구나.\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p15-2.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-booqoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"할머니 팥죽이 세상에서 제일 맛있어요!\""
@@ -4838,16 +4838,10 @@
     "text": "아침 해가 뜨자 넷은 마당에 모였지요.\n햇살에 오두막이 반짝반짝 빛났지요."
   },
   "classic/bremen/seg-cast-p15-1.mp3": {
-    "voice": "tc-guri",
+    "voice": "tc-dukgu",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"얘들아, 우리 여기서 사는 건 어떨 것 같아?\"\n\"좋아!\" \"좋아!\""
-  },
-  "classic/bremen/seg-tc-minjung-p15-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "다들 끄덕였어요.\n수탉이 지붕에서 힘차게 울었답니다."
+    "text": "\"얘들아, 우리 여기서 사는 건 어떨 것 같아?\""
   },
   "classic/bremen/say-p15-cat.mp3": {
     "voice": "tc-hamchu",
@@ -5370,5 +5364,47 @@
     "emotion": "normal",
     "intensity": null,
     "text": "서로 다른 집에서, 둘은 각자 행복했답니다."
+  },
+  "folk/patjuk-halmae-tiger/seg-cast-p9-1.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"지금이다!\""
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p9-2.mp3": {
+    "voice": "tc-jiyoung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "뜨겁게 달궈진 알밤이 탁! 튀어 호랑이 눈을 때렸어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-cast-p9-3.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"아야! 내 눈!\""
+  },
+  "folk/haedal/seg-cast-p12-2.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"앗, 안 돼!\""
+  },
+  "classic/bremen/seg-cast-p15-2.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"좋아!\""
+  },
+  "classic/bremen/seg-cast-p15-3.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"좋아!\""
+  },
+  "classic/bremen/seg-tc-minjung-p15-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "다들 끄덕였어요.\n수탉이 지붕에서 힘차게 울었답니다."
   }
 }

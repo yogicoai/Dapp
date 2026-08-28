@@ -2644,6 +2644,16 @@
       {
         "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌지요.\n\"오빠, 엄마 왜 이렇게 안 오지?\"\n\"조금만 더 기다려 보자. 곧 오실 거야.\"\n누이는 오빠 옆에 바짝 붙어 앉았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p3.webp?v=3",
+        "lines": [
+          {
+            "text": "오빠, 엄마 왜 이렇게 안 오지?",
+            "who": "sister"
+          },
+          {
+            "text": "조금만 더 기다려 보자. 곧 오실 거야.",
+            "who": "brother"
+          }
+        ],
         "hotspots": [
           {
             "label": "sister",
@@ -2680,7 +2690,7 @@
             "text": "\"오빠, 엄마 왜 이렇게 안 오지?\"\n"
           },
           {
-            "who": "sister",
+            "who": "brother",
             "src": "/folk/haedal/seg-cast-p3-2.mp3",
             "text": "\"조금만 더 기다려 보자. 곧 오실 거야.\""
           },
@@ -2773,6 +2783,16 @@
       {
         "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요.\n\"이제… 줄 떡이 없구나.\"\n\"그럼 널 잡아먹어야겠다!\"\n호랑이는 어머니의 옷과 광주리를 빼앗고\n어머니를 깊은 굴에 가둬 버렸답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p6.webp?v=3",
+        "lines": [
+          {
+            "text": "이제… 줄 떡이 없구나.",
+            "who": "mother"
+          },
+          {
+            "text": "그럼 널 잡아먹어야겠다!",
+            "who": "tiger"
+          }
+        ],
         "hotspots": [
           {
             "label": "mother",
@@ -2804,7 +2824,7 @@
             "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요.\n"
           },
           {
-            "who": "tiger",
+            "who": "mother",
             "src": "/folk/haedal/seg-cast-p6-1.mp3",
             "text": "\"이제… 줄 떡이 없구나.\"\n"
           },
@@ -2978,6 +2998,16 @@
       {
         "text": "집 안을 다 뒤진 호랑이가 우물가로 어슬렁어슬렁 왔어요.\n우물 속에 비친 오누이를 보고 소리쳤지요.\n\"옳지, 너희 우물 속에 숨었구나!\"\n\"호호, 바보 호랑이!\"\n그 소리에 동생이 그만 웃음을 터뜨리고 말았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p10.webp?v=3",
+        "lines": [
+          {
+            "text": "옳지, 너희 우물 속에 숨었구나!",
+            "who": "tiger"
+          },
+          {
+            "text": "호호, 바보 호랑이!",
+            "who": "sister"
+          }
+        ],
         "hotspots": [
           {
             "label": "tiger",
@@ -3014,7 +3044,7 @@
             "text": "\"옳지, 너희 우물 속에 숨었구나!\"\n"
           },
           {
-            "who": "tiger",
+            "who": "sister",
             "src": "/folk/haedal/seg-cast-p10-2.mp3",
             "text": "\"호호, 바보 호랑이!\""
           },
@@ -3067,6 +3097,17 @@
       {
         "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요.\n\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n\"앗, 안 돼!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p12.webp?v=4",
+        "lines": [
+          {
+            "text": "바보 호랑이! 도끼로 찍으면서 올라와야지!",
+            "who": "sister"
+          },
+          {
+            "text": "앗, 안 돼!",
+            "who": "brother",
+            "feel": "toneup"
+          }
+        ],
         "hotspots": [
           {
             "label": "sister",
@@ -3100,7 +3141,12 @@
           {
             "who": "sister",
             "src": "/folk/haedal/seg-cast-p12-1.mp3",
-            "text": "\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n\"앗, 안 돼!\""
+            "text": "\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/haedal/seg-cast-p12-2.mp3",
+            "text": "\"앗, 안 돼!\""
           }
         ]
       },
@@ -3363,6 +3409,20 @@
       {
         "text": "임금님이 말했어요. \"너희가 세상을 밝혀 주겠니?\"\n처음엔 오빠가 해님, 동생이 달님이 되기로 했어요.\n그런데 동생이 소곤소곤. \"오빠… 나 깜깜한 밤은 무서워.\"\n\"그럼 우리 바꾸자!\" 오빠는 웃으며 달님이 되어 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p19.webp?v=3",
+        "lines": [
+          {
+            "text": "너희가 세상을 밝혀 주겠니?",
+            "who": "king"
+          },
+          {
+            "text": "오빠… 나 깜깜한 밤은 무서워.",
+            "who": "sister"
+          },
+          {
+            "text": "그럼 우리 바꾸자!",
+            "who": "brother"
+          }
+        ],
         "hotspots": [
           {
             "label": "king",
@@ -3420,7 +3480,7 @@
             "text": "\"오빠… 나 깜깜한 밤은 무서워.\"\n"
           },
           {
-            "who": "sister",
+            "who": "brother",
             "src": "/folk/haedal/seg-cast-p19-4.mp3",
             "text": "\"그럼 우리 바꾸자!\""
           },
@@ -3621,6 +3681,12 @@
       {
         "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\"\n산신령님은 고개를 끄덕이더니 연못 속으로 사라졌지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p6.webp?v=5",
+        "lines": [
+          {
+            "text": "하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.",
+            "who": "woodcutter"
+          }
+        ],
         "hotspots": [
           {
             "label": "woodcutter",
@@ -3636,7 +3702,7 @@
         ],
         "segments": [
           {
-            "who": "spirit",
+            "who": "woodcutter",
             "src": "/folk/goldaxe/seg-cast-p6-0.mp3",
             "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\""
           },
@@ -3650,6 +3716,16 @@
       {
         "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요.\n\"이 금도끼가 네 도끼냐?\"\n\"아니요, 제 도끼가 아닙니다.\"\n산신령님은 슬며시 웃으며 다시 물속으로 들어갔지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p7.webp?v=7",
+        "lines": [
+          {
+            "text": "이 금도끼가 네 도끼냐?",
+            "who": "spirit"
+          },
+          {
+            "text": "아니요, 제 도끼가 아닙니다.",
+            "who": "woodcutter"
+          }
+        ],
         "hotspots": [
           {
             "label": "spirit",
@@ -3686,7 +3762,7 @@
             "text": "\"이 금도끼가 네 도끼냐?\"\n"
           },
           {
-            "who": "spirit",
+            "who": "woodcutter",
             "src": "/folk/goldaxe/seg-cast-p7-2.mp3",
             "text": "\"아니요, 제 도끼가 아닙니다.\""
           },
@@ -3700,6 +3776,16 @@
       {
         "text": "이번에는 산신령님이 은도끼를 들고 나왔어요.\n\"그럼 이 은도끼가 네 도끼냐?\"\n\"아니요, 그것도 제 것이 아닙니다.\"\n나무꾼은 고개를 살래살래 저었어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p8.webp?v=7",
+        "lines": [
+          {
+            "text": "그럼 이 은도끼가 네 도끼냐?",
+            "who": "spirit"
+          },
+          {
+            "text": "아니요, 그것도 제 것이 아닙니다.",
+            "who": "woodcutter"
+          }
+        ],
         "hotspots": [
           {
             "label": "spirit",
@@ -3736,7 +3822,7 @@
             "text": "\"그럼 이 은도끼가 네 도끼냐?\"\n"
           },
           {
-            "who": "spirit",
+            "who": "woodcutter",
             "src": "/folk/goldaxe/seg-cast-p8-2.mp3",
             "text": "\"아니요, 그것도 제 것이 아닙니다.\""
           },
@@ -3825,6 +3911,16 @@
       {
         "text": "나무꾼은 도끼 세 자루를 안고 한달음에 집으로 갔어요.\n\"어머니! 산신령님이 이런 선물을 주셨어요!\"\n\"네가 바르게 살아 준 덕이구나.\"\n어머니는 아들의 손을 오래오래 쓸어 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p11.webp?v=7",
+        "lines": [
+          {
+            "text": "어머니! 산신령님이 이런 선물을 주셨어요!",
+            "who": "woodcutter"
+          },
+          {
+            "text": "네가 바르게 살아 준 덕이구나.",
+            "who": "mother"
+          }
+        ],
         "hotspots": [
           {
             "label": "woodcutter",
@@ -3861,7 +3957,7 @@
             "text": "\"어머니! 산신령님이 이런 선물을 주셨어요!\"\n"
           },
           {
-            "who": "woodcutter",
+            "who": "mother",
             "src": "/folk/goldaxe/seg-cast-p11-2.mp3",
             "text": "\"네가 바르게 살아 준 덕이구나.\""
           },
@@ -3944,6 +4040,16 @@
       {
         "text": "연못이 반짝이더니 산신령님이 금도끼를 들고 나타났어요.\n\"이 금도끼가 네 도끼냐?\"\n\"맞아요, 맞아! 그 금도끼가 제 것입니다!\"\n욕심쟁이는 손을 뻗으며 냉큼 외쳤지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p13.webp?v=7",
+        "lines": [
+          {
+            "text": "이 금도끼가 네 도끼냐?",
+            "who": "spirit"
+          },
+          {
+            "text": "맞아요, 맞아! 그 금도끼가 제 것입니다!",
+            "who": "greedy"
+          }
+        ],
         "hotspots": [
           {
             "label": "spirit",
@@ -3980,7 +4086,7 @@
             "text": "\"이 금도끼가 네 도끼냐?\"\n"
           },
           {
-            "who": "spirit",
+            "who": "greedy",
             "src": "/folk/goldaxe/seg-cast-p14-2.mp3",
             "text": "\"맞아요, 맞아! 그 금도끼가 제 것입니다!\""
           },
@@ -4052,6 +4158,12 @@
       {
         "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요.\n\"어머니, 저는 도끼 한 자루면 넉넉해요.\"\n나무꾼과 어머니는 오래오래 행복하게 살았답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p16.webp?v=7",
+        "lines": [
+          {
+            "text": "어머니, 저는 도끼 한 자루면 넉넉해요.",
+            "who": "woodcutter"
+          }
+        ],
         "hotspots": [
           {
             "label": "woodcutter",
@@ -4083,7 +4195,7 @@
             "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요.\n"
           },
           {
-            "who": "mother",
+            "who": "woodcutter",
             "src": "/folk/goldaxe/seg-cast-p17-1.mp3",
             "text": "\"어머니, 저는 도끼 한 자루면 넉넉해요.\""
           },
@@ -4154,6 +4266,17 @@
       },
       {
         "text": "할머니는 깜짝 놀랐지만 꾀를 냈어요.\n\"호랑이야, 가을에 팥이 익으면 팥죽을 쒀 줄게.\n그때 배불리 먹고 나서 나를 잡아먹으렴.\"\n\"좋아! 그럼 그때 다시 오마.\" 호랑이는 어슬렁어슬렁 돌아갔어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p2.webp",
+        "lines": [
+          {
+            "text": "호랑이야, 가을에 팥이 익으면 팥죽을 쒀 줄게.\n그때 배불리 먹고 나서 나를 잡아먹으렴.",
+            "who": "granny"
+          },
+          {
+            "text": "좋아! 그럼 그때 다시 오마.",
+            "who": "tiger"
+          }
+        ],
         "hotspots": [
           {
             "label": "granny",
@@ -4178,7 +4301,6 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p2-tiger.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p2.webp",
         "segments": [
           {
             "who": "narration",
@@ -4191,7 +4313,7 @@
             "text": "\"호랑이야, 가을에 팥이 익으면 팥죽을 쒀 줄게.\n그때 배불리 먹고 나서 나를 잡아먹으렴.\"\n"
           },
           {
-            "who": "granny",
+            "who": "tiger",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p2-2.mp3",
             "text": "\"좋아! 그럼 그때 다시 오마.\""
           },
@@ -4239,6 +4361,22 @@
       },
       {
         "text": "그때 부엌 아궁이에서 알밤이 톡 튀어나왔어요.\n\"할머니, 왜 울어요?\"\n\"호랑이가 날 잡아먹으러 온단다.\"\n\"팥죽 한 그릇 주시면 제가 아궁이에 숨어 있을게요!\"\n알밤은 냠냠 팥죽을 먹고 아궁이 속에 쏙 숨었어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p4.webp",
+        "lines": [
+          {
+            "text": "할머니, 왜 울어요?",
+            "who": "chestnut"
+          },
+          {
+            "text": "호랑이가 날 잡아먹으러 온단다.",
+            "who": "granny",
+            "feel": "sad"
+          },
+          {
+            "text": "팥죽 한 그릇 주시면 제가 아궁이에 숨어 있을게요!",
+            "who": "chestnut"
+          }
+        ],
         "hotspots": [
           {
             "label": "granny",
@@ -4263,7 +4401,6 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p4-chestnut.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p4.webp",
         "segments": [
           {
             "who": "narration",
@@ -4276,7 +4413,7 @@
             "text": "\"할머니, 왜 울어요?\"\n"
           },
           {
-            "who": "chestnut",
+            "who": "granny",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p4-2.mp3",
             "text": "\"호랑이가 날 잡아먹으러 온단다.\"\n"
           },
@@ -4328,6 +4465,25 @@
       },
       {
         "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아와 입을 모았어요.\n\"저희들도 할머니를 도와드릴게요!\"\n\"나는 미끄럽지! 밟기만 해 보라지.\"\n\"나는 둘둘 말 줄 알아!\"\n\"나는 지고 갈 힘이 있소!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p6.webp?v=2",
+        "lines": [
+          {
+            "text": "저희들도 할머니를 도와드릴게요!",
+            "who": "mat"
+          },
+          {
+            "text": "나는 미끄럽지! 밟기만 해 보라지.",
+            "who": "dung"
+          },
+          {
+            "text": "나는 둘둘 말 줄 알아!",
+            "who": "mat"
+          },
+          {
+            "text": "나는 지고 갈 힘이 있소!",
+            "who": "carrier"
+          }
+        ],
         "hotspots": [
           {
             "label": "dung",
@@ -4363,7 +4519,6 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p6-carrier.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p6.webp?v=2",
         "segments": [
           {
             "who": "narration",
@@ -4371,17 +4526,17 @@
             "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아와 입을 모았어요.\n"
           },
           {
-            "who": "carrier",
+            "who": "mat",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p6-1.mp3",
             "text": "\"저희들도 할머니를 도와드릴게요!\"\n"
           },
           {
-            "who": "carrier",
+            "who": "dung",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p6-2.mp3",
             "text": "\"나는 미끄럽지! 밟기만 해 보라지.\"\n"
           },
           {
-            "who": "carrier",
+            "who": "mat",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p6-3.mp3",
             "text": "\"나는 둘둘 말 줄 알아!\"\n"
           },
@@ -4394,6 +4549,13 @@
       },
       {
         "text": "다들 팥죽을 배불리 먹고 저마다 자리를 잡았어요.\n쇠똥은 마당 한가운데, 멍석은 마루에,\n지게는 문 뒤에 살그머니 숨었답니다.\n\"할머니, 우리만 믿으세요!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p7.webp",
+        "lines": [
+          {
+            "text": "할머니, 우리만 믿으세요!",
+            "who": "mat"
+          }
+        ],
         "hotspots": [
           {
             "label": "mat",
@@ -4418,7 +4580,6 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p7-granny.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p7.webp",
         "segments": [
           {
             "who": "narration",
@@ -4426,7 +4587,7 @@
             "text": "다들 팥죽을 배불리 먹고 저마다 자리를 잡았어요.\n쇠똥은 마당 한가운데, 멍석은 마루에,\n지게는 문 뒤에 살그머니 숨었답니다.\n"
           },
           {
-            "who": "carrier",
+            "who": "mat",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p7-1.mp3",
             "text": "\"할머니, 우리만 믿으세요!\""
           }
@@ -4434,6 +4595,17 @@
       },
       {
         "text": "깜깜한 밤, 드디어 호랑이가 어슬렁어슬렁 찾아왔어요.\n\"할멈, 약속대로 왔다! 팥죽은 다 익었느냐?\"\n\"부엌 아궁이에 있으니 직접 꺼내 먹으렴.\"\n호랑이는 침을 꿀꺽 삼키며 부엌으로 갔지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p8.webp",
+        "lines": [
+          {
+            "text": "할멈, 약속대로 왔다! 팥죽은 다 익었느냐?",
+            "who": "tiger"
+          },
+          {
+            "text": "부엌 아궁이에 있으니 직접 꺼내 먹으렴.",
+            "who": "granny"
+          }
+        ],
         "hotspots": [
           {
             "label": "tiger",
@@ -4458,7 +4630,6 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p8-granny.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p8.webp",
         "segments": [
           {
             "who": "narration",
@@ -4471,7 +4642,7 @@
             "text": "\"할멈, 약속대로 왔다! 팥죽은 다 익었느냐?\"\n"
           },
           {
-            "who": "tiger",
+            "who": "granny",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p8-2.mp3",
             "text": "\"부엌 아궁이에 있으니 직접 꺼내 먹으렴.\""
           },
@@ -4484,6 +4655,17 @@
       },
       {
         "text": "호랑이가 아궁이를 들여다보는 순간 —\n\"지금이다!\"\n뜨겁게 달궈진 알밤이 탁! 튀어 호랑이 눈을 때렸어요.\n\"아야! 내 눈!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p9.webp",
+        "lines": [
+          {
+            "text": "지금이다!",
+            "who": "chestnut"
+          },
+          {
+            "text": "아야! 내 눈!",
+            "who": "tiger"
+          }
+        ],
         "hotspots": [
           {
             "label": "chestnut",
@@ -4508,22 +4690,42 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p9-tiger.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p9.webp",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/patjuk-halmae-tiger/seg-p9-0.mp3",
-            "text": "호랑이가 아궁이를 들여다보는 순간 —\n\"지금이다!\""
+            "text": "호랑이가 아궁이를 들여다보는 순간 —\n"
+          },
+          {
+            "who": "chestnut",
+            "src": "/folk/patjuk-halmae-tiger/seg-cast-p9-1.mp3",
+            "text": "\"지금이다!\""
           },
           {
             "who": "narration",
-            "src": "/folk/patjuk-halmae-tiger/seg-p9-1.mp3",
-            "text": "\n뜨겁게 달궈진 알밤이 탁! 튀어 호랑이 눈을 때렸어요.\n\"아야! 내 눈!\""
+            "src": "/folk/patjuk-halmae-tiger/seg-p9-2.mp3",
+            "text": "\n뜨겁게 달궈진 알밤이 탁! 튀어 호랑이 눈을 때렸어요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/patjuk-halmae-tiger/seg-cast-p9-3.mp3",
+            "text": "\"아야! 내 눈!\""
           }
         ]
       },
       {
         "text": "호랑이가 물동이로 눈을 씻으러 달려갔어요.\n물에 손을 넣는 순간, 자라가 콱!\n\"약속대로 꽉 물었지!\"\n\"아이고 아파!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p10.webp",
+        "lines": [
+          {
+            "text": "약속대로 꽉 물었지!",
+            "who": "turtle"
+          },
+          {
+            "text": "아이고 아파!",
+            "who": "tiger"
+          }
+        ],
         "hotspots": [
           {
             "label": "turtle",
@@ -4548,7 +4750,6 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p10-tiger.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p10.webp",
         "segments": [
           {
             "who": "narration",
@@ -4561,7 +4762,7 @@
             "text": "\"약속대로 꽉 물었지!\"\n"
           },
           {
-            "who": "turtle",
+            "who": "tiger",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p10-2.mp3",
             "text": "\"아이고 아파!\""
           }
@@ -4569,6 +4770,13 @@
       },
       {
         "text": "놀란 호랑이가 뒷걸음질을 쳤어요.\n\"밟았구나! 내가 말했지, 밟기만 해 보라고!\"\n마당 한가운데 쇠똥을 밟고 주르륵 — 쿵!\n호랑이가 벌러덩 나자빠졌지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p11.webp",
+        "lines": [
+          {
+            "text": "밟았구나! 내가 말했지, 밟기만 해 보라고!",
+            "who": "dung"
+          }
+        ],
         "hotspots": [
           {
             "label": "dung",
@@ -4593,7 +4801,6 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p11-tiger.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p11.webp",
         "segments": [
           {
             "who": "narration",
@@ -4601,7 +4808,7 @@
             "text": "놀란 호랑이가 뒷걸음질을 쳤어요.\n"
           },
           {
-            "who": "tiger",
+            "who": "dung",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p11-1.mp3",
             "text": "\"밟았구나! 내가 말했지, 밟기만 해 보라고!\""
           },
@@ -4614,6 +4821,17 @@
       },
       {
         "text": "그때 마루에 있던 멍석이 데굴데굴 굴러왔어요.\n\"자, 둘둘 말아 주마!\"\n멍석은 넘어진 호랑이를 순식간에 둘둘 말아 버렸답니다.\n\"어푸! 꼼짝도 못 하겠다!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p12.webp",
+        "lines": [
+          {
+            "text": "자, 둘둘 말아 주마!",
+            "who": "mat"
+          },
+          {
+            "text": "어푸! 꼼짝도 못 하겠다!",
+            "who": "tiger"
+          }
+        ],
         "hotspots": [
           {
             "label": "mat",
@@ -4638,7 +4856,6 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p12-tiger.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p12.webp",
         "segments": [
           {
             "who": "narration",
@@ -4656,7 +4873,7 @@
             "text": "\n멍석은 넘어진 호랑이를 순식간에 둘둘 말아 버렸답니다.\n"
           },
           {
-            "who": "mat",
+            "who": "tiger",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p12-3.mp3",
             "text": "\"어푸! 꼼짝도 못 하겠다!\""
           }
@@ -4698,6 +4915,13 @@
       },
       {
         "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n\"어푸어푸! 아이고 무서워라, 얼른 달아나야겠다!\"\n호랑이는 강 건너 산 너머로 걸음아 날 살려라 도망쳤답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p14.webp",
+        "lines": [
+          {
+            "text": "어푸어푸! 아이고 무서워라, 얼른 달아나야겠다!",
+            "who": "tiger"
+          }
+        ],
         "hotspots": [
           {
             "label": "tiger",
@@ -4722,7 +4946,6 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p14-carrier.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p14.webp",
         "segments": [
           {
             "who": "narration",
@@ -4730,7 +4953,7 @@
             "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n"
           },
           {
-            "who": "carrier",
+            "who": "tiger",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p14-1.mp3",
             "text": "\"어푸어푸! 아이고 무서워라, 얼른 달아나야겠다!\""
           },
@@ -4743,6 +4966,17 @@
       },
       {
         "text": "할머니는 남은 팥죽을 다시 데웠어요.\n알밤도 자라도, 쇠똥도 멍석도 지게도 마당에 둘러앉았지요.\n\"너희가 아니었으면 할미가 어쩔 뻔했니. 정말 고맙구나.\"\n\"할머니 팥죽이 세상에서 제일 맛있어요!\"\n그날 밤, 오두막에는 웃음소리가 오래오래 이어졌답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p15.webp",
+        "lines": [
+          {
+            "text": "너희가 아니었으면 할미가 어쩔 뻔했니. 정말 고맙구나.",
+            "who": "granny"
+          },
+          {
+            "text": "할머니 팥죽이 세상에서 제일 맛있어요!",
+            "who": "chestnut"
+          }
+        ],
         "hotspots": [
           {
             "label": "granny",
@@ -4778,7 +5012,6 @@
             "audio": "/folk/patjuk-halmae-tiger/say-p15-turtle.mp3"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p15.webp",
         "segments": [
           {
             "who": "narration",
@@ -4786,12 +5019,12 @@
             "text": "할머니는 남은 팥죽을 다시 데웠어요.\n알밤도 자라도, 쇠똥도 멍석도 지게도 마당에 둘러앉았지요.\n"
           },
           {
-            "who": "carrier",
+            "who": "granny",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p15-1.mp3",
             "text": "\"너희가 아니었으면 할미가 어쩔 뻔했니. 정말 고맙구나.\"\n"
           },
           {
-            "who": "carrier",
+            "who": "chestnut",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p15-2.mp3",
             "text": "\"할머니 팥죽이 세상에서 제일 맛있어요!\""
           },

@@ -87,7 +87,7 @@ export function planPageVoices(input: {
 }): PlannedSegment[] {
   const segments = splitDialogue(input.text);
   const guessed = attributeSpeakers(segments, input.cast ?? []);
-  const script = new Map((input.lines ?? []).map((l) => [normalize(l.text), l]));
+  const script = scriptOf(input.lines ?? []);
 
   const planned: PlannedSegment[] = [];
   segments.forEach((segment, i) => {
@@ -104,9 +104,65 @@ export function planPageVoices(input: {
     }
     const name = guessed[i];
     const role = name ? (input.roleOf?.[name] ?? name) : NARRATION;
-    planned.push({ who: role, text: segment.text, dialogue: true });
+    // 따옴표 대사가 연달아 붙으면("…올라와야지!"\n"앗, 안 돼!") 조각내기가 한 덩어리로
+    // 묶는다. 대사집에 각각 적혀 있으면 덩어리 안에서 갈라 서로 다른 목소리를 준다.
+    planned.push(...splitByScript(segment.text, script, role));
   });
   return planned;
+}
+
+/**
+ * 한 대사 덩어리 안의 따옴표 대사를 대사집으로 갈라낸다.
+ *
+ * 대사집에 적힌 것만 떼고, 나머지(적히지 않은 대사·사이의 공백)는 자동 판정한 배역에
+ * 그대로 둔다. 사이 공백은 앞 조각 꼬리에 붙여 조각을 이어 붙이면 원문과 같게 한다.
+ */
+function splitByScript(text: string, script: Script, fallback: string): PlannedSegment[] {
+  const whole = { who: fallback, text, dialogue: true };
+  if (script.size === 0) return [whole];
+  const out: PlannedSegment[] = [];
+  let at = 0;
+  let hit = false;
+  const push = (piece: PlannedSegment) => {
+    const prev = out[out.length - 1];
+    if (prev && piece.text.trim() === "") prev.text += piece.text;
+    else out.push(piece);
+  };
+  for (const match of text.matchAll(QUOTED)) {
+    const told = script.get(normalize(match[0]));
+    if (!told) continue;
+    hit = true;
+    const start = match.index ?? 0;
+    if (start > at) push({ who: fallback, text: text.slice(at, start), dialogue: true });
+    push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel });
+    at = start + match[0].length;
+  }
+  if (!hit) return [whole];
+  if (at < text.length) push({ who: fallback, text: text.slice(at), dialogue: true });
+  return out;
+}
+
+/** 대사집 찾아보기 — 글로 찾되, 같은 글이 여러 줄이면 본문 순서대로 하나씩 내준다. */
+type Script = { size: number; get(key: string): CastLine | undefined };
+
+function scriptOf(lines: CastLine[]): Script {
+  const queues = new Map<string, CastLine[]>();
+  for (const line of lines) {
+    const key = normalize(line.text);
+    const queue = queues.get(key) ?? [];
+    queue.push(line);
+    queues.set(key, queue);
+  }
+  return {
+    size: lines.length,
+    get(key) {
+      const queue = queues.get(key);
+      if (!queue) return undefined;
+      // "좋아!" "좋아!" 처럼 같은 말을 다른 배역이 잇달아 하면 적힌 순서대로 준다.
+      // 마지막 줄은 남겨 둔다 — 본문에 더 나와도 계속 맞아야 하므로.
+      return queue.length > 1 ? queue.shift() : queue[0];
+    },
+  };
 }
 
 /**
@@ -127,7 +183,7 @@ const QUOTED = /"[^"]*"|“[^”]*”|'[^']*'|‘[^’]*’/g;
  * 그 규칙 자체를 바꾸면 실시간 낭독의 끊어 읽기와 글자 색칠까지 흔들리므로,
  * **대사집에 적힌 줄만** 여기서 되살린다. 안 적힌 짧은 말은 그대로 둔다.
  */
-function rescueShortLines(text: string, script: Map<string, CastLine>): PlannedSegment[] {
+function rescueShortLines(text: string, script: Script): PlannedSegment[] {
   if (script.size === 0) return [{ who: NARRATION, text, dialogue: false }];
   const out: PlannedSegment[] = [];
   let at = 0;

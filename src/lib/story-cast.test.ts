@@ -88,6 +88,47 @@ describe("planPageVoices", () => {
     assert.equal(plan[1].who, NARRATION);
     assert.equal(plan.map((s) => s.text).join(""), '"안 돼!" 토끼는 있는 힘껏 달렸지만 이미 늦었어요.');
   });
+
+  it("연달아 붙은 대사도 대사집에 각각 적혀 있으면 갈라낸다 — 해님 달님 12쪽", () => {
+    const text = '그때 동생이 그만 말해 버렸지요.\n"바보 호랑이! 도끼로 찍으면서 올라와야지!"\n"앗, 안 돼!"';
+    const plan = planPageVoices({
+      text,
+      cast: [{ name: "동생" }, { name: "오빠" }],
+      roleOf: { 동생: "sister", 오빠: "brother" },
+      lines: [
+        { text: "바보 호랑이! 도끼로 찍으면서 올라와야지!", who: "sister" },
+        { text: "앗, 안 돼!", who: "brother" },
+      ],
+    });
+    assert.deepEqual(plan.map((s) => s.who), [NARRATION, "sister", "brother"]);
+    assert.equal(plan.map((s) => s.text).join(""), text);
+  });
+
+  it("같은 말을 다른 배역이 잇달아 하면 대사집 순서대로 준다 — 브레멘 15쪽 \"좋아!\" \"좋아!\"", () => {
+    const text = '"얘들아, 우리 여기서 사는 건 어떨 것 같아?"\n"좋아!" "좋아!" 다들 끄덕였어요.';
+    const plan = planPageVoices({
+      text,
+      cast: [{ name: "당나귀" }, { name: "개" }, { name: "고양이" }],
+      roleOf: { 당나귀: "donkey", 개: "dog", 고양이: "cat" },
+      lines: [
+        { text: "얘들아, 우리 여기서 사는 건 어떨 것 같아?", who: "donkey" },
+        { text: "좋아!", who: "dog" },
+        { text: "좋아!", who: "cat" },
+      ],
+    });
+    assert.deepEqual(plan.map((s) => s.who), ["donkey", "dog", "cat", NARRATION]);
+    assert.equal(plan.map((s) => s.text).join(""), text);
+  });
+
+  it("덩어리 안에서 대사집에 없는 대사는 자동 판정 배역에 남는다", () => {
+    const plan = planPageVoices({
+      text: '토끼가 소리쳤어요.\n"거북아, 빨리 와!"\n"금방 갈게!"',
+      cast,
+      roleOf,
+      lines: [{ text: "금방 갈게!", who: "turtle" }],
+    });
+    assert.deepEqual(plan.map((s) => s.who), [NARRATION, "rabbit", "turtle"]);
+  });
 });
 
 describe("unmatchedLines", () => {

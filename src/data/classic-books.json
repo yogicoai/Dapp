@@ -2875,13 +2875,23 @@
             "text": "아침 해가 뜨자 넷은 마당에 모였지요.\n햇살에 오두막이 반짝반짝 빛났지요.\n"
           },
           {
-            "who": "rooster",
+            "who": "donkey",
             "src": "/classic/bremen/seg-cast-p15-1.mp3",
-            "text": "\"얘들아, 우리 여기서 사는 건 어떨 것 같아?\"\n\"좋아!\" \"좋아!\""
+            "text": "\"얘들아, 우리 여기서 사는 건 어떨 것 같아?\"\n"
+          },
+          {
+            "who": "dog",
+            "src": "/classic/bremen/seg-cast-p15-2.mp3",
+            "text": "\"좋아!\" "
+          },
+          {
+            "who": "cat",
+            "src": "/classic/bremen/seg-cast-p15-3.mp3",
+            "text": "\"좋아!\""
           },
           {
             "who": "narration",
-            "src": "/classic/bremen/seg-p15-2.mp3",
+            "src": "/classic/bremen/seg-p15-4.mp3",
             "text": " 다들 끄덕였어요.\n수탉이 지붕에서 힘차게 울었답니다."
           }
         ]
