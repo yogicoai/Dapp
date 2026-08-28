@@ -398,7 +398,7 @@ function whoLine(
   }
   if (!term) {
     // 칩도 이름도 없는데 성별만 있는 경우(직접 구성) — 성별만이라도 알려 준다.
-    return `${label}: 함께 나오는 사람의${g}`;
+    return `${label}: 함께 나오는 사람은${g}`;
   }
   return `${label}: ${term} (이름을 지어내지 말고 '${term}'라고만 부른다.${g})`;
 }
