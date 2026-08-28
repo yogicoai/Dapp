@@ -2864,7 +2864,8 @@ export default function CreatePage() {
                 어떤 그림으로 그릴까요?
               </h1>
 
-              <div className="grid grid-cols-3 gap-2.5">
+              {/* 4종이라 한 줄에 다 보이게 — 폰 폭(360px)에서도 네 칸이 들어가도록 여백·글씨를 줄였다. */}
+              <div className="grid grid-cols-4 gap-2">
                 {ART_STYLES.map((s) => {
                   const active = artStyle === s.id;
                   return (
@@ -2874,7 +2875,7 @@ export default function CreatePage() {
                       onClick={() => setArtStyle(s.id)}
                       aria-pressed={active}
                       style={active ? { borderColor: accent, background: accentSoft } : undefined}
-                      className={`flex flex-col items-center gap-1.5 rounded-2xl border-[3px] p-2.5 transition ${
+                      className={`flex min-w-0 flex-col items-center gap-1 rounded-2xl border-[3px] p-1.5 transition sm:p-2.5 ${
                         active
                           ? "shadow"
                           : "border-transparent bg-neutral-100 hover:bg-neutral-200"
@@ -2892,7 +2893,7 @@ export default function CreatePage() {
                           {s.emoji}
                         </span>
                       )}
-                      <span className="break-keep text-center text-[11px] font-bold leading-tight text-neutral-700">
+                      <span className="break-keep text-center text-[10px] font-bold leading-tight text-neutral-700 sm:text-[11px]">
                         {s.label}
                       </span>
                     </button>
