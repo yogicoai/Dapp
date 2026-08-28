@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ART_STYLES } from "@/lib/art-styles";
 import { GeminiError, generateImage, toDataUrl } from "@/lib/gemini";
+import { isIndoorPlace } from "@/lib/story-quality";
 
 /**
  * 장소 시트 — 인물 시트의 장소판.
@@ -37,6 +38,7 @@ export async function POST(request: Request) {
   const detail = typeof input.detail === "string" ? input.detail.trim().slice(0, 200) : "";
   const style = ART_STYLES.find((s) => s.id === input.artStyleId) ?? ART_STYLES[0];
   const phone = input.shape === "phone";
+  const indoor = isIndoorPlace(name, description);
 
   const prompt = [
     `Children's picture book BACKGROUND illustration (an establishing shot of a place), ${style.prompt}.`,
@@ -57,7 +59,14 @@ export async function POST(request: Request) {
       "Draw it as an EMPTY STAGE: NO people, NO children, NO adults, NO faces, NO animals, NO characters of any kind. The characters will be placed into this scene on later pages.",
       "Keep it specific and simple — a few clear, memorable features rather than clutter. Everything shown here must be easy to repeat.",
     ].join("\n"),
-    "PRESENT-DAY KOREA — this book is set in Korea today. Backgrounds are modern: apartment blocks, concrete and paved walkways, metal or wooden fences, glass windows, ordinary city trees and lawns.",
+    // 실내면 안쪽만 — 바깥 목록(아파트·보도)을 주면 마트 안을 마트 앞 길거리로 그린다.
+    indoor === true
+      ? [
+          `INDOOR PLACE — "${name}" is INSIDE a building. Draw only the interior: floor, walls, ceiling or ceiling lights, shelves, furniture and fixtures, from inside the room.`,
+          "No street, no sidewalk, no shop front, no building exterior, no sky and no outdoor ground — except, at most, a small view through a window. Never combine the inside and the outside of a building.",
+          "PRESENT-DAY KOREA — the interior is modern: bright floors, plain walls, glass doors, modern fixtures.",
+        ].join("\n")
+      : "PRESENT-DAY KOREA — this book is set in Korea today. Backgrounds are modern: apartment blocks, concrete and paved walkways, metal or wooden fences, glass windows, ordinary city trees and lawns.",
     "Do NOT add traditional Korean architecture that the place description did not ask for — no tiled-roof pavilion, no hanok, no thatched roof, no wooden gate, no paper-screen door, no stone jar terrace.",
     "The artwork must fill the entire canvas edge to edge: no white margins, no borders, no frames, no letterboxing.",
     "Keep the bottom quarter simple but FULLY PAINTED with scene colour (ground, floor, water or sky).",

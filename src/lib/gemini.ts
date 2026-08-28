@@ -335,6 +335,8 @@ export async function validateIllustration(input: {
   styleReference?: GeneratedImage | null;
   /** 장소 기준 그림(인물 없는 장소판). 있으면 장소가 이것과 같은지까지 본다. */
   locationReference?: GeneratedImage | null;
+  /** 실내 장소인가(true) — 실내가 바깥에 그려지거나 바깥과 합쳐지면 떨어뜨린다. */
+  indoor?: boolean | null;
   scene: string;
   expectedLocation?: string;
   cast: { name: string; description: string }[];
@@ -373,6 +375,11 @@ export async function validateIllustration(input: {
         `Required illustration style: ${input.stylePrompt}.`,
         "FAIL for any readable or pseudo-readable writing inside the artwork: captions, subtitles, story sentences, English or Korean letters, numbers, labels, signs, logos, signatures, speech bubbles or watermarks. The page must be image-only.",
         "FAIL if the setting contradicts the mandatory expected location. A home/playroom cannot be shown as a forest path, park, hanok courtyard, classroom or generic outdoor landscape. A park cannot be shown as an indoor room. Do not accept a metaphorical or merely pretty substitute for the named place.",
+        input.indoor === true
+          ? "The expected location is INDOORS. FAIL if the scene is drawn outdoors, on a street or sidewalk, in front of a shop, or if indoor shelves/furniture stand outside, or if the inside and the outside of a building are combined in one picture (more than a small window view of outdoors)."
+          : input.indoor === false
+            ? "The expected location is OUTDOORS. FAIL if the scene is drawn inside a room or building."
+            : "",
         "For a recurring place, FAIL if its fixed architecture, wall/floor colours, windows, large furniture or play equipment visibly change from the approved same-location reference.",
         input.locationReference
           ? "A LOCATION reference sheet is attached: the page must clearly be the same place as that sheet — same kind of ground, same big landmark, same wall/floor colours and layout. A different camera angle is fine; a different place, a different landmark or different colours is a FAIL."

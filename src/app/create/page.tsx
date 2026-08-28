@@ -1635,12 +1635,24 @@ export default function CreatePage() {
        * (같은 장소의 첫 통과 그림)으로 간다 — 여기서 책 만들기를 막지 않는다.
        * 장수가 곧 비용이라 순서대로 한 장씩 그린다.
        */
+      /*
+       * 두 쪽 이상 나오는 장소만 시트를 그린다.
+       *
+       * 시트의 목적은 "여러 쪽에서 같은 곳이 나오게"다. 한 쪽에만 나오는 장소(지나가는
+       * 길·차 안)는 기준이 필요 없고, 장당 값이 나가니 안 그린다. 장소가 셋인 책에서
+       * 3장 → 1장으로 준다(사장님 결정, 2026-08-28).
+       */
+      const pagesPerKey = new Map<string, number>();
+      for (const page of s.pages) {
+        const key = locationKeyFromImagePrompt(page.imagePrompt);
+        if (key) pagesPerKey.set(key, (pagesPerKey.get(key) ?? 0) + 1);
+      }
       const wanted: LocationSheet[] = [];
       for (const page of s.pages) {
         const location = locationOfImagePrompt(page.imagePrompt);
         if (!location) continue;
         const key = locationKeyOf(location.name);
-        if (!key || wanted.some((w) => w.key === key)) continue;
+        if (!key || (pagesPerKey.get(key) ?? 0) < 2 || wanted.some((w) => w.key === key)) continue;
         wanted.push({ key, name: location.name, description: location.description, image: "" });
         if (wanted.length >= 3) break;
       }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ART_STYLES } from "@/lib/art-styles";
 import { pickLocationDetail } from "@/lib/scene-edit";
-import { locationKeyOf } from "@/lib/story-quality";
+import { isIndoorPlace, locationKeyOf } from "@/lib/story-quality";
 import {
   GeminiError,
   detectBlankCanvasBorder,
@@ -138,6 +138,8 @@ export async function POST(request: Request) {
   const pageLocationDetail = currentLocation
     ? pickLocationDetail(locationDetail, currentLocation.name)
     : locationDetail;
+  /** 실내(true)·실외(false)·모름(null) — 배경 지시와 품질검사가 이걸 본다. */
+  const indoor = currentLocation ? isIndoorPlace(currentLocation.name, currentLocation.description) : null;
   /*
    * 붙이는 그림의 순서 — 인물 시트 → 장소 시트 → 승인 쪽. 프롬프트의 각 문장이
    * "몇 번째 그림"을 말하는지 여기서 정한다. 셋이 다 있으면 '첨부된 그림'이라는 말만으로는
@@ -249,7 +251,20 @@ export async function POST(request: Request) {
      * 들어왔다. 장소 설명에 없는 건물인데, 모델이 "한국 공원"의 빈자리를 전통
      * 건물로 메운 것이다. 우리 동화는 지금 여기, 요즘 한국이다.
      */
-    "PRESENT-DAY KOREA — this book is set in Korea today. Backgrounds are modern: apartment blocks, concrete and paved walkways, metal or wooden fences, glass windows, ordinary city trees and lawns.",
+    /*
+     * 실내와 실외를 가른다.
+     *
+     * 아래 '요즘 한국' 줄이 아파트·보도·가로수처럼 바깥 것만 나열해서, 실내 장면에도
+     * 그대로 들어가면 마트 진열대가 보도 위에 나오고 뒤에 아파트가 섰다(실제로 났다).
+     * 실내면 안쪽만 그리라고 하고 바깥 목록은 뺀다.
+     */
+    indoor === true
+      ? [
+          `INDOOR SCENE — "${currentLocation?.name ?? "this place"}" is INSIDE a building. Draw only the interior: its floor, walls, ceiling or ceiling lights, shelves, furniture and fixtures.`,
+          "No street, no sidewalk, no shop front, no apartment buildings, no sky, no trees and no outdoor ground may appear — except, at most, as a small view through a window. Never place indoor furniture or shelves outdoors, and never combine the inside and the outside of a building in one picture.",
+          "PRESENT-DAY KOREA — the interior is modern: bright floors, plain walls, glass doors, modern fixtures.",
+        ].join("\n")
+      : "PRESENT-DAY KOREA — this book is set in Korea today. Backgrounds are modern: apartment blocks, concrete and paved walkways, metal or wooden fences, glass windows, ordinary city trees and lawns.",
     /*
      * 아이 안전 — 그림책은 아이가 따라 한다.
      *
@@ -467,6 +482,7 @@ export async function POST(request: Request) {
       reference: sheet,
       styleReference: usedStyleReference,
       locationReference: locationSheet,
+      indoor,
       scene: storyText ? `${scene}\nStory text: ${storyText}` : scene,
       expectedLocation: currentLocation
         ? `${currentLocation.name}: ${currentLocation.description}`

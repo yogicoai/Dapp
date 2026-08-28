@@ -127,6 +127,37 @@ function locationHints(text: string): (LocationHint & { score: number })[] {
   return hints;
 }
 
+/*
+ * 실내인가 — 프롬프트의 배경 지시를 가르는 기준.
+ *
+ * "요즘 한국" 배경 지시가 아파트·보도·가로수처럼 **바깥 것**만 나열하고 있어서, 실내
+ * 장면에도 그대로 들어가면 마트 진열대가 보도 위에 나오고 뒤에 아파트가 선다
+ * (실제로 났다 — 마트 장난감 코너가 마트 문 앞 길거리로 그려졌다). 장소 이름·설명으로
+ * 실내를 알아보고, 실내면 안쪽만 그리라고 따로 이른다.
+ */
+const INDOOR_WORDS =
+  /(마트|가게|상점|편의점|백화점|코너|매장|계산대|진열대|거실|안방|침실|놀이방|부엌|주방|식탁|욕실|화장실|현관|복도|교실|어린이집|유치원|학교|도서관|서점|식당|카페|병원|진료실|치과|수영장|실내|방\s*(?:안|에서)|집\s*안|안에서|차\s*안|버스\s*안|지하철|엘리베이터|목욕탕|찜질방|극장|영화관|박물관|미술관|체육관|사무실|공항|기차\s*안)/;
+const OUTDOOR_WORDS =
+  /(놀이터|공원|마당|운동장|골목|길가|거리|바닷가|해변|바다|계곡|숲|산|들판|논|밭|강가|호숫가|캠핑장|정류장|횡단보도|주차장|옥상|베란다|텃밭|하늘|눈밭)/;
+
+/** 장소 이름과 설명을 보고 실내인지 정한다. 둘 다 아니면 null(모름). */
+export function isIndoorPlace(name: string, description = ""): boolean | null {
+  // 마지막에 나온 낱말이 이긴다 — 한국어는 머리 명사가 뒤에 온다.
+  // "마트 앞 주차장"은 주차장(바깥), "놀이터 옆 편의점"은 편의점(실내).
+  const lastAt = (re: RegExp, text: string) => {
+    let last = -1;
+    for (const m of text.matchAll(new RegExp(re.source, "g"))) last = m.index ?? last;
+    return last;
+  };
+  // 이름이 정하고, 이름에 단서가 없을 때만 설명을 본다.
+  for (const text of [name, description]) {
+    const indoorAt = lastAt(INDOOR_WORDS, text);
+    const outdoorAt = lastAt(OUTDOOR_WORDS, text);
+    if (indoorAt >= 0 || outdoorAt >= 0) return indoorAt > outdoorAt;
+  }
+  return null;
+}
+
 /** 목록에 있는 장소인가 — 있으면 계열 이름, 없으면 null. */
 export function knownPlaceFamily(name: string): string | null {
   return inferLocationFromText(name)?.family ?? null;

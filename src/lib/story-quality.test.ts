@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   isBlockingStoryQualityIssue,
+  isIndoorPlace,
   locationKeyOf,
   repairStoryContinuity,
   validateStoryQuality,
@@ -348,6 +349,24 @@ describe("장소 갈아끼우기는 목록에 있는 두 곳이 정면으로 다
     );
     const repaired = repairStoryContinuity(value);
     assert.ok(repaired.pages.every((p) => !p.imagePrompt.includes("숲길")));
+  });
+});
+
+describe("isIndoorPlace — 실내를 알아본다", () => {
+  it("마트 코너·거실·교실은 실내", () => {
+    assert.equal(isIndoorPlace("마트 장난감 코너", "하얀 진열대에 킥보드가 줄지어"), true);
+    assert.equal(isIndoorPlace("거실", "크림색 벽과 밝은 나무 마루"), true);
+    assert.equal(isIndoorPlace("어린이집 교실", ""), true);
+  });
+
+  it("놀이터·계곡·마트 앞 주차장은 바깥", () => {
+    assert.equal(isIndoorPlace("동네 놀이터", "노란 미끄럼틀과 둥근 모래밭"), false);
+    assert.equal(isIndoorPlace("계곡", "회색 자갈 바닥"), false);
+    assert.equal(isIndoorPlace("마트 앞 주차장", "회색 아스팔트"), false);
+  });
+
+  it("모르는 곳은 null — 억지로 정하지 않는다", () => {
+    assert.equal(isIndoorPlace("별빛 나라", "반짝이는 것들"), null);
   });
 });
 
