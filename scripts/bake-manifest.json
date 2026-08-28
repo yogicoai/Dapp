@@ -5712,5 +5712,347 @@
     "emotion": "normal",
     "intensity": null,
     "text": "이번엔 진짜라는 걸 알았지."
+  },
+  "classic/emperor/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 어느 나라에 옷을 아주 좋아하는 임금님이 살았어요.\n하루에도 몇 번씩 새 옷으로 갈아입었지요."
+  },
+  "classic/emperor/seg-cast-p1-1.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"오늘은 또 어떤 옷을 입어 볼까?\""
+  },
+  "classic/emperor/seg-tc-minjung-p1-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "나라 일보다 옷 생각이 먼저였답니다."
+  },
+  "classic/emperor/say-p1-emperor.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오늘은 또 어떤 옷을 입어 볼까?"
+  },
+  "classic/emperor/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 날 낯선 두 사람이 임금님을 찾아왔어요."
+  },
+  "classic/emperor/seg-cast-p2-1.mp3": {
+    "voice": "tc-goat",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"저희는 세상에서 가장 아름다운 옷을 짓습니다.\n어리석은 사람 눈에는 보이지 않는 신기한 옷이지요.\""
+  },
+  "classic/emperor/seg-tc-minjung-p2-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "임금님의 귀가 쫑긋 세워졌답니다."
+  },
+  "classic/emperor/say-p2-emperor.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오호, 그런 옷이 있단 말이냐?"
+  },
+  "classic/emperor/say-p2-swindler.mp3": {
+    "voice": "tc-goat",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어리석은 사람 눈에는 보이지 않는 옷이지요."
+  },
+  "classic/emperor/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "임금님은 눈이 번쩍 뜨였어요."
+  },
+  "classic/emperor/seg-cast-p3-1.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'그 옷을 입으면 누가 어리석은지 알 수 있겠구나!'"
+  },
+  "classic/emperor/seg-tc-minjung-p3-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "임금님은 금화 주머니를 내주며 말했지요."
+  },
+  "classic/emperor/seg-cast-p3-3.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"어서 지어 오너라. 세상에서 제일 멋지게!\""
+  },
+  "classic/emperor/say-p3-emperor.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "어서 지어 오너라. 세상에서 제일 멋지게!"
+  },
+  "classic/emperor/say-p3-swindler.mp3": {
+    "voice": "tc-goat",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "맡겨만 주십시오, 임금님!"
+  },
+  "classic/emperor/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "두 사람은 빈 베틀 앞에 앉았어요.\n실도 없고 천도 없는데 손만 부지런히 움직였지요."
+  },
+  "classic/emperor/seg-cast-p4-1.mp3": {
+    "voice": "tc-goat",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"실이 아주 곱지요? 만져 보시겠어요?\""
+  },
+  "classic/emperor/seg-tc-minjung-p4-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "달그락달그락, 밤늦도록 소리만 났답니다."
+  },
+  "classic/emperor/say-p4-swindler.mp3": {
+    "voice": "tc-goat",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "실이 아주 곱지요? 만져 보시겠어요?"
+  },
+  "classic/emperor/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "임금님은 나이 많은 신하를 보내 보았어요.\n신하의 눈에는 아무것도 보이지 않았지요."
+  },
+  "classic/emperor/seg-cast-p5-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'혹시 내가 어리석은 사람인가?'"
+  },
+  "classic/emperor/seg-tc-minjung-p5-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "신하는 얼른 말했어요."
+  },
+  "classic/emperor/seg-cast-p5-3.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"참으로 훌륭합니다! 이런 천은 처음 봅니다.\""
+  },
+  "classic/emperor/say-p5-minister.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "참으로 훌륭합니다! 이런 천은 처음 봅니다."
+  },
+  "classic/emperor/say-p5-swindler.mp3": {
+    "voice": "tc-goat",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어떠십니까, 대감?"
+  },
+  "classic/emperor/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "다음에 간 신하도 똑같았어요.\n텅 빈 베틀만 보이는데 차마 말할 수가 없었지요."
+  },
+  "classic/emperor/seg-cast-p6-1.mp3": {
+    "voice": "tc-sullock",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"빛깔이 곱기도 하지요!\""
+  },
+  "classic/emperor/seg-tc-minjung-p6-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "땀을 닦으며 서둘러 돌아 나왔지요.\n그렇게 거짓말이 하나씩 쌓여 갔답니다."
+  },
+  "classic/emperor/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "드디어 임금님이 옷을 보러 갔어요.\n아무것도, 정말 아무것도 보이지 않았지요."
+  },
+  "classic/emperor/seg-cast-p7-1.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'설마 내가… 어리석은 걸까?'"
+  },
+  "classic/emperor/seg-tc-minjung-p7-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "임금님은 깜짝 놀랐지만 이렇게 말했답니다."
+  },
+  "classic/emperor/seg-cast-p7-3.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"오, 참으로 멋지구나!\""
+  },
+  "classic/emperor/say-p7-swindler.mp3": {
+    "voice": "tc-goat",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어떠십니까, 임금님?"
+  },
+  "classic/emperor/say-p7-emperor.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오, 참으로 멋지구나!"
+  },
+  "classic/emperor/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "두 사람은 없는 옷을 입혀 주는 척했어요."
+  },
+  "classic/emperor/seg-cast-p8-1.mp3": {
+    "voice": "tc-goat",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"팔을 드세요. 자, 다 되었습니다!\""
+  },
+  "classic/emperor/seg-tc-minjung-p8-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거울 앞에 선 임금님은 속옷 차림이었지만\n고개를 끄덕이며 흐뭇하게 웃었답니다."
+  },
+  "classic/emperor/say-p8-swindler.mp3": {
+    "voice": "tc-goat",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "팔을 드세요. 자, 다 되었습니다!"
+  },
+  "classic/emperor/say-p8-emperor.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "음, 아주 멋지구나!"
+  },
+  "classic/emperor/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "임금님이 새 옷을 입고 거리로 나섰어요.\n사람들은 서로 눈치를 보며 박수만 쳤지요.\n아무도 본 대로 말하지 못했답니다.\n어리석다는 말을 들을까 무서웠거든요."
+  },
+  "classic/emperor/say-p9-emperor.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "하하, 다들 내 새 옷을 보거라!"
+  },
+  "classic/emperor/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 한 아이가 아빠 손을 잡고 말했어요."
+  },
+  "classic/emperor/seg-cast-p10-1.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"어? 임금님이 벌거벗었어요!\""
+  },
+  "classic/emperor/seg-tc-minjung-p10-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "맑고 또렷한 목소리가 거리에 울려 퍼졌지요.\n사람들이 일제히 아이를 돌아보았답니다."
+  },
+  "classic/emperor/say-p10-child.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "어? 임금님이 벌거벗었어요!"
+  },
+  "classic/emperor/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아빠가 아이를 내려다보다 고개를 끄덕였어요."
+  },
+  "classic/emperor/seg-cast-p11-1.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그러고 보니… 정말 아무것도 안 입으셨네.\""
+  },
+  "classic/emperor/seg-tc-minjung-p11-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러자 여기저기서 웃음이 터져 나왔지요.\n거리가 온통 웃음바다가 되었답니다."
+  },
+  "classic/emperor/say-p11-dad.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러고 보니… 정말 아무것도 안 입으셨네."
+  },
+  "classic/emperor/say-p11-child.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그렇지요, 아빠?"
+  },
+  "classic/emperor/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "임금님은 얼굴이 새빨개졌지만 끝까지 걸었어요.\n아이가 아빠를 올려다보며 물었지요."
+  },
+  "classic/emperor/seg-cast-p12-1.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"보이는 대로 말하면 되는 거 아니에요?\""
+  },
+  "classic/emperor/seg-tc-minjung-p12-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아빠는 아이를 번쩍 안아 올렸지요."
+  },
+  "classic/emperor/seg-cast-p12-3.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그럼! 우리 아이 말이 맞고말고.\""
+  },
+  "classic/emperor/say-p12-child.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "보이는 대로 말하면 되는 거 아니에요?"
+  },
+  "classic/emperor/say-p12-dad.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "그럼! 우리 아이 말이 맞고말고."
+  },
+  "classic/emperor/say-p6-minister2.mp3": {
+    "voice": "tc-sullock",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "빛깔이 곱기도 하지요!"
   }
 }

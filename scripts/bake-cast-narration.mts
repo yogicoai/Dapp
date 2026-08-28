@@ -97,6 +97,17 @@ type BookSpec = {
   cast: { name: string }[];
 };
 const BOOKS: Record<string, BookSpec> = {
+  "벌거벗은 임금님": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "emperor",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [
+      { name: "임금님" }, { name: "재봉사" }, { name: "신하" },
+      { name: "아이" }, { name: "아빠" },
+    ],
+  },
   "양치기 소년": {
     data: "src/data/classic-books.json",
     root: "classic",

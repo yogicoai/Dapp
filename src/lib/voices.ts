@@ -112,6 +112,7 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-babilon", label: "바빌론", emoji: "🪓", voiceId: "tc_677628030c63239147ab40c6", model: "ssfm-v30", desc: "남자 · 우렁찬 목소리", sample: "다시는 이 숲에 얼씬도 마라!" },
   // 벌거벗은 임금님의 임금님 — 사장님이 고른 성우 (2026-08-28)
   { kind: "tc", id: "tc-wangkwon", label: "왕권", emoji: "👑", voiceId: "tc_66a1ea9420b813b5c36197f1", model: "ssfm-v30", desc: "남자 · 위엄 있는 중년", sample: "오늘은 또 어떤 옷을 입어 볼까?" },
+  { kind: "tc", id: "tc-jongdae", label: "종대", emoji: "🎩", voiceId: "tc_67e38d8c771b5511659c4534", model: "ssfm-v30", desc: "남자 · 점잖은 노년", sample: "오, 참으로 멋지구나!" },
   { kind: "tc", id: "tc-gunseok", label: "건석", emoji: "🧔", voiceId: "tc_6731b2e0855f351b98d30c48", model: "ssfm-v30", desc: "남자 · 듬직한 아빠", sample: "아빠가 재미있게 읽어줄게." },
   { kind: "tc", id: "tc-changsu", label: "창수", emoji: "⚡", voiceId: "tc_6059dad0b83880769a50502f", model: "ssfm-v30", desc: "남자 · 활기찬 형아", sample: "형아랑 신나는 이야기 가자!" },
   { kind: "tc", id: "tc-siwoo", label: "시우", emoji: "🧒", voiceId: "tc_6699eb3849dfac016c29444c", model: "ssfm-v30", desc: "남자 어린이 · 씩씩한 친구", sample: "나랑 같이 모험 떠나자!" },

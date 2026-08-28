@@ -4607,68 +4607,627 @@
     "id": "classic-emperor",
     "lang": "ko",
     "title": "벌거벗은 임금님",
-    "summary": "어른들이 모두 속아 넘어갈 때, 아이 하나가 본 대로 말했어요",
-    "narrator": "tc-daeun",
+    "summary": "아무도 말하지 못한 것을 한 아이가 말했어요 — 보이는 대로 말하면 되는 거 아니에요?",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "emperor": "tc-jongdae",
+      "swindler": "tc-goat",
+      "minister": "tc-homun",
+      "minister2": "tc-sullock",
+      "child": "tc-siwoo",
+      "dad": "tc-hosun"
+    },
+    "roleOf": {
+      "임금님": "emperor",
+      "재봉사": "swindler",
+      "재봉사들": "swindler",
+      "낯선 두 사람": "swindler",
+      "두 사람": "swindler",
+      "신하": "minister",
+      "둘째 신하": "minister2",
+      "아이": "child",
+      "아빠": "dad"
+    },
     "pages": [
       {
-        "text": "옛날 어느 나라에 옷을 아주 좋아하는 임금님이 살았어요.\n하루에도 몇 번씩 새 옷으로 갈아입었지요.\n나라 일보다 옷 생각이 먼저였답니다.",
-        "image": "/books/classic-emperor/p1.webp?v=2",
-        "audio": null
+        "n": 1,
+        "text": "옛날 어느 나라에 옷을 아주 좋아하는 임금님이 살았어요.\n하루에도 몇 번씩 새 옷으로 갈아입었지요.\n\"오늘은 또 어떤 옷을 입어 볼까?\"\n나라 일보다 옷 생각이 먼저였답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p1.webp?v=2",
+        "lines": [
+          {
+            "text": "오늘은 또 어떤 옷을 입어 볼까?",
+            "who": "emperor"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "emperor",
+            "line": "오늘은 또 어떤 옷을 입어 볼까?",
+            "box": [
+              46,
+              397,
+              880,
+              760
+            ],
+            "audio": "/classic/emperor/say-p1-emperor.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p1-0.mp3",
+            "text": "옛날 어느 나라에 옷을 아주 좋아하는 임금님이 살았어요.\n하루에도 몇 번씩 새 옷으로 갈아입었지요.\n"
+          },
+          {
+            "who": "emperor",
+            "src": "/classic/emperor/seg-cast-p1-1.mp3",
+            "text": "\"오늘은 또 어떤 옷을 입어 볼까?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p1-2.mp3",
+            "text": "\n나라 일보다 옷 생각이 먼저였답니다."
+          }
+        ]
       },
       {
-        "text": "어느 날 낯선 두 사람이 임금님을 찾아왔어요.\n\"저희는 세상에서 가장 아름다운 옷을 짓습니다.\n어리석은 사람 눈에는 보이지 않는 신기한 옷이지요.\"",
-        "image": "/books/classic-emperor/p2.webp?v=2",
-        "audio": null
+        "n": 2,
+        "text": "어느 날 낯선 두 사람이 임금님을 찾아왔어요.\n\"저희는 세상에서 가장 아름다운 옷을 짓습니다.\n어리석은 사람 눈에는 보이지 않는 신기한 옷이지요.\"\n임금님의 귀가 쫑긋 세워졌답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p2.webp?v=2",
+        "lines": [
+          {
+            "text": "저희는 세상에서 가장 아름다운 옷을 짓습니다.\n어리석은 사람 눈에는 보이지 않는 신기한 옷이지요.",
+            "who": "swindler"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "emperor",
+            "line": "오호, 그런 옷이 있단 말이냐?",
+            "box": [
+              185,
+              93,
+              764,
+              456
+            ],
+            "audio": "/classic/emperor/say-p2-emperor.mp3"
+          },
+          {
+            "label": "swindler",
+            "line": "어리석은 사람 눈에는 보이지 않는 옷이지요.",
+            "box": [
+              185,
+              540,
+              960,
+              895
+            ],
+            "audio": "/classic/emperor/say-p2-swindler.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p2-0.mp3",
+            "text": "어느 날 낯선 두 사람이 임금님을 찾아왔어요.\n"
+          },
+          {
+            "who": "swindler",
+            "src": "/classic/emperor/seg-cast-p2-1.mp3",
+            "text": "\"저희는 세상에서 가장 아름다운 옷을 짓습니다.\n어리석은 사람 눈에는 보이지 않는 신기한 옷이지요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p2-2.mp3",
+            "text": "\n임금님의 귀가 쫑긋 세워졌답니다."
+          }
+        ]
       },
       {
-        "text": "임금님은 눈이 번쩍 뜨였어요.\n'그 옷을 입으면 누가 어리석은지 알 수 있겠구나!'\n임금님은 큰돈을 내주며 어서 지으라고 했어요.",
-        "image": "/books/classic-emperor/p3.webp?v=2",
-        "audio": null
+        "n": 3,
+        "text": "임금님은 눈이 번쩍 뜨였어요.\n'그 옷을 입으면 누가 어리석은지 알 수 있겠구나!'\n임금님은 금화 주머니를 내주며 말했지요.\n\"어서 지어 오너라. 세상에서 제일 멋지게!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p3.webp?v=2",
+        "lines": [
+          {
+            "text": "'그 옷을 입으면 누가 어리석은지 알 수 있겠구나!'",
+            "who": "emperor"
+          },
+          {
+            "text": "어서 지어 오너라. 세상에서 제일 멋지게!",
+            "who": "emperor"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "emperor",
+            "line": "어서 지어 오너라. 세상에서 제일 멋지게!",
+            "box": [
+              35,
+              0,
+              995,
+              397
+            ],
+            "audio": "/classic/emperor/say-p3-emperor.mp3",
+            "feel": "happy"
+          },
+          {
+            "label": "swindler",
+            "line": "맡겨만 주십시오, 임금님!",
+            "box": [
+              70,
+              557,
+              995,
+              1000
+            ],
+            "audio": "/classic/emperor/say-p3-swindler.mp3",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p3-0.mp3",
+            "text": "임금님은 눈이 번쩍 뜨였어요.\n"
+          },
+          {
+            "who": "emperor",
+            "src": "/classic/emperor/seg-cast-p3-1.mp3",
+            "text": "'그 옷을 입으면 누가 어리석은지 알 수 있겠구나!'"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p3-2.mp3",
+            "text": "\n임금님은 금화 주머니를 내주며 말했지요.\n"
+          },
+          {
+            "who": "emperor",
+            "src": "/classic/emperor/seg-cast-p3-3.mp3",
+            "text": "\"어서 지어 오너라. 세상에서 제일 멋지게!\""
+          }
+        ]
       },
       {
-        "text": "두 사람은 빈 베틀 앞에 앉았어요.\n실도 없고 천도 없는데 손만 부지런히 움직였지요.\n달그락달그락, 밤늦도록 소리만 났답니다.",
-        "image": "/books/classic-emperor/p4.webp?v=2",
-        "audio": null
+        "n": 4,
+        "text": "두 사람은 빈 베틀 앞에 앉았어요.\n실도 없고 천도 없는데 손만 부지런히 움직였지요.\n\"실이 아주 곱지요? 만져 보시겠어요?\"\n달그락달그락, 밤늦도록 소리만 났답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p4.webp?v=2",
+        "lines": [
+          {
+            "text": "실이 아주 곱지요? 만져 보시겠어요?",
+            "who": "swindler"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "swindler",
+            "line": "실이 아주 곱지요? 만져 보시겠어요?",
+            "box": [
+              174,
+              617,
+              926,
+              878
+            ],
+            "audio": "/classic/emperor/say-p4-swindler.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p4-0.mp3",
+            "text": "두 사람은 빈 베틀 앞에 앉았어요.\n실도 없고 천도 없는데 손만 부지런히 움직였지요.\n"
+          },
+          {
+            "who": "swindler",
+            "src": "/classic/emperor/seg-cast-p4-1.mp3",
+            "text": "\"실이 아주 곱지요? 만져 보시겠어요?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p4-2.mp3",
+            "text": "\n달그락달그락, 밤늦도록 소리만 났답니다."
+          }
+        ]
       },
       {
-        "text": "임금님은 나이 많은 신하를 보내 보았어요.\n신하의 눈에는 아무것도 보이지 않았어요.\n'혹시 내가 어리석은 사람인가?'\n신하는 얼른 말했지요. \"참으로 훌륭합니다!\"",
-        "image": "/books/classic-emperor/p5.webp?v=2",
-        "audio": null
+        "n": 5,
+        "text": "임금님은 나이 많은 신하를 보내 보았어요.\n신하의 눈에는 아무것도 보이지 않았지요.\n'혹시 내가 어리석은 사람인가?'\n신하는 얼른 말했어요.\n\"참으로 훌륭합니다! 이런 천은 처음 봅니다.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p5.webp?v=2",
+        "lines": [
+          {
+            "text": "'혹시 내가 어리석은 사람인가?'",
+            "who": "minister"
+          },
+          {
+            "text": "참으로 훌륭합니다! 이런 천은 처음 봅니다.",
+            "who": "minister"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "minister",
+            "line": "참으로 훌륭합니다! 이런 천은 처음 봅니다.",
+            "box": [
+              46,
+              17,
+              995,
+              498
+            ],
+            "audio": "/classic/emperor/say-p5-minister.mp3"
+          },
+          {
+            "label": "swindler",
+            "line": "어떠십니까, 대감?",
+            "box": [
+              116,
+              701,
+              960,
+              954
+            ],
+            "audio": "/classic/emperor/say-p5-swindler.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p5-0.mp3",
+            "text": "임금님은 나이 많은 신하를 보내 보았어요.\n신하의 눈에는 아무것도 보이지 않았지요.\n"
+          },
+          {
+            "who": "minister",
+            "src": "/classic/emperor/seg-cast-p5-1.mp3",
+            "text": "'혹시 내가 어리석은 사람인가?'"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p5-2.mp3",
+            "text": "\n신하는 얼른 말했어요.\n"
+          },
+          {
+            "who": "minister",
+            "src": "/classic/emperor/seg-cast-p5-3.mp3",
+            "text": "\"참으로 훌륭합니다! 이런 천은 처음 봅니다.\""
+          }
+        ]
       },
       {
-        "text": "다음에 간 신하도 똑같았어요.\n텅 빈 베틀만 보이는데 차마 말할 수가 없었지요.\n\"빛깔이 곱기도 하지요!\"\n거짓말이 하나씩 쌓여 갔어요.",
-        "image": "/books/classic-emperor/p6.webp?v=2",
-        "audio": null
+        "n": 6,
+        "text": "다음에 간 신하도 똑같았어요.\n텅 빈 베틀만 보이는데 차마 말할 수가 없었지요.\n\"빛깔이 곱기도 하지요!\"\n땀을 닦으며 서둘러 돌아 나왔지요.\n그렇게 거짓말이 하나씩 쌓여 갔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p6.webp?v=2",
+        "lines": [
+          {
+            "text": "빛깔이 곱기도 하지요!",
+            "who": "minister2"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "minister2",
+            "line": "빛깔이 곱기도 하지요!",
+            "box": [
+              46,
+              51,
+              995,
+              540
+            ],
+            "audio": "/classic/emperor/say-p6-minister2.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p6-0.mp3",
+            "text": "다음에 간 신하도 똑같았어요.\n텅 빈 베틀만 보이는데 차마 말할 수가 없었지요.\n"
+          },
+          {
+            "who": "minister2",
+            "src": "/classic/emperor/seg-cast-p6-1.mp3",
+            "text": "\"빛깔이 곱기도 하지요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p6-2.mp3",
+            "text": "\n땀을 닦으며 서둘러 돌아 나왔지요.\n그렇게 거짓말이 하나씩 쌓여 갔답니다."
+          }
+        ]
       },
       {
-        "text": "드디어 임금님이 옷을 보러 갔어요.\n아무것도, 정말 아무것도 보이지 않았어요.\n임금님은 깜짝 놀랐지만 이렇게 말했답니다.\n\"오, 참으로 멋지구나!\"",
-        "image": "/books/classic-emperor/p7.webp?v=2",
-        "audio": null
+        "n": 7,
+        "text": "드디어 임금님이 옷을 보러 갔어요.\n아무것도, 정말 아무것도 보이지 않았지요.\n'설마 내가… 어리석은 걸까?'\n임금님은 깜짝 놀랐지만 이렇게 말했답니다.\n\"오, 참으로 멋지구나!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p7.webp?v=2",
+        "lines": [
+          {
+            "text": "'설마 내가… 어리석은 걸까?'",
+            "who": "emperor"
+          },
+          {
+            "text": "오, 참으로 멋지구나!",
+            "who": "emperor"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "swindler",
+            "line": "어떠십니까, 임금님?",
+            "box": [
+              139,
+              84,
+              914,
+              312
+            ],
+            "audio": "/classic/emperor/say-p7-swindler.mp3"
+          },
+          {
+            "label": "emperor",
+            "line": "오, 참으로 멋지구나!",
+            "box": [
+              150,
+              312,
+              995,
+              676
+            ],
+            "audio": "/classic/emperor/say-p7-emperor.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p7-0.mp3",
+            "text": "드디어 임금님이 옷을 보러 갔어요.\n아무것도, 정말 아무것도 보이지 않았지요.\n"
+          },
+          {
+            "who": "emperor",
+            "src": "/classic/emperor/seg-cast-p7-1.mp3",
+            "text": "'설마 내가… 어리석은 걸까?'"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p7-2.mp3",
+            "text": "\n임금님은 깜짝 놀랐지만 이렇게 말했답니다.\n"
+          },
+          {
+            "who": "emperor",
+            "src": "/classic/emperor/seg-cast-p7-3.mp3",
+            "text": "\"오, 참으로 멋지구나!\""
+          }
+        ]
       },
       {
-        "text": "두 사람은 없는 옷을 입혀 주는 척했어요.\n\"팔을 드세요. 자, 다 되었습니다!\"\n거울 앞에 선 임금님은 속옷 차림이었지만\n고개를 끄덕이며 흐뭇하게 웃었어요.",
-        "image": "/books/classic-emperor/p8.webp?v=2",
-        "audio": null
+        "n": 8,
+        "text": "두 사람은 없는 옷을 입혀 주는 척했어요.\n\"팔을 드세요. 자, 다 되었습니다!\"\n거울 앞에 선 임금님은 속옷 차림이었지만\n고개를 끄덕이며 흐뭇하게 웃었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p8.webp?v=2",
+        "lines": [
+          {
+            "text": "팔을 드세요. 자, 다 되었습니다!",
+            "who": "swindler"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "swindler",
+            "line": "팔을 드세요. 자, 다 되었습니다!",
+            "box": [
+              150,
+              76,
+              926,
+              473
+            ],
+            "audio": "/classic/emperor/say-p8-swindler.mp3"
+          },
+          {
+            "label": "emperor",
+            "line": "음, 아주 멋지구나!",
+            "box": [
+              46,
+              473,
+              833,
+              760
+            ],
+            "audio": "/classic/emperor/say-p8-emperor.mp3",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p8-0.mp3",
+            "text": "두 사람은 없는 옷을 입혀 주는 척했어요.\n"
+          },
+          {
+            "who": "swindler",
+            "src": "/classic/emperor/seg-cast-p8-1.mp3",
+            "text": "\"팔을 드세요. 자, 다 되었습니다!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p8-2.mp3",
+            "text": "\n거울 앞에 선 임금님은 속옷 차림이었지만\n고개를 끄덕이며 흐뭇하게 웃었답니다."
+          }
+        ]
       },
       {
-        "text": "임금님이 새 옷을 입고 거리로 나섰어요.\n길가에 모인 사람들이 입을 모아 외쳤지요.\n\"우아, 정말 훌륭한 옷이다!\"\n아무도 본 대로 말하지 않았어요.",
-        "image": "/books/classic-emperor/p9.webp?v=2",
-        "audio": null
+        "n": 9,
+        "text": "임금님이 새 옷을 입고 거리로 나섰어요.\n사람들은 서로 눈치를 보며 박수만 쳤지요.\n아무도 본 대로 말하지 못했답니다.\n어리석다는 말을 들을까 무서웠거든요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p9.webp?v=2",
+        "hotspots": [
+          {
+            "label": "emperor",
+            "line": "하하, 다들 내 새 옷을 보거라!",
+            "box": [
+              139,
+              372,
+              926,
+              676
+            ],
+            "audio": "/classic/emperor/say-p9-emperor.mp3",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p9-0.mp3",
+            "text": "임금님이 새 옷을 입고 거리로 나섰어요.\n사람들은 서로 눈치를 보며 박수만 쳤지요.\n아무도 본 대로 말하지 못했답니다.\n어리석다는 말을 들을까 무서웠거든요."
+          }
+        ]
       },
       {
-        "text": "그때 한 아이가 아빠 손을 잡고 말했어요.\n\"어? 임금님이 벌거벗었어요!\"\n맑고 또렷한 목소리가 거리에 울려 퍼졌어요.",
-        "image": "/books/classic-emperor/p10.webp?v=2",
-        "audio": null
+        "n": 10,
+        "text": "그때 한 아이가 아빠 손을 잡고 말했어요.\n\"어? 임금님이 벌거벗었어요!\"\n맑고 또렷한 목소리가 거리에 울려 퍼졌지요.\n사람들이 일제히 아이를 돌아보았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p10.webp?v=2",
+        "lines": [
+          {
+            "text": "어? 임금님이 벌거벗었어요!",
+            "who": "child",
+            "feel": "toneup"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "child",
+            "line": "어? 임금님이 벌거벗었어요!",
+            "box": [
+              394,
+              310,
+              903,
+              524
+            ],
+            "audio": "/classic/emperor/say-p10-child.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p10-0.mp3",
+            "text": "그때 한 아이가 아빠 손을 잡고 말했어요.\n"
+          },
+          {
+            "who": "child",
+            "src": "/classic/emperor/seg-cast-p10-1.mp3",
+            "text": "\"어? 임금님이 벌거벗었어요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p10-2.mp3",
+            "text": "\n맑고 또렷한 목소리가 거리에 울려 퍼졌지요.\n사람들이 일제히 아이를 돌아보았답니다."
+          }
+        ]
       },
       {
-        "text": "사람들이 웅성거리기 시작했어요.\n\"그러고 보니… 정말 아무것도 안 입으셨네.\"\n여기저기서 웃음이 터져 나왔답니다.",
-        "image": "/books/classic-emperor/p11.webp?v=2",
-        "audio": null
+        "n": 11,
+        "text": "아빠가 아이를 내려다보다 고개를 끄덕였어요.\n\"그러고 보니… 정말 아무것도 안 입으셨네.\"\n그러자 여기저기서 웃음이 터져 나왔지요.\n거리가 온통 웃음바다가 되었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p11.webp?v=2",
+        "lines": [
+          {
+            "text": "그러고 보니… 정말 아무것도 안 입으셨네.",
+            "who": "dad"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "dad",
+            "line": "그러고 보니… 정말 아무것도 안 입으셨네.",
+            "box": [
+              278,
+              211,
+              880,
+              524
+            ],
+            "audio": "/classic/emperor/say-p11-dad.mp3"
+          },
+          {
+            "label": "child",
+            "line": "그렇지요, 아빠?",
+            "box": [
+              417,
+              524,
+              868,
+              659
+            ],
+            "audio": "/classic/emperor/say-p11-child.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p11-0.mp3",
+            "text": "아빠가 아이를 내려다보다 고개를 끄덕였어요.\n"
+          },
+          {
+            "who": "dad",
+            "src": "/classic/emperor/seg-cast-p11-1.mp3",
+            "text": "\"그러고 보니… 정말 아무것도 안 입으셨네.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p11-2.mp3",
+            "text": "\n그러자 여기저기서 웃음이 터져 나왔지요.\n거리가 온통 웃음바다가 되었답니다."
+          }
+        ]
       },
       {
-        "text": "임금님은 얼굴이 새빨개졌지만 끝까지 걸었어요.\n아이는 아빠를 올려다보며 물었어요.\n\"보이는 대로 말하면 되는 거 아니에요?\"\n그날 거리에서 가장 용감한 사람은 그 아이였어요.",
-        "image": "/books/classic-emperor/p12.webp?v=2",
-        "audio": null
+        "n": 12,
+        "text": "임금님은 얼굴이 새빨개졌지만 끝까지 걸었어요.\n아이가 아빠를 올려다보며 물었지요.\n\"보이는 대로 말하면 되는 거 아니에요?\"\n아빠는 아이를 번쩍 안아 올렸지요.\n\"그럼! 우리 아이 말이 맞고말고.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/emperor/p12.webp?v=2",
+        "lines": [
+          {
+            "text": "보이는 대로 말하면 되는 거 아니에요?",
+            "who": "child"
+          },
+          {
+            "text": "그럼! 우리 아이 말이 맞고말고.",
+            "who": "dad"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "child",
+            "line": "보이는 대로 말하면 되는 거 아니에요?",
+            "box": [
+              46,
+              300,
+              532,
+              600
+            ],
+            "audio": "/classic/emperor/say-p12-child.mp3"
+          },
+          {
+            "label": "dad",
+            "line": "그럼! 우리 아이 말이 맞고말고.",
+            "box": [
+              540,
+              84,
+              995,
+              473
+            ],
+            "audio": "/classic/emperor/say-p12-dad.mp3",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p12-0.mp3",
+            "text": "임금님은 얼굴이 새빨개졌지만 끝까지 걸었어요.\n아이가 아빠를 올려다보며 물었지요.\n"
+          },
+          {
+            "who": "child",
+            "src": "/classic/emperor/seg-cast-p12-1.mp3",
+            "text": "\"보이는 대로 말하면 되는 거 아니에요?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/emperor/seg-p12-2.mp3",
+            "text": "\n아빠는 아이를 번쩍 안아 올렸지요.\n"
+          },
+          {
+            "who": "dad",
+            "src": "/classic/emperor/seg-cast-p12-3.mp3",
+            "text": "\"그럼! 우리 아이 말이 맞고말고.\""
+          }
+        ]
       }
     ]
   }
