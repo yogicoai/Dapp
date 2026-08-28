@@ -97,6 +97,12 @@ type BookSpec = {
   cast: { name: string }[];
 };
 const BOOKS: Record<string, BookSpec> = {
+  "의좋은 형제": {
+    dir: "brothers",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "형" }, { name: "아우" }],
+  },
   "벌거벗은 임금님": {
     data: "src/data/classic-books.json",
     root: "classic",

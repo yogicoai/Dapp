@@ -5492,5 +5492,617 @@
     "narrators": [
       "tc-jiyoon"
     ]
+  },
+  {
+    "id": "folk-brothers",
+    "lang": "ko",
+    "title": "의좋은 형제",
+    "summary": "밤마다 서로의 논에 볏단을 몰래 옮기던 형과 아우가 달밤 논둑길에서 마주친 이야기",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p11.webp?v=2",
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "brother": "tc-gunseok",
+      "younger": "tc-hosun"
+    },
+    "roleOf": {
+      "형": "brother",
+      "형님": "brother",
+      "아우": "younger",
+      "동생": "younger"
+    },
+    "pages": [
+      {
+        "text": "옛날 어느 마을에 사이좋은 형제가 살았어요.\n형은 아랫마을에, 아우는 윗마을에 살았지만\n논은 나란히 붙어 있어 날마다 함께 일했지요.\n\"형님, 제가 물꼬를 볼게요!\"\n\"그래, 나는 풀을 뽑으마.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p1.webp?v=2",
+        "lines": [
+          {
+            "text": "형님, 제가 물꼬를 볼게요!",
+            "who": "younger"
+          },
+          {
+            "text": "그래, 나는 풀을 뽑으마.",
+            "who": "brother"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "그래, 나는 풀을 뽑으마.",
+            "box": [
+              220,
+              127,
+              787,
+              422
+            ],
+            "audio": "/folk/brothers/say-p1-brother.mp3"
+          },
+          {
+            "label": "younger",
+            "line": "형님, 제가 물꼬를 볼게요!",
+            "box": [
+              347,
+              507,
+              787,
+              802
+            ],
+            "audio": "/folk/brothers/say-p1-younger.mp3",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p1-0.mp3",
+            "text": "옛날 어느 마을에 사이좋은 형제가 살았어요.\n형은 아랫마을에, 아우는 윗마을에 살았지만\n논은 나란히 붙어 있어 날마다 함께 일했지요.\n"
+          },
+          {
+            "who": "younger",
+            "src": "/folk/brothers/seg-cast-p1-1.mp3",
+            "text": "\"형님, 제가 물꼬를 볼게요!\"\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/brothers/seg-cast-p1-2.mp3",
+            "text": "\"그래, 나는 풀을 뽑으마.\""
+          }
+        ]
+      },
+      {
+        "text": "가을이 되자 논이 온통 황금빛으로 물들었어요.\n형제는 함께 벼를 베어 볏단을 쌓았지요.\n해마다 그랬듯 볏단은 반으로 나누었어요.\n\"형님, 올해도 반씩이에요.\"\n\"그래, 늘 하던 대로.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p2.webp?v=2",
+        "lines": [
+          {
+            "text": "형님, 올해도 반씩이에요.",
+            "who": "younger"
+          },
+          {
+            "text": "그래, 늘 하던 대로.",
+            "who": "brother"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "그래, 늘 하던 대로.",
+            "box": [
+              139,
+              253,
+              764,
+              456
+            ],
+            "audio": "/folk/brothers/say-p2-brother.mp3"
+          },
+          {
+            "label": "younger",
+            "line": "형님, 올해도 반씩이에요.",
+            "box": [
+              208,
+              540,
+              764,
+              760
+            ],
+            "audio": "/folk/brothers/say-p2-younger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p2-0.mp3",
+            "text": "가을이 되자 논이 온통 황금빛으로 물들었어요.\n형제는 함께 벼를 베어 볏단을 쌓았지요.\n해마다 그랬듯 볏단은 반으로 나누었어요.\n"
+          },
+          {
+            "who": "younger",
+            "src": "/folk/brothers/seg-cast-p2-1.mp3",
+            "text": "\"형님, 올해도 반씩이에요.\"\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/brothers/seg-cast-p2-2.mp3",
+            "text": "\"그래, 늘 하던 대로.\""
+          }
+        ]
+      },
+      {
+        "text": "그날 밤, 형은 잠이 오지 않았어요.\n'아우는 올해 살림을 새로 차렸잖아.\n쓸 데가 많을 텐데… 내 볏단을 좀 나눠 줘야지.'\n형은 살그머니 문을 열고 밖으로 나갔어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p3.webp?v=2",
+        "lines": [
+          {
+            "text": "'아우는 올해 살림을 새로 차렸잖아.\n쓸 데가 많을 텐데… 내 볏단을 좀 나눠 줘야지.'",
+            "who": "brother"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "아우한테 볏단을 좀 나눠 줘야지.",
+            "box": [
+              174,
+              405,
+              880,
+              811
+            ],
+            "audio": "/folk/brothers/say-p3-brother.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p3-0.mp3",
+            "text": "그날 밤, 형은 잠이 오지 않았어요.\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/brothers/seg-cast-p3-1.mp3",
+            "text": "'아우는 올해 살림을 새로 차렸잖아.\n쓸 데가 많을 텐데… 내 볏단을 좀 나눠 줘야지.'"
+          },
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p3-2.mp3",
+            "text": "\n형은 살그머니 문을 열고 밖으로 나갔어요."
+          }
+        ]
+      },
+      {
+        "text": "달빛이 환한 논둑길이었어요.\n형은 볏단을 지게에 지고 아우네 논으로 갔지요.\n\"아우는 모르게 해야지. 알면 안 받을 테니까.\"\n형은 볏단을 살짝 얹어 놓고 돌아왔어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p4.webp?v=2",
+        "lines": [
+          {
+            "text": "아우는 모르게 해야지. 알면 안 받을 테니까.",
+            "who": "brother",
+            "feel": "whisper"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "아우는 모르게 해야지. 알면 안 받을 테니까.",
+            "box": [
+              127,
+              321,
+              764,
+              608
+            ],
+            "audio": "/folk/brothers/say-p4-brother.mp3",
+            "feel": "whisper"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p4-0.mp3",
+            "text": "달빛이 환한 논둑길이었어요.\n형은 볏단을 지게에 지고 아우네 논으로 갔지요.\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/brothers/seg-cast-p4-1.mp3",
+            "text": "\"아우는 모르게 해야지. 알면 안 받을 테니까.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p4-2.mp3",
+            "text": "\n형은 볏단을 살짝 얹어 놓고 돌아왔어요."
+          }
+        ]
+      },
+      {
+        "text": "같은 밤, 아우도 뒤척이고 있었어요.\n'형님 댁은 식구가 많잖아. 조카들도 한창 먹을 때인데…\n내 볏단을 형님께 드려야지.'\n아우도 살그머니 지게를 챙겨 나갔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p5.webp?v=2",
+        "lines": [
+          {
+            "text": "'형님 댁은 식구가 많잖아. 조카들도 한창 먹을 때인데…\n내 볏단을 형님께 드려야지.'",
+            "who": "younger"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "younger",
+            "line": "형님 댁은 식구가 많잖아… 내 볏단을 드려야지.",
+            "box": [
+              174,
+              397,
+              891,
+              693
+            ],
+            "audio": "/folk/brothers/say-p5-younger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p5-0.mp3",
+            "text": "같은 밤, 아우도 뒤척이고 있었어요.\n"
+          },
+          {
+            "who": "younger",
+            "src": "/folk/brothers/seg-cast-p5-1.mp3",
+            "text": "'형님 댁은 식구가 많잖아. 조카들도 한창 먹을 때인데…\n내 볏단을 형님께 드려야지.'"
+          },
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p5-2.mp3",
+            "text": "\n아우도 살그머니 지게를 챙겨 나갔답니다."
+          }
+        ]
+      },
+      {
+        "text": "아우는 볏단을 지고 형네 논으로 갔어요.\n\"형님이 알면 도로 주실 거야. 몰래 놓고 와야지.\"\n아우는 볏단을 가만히 얹어 놓고\n휘파람을 불며 가볍게 돌아왔지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p6.webp?v=2",
+        "lines": [
+          {
+            "text": "형님이 알면 도로 주실 거야. 몰래 놓고 와야지.",
+            "who": "younger",
+            "feel": "whisper"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "younger",
+            "line": "형님이 알면 도로 주실 거야. 몰래 놓고 와야지.",
+            "box": [
+              243,
+              625,
+              880,
+              887
+            ],
+            "audio": "/folk/brothers/say-p6-younger.mp3",
+            "feel": "whisper"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p6-0.mp3",
+            "text": "아우는 볏단을 지고 형네 논으로 갔어요.\n"
+          },
+          {
+            "who": "younger",
+            "src": "/folk/brothers/seg-cast-p6-1.mp3",
+            "text": "\"형님이 알면 도로 주실 거야. 몰래 놓고 와야지.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p6-2.mp3",
+            "text": "\n아우는 볏단을 가만히 얹어 놓고\n휘파람을 불며 가볍게 돌아왔지요."
+          }
+        ]
+      },
+      {
+        "text": "이튿날 아침, 형은 논에 나가 볏단을 세어 보았어요.\n\"어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?\"\n아우도 제 논을 보고 고개를 갸웃했지요.\n\"형님 논에 놓고 왔는데 왜 그대로지?\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p7.webp?v=2",
+        "lines": [
+          {
+            "text": "어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?",
+            "who": "brother",
+            "feel": "toneup"
+          },
+          {
+            "text": "형님 논에 놓고 왔는데 왜 그대로지?",
+            "who": "younger",
+            "feel": "toneup"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?",
+            "box": [
+              150,
+              253,
+              787,
+              473
+            ],
+            "audio": "/folk/brothers/say-p7-brother.mp3",
+            "feel": "toneup"
+          },
+          {
+            "label": "younger",
+            "line": "형님 논에 놓고 왔는데 왜 그대로지?",
+            "box": [
+              266,
+              642,
+              521,
+              743
+            ],
+            "audio": "/folk/brothers/say-p7-younger.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p7-0.mp3",
+            "text": "이튿날 아침, 형은 논에 나가 볏단을 세어 보았어요.\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/brothers/seg-cast-p7-1.mp3",
+            "text": "\"어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p7-2.mp3",
+            "text": "\n아우도 제 논을 보고 고개를 갸웃했지요.\n"
+          },
+          {
+            "who": "younger",
+            "src": "/folk/brothers/seg-cast-p7-3.mp3",
+            "text": "\"형님 논에 놓고 왔는데 왜 그대로지?\""
+          }
+        ]
+      },
+      {
+        "text": "그날 밤에도, 그다음 밤에도\n형은 아우네 논으로, 아우는 형네 논으로 볏단을 옮겼어요.\n그런데 아침이면 볏단은 늘 그대로였지요.\n둘 다 고개를 갸웃했지만, 밤이 되면 또 지게를 졌답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p8.webp?v=2",
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "오늘 밤에도 한 단 더.",
+            "box": [
+              150,
+              110,
+              741,
+              321
+            ],
+            "audio": "/folk/brothers/say-p8-brother.mp3",
+            "feel": "whisper"
+          },
+          {
+            "label": "younger",
+            "line": "형님 몰래, 살금살금.",
+            "box": [
+              197,
+              676,
+              741,
+              887
+            ],
+            "audio": "/folk/brothers/say-p8-younger.mp3",
+            "feel": "whisper"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p8-0.mp3",
+            "text": "그날 밤에도, 그다음 밤에도\n형은 아우네 논으로, 아우는 형네 논으로 볏단을 옮겼어요.\n그런데 아침이면 볏단은 늘 그대로였지요.\n둘 다 고개를 갸웃했지만, 밤이 되면 또 지게를 졌답니다."
+          }
+        ]
+      },
+      {
+        "text": "보름달이 커다랗게 뜬 밤이었어요.\n형과 아우는 볏단을 지고 논둑길을 걸었지요.\n그런데 좁은 논둑 한가운데에서 — 쿵!\n볏짚이 흩날리며 누군가와 부딪히고 말았어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p9.webp?v=2",
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "어이쿠!",
+            "box": [
+              197,
+              127,
+              810,
+              456
+            ],
+            "audio": "/folk/brothers/say-p9-brother.mp3",
+            "feel": "toneup"
+          },
+          {
+            "label": "younger",
+            "line": "아이고!",
+            "box": [
+              220,
+              507,
+              810,
+              845
+            ],
+            "audio": "/folk/brothers/say-p9-younger.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p9-0.mp3",
+            "text": "보름달이 커다랗게 뜬 밤이었어요.\n형과 아우는 볏단을 지고 논둑길을 걸었지요.\n그런데 좁은 논둑 한가운데에서 — 쿵!\n볏짚이 흩날리며 누군가와 부딪히고 말았어요."
+          }
+        ]
+      },
+      {
+        "text": "달빛 아래 마주 선 두 사람.\n서로의 지게 위에는 볏단이 똑같이 얹혀 있었어요.\n\"형님…!\" \"아우야…!\"\n그제야 형제는 볏단이 늘 그대로였던 까닭을 알았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p10.webp?v=2",
+        "lines": [
+          {
+            "text": "형님…!",
+            "who": "younger",
+            "feel": "toneup"
+          },
+          {
+            "text": "아우야…!",
+            "who": "brother",
+            "feel": "toneup"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "아우야…!",
+            "box": [
+              174,
+              127,
+              833,
+              422
+            ],
+            "audio": "/folk/brothers/say-p10-brother.mp3",
+            "feel": "toneup"
+          },
+          {
+            "label": "younger",
+            "line": "형님…!",
+            "box": [
+              174,
+              540,
+              833,
+              845
+            ],
+            "audio": "/folk/brothers/say-p10-younger.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p10-0.mp3",
+            "text": "달빛 아래 마주 선 두 사람.\n서로의 지게 위에는 볏단이 똑같이 얹혀 있었어요.\n"
+          },
+          {
+            "who": "younger",
+            "src": "/folk/brothers/seg-cast-p10-1.mp3",
+            "text": "\"형님…!\" "
+          },
+          {
+            "who": "brother",
+            "src": "/folk/brothers/seg-cast-p10-3.mp3",
+            "text": "\"아우야…!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p10-4.mp3",
+            "text": "\n그제야 형제는 볏단이 늘 그대로였던 까닭을 알았답니다."
+          }
+        ]
+      },
+      {
+        "text": "형제는 지게를 내려놓고 서로를 꼭 끌어안았어요.\n\"내 걱정은 말고 아우네나 넉넉히 쓰지 그랬어.\"\n\"형님도 참, 조카들 먹일 생각만 하셨지요?\"\n둘은 달을 올려다보며 한참을 웃었지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p11.webp?v=2",
+        "lines": [
+          {
+            "text": "내 걱정은 말고 아우네나 넉넉히 쓰지 그랬어.",
+            "who": "brother",
+            "feel": "happy"
+          },
+          {
+            "text": "형님도 참, 조카들 먹일 생각만 하셨지요?",
+            "who": "younger",
+            "feel": "happy"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "내 걱정은 말고 아우네나 넉넉히 쓰지 그랬어.",
+            "box": [
+              150,
+              355,
+              787,
+              507
+            ],
+            "audio": "/folk/brothers/say-p11-brother.mp3",
+            "feel": "happy"
+          },
+          {
+            "label": "younger",
+            "line": "형님도 참, 조카들 먹일 생각만 하셨지요?",
+            "box": [
+              150,
+              507,
+              787,
+              659
+            ],
+            "audio": "/folk/brothers/say-p11-younger.mp3",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p11-0.mp3",
+            "text": "형제는 지게를 내려놓고 서로를 꼭 끌어안았어요.\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/brothers/seg-cast-p11-1.mp3",
+            "text": "\"내 걱정은 말고 아우네나 넉넉히 쓰지 그랬어.\"\n"
+          },
+          {
+            "who": "younger",
+            "src": "/folk/brothers/seg-cast-p11-2.mp3",
+            "text": "\"형님도 참, 조카들 먹일 생각만 하셨지요?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p11-3.mp3",
+            "text": "\n둘은 달을 올려다보며 한참을 웃었지요."
+          }
+        ]
+      },
+      {
+        "text": "그날 밤 뒤로 형제는 서로를 더욱 아끼며 살았어요.\n마을 사람들은 두 사람을 '의좋은 형제'라 불렀답니다.\n오늘 밤 보름달을 보면 그 논둑길을 떠올려 보세요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p12.webp?v=2",
+        "hotspots": [
+          {
+            "label": "brother",
+            "line": "가자, 아우야.",
+            "box": [
+              150,
+              144,
+              880,
+              439
+            ],
+            "audio": "/folk/brothers/say-p12-brother.mp3",
+            "feel": "happy"
+          },
+          {
+            "label": "younger",
+            "line": "네, 형님!",
+            "box": [
+              220,
+              473,
+              880,
+              743
+            ],
+            "audio": "/folk/brothers/say-p12-younger.mp3",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p12-0.mp3",
+            "text": "그날 밤 뒤로 형제는 서로를 더욱 아끼며 살았어요.\n마을 사람들은 두 사람을 "
+          },
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p12-1.mp3",
+            "text": "'의좋은 형제'"
+          },
+          {
+            "who": "narration",
+            "src": "/folk/brothers/seg-p12-2.mp3",
+            "text": "라 불렀답니다.\n오늘 밤 보름달을 보면 그 논둑길을 떠올려 보세요."
+          }
+        ]
+      }
+    ]
   }
 ]
