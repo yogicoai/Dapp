@@ -1054,7 +1054,8 @@ export default function CreatePage() {
   // 기본 선택을 두지 않는다("") — 부모가 직접 골라 들어보고 정하게 유도한다.
   const [narratorVoice, setNarratorVoice] = useState<string>("");
   // 제작할 때 한 번만 고르고 책에 고정한다. 뷰어에서 바꾸지 않아 TTS 재합성을 막는다.
-  const [narrationStyle, setNarrationStyle] = useState<NarrationStyle>("natural");
+  // 낭독 느낌은 늘 '자연스럽게' — 고르는 칸은 없앴다(사장님 결정, 2026-08-28).
+  const narrationStyle: NarrationStyle = "natural";
   /*
    * 이 계정에 등록된 엄마·아빠 목소리. 동화를 다 만든 뒤 앞 쪽 낭독을 미리 구울 때,
    * 부모 목소리가 있으면 그게 기본 성우가 되므로 그것으로 구워야 캐시가 맞는다.
@@ -1064,7 +1065,8 @@ export default function CreatePage() {
     loadParentVoices().then(setParentVoices).catch(() => {});
   }, []);
   // 이야기 길이 — 쪽수가 적어도 각 쪽을 더 길고 풍부하게 연출할지.
-  const [longerStory, setLongerStory] = useState(false);
+  // 이야기 길이는 늘 '넉넉하게' — 고르는 칸은 없앴다(사장님 결정, 2026-08-28). 6쪽 고정과 짝.
+  const longerStory = true;
   // 성우를 고르면 미리 구운 샘플(진짜 그 성우 목소리, static mp3)을 들려준다 — 크레딧 0.
   const narratorPreviewRef = useRef<HTMLAudioElement | null>(null);
   async function pickNarrator(id: string) {
@@ -1305,8 +1307,8 @@ export default function CreatePage() {
     setArtStyle(ART_STYLES.some((style) => style.id === draft.artStyle) ? draft.artStyle : ART_STYLES[0].id);
     // 비율은 4:3 고정 — 초안의 값은 쓰지 않는다.
     setNarratorVoice(draft.narratorVoice);
-    setNarrationStyle(draft.narrationStyle ?? "natural");
-    setLongerStory(draft.longerStory);
+    // 낭독 느낌은 늘 '자연스럽게' — 초안 값은 쓰지 않는다.
+    // 길이는 늘 '넉넉하게' — 초안 값은 쓰지 않는다.
     // 예전 초안에 다른 쪽수가 남아 있어도 고정값으로 — 값이 책마다 달라지지 않게.
     setPageCount(FIXED_PAGE_COUNT);
     setOutline(draft.outline);
@@ -2961,82 +2963,8 @@ export default function CreatePage() {
                 </p>
               </div>
 
-              {/* 이야기 길이 — 쪽수(장면 수)와 별개로, 각 쪽을 얼마나 길게 채울지.
-                  장면 수가 적어도 "넉넉하게"를 고르면 각 쪽 분량이 늘어 이야기가 풍성해진다. */}
-              <div>
-                <p className="mb-1.5 text-xs font-bold text-neutral-400">이야기 길이</p>
-                <div className="flex gap-2">
-                  {[
-                    { v: false, label: "간결하게", desc: "나이에 맞는 기본 분량" },
-                    { v: true, label: "넉넉하게", desc: "각 쪽을 더 길고 풍부하게" },
-                  ].map((o) => {
-                    const active = longerStory === o.v;
-                    return (
-                      <button
-                        key={o.label}
-                        type="button"
-                        onClick={() => setLongerStory(o.v)}
-                        aria-pressed={active}
-                        style={active ? { background: accent } : undefined}
-                        className={`flex flex-1 flex-col items-center gap-0.5 rounded-2xl py-2.5 font-bold transition ${
-                          active
-                            ? "text-white shadow"
-                            : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                        }`}
-                      >
-                        <span className="text-sm">{o.label}</span>
-                        <span className={`text-[10px] font-medium ${active ? "text-white/85" : "text-neutral-400"}`}>
-                          {o.desc}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="mt-1.5 text-[11px] font-medium text-neutral-400">
-                  장면 수가 적어도 ‘넉넉하게’를 고르면 이야기를 더 길게 들려줘요.
-                </p>
-              </div>
-
-              {/* 낭독 느낌 — 제작할 때 한 번 고른 뒤 페이지별 음성 지시에 박아 둔다.
-                  완성된 책에서는 변경 UI를 제공하지 않아 같은 본문을 다른 톤으로 재합성하지 않는다. */}
-              <div>
-                <p className="mb-1.5 text-xs font-bold text-neutral-400">
-                  낭독 느낌 <span className="font-medium">(제작 후 고정)</span>
-                </p>
-                <div className="grid grid-cols-3 gap-2">
-                  {(
-                    [
-                      { id: "cozy", icon: "🌙", label: "포근하게", desc: "느리고 편안하게" },
-                      { id: "natural", icon: "📖", label: "자연스럽게", desc: "차분한 기본 낭독" },
-                      { id: "lively", icon: "✨", label: "조금 신나게", desc: "리듬만 살짝 경쾌하게" },
-                    ] as const
-                  ).map((option) => {
-                    const active = narrationStyle === option.id;
-                    return (
-                      <button
-                        key={option.id}
-                        type="button"
-                        onClick={() => setNarrationStyle(option.id)}
-                        aria-pressed={active}
-                        style={active ? { borderColor: accent, background: accentSoft } : undefined}
-                        className={`flex min-w-0 flex-col items-center gap-0.5 rounded-2xl border-[3px] px-2 py-3 text-center transition ${
-                          active
-                            ? "shadow-sm"
-                            : "border-transparent bg-neutral-100 hover:bg-neutral-200"
-                        }`}
-                      >
-                        <span className="text-xl" aria-hidden>{option.icon}</span>
-                        <span className="break-keep text-xs font-extrabold text-neutral-700">{option.label}</span>
-                        <span className="break-keep text-[10px] font-medium leading-tight text-neutral-400">{option.desc}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="mt-1.5 break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
-                  처음 만든 음성을 이 기기에 저장해 같은 브라우저에서 다시 들을 때는 추가
-                  토큰이 들지 않아요. 부모 목소리는 원래 음색을 지키기 위해 자연스럽게 읽어요.
-                </p>
-              </div>
+              {/* 이야기 길이(늘 넉넉하게)·낭독 느낌(늘 자연스럽게) 선택 칸은 없앴다 —
+                  사장님 결정(2026-08-28). 고를 것이 적을수록 만들기가 빠르다. */}
 
               {/* 읽어줄 성우 — 만든 동화에 박아 저장한다(book.narrator). 뷰어가 이 성우로
                   읽어준다. 실시간 합성이 켜지면 만들 때 한 번 구워 재생은 늘 무료가 된다. */}
