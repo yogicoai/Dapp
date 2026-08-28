@@ -147,15 +147,33 @@ export function trimSilence(x: Float32Array, sampleRate: number): Float32Array {
   first = Math.max(0, first - pad);
   last = Math.min(loud.length - 1, last + pad);
 
-  const maxGap = Math.ceil(0.8 / 0.02); // 0.8초 넘는 침묵은
-  const keepGap = Math.ceil(0.3 / 0.02); // 0.3초로 줄인다
+  /*
+   * 0.8초 넘는 침묵만 0.5초로 줄인다. 그보다 짧은 쉼은 손대지 않는다.
+   *
+   * 예전 코드는 조건 두 개가 모두 `continue`라 **0.3초 넘는 모든 쉼**을 0.3초로 잘랐다.
+   * 문장 끝의 자연스러운 숨(0.5~0.8초)이 잘려 나가, 클론이 숨 쉴 틈 없이 급하게 읽는
+   * 쪽으로 배웠다. 침묵 구간의 전체 길이를 먼저 재고 나서 자를지 정한다.
+   */
+  const maxGap = Math.ceil(0.8 / 0.02); // 이보다 긴 침묵만
+  const keepGap = Math.ceil(0.5 / 0.02); // 이만큼 남기고 자른다
+  // 각 조용한 창이 속한 침묵 구간의 길이(창 수)
+  const runLen = new Int32Array(loud.length);
+  for (let b = first; b <= last; ) {
+    if (loud[b]) {
+      b++;
+      continue;
+    }
+    let e = b;
+    while (e <= last && !loud[e]) e++;
+    for (let k = b; k < e; k++) runLen[k] = e - b;
+    b = e;
+  }
   const out: number[] = [];
   let gap = 0;
   for (let b = first; b <= last; b++) {
     if (!loud[b]) {
       gap++;
-      if (gap > maxGap) continue;
-      if (gap > keepGap) continue;
+      if (runLen[b] > maxGap && gap > keepGap) continue;
     } else {
       gap = 0;
     }
@@ -164,6 +182,254 @@ export function trimSilence(x: Float32Array, sampleRate: number): Float32Array {
     for (let j = s; j < e; j++) out.push(x[j]);
   }
   return Float32Array.from(out);
+}
+
+/**
+ * 하이패스(2차 버터워스 바이쿼드) 두 번, 기본 90Hz.
+ *
+ * 예전엔 1차 80Hz 하나였다 — 6dB/옥타브라 60Hz 전원 험이 겨우 -4dB, 120·180Hz 배음은
+ * 거의 그대로 지나갔다. 4차(24dB/옥타브)면 60Hz가 -15dB 아래로 내려가고, 목소리
+ * 기본음(남자 100Hz~)은 90Hz 위라 손대지 않는다.
+ */
+export function highPass(x: Float32Array, sampleRate: number, cutoff = 90): Float32Array {
+  const w0 = (2 * Math.PI * cutoff) / sampleRate;
+  const cosw = Math.cos(w0);
+  const alpha = Math.sin(w0) / (2 * Math.SQRT1_2);
+  const a0 = 1 + alpha;
+  const b0 = (1 + cosw) / 2 / a0;
+  const b1 = -(1 + cosw) / a0;
+  const b2 = b0;
+  const a1 = (-2 * cosw) / a0;
+  const a2 = (1 - alpha) / a0;
+  const once = (input: Float32Array): Float32Array => {
+    const out = new Float32Array(input.length);
+    let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+    for (let i = 0; i < input.length; i++) {
+      const v = input[i];
+      const y = b0 * v + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+      x2 = x1; x1 = v; y2 = y1; y1 = y;
+      out[i] = y;
+    }
+    return out;
+  };
+  return once(once(x));
+}
+
+/**
+ * 부드러운 리미터 — 0.8까지는 그대로, 그 위는 서서히 눌러 0.95를 넘지 않게.
+ * 딱 자르면(클리핑) 그 자체가 잡음이 된다.
+ */
+export function softLimit(x: Float32Array, knee = 0.8, ceiling = 0.95): Float32Array {
+  const room = ceiling - knee;
+  const y = new Float32Array(x.length);
+  for (let i = 0; i < x.length; i++) {
+    const v = x[i];
+    const a = Math.abs(v);
+    y[i] = a <= knee ? v : Math.sign(v) * (knee + room * Math.tanh((a - knee) / room));
+  }
+  return y;
+}
+
+/**
+ * 말소리 기준으로 크기를 맞춘다.
+ *
+ * 예전엔 '가장 큰 한 점'을 0.9로 끌어올렸다. 'ㅍ·ㅂ' 파열음이 마이크를 한 번 치면
+ * 그 점이 최대값이 되어 전체가 작게 남고, 두 문장을 다른 거리에서 읽으면 크기가 서로
+ * 달랐다. 이제 **말하는 창들의 평균 크기(RMS)** 를 목표값에 맞춘다 — 조용한 구간은
+ * 평균에서 빼야 작은 녹음을 과하게 키우지 않는다. 큰 녹음은 줄이고, 튀는 점은 리미터가
+ * 부드럽게 받는다.
+ *
+ * @param targetRms 말소리 평균 크기 목표. 0.1 = -20dBFS. 실제 낭독 파일이 그쯤이었다.
+ */
+export function normalizeLoudness(x: Float32Array, sampleRate: number, targetRms = 0.1): Float32Array {
+  const win = Math.max(1, Math.floor(sampleRate * 0.02));
+  const rms: number[] = [];
+  for (let i = 0; i < x.length; i += win) {
+    let s = 0;
+    const end = Math.min(x.length, i + win);
+    for (let j = i; j < end; j++) s += x[j] * x[j];
+    rms.push(Math.sqrt(s / (end - i)));
+  }
+  const peak = rms.reduce((a, b) => (b > a ? b : a), 0);
+  const threshold = Math.max(0.002, peak * 0.08);
+  // 말하는 창들의 **중앙값** — 평균은 파열음 한 점이 든 창 하나에도 끌려간다.
+  const speaking = rms.filter((v) => v > threshold).sort((a, b) => a - b);
+  if (speaking.length === 0) return x;
+  const speechRms = speaking[speaking.length >> 1];
+  if (speechRms < 1e-4) return x;
+  // 12배 넘게 키우면 바닥 잡음만 커진다 · 4배 넘게 줄일 일은 없다(그건 깨진 녹음이다).
+  const gain = Math.min(12, Math.max(0.25, targetRms / speechRms));
+  const y = new Float32Array(x.length);
+  for (let i = 0; i < x.length; i++) y[i] = x[i] * gain;
+  return softLimit(y);
+}
+
+/* ── 잡음 빼기(스펙트럼 감산) ──────────────────────────────────
+ * 게이트는 말과 말 **사이**만 누른다. 선풍기·에어컨·냉장고의 "쉬이—" 하는 넓은 잡음은
+ * 말소리와 함께 그대로 들어가고, 클로닝 모델은 그것까지 '이 사람 목소리의 결'로 배운다.
+ * 녹음 전에 2초 재 둔 방 소음을 '잡음 지문'으로 삼아, 소리를 주파수별로 나눠 그
+ * 지문만큼 빼 준다. 조용한 방(지문이 아주 작음)에서는 아무 일도 하지 않는다.
+ */
+
+/** 방 소음의 주파수별 세기 — 녹음 전에 잰 2초에서 만든다. */
+export type NoiseProfile = {
+  sampleRate: number;
+  /** 한 조각의 길이(표본 수, 2의 거듭제곱). */
+  frame: number;
+  /** 조각당 주파수별 평균 파워(|N|²). 길이 frame/2+1. */
+  power: Float64Array;
+  /** 방 소음의 전체 RMS — 아주 조용하면 빼기를 건너뛰는 기준. */
+  rms: number;
+};
+
+/** 표본율에 맞는 조각 길이 — 48kHz면 1024(약 21ms). */
+function frameSizeFor(sampleRate: number): number {
+  return sampleRate >= 32000 ? 1024 : 512;
+}
+
+function hann(n: number): Float64Array {
+  const w = new Float64Array(n);
+  for (let i = 0; i < n; i++) w[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / n);
+  return w;
+}
+
+/** 제자리 복소 FFT(반지름 2). 길이는 2의 거듭제곱이어야 한다. */
+function fft(re: Float64Array, im: Float64Array, inverse: boolean): void {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) {
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) {
+      const tr = re[i]; re[i] = re[j]; re[j] = tr;
+      const ti = im[i]; im[i] = im[j]; im[j] = ti;
+    }
+  }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = ((inverse ? 1 : -1) * 2 * Math.PI) / len;
+    const wr = Math.cos(ang);
+    const wi = Math.sin(ang);
+    const half = len >> 1;
+    for (let i = 0; i < n; i += len) {
+      let cr = 1, ci = 0;
+      for (let j = 0; j < half; j++) {
+        const a = i + j, b = a + half;
+        const vr = re[b] * cr - im[b] * ci;
+        const vi = re[b] * ci + im[b] * cr;
+        re[b] = re[a] - vr; im[b] = im[a] - vi;
+        re[a] += vr; im[a] += vi;
+        const ncr = cr * wr - ci * wi;
+        ci = cr * wi + ci * wr;
+        cr = ncr;
+      }
+    }
+  }
+  if (inverse) {
+    for (let i = 0; i < n; i++) { re[i] /= n; im[i] /= n; }
+  }
+}
+
+/**
+ * 방 소음 조각들 → 잡음 지문.
+ *
+ * 조각은 말하지 않을 때 잰 것이어야 한다(녹음 전 2초). 조각 하나가 한 프레임보다
+ * 짧으면 건너뛰고, 쓸 만한 프레임이 하나도 없으면 null.
+ */
+export function buildNoiseProfile(chunks: Float32Array[], sampleRate: number): NoiseProfile | null {
+  const frame = frameSizeFor(sampleRate);
+  const hop = frame >> 1;
+  const w = hann(frame);
+  const bins = (frame >> 1) + 1;
+  const power = new Float64Array(bins);
+  const re = new Float64Array(frame);
+  const im = new Float64Array(frame);
+  let frames = 0;
+  let sq = 0;
+  let count = 0;
+  for (const c of chunks) {
+    for (let i = 0; i < c.length; i++) sq += c[i] * c[i];
+    count += c.length;
+    for (let s = 0; s + frame <= c.length; s += hop) {
+      for (let i = 0; i < frame; i++) { re[i] = c[s + i] * w[i]; im[i] = 0; }
+      fft(re, im, false);
+      for (let k = 0; k < bins; k++) power[k] += re[k] * re[k] + im[k] * im[k];
+      frames++;
+    }
+  }
+  if (frames === 0) return null;
+  for (let k = 0; k < bins; k++) power[k] /= frames;
+  return { sampleRate, frame, power, rms: count > 0 ? Math.sqrt(sq / count) : 0 };
+}
+
+/** 아주 조용한 방 — 이 아래면 잡음 빼기를 하지 않는다(안 건드리는 게 늘 안전하다). */
+export const DENOISE_MIN_ROOM_RMS = 0.0025;
+
+/**
+ * 잡음 지문만큼 빼기.
+ *
+ * 소리를 21ms 조각(절반씩 겹침, 한 창)으로 나눠 주파수별로 보고, 그 자리의 잡음
+ * 파워(지문 × alpha)를 뺀 만큼만 남긴다. 다 빼지 않고 `floor`(기본 0.15 = 약 -16dB)
+ * 까지만 누른다 — 끝까지 빼면 '뮤지컬 노이즈'라는 반짝이는 잡음이 새로 생긴다.
+ * 조각 사이의 흔들림은 닫힐 때만 천천히 하게 해서(열릴 땐 즉시) 말 첫소리를 물지 않는다.
+ *
+ * 지문의 표본율이 다르면 주파수 축을 맞춰 옮겨 쓴다.
+ */
+export function denoise(
+  x: Float32Array,
+  sampleRate: number,
+  profile: NoiseProfile | null,
+  opts: { alpha?: number; floor?: number } = {},
+): Float32Array {
+  if (!profile || !(profile.rms >= DENOISE_MIN_ROOM_RMS)) return x;
+  const alpha = opts.alpha ?? 1.5;
+  const floor = opts.floor ?? 0.15;
+  const frame = frameSizeFor(sampleRate);
+  const hop = frame >> 1;
+  const bins = hop + 1;
+  const w = hann(frame);
+
+  // 지문을 이 표본율·조각 길이의 주파수 축으로 옮긴다.
+  const noise = new Float64Array(bins);
+  const pBins = (profile.frame >> 1) + 1;
+  for (let k = 0; k < bins; k++) {
+    const hz = (k * sampleRate) / frame;
+    const pos = (hz * profile.frame) / profile.sampleRate;
+    const i0 = Math.min(pBins - 1, Math.floor(pos));
+    const i1 = Math.min(pBins - 1, i0 + 1);
+    const t = pos - i0;
+    // 파워는 조각 길이에 비례하므로 길이 비율만큼 맞춘다.
+    noise[k] = ((profile.power[i0] * (1 - t) + profile.power[i1] * t) * frame) / profile.frame;
+  }
+
+  const y = new Float32Array(x.length);
+  const re = new Float64Array(frame);
+  const im = new Float64Array(frame);
+  const prevGain = new Float64Array(bins).fill(1);
+  const floor2 = floor * floor;
+  for (let s = -hop; s < x.length; s += hop) {
+    for (let i = 0; i < frame; i++) {
+      const idx = s + i;
+      re[i] = idx >= 0 && idx < x.length ? x[idx] * w[i] : 0;
+      im[i] = 0;
+    }
+    fft(re, im, false);
+    for (let k = 0; k < bins; k++) {
+      const p = re[k] * re[k] + im[k] * im[k];
+      let g = p > 0 ? Math.sqrt(Math.max(floor2, 1 - (alpha * noise[k]) / p)) : floor;
+      // 열릴 땐 바로, 닫힐 땐 서서히 — 조각마다 깜빡이는 걸 막는다.
+      g = Math.max(g, prevGain[k] * 0.6);
+      prevGain[k] = g;
+      re[k] *= g; im[k] *= g;
+      if (k > 0 && k < hop) { re[frame - k] *= g; im[frame - k] *= g; }
+    }
+    fft(re, im, true);
+    // 분석 창(한)이 절반 겹침에서 합이 1이라 그대로 겹쳐 더하면 된다.
+    for (let i = 0; i < frame; i++) {
+      const idx = s + i;
+      if (idx >= 0 && idx < x.length) y[idx] += re[i];
+    }
+  }
+  return y;
 }
 
 /**

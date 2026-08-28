@@ -9,7 +9,11 @@
 import {
   CLONE_MAX_SECONDS,
   CLONE_SAMPLE_RATE,
+  buildNoiseProfile,
   cloneWavBytes,
+  denoise,
+  highPass,
+  normalizeLoudness,
   resample,
   noiseGate,
   trimSilence,
@@ -92,35 +96,20 @@ async function currentUserId(): Promise<string | null> {
  * 그래서 보내기 전에 아래를 손본다 — 비용 0, 전부 브라우저 안에서 끝난다.
  */
 
-/** 저주파 웅웅거림(에어컨·냉장고·차 소리) 제거. 1차 하이패스, 약 80Hz. */
-function highPass(x: Float32Array, sampleRate: number): Float32Array {
-  const rc = 1 / (2 * Math.PI * 80);
-  const dt = 1 / sampleRate;
-  const a = rc / (rc + dt);
-  const y = new Float32Array(x.length);
-  for (let i = 1; i < x.length; i++) y[i] = a * (y[i - 1] + x[i] - x[i - 1]);
-  return y;
-}
-
-/** 최대 크기를 0.9까지 끌어올린다. 작게 녹음된 목소리를 살리는 가장 큰 한 방. */
-function normalize(x: Float32Array): Float32Array {
-  let peak = 0;
-  for (const s of x) {
-    const a = Math.abs(s);
-    if (a > peak) peak = a;
-  }
-  if (peak < 1e-4) return x;
-  // 너무 작은 녹음을 무한정 키우면 잡음만 커진다 — 12배까지만.
-  const gain = Math.min(0.9 / peak, 12);
-  if (gain <= 1.01) return x;
-  const y = new Float32Array(x.length);
-  for (let i = 0; i < x.length; i++) y[i] = Math.max(-1, Math.min(1, x[i] * gain));
-  return y;
-}
-
 const CLONE_WAV_MAX_BYTES = cloneWavBytes(CLONE_MAX_SECONDS);
 
-/** 표본율 변환(선형 보간). 목소리 재료로는 이 정도면 충분하다. */
+/**
+ * 녹음 하나에 딸린 방 소음 — 녹음 직전 2초 동안 말하지 않고 잰 것.
+ *
+ * `rms`는 게이트 문턱, `chunks`는 잡음 지문(주파수별 세기)의 재료다.
+ * 문장마다 따로 들고 있어야 한다: 1번 문장은 조용할 때, 2번은 냉장고가 돌 때 읽었으면
+ * 각자 제 소음으로 손질해야지, 마지막에 잰 값 하나를 둘 다에 걸면 한쪽이 틀린다.
+ */
+export type TakeNoise = {
+  rms: number;
+  chunks: Float32Array[];
+  sampleRate: number;
+};
 
 
 /** AudioBuffer → 모노 Float32 (여러 채널이면 섞는다). */
@@ -142,34 +131,54 @@ function toMono(buffer: AudioBuffer): Float32Array {
 /**
  * 녹음들을 클로닝용 WAV 한 덩어리로.
  *
- * @param roomNoise 녹음 전에 잰 방 소음(RMS). 넘기면 말 사이 잡음을 눌러 준다.
- *                  안 넘기면 그 단계만 건너뛴다 — 예전 호출부도 그대로 돈다.
+ * @param noise 녹음마다의 방 소음. 숫자 하나(RMS)를 주면 예전처럼 게이트만 걸고,
+ *              녹음별 배열(TakeNoise)을 주면 잡음 지문으로 빼기까지 한다.
+ *              없으면(0·null) 손질 중 소음 관련 단계만 건너뛴다.
  */
-export async function prepareVoiceWav(blobs: Blob[], roomNoise = 0): Promise<Blob> {
+export async function prepareVoiceWav(
+  blobs: Blob[],
+  noise: number | (TakeNoise | number | null | undefined)[] = 0,
+): Promise<Blob> {
   const AC =
     window.AudioContext ??
     (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
   const ctx = new AC();
   try {
     const pieces: Float32Array[] = [];
-    for (const b of blobs) {
+    for (let i = 0; i < blobs.length; i++) {
+      const b = blobs[i];
+      const own = Array.isArray(noise) ? noise[i] : noise;
+      const roomRms = typeof own === "number" ? own : (own?.rms ?? 0);
       // 조각마다 따로 감싼다 — 예전엔 한 덩어리 루프라 2번 문장이 안 열리면
       // 잘 읽은 1번 문장까지 함께 날아갔다. 하나가 안 되면 그것만 건너뛴다.
       try {
         const audio = await ctx.decodeAudioData(await b.arrayBuffer());
-        // 다듬기는 원본 표본율에서 하고, 마지막에 16kHz로 낮춰 보낸다(용량 절약).
+        const rate = audio.sampleRate;
         /*
-         * 낮은 웅웅거림을 걷어내고 → 말 사이 잡음을 누르고 → 앞뒤 무음을 자른다.
-         *
-         * 게이트를 하이패스 뒤에 두는 이유: 에어컨 같은 저주파가 남아 있으면 그것이
-         * 세기에 잡혀 '말하는 중'으로 오판된다. 먼저 걷어내야 문턱이 제대로 먹는다.
-         * 자르기(trimSilence) 앞에 두는 이유: 눌러 놓아야 어디가 무음인지 더 잘 보인다.
+         * 순서가 곧 품질이다:
+         *   하이패스(90Hz, 4차) — 전원 험·에어컨 웅웅거림을 먼저 걷어낸다. 남아 있으면
+         *     아래 단계들이 그걸 '소리'로 오판한다.
+         *   잡음 빼기 — 녹음 전 2초 방 소음의 지문만큼 주파수별로 뺀다. 말하는 동안
+         *     깔린 "쉬이—"가 여기서 빠진다(게이트는 말 사이만 누르므로 이게 없으면
+         *     그 잡음까지 목소리의 결로 배운다). 지문도 같은 하이패스를 거쳐야 짝이 맞는다.
+         *   게이트 — 말 사이의 남은 잔향·바스락거림을 누른다.
+         *   침묵 정리 — 앞뒤를 자르고 긴 쉼만 줄인다(짧은 쉼은 둔다).
+         *   24kHz — 접힘 없이 낮춘다.
+         *   크기 맞추기 — 문장마다 말소리 평균을 -20dBFS로. 두 문장을 다른 거리에서
+         *     읽어도 같은 크기로 들어가고, 튀는 점은 리미터가 받는다.
          */
+        const profile =
+          own && typeof own !== "number"
+            ? buildNoiseProfile(
+                own.chunks.map((c) => highPass(c, own.sampleRate)),
+                own.sampleRate,
+              )
+            : null;
         const cleaned = trimSilence(
-          noiseGate(highPass(toMono(audio), audio.sampleRate), audio.sampleRate, roomNoise),
-          audio.sampleRate,
+          noiseGate(denoise(highPass(toMono(audio), rate), rate, profile), rate, roomRms),
+          rate,
         );
-        pieces.push(resample(cleaned, audio.sampleRate, CLONE_SAMPLE_RATE));
+        pieces.push(normalizeLoudness(resample(cleaned, rate, CLONE_SAMPLE_RATE), CLONE_SAMPLE_RATE));
       } catch (e) {
         console.warn("[prepareVoiceWav] 녹음 하나를 열지 못했어요 — 건너뜁니다", e);
       }
@@ -192,7 +201,9 @@ export async function prepareVoiceWav(blobs: Blob[], roomNoise = 0): Promise<Blo
       merged.set(p, at);
       at += p.length + (i < capped.length - 1 ? gap : 0);
     });
-    return encodeWav(normalize(merged), CLONE_SAMPLE_RATE);
+    // 조각마다 이미 크기를 맞추고 리미터를 거쳤으므로 전체 정규화는 하지 않는다 —
+    // 여기서 한 번 더 키우면 문장 사이 균형이 다시 깨진다.
+    return encodeWav(merged, CLONE_SAMPLE_RATE);
   } finally {
     void ctx.close();
   }

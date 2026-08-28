@@ -9,7 +9,7 @@ import {
   loadCustomVoices,
   type CustomVoice,
 } from "@/lib/voices";
-import { prepareVoiceWav } from "@/lib/parent-voice";
+import { prepareVoiceWav, type TakeNoise } from "@/lib/parent-voice";
 
 type Phase = "idle" | "checking" | "recording" | "preview" | "saving";
 
@@ -60,8 +60,33 @@ const LEVEL_FULL = 0.15; // 막대가 가득 차는 기준값
 type VerdictLevel = "ok" | "warn" | "block";
 type Verdict = { level: VerdictLevel; title: string; detail: string };
 
-/** 문장 한 자리에 담긴 녹음. */
-type Take = { blob: Blob; url: string; verdict: Verdict | null };
+/** 문장 한 자리에 담긴 녹음 — 그 녹음 직전에 잰 방 소음도 함께 든다. */
+type Take = { blob: Blob; url: string; verdict: Verdict | null; noise: TakeNoise | null };
+
+/**
+ * 녹음 형식. 브라우저 기본값은 비트레이트를 정하지 않아 낮게 잡히는 경우가 있다 —
+ * 압축이 세면 치찰음·숨소리의 결이 먼저 뭉개지고, 그게 곧 '덜 닮는' 원인이다.
+ * 되는 형식 가운데 첫 번째를 쓰고 128kbps를 명시한다. 못 만들면 기본값으로 돌아간다.
+ */
+const RECORDER_MIME_CANDIDATES = [
+  "audio/webm;codecs=opus",
+  "audio/webm",
+  "audio/mp4",
+  "audio/ogg;codecs=opus",
+];
+function createRecorder(stream: MediaStream): MediaRecorder {
+  const mimeType = RECORDER_MIME_CANDIDATES.find(
+    (m) => typeof MediaRecorder.isTypeSupported === "function" && MediaRecorder.isTypeSupported(m),
+  );
+  try {
+    return new MediaRecorder(stream, {
+      ...(mimeType ? { mimeType } : {}),
+      audioBitsPerSecond: 128_000,
+    });
+  } catch {
+    return new MediaRecorder(stream);
+  }
+}
 
 /**
  * 엄마·아빠 목소리 녹음.
@@ -112,14 +137,17 @@ export function VoiceRecorder({
   // 마이크 권한을 기다리는 사이 닫히면, 뒤늦게 온 스트림을 바로 꺼야 한다.
   const closedRef = useRef(false);
   // 소음 검사에 연달아 걸린 횟수 — 두 번 걸리면 그냥 진행할 수 있게 열어 준다.
+  // 판단은 ref(즉시), 화면은 state(렌더)로 — 렌더 중에 ref를 읽지 않기 위해 둘 다 둔다.
   const noiseRejectsRef = useRef(0);
+  const [noiseRejects, setNoiseRejects] = useState(0);
   /*
-   * 마지막으로 잰 방 소음. 저장할 때 노이즈 게이트의 문턱이 된다.
+   * 지금 녹음 직전에 잰 방 소음 — 녹음이 끝나면 그 자리(Take)에 함께 담긴다.
    *
    * 브라우저 소음 제거(noiseSuppression)는 일부러 꺼 둔다 — 사람 목소리까지 깎아서
-   * 클론이 덜 닮아진다. 대신 이 값으로 '말할 때는 손대지 않고 말 사이만' 누른다.
+   * 클론이 덜 닮아진다. 대신 이 2초를 잡음 지문으로 삼아 저장할 때 주파수별로 빼고,
+   * 말 사이는 게이트로 누른다. 소음 검사를 건너뛴 녹음은 null — 소음 단계를 건너뛴다.
    */
-  const roomNoiseRef = useRef(0);
+  const roomNoiseRef = useRef<TakeNoise | null>(null);
   const [skipNoiseCheck, setSkipNoiseCheck] = useState(false);
   /**
    * 녹음 조작(소리 막대·시간·끝내기) 자리.
@@ -178,8 +206,11 @@ export function VoiceRecorder({
     };
   }, []);
 
-  /** 녹음 전에 2초간 말하지 않은 방의 평균 소음을 잰다. */
-  async function measureRoomNoise(stream: MediaStream): Promise<number> {
+  /**
+   * 녹음 전에 2초간 말하지 않은 방의 소음을 잰다.
+   * 평균 크기(RMS)뿐 아니라 소리 조각 자체를 모아 둔다 — 저장할 때 잡음 지문이 된다.
+   */
+  async function measureRoomNoise(stream: MediaStream): Promise<TakeNoise> {
     const AC =
       window.AudioContext ??
       (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -189,6 +220,7 @@ export function VoiceRecorder({
       analyser.fftSize = 2048;
       ctx.createMediaStreamSource(stream).connect(analyser);
       const buf = new Float32Array(analyser.fftSize);
+      const chunks: Float32Array[] = [];
       let squareSum = 0;
       let sampleCount = 0;
       const startedAt = performance.now();
@@ -197,8 +229,13 @@ export function VoiceRecorder({
         analyser.getFloatTimeDomainData(buf);
         for (const sample of buf) squareSum += sample * sample;
         sampleCount += buf.length;
+        chunks.push(Float32Array.from(buf));
       }
-      return sampleCount > 0 ? Math.sqrt(squareSum / sampleCount) : 0;
+      return {
+        rms: sampleCount > 0 ? Math.sqrt(squareSum / sampleCount) : 0,
+        chunks,
+        sampleRate: ctx.sampleRate,
+      };
     } finally {
       void ctx.close().catch(() => {});
     }
@@ -206,7 +243,9 @@ export function VoiceRecorder({
 
   // 화면을 떠날 때 미리듣기 URL을 모두 해제한다(자리별로 하나씩 들고 있다).
   const takesRef = useRef(takes);
-  takesRef.current = takes;
+  useEffect(() => {
+    takesRef.current = takes;
+  }, [takes]);
   useEffect(
     () => () => {
       for (const take of takesRef.current) {
@@ -259,6 +298,7 @@ export function VoiceRecorder({
         return;
       }
       // 소음 검사에 두 번 연달아 걸린 사람은 건너뛸 수 있다(아래 skipNoiseCheck).
+      roomNoiseRef.current = null;
       if (!skipNoiseCheck) {
         setPhase("checking");
         const roomNoise = await measureRoomNoise(stream);
@@ -267,14 +307,16 @@ export function VoiceRecorder({
           stream.getTracks().forEach((t) => t.stop());
           return;
         }
-        if (roomNoise > NOISE_RMS_MAX) {
+        if (roomNoise.rms > NOISE_RMS_MAX) {
           stream.getTracks().forEach((t) => t.stop());
           streamRef.current = null;
-          noiseRejectsRef.current++;
+          const rejects = noiseRejectsRef.current + 1;
+          noiseRejectsRef.current = rejects;
+          setNoiseRejects(rejects);
           // 읽은 게 있으면 첫 화면으로 보내지 않는다 — 거기 있는 버튼이 전부를 지웠다.
           setPhase(hasAnyTake() ? "preview" : "idle");
           setError(
-            noiseRejectsRef.current >= 2
+            rejects >= 2
               ? "주변 소리가 계속 들려요. 조용한 곳이 없다면 아래 '그래도 녹음할게요'로 진행할 수 있어요."
               : "주변 소리가 크게 들려요. TV·음악·선풍기·에어컨을 끄고 다시 시도해주세요.",
           );
@@ -282,20 +324,23 @@ export function VoiceRecorder({
         }
       }
       noiseRejectsRef.current = 0;
-      const rec = new MediaRecorder(stream);
+      setNoiseRejects(0);
+      const rec = createRecorder(stream);
       chunksRef.current = [];
       rec.ondataavailable = (e) => chunksRef.current.push(e.data);
       rec.onstop = () => {
         stopMeter();
         const blob = new Blob(chunksRef.current, { type: rec.mimeType });
         const url = URL.createObjectURL(blob);
+        // 이 녹음 직전에 잰 방 소음 — 이 자리에만 붙는다.
+        const noise = roomNoiseRef.current;
         // 판정을 알기 전에 자리에 넣는다. 넣은 녹음은 절대 지우지 않는다 —
         // 판정이 나빠도 사람이 직접 다시 읽기 전까지는 남아 있어야 한다.
         setTakes((prev) =>
           prev.map((take, i) => {
             if (i !== index) return take;
             if (take) URL.revokeObjectURL(take.url); // 같은 자리를 다시 읽었으면 옛 URL 정리
-            return { blob, url, verdict: null };
+            return { blob, url, verdict: null, noise };
           }),
         );
         /*
@@ -307,7 +352,7 @@ export function VoiceRecorder({
          * 읽는 일이 생긴다. 손질에 실패하면 원본을 그대로 둔다 — 들어보기가 막히느니
          * 손질 전 소리라도 들리는 편이 낫다.
          */
-        void prepareVoiceWav([blob], roomNoiseRef.current)
+        void prepareVoiceWav([blob], [noise])
           .then((clean) => {
             const cleanUrl = URL.createObjectURL(clean);
             setTakes((prev) =>
@@ -478,13 +523,13 @@ export function VoiceRecorder({
     }
     setPhase("saving");
     setError("");
-    // 읽은 것들을 문장 순서대로 이어 붙이고, 소리 크기·침묵·저주파 잡음까지 다듬어 저장한다.
-    // 여기서 잘 다듬을수록 복제된 목소리가 더 닮는다.
+    // 읽은 것들을 문장 순서대로 이어 붙이고, 잡음·크기·침묵을 다듬어 저장한다.
+    // 소음은 문장마다 제 것을 쓴다 — 여기서 잘 다듬을수록 복제된 목소리가 더 닮는다.
     let audio: Blob;
     try {
       audio = await prepareVoiceWav(
         filled.map((take) => take.blob),
-        roomNoiseRef.current,
+        filled.map((take) => take.noise),
       );
     } catch {
       // 녹음은 그대로 둔다 — 여기서 자리를 비우면 애써 읽은 걸 잃는다.
@@ -829,7 +874,7 @@ export function VoiceRecorder({
         <div className="flex flex-col items-center gap-2">
           <p className="break-keep text-center text-sm font-bold text-red-600">{error}</p>
           {/* 소음 검사에 두 번 걸린 사람에게만 — 조용한 곳이 없는 집이 영영 못 쓰면 안 된다. */}
-          {noiseRejectsRef.current >= 2 && !skipNoiseCheck && (
+          {noiseRejects >= 2 && !skipNoiseCheck && (
             <button
               type="button"
               onClick={() => {
