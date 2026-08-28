@@ -21,6 +21,15 @@ import {
 import { looksToDrawingPrompt } from "@/lib/child-looks";
 import { locationKeyOf } from "@/lib/story-quality";
 import { pickLocationDetail } from "@/lib/scene-edit";
+import {
+  EMPTY_COUNTS,
+  clearDrawProgress,
+  describeDrawCounts,
+  drawProgressKey,
+  loadDrawProgress,
+  saveDrawProgress,
+  type DrawCounts,
+} from "@/lib/draw-progress";
 import { rewriteScene, suggestLocationDetail } from "@/lib/scene-edit";
 import {
   illustrationTokenCost,
@@ -1029,11 +1038,14 @@ export default function CreatePage() {
     }
   }
 
-  const [screenShape, setScreenShape] = useState<"tablet" | "phone">("tablet");
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- 화면 크기는 클라 전용, 마운트 후 판별
-    setScreenShape(window.innerWidth < 700 ? "phone" : "tablet");
-  }, []);
+  /*
+   * 그림 비율은 항상 4:3(가로) — 사장님 결정(2026-08-28).
+   *
+   * 예전엔 만든 기기 폭으로 3:4(폰)·4:3(태블릿)을 갈랐다. 폰으로 만들고 태블릿·TV로
+   * 보면 양옆이 비었고, 제공 책들은 전부 4:3이라 서가에서도 혼자 달라 보였다.
+   * 옛 책은 저장된 shape를 그대로 쓰므로(다시 그리기) 여기만 고정하면 된다.
+   */
+  const screenShape: "tablet" | "phone" = "tablet";
   const mood = deriveAutomaticMood({
     storyMode, emotion, theme, happening, todayEvent, feeling,
     directStory: directMode === "full" ? directText : `${directOpening} ${directDevelopment} ${directCrisis} ${directEnding}`,
@@ -1189,6 +1201,16 @@ export default function CreatePage() {
   const sheetImageRef = useRef<string | null>(null);
   // 장소 시트(장소마다 한 장)도 같이 저장한다 — 다시 그릴 때 같은 곳이 나오게.
   const locationSheetsRef = useRef<LocationSheet[]>([]);
+  /*
+   * 그리기 진행 보관(IndexedDB) — 그리다 나가도 그린 장을 잃지 않게.
+   * 열쇠는 이야기 내용+그림체. 완성해서 저장하면 지운다.
+   */
+  const drawProgressKeyRef = useRef("");
+  /** 이번 책에서 실제로 Gemini를 부른 장수 — 완성 화면에 보여 주고 크레딧 셈의 근거가 된다. */
+  const drawCountsRef = useRef<DrawCounts>({ ...EMPTY_COUNTS });
+  const [drawSummary, setDrawSummary] = useState("");
+  /** 이 대본으로 그리다 만 그림이 몇 장 남아 있는지 — 버튼 글씨에 쓴다. */
+  const [resumablePages, setResumablePages] = useState(0);
 
   // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
   const [confirmMake, setConfirmMake] = useState(false);
@@ -1230,6 +1252,25 @@ export default function CreatePage() {
     return () => window.removeEventListener("pagehide", saveBeforeLeaving);
   }, [draftContent, draftOwner, draftReady, step]);
 
+  /*
+   * 대본 화면에 왔을 때, 이 대본으로 그리다 만 그림이 있는지 본다 — 버튼 글씨가 바뀐다.
+   * 상태 갱신은 비동기 안에서만 한다(렌더 중 setState 규칙).
+   */
+  useEffect(() => {
+    let cancelled = false;
+    const lookup =
+      step === "story" && story
+        ? loadDrawProgress(drawProgressKey(draftOwner ?? "guest", story, artStyle))
+        : Promise.resolve(null);
+    void lookup.then((progress) => {
+      if (cancelled) return;
+      setResumablePages(progress ? progress.images.filter(Boolean).length : 0);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [step, story, artStyle, draftOwner]);
+
   function restoreCreateDraft(draft: CreateDraft): void {
     setName(draft.name);
     setAge(draft.age);
@@ -1262,7 +1303,7 @@ export default function CreatePage() {
     // 적어 둔 것이 있으면 손댄 것으로 본다 — 이어서 만들 때 덮어쓰지 않게.
     locationTouchedRef.current = Boolean(draft.locationDetail);
     setArtStyle(ART_STYLES.some((style) => style.id === draft.artStyle) ? draft.artStyle : ART_STYLES[0].id);
-    setScreenShape(draft.screenShape === "phone" ? "phone" : "tablet");
+    // 비율은 4:3 고정 — 초안의 값은 쓰지 않는다.
     setNarratorVoice(draft.narratorVoice);
     setNarrationStyle(draft.narrationStyle ?? "natural");
     setLongerStory(draft.longerStory);
@@ -1595,36 +1636,64 @@ export default function CreatePage() {
      */
     const drawFailures: string[] = [];
     locationSheetsRef.current = [];
+    /*
+     * 그리다 만 것이 있으면 이어서 그린다.
+     *
+     * 시트·장소 시트·그린 쪽을 IndexedDB에 두고, 같은 대본(내용+그림체)으로 다시 오면
+     * 있는 것은 건너뛴다. 그림 단계에서 앱을 닫아도 이미 낸 돈이 헛되지 않는다.
+     */
+    const progressKey = drawProgressKey(draftOwner ?? "guest", s, artStyle);
+    drawProgressKeyRef.current = progressKey;
+    const saved = await loadDrawProgress(progressKey);
+    const counts: DrawCounts = { ...EMPTY_COUNTS, ...(saved?.counts ?? {}) };
+    drawCountsRef.current = counts;
+    const persist = () =>
+      void saveDrawProgress({
+        key: progressKey,
+        savedAt: 0,
+        sheet: sheetImageRef.current,
+        locationSheets: locationSheetsRef.current,
+        images: [...images],
+        passed: [...passedRef.current],
+        counts: { ...counts },
+      });
+    const passedRef = { current: [] as boolean[] };
     try {
       const child = loadChild();
       const heroLooks = looksToPrompt(child?.looks);
       // 그림 모델에는 영어로 — 영어 규칙 사이에 한국어 한 줄이 끼는 것보다 확실히 읽힌다.
       const heroLooksEn = looksToDrawingPrompt(child?.looks);
-      const sheetRes = await fetch("/api/character-sheet", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          characters: s.characters,
-          artStyleId: artStyle,
-          drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
-          // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
-          looks: heroLooks,
-          looksEn: heroLooksEn,
-          // 나이·성별은 이야기에만 가고 시트에는 안 갔다 — 다섯 살이 여덟 살 얼굴로 나오던 구멍.
-          heroAge: age ?? child?.age ?? null,
-          heroGender: gender !== "unspecified" ? gender : child?.gender,
-        }),
-        signal: ac.signal,
-      });
-      // .json()을 ok 검사보다 먼저 부르면, 프록시가 HTML 오류 페이지를 주는 순간
-      // "Unexpected token '<'" 같은 알 수 없는 말이 부모에게 그대로 뜬다.
-      const sheetData = (await sheetRes.json().catch(() => ({}))) as { error?: string; image?: string };
-      if (!sheetRes.ok) {
-        throw new Error(sheetData.error ?? `캐릭터 그림을 만들지 못했어요 (HTTP ${sheetRes.status})`);
+      let sheet = saved?.sheet ?? null;
+      if (!sheet) {
+        const sheetRes = await fetch("/api/character-sheet", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            characters: s.characters,
+            artStyleId: artStyle,
+            drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
+            // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
+            looks: heroLooks,
+            looksEn: heroLooksEn,
+            // 나이·성별은 이야기에만 가고 시트에는 안 갔다 — 다섯 살이 여덟 살 얼굴로 나오던 구멍.
+            heroAge: age ?? child?.age ?? null,
+            heroGender: gender !== "unspecified" ? gender : child?.gender,
+          }),
+          signal: ac.signal,
+        });
+        // .json()을 ok 검사보다 먼저 부르면, 프록시가 HTML 오류 페이지를 주는 순간
+        // "Unexpected token '<'" 같은 알 수 없는 말이 부모에게 그대로 뜬다.
+        const sheetData = (await sheetRes.json().catch(() => ({}))) as { error?: string; image?: string };
+        if (!sheetRes.ok) {
+          throw new Error(sheetData.error ?? `캐릭터 그림을 만들지 못했어요 (HTTP ${sheetRes.status})`);
+        }
+        sheet = sheetData.image ?? null;
+        if (!sheet) throw new Error("캐릭터 그림을 받지 못했어요. 잠시 뒤 다시 시도해 주세요.");
+        counts.sheet += 1;
       }
-      const sheet = sheetData.image;
-      if (!sheet) throw new Error("캐릭터 그림을 받지 못했어요. 잠시 뒤 다시 시도해 주세요.");
       sheetImageRef.current = sheet;
+      locationSheetsRef.current = saved?.locationSheets ? [...saved.locationSheets] : [];
+      persist();
 
       /*
        * 장소 시트 — 인물 시트의 장소판.
@@ -1653,8 +1722,10 @@ export default function CreatePage() {
         if (!location) continue;
         const key = locationKeyOf(location.name);
         if (!key || (pagesPerKey.get(key) ?? 0) < 2 || wanted.some((w) => w.key === key)) continue;
+        // 이어 그리기 — 이미 있는 장소 시트는 다시 그리지 않는다.
+        if (locationSheetsRef.current.some((l) => l.key === key && l.image)) continue;
         wanted.push({ key, name: location.name, description: location.description, image: "" });
-        if (wanted.length >= 3) break;
+        if (wanted.length + locationSheetsRef.current.length >= 3) break;
       }
       for (const want of wanted) {
         if (ac.signal.aborted) break;
@@ -1675,6 +1746,8 @@ export default function CreatePage() {
           const data = (await r.json().catch(() => ({}))) as { image?: string; error?: string };
           if (r.ok && data.image) {
             locationSheetsRef.current.push({ ...want, image: data.image });
+            counts.location += 1;
+            persist();
           } else {
             console.warn("[illustrate] 장소 시트 실패", want.name, data.error);
           }
@@ -1720,9 +1793,26 @@ export default function CreatePage() {
        * 기준이 되어 나머지까지 끌고 내려간다.
        */
       const passed: boolean[] = new Array(s.pages.length).fill(false);
+      passedRef.current = passed;
       let done = 0;
       let cursor = 0;
       const claimedPages = new Set<number>();
+      // 이어 그리기 — 지난번에 그린 쪽은 그대로 쓰고 건너뛴다.
+      if (saved?.images?.length === s.pages.length) {
+        saved.images.forEach((im, i) => {
+          if (!im) return;
+          images[i] = im;
+          passed[i] = Boolean(saved.passed?.[i]);
+          claimedPages.add(i);
+          done++;
+          if (passed[i]) {
+            const key = locationKeyFromImagePrompt(s.pages[i].imagePrompt);
+            if (key && !locationReferences.has(key)) locationReferences.set(key, { image: im, scene: s.pages[i].imagePrompt });
+          }
+        });
+        setDrawn(done);
+        setPageImages([...images]);
+      }
       // 비용 상한일 뿐 실패 사유가 아니다 — 여기 걸려도 그림은 그대로 책에 들어간다.
       const MAX_QA_REDRAWS_PER_BOOK = Math.max(2, Math.ceil(s.pages.length / 3));
       let qaRedrawsUsed = 0;
@@ -1812,6 +1902,7 @@ export default function CreatePage() {
              * 이제 다시 그려 보되, 그것도 신통찮으면 처음 그림을 그대로 쓴다.
              */
             const first = await requestImage();
+            if (first.ok && first.data.image) counts.pages += 1;
             if (!first.ok && first.data.error) drawFailures.push(first.data.error);
             let image = first.ok ? (first.data.image ?? null) : null;
             let ok = first.ok && first.data.qualityPassed !== false && Boolean(image);
@@ -1837,6 +1928,7 @@ export default function CreatePage() {
                   ? "The previous attempt drew readable words inside the picture. Draw the same scene with absolutely no writing of any kind."
                   : (first.data.qualityWarning ?? "Character mismatch"),
               );
+              if (second.ok && second.data.image) counts.redraws += 1;
               if (second.ok && second.data.image && second.data.qualityPassed !== false) {
                 image = second.data.image;
                 ok = true;
@@ -1848,6 +1940,7 @@ export default function CreatePage() {
 
             images[i] = image; // 그린 그림은 검사 결과와 무관하게 남긴다
             passed[i] = ok;
+            persist(); // 한 장 그릴 때마다 보관 — 여기서 나가도 이 장은 남는다
             if (image && ok) {
               const locationKey = locationKeyFromImagePrompt(s.pages[i].imagePrompt);
               if (locationKey && !locationReferences.has(locationKey)) {
@@ -2007,6 +2100,10 @@ export default function CreatePage() {
     await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
     clearCreateDraft(draftOwner);
     draftBaselineRef.current = null;
+    // 책이 저장됐으니 그리기 진행 보관은 지운다. 그린 장수는 완성 화면에 보여 준다.
+    if (drawProgressKeyRef.current) void clearDrawProgress(drawProgressKeyRef.current);
+    setResumablePages(0);
+    setDrawSummary(illustrated ? describeDrawCounts(drawCountsRef.current) : "");
 
     /*
      * 앞 몇 쪽 낭독을 미리 구워 둔다 — 열자마자 소리가 나게.
@@ -2034,7 +2131,23 @@ export default function CreatePage() {
 
   // 완성 → 저장해 둔 책을 뷰어로 보여준다.
   if (step === "done" && finalBook) {
-    return <BookViewer book={finalBook} />;
+    return (
+      <>
+        <BookViewer book={finalBook} />
+        {/* 이번에 실제로 그린 장수 — 저장 단계의 '10장'(표지 썸네일 포함)과 헷갈리지 않게 따로 보여 준다. */}
+        {drawSummary && (
+          <div className="pointer-events-none fixed inset-x-0 bottom-20 z-30 flex justify-center px-4">
+            <button
+              type="button"
+              onClick={() => setDrawSummary("")}
+              className="pointer-events-auto max-w-full break-keep rounded-full bg-neutral-900/80 px-4 py-2 text-[12px] font-bold text-white shadow-lg backdrop-blur"
+            >
+              🎨 {drawSummary} · 닫기 ✕
+            </button>
+          </div>
+        )}
+      </>
+    );
   }
 
   return (
@@ -2830,46 +2943,7 @@ export default function CreatePage() {
                 </p>
               </div>
 
-              {/* 어느 화면에서 볼지 — 삽화를 그 비율로 그린다. 핸드폰은 세로,
-                  태블릿은 가로. 기기에 맞춰 그려야 그림이 화면을 꽉 채운다. */}
-              <div className="flex flex-col gap-2">
-                <p className="break-keep text-center text-sm font-bold text-neutral-500">
-                  어디에서 볼 동화인가요?
-                </p>
-                <div className="flex flex-wrap justify-center gap-2.5">
-                  {(
-                    [
-                      { id: "phone", label: "핸드폰", hint: "세로 그림", icon: "/icons/shape-phone.webp" },
-                      { id: "tablet", label: "태블릿·PC", hint: "가로 그림", icon: "/icons/shape-tablet.webp" },
-                    ] as const
-                  ).map((o) => {
-                    const active = screenShape === o.id;
-                    return (
-                      <button
-                        key={o.id}
-                        type="button"
-                        onClick={() => setScreenShape(o.id)}
-                        aria-pressed={active}
-                        style={active ? { borderColor: accent, background: accentSoft } : undefined}
-                        className={`flex items-center gap-2 rounded-2xl border-[3px] px-4 py-2.5 transition ${
-                          active ? "shadow" : "border-transparent bg-neutral-100 hover:bg-neutral-200"
-                        }`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={o.icon} alt="" aria-hidden className="h-9 w-9 shrink-0 object-contain" />
-                        <span className="flex flex-col items-start leading-tight">
-                          <span className="break-keep text-sm font-extrabold text-neutral-700">
-                            {o.label}
-                          </span>
-                          <span className="break-keep text-[11px] font-bold text-neutral-400">
-                            {o.hint}
-                          </span>
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              {/* 화면 비율 선택은 없앴다 — 항상 4:3 가로(FIXED, screenShape 참고). */}
 
               {/* 장면 수 — 6쪽 고정. 고르는 칸 대신 값만 알려 준다(쪽수 = 그림 장수 = 크레딧이라
                   고르게 두면 책마다 값이 달라져 크레딧 안내가 어려웠다). */}
@@ -3459,7 +3533,9 @@ export default function CreatePage() {
                         illustrate(story);
                       }}
                     >
-                      이 글로 그림 그리기 🎨
+                      {resumablePages > 0
+                        ? `이어서 그리기 🎨 (그려 둔 ${resumablePages}장 있음)`
+                        : "이 글로 그림 그리기 🎨"}
                     </BigButton>
                   )}
                   {/*
