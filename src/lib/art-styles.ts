@@ -24,6 +24,15 @@ export type ArtStyle = {
  * 잠그는 자리라, 앞부분이 바뀌면 그 쪽만 결이 달라진다. 뒤에 붙인 설명은 재료·선·색·
  * 질감·마감을 못박아 "따뜻한 수채화"가 날마다 다르게 해석되는 폭을 줄인다.
  */
+/*
+ * 4종으로 줄였다 (사장님 결정, 2026-08-28). 모델이 안정적으로 재현하는 것만 남긴다 —
+ * 파스텔(수채화와 사실상 같음)·크레용(질감이 매번 다르고 얼굴이 뭉개짐)·연필(선 밀도
+ * 들쭉날쭉)·먹그림(붓 몇 번으로 얼굴을 그려 쪽마다 다른 사람)은 뺐다.
+ * 옛 책의 id가 이 목록에 없으면 다시 그리기는 참조 그림을 따르는 길로 간다(knownStyle=false).
+ *
+ * 이름에 '지브리'·'픽사' 같은 상표는 쓰지 않는다. 프롬프트엔 원래 없었지만(필터에 걸리지
+ * 않는 이유), 앱 화면의 상표 표기도 상업 서비스에는 부담이라 느낌만 적는다.
+ */
 export const ART_STYLES: ArtStyle[] = [
   {
     id: "watercolor",
@@ -34,24 +43,8 @@ export const ART_STYLES: ArtStyle[] = [
       "warm soft watercolor storybook illustration, gentle brush strokes; transparent wet-on-dry washes on cream paper, soft bleeding edges, thin sepia pencil contour, warm muted palette (peach, ochre, sage), light left unpainted for highlights, matte paper finish",
   },
   {
-    id: "pastel",
-    label: "파스텔 디지털",
-    emoji: "🖍️",
-    image: "/art-styles/style_02.webp",
-    prompt:
-      "soft pastel digital illustration, gentle gradients, dreamy tones; smooth airbrushed shading with no hard outlines, powdery pastel palette (lilac, mint, baby pink, cream), soft rim light, slight paper grain, clean and calm",
-  },
-  {
-    id: "crayon",
-    label: "크레용 그림",
-    emoji: "✏️",
-    image: "/art-styles/style_03.webp",
-    prompt:
-      "children's crayon drawing style, waxy texture, playful lines; visible wax-crayon strokes with white paper showing through, wobbly hand-drawn dark outlines, bright primary colours, flat fills with scribbled shading, cheerful and naive",
-  },
-  {
     id: "ghibli",
-    label: "지브리풍 애니",
+    label: "포근한 애니 영화풍",
     emoji: "🌿",
     image: "/art-styles/style_04.webp",
     prompt:
@@ -59,7 +52,7 @@ export const ART_STYLES: ArtStyle[] = [
   },
   {
     id: "pixar",
-    label: "3D 픽사풍",
+    label: "3D 애니풍",
     emoji: "🧸",
     image: "/art-styles/style_05.webp",
     prompt:
@@ -72,22 +65,6 @@ export const ART_STYLES: ArtStyle[] = [
     image: "/art-styles/style_07.webp",
     prompt:
       "flat vector illustration, bold simple shapes, clean colors; no outlines or uniform thin outlines, flat colour fills with at most two shade tones, geometric simplified forms, limited harmonious palette, crisp edges, no texture or gradients",
-  },
-  {
-    id: "sketch",
-    label: "연필 스케치",
-    emoji: "✒️",
-    image: "/art-styles/style_08.webp",
-    prompt:
-      "soft pencil sketch, graphite lines, lightly tinted; loose graphite hatching and construction lines left visible, warm off-white paper, light watercolour tint only on key areas (cheeks, clothing, one object), lots of white space, gentle and hand-made",
-  },
-  {
-    id: "inkwash",
-    label: "동양화 먹그림",
-    emoji: "🖌️",
-    image: "/art-styles/style_09.webp",
-    prompt:
-      "East Asian ink wash painting, minimal expressive brush strokes; sumi ink on rice paper with graded washes, confident single brush strokes, large empty space, restrained colour accents (one red or ochre touch), soft ink bleeds, calm and poetic",
   },
 ];
 
