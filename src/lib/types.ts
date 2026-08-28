@@ -150,6 +150,15 @@ export type Book = {
    * 다시 그린 쪽만 다른 계곡, 다른 방이 되어 오히려 더 눈에 띈다.
    */
   locationDetail?: string;
+  /**
+   * 장소 기준 그림 — 인물 시트의 장소판.
+   *
+   * 인물은 시트(그림)로 잠갔는데 장소는 글 한 줄뿐이라 쪽마다 다른 계곡이 그려졌다.
+   * 만들 때 장소마다 인물 없는 기준 그림을 한 장 그려 두고, 그 장소의 모든 쪽과
+   * 나중에 한 쪽만 다시 그릴 때 참조로 넣는다. key는 장소 이름을 묶은 열쇠
+   * (locationKeyOf) — "놀이터"와 "동네 놀이터"가 같은 곳이 되게.
+   */
+  locationSheets?: { key: string; name: string; description: string; image: string }[];
   pages: BookPage[];
 };
 

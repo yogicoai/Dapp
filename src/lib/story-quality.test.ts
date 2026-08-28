@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { isBlockingStoryQualityIssue, repairStoryContinuity, validateStoryQuality } from "./story-quality.ts";
+import {
+  isBlockingStoryQualityIssue,
+  locationKeyOf,
+  repairStoryContinuity,
+  validateStoryQuality,
+} from "./story-quality.ts";
 import type { ParsedStory } from "./story-format.ts";
 
 const direction = { narration: "normal", dialogue: "happy", intensity: 0.8, pace: "normal" } as const;
@@ -279,6 +284,105 @@ it("어린이집 이야기의 신발장을 아파트 현관으로 바꾸지 않�
     .find((l) => l.startsWith("장소:"))!;
   assert.ok(!line.includes("아파트"), line);
   assert.ok(/교실|어린이집/.test(line), line);
+});
+
+describe("장소 갈아끼우기는 목록에 있는 두 곳이 정면으로 다를 때만", () => {
+  function two(text1: string, prompt1: string, text2: string, prompt2: string): ParsedStory {
+    return {
+      title: "t",
+      summary: "",
+      characters: [],
+      pages: [
+        { pageNo: 1, text: text1, imagePrompt: prompt1, voiceDirection: direction },
+        { pageNo: 2, text: text2, imagePrompt: prompt2, voiceDirection: direction },
+      ],
+    };
+  }
+
+  it("목록에 없는 곳(캠핑장)은 본문에 '숲'이 있어도 클로드 설명을 지킨다", () => {
+    // 실제 문제: "장소: 캠핑장 — 텐트와 모닥불"이 "장소: 숲속 — 키 큰 푸른 나무"로 바뀌어
+    // 글은 캠핑장인데 그림은 숲이 됐다.
+    const value = two(
+      "하온이네 가족은 숲속 캠핑장에 도착했어요. 텐트를 쳤어요.",
+      "등장인물 1명: 하온. 장소: 캠핑장 — 초록 텐트 하나, 돌로 둘러싼 모닥불 자리, 흙바닥. 하온이가 텐트를 본다.",
+      "밤이 되자 모닥불이 타올랐어요. 하온이는 마시멜로를 구웠어요.",
+      "등장인물 1명: 하온. 장소: 캠핑장 — 초록 텐트 하나, 돌로 둘러싼 모닥불 자리, 흙바닥. 하온이가 굽는다.",
+    );
+    const repaired = repairStoryContinuity(value);
+    for (const page of repaired.pages) {
+      assert.match(page.imagePrompt, /장소: 캠핑장 — 초록 텐트/, page.imagePrompt);
+    }
+  });
+
+  it("시골 할머니 댁 마당은 아파트 거실로 바뀌지 않는다", () => {
+    const value = two(
+      "하온이는 시골 할머니 댁 마당에서 감나무를 올려다봤어요.",
+      "등장인물 1명: 하온. 장소: 할머니 댁 마당 — 흙마당, 큰 감나무 하나, 낮은 돌담. 하온이가 올려다본다.",
+      "할머니가 감을 하나 따 주셨어요. 하온이는 활짝 웃었어요.",
+      "등장인물 2명: 하온, 할머니. 장소: 할머니 댁 마당 — 흙마당, 큰 감나무 하나, 낮은 돌담. 할머니가 감을 건넨다.",
+    );
+    const repaired = repairStoryContinuity(value);
+    for (const page of repaired.pages) {
+      assert.ok(!/아파트|소파/.test(page.imagePrompt), page.imagePrompt);
+      assert.match(page.imagePrompt, /감나무/, page.imagePrompt);
+    }
+  });
+
+  it("본문이 말하지 않아도, 클로드 이름이 본문에 있으면 앞 장소로 되돌리지 않는다", () => {
+    const value = two(
+      "하온이는 거실에서 신발을 신었어요.",
+      "등장인물 1명: 하온. 장소: 거실 — 밝은 나무 마루. 하온이가 신발을 신는다.",
+      "목욕탕은 김이 자욱했어요. 하온이는 탕에 발을 담갔어요.",
+      "등장인물 1명: 하온. 장소: 목욕탕 — 파란 타일 바닥, 둥근 온탕 하나, 김 서린 벽. 하온이가 발을 담근다.",
+    );
+    const repaired = repairStoryContinuity(value);
+    assert.match(repaired.pages[1].imagePrompt, /장소: 목욕탕/, repaired.pages[1].imagePrompt);
+  });
+
+  it("목록에 있는 두 곳이 정면으로 다르면 여전히 본문 쪽으로 고친다", () => {
+    const value = two(
+      "하온이는 태이네 집에 놀러 갔어요.",
+      "등장인물 1명: 하온. 장소: 푸른 숲길 — 키 큰 나무와 꽃덤불. 하온이가 걷는다.",
+      "태이네 집에서 둘은 블록을 쌓았어요.",
+      "등장인물 2명: 하온, 태이. 장소: 푸른 숲길 — 키 큰 나무와 꽃덤불. 둘이 쌓는다.",
+    );
+    const repaired = repairStoryContinuity(value);
+    assert.ok(repaired.pages.every((p) => !p.imagePrompt.includes("숲길")));
+  });
+});
+
+describe("locationKeyOf — 같은 곳끼리 묶는다", () => {
+  it("꾸밈말이 달라도 같은 놀이터", () => {
+    assert.equal(locationKeyOf("놀이터"), locationKeyOf("동네 놀이터"));
+    assert.equal(locationKeyOf("놀이터"), locationKeyOf("아파트 놀이터"));
+  });
+
+  it("아이 방과 거실은 다른 곳, 태이네 집과 우리 집 거실은 집 계열", () => {
+    assert.notEqual(locationKeyOf("하온이 방"), locationKeyOf("거실"));
+    assert.equal(locationKeyOf("거실"), locationKeyOf("우리 집 거실"));
+    assert.equal(locationKeyOf("놀이방"), locationKeyOf("아이 방"));
+  });
+
+  it("어린이집 현관과 아파트 현관은 다른 곳", () => {
+    assert.notEqual(locationKeyOf("어린이집 현관"), locationKeyOf("아파트 현관"));
+  });
+
+  it("목록에 없는 곳은 이름으로 묶되 꾸밈말은 뗀다", () => {
+    assert.equal(locationKeyOf("캠핑장"), locationKeyOf("동네 캠핑장"));
+    assert.notEqual(locationKeyOf("캠핑장"), locationKeyOf("목욕탕"));
+  });
+
+  it("같은 계열이면 뒤 쪽 장소 줄이 앞 쪽 것으로 통일된다", () => {
+    const value = story([
+      "하온이는 놀이터에서 그네를 탔어요.",
+      "하온이는 놀이터에서 미끄럼틀을 탔어요.",
+    ]);
+    value.pages[0].imagePrompt = "등장인물 1명: 하온. 장소: 놀이터 — 노란 미끄럼틀 하나, 둥근 모래밭, 초록 울타리. 하온이가 그네를 탄다.";
+    value.pages[1].imagePrompt = "등장인물 1명: 하온. 장소: 동네 놀이터 — 파란 미끄럼틀과 잔디. 하온이가 미끄럼틀을 탄다.";
+    const repaired = repairStoryContinuity(value);
+    assert.match(repaired.pages[1].imagePrompt, /장소: 놀이터 — 노란 미끄럼틀 하나/);
+    assert.ok(!repaired.pages[1].imagePrompt.includes("파란 미끄럼틀"));
+  });
 });
 
 it("장면 문장이 말하는 장소를 장소 줄보다 믿는다", () => {

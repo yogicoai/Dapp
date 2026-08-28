@@ -1,7 +1,34 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { rewriteScene, suggestLocationDetail } from "./scene-edit.ts";
+import { pickLocationDetail, rewriteScene, suggestLocationDetail } from "./scene-edit.ts";
+
+describe("pickLocationDetail — 이 쪽 장소에 해당하는 부분만", () => {
+  const detail = "계곡은 회색 자갈 바닥에 넓적한 바위 하나 · 거실은 밝은 나무 마루와 파란 소파 · 아이스크림은 분홍색 한 덩이";
+
+  it("계곡 쪽에는 계곡과 물건만 남는다", () => {
+    const out = pickLocationDetail(detail, "계곡");
+    assert.ok(out.includes("계곡은"), out);
+    assert.ok(out.includes("아이스크림은"), out);
+    assert.ok(!out.includes("거실"), out);
+  });
+
+  it("거실 쪽에는 거실만 — 이름이 조금 달라도 같은 계열이면 잡는다", () => {
+    const out = pickLocationDetail(detail, "우리 집 거실");
+    assert.ok(out.includes("거실은"), out);
+    assert.ok(!out.includes("계곡"), out);
+  });
+
+  it("나뉘지 않은 자유 문장은 그대로 준다", () => {
+    const free = "우리 동네 놀이터는 파란 미끄럼틀이 있고 바닥이 고무예요";
+    assert.equal(pickLocationDetail(free, "거실"), free);
+  });
+
+  it("목록에 없는 이름은 물건일 수 있으니 남긴다", () => {
+    const out = pickLocationDetail("캠핑장은 초록 텐트 · 손전등은 노란색", "거실");
+    assert.ok(out.includes("손전등"), out);
+  });
+});
 
 describe("suggestLocationDetail", () => {
   const prompts = [

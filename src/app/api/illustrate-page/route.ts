@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { ART_STYLES } from "@/lib/art-styles";
+import { pickLocationDetail } from "@/lib/scene-edit";
+import { locationKeyOf } from "@/lib/story-quality";
 import {
   GeminiError,
   detectBlankCanvasBorder,
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
     cast?: unknown;
     qualityCorrection?: unknown;
     locationDetail?: unknown;
+    locationSheet?: unknown;
   };
 
   // 어느 화면에서 볼 동화인가 — 핸드폰은 세로(3:4), 태블릿은 가로(4:3)로 그린다.
@@ -108,10 +111,44 @@ export async function POST(request: Request) {
 
   const currentLocation = readLocation(scene);
   const referenceLocation = readLocation(styleReferenceScene);
+  // 이름 글자가 아니라 계열로 본다 — "놀이터"와 "동네 놀이터"는 같은 곳이다.
   const sameReferenceLocation = Boolean(
     currentLocation && referenceLocation &&
-    currentLocation.name.replace(/\s+/g, "") === referenceLocation.name.replace(/\s+/g, ""),
+    locationKeyOf(currentLocation.name) === locationKeyOf(referenceLocation.name),
   );
+  /*
+   * 장소 기준 그림(장소 시트) — 인물 없는 그 장소의 그림.
+   * 인물 시트가 얼굴을 잡듯 이것이 장소를 잡는다. 만들 때 장소마다 한 장 그려 둔다.
+   */
+  const locationSheet =
+    typeof input.locationSheet === "string" ? await loadReferenceImage(input.locationSheet) : null;
+  /*
+   * 다른 장소의 그림은 참조로 넣지 않는다.
+   *
+   * 예전엔 같은 장소 그림이 없으면 1쪽 그림을 그림체 참조로 보내면서 "장소는 따라 하지
+   * 마라"고 글로만 말했다. 그림 모델은 받은 그림에 강하게 끌린다 — 거실 그림을 주고
+   * 놀이터를 그리라 하면 거실 창문이 섞여 나오고, 인물이 창문 양쪽으로 갈렸다.
+   * 그림체는 인물 시트와 그림체 문구가 이미 잡는다. 그림체를 모르는 옛 책만 예외다.
+   */
+  const usedStyleReference =
+    styleReference && (sameReferenceLocation || !knownStyle) ? styleReference : null;
+  /*
+   * 부모가 적은 장소 칸에서 이 쪽의 장소 부분만 고른다 — 계곡 바위가 거실에 따라오지 않게.
+   */
+  const pageLocationDetail = currentLocation
+    ? pickLocationDetail(locationDetail, currentLocation.name)
+    : locationDetail;
+  /*
+   * 붙이는 그림의 순서 — 인물 시트 → 장소 시트 → 승인 쪽. 프롬프트의 각 문장이
+   * "몇 번째 그림"을 말하는지 여기서 정한다. 셋이 다 있으면 '첨부된 그림'이라는 말만으로는
+   * 어느 것인지 모델이 헷갈린다.
+   */
+  const attachedOrder = [
+    sheet ? "sheet" : "",
+    locationSheet ? "location" : "",
+    usedStyleReference ? "style" : "",
+  ].filter(Boolean);
+  const nth = (kind: string) => ["FIRST", "SECOND", "THIRD"][attachedOrder.indexOf(kind)] ?? "attached";
 
   const mood = typeof input.mood === "string" ? input.mood.trim().slice(0, 80) : "";
   const qualityCorrection =
@@ -167,9 +204,29 @@ export async function POST(request: Request) {
       knownStyle
         ? `STYLE LOCK — render the entire page ONLY as: ${style.prompt}.`
         : "STYLE LOCK — copy the rendering style of the attached reference image(s) exactly. Do not invent or substitute a style of your own; the attached pages define what this book looks like.",
-      "The character reference sheet is also the rendering-style reference. Match its medium, brush/line quality, shape language, facial construction, shading method, texture, saturation and finish exactly.",
+      sheet
+        ? `The ${nth("sheet")} attached image (the character reference sheet) is also the rendering-style reference. Match its medium, brush/line quality, shape language, facial construction, shading method, texture, saturation and finish exactly.`
+        : "",
       "Never switch medium or rendering technique between pages. Do not turn watercolor into 3D, vector, crayon, anime, pencil, collage or a different kind of painting. Do not mix two styles in one page.",
     ].join("\n"),
+    /*
+     * 장소 잠금을 그림체 바로 다음, 프롬프트 앞쪽에 둔다.
+     *
+     * 예전엔 60줄짜리 프롬프트 한가운데 한 줄이었다. 인물 규칙은 대여섯 번 반복되는데
+     * 장소는 한 번 — 긴 프롬프트에서 모델은 앞·뒤·반복되는 것을 지키고 중간 한 줄은
+     * 흘린다. 장소가 쪽마다 바뀌던 이유 중 하나다. 앞에 두고 끝에서 한 번 더 확인시킨다.
+     */
+    currentLocation
+      ? [
+          `LOCATION LOCK — this page takes place at "${currentLocation.name}". Fixed features that MUST be visible: ${currentLocation.description}.`,
+          "The place is as important as the characters. Draw exactly this kind of place with exactly these features — never a generic forest, park, hanok, classroom, street or a different house in its place, and never a prettier substitute.",
+          locationSheet
+            ? `The ${nth("location")} attached image is the LOCATION REFERENCE SHEET (the place with no people). It is the authoritative picture of this place: keep its ground, its big landmark, its architecture, its wall/floor colours and their arrangement. You may change the camera angle and crop; you may not change what the place is made of. Put the characters INTO this place.`
+            : "",
+        ]
+          .filter(Boolean)
+          .join("\n")
+      : "",
     `Scene: ${scene}`,
     /*
      * 구도 — 아래가 텅 비지 않게.
@@ -185,9 +242,6 @@ export async function POST(request: Request) {
       "Every face must be cleanly and correctly drawn: two clear eyes, a nose and a mouth in the right places, no smeared, doubled, melted or distorted features. A child whose face came out broken is the single most upsetting error in this book.",
       "Draw the expression the text asks for. If the child is looking up at something, their head is tilted back and their eyes point upward, not at the viewer.",
     ].join("\n"),
-    currentLocation
-      ? `LOCATION LOCK — this scene visibly takes place at "${currentLocation.name}": ${currentLocation.description}. Draw that setting, not a generic forest, park, hanok, classroom or another house.`
-      : "",
     /*
      * 배경을 채울 때 한국 = 전통이라고 읽지 않게 한다.
      *
@@ -238,10 +292,10 @@ export async function POST(request: Request) {
      * 부모가 적어 준 장소는 모델이 상상한 장소보다 우선한다 — 아이가 실제로 아는
      * 곳이기 때문이다. 다만 이것도 '그릴 것'이지 '쓸 글자'가 아니라고 못박는다.
      */
-    locationDetail
+    pageLocationDetail
       ? [
-          `PLACE / OBJECT DETAIL (highest priority, written by the child's parent, Korean): ${locationDetail}`,
-          "Build the setting and any object it names from this description on EVERY page of the book: the same ground, the same big landmark, the same colors, the same shape of object. If it conflicts with what you would normally imagine, follow this description.",
+          `PLACE / OBJECT DETAIL (highest priority, written by the child's parent, Korean): ${pageLocationDetail}`,
+          "Build this page's setting and any object it names from this description: the same ground, the same big landmark, the same colors, the same shape of object. If it conflicts with what you would normally imagine, follow this description.",
           "These are things to draw, never words to write in the image.",
         ].join("\n")
       : "",
@@ -266,7 +320,7 @@ export async function POST(request: Request) {
     // "생김새만 참고, 배치는 베끼지 말 것 + 같은 인물 두 번 금지"를 분명히 못박는다.
     sheet
       ? [
-          "The attached image is a CHARACTER REFERENCE SHEET. Use it ONLY to know what each character looks like — face, hair, clothing, colors.",
+          `The ${nth("sheet")} attached image is the CHARACTER REFERENCE SHEET. Use it ONLY to know what each character looks like — face, hair, clothing, colors.`,
           "Do NOT copy the sheet's layout. The sheet lines characters up side by side on a blank background; this page is a real scene with its own composition.",
           "Each character exists exactly ONCE in this world. NEVER draw the same character twice in one picture — no twins, no repeated faces, no duplicated family members, no mirrored copies.",
           // 시트의 '정면 차렷 자세'까지 베껴 와서, 장면 한가운데 인물만 오려 붙인 것처럼
@@ -278,10 +332,10 @@ export async function POST(request: Request) {
           "Characters must physically belong to the scene: touching, holding, standing on, or reacting to what is around them, with an expression that matches the moment.",
         ].join("\n")
       : "",
-    styleReference
+    usedStyleReference
       ? [
-          "A previously APPROVED page from this same book is attached after the character sheet.",
-          "Use that approved page ONLY as the book-wide rendering reference: identical medium, dimensionality (2D versus 3D), line/edge treatment, textures, facial construction, lighting softness, colour strength and finish.",
+          `The ${nth("style")} attached image is a previously APPROVED page from this same book.`,
+          "Use that approved page as the book-wide rendering reference: identical medium, dimensionality (2D versus 3D), line/edge treatment, textures, facial construction, lighting softness, colour strength and finish.",
           sameReferenceLocation
             ? `SAME LOCATION LOCK — the approved page and this page are both "${currentLocation?.name}". Preserve the same room/outdoor identity, architecture, wall and floor colours, windows, large furniture or play equipment and their stable arrangement. Change only camera angle, character pose and small story props.`
             : "Do not copy its composition or location because this scene uses a different place.",
@@ -322,7 +376,12 @@ export async function POST(request: Request) {
       "Every named character — children AND adults such as a parent, teacher or shopkeeper — must be drawn with the face and hair the reference sheet gives them. An adult whose face changes from page to page reads as a different person to a child.",
       "Before drawing, assign each named character one position and one action from the Scene. Do not swap who performs an action, who has stopped, who leads, who follows, or which side of an object each person occupies.",
       "FINAL CHECK before you finish: look at every face you drew. If two figures share the same face, the same hair and the same clothes, that is the duplication error — remove one of them or redraw that figure as the correct, visibly different character.",
-    ].join("\n"),
+      currentLocation
+        ? `Then check the PLACE: is this unmistakably "${currentLocation.name}" with ${currentLocation.description}? If the ground, the landmark or the colours are different, the page is wrong — fix the place before anything else.`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n"),
     /*
      * 인물은 한 공간에 있어야 한다.
      *
@@ -391,9 +450,10 @@ export async function POST(request: Request) {
 
   try {
     // 비용 상한: 페이지당 이미지 생성은 정확히 한 번만 호출한다.
+    // 참조 순서 = 프롬프트가 말하는 순서: 인물 시트 → 장소 시트 → (같은 장소의) 승인 쪽.
     let image = await generateImage({
       prompt,
-      references: [sheet, styleReference].filter(Boolean) as NonNullable<typeof sheet>[],
+      references: [sheet, locationSheet, usedStyleReference].filter(Boolean) as NonNullable<typeof sheet>[],
       aspectRatio,
     });
 
@@ -405,7 +465,8 @@ export async function POST(request: Request) {
     const check = await validateIllustration({
       image,
       reference: sheet,
-      styleReference,
+      styleReference: usedStyleReference,
+      locationReference: locationSheet,
       scene: storyText ? `${scene}\nStory text: ${storyText}` : scene,
       expectedLocation: currentLocation
         ? `${currentLocation.name}: ${currentLocation.description}`

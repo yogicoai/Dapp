@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ART_STYLES } from "@/lib/art-styles";
 import { GeminiError, fromDataUrl, generateImage, toDataUrl } from "@/lib/gemini";
+import { heroIdentity } from "@/lib/child-looks";
 
 /**
  * 캐릭터 시트 — 삽화 일관성의 축.
@@ -22,6 +23,9 @@ export async function POST(request: Request) {
     artStyleId?: unknown;
     drawing?: unknown;
     looks?: unknown;
+    looksEn?: unknown;
+    heroAge?: unknown;
+    heroGender?: unknown;
   };
 
   /**
@@ -29,8 +33,20 @@ export async function POST(request: Request) {
    * 사진이 아니라 특징만 받는 이유: 아동 얼굴은 개인정보 부담이 크고, 어설프게 닮으면
    * 오히려 실망한다. 특징만으로도 "우리 애 같네"는 충분히 나온다.
    * 이 시트가 모든 쪽 삽화의 기준이므로, 여기 한 번만 넣으면 책 전체에 적용된다.
+   *
+   * 영어(looksEn)가 오면 그것을 쓴다 — 영어 규칙 사이에 한국어 한 줄이 끼는 것보다
+   * 확실히 읽힌다. 옛 호출은 한국어(looks)만 보내므로 그것도 받는다.
    */
-  const looks = typeof input.looks === "string" ? input.looks.trim().slice(0, 200) : "";
+  const looksKo = typeof input.looks === "string" ? input.looks.trim().slice(0, 200) : "";
+  const looksEn = typeof input.looksEn === "string" ? input.looksEn.trim().slice(0, 400) : "";
+  const looks = looksEn || looksKo;
+  /*
+   * 나이·성별은 이야기(클로드)에만 가고 여기엔 클로드가 쓴 생김새 줄만 왔다.
+   * 클로드가 그 줄에 나이를 안 적으면 다섯 살이 여덟 살 얼굴로 나올 수 있었다.
+   */
+  const heroAge = typeof input.heroAge === "number" ? input.heroAge : null;
+  const heroGender = typeof input.heroGender === "string" ? input.heroGender : undefined;
+  const hero = heroIdentity(heroAge, heroGender);
 
   /**
    * 아이가 그린 그림(선택) — 주인공을 이 그림에서 따온다.
@@ -71,9 +87,10 @@ export async function POST(request: Request) {
   const prompt = [
     `Character reference sheet for a children's picture book, ${style.prompt}.`,
     `Characters:\n${cast}`,
-    // 주인공(첫 번째 인물)의 생김새는 부모가 고른 특징을 그대로 따른다.
+    // 주인공(첫 번째 인물)은 나이·성별을 못박고, 생김새는 부모가 고른 특징을 그대로 따른다.
+    `The FIRST character is the child hero: ${hero}. Draw a child of exactly that age — a small child's proportions and face, never older.`,
     looks
-      ? `The FIRST character is the child hero. Their appearance MUST match these traits exactly: ${looks}. Keep these traits visible and consistent — they are how the child recognizes themselves. Hair texture is a hard identity trait: straight hair must stay completely straight with no curls or perm volume; wave, natural curls, and permed curls must remain visually distinct and must never be substituted for one another.`
+      ? `The hero's appearance MUST match these traits exactly: ${looks}. Keep these traits visible and consistent — they are how the child recognizes themselves. Hair texture is a hard identity trait: straight hair must stay completely straight with no curls or perm volume; wave, natural curls, and permed curls must remain visually distinct and must never be substituted for one another.`
       : "",
     // 아이 그림이 있으면 그 그림이 주인공의 원본이다 — 아이가 자기 캐릭터로 알아보게
     // 눈에 띄는 특징(머리 모양·옷 색·좋아하는 물건)을 반드시 살린다.

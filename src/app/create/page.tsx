@@ -18,6 +18,9 @@ import {
   saveChild,
   saveMyBook,
 } from "@/lib/prefs";
+import { looksToDrawingPrompt } from "@/lib/child-looks";
+import { locationKeyOf } from "@/lib/story-quality";
+import { pickLocationDetail } from "@/lib/scene-edit";
 import { rewriteScene, suggestLocationDetail } from "@/lib/scene-edit";
 import {
   illustrationTokenCost,
@@ -346,10 +349,24 @@ function deriveAutomaticMood(input: {
     : { ko: "따뜻하고 포근한", en: "warm cozy soft lighting" };
 }
 
-function locationKeyFromImagePrompt(prompt: string): string {
-  const match = /장소\s*:\s*([^\n—.-]+?)\s*[—-]/.exec(prompt);
-  return match?.[1].replace(/\s+/g, "").normalize("NFC") ?? "";
+/** 장면 지시의 `장소: 이름 — 특징.`을 읽는다. 없으면 null. */
+function locationOfImagePrompt(prompt: string): { name: string; description: string } | null {
+  const match = /장소\s*:\s*([^\n—.-]+?)\s*[—-]\s*([^\n.]+)/.exec(prompt ?? "");
+  return match ? { name: match[1].trim(), description: match[2].trim() } : null;
 }
+
+/**
+ * 장소를 묶는 열쇠 — 이름 글자가 아니라 계열로.
+ * "놀이터"·"동네 놀이터"·"아파트 놀이터"가 셋 다 다른 키가 되어 각자 첫 그림을 새로
+ * 상상하던 문제를 막는다.
+ */
+function locationKeyFromImagePrompt(prompt: string): string {
+  const location = locationOfImagePrompt(prompt);
+  return location ? locationKeyOf(location.name) : "";
+}
+
+/** 만들 때 그린 장소 기준 그림 한 장. */
+type LocationSheet = { key: string; name: string; description: string; image: string };
 
 /** 장면(쪽) 수 선택지 3~8. 삽화를 켜면 쪽수가 곧 그림 장수(=크레딧)라 8이 상한. */
 const PAGE_OPTIONS = [3, 4, 5, 6, 7, 8];
@@ -946,18 +963,28 @@ export default function CreatePage() {
     pageArt: (string | null)[],
     cover: string | null,
     sheet: string | null = null,
-  ): Promise<{ images: (string | null)[]; cover: string | null; sheet: string | null }> {
+    locationSheets: LocationSheet[] = [],
+  ): Promise<{
+    images: (string | null)[];
+    cover: string | null;
+    sheet: string | null;
+    locationSheets: LocationSheet[];
+  }> {
     const jobs: { name: string; dataUrl: string; put: (url: string) => void }[] = [];
     const images = [...pageArt];
     let coverOut = cover;
     let sheetOut = sheet;
+    const locationsOut = locationSheets.map((s) => ({ ...s }));
 
     if (cover) jobs.push({ name: "cover", dataUrl: cover, put: (u) => (coverOut = u) });
     if (sheet) jobs.push({ name: "sheet", dataUrl: sheet, put: (u) => (sheetOut = u) });
+    locationsOut.forEach((s, i) => {
+      jobs.push({ name: `loc${i + 1}`, dataUrl: s.image, put: (u) => (locationsOut[i].image = u) });
+    });
     pageArt.forEach((im, i) => {
       if (im) jobs.push({ name: `p${i + 1}`, dataUrl: im, put: (u) => (images[i] = u) });
     });
-    if (jobs.length === 0) return { images, cover: coverOut, sheet: sheetOut };
+    if (jobs.length === 0) return { images, cover: coverOut, sheet: sheetOut, locationSheets: locationsOut };
 
     setUploading({ done: 0, total: jobs.length });
     // 회원 아이디로 폴더를 나눈다 — 나중에 사람이 직접 찾아보거나 지울 수 있게.
@@ -980,7 +1007,7 @@ export default function CreatePage() {
       setUploading({ done: i + 1, total: jobs.length });
     }
     setUploading(null);
-    return { images, cover: coverOut, sheet: sheetOut };
+    return { images, cover: coverOut, sheet: sheetOut, locationSheets: locationsOut };
   }
 
   /** 올린 그림을 캔버스로 줄여 data URL로 만든다 — 원본 사진은 몇 MB라 그대로 보내면 느리다. */
@@ -1167,6 +1194,8 @@ export default function CreatePage() {
   const locationTouchedRef = useRef(false);
   // 캐릭터 시트는 책에 함께 저장한다 — 나중에 한 쪽만 다시 그릴 때 얼굴 기준이 된다.
   const sheetImageRef = useRef<string | null>(null);
+  // 장소 시트(장소마다 한 장)도 같이 저장한다 — 다시 그릴 때 같은 곳이 나오게.
+  const locationSheetsRef = useRef<LocationSheet[]>([]);
 
   // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
   const [confirmMake, setConfirmMake] = useState(false);
@@ -1571,8 +1600,12 @@ export default function CreatePage() {
      * 왜 안 됐는지를 알아야 기다렸다 다시 할지, 오늘은 그만둘지 정할 수 있다.
      */
     const drawFailures: string[] = [];
+    locationSheetsRef.current = [];
     try {
-      const heroLooks = looksToPrompt(loadChild()?.looks);
+      const child = loadChild();
+      const heroLooks = looksToPrompt(child?.looks);
+      // 그림 모델에는 영어로 — 영어 규칙 사이에 한국어 한 줄이 끼는 것보다 확실히 읽힌다.
+      const heroLooksEn = looksToDrawingPrompt(child?.looks);
       const sheetRes = await fetch("/api/character-sheet", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -1582,6 +1615,10 @@ export default function CreatePage() {
           drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
           // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
           looks: heroLooks,
+          looksEn: heroLooksEn,
+          // 나이·성별은 이야기에만 가고 시트에는 안 갔다 — 다섯 살이 여덟 살 얼굴로 나오던 구멍.
+          heroAge: age ?? child?.age ?? null,
+          heroGender: gender !== "unspecified" ? gender : child?.gender,
         }),
         signal: ac.signal,
       });
@@ -1594,6 +1631,54 @@ export default function CreatePage() {
       const sheet = sheetData.image;
       if (!sheet) throw new Error("캐릭터 그림을 받지 못했어요. 잠시 뒤 다시 시도해 주세요.");
       sheetImageRef.current = sheet;
+
+      /*
+       * 장소 시트 — 인물 시트의 장소판.
+       *
+       * 인물은 시트(그림)로 잠갔는데 장소는 글 한 줄뿐이라 쪽마다 다른 계곡이 그려졌다.
+       * 장소마다(책당 보통 1~2곳, 상한 3) 인물 없는 기준 그림을 먼저 한 장 그려 두고,
+       * 그 장소의 모든 쪽에 참조로 넣는다. 한 장이라도 실패하면 그 장소만 예전 방식
+       * (같은 장소의 첫 통과 그림)으로 간다 — 여기서 책 만들기를 막지 않는다.
+       * 장수가 곧 비용이라 순서대로 한 장씩 그린다.
+       */
+      const wanted: LocationSheet[] = [];
+      for (const page of s.pages) {
+        const location = locationOfImagePrompt(page.imagePrompt);
+        if (!location) continue;
+        const key = locationKeyOf(location.name);
+        if (!key || wanted.some((w) => w.key === key)) continue;
+        wanted.push({ key, name: location.name, description: location.description, image: "" });
+        if (wanted.length >= 3) break;
+      }
+      for (const want of wanted) {
+        if (ac.signal.aborted) break;
+        try {
+          const r = await fetch("/api/location-sheet", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              name: want.name,
+              description: want.description,
+              artStyleId: artStyle,
+              shape: screenShape,
+              // 부모가 적은 장소 칸에서 이 장소 부분만 — 다른 장소 설명이 섞이지 않게.
+              detail: pickLocationDetail(locationDetail.trim(), want.name),
+            }),
+            signal: ac.signal,
+          });
+          const data = (await r.json().catch(() => ({}))) as { image?: string; error?: string };
+          if (r.ok && data.image) {
+            locationSheetsRef.current.push({ ...want, image: data.image });
+          } else {
+            console.warn("[illustrate] 장소 시트 실패", want.name, data.error);
+          }
+        } catch (e) {
+          if ((e as Error).name === "AbortError") break;
+          console.warn("[illustrate] 장소 시트 실패", want.name, e);
+        }
+      }
+      const locationSheetFor = (prompt: string) =>
+        locationSheetsRef.current.find((l) => l.key === locationKeyFromImagePrompt(prompt))?.image ?? "";
 
       // 삽화는 쪽마다 독립이다(캐릭터 일관성은 위에서 만든 캐릭터 시트가 잡아준다).
       // 예전엔 한 장씩 줄 세워 그려서 8쪽이면 '한 장 시간 × 8'을 기다려야 했다 —
@@ -1684,15 +1769,17 @@ export default function CreatePage() {
                   mood: mood.en,
                   shape: screenShape,
                   qualityCorrection,
-                  // 부모가 대본 화면에서 적어 준 장소 — 모든 쪽이 같은 곳을 그리게 하는 유일한 끈이다.
+                  // 부모가 대본 화면에서 적어 준 장소 — 서버가 이 쪽의 장소 부분만 골라 쓴다.
                   locationDetail: locationDetail.trim(),
+                  // 이 쪽 장소의 기준 그림 — 있으면 모든 쪽이 같은 곳을 그린다.
+                  locationSheet: locationSheetFor(s.pages[i].imagePrompt),
                   // 책 전체 인물을 보내되 서버가 장면에 이름이 있는 인물만 골라 잠근다.
                   cast: s.characters.map((c, characterIndex) => ({
                     name: c.name,
                     // 주인공 머리결 선택을 페이지 QA에도 넣어 시트 이후 다시 곱슬로 변하지 않게 한다.
                     description:
-                      characterIndex === 0 && heroLooks
-                        ? `${c.description}, ${heroLooks}`
+                      characterIndex === 0 && (heroLooksEn || heroLooks)
+                        ? `${c.description}, ${heroLooksEn || heroLooks}`
                         : c.description,
                   })),
                 }),
@@ -1884,7 +1971,7 @@ export default function CreatePage() {
      * 동화가 통째로 날아간다. 그림은 이미 다 그려졌고 토큰도 이미 냈다.
      */
     const bookId = `my-${Date.now().toString(36)}`;
-    const hosted = await hostArtwork(bookId, slim, cover, sheetImageRef.current);
+    const hosted = await hostArtwork(bookId, slim, cover, sheetImageRef.current, locationSheetsRef.current);
 
     const book: Book = {
       id: bookId,
@@ -1901,6 +1988,7 @@ export default function CreatePage() {
       artStyleId: artStyle,
       shape: screenShape,
       characterSheet: hosted.sheet,
+      locationSheets: hosted.locationSheets.length ? hosted.locationSheets : undefined,
       locationDetail: locationDetail.trim() || undefined,
       cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
       pages: s.pages.map((p, i) => ({

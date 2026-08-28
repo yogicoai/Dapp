@@ -52,6 +52,14 @@ type LocationHint = { family: string; name: string; description: string; index: 
  * 모델이 그 빈 곳을 마당 있는 옛날 집으로 채웠다.
  */
 function inferLocationFromText(text: string): LocationHint | null {
+  const hints = locationHints(text);
+  // 점수가 높은 곳이 '지금 있는 곳'. 같으면 뒤에 나온 것을 쓴다(가다가 도착한 곳).
+  const best = hints.sort((a, b) => b.score - a.score || b.index - a.index)[0] ?? null;
+  return best ? inVenue(best, hints) : null;
+}
+
+/** 글에 나오는 장소 낱말을 전부 찾는다(점수 포함). 고르는 일은 부르는 쪽이 한다. */
+function locationHints(text: string): (LocationHint & { score: number })[] {
   const definitions = [
     {
       family: "home",
@@ -116,9 +124,48 @@ function inferLocationFromText(text: string): LocationHint | null {
       });
     }
   }
-  // 점수가 높은 곳이 '지금 있는 곳'. 같으면 뒤에 나온 것을 쓴다(가다가 도착한 곳).
-  const best = hints.sort((a, b) => b.score - a.score || b.index - a.index)[0] ?? null;
-  return best ? inVenue(best, hints) : null;
+  return hints;
+}
+
+/** 목록에 있는 장소인가 — 있으면 계열 이름, 없으면 null. */
+export function knownPlaceFamily(name: string): string | null {
+  return inferLocationFromText(name)?.family ?? null;
+}
+
+/**
+ * 장소 이름 → 같은 곳끼리 묶는 열쇠.
+ *
+ * 장소 기준 그림은 이름 글자로 찾았다. "놀이터"·"동네 놀이터"·"아파트 놀이터"는 셋 다
+ * 다른 키가 되어 각자 첫 그림을 새로 상상했다 — 같은 놀이터인데 미끄럼틀이 쪽마다
+ * 달랐다. 클로드에게 "한 글자도 다르지 않게 반복하라"고 시켜도 모델은 말을 바꾼다.
+ * 그래서 이름이 아니라 **계열**로 묶는다.
+ *
+ * 집은 방을 가른다 — 아이 방과 거실은 다른 그림이어야 한다. 큰 건물(어린이집·도서관)
+ * 안의 자리는 건물까지 붙인다 — 어린이집 현관과 아파트 현관은 다른 곳이다.
+ * 목록에 없는 곳은 꾸밈말만 떼고 이름 자체로 묶는다.
+ */
+export function locationKeyOf(name: string): string {
+  // 꾸밈말을 먼저 뗀다 — '동네'는 길 계열 낱말이라, 떼지 않으면 "동네 캠핑장"이 길이 된다.
+  const bare = name
+    .normalize("NFC")
+    .trim()
+    .replace(/^(?:(?:동네|우리|낯선|작은|큰|근처|아파트|시골|새|옛|어느|우리\s*집)\s*)+/, "")
+    .trim();
+  const cleaned = compact(bare) || compact(name);
+  if (!cleaned) return "";
+  const hint = inferLocationFromText(bare || name);
+  if (!hint) {
+    // 목록에 없는 곳 — '~방'으로 끝나면 집 안의 방(아이 방·하온이 방), 아니면 이름 자체로 묶는다.
+    if (/방$/.test(cleaned) && !/(주방|가방|책방|찜질방|노래방)$/.test(cleaned)) return "home:room";
+    return cleaned;
+  }
+  let base = hint.family;
+  if (base === "home") {
+    if (/거실/.test(bare)) base = "home:living";
+    else if (/침실|안방|건넌방|놀이방|(?<![가-힣])방(?![가-힣])/.test(bare) || /방$/.test(cleaned)) base = "home:room";
+  }
+  const venue = locationHints(bare || name).find((h) => VENUE_FAMILIES.has(h.family));
+  return venue && venue.family !== hint.family ? `${venue.family}:${base}` : base;
 }
 
 /**
@@ -247,7 +294,20 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
       .filter((line) => !/^\s*(?:등장인물|장소\s*:|물건\s*:)/.test(line))
       .join(" ");
     const textLocation = inferLocationFromText(`${page.text} ${sceneOnly}`);
-    if (location && textLocation && locationFamily(location[1]) !== textLocation.family) {
+    /*
+     * 클로드가 적은 장소 이름이 본문에도 그대로 있으면 그것이 곧 근거다.
+     *
+     * 예전엔 목록에 없는 곳(캠핑장·호숫가·목욕탕…)을 못 알아보고, 본문에 목록 낱말이
+     * 하나라도 있으면(숲·공원) 그쪽 기성 문구로 통째로 갈아 끼웠다 — "장소: 캠핑장 —
+     * 텐트와 모닥불"이 "장소: 숲속 — 키 큰 푸른 나무와 흙길"이 되는 식이다. 글은
+     * 캠핑장인데 그림은 숲. 이제 이름이 본문에 있거나 목록에 없는 곳이면 클로드를 믿는다.
+     * 갈아 끼우는 것은 **목록에 있는 두 곳이 정면으로 다를 때**(숲길 ↔ 태이네 집)뿐이다.
+     */
+    const nameInText = location ? compact(page.text).includes(compact(location[1])) : false;
+    const claudeFamily = location ? knownPlaceFamily(location[1]) : null;
+    /** 목록엔 없지만 본문이 그 이름을 부르는 곳(캠핑장·목욕탕) — 클로드가 맞다. */
+    const unknownButNamed = claudeFamily === null && nameInText;
+    if (location && textLocation && claudeFamily && claudeFamily !== textLocation.family) {
       const correctedClause = `장소: ${textLocation.name} — ${textLocation.description}`;
       imagePrompt = imagePrompt.replace(location[0], correctedClause);
       location = LOCATION_PATTERN.exec(imagePrompt);
@@ -260,7 +320,8 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
       return { ...page, imagePrompt };
     }
 
-    const name = compact(location[1]);
+    // 같은 곳끼리 묶는 열쇠 — 이름 글자가 아니라 계열로 본다("놀이터" = "동네 놀이터").
+    const name = locationKeyOf(location[1]);
     let clause = location[0];
     /*
      * 앞 쪽으로 되돌릴지 정하는 자리.
@@ -278,6 +339,7 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
       previous &&
       previous.name !== name &&
       !textLocation &&
+      !unknownButNamed &&
       !MOVE_PATTERN.test(`${previous.text} ${page.text}`)
     ) {
       imagePrompt = imagePrompt.replace(location[0], previous.clause);

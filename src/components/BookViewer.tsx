@@ -35,6 +35,7 @@ import folkBooksJson from "@/data/folk-books.json";
 import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
+import { locationKeyOf } from "@/lib/story-quality";
 import {
   applyPlaybackRate,
   buildPresetUtterance,
@@ -498,12 +499,17 @@ export function BookViewer({ book }: { book: Book }) {
        * 어린이집 현관 그림이 기준으로 갔고, 다시 그린 놀이터의 미끄럼틀 모양이 나머지
        * 쪽과 달라졌다(실제로 났다). 같은 장소를 그린 쪽이 있으면 그쪽을 먼저 쓴다.
        */
-      const placeOf = (prompt: string | undefined) =>
-        /장소\s*:\s*([^—\-\n.]+)/.exec(prompt ?? "")?.[1]?.replace(/\s+/g, "") ?? "";
+      // 이름 글자가 아니라 계열로 묶는다 — "놀이터"와 "동네 놀이터"는 같은 곳이다.
+      const placeOf = (prompt: string | undefined) => {
+        const name = /장소\s*:\s*([^—\-\n.]+)/.exec(prompt ?? "")?.[1]?.trim() ?? "";
+        return name ? locationKeyOf(name) : "";
+      };
       const here = placeOf(page.imagePrompt);
       const others = book.pages.filter((p, i) => i !== index && p.image);
       const sibling =
         (here ? others.find((p) => placeOf(p.imagePrompt) === here) : undefined) ?? others[0];
+      // 만들 때 그린 장소 시트가 있으면 그것이 장소의 기준이다.
+      const locationSheet = here ? book.locationSheets?.find((s) => s.key === here)?.image ?? "" : "";
       const res = await fetch("/api/illustrate-page", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -519,6 +525,7 @@ export function BookViewer({ book }: { book: Book }) {
           cast: book.cast ?? [],
           // 만들 때 부모가 적어 둔 장소 — 이게 있어야 다시 그린 쪽도 같은 곳이 된다.
           locationDetail: book.locationDetail ?? "",
+          locationSheet,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as { image?: string; error?: string };

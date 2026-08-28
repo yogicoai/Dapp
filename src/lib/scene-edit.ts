@@ -14,6 +14,9 @@
  * 새 API를 부르지 않는다. 부모가 문장 하나 고칠 때마다 돈이 나가면 마음 놓고 못 고친다.
  */
 
+// 상대 경로 + 확장자 — node --test는 "@/" 별칭을 모르고 확장자를 요구한다(tsconfig가 허용).
+import { knownPlaceFamily, locationKeyOf } from "./story-quality.ts";
+
 /** 등장인물 잠금 줄 — 한 화면에 같은 인물이 두 번 그려지는 것을 막는 줄이다. */
 const CAST_LINE = /등장인물\s*\d+\s*명(?:\s*:[^.\n]*)?\./;
 /** 장소 잠금 줄 — 쪽마다 다른 계곡이 되지 않게 잡아 주는 줄. */
@@ -23,6 +26,32 @@ const PROP_LINE = /물건\s*:[^.\n]*\./g;
 
 /** `장소: 이름 — 특징.`에서 이름과 특징을 따로 뽑는다. */
 const NAMED_LOCK = /^(?:장소|물건)\s*:\s*([^—\-\n]+?)\s*[—-]\s*([^\n]+?)\.?$/;
+
+/**
+ * 부모가 적은 장소 칸에서 **이 쪽의 장소에 해당하는 부분만** 고른다.
+ *
+ * 칸은 책 전체 한 줄이다: `계곡은 회색 자갈 바닥 · 거실은 밝은 마루 · 아이스크림은 분홍색`.
+ * 예전엔 이 한 줄을 모든 쪽에 통째로 넣고 "매 쪽 이 장소를 그려라"고 했다 —
+ * 그러면 거실 장면에 계곡 바위가 따라 들어온다. 이제 장소 부분은 이 쪽의 장소와
+ * 같은 계열만 남기고, 물건 부분(장소가 아닌 것)은 그대로 둔다.
+ *
+ * ' · '로 나뉘어 있지 않은 자유 문장은 손대지 않고 그대로 준다.
+ */
+export function pickLocationDetail(detail: string, locationName: string): string {
+  const parts = detail.split(/\s*·\s*/).map((s) => s.trim()).filter(Boolean);
+  if (parts.length <= 1) return detail.trim();
+  const here = locationName ? locationKeyOf(locationName) : "";
+  const kept = parts.filter((part) => {
+    const m = /^(.+?)(?:은|는)\s+(.+)$/.exec(part);
+    if (!m) return true;
+    const subject = m[1].trim();
+    // 이 쪽의 장소와 같은 계열이면 남긴다.
+    if (here && locationKeyOf(subject) === here) return true;
+    // 목록에 있는 다른 장소면 뺀다. 목록에 없는 것은 물건일 수 있으니 둔다.
+    return knownPlaceFamily(subject) === null;
+  });
+  return kept.join(" · ");
+}
 
 /** 받침이 있으면 '은', 없으면 '는'. (가-힣 블록에서 (코드-0xac00)%28 != 0 이면 받침) */
 function topicParticle(word: string): string {

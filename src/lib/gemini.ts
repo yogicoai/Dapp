@@ -333,6 +333,8 @@ export async function validateIllustration(input: {
   image: GeneratedImage;
   reference?: GeneratedImage | null;
   styleReference?: GeneratedImage | null;
+  /** 장소 기준 그림(인물 없는 장소판). 있으면 장소가 이것과 같은지까지 본다. */
+  locationReference?: GeneratedImage | null;
   scene: string;
   expectedLocation?: string;
   cast: { name: string; description: string }[];
@@ -344,18 +346,24 @@ export async function validateIllustration(input: {
   const model = process.env.GEMINI_VISION_MODEL ?? "gemini-2.5-flash";
   const expected = input.cast.length;
   const cast = input.cast.map((c, i) => `${i + 1}. ${c.name}: ${c.description}`).join("\n");
+  // 붙이는 그림의 순서와 역할을 함께 적는다 — 어느 것이 몇 번째인지 틀리면 검사가 엉뚱해진다.
+  const ordinal = ["FIRST", "SECOND", "THIRD", "FOURTH"];
+  const attached: { image: GeneratedImage; role: string }[] = [
+    { image: input.image, role: "the generated page to check" },
+  ];
+  if (input.reference) attached.push({ image: input.reference, role: "the whole-book character reference sheet" });
+  if (input.styleReference) {
+    attached.push({ image: input.styleReference, role: "a previously approved page from this same book — the authoritative rendering-style reference" });
+  }
+  if (input.locationReference) {
+    attached.push({ image: input.locationReference, role: "the LOCATION reference sheet for this page's place (the place itself, with no people) — its architecture, ground, landmark and colours are mandatory" });
+  }
   const parts: unknown[] = [
-    { inlineData: { mimeType: input.image.mimeType, data: input.image.data } },
-    ...(input.reference
-      ? [{ inlineData: { mimeType: input.reference.mimeType, data: input.reference.data } }]
-      : []),
-    ...(input.styleReference
-      ? [{ inlineData: { mimeType: input.styleReference.mimeType, data: input.styleReference.data } }]
-      : []),
+    ...attached.map((a) => ({ inlineData: { mimeType: a.image.mimeType, data: a.image.data } })),
     {
       text: [
         "You are checking a generated children's-book page for factual illustration errors.",
-        "The FIRST attached image is the generated page. If present, the SECOND is the whole-book character reference sheet. If present, the THIRD is a previously approved page from this same book and is the authoritative rendering-style reference.",
+        attached.map((a, i) => `The ${ordinal[i]} attached image is ${a.role}.`).join(" "),
         `Scene instruction: ${input.scene}`,
         input.expectedLocation
           ? `MANDATORY EXPECTED LOCATION: ${input.expectedLocation}. The generated page must visibly depict this exact kind of place.`
@@ -366,6 +374,9 @@ export async function validateIllustration(input: {
         "FAIL for any readable or pseudo-readable writing inside the artwork: captions, subtitles, story sentences, English or Korean letters, numbers, labels, signs, logos, signatures, speech bubbles or watermarks. The page must be image-only.",
         "FAIL if the setting contradicts the mandatory expected location. A home/playroom cannot be shown as a forest path, park, hanok courtyard, classroom or generic outdoor landscape. A park cannot be shown as an indoor room. Do not accept a metaphorical or merely pretty substitute for the named place.",
         "For a recurring place, FAIL if its fixed architecture, wall/floor colours, windows, large furniture or play equipment visibly change from the approved same-location reference.",
+        input.locationReference
+          ? "A LOCATION reference sheet is attached: the page must clearly be the same place as that sheet — same kind of ground, same big landmark, same wall/floor colours and layout. A different camera angle is fine; a different place, a different landmark or different colours is a FAIL."
+          : "",
         "FAIL for wrong number of people, an extra/background person, a duplicated person, a missing expected person, identities/outfits swapped, or any visible change from the character reference in face construction, hair shape/colour, clothing design/colour, shoes or accessories.",
         "FAIL for any rendering-style drift from the references: 3D/clay to flat 2D, 2D to 3D, watercolor to vector/anime, different line quality, texture, shading, saturation or finish. Treat the approved-page style as mandatory, not optional.",
         "FAIL if a named character performs or occupies the clearly wrong action or place.",
