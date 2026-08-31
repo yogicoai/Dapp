@@ -1647,6 +1647,25 @@ export default function CreatePage() {
      * 왜 안 됐는지를 알아야 기다렸다 다시 할지, 오늘은 그만둘지 정할 수 있다.
      */
     const drawFailures: string[] = [];
+    /*
+     * 참조로 다시 올려보낼 그림은 줄여서 보낸다.
+     *
+     * 쪽 그림 한 장은 2~3MB인데, 우리는 그 그림을 뒤 쪽의 그림체·장소 기준으로
+     * 서버에 다시 올린다. 원본 그대로 실으면 캐릭터 시트·장소 시트와 합쳐 요청이
+     * 서버 한도(4.5MB)를 넘어 413으로 거절당한다. 413은 본문이 JSON이 아니라
+     * 오류 이유조차 안 남아, 화면에는 "그림 3장을 못 그렸어요"만 뜨고 까닭이 없었다.
+     * 기준 그림은 얼굴·색·그림체만 보면 되므로 1024px면 충분하다.
+     */
+    const shrunkRefs = new Map<string, string>();
+    const asReference = async (dataUrl: string) => {
+      if (!dataUrl) return "";
+      const hit = shrunkRefs.get(dataUrl);
+      if (hit) return hit;
+      const small = await shrinkDataUrl(dataUrl, 1024, 0.82);
+      if (shrunkRefs.size > 8) shrunkRefs.clear();
+      shrunkRefs.set(dataUrl, small);
+      return small;
+    };
     locationSheetsRef.current = [];
     /*
      * 그리다 만 것이 있으면 이어서 그린다.
@@ -1863,7 +1882,16 @@ export default function CreatePage() {
               // 삼으면 그 어긋남이 뒤 쪽으로 번진다.
               const styleSeed = passed[0] ? 0 : passed.findIndex(Boolean);
               const styleFallback = styleSeed >= 0 ? images[styleSeed] : null;
-              const styleReference = sameLocationReference?.image ?? styleFallback ?? "";
+              /*
+               * 기준 그림은 줄여서 보낸다.
+               *
+               * 이 그림은 앞 쪽에서 그린 '완성 쪽 그림'이라 2~3MB다. 원본 그대로 실으면
+               * 캐릭터 시트·장소 시트와 합쳐 요청이 서버 한도(4.5MB)를 넘고, 413으로
+               * 조용히 거절당한다. 앞 쪽이 그려질수록 뒤 쪽이 무너지던 까닭이 이것이다.
+               */
+              const styleReference = await asReference(
+                sameLocationReference?.image ?? styleFallback ?? "",
+              );
               const styleReferenceScene =
                 sameLocationReference?.scene ??
                 (styleFallback && styleSeed >= 0 ? s.pages[styleSeed].imagePrompt : "");
@@ -1909,7 +1937,7 @@ export default function CreatePage() {
                 qualityWarning?: string;
                 qualityIssue?: "text" | "other";
               };
-              return { ok: r.ok, data };
+              return { ok: r.ok, status: r.status, data };
             };
 
             /*
@@ -1921,7 +1949,21 @@ export default function CreatePage() {
              */
             const first = await requestImage();
             if (first.ok && first.data.image) counts.pages += 1;
-            if (!first.ok && first.data.error) drawFailures.push(first.data.error);
+            /*
+             * 이유 없는 실패를 없앤다.
+             *
+             * 413(요청이 너무 큼)이나 프록시 오류는 본문이 JSON이 아니라 error가 비어
+             * 있었다. 그래서 화면에는 "그림 3장을 못 그렸어요"만 뜨고 까닭 줄이 통째로
+             * 사라졌다 — 부모도 우리도 왜 안 됐는지 알 길이 없었다.
+             */
+            if (!first.ok) {
+              drawFailures.push(
+                first.data.error ||
+                  (first.status === 413
+                    ? "참고 그림이 너무 커서 서버가 요청을 거절했어요."
+                    : `서버가 그림을 돌려주지 않았어요 (오류 ${first.status}).`),
+              );
+            }
             let image = first.ok ? (first.data.image ?? null) : null;
             /*
              * '검사 통과'와 '검사 못 함'을 가른다.
