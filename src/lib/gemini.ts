@@ -382,7 +382,12 @@ export async function validateIllustration(input: {
   const key = process.env.GEMINI_API_KEY;
   if (!key) return { ok: true, checked: false, issues: "" };
 
-  const model = process.env.GEMINI_VISION_MODEL ?? "gemini-2.5-flash";
+  /*
+   * 검수 모델. gemini-2.5-flash 는 2026-08 기준 신규 사용이 막혀 404를 돌려준다 —
+   * 그동안 검사가 통째로 죽어 있었는데 옛 코드가 장애를 "통과"로 바꿔 아무도 몰랐다.
+   * 별칭(gemini-flash-latest)을 쓰면 모델이 바뀌어도 따라간다.
+   */
+  const model = process.env.GEMINI_VISION_MODEL ?? "gemini-flash-latest";
   const expected = input.cast.length;
   const cast = input.cast.map((c, i) => `${i + 1}. ${c.name}: ${c.description}`).join("\n");
   // 붙이는 그림의 순서와 역할을 함께 적는다 — 어느 것이 몇 번째인지 틀리면 검사가 엉뚱해진다.
