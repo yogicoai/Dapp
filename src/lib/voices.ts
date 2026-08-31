@@ -61,6 +61,13 @@ export type TypecastPreset = {
   /** 칩 툴팁 — 어떤 목소리인지 */
   desc: string;
   sample: string;
+  /**
+   * 이 목소리가 실제로 낼 수 있는 감정. 안 적으면 일곱 가지를 다 낸다고 본다.
+   *
+   * 옛 모델(ssfm-v21)은 normal·happy·sad·angry 넷뿐이라, toneup 같은 걸 그대로
+   * 보내면 합성이 거절당한다. 여기 적어 두면 굽는 쪽이 낼 수 있는 감정으로 바꿔 준다.
+   */
+  emotions?: string[];
 };
 
 export type Voice = PresetVoice | CustomVoice | TypecastPreset;
@@ -173,6 +180,9 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-hosun", label: "호선", emoji: "🪓", voiceId: "tc_65a0e1eb23a607b9906c0154", model: "ssfm-v30", desc: "남자 · 담백하고 반듯한 목소리", sample: "옛날 어느 산골에 부지런한 나무꾼이 살았어요." },
   { kind: "tc", id: "tc-taeji", label: "태지", emoji: "🐢", voiceId: "tc_660645fb8db3e2c06ff7070b", model: "ssfm-v30", desc: "남자 어린이 · 또박또박 단단한 목소리", sample: "괜찮아. 나는 나의 걸음으로 가면 돼." },
   { kind: "tc", id: "tc-gahee", label: "가희", emoji: "💅", voiceId: "tc_624ccc04adcd568510764d3f", model: "ssfm-v30", desc: "여자 · 새침하고 앙칼진 목소리", sample: "언니는 집이나 지켜. 잔치는 우리끼리 갈 거야!" },
+  // 양치기 소년 · 소년 역 (2026-08-31 사장님이 voice id를 직접 주심).
+  // ssfm-v21 이라 감정이 넷뿐 — toneup·tonedown·whisper 가 없다.
+  { kind: "tc", id: "tc-toby", label: "토비", emoji: "🐑", voiceId: "tc_6080369d3211aa112ab131db", model: "ssfm-v21", desc: "남자 어린이 · 맑고 또렷한 목소리", sample: "늑대다! 늑대가 나타났어요!", emotions: ["normal", "happy", "sad", "angry"] },
 ];
 
 /**

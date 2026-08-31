@@ -263,12 +263,34 @@ if (!BAKED_NARRATORS.includes(DEFAULT_NARRATOR)) {
 const CAST_NAMES = SPEC.cast;
 
 /** voices.ts에서 성우 id → Typecast voiceId·모델을 읽어 온다(두 벌로 관리하지 않으려고). */
-function voiceTable(): Record<string, { voiceId: string; model: string }> {
+function voiceTable(): Record<string, { voiceId: string; model: string; emotions?: string[] }> {
   const src = fs.readFileSync("src/lib/voices.ts", "utf8");
-  const table: Record<string, { voiceId: string; model: string }> = {};
+  const table: Record<string, { voiceId: string; model: string; emotions?: string[] }> = {};
   const re = /id:\s*"(tc-[a-z0-9]+)"[\s\S]{0,240}?voiceId:\s*"(tc_[a-f0-9]+)"[\s\S]{0,80}?model:\s*"([^"]+)"/g;
   for (const m of src.matchAll(re)) table[m[1]] = { voiceId: m[2], model: m[3] };
+  // 낼 수 있는 감정이 적힌 목소리는 그 목록도 읽는다(한 줄에 한 명씩 적혀 있다).
+  for (const m of src.matchAll(/id:\s*"(tc-[a-z0-9]+)".*?emotions:\s*\[([^\]]*)\]/g)) {
+    if (table[m[1]]) table[m[1]].emotions = [...m[2].matchAll(/"([^"]+)"/g)].map((x) => x[1]);
+  }
   return table;
+}
+
+/**
+ * 그 목소리가 못 내는 감정은 낼 수 있는 것으로 바꾼다.
+ *
+ * 옛 모델(ssfm-v21)은 normal·happy·sad·angry 넷뿐인데 toneup 을 보내면 합성이
+ * 거절당한다. 그러면 그 조각만 통째로 빠져 낭독이 중간에 끊긴다.
+ * 치켜 외치는 줄은 happy 가 가장 가깝고, 낮추거나 속삭이는 줄은 normal 이 낫다.
+ */
+const EMOTION_FALLBACK: Record<string, string> = {
+  toneup: "happy",
+  tonedown: "normal",
+  whisper: "normal",
+};
+function usableEmotion(v: { emotions?: string[] }, want: string): string {
+  if (!v.emotions || v.emotions.includes(want)) return want;
+  const alt = EMOTION_FALLBACK[want] ?? "normal";
+  return v.emotions.includes(alt) ? alt : "normal";
 }
 
 /**
@@ -361,6 +383,9 @@ async function bake(file: string, text: string, voice: string, emotion: string, 
   const table = voiceTable();
   const v = table[voice];
   if (!v) throw new Error(`성우 ${voice}를 voices.ts에서 못 찾았습니다`);
+  const wanted = emotion;
+  emotion = usableEmotion(v, emotion);
+  if (emotion !== wanted) console.log(`  (감정 바꿈) ${voice}는 ${wanted}를 못 냅니다 → ${emotion}`);
   const out = path.join(DIR, file);
   const recipe: Recipe = {
     voice,
