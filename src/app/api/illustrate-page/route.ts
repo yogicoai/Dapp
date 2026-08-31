@@ -12,6 +12,14 @@ import {
   validateIllustration,
 } from "@/lib/gemini";
 
+/*
+ * 그리는 데 20~30초가 걸린다(검사에 걸려 다시 그리면 그 두 배).
+ * 이 값을 안 적으면 배포 환경의 짧은 기본값이 걸려 도중에 잘린다 — 그때 돌아오는
+ * 응답은 JSON이 아니라, 부르는 쪽은 이유도 모른 채 그 쪽만 빈 채로 넘어갔다.
+ */
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
 /**
  * 쪽별 삽화. 클로드가 쓴 장면 묘사(@@IMG@@) + 그림체 프롬프트 + 캐릭터 시트 참조.
  *
