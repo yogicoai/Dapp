@@ -136,6 +136,14 @@ export async function POST(request: Request) {
      */
     `Draw EXACTLY ${characters.length} character${characters.length > 1 ? "s" : ""}, one per person listed above, arranged left to right in that order, evenly spaced and clearly separated.`,
     "Each listed character appears exactly ONCE. Never repeat a character, never draw twins, never add anyone who is not on the list.",
+    /*
+     * 어른에게 안경·수염을 임의로 붙이지 않는다.
+     *
+     * 이 동화의 어른은 아이의 실제 엄마·아빠다. 안 쓰는 안경을 씌우면 아이가 "우리
+     * 아빠"로 못 알아본다(실제로 6쪽 내내 안경잡이 아빠가 그려졌다). 구별은 머리
+     * 길이와 옷 색으로 충분하다. 글로 적혀 있을 때만 그린다.
+     */
+    "DO NOT invent facial accessories or features for the ADULTS. Never add glasses, sunglasses, a beard, a moustache, a hat, earrings, a mole or a tattoo to any adult unless that exact item is written in their description above. These adults are the child's real family — a father wearing glasses he does not own makes the child fail to recognise him. Tell adults apart by HAIR LENGTH/STYLE and CLOTHING COLOUR only.",
     characters.length > 1
       ? [
           "MAKE THEM UNMISTAKABLY DIFFERENT FROM EACH OTHER. This is the most important rule of this sheet.",
