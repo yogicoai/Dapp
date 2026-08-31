@@ -51,14 +51,6 @@ export const ART_STYLES: ArtStyle[] = [
       "classic Japanese animation storybook style, painterly lush backgrounds; hand-painted gouache backgrounds with soft light, clean thin cel outlines on characters, flat cel shading with one shadow tone, natural greens and sky blues, nostalgic film-like softness",
   },
   {
-    id: "pixar",
-    label: "3D 애니풍",
-    emoji: "🧸",
-    image: "/art-styles/style_05.webp",
-    prompt:
-      "modern 3D animated movie style, glossy soft-toy look, rounded shapes; smooth subsurface-scattering skin, big expressive eyes, soft global illumination with gentle shadows, plush fabric and fur textures, shallow depth of field, saturated but soft colours",
-  },
-  {
     id: "vector",
     label: "플랫 벡터",
     emoji: "🔷",

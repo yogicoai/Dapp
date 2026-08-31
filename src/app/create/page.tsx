@@ -2942,7 +2942,7 @@ export default function CreatePage() {
               </h1>
 
               {/* 4종이라 한 줄에 다 보이게 — 폰 폭(360px)에서도 네 칸이 들어가도록 여백·글씨를 줄였다. */}
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 {ART_STYLES.map((s) => {
                   const active = artStyle === s.id;
                   return (
