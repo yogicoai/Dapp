@@ -32,7 +32,28 @@ export function parseChild(value: unknown): ChildProfile {
   // 부모가 고른 생김새 — 그림 프롬프트로 그대로 들어가므로 길이를 제한한다.
   const looks = typeof c?.looks === "string" ? c.looks.trim().slice(0, 300) : "";
 
-  return { name, age, gender, ...(looks ? { looks } : {}) };
+  /*
+   * 엄마·아빠 생김새 — 안 주면 모델이 안경·수염을 지어낸다.
+   * 아이 것과 같은 이유로 길이를 자른다(프롬프트에 그대로 들어간다).
+   */
+  const pl = c?.parentLooks as { mom?: unknown; dad?: unknown } | undefined;
+  const one = (x: unknown) => (typeof x === "string" ? x.trim().slice(0, 150) : "");
+  const parentLooks = { mom: one(pl?.mom), dad: one(pl?.dad) };
+
+  return {
+    name,
+    age,
+    gender,
+    ...(looks ? { looks } : {}),
+    ...(parentLooks.mom || parentLooks.dad
+      ? {
+          parentLooks: {
+            ...(parentLooks.mom ? { mom: parentLooks.mom } : {}),
+            ...(parentLooks.dad ? { dad: parentLooks.dad } : {}),
+          },
+        }
+      : {}),
+  };
 }
 
 /**

@@ -15,6 +15,7 @@ import {
   AGE_OVER,
   countMyBooks,
   looksToPrompt,
+  parentLooksToPrompt,
   saveChild,
   saveMyBook,
 } from "@/lib/prefs";
@@ -1343,6 +1344,11 @@ export default function CreatePage() {
     age: age ?? 0,
     gender,
     looks: looksToPrompt(loadChild()?.looks) || undefined,
+    // 엄마·아빠 생김새(선택) — 안 주면 모델이 안경·수염을 지어낸다.
+    parentLooks: {
+      mom: parentLooksToPrompt(loadChild()?.parents?.mom) || undefined,
+      dad: parentLooksToPrompt(loadChild()?.parents?.dad) || undefined,
+    },
   };
 
   // '누구랑' 칩 — 아이 성별에 맞는 형제 호칭을 끼워 만든다.
@@ -1684,6 +1690,11 @@ export default function CreatePage() {
             // 나이·성별은 이야기에만 가고 시트에는 안 갔다 — 다섯 살이 여덟 살 얼굴로 나오던 구멍.
             heroAge: age ?? child?.age ?? null,
             heroGender: gender !== "unspecified" ? gender : child?.gender,
+            // 엄마·아빠도 부모가 고른 대로 — 안경은 여기 적혔을 때만 그린다.
+            adultLooks: {
+              엄마: parentLooksToPrompt(child?.parents?.mom) || undefined,
+              아빠: parentLooksToPrompt(child?.parents?.dad) || undefined,
+            },
           }),
           signal: ac.signal,
         });

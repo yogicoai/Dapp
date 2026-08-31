@@ -40,6 +40,8 @@ import {
   type ShelfCols,
   looksToPrompt,
   type ChildLooks,
+  type ParentLooks,
+  parentLooksToPrompt,
   saveBookLayout,
   saveChild,
   saveLang,
@@ -197,6 +199,9 @@ export default function SettingsPage() {
   const childTouched = useRef(false);
   // 항목이 많아 화면이 길어진다 — 평소엔 접어 두고 눌러서 편다.
   const [looksOpen, setLooksOpen] = useState(false);
+  // 엄마·아빠 생김새(아주 간단히) — 안 알려 주면 모델이 안경·수염을 지어낸다.
+  const [parents, setParents] = useState<{ mom?: ParentLooks; dad?: ParentLooks }>({});
+  const [parentsOpen, setParentsOpen] = useState(false);
   const [lang, setLang] = useState("ko");
 
   // 목소리 — 프리셋 선택 + 엄마·아빠 녹음 관리
@@ -265,6 +270,7 @@ export default function SettingsPage() {
       setAge(stored.age);
       setGender(stored.gender);
       setLooks(stored.looks ?? {});
+      setParents(stored.parents ?? {});
     }
     setLang(loadLang());
     setVoiceId(loadSelectedVoiceId());
@@ -324,6 +330,7 @@ export default function SettingsPage() {
           setAge(c.age);
           setGender(c.gender);
           setLooks(c.looks ?? {});
+          setParents(c.parents ?? {});
         })
         .catch(() => {});
 
@@ -680,6 +687,7 @@ export default function SettingsPage() {
     age?: number | null;
     gender?: Gender;
     looks?: ChildLooks;
+    parents?: { mom?: ParentLooks; dad?: ParentLooks };
   }) => {
     // 부모가 손을 댄 순간부터는 뒤늦게 도착하는 서버 값이 이걸 덮지 못하게 한다.
     childTouched.current = true;
@@ -688,6 +696,7 @@ export default function SettingsPage() {
       age: next.age !== undefined ? next.age : age,
       gender: next.gender ?? gender,
       looks: next.looks ?? looks,
+      parents: next.parents ?? parents,
     };
     saveChild(merged);
     flashSaved();
@@ -699,6 +708,14 @@ export default function SettingsPage() {
     setLooks(merged);
     persistChild({ looks: merged });
   };
+  /** 엄마·아빠 특징 한 항목 바꾸기 — 같은 걸 다시 누르면 해제된다. */
+  const setParent = (role: "mom" | "dad", patch: Partial<ParentLooks>) => {
+    const cur = parents[role] ?? {};
+    const merged = { ...parents, [role]: { ...cur, ...patch } };
+    setParents(merged);
+    persistChild({ parents: merged });
+  };
+
   /** 여러 개 고르는 항목(늘 지니는 것·이런 점도)에서 하나를 켜고 끈다. */
   const toggleIn = (key: "items" | "marks", v: string) => {
     const cur = looks[key] ?? [];
@@ -996,6 +1013,7 @@ export default function SettingsPage() {
                         type="button"
                         onClick={() => {
                           setLooks({});
+                          setParents({});
                           persistChild({ looks: {} });
                         }}
                         className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[11px] font-extrabold text-neutral-500 shadow-sm"
@@ -1009,6 +1027,104 @@ export default function SettingsPage() {
             </div>
           </section>
           </>)}
+
+          {/* ── 엄마·아빠 특징 ── 아주 간단하게 셋만.
+              안 알려 주면 이야기 모델이 지어낸다 — 실제로 안경을 안 쓰는 아빠가
+              6쪽 내내 안경잡이로 그려졌다. 자세히 받으면 만들기가 길어지므로
+              머리·안경·옷 색만 받고 나머지는 자유 한 줄로 둔다. */}
+          <section className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => setParentsOpen((v) => !v)}
+              aria-expanded={parentsOpen}
+              className="flex items-center gap-2 rounded-2xl bg-neutral-100 px-4 py-3 text-left transition hover:bg-neutral-200"
+            >
+              <span className="text-lg leading-none" aria-hidden>👨‍👩‍👦</span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-extrabold text-neutral-700">
+                  엄마·아빠 특징 <span className="font-bold text-neutral-400">(선택)</span>
+                </span>
+                <span className="block truncate text-[11px] font-bold text-neutral-400">
+                  {[parentLooksToPrompt(parents.mom) && "엄마 " + parentLooksToPrompt(parents.mom),
+                    parentLooksToPrompt(parents.dad) && "아빠 " + parentLooksToPrompt(parents.dad)]
+                    .filter(Boolean).join(" · ") || "동화에 엄마·아빠가 나올 때 그대로 그려져요"}
+                </span>
+              </span>
+              <span aria-hidden className={`text-neutral-400 transition-transform ${parentsOpen ? "rotate-180" : ""}`}>
+                ▼
+              </span>
+            </button>
+
+            <div className={`grid transition-[grid-template-rows,opacity] duration-300 ${parentsOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+              <div className="overflow-hidden">
+                <div className="flex flex-col gap-4 rounded-2xl bg-white/70 p-4">
+                  <p className="break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
+                    안 고르시면 앱이 알아서 정해요. 안경처럼 있고 없음이 분명한 건 여기서 알려 주셔야
+                    그림이 실제 모습과 맞아요.
+                  </p>
+                  {([
+                    { role: "mom" as const, label: "엄마", emoji: "👩",
+                      hairs: ["짧은 머리", "단발", "긴 머리", "묶은 머리", "파마머리"] },
+                    { role: "dad" as const, label: "아빠", emoji: "👨",
+                      hairs: ["짧은 머리", "아주 짧은 머리", "조금 긴 머리", "곱슬머리"] },
+                  ]).map((row) => {
+                    const cur = parents[row.role] ?? {};
+                    return (
+                      <div key={row.role} className="flex flex-col gap-2">
+                        <p className="text-xs font-extrabold text-neutral-600">
+                          <span className="mr-1" aria-hidden>{row.emoji}</span>{row.label}
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {row.hairs.map((h) => {
+                            const on = cur.hair === h;
+                            return (
+                              <button key={h} type="button"
+                                onClick={() => setParent(row.role, { hair: on ? undefined : h })}
+                                aria-pressed={on}
+                                style={on ? { background: accent } : undefined}
+                                className={`rounded-full px-3 py-1.5 text-[12px] font-bold transition ${on ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}
+                              >
+                                {h}
+                              </button>
+                            );
+                          })}
+                          <button type="button"
+                            onClick={() => setParent(row.role, { glasses: cur.glasses ? undefined : true })}
+                            aria-pressed={Boolean(cur.glasses)}
+                            style={cur.glasses ? { background: accent } : undefined}
+                            className={`rounded-full px-3 py-1.5 text-[12px] font-bold transition ${cur.glasses ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}
+                          >
+                            👓 안경
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {["빨강", "노랑", "파랑", "초록", "분홍", "보라", "하양", "검정", "회색", "베이지"].map((c) => {
+                            const on = cur.color === c;
+                            return (
+                              <button key={c} type="button"
+                                onClick={() => setParent(row.role, { color: on ? undefined : c })}
+                                aria-pressed={on}
+                                style={on ? { background: accent } : undefined}
+                                className={`rounded-full px-2.5 py-1 text-[11px] font-bold transition ${on ? "text-white shadow" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`}
+                              >
+                                {c} 옷
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <input
+                          value={cur.note ?? ""}
+                          onChange={(e) => setParent(row.role, { note: e.target.value.slice(0, 40) || undefined })}
+                          placeholder={row.role === "mom" ? "예: 늘 앞치마를 둘러요" : "예: 수염이 조금 있어요"}
+                          className="w-full rounded-xl border-2 border-neutral-100 bg-neutral-50 px-3 py-2 text-[13px] font-medium text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-200"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* ── 나라(테마) ── 게스트도 바꿀 수 있는 유일한 설정(스킨). */}
           <section className="flex flex-col gap-2.5">

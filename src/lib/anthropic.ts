@@ -63,6 +63,11 @@ export type ChildProfile = {
    * 이제 이야기를 쓸 때부터 알려 줘서, 인물 설명 자체가 이 값으로 나오게 한다.
    */
   looks?: string;
+  /**
+   * 부모가 설정에서 고른 엄마·아빠 생김새(선택).
+   * 안 주면 모델이 지어낸다 — 안경을 안 쓰는 아빠가 안경잡이로 그려졌다.
+   */
+  parentLooks?: { mom?: string; dad?: string };
 };
 
 /**
@@ -135,6 +140,13 @@ function describeChild(child: ChildProfile): string {
      */
     child.looks
       ? `주인공의 생김새는 부모가 직접 고른 것이다. @@CHARACTER@@의 첫 줄에 이 내용을 **그대로** 쓰고, 여기 없는 머리 모양·머리결·눈매·피부를 새로 지어내지 않는다: ${child.looks}`
+      : "",
+    // 엄마·아빠도 부모가 알려 준 대로만 적는다. 안 알려 준 항목은 지어내지 않는다.
+    child.parentLooks?.mom
+      ? `엄마가 이야기에 나오면 생김새는 이대로 쓴다(부모가 직접 고름, 여기 없는 것은 지어내지 않는다): ${child.parentLooks.mom}`
+      : "",
+    child.parentLooks?.dad
+      ? `아빠가 이야기에 나오면 생김새는 이대로 쓴다(부모가 직접 고름, 여기 없는 것은 지어내지 않는다): ${child.parentLooks.dad}`
       : "",
   ]
     .filter(Boolean)

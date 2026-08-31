@@ -57,11 +57,28 @@ export function ageLabel(age: number | null): string {
   return age >= AGE_OVER ? "8세 이상" : `${age}세`;
 }
 
+/**
+ * 엄마·아빠 생김새 — 아주 간단하게.
+ *
+ * 아이 특징은 부모가 고르는데 엄마·아빠는 알려 줄 방법이 없어서, 이야기 모델이
+ * 매번 지어냈다. 실제로 안경을 안 쓰는 아빠가 6쪽 내내 안경잡이로 그려졌다.
+ * 그렇다고 아이만큼 자세히 받으면 만들기가 길어지므로 셋만 받는다:
+ * 머리 / 안경 / 옷 색. 나머지는 자유 한 줄.
+ */
+export type ParentLooks = {
+  hair?: string;
+  glasses?: boolean;
+  color?: string;
+  note?: string;
+};
+
 export type ChildPrefs = {
   name: string;
   age: number | null;
   gender: Gender;
   looks?: ChildLooks;
+  /** 엄마·아빠 생김새(선택). 동화에 엄마·아빠가 나올 때만 쓰인다. */
+  parents?: { mom?: ParentLooks; dad?: ParentLooks };
 };
 
 /** 저장된 값에서 생김새만 안전하게 골라낸다(모르는 값·형식은 버린다). */
@@ -116,6 +133,7 @@ function normalizeChild(raw: unknown): ChildPrefs | null {
     age: typeof c.age === "number" ? c.age : null,
     gender: c.gender === "girl" || c.gender === "boy" ? c.gender : "unspecified",
     looks: normalizeLooks((c as { looks?: unknown }).looks),
+    parents: normalizeParents((c as { parents?: unknown }).parents),
   };
 }
 
@@ -123,6 +141,42 @@ function normalizeChild(raw: unknown): ChildPrefs | null {
  * 생김새를 그림 프롬프트에 넣을 한 줄로 만든다(한국어). 안 고른 항목은 빠진다.
  * 캐릭터 시트가 이 문장을 받아 주인공을 그리고, 그 시트가 모든 쪽의 기준이 된다.
  */
+/** 저장된 값에서 엄마·아빠 생김새만 안전하게 골라낸다. */
+function normalizeParents(raw: unknown): ChildPrefs["parents"] {
+  const v = raw as { mom?: unknown; dad?: unknown } | null | undefined;
+  if (!v || typeof v !== "object") return undefined;
+  const one = (x: unknown): ParentLooks | undefined => {
+    const p = x as Partial<ParentLooks> | null | undefined;
+    if (!p || typeof p !== "object") return undefined;
+    const str = (y: unknown, max = 30) =>
+      typeof y === "string" && y.trim() ? y.trim().slice(0, max) : undefined;
+    const out: ParentLooks = {
+      hair: str(p.hair),
+      glasses: p.glasses === true ? true : undefined,
+      color: str(p.color),
+      note: str(p.note, 40),
+    };
+    return Object.values(out).some(Boolean) ? out : undefined;
+  };
+  const mom = one(v.mom);
+  const dad = one(v.dad);
+  return mom || dad ? { ...(mom ? { mom } : {}), ...(dad ? { dad } : {}) } : undefined;
+}
+
+/**
+ * 엄마·아빠 생김새를 한 줄로. 안 고른 항목은 빠지고, 아무것도 없으면 빈 문자열.
+ * 이 줄이 이야기(@@CHARACTER@@)와 캐릭터 시트 양쪽에 그대로 간다.
+ */
+export function parentLooksToPrompt(p: ParentLooks | undefined): string {
+  if (!p) return "";
+  const parts: string[] = [];
+  if (p.hair) parts.push(p.hair);
+  parts.push(p.glasses ? "안경을 썼다" : "안경을 쓰지 않는다");
+  if (p.color) parts.push(`${p.color} 옷을 즐겨 입는다`);
+  if (p.note) parts.push(p.note);
+  return parts.join(", ");
+}
+
 export function looksToPrompt(looks: ChildLooks | undefined): string {
   if (!looks) return "";
   const parts: string[] = [];

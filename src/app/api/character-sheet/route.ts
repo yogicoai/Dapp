@@ -26,7 +26,19 @@ export async function POST(request: Request) {
     looksEn?: unknown;
     heroAge?: unknown;
     heroGender?: unknown;
+    adultLooks?: unknown;
   };
+  /**
+   * 엄마·아빠 생김새 — 부모가 설정에서 고른 것(선택).
+   * 이름(엄마/아빠)별로 한 줄씩. 안 온 사람에겐 아래 '지어내지 말라' 규칙만 걸린다.
+   */
+  const adultLooks = ((): { name: string; line: string }[] => {
+    const v = input.adultLooks as Record<string, unknown> | undefined;
+    if (!v || typeof v !== "object") return [];
+    return Object.entries(v)
+      .filter(([, line]) => typeof line === "string" && line.trim())
+      .map(([name, line]) => ({ name, line: String(line).trim().slice(0, 120) }));
+  })();
 
   /**
    * 아이 생김새 — 설정에서 고른 특징(머리·안경·좋아하는 옷 색·주근깨 등)을 한 줄로 받는다.
@@ -143,6 +155,10 @@ export async function POST(request: Request) {
      * 아빠"로 못 알아본다(실제로 6쪽 내내 안경잡이 아빠가 그려졌다). 구별은 머리
      * 길이와 옷 색으로 충분하다. 글로 적혀 있을 때만 그린다.
      */
+    ...adultLooks.map(
+      (a) =>
+        `The adult "${a.name}" looks EXACTLY like this, chosen by the child's parent (Korean): ${a.line}. Follow it literally — if it says they do not wear glasses, draw no glasses.`,
+    ),
     "DO NOT invent facial accessories or features for the ADULTS. Never add glasses, sunglasses, a beard, a moustache, a hat, earrings, a mole or a tattoo to any adult unless that exact item is written in their description above. These adults are the child's real family — a father wearing glasses he does not own makes the child fail to recognise him. Tell adults apart by HAIR LENGTH/STYLE and CLOTHING COLOUR only.",
     characters.length > 1
       ? [
