@@ -1002,9 +1002,13 @@ export default function CreatePage() {
         if (res.ok) {
           const { url } = (await res.json()) as { url?: string };
           if (url) job.put(url);
+        } else {
+          console.warn("[hostArtwork] 올리기 실패", job.name, res.status);
         }
-      } catch {
-        /* 이 장만 base64로 남는다 — 다음 장을 계속 올린다 */
+      } catch (e) {
+        // 이 장만 base64로 남는다 — 다음 장을 계속 올린다.
+        // 조용히 넘기면 책이 통째로 base64가 되어 수 MB짜리 줄이 DB에 들어간다(실제로 났다).
+        console.warn("[hostArtwork] 올리기 실패", job.name, e);
       }
       setUploading({ done: i + 1, total: jobs.length });
     }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ART_STYLES } from "@/lib/art-styles";
-import { GeminiError, fromDataUrl, generateImage, loadReferenceImage, toDataUrl } from "@/lib/gemini";
+import { GeminiError, fromDataUrl, generateImage, loadReferenceImage, shrinkForReference, toDataUrl } from "@/lib/gemini";
 import { heroIdentity } from "@/lib/child-looks";
 
 /**
@@ -177,7 +177,12 @@ export async function POST(request: Request) {
        */
       aspectRatio: characters.length >= 3 ? "4:3" : "1:1",
     });
-    return NextResponse.json({ image: toDataUrl(image) });
+    /*
+     * 작게 줄여서 돌려준다 — 이 시트는 쪽마다 참조로 **다시 올라가는** 그림이다.
+     * 원본(2~3MB)을 그대로 두면 장소 시트와 합쳐 요청이 4.5MB를 넘어 그 쪽들이
+     * 통째로 실패한다(2026-08-29 실제 사고).
+     */
+    return NextResponse.json({ image: toDataUrl(await shrinkForReference(image)) });
   } catch (e) {
     if (e instanceof GeminiError) {
       return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });

@@ -496,6 +496,33 @@ export async function validateIllustration(input: {
   return unchecked;
 }
 
+/**
+ * 참조로 쓸 그림을 작게 줄인다 — **요청 본문 한도(4.5MB)를 지키기 위한 필수 단계다.**
+ *
+ * 실제로 난 사고(2026-08-29): 그림 모델을 gemini-3.1-flash-image로 올린 뒤 시트 한 장이
+ * 2~3MB가 됐다. 쪽 그림을 그릴 때는 캐릭터 시트와 장소 시트를 **둘 다** 참조로 보내므로
+ * 요청이 4.5MB를 넘었고, 그 장소를 쓰는 쪽이 **통째로** 실패했다. 6쪽 책 두 권에서
+ * 각각 한 장소의 세 쪽이 전부 빈 채로 저장됐다.
+ *
+ * 참조 그림은 "얼굴이 어떻게 생겼나 / 이 방이 어떻게 생겼나"를 보여 주는 용도라
+ * 1024px JPEG면 충분하다(2~3MB → 150~300KB). 실패하면 원본을 그대로 둔다.
+ */
+export async function shrinkForReference(
+  image: GeneratedImage,
+  maxSide = 1024,
+  quality = 82,
+): Promise<GeneratedImage> {
+  try {
+    const buf = await sharp(Buffer.from(image.data, "base64"))
+      .resize(maxSide, maxSide, { fit: "inside", withoutEnlargement: true })
+      .jpeg({ quality })
+      .toBuffer();
+    return { mimeType: "image/jpeg", data: buf.toString("base64") };
+  } catch {
+    return image;
+  }
+}
+
 export function toDataUrl(img: GeneratedImage): string {
   return `data:${img.mimeType};base64,${img.data}`;
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ART_STYLES } from "@/lib/art-styles";
-import { GeminiError, generateImage, loadReferenceImage, toDataUrl } from "@/lib/gemini";
+import { GeminiError, generateImage, loadReferenceImage, shrinkForReference, toDataUrl } from "@/lib/gemini";
 import { isIndoorPlace } from "@/lib/story-quality";
 
 /**
@@ -94,7 +94,8 @@ export async function POST(request: Request) {
       references: styleSample ? [styleSample] : undefined,
       aspectRatio: phone ? "3:4" : "4:3",
     });
-    return NextResponse.json({ image: toDataUrl(image) });
+    // 쪽마다 참조로 다시 올라가는 그림이라 작게 줄여 보낸다(요청 4.5MB 한도).
+    return NextResponse.json({ image: toDataUrl(await shrinkForReference(image)) });
   } catch (e) {
     if (e instanceof GeminiError) {
       console.error("[location-sheet] Gemini", e.status, e.message);
