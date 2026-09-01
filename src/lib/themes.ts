@@ -51,7 +51,10 @@ export type Theme = {
    */
   cover: {
     frame: string;
-    titleTop: string; // 리본 안 제목의 top %
+    titleTop: string; // 리본(제목 칸)의 세로 가운데 %
+    /** 제목 칸의 높이·너비(표지 대비 %). 안 적으면 기본값. 리본이 넓은 틀만 적는다. */
+    titleHeight?: string;
+    titleWidth?: string;
     circleTop: string; // 그림 원의 중심 top %
     circleWidth: string; // 그림 원의 지름 (틀 폭 대비 %)
     ink: string; // 제목·쪽수 글자색 (틀과 어울리는 짙은 색)
@@ -76,7 +79,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     },
     cover: {
       frame: "/covers/frame-storybook.webp",
-      titleTop: "12%",
+      titleTop: "11.7%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
+      titleHeight: "4.8%",
+      titleWidth: "43%",
       circleTop: "51.5%",
       circleWidth: "62%",
       ink: "#b45309", // 금테와 어울리는 앰버
@@ -100,7 +105,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     cover: {
       // 전용 수채화 틀 — 잠든 여우·책더미·나뭇잎이 그려진 크림빛 프레임.
       frame: "/covers/frame-picturebook.webp",
-      titleTop: "14%",
+      titleTop: "14.4%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
+      titleHeight: "6.9%",
+      titleWidth: "44%",
       circleTop: "52%",
       circleWidth: "52%",
       ink: "#a15c3e", // 틀의 크림·테라코타와 어울리는 짙은 브라운
@@ -117,7 +124,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     icons: { voice: "/icons/func-mic.webp", book: "/themes/dino/icon-book.webp" },
     cover: {
       frame: "/covers/frame-dino.webp",
-      titleTop: "14%",
+      titleTop: "14.4%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
+      titleHeight: "6.0%",
+      titleWidth: "44%",
       circleTop: "50.5%",
       circleWidth: "52%",
       ink: "#166534", // 정글 초록
@@ -134,7 +143,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     icons: { voice: "/icons/func-mic.webp", book: "/themes/car/icon-book.webp" },
     cover: {
       frame: "/covers/frame-car.webp",
-      titleTop: "14.5%",
+      titleTop: "14.0%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
+      titleHeight: "6.3%",
+      titleWidth: "55%",
       circleTop: "50.5%",
       circleWidth: "63%",
       ink: "#1d4ed8",
@@ -153,9 +164,13 @@ export const THEMES: Record<ThemeId, Theme> = {
     },
     cover: {
       frame: "/covers/frame-princess.webp",
-      titleTop: "15.5%",
-      circleTop: "50%",
-      circleWidth: "48%",
+      // 제목 명패가 넓어진 새 틀(2026-09-01). 값은 그림에서 실제로 재서 넣었다 —
+      // 흰 칸 세로 16.3~30.4%(가운데 23.3%), 그림 원 가운데 55.7%.
+      titleTop: "23.4%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
+      titleHeight: "13.3%",
+      titleWidth: "56%",
+      circleTop: "55.7%",
+      circleWidth: "44%",
       ink: "#be185d",
     },
   },
@@ -169,7 +184,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     icons: { voice: "/icons/func-mic.webp", book: "/themes/space/icon-book.webp" },
     cover: {
       frame: "/covers/frame-space.webp",
-      titleTop: "11.5%",
+      titleTop: "12.3%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
+      titleHeight: "6.9%",
+      titleWidth: "59%",
       circleTop: "49.5%",
       circleWidth: "58%",
       ink: "#4338ca",
@@ -185,7 +202,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     icons: { voice: "/icons/func-mic.webp", book: "/themes/ocean/icon-book.webp" },
     cover: {
       frame: "/covers/frame-ocean.webp",
-      titleTop: "14%",
+      titleTop: "15.0%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
+      titleHeight: "6.2%",
+      titleWidth: "45%",
       circleTop: "50%",
       circleWidth: "57%",
       ink: "#0f766e",

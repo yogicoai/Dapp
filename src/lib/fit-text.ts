@@ -36,3 +36,24 @@ export function fitScale(
   }
   return low;
 }
+
+/**
+ * 표지 리본 안에 들어가도록 제목 글자를 얼마나 줄일지.
+ *
+ * 리본(표지 틀 그림에 그려진 띠)의 흰 자리는 표지 높이의 6~7%밖에 안 된다.
+ * 그런데 제목은 두 줄까지 허용돼 있어서, 두 줄이 되는 순간 아랫줄이 리본
+ * 밖으로 흘러내렸다 — "팥죽 할머니와 호랑이"의 '랑이'가 리본 아래 표지 위에
+ * 떠 있었다(사장님 제보).
+ *
+ * 브라우저에서 재지 않고 글자 수로 정한다. 표지는 한 화면에 여러 권이 깔리는데
+ * 권마다 재면 그릴 때마다 레이아웃이 출렁이고, 제목 길이는 미리 알 수 있다.
+ */
+export function coverTitleScale(title: string): number {
+  const n = [...title.trim()].length;
+  if (n <= 6) return 1;
+  if (n <= 8) return 0.92;
+  if (n <= 10) return 0.84;
+  if (n <= 13) return 0.76;
+  if (n <= 16) return 0.68;
+  return 0.6;
+}

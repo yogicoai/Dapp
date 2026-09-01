@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { coverTitleScale } from "@/lib/fit-text";
 import { useTheme } from "./ThemeProvider";
 
 /**
@@ -92,12 +93,28 @@ export function Bookshelf({ books, cols = 5 }: { books: ShelfItem[]; cols?: numb
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-gradient-to-b from-black/20 to-transparent" />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2 bg-gradient-to-t from-black/25 to-transparent" />
 
-                {/* 제목 — 리본 안 */}
+                {/*
+                  제목 — 리본 안.
+
+                  리본의 흰 자리는 표지 높이의 6~7%밖에 안 된다. 예전에는 높이를 안
+                  정해 두고 두 줄까지 허용해서, 두 줄이 되는 순간 아랫줄이 리본 밖으로
+                  흘러내렸다("팥죽 할머니와 호랑이"의 '랑이'가 리본 아래 떠 있었다).
+                  이제 리본만 한 칸을 정해 두고, 그 안에서 가운데 맞춤으로 놓는다.
+                  긴 제목은 글자를 줄여 넣는다 — 넘치는 대신 작아진다.
+                */}
                 <h2
-                  className="absolute left-1/2 w-[56%] -translate-x-1/2 overflow-hidden text-center text-[11px] font-extrabold leading-tight [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] sm:text-[13px]"
-                  style={{ top: `calc(${cover.titleTop} - 2%)`, color: cover.ink }}
+                  className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden text-center font-extrabold leading-[1.15]"
+                  style={{
+                    top: cover.titleTop,
+                    width: cover.titleWidth ?? "58%",
+                    height: cover.titleHeight ?? "9%",
+                    color: cover.ink,
+                    fontSize: `${13 * coverTitleScale(book.title)}px`,
+                  }}
                 >
-                  {book.title}
+                  <span className="[display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
+                    {book.title}
+                  </span>
                 </h2>
 
                 {/* 그림 — 원 창 안 */}

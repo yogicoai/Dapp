@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { fitScale, MIN_FIT } from "./fit-text.ts";
+import { coverTitleScale, fitScale, MIN_FIT } from "./fit-text.ts";
 
 describe("fitScale — 본문이 칸에 들어가게 줄이기", () => {
   it("이미 들어가면 줄이지 않는다", () => {
@@ -42,5 +42,26 @@ describe("fitScale — 본문이 칸에 들어가게 줄이기", () => {
     const short = fitScale((s) => s <= 0.95);
     const long = fitScale((s) => s <= 0.55);
     assert.ok(long < short, `긴 쪽(${long})이 짧은 쪽(${short})보다 작아야 한다`);
+  });
+});
+
+describe("coverTitleScale", () => {
+  it("짧은 제목은 줄이지 않는다", () => {
+    assert.equal(coverTitleScale("흥부와 놀부"), 1);
+  });
+
+  it("길수록 더 줄인다", () => {
+    const a = coverTitleScale("팥죽 할머니와 호랑이");
+    const b = coverTitleScale("노란 킥보드와 따르릉 약속");
+    assert.ok(a < 1, "긴 제목은 줄여야 한다");
+    assert.ok(b < a, "더 길면 더 줄여야 한다");
+  });
+
+  it("아무리 길어도 읽을 수 있는 선에서 멈춘다", () => {
+    assert.ok(coverTitleScale("아주아주 길고 긴 제목을 가진 어떤 동화책 이야기") >= 0.6);
+  });
+
+  it("앞뒤 공백은 세지 않는다", () => {
+    assert.equal(coverTitleScale("  흥부와 놀부  "), coverTitleScale("흥부와 놀부"));
   });
 });
