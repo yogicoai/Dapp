@@ -260,6 +260,27 @@ export function attributeSpeakers(
 }
 
 /**
+ * 낱말이 '토막'이 아니라 낱말로 들어 있는가.
+ *
+ * 예전에는 그냥 문자열 포함으로 봤다. 그래서 '마트용 장바구니'의 '용'이 용·용왕과
+ * 같은 큰 인물로 잡혔고, 네 살 아이 대사가 속도 0.86에 음높이까지 낮춰 읽혔다.
+ * 앞에는 한글이 오면 안 되고, 뒤에는 조사만 올 수 있게 한다('용이 나타났어요'는 살린다).
+ */
+// 낱말 뒤에 붙을 수 있는 것 — 조사와 "~이다" 꼴. 이것 말고 한글이 이어지면
+// 그건 다른 낱말이다("마트용", "용감한"은 용이 아니다).
+const ENDING =
+  "(?:이다|이었다|였다|입니다|이에요|예요|님|씨|이|가|은|는|을|를|와|과|랑|이랑|도|의|에|에게|한테|께|들)?";
+const wordCache = new Map<string, RegExp>();
+function hasWord(haystack: string, word: string): boolean {
+  let re = wordCache.get(word);
+  if (!re) {
+    re = new RegExp(`(?<![가-힣])${escapeForRegExp(word)}${ENDING}(?![가-힣])`);
+    wordCache.set(word, re);
+  }
+  return re.test(haystack);
+}
+
+/**
  * 그 배역을 어떤 톤으로 읽을지. 화자를 모르면 손대지 않는다(rate 1).
  *
  * 이름만으로 모자랄 때가 있어 등장인물 설명도 함께 본다 — 이름이 '두리'인데
@@ -269,9 +290,17 @@ export function speakerTone(speaker: string | null, cast: CastMember[] = []): Sp
   if (!speaker) return PLAIN_TONE;
   const name = nfc(speaker);
   const member = cast.find((c) => nfc(c.name ?? "") === name);
-  const haystack = `${name} ${nfc(member?.description ?? "")}`;
+  /*
+   * 설명은 **첫 줄만** 본다.
+   *
+   * 이미 만들어 둔 옛 책에는 네 사람이 한 칸에 뭉쳐 저장돼 있다(읽는 쪽 버그였고
+   * 지금은 고쳤지만, 저장된 책은 그대로다). 그 칸을 통째로 보면 남의 설명이 섞여
+   * 아이가 어른·큰 인물로 읽힌다. 자기 줄만 보면 옛 책도 제대로 읽힌다.
+   */
+  const own = nfc(member?.description ?? "").split(/[\r\n]+/)[0] ?? "";
+  const haystack = `${name} ${own}`;
   for (const rule of TONE_RULES) {
-    if (rule.words.some((word) => haystack.includes(word))) {
+    if (rule.words.some((word) => hasWord(haystack, word))) {
       return { rate: rule.rate, shiftPitch: rule.shiftPitch, label: rule.label };
     }
   }

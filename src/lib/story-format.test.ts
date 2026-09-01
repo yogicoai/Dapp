@@ -231,3 +231,21 @@ describe("markerContent — 마커 줄과 아랫줄을 모두 살린다", () => 
     assert.equal(page.imagePrompt, "하온이가 웃는다.");
   });
 });
+
+describe("@@CHARACTER@@ 여러 줄", () => {
+  it("한 표시에 네 사람이 오면 네 사람으로 읽는다", () => {
+    const raw = [
+      "@@TITLE@@ 제목",
+      "@@CHARACTER@@ 하온 | 네 살 남자아이",
+      "엄마 | 어깨까지 오는 검은 머리",
+      "아빠 | 회색 후드티",
+      "아주머니 | 마트용 장바구니를 든 동네 어른",
+      "@@PAGE@@ 1",
+      "@@TEXT@@ 본문이에요.",
+    ].join("\n");
+    const cast = parseStory(raw).characters;
+    assert.deepEqual(cast.map((c) => c.name), ["하온", "엄마", "아빠", "아주머니"]);
+    assert.equal(cast[0].description, "네 살 남자아이");
+    assert.ok(!cast[0].description.includes("엄마"), "남의 설명이 섞이면 안 된다");
+  });
+});

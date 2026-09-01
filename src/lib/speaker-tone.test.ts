@@ -132,3 +132,22 @@ describe("segmentTones", () => {
     assert.equal(segmentTones(segments, cast).length, 3);
   });
 });
+
+describe("낱말 한가운데를 배역으로 읽지 않는다", () => {
+  it("'마트용 장바구니'의 용을 용왕으로 보지 않는다", () => {
+    const cast = [{ name: "아주머니", description: "마트용 장바구니를 든 동네 어른" }];
+    assert.equal(speakerTone("아주머니", cast).label, "어른");
+  });
+
+  it("진짜 용은 그대로 큰 인물이다", () => {
+    const cast = [{ name: "바다지기", description: "바다를 지키는 늙은 용이다" }];
+    assert.equal(speakerTone("바다지기", cast).label, "큰 인물");
+  });
+
+  it("한 칸에 뭉쳐 저장된 옛 책도 자기 줄만 본다", () => {
+    const cast = [
+      { name: "하온", description: "네 살 남자아이\n엄마 | 어깨까지 오는 검은 머리\n아주머니 | 동네 어른" },
+    ];
+    assert.equal(speakerTone("하온", cast).label, "아이");
+  });
+});

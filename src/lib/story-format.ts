@@ -253,9 +253,21 @@ export function parseStory(raw: string): ParsedStory {
         break;
 
       case "CHARACTER": {
-        // "이름 | 생김새" — 구분자가 없으면 통째로 이름 취급한다.
-        const [name, ...rest] = inlineOrBody.split("|");
-        if (name.trim()) {
+        /*
+         * "이름 | 생김새" — 구분자가 없으면 통째로 이름 취급한다.
+         *
+         * 한 표시 안에 여러 줄이 올 수 있다. 실제로 클로드가 네 사람을
+         * @@CHARACTER@@ 하나에 네 줄로 적어 보낸 적이 있는데, 예전 코드는 첫 줄만
+         * 이름으로 보고 **나머지 셋을 첫 사람의 생김새로 붙여** 버렸다. 그 결과
+         * 캐릭터 시트도 쪽별 인물 잠금도 한 명만 알았고, 남의 설명이 섞여 들어가
+         * 네 살 아이 대사가 '용' 톤으로 읽히기까지 했다(마트'용' 장바구니).
+         * 줄마다 한 사람으로 읽는다.
+         */
+        for (const line of inlineOrBody.split(/[\r\n]+/)) {
+          const row = line.trim();
+          if (!row) continue;
+          const [name, ...rest] = row.split("|");
+          if (!name.trim()) continue;
           characters.push({
             name: name.trim(),
             description: rest.join("|").trim(),
