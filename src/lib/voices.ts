@@ -522,10 +522,18 @@ export async function fetchTypecastAudio(
   emotion?: string,
   intensity?: number,
 ): Promise<Blob> {
-  // 감정 프리셋이 원래 음색을 밀어 올리지 않도록 낭독용 강도 범위만 허용한다.
-  const safeIntensity = Math.min(0.65, Math.max(0.3, intensity ?? 0.5));
+  /*
+   * 담담하게 읽는 줄에는 세기를 아예 안 보낸다.
+   *
+   * 미리 굽는 전래동화는 normal 이면 intensity 를 빼고 부른다. 그런데 만든 동화의
+   * 실시간 낭독만 normal 인데도 0.5를 늘 함께 보내고 있었다 — 같은 민정인데 부르는
+   * 방법이 달라, 지문이 원래 음색보다 높고 어리게 들렸다(사장님 제보).
+   * 감정을 거는 대사에만 세기를 준다.
+   */
+  const plain = !emotion || emotion === "normal";
+  const safeIntensity = plain ? undefined : Math.min(0.65, Math.max(0.3, intensity ?? 0.5));
   // 기존의 강한 연기 캐시와 분리한다. 새 낭독은 한 번만 합성된 뒤 다시 캐시된다.
-  const cacheId = `tts-read-v2:${tc.voiceId}:${emotion ?? "normal"}:${safeIntensity.toFixed(2)}:${hashText(text)}`;
+  const cacheId = `tts-read-v3:${tc.voiceId}:${emotion ?? "normal"}:${safeIntensity?.toFixed(2) ?? "-"}:${hashText(text)}`;
   return fetchCachedVoiceAudio(cacheId, async () => {
     const r = await fetch("/api/tts", {
       method: "POST",
