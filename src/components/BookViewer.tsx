@@ -1807,8 +1807,9 @@ export function BookViewer({ book }: { book: Book }) {
             setBgmOn(next);
             saveBgmOn(next);
           }}
+          style={bgmOn ? { background: ui.colors.accent } : undefined}
           className={`flex h-9 w-9 items-center justify-center rounded-full shadow-md backdrop-blur transition outline-none focus:outline-none sm:h-11 sm:w-11 ${
-            bgmOn ? "bg-amber-400 text-white" : "bg-white/85 text-neutral-400 hover:bg-white"
+            bgmOn ? "text-white" : "bg-white/85 text-neutral-400 hover:bg-white"
           }`}
         >
           <span className="text-lg leading-none" aria-hidden>
@@ -1820,8 +1821,9 @@ export function BookViewer({ book }: { book: Book }) {
           type="button"
           aria-label="읽어주는 성우 바꾸기"
           onClick={() => setVoiceMenu((v) => !v)}
+          style={voiceMenu ? { background: ui.colors.accent } : undefined}
           className={`flex h-9 items-center justify-center gap-1 rounded-full px-2.5 shadow-md backdrop-blur transition outline-none focus:outline-none sm:h-11 sm:px-3 ${
-            voiceMenu ? "bg-amber-400 text-white" : "bg-white/85 text-neutral-600 hover:bg-white"
+            voiceMenu ? "text-white" : "bg-white/85 text-neutral-600 hover:bg-white"
           }`}
         >
           <span className="text-base leading-none" aria-hidden>
@@ -1849,8 +1851,9 @@ export function BookViewer({ book }: { book: Book }) {
                 key={v.id}
                 type="button"
                 onClick={() => pickVoice(v.id)}
+                style={active ? { background: ui.colors.accent } : undefined}
                 className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-bold transition ${
-                  active ? "bg-amber-400 text-white" : "text-neutral-700 hover:bg-neutral-100"
+                  active ? "text-white" : "text-neutral-700 hover:bg-neutral-100"
                 }`}
               >
                 <span className="text-base leading-none" aria-hidden>{v.emoji}</span>
@@ -2216,9 +2219,12 @@ export function BookViewer({ book }: { book: Book }) {
                 type="button"
                 onClick={() => applyTextScale(s.value)}
                 className={`px-5 py-2.5 text-left font-bold outline-none transition ${
-                  textScale === s.value ? "bg-amber-400 text-white" : "text-white/90 hover:bg-white/15"
+                  textScale === s.value ? "text-white" : "text-white/90 hover:bg-white/15"
                 }`}
-                style={{ fontSize: `${0.8 + (s.value - 0.85) * 0.5}rem` }}
+                style={{
+                  fontSize: `${0.8 + (s.value - 0.85) * 0.5}rem`,
+                  ...(textScale === s.value ? { background: ui.colors.accent } : {}),
+                }}
               >
                 {s.label} {textScale === s.value ? "✓" : ""}
               </button>
@@ -2251,8 +2257,9 @@ export function BookViewer({ book }: { book: Book }) {
                 key={s}
                 type="button"
                 onClick={() => applyRate(s)}
+                style={rate === s ? { background: ui.colors.accent } : undefined}
                 className={`px-5 py-2.5 text-left text-sm font-bold outline-none transition ${
-                  rate === s ? "bg-amber-400 text-white" : "text-white/90 hover:bg-white/15"
+                  rate === s ? "text-white" : "text-white/90 hover:bg-white/15"
                 }`}
               >
                 {s}배속 {rate === s ? "✓" : ""}
@@ -2314,9 +2321,16 @@ export function BookViewer({ book }: { book: Book }) {
           type="button"
           aria-label={reading ? "그만 읽기" : "읽어주기"}
           onClick={reading ? stopReading : startReading}
-          style={reading || preparing ? undefined : { background: ui.colors.accent }}
+          /*
+           * 읽는 중·준비 중도 나라 색을 따른다.
+           *
+           * 대기 상태만 나라 색이고 누르는 순간 앰버(주황)로 튀었다 — 공주나라에서
+           * 분홍 버튼을 눌렀는데 주황이 되니 다른 버튼처럼 보였다. 상태 구분은
+           * 진한 쪽(accentDark)과 맥박으로 충분하다.
+           */
+          style={{ background: reading || preparing ? ui.colors.accentDark : ui.colors.accent }}
           className={`flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_6px_16px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 sm:h-16 sm:w-16 ${
-            preparing ? "bg-amber-400" : reading ? "animate-pulse bg-amber-400" : ""
+            reading ? "animate-pulse" : ""
           }`}
         >
           {preparing ? (
