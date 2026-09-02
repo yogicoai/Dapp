@@ -2322,13 +2322,13 @@
     "text": "그때였어요. 연못 물이 반짝반짝 빛나더니\n하얀 수염을 길게 늘어뜨린 산신령님이 스르르 나타났어요."
   },
   "folk/goldaxe/seg-cast-p5-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "\"나무꾼아, 왜 그리 슬피 우느냐?\""
   },
   "folk/goldaxe/say-p5-spirit.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "나무꾼아, 왜 그리 슬피 우느냐?"
@@ -2358,7 +2358,7 @@
     "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요."
   },
   "folk/goldaxe/seg-cast-p7-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이 금도끼가 네 도끼냐?\""
@@ -2376,7 +2376,7 @@
     "text": "산신령님은 슬며시 웃으며 다시 물속으로 들어갔지요."
   },
   "folk/goldaxe/say-p7-spirit.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "이 금도끼가 네 도끼냐?"
@@ -2394,7 +2394,7 @@
     "text": "이번에는 산신령님이 은도끼를 들고 나왔어요."
   },
   "folk/goldaxe/seg-cast-p8-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "\"그럼 이 은도끼가 네 도끼냐?\""
@@ -2412,7 +2412,7 @@
     "text": "나무꾼은 고개를 살래살래 저었어요."
   },
   "folk/goldaxe/say-p8-spirit.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "그럼 이 은도끼가 네 도끼냐?"
@@ -2436,7 +2436,7 @@
     "text": "\"맞아요! 그게 바로 제 도끼입니다!\""
   },
   "folk/goldaxe/say-p9-spirit.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "그럼 이건 어떠냐?"
@@ -2454,13 +2454,13 @@
     "text": "산신령님이 껄껄 웃으며 말했어요."
   },
   "folk/goldaxe/seg-cast-p10-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "\"참으로 정직하구나. 네 정직한 마음에 감동했으니\n금도끼와 은도끼도 모두 너에게 주마!\""
   },
   "folk/goldaxe/say-p10-spirit.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "금도끼와 은도끼도 모두 너에게 주마!"
@@ -2550,7 +2550,7 @@
     "text": "연못이 반짝이더니 산신령님이 금도끼를 들고 나타났어요."
   },
   "folk/goldaxe/seg-cast-p14-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이 금도끼가 네 도끼냐?\""
@@ -2568,7 +2568,7 @@
     "text": "욕심쟁이는 손을 뻗으며 냉큼 외쳤지요."
   },
   "folk/goldaxe/say-p14-spirit.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "이 금도끼가 네 도끼냐?"
@@ -2586,7 +2586,7 @@
     "text": "산신령님의 얼굴이 무섭게 굳어졌어요."
   },
   "folk/goldaxe/seg-cast-p15-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "\"네 도끼는 낡은 쇠도끼가 아니더냐.\n거짓말을 하는구나!\""
@@ -2598,7 +2598,7 @@
     "text": "산신령님은 연못 속으로 스르르 사라져 버렸지요."
   },
   "folk/goldaxe/say-p15-spirit.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
     "text": "거짓말을 하는구나!"
@@ -7073,12 +7073,24 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요."
+    "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n금도끼 판 돈으로 좋은 약을 지어 드리자, 어머니의 병도 씻은 듯이 나았지요."
   },
   "folk/goldaxe/seg-tc-minjung-p17-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "나무꾼과 어머니는 오래오래 행복하게 살았답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요."
+    "text": "어머니가 아들의 등을 토닥이며 말했지요."
+  },
+  "folk/goldaxe/seg-cast-p17-3.mp3": {
+    "voice": "tc-juha",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그럼. 정직한 네 마음이 금도끼보다 값진걸.\""
+  },
+  "folk/goldaxe/seg-tc-minjung-p17-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "나무꾼과 어머니는 오래오래 행복하게 살았답니다."
   }
 }

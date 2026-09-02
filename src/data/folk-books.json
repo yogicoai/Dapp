@@ -4237,12 +4237,16 @@
         ]
       },
       {
-        "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요.\n\"어머니, 저는 도끼 한 자루면 넉넉해요.\"\n나무꾼과 어머니는 오래오래 행복하게 살았답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요.",
+        "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n금도끼 판 돈으로 좋은 약을 지어 드리자, 어머니의 병도 씻은 듯이 나았지요.\n\"어머니, 저는 도끼 한 자루면 넉넉해요.\"\n어머니가 아들의 등을 토닥이며 말했지요.\n\"그럼. 정직한 네 마음이 금도끼보다 값진걸.\"\n나무꾼과 어머니는 오래오래 행복하게 살았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p16.webp?v=7",
         "lines": [
           {
             "text": "어머니, 저는 도끼 한 자루면 넉넉해요.",
             "who": "woodcutter"
+          },
+          {
+            "text": "그럼. 정직한 네 마음이 금도끼보다 값진걸.",
+            "who": "mother"
           }
         ],
         "hotspots": [
@@ -4273,7 +4277,7 @@
           {
             "who": "narration",
             "src": "/folk/goldaxe/seg-p17-0.mp3",
-            "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요.\n"
+            "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n금도끼 판 돈으로 좋은 약을 지어 드리자, 어머니의 병도 씻은 듯이 나았지요.\n"
           },
           {
             "who": "woodcutter",
@@ -4283,7 +4287,17 @@
           {
             "who": "narration",
             "src": "/folk/goldaxe/seg-p17-2.mp3",
-            "text": "\n나무꾼과 어머니는 오래오래 행복하게 살았답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요."
+            "text": "\n어머니가 아들의 등을 토닥이며 말했지요.\n"
+          },
+          {
+            "who": "mother",
+            "src": "/folk/goldaxe/seg-cast-p17-3.mp3",
+            "text": "\"그럼. 정직한 네 마음이 금도끼보다 값진걸.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/goldaxe/seg-p17-4.mp3",
+            "text": "\n나무꾼과 어머니는 오래오래 행복하게 살았답니다."
           }
         ]
       }
@@ -4292,7 +4306,7 @@
     "voiceCast": {
       "narration": "tc-minjung",
       "woodcutter": "tc-hosun",
-      "spirit": "tc-kwonil",
+      "spirit": "tc-tian",
       "greedy": "tc-homun",
       "mother": "tc-juha"
     },
