@@ -202,8 +202,9 @@ const BOOKS: Record<string, BookSpec> = {
   },
   "금도끼 은도끼": {
     dir: "goldaxe",
-    narrators: ["tc-hosun"],
-    defaultNarrator: "tc-hosun",
+    // 나레이션 호선 → 민정 (2026-09-01 사장님 캐스팅).
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
     cast: [
       { name: "나무꾼" }, { name: "산신령" }, { name: "욕심쟁이" }, { name: "어머니" },
     ],

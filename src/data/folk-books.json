@@ -3612,7 +3612,7 @@
     "lang": "ko",
     "title": "금도끼 은도끼",
     "summary": "연못에 도끼를 빠뜨린 정직한 나무꾼이 산신령님께 상을 받는 이야기",
-    "narrator": "tc-hosun",
+    "narrator": "tc-minjung",
     "pages": [
       {
         "text": "옛날 어느 산골에 부지런한 나무꾼이 살았어요.\n나무꾼은 홀어머니를 모시고\n날마다 산에 올라 열심히 나무를 했답니다.",
@@ -4290,11 +4290,11 @@
     ],
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=5",
     "voiceCast": {
-      "narration": "tc-hosun",
-      "woodcutter": "tc-gunseok",
+      "narration": "tc-minjung",
+      "woodcutter": "tc-hosun",
       "spirit": "tc-kwonil",
-      "greedy": "tc-sullock",
-      "mother": "tc-jungsoon"
+      "greedy": "tc-homun",
+      "mother": "tc-juha"
     },
     "roleOf": {
       "나무꾼": "woodcutter",
@@ -4305,7 +4305,7 @@
       "홀어머니": "mother"
     },
     "narrators": [
-      "tc-hosun"
+      "tc-minjung"
     ]
   },
   {
