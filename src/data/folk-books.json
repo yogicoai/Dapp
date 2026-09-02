@@ -4,7 +4,7 @@
     "lang": "ko",
     "title": "흥부와 놀부",
     "summary": "다친 제비를 정성껏 돌본 흥부가 박씨 하나로 복을 받는 이야기",
-    "narrator": "tc-kwonil",
+    "narrator": "tc-minjung",
     "pages": [
       {
         "text": "옛날 옛적, 어느 산골 마을에 형제가 살았어요.\n형 놀부는 욕심 많고 심술궂었지만,\n동생 흥부는 마음이 비단결처럼 고왔답니다.",
@@ -980,11 +980,11 @@
     ],
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p1.webp?v=4",
     "voiceCast": {
-      "narration": "tc-kwonil",
+      "narration": "tc-minjung",
       "heungbu": "tc-gunseok",
-      "nolbu": "tc-sullock",
+      "nolbu": "tc-kijang",
       "heungbuwife": "tc-najin",
-      "nolbuwife": "tc-sookhee",
+      "nolbuwife": "tc-yubin",
       "swallow": "tc-sua",
       "dokkaebi": "tc-hakchul",
       "kids": "tc-hamchu"
@@ -1006,7 +1006,7 @@
       "아이들": "kids"
     },
     "narrators": [
-      "tc-kwonil"
+      "tc-minjung"
     ]
   },
   {

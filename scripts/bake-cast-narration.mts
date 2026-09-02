@@ -236,7 +236,8 @@ const BOOKS: Record<string, BookSpec> = {
   },
   "흥부와 놀부": {
     dir: "heungbu",
-    narrators: ["tc-kwonil"],
+    // 나레이션을 이야기 할아버지 → 민정으로 (2026-09-01 사장님 캐스팅).
+    narrators: ["tc-minjung"],
     cast: [
       { name: "흥부" }, { name: "놀부" }, { name: "형" }, { name: "형수" },
       { name: "아내" }, { name: "제비" }, { name: "도깨비" }, { name: "아이들" },
