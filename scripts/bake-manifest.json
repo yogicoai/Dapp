@@ -921,7 +921,7 @@
     "voice": "tc-jiyoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "캄캄한 오두막은 조금 무서웠어요. 가슴이 콩닥콩닥.\n그럴 때마다 할아버지는 노래를 불렀어요."
+    "text": "캄캄한 오두막은 조금 무서웠어요. 가슴이 콩닥콩닥.\n그럴 때마다 할아버지는 노래를 불렀어요.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n고운 노랫소리가 밤하늘에 울려 퍼졌지요."
   },
   "folk/hokburi/seg-cast-p3-1.mp3": {
     "voice": "tc-kwonil",
@@ -945,13 +945,13 @@
     "voice": "tc-jiyoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "그때였어요! 쿵! 쿵! 쿵!\n문이 벌컥 열리더니 도깨비들이 우르르 몰려왔어요.\n할아버지는 깜짝 놀랐지만, 용기를 내어 노래를 멈추지 않았어요.\n도깨비 대장이 눈을 반짝이며 물었지요."
+    "text": "그때였어요! 쿵! 쿵! 쿵!\n문이 벌컥 열리더니 도깨비들이 우르르 몰려왔어요.\n할아버지는 깜짝 놀랐지만, 용기를 내어 노래를 멈추지 않았지요.\n그러자 도깨비들은 어느새 어깨를 들썩이며 노래에 빠져들었어요.\n도깨비 대장이 할아버지의 볼록한 혹을 가리키며 소리쳤지요."
   },
   "folk/hokburi/seg-cast-p4-1.mp3": {
     "voice": "tc-hakchul",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"영감! 그 고운 노래는 어디서 나오는 거냐?\""
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"아하! 저 볼록한 게 바로 노래 주머니로구나!\""
   },
   "folk/hokburi/say-p4-dokkaebi.mp3": {
     "voice": "tc-hakchul",
@@ -963,25 +963,25 @@
     "voice": "tc-jiyoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "할아버지는 얼떨결에 볼에 달린 혹을 가리켰어요."
+    "text": "할아버지는 손을 내저으며 말했어요."
   },
   "folk/hokburi/seg-cast-p5-1.mp3": {
     "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이... 이 혹에서 노래가 술술 나온다오.\""
+    "text": "\"아니라오. 노래는 혹이 아니라 마음에서 나온다오.\""
   },
   "folk/hokburi/seg-cast-p5-2.mp3": {
     "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"오오! 그 노래 주머니를 나에게 팔아라!\""
+    "text": "\"시치미 떼지 마라! 그 혹이 노래 주머니인 걸 다 안다!\""
   },
   "folk/hokburi/seg-tc-jiyoon-p5-3.mp3": {
     "voice": "tc-jiyoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "도깨비들은 혹을 쏙 떼어 가고, 반짝반짝 금은보화를 잔뜩 안겨 주었어요."
+    "text": "도깨비들은 우기며 혹을 쏙 떼어 가고, 반짝반짝 금은보화를 잔뜩 안겨 주었어요."
   },
   "folk/hokburi/say-p5-oldman.mp3": {
     "voice": "tc-kwonil",
@@ -1077,7 +1077,7 @@
     "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"너도 거짓말쟁이구나! 이 혹, 도로 가져가라!\""
+    "text": "\"이 거짓말쟁이 영감 같으니! 이 혹, 도로 가져가라!\""
   },
   "folk/hokburi/seg-tc-jiyoon-p9-1.mp3": {
     "voice": "tc-jiyoon",
