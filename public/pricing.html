@@ -94,15 +94,15 @@
 <header>
   <div class="eyebrow">우리 가족 보이스 동화 · 안드로이드 출시 기준</div>
   <h1>보이스 동화 수익 설계</h1>
-  <div class="meta">2026-09-02 · 구글 플레이 인앱 결제 기준 · 환율 <b>1,380원/$</b> · 그림 원가는 <b>실측</b>(권당 9장), 이야기·낭독은 <b>추정</b> — 추정 항목엔 <span class="pill">추정</span> 표시</div>
+  <div class="meta">2026-09-02 · 구글 플레이 인앱 결제 기준 · 환율 <b>1,380원/$</b> · 그림 원가는 <b>실측</b>(권당 9장), 이야기·낭독은 <b>추정</b> — 추정 항목엔 <span class="pill">추정</span> 표시 · <b>권당 총원가는 월 300권 판매 기준</b>(고정비 배분 포함)</div>
 </header>
 
 <div class="tiles">
-  <div class="tile"><div class="k">1권 변동원가</div><div class="v accent">≈ 770원</div><div class="s">만들 때마다 나가는 돈 · 고정비 별도</div></div>
-  <div class="tile"><div class="k">월 고정비 (출시 기준)</div><div class="v">≈ 8.8만원</div><div class="s">Typecast·호스팅 — 구독 33명이면 덮음</div></div>
-  <div class="tile"><div class="k">990원 판매 시 실수령</div><div class="v">765원</div><div class="s">부가세 제외 후 수수료 15% 기준</div></div>
-  <div class="tile"><div class="k">990원 단권 마진</div><div class="v bad">≈ 0원</div><div class="s">사실상 본전 — 체험 상품으로만</div></div>
-  <div class="tile"><div class="k">권장 주력</div><div class="v good">월간 구독</div><div class="s">마진 25~30%, 크레딧 묶음 병행</div></div>
+  <div class="tile"><div class="k">1권 변동원가</div><div class="v accent">≈ 770원</div><div class="s">만들 때마다 나가는 돈</div></div>
+  <div class="tile"><div class="k">월 고정비 (출시 기준)</div><div class="v">≈ 4.8만원</div><div class="s">Typecast $15 + Vercel Pro $20</div></div>
+  <div class="tile"><div class="k">권당 총원가</div><div class="v accent">≈ 931원</div><div class="s">변동비 + 고정비 배분 (월 300권 기준)</div></div>
+  <div class="tile"><div class="k">990원 단권 마진</div><div class="v bad">-166원</div><div class="s">실수령 765원 - 총원가 931원</div></div>
+  <div class="tile"><div class="k">권장 주력</div><div class="v good">월간 구독</div><div class="s">총원가 기준 마진 24~39%</div></div>
 </div>
 
 <h2><span class="no">1</span>동화 1권을 만드는 데 드는 돈</h2>
@@ -122,20 +122,18 @@
 <div class="tblwrap"><table>
   <tr><th>항목</th><th>내용</th><th class="num">월 비용</th></tr>
   <tr><td>Typecast</td><td>성우 낭독 + 부모 목소리 슬롯 50개 · $15/월</td><td class="num">20,700원</td></tr>
-  <tr><td>cafe24 이미지호스팅 <span class="pill">추정</span></td><td>그림·낭독 파일 창고 (선결제)</td><td class="num">5,500원</td></tr>
-  <tr><td>Vercel Pro <span class="pill">출시 시</span></td><td>앱 서버 · 지금은 무료(Hobby)지만 상용 출시엔 Pro $20 필요</td><td class="num">27,600원</td></tr>
-  <tr><td>Supabase Pro <span class="pill">출시 시</span></td><td>회원·책 데이터 · 무료 한도 초과 이력이 있어 출시엔 $25 권장</td><td class="num">34,500원</td></tr>
-  <tr class="total"><td>합계</td><td>지금 베타는 위 두 줄만 ≈ 26,200원/월</td><td class="num">≈ 88,300원</td></tr>
+  <tr><td>Vercel Pro <span class="pill">출시 시</span></td><td>앱 서버 · 지금은 무료(Hobby), 상용 출시엔 Pro $20</td><td class="num">27,600원</td></tr>
+  <tr class="total"><td>합계</td><td>지금 베타는 Typecast만 ≈ 20,700원/월</td><td class="num">≈ 48,300원</td></tr>
 </table></div>
 <p class="lede" style="margin-top:22px">이 고정비를 판매량으로 나누면 <b>진짜 권당 총원가</b>가 나옵니다.</p>
 <div class="tblwrap"><table>
   <tr><th>월 판매량</th><th class="num">권당 고정비 배분</th><th class="num">권당 총원가 (770원 + 배분)</th><th>990원에 팔면 (실수령 765원)</th></tr>
-  <tr><td>월 50권</td><td class="num">1,766원</td><td class="num">2,536원</td><td class="bad">권당 -1,771원 적자</td></tr>
-  <tr><td>월 100권</td><td class="num">883원</td><td class="num">1,653원</td><td class="bad">권당 -888원 적자</td></tr>
-  <tr><td>월 300권</td><td class="num">294원</td><td class="num">1,064원</td><td class="bad">권당 -299원 적자</td></tr>
-  <tr><td>월 1,000권</td><td class="num">88원</td><td class="num">858원</td><td class="bad">권당 -93원 적자</td></tr>
+  <tr><td>월 50권</td><td class="num">966원</td><td class="num">1,736원</td><td class="bad">권당 -971원 적자</td></tr>
+  <tr><td>월 100권</td><td class="num">483원</td><td class="num">1,253원</td><td class="bad">권당 -488원 적자</td></tr>
+  <tr><td><b>월 300권 (기준)</b></td><td class="num">161원</td><td class="num"><b>931원</b></td><td class="bad">권당 -166원 적자</td></tr>
+  <tr><td>월 1,000권</td><td class="num">48원</td><td class="num">818원</td><td class="bad">권당 -53원 적자</td></tr>
 </table></div>
-<div class="callout warn"><b>고정비까지 넣으면 990원은 어느 판매량에서도 적자입니다.</b> 990원(실수령 765원)은 변동비 770원과 같은 수준이라, 고정비를 한 푼도 못 갚습니다. 고정비는 아래 구독·묶음의 마진으로 갚는 구조로 가야 합니다.</div>
+<div class="callout warn"><b>990원은 어느 판매량에서도 적자입니다.</b> 실수령 765원이 변동비 770원에도 못 미쳐, 고정비를 한 푼도 못 갚습니다. 고정비는 아래 구독·묶음의 마진으로 갚는 구조로 가야 합니다.</div>
 
 <h2><span class="no">2</span>단권 990원, 얼마가 남나</h2>
 <p class="lede">구글 플레이는 소비자가에서 <b>부가세 10%를 먼저 정산</b>하고, 남은 순매출에서 수수료를 뗍니다. 990원 → 순매출 900원 → 수수료를 뗀 것이 실수령입니다.</p>
@@ -147,37 +145,38 @@
 <div class="legend">
   <span><i class="seg-vat"></i>부가세 90원</span>
   <span><i class="seg-fee"></i>플레이 수수료 <b id="lgFee">135원</b></span>
-  <span><i class="seg-cost"></i>원가 770원</span>
+  <span><i class="seg-cost"></i>총원가 931원 — 실수령을 다 삼킴</span>
   <span><i class="seg-margin"></i>마진 <b id="lgMargin">-5원</b></span>
 </div>
 <div class="tblwrap" style="margin-top:16px"><table>
   <tr><th>단권 가격</th><th class="num">실수령 (15%)</th><th class="num">마진 (15%)</th><th class="num">실수령 (30%)</th><th class="num">마진 (30%)</th></tr>
-  <tr><td><b>990원</b> (현재 안)</td><td class="num">765원</td><td class="num bad">-5원</td><td class="num">630원</td><td class="num bad">-140원</td></tr>
-  <tr><td>1,500원</td><td class="num">1,159원</td><td class="num good">+389원 (26%)</td><td class="num">955원</td><td class="num good">+185원</td></tr>
-  <tr><td>1,900원</td><td class="num">1,468원</td><td class="num good">+698원 (37%)</td><td class="num">1,209원</td><td class="num good">+439원</td></tr>
+  <tr><td><b>990원</b> (현재 안)</td><td class="num">765원</td><td class="num bad">-166원</td><td class="num">630원</td><td class="num bad">-301원</td></tr>
+  <tr><td>1,500원</td><td class="num">1,159원</td><td class="num good">+228원 (20%)</td><td class="num">955원</td><td class="num good">+24원</td></tr>
+  <tr><td>1,900원</td><td class="num">1,468원</td><td class="num good">+537원 (37%)</td><td class="num">1,209원</td><td class="num good">+278원</td></tr>
 </table></div>
-<div class="callout warn"><b>990원 단권은 이익 상품이 아닙니다.</b> 수수료 15%를 받아내도 마진이 0원이고, 30%면 권당 140원 적자입니다. 첫 경험을 열어 주는 <b>체험 상품(1인 1회 한정)</b>으로만 쓰고, 주력은 아래 구독·묶음으로 가야 합니다.</div>
+<div class="callout warn"><b>990원 단권은 총원가 기준 권당 166원 적자입니다.</b> 실수령 765원이 총원가 931원에 못 미칩니다. 첫 경험을 열어 주는 <b>체험 상품(1인 1회 한정)</b>으로만 쓰고, 주력은 아래 구독·묶음으로 가야 합니다.</div>
 
 <h2><span class="no">3</span>크레딧 묶음 — 실질 권당 단가를 올리는 길</h2>
-<p class="lede">앱 안 크레딧은 이미 1크레딧 = 100원, 그림동화 1권 = 12크레딧(1,200원 상당)으로 짜여 있습니다. 묶음 판매는 이 셈과 맞아떨어집니다.</p>
+<p class="lede">총원가 931원을 넘기려면 실수령이 권당 931원 이상, 즉 <b>판매가 기준 권당 1,205원 이상</b>이어야 합니다. 현재 앱 크레딧 셈(권당 1,200원 상당)은 딱 본전 선이라, 묶음은 권당 1,400~1,650원으로 잡았습니다.</p>
 <div class="tblwrap"><table>
   <tr><th>상품</th><th class="num">가격</th><th>담기는 것</th><th class="num">권당 단가</th><th class="num">실수령 (15%)</th><th class="num">마진</th></tr>
-  <tr><td>가벼운 충전</td><td class="num">4,900원</td><td>크레딧 48 = 그림동화 4권</td><td class="num">1,225원</td><td class="num">3,786원</td><td class="num good">+706원 (19%)</td></tr>
-  <tr><td>넉넉한 충전</td><td class="num">9,900원</td><td>크레딧 96 = 그림동화 8권</td><td class="num">1,238원</td><td class="num">7,650원</td><td class="num good">+1,490원 (19%)</td></tr>
-  <tr><td>가족 충전</td><td class="num">19,900원</td><td>크레딧 204 = 17권 (보너스 1권 포함)</td><td class="num">1,171원</td><td class="num">15,377원</td><td class="num good">+2,287원 (15%)</td></tr>
+  <tr><td>가벼운 충전</td><td class="num">4,900원</td><td>그림동화 3권</td><td class="num">1,633원</td><td class="num">3,786원</td><td class="num good">+993원 (26%)</td></tr>
+  <tr><td>넉넉한 충전</td><td class="num">9,900원</td><td>그림동화 6권</td><td class="num">1,650원</td><td class="num">7,650원</td><td class="num good">+2,064원 (27%)</td></tr>
+  <tr><td>가족 충전</td><td class="num">19,900원</td><td>그림동화 13권 (보너스 1권 느낌)</td><td class="num">1,531원</td><td class="num">15,377원</td><td class="num good">+3,274원 (21%)</td></tr>
 </table></div>
-<p class="note">크레딧은 선불이라 안 쓰고 남는 몫(보통 10~20%)이 있어 실제 마진은 표보다 좋아집니다. 다만 미사용 크레딧은 회계상 부채로 남는 점은 유의.</p>
+<p class="note">이 구성에 맞추려면 앱 크레딧 셈을 그림동화 12 → 14크레딧으로 올리는 게 안전합니다(6번 항목). 크레딧은 선불이라 안 쓰고 남는 몫(보통 10~20%)이 있어 실제 마진은 표보다 좋아집니다. 다만 미사용 크레딧은 회계상 부채로 남는 점은 유의.</p>
 
 <h2><span class="no">4</span>월간 · 연간 구독 — 주력 후보</h2>
 <p class="lede">구글 플레이 구독 수수료는 처음부터 <b>15%</b>입니다(단건과 달리 소규모 프로그램 등록 여부와 무관). 포함량을 원가로 눌러 놓으면 마진이 가장 안정적입니다.</p>
 <div class="tblwrap"><table>
   <tr><th>안</th><th class="num">가격</th><th>매달 담기는 것</th><th class="num">실수령/월</th><th class="num">포함분 원가</th><th class="num">마진/월</th></tr>
-  <tr><td><b>월간 스탠다드</b> (추천)</td><td class="num">9,900원</td><td>그림동화 6권 + 부모 목소리 1개 유지</td><td class="num">7,650원</td><td class="num">≈ 4,900원</td><td class="num good">+2,750원 (28%)</td></tr>
-  <tr><td>월간 라이트</td><td class="num">5,900원</td><td>그림동화 3권</td><td class="num">4,559원</td><td class="num">≈ 2,310원</td><td class="num good">+2,249원 (38%)</td></tr>
-  <tr><td>연간 (월간의 2달 할인)</td><td class="num">99,000원/년</td><td>월간 스탠다드와 동일 · 월 8,250원꼴</td><td class="num">6,375원</td><td class="num">≈ 4,900원</td><td class="num good">+1,475원 (15%)</td></tr>
+  <tr><td><b>월간 스탠다드</b> (추천)</td><td class="num">9,900원</td><td>그림동화 6권 + 부모 목소리 1개 유지</td><td class="num">7,650원</td><td class="num">≈ 5,790원</td><td class="num good">+1,860원 (24%)</td></tr>
+  <tr><td>월간 라이트</td><td class="num">5,900원</td><td>그림동화 3권</td><td class="num">4,559원</td><td class="num">≈ 2,790원</td><td class="num good">+1,769원 (39%)</td></tr>
+  <tr><td>연간 — 2달 할인이면</td><td class="num">99,000원/년</td><td>월 6권 그대로 (월 8,250원꼴)</td><td class="num">6,375원</td><td class="num">≈ 5,790원</td><td class="num good">+585원 (9%) · 얇음</td></tr>
+  <tr><td>연간 — 조정안</td><td class="num">99,000원/년</td><td><b>월 5권</b>으로 조정</td><td class="num">6,375원</td><td class="num">≈ 4,860원</td><td class="num good">+1,515원 (24%)</td></tr>
 </table></div>
-<div class="callout ok"><b>손익분기: 월간 스탠다드 33명.</b> 구독 33명이면 마진(2,750원×33 ≈ 9.1만원)이 월 고정비 8.8만원을 덮고, 그 위부터가 이익입니다. 크레딧 묶음으로 치면 9,900원 묶음 월 60개입니다.</div>
-<div class="callout ok"><b>구독이 유리한 숨은 이유 둘.</b> ① 안 만들고 지나가는 달이 생겨 포함분 원가가 표보다 덜 나갑니다. ② 낭독은 첫 재생 때만 돈이 들고 반복 재생은 무료라, 같은 책을 반복해 듣는 유아 사용 패턴에서 원가가 더 내려갑니다. 연간은 마진이 얇으니 <b>이탈 방지용</b>으로만 두고 할인 폭을 2달 이상 벌리지 않는 것을 권합니다.</div>
+<div class="callout ok"><b>손익분기: 월간 스탠다드 17명.</b> 고정비를 따로 놓고 보면, 구독 17명이면 변동 마진(약 2,830원×17 ≈ 4.8만원)이 월 고정비를 덮고 그 위부터 이익입니다. 위 표의 마진에는 고정비가 이미 녹아 있습니다(월 300권 기준) — 판매가 그보다 적으면 마진이 표보다 얇아집니다.</div>
+<div class="callout ok"><b>구독이 유리한 숨은 이유 둘.</b> ① 안 만들고 지나가는 달이 생겨 포함분 원가가 표보다 덜 나갑니다. ② 낭독은 첫 재생 때만 돈이 들고 반복 재생은 무료라, 같은 책을 반복해 듣는 유아 사용 패턴에서 원가가 더 내려갑니다. 연간은 2달 할인 + 동일 포함량이면 마진 9%로 얇아지니, <b>포함량을 월 5권으로 줄이거나 할인을 1달로</b> 잡는 것을 권합니다.</div>
 
 <h2><span class="no">5</span>부모 목소리 — 마진이 가장 좋은 상품</h2>
 <p class="lede">Typecast 요금제에 목소리 슬롯 50개가 포함돼 있어, 슬롯 안에서는 <b>추가 원가가 거의 0원</b>입니다(합성 사용분만 소액).</p>
@@ -186,25 +185,25 @@
   <tr><td>단품 판매</td><td class="num">2,900원</td><td class="num">2,241원</td><td class="num">≈ 200원</td><td class="num good">+2,041원 (70%)</td></tr>
   <tr><td>구독 가입 혜택 포함</td><td class="num">0원 (구독 유인)</td><td class="num">—</td><td class="num">≈ 200원</td><td class="num">가입 전환용</td></tr>
 </table></div>
-<p class="note">현재 앱 안 가격은 15크레딧(1,500원 상당)입니다. 마진이 커서 <b>구독의 미끼 상품</b>으로 쓰는 편이 전체 매출에 유리합니다 — "구독하면 우리 아이가 엄마 목소리로 듣는다"가 가장 강한 가입 문장입니다.</p>
+<p class="note">고정비는 책 쪽에 이미 배분해 여기엔 다시 얹지 않았습니다(이중 계산 방지). 현재 앱 안 가격은 15크레딧(1,500원 상당)입니다. 마진이 커서 <b>구독의 미끼 상품</b>으로 쓰는 편이 전체 매출에 유리합니다 — "구독하면 우리 아이가 엄마 목소리로 듣는다"가 가장 강한 가입 문장입니다.</p>
 
 <h2><span class="no">6</span>출시 전에 정할 것 · 고칠 것</h2>
 <ol class="todo">
   <li><b>플레이 콘솔 소규모 개발자 프로그램(15%) 등록.</b> 등록 없이는 단건 수수료 30% — 990원 판매가 곧바로 적자입니다.</li>
   <li><b>가입 보너스 200크레딧(그림동화 16권 상당) 하향.</b> 베타용 설정이 그대로 남아 있습니다. 출시 기준 <b>1~2권 무료 체험</b> 수준(12~24크레딧)으로.</li>
-  <li><b>990원과 앱 내 크레딧 값(권당 1,200원 상당)의 정리.</b> 990원을 쓰려면 "첫 1권 한정 체험가"로 이름 붙이고, 상시 단가는 크레딧 셈과 맞추는 것을 권합니다.</li>
+  <li><b>크레딧 셈 조정: 그림동화 12 → 14크레딧.</b> 총원가 931원 기준으로 권당 1,200원 상당은 딱 본전 선입니다. 990원은 "첫 1권 한정 체험가"로만 쓰고, 상시 단가는 1,400원 상당으로.</li>
   <li><b>구독 포함량의 이월 규칙.</b> 남은 권수를 다음 달로 넘길지(넘기면 친절하지만 원가 부담), 소멸시킬지 — 소멸 + "가족 앨범은 영구 보관"을 권합니다.</li>
   <li><b>원가 절감 두 가지.</b> 아이 캐릭터 시트를 계정에 저장해 재사용하면 권당 그림 1장(54원) 절감 + 얼굴 일관성 상승. 장소가 1곳인 책은 장소 시트 생략으로 1장 추가 절감.</li>
 </ol>
 
-<div class="foot">숫자 기준: 그림 장당 $0.039(구글 공지 단가), 환율 1,380원/$, 부가세 10%는 구글이 정산 후 순매출에서 수수료 차감. 이야기·낭독 원가는 사용량 기반 추정으로 ±30% 여유를 두고 볼 것. 코드에 남긴 실측 범위(권당 480~865원)와 부합. 고정비: Typecast $15/월(사장님 확인), 호스팅은 출시 구성 기준 추정. · 우리 가족 보이스 동화 내부 자료</div>
+<div class="foot">숫자 기준: 그림 장당 $0.039(구글 공지 단가), 환율 1,380원/$, 부가세 10%는 구글이 정산 후 순매출에서 수수료 차감. 이야기·낭독 원가는 사용량 기반 추정으로 ±30% 여유를 두고 볼 것. 코드에 남긴 실측 범위(권당 480~865원)와 부합. 고정비: Typecast $15/월(사장님 확인) + Vercel Pro $20/월(출시 시). 권당 총원가 931원 = 변동비 770원 + 고정비 48,300원 ÷ 월 300권. · 우리 가족 보이스 동화 내부 자료</div>
 </div>
 <script>
-  var COST=770, PRICE=990, NET=900;
+  var COST=931, PRICE=990, NET=900; // 총원가(월 300권 기준)
   var bar=document.getElementById("bar990"), lgFee=document.getElementById("lgFee"), lgMargin=document.getElementById("lgMargin");
   function draw(feePct){
     var fee=Math.round(NET*feePct/100), payout=NET-fee, margin=payout-COST;
-    var segs=[["seg-vat",90,"부가세"],["seg-fee",fee,"수수료 "+fee],["seg-cost",Math.min(COST,payout),"원가 770"]];
+    var segs=[["seg-vat",90,"부가세"],["seg-fee",fee,"수수료 "+fee],["seg-cost",Math.min(COST,payout),"총원가"]];
     var html="";
     for(var i=0;i<segs.length;i++){
       var w=(segs[i][1]/PRICE*100).toFixed(1);
