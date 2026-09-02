@@ -2724,7 +2724,7 @@
     "text": "그때 부엌 아궁이에서 알밤이 톡 튀어나왔어요."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p4-1.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"할머니, 왜 울어요?\""
@@ -2736,7 +2736,7 @@
     "text": "\"호랑이가 날 잡아먹으러 온단다.\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p4-3.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"팥죽 한 그릇 주시면 제가 아궁이에 숨어 있을게요!\""
@@ -2754,7 +2754,7 @@
     "text": "호랑이가 날 잡아먹으러 온단다."
   },
   "folk/patjuk-halmae-tiger/say-p4-chestnut.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
     "text": "제가 아궁이에 숨어 있을게요!"
@@ -2790,7 +2790,7 @@
     "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아와 입을 모았어요."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p6-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-guri",
     "emotion": "normal",
     "intensity": null,
     "text": "\"저희들도 할머니를 도와드릴게요!\""
@@ -2802,13 +2802,13 @@
     "text": "\"나는 미끄럽지! 밟기만 해 보라지.\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p6-3.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-guri",
     "emotion": "normal",
     "intensity": null,
     "text": "\"나는 둘둘 말 줄 알아!\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p6-4.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-babilon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"나는 지고 갈 힘이 있소!\""
@@ -2820,13 +2820,13 @@
     "text": "나는 미끄럽지! 밟기만 해 보라지."
   },
   "folk/patjuk-halmae-tiger/say-p6-mat.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-guri",
     "emotion": "normal",
     "intensity": null,
     "text": "나는 둘둘 말 줄 알아!"
   },
   "folk/patjuk-halmae-tiger/say-p6-carrier.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-babilon",
     "emotion": "normal",
     "intensity": null,
     "text": "나는 지고 갈 힘이 있소!"
@@ -2838,13 +2838,13 @@
     "text": "다들 팥죽을 배불리 먹고 저마다 자리를 잡았어요.\n쇠똥은 마당 한가운데, 멍석은 마루에,\n지게는 문 뒤에 살그머니 숨었답니다."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p7-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-guri",
     "emotion": "normal",
     "intensity": null,
     "text": "\"할머니, 우리만 믿으세요!\""
   },
   "folk/patjuk-halmae-tiger/say-p7-mat.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-guri",
     "emotion": "normal",
     "intensity": null,
     "text": "할머니, 우리만 믿으세요!"
@@ -2904,7 +2904,7 @@
     "text": "뜨겁게 달궈진 알밤이 탁! 튀어 호랑이 눈을 때렸어요.\n\"아야! 내 눈!\""
   },
   "folk/patjuk-halmae-tiger/say-p9-chestnut.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
     "text": "지금이다!"
@@ -2982,7 +2982,7 @@
     "text": "그때 마루에 있던 멍석이 데굴데굴 굴러왔어요."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p12-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-guri",
     "emotion": "normal",
     "intensity": null,
     "text": "\"자, 둘둘 말아 주마!\""
@@ -3000,7 +3000,7 @@
     "text": "\"어푸! 꼼짝도 못 하겠다!\""
   },
   "folk/patjuk-halmae-tiger/say-p12-mat.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-guri",
     "emotion": "normal",
     "intensity": null,
     "text": "자, 둘둘 말아 주마!"
@@ -3018,7 +3018,7 @@
     "text": "문 뒤에서 지게가 성큼성큼 걸어 나왔어요."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p13-1.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-babilon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이제 내 차례군. 어디 한번 업혀 보시오!\""
@@ -3030,7 +3030,7 @@
     "text": "지게는 멍석에 싸인 호랑이를 번쩍 짊어졌지요."
   },
   "folk/patjuk-halmae-tiger/say-p13-carrier.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-babilon",
     "emotion": "normal",
     "intensity": null,
     "text": "이제 내 차례군!"
@@ -3060,7 +3060,7 @@
     "text": "아이고 무서워라, 얼른 달아나야겠다!"
   },
   "folk/patjuk-halmae-tiger/say-p14-carrier.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-babilon",
     "emotion": "normal",
     "intensity": null,
     "text": "다시는 얼씬도 마시오!"
@@ -3078,7 +3078,7 @@
     "text": "\"너희가 아니었으면 할미가 어쩔 뻔했니. 정말 고맙구나.\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p15-2.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"할머니 팥죽이 세상에서 제일 맛있어요!\""
@@ -3096,7 +3096,7 @@
     "text": "너희가 아니었으면 할미가 어쩔 뻔했니."
   },
   "folk/patjuk-halmae-tiger/say-p15-chestnut.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
     "text": "할머니 팥죽이 세상에서 제일 맛있어요!"
@@ -5366,7 +5366,7 @@
     "text": "서로 다른 집에서, 둘은 각자 행복했답니다."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p9-1.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
     "text": "\"지금이다!\""
