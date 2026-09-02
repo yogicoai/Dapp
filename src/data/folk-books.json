@@ -1633,7 +1633,7 @@
     "lang": "ko",
     "title": "콩쥐 팥쥐",
     "summary": "동물 친구들과 선녀님의 도움으로 잔치에 간 콩쥐와 꽃신 이야기",
-    "narrator": "tc-jungsoon",
+    "narrator": "tc-minjung",
     "pages": [
       {
         "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니를 일찍 여읜 콩쥐는 새어머니, 동생 팥쥐와 함께 살았지요.",
@@ -1826,7 +1826,7 @@
         ]
       },
       {
-        "text": "그때 팥쥐가 헛간에서 항아리를 하나 골라 왔어요.\n\"엄마, 이걸로 주면 딱 좋겠는데.\"\n팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았지요.\n\"참, 저 볏단도 다 찧어 놓으라고 해요. 언니는 집이나 지켜!\"\n둘이 떠난 마당에는 항아리와 볏단만 덩그러니 남았답니다.",
+        "text": "그때 팥쥐가 헛간에서 항아리를 하나 골라 왔어요.\n\"엄마, 이걸로 주면 딱 좋겠는데.\"\n팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았지요.\n\"참, 언니한테는 저 볏단도 다 찧어 놓으라고 해요. 잔치에 못 오게 집이나 지키라고 하고요!\"\n둘이 떠난 마당에는 항아리와 볏단만 덩그러니 남았답니다.",
         "hotspots": [
           {
             "label": "patjwi",
@@ -1870,7 +1870,7 @@
           {
             "who": "patjwi",
             "src": "/folk/kongjwi/seg-cast-p5-3.mp3",
-            "text": "\"참, 저 볏단도 다 찧어 놓으라고 해요. 언니는 집이나 지켜!\""
+            "text": "\"참, 언니한테는 저 볏단도 다 찧어 놓으라고 해요. 잔치에 못 오게 집이나 지키라고 하고요!\""
           },
           {
             "who": "narration",
@@ -1878,7 +1878,17 @@
             "text": "\n둘이 떠난 마당에는 항아리와 볏단만 덩그러니 남았답니다."
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p5.webp?v=3"
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p5.webp?v=3",
+        "lines": [
+          {
+            "text": "엄마, 이걸로 주면 딱 좋겠는데.",
+            "who": "patjwi"
+          },
+          {
+            "text": "참, 언니한테는 저 볏단도 다 찧어 놓으라고 해요. 잔치에 못 오게 집이나 지키라고 하고요!",
+            "who": "patjwi"
+          }
+        ]
       },
       {
         "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자 그만 주저앉고 말았지요.\n\"이 밭을 언제 다 매지…\"\n그때 물을 나눠 받았던 검은 소가 저벅저벅 걸어와 밭을 갈아 주었답니다.",
@@ -2230,7 +2240,7 @@
         ]
       },
       {
-        "text": "'새어머니와 팥쥐가 나를 알아보기 전에 얼른 가야 해!'\n콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요.",
+        "text": "'어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가 있어야 해!'\n콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p14.webp?v=3",
         "hotspots": [
           {
@@ -2249,12 +2259,18 @@
           {
             "who": "kongjwi",
             "src": "/folk/kongjwi/seg-cast-p14-0.mp3",
-            "text": "'새어머니와 팥쥐가 나를 알아보기 전에 얼른 가야 해!'"
+            "text": "'어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가 있어야 해!'"
           },
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p14-1.mp3",
             "text": "\n콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요."
+          }
+        ],
+        "lines": [
+          {
+            "text": "'어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가 있어야 해!'",
+            "who": "kongjwi"
           }
         ]
       },
@@ -2294,11 +2310,11 @@
         ]
       },
       {
-        "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요.\n\"그 신은 제 거예요!\"\n팥쥐가 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다.",
+        "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요.\n\"어머, 그 신은 제 것인 것 같습니다, 원님.\"\n팥쥐가 목소리를 곱게 꾸미며 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p16.webp?v=4",
         "lines": [
           {
-            "text": "그 신은 제 거예요!",
+            "text": "어머, 그 신은 제 것인 것 같습니다, 원님.",
             "who": "patjwi"
           }
         ],
@@ -2335,26 +2351,31 @@
           {
             "who": "patjwi",
             "src": "/folk/kongjwi/seg-cast-p16-1.mp3",
-            "text": "\"그 신은 제 거예요!\""
+            "text": "\"어머, 그 신은 제 것인 것 같습니다, 원님.\""
           },
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p16-2.mp3",
-            "text": "\n팥쥐가 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다."
+            "text": "\n팥쥐가 목소리를 곱게 꾸미며 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다."
           }
         ]
       },
       {
-        "text": "\"우리 집 딸은 팥쥐 하나뿐입니다!\"\n새어머니는 콩쥐를 헛간으로 밀어 넣고 문을 닫아 버렸어요.\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했지요.\n\"짹짹! 여기예요, 여기! 헛간 안이에요!\"",
+        "text": "새어머니는 얼른 콩쥐를 헛간으로 밀어 넣고 문을 닫아 버렸어요.\n원님이 집 안을 둘러보며 물었지요.\n\"이 댁에 다른 아가씨는 안 계십니까?\"\n\"우리 집 딸은 팥쥐 하나뿐입니다!\"\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했어요.\n\"짹짹! 여기예요, 여기! 헛간 안이에요!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p17.webp?v=3",
         "lines": [
+          {
+            "text": "이 댁에 다른 아가씨는 안 계십니까?",
+            "who": "magistrate"
+          },
           {
             "text": "우리 집 딸은 팥쥐 하나뿐입니다!",
             "who": "stepmom"
           },
           {
             "text": "짹짹! 여기예요, 여기! 헛간 안이에요!",
-            "who": "sparrow"
+            "who": "sparrow",
+            "feel": "toneup"
           }
         ],
         "hotspots": [
@@ -2383,18 +2404,28 @@
         ],
         "segments": [
           {
+            "who": "narration",
+            "src": "/folk/kongjwi/seg-p17-0.mp3",
+            "text": "새어머니는 얼른 콩쥐를 헛간으로 밀어 넣고 문을 닫아 버렸어요.\n원님이 집 안을 둘러보며 물었지요.\n"
+          },
+          {
+            "who": "magistrate",
+            "src": "/folk/kongjwi/seg-cast-p17-1.mp3",
+            "text": "\"이 댁에 다른 아가씨는 안 계십니까?\"\n"
+          },
+          {
             "who": "stepmom",
-            "src": "/folk/kongjwi/seg-cast-p17-0.mp3",
+            "src": "/folk/kongjwi/seg-cast-p17-2.mp3",
             "text": "\"우리 집 딸은 팥쥐 하나뿐입니다!\""
           },
           {
             "who": "narration",
-            "src": "/folk/kongjwi/seg-p17-1.mp3",
-            "text": "\n새어머니는 콩쥐를 헛간으로 밀어 넣고 문을 닫아 버렸어요.\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했지요.\n"
+            "src": "/folk/kongjwi/seg-p17-3.mp3",
+            "text": "\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했어요.\n"
           },
           {
             "who": "sparrow",
-            "src": "/folk/kongjwi/seg-cast-p17-2.mp3",
+            "src": "/folk/kongjwi/seg-cast-p17-4.mp3",
             "text": "\"짹짹! 여기예요, 여기! 헛간 안이에요!\""
           }
         ]
@@ -2566,14 +2597,14 @@
       }
     ],
     "voiceCast": {
-      "narration": "tc-jungsoon",
-      "kongjwi": "tc-mongsil",
+      "narration": "tc-minjung",
+      "kongjwi": "tc-najin",
       "patjwi": "tc-gahee",
       "stepmom": "tc-sookhee",
       "magistrate": "tc-tian",
-      "fairy": "tc-chungah",
+      "fairy": "tc-jiyoung",
       "ox": "tc-monggun",
-      "toad": "tc-kijang",
+      "toad": "tc-homun",
       "sparrow": "tc-sua"
     },
     "roleOf": {
@@ -2590,7 +2621,7 @@
       "참새들": "sparrow"
     },
     "narrators": [
-      "tc-jungsoon"
+      "tc-minjung"
     ],
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p1.webp?v=2"
   },

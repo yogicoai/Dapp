@@ -220,8 +220,9 @@ const BOOKS: Record<string, BookSpec> = {
   },
   "콩쥐 팥쥐": {
     dir: "kongjwi",
-    narrators: ["tc-jungsoon"],
-    defaultNarrator: "tc-jungsoon",
+    // 나레이션 정순 → 민정 (2026-09-01 사장님 캐스팅).
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
     cast: [
       { name: "콩쥐" }, { name: "팥쥐" }, { name: "새어머니" }, { name: "원님" },
       { name: "선녀" }, { name: "황소" }, { name: "두꺼비" }, { name: "참새" },
