@@ -963,13 +963,13 @@
     "voice": "tc-jiyoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "할아버지는 손을 내저으며 말했어요."
+    "text": "할아버지가 미처 아니라고 말하기도 전이었어요."
   },
   "folk/hokburi/seg-cast-p5-1.mp3": {
-    "voice": "tc-kwonil",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"아니라오. 노래는 혹이 아니라 마음에서 나온다오.\""
+    "voice": "tc-hakchul",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"옳지! 이 노래 주머니는 우리가 사 가마!\""
   },
   "folk/hokburi/seg-cast-p5-2.mp3": {
     "voice": "tc-hakchul",
@@ -1009,15 +1009,15 @@
   },
   "folk/hokburi/seg-cast-p7-0.mp3": {
     "voice": "tc-sullock",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.4,
     "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야지!\""
   },
   "folk/hokburi/seg-tc-jiyoon-p7-1.mp3": {
     "voice": "tc-jiyoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자 억지로 목청을 높였지요."
+    "text": "욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자, 혹부리 영감이 부르던 노래를 흉내 내어 억지로 목청을 높였지요.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n하지만 듣기 싫은 노랫소리만 삐걱삐걱 울렸어요."
   },
   "folk/hokburi/seg-cast-p7-2.mp3": {
     "voice": "tc-sullock",
@@ -7110,5 +7110,23 @@
     "emotion": "normal",
     "intensity": null,
     "text": "이후에도 두 형제는 서로를 위하며 오래오래 행복하게 살았답니다."
+  },
+  "folk/hokburi/seg-tc-jiyoon-p5-2.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "도깨비들은 혹을 쏙 떼어 가고, 반짝반짝 금은보화를 잔뜩 안겨 주었어요."
+  },
+  "folk/hokburi/seg-cast-p5-3.mp3": {
+    "voice": "tc-kwonil",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"아니, 여보게들! 그건 노래 주머니가 아니라오…\""
+  },
+  "folk/hokburi/seg-tc-jiyoon-p5-4.mp3": {
+    "voice": "tc-jiyoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하지만 도깨비들은 벌써 바람처럼 사라진 뒤였답니다."
   }
 }
