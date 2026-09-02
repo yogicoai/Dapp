@@ -122,12 +122,12 @@ export async function clearDrawProgress(key: string): Promise<void> {
 
 /** 그린 그림을 한 줄로 — 완성 화면·크레딧 셈용. */
 export function describeDrawCounts(c: DrawCounts): string {
-  const total = c.sheet + c.location + c.pages + c.redraws;
-  const parts = [
-    c.sheet ? `인물 시트 ${c.sheet}` : "",
-    c.location ? `장소 시트 ${c.location}` : "",
-    `본문 ${c.pages}`,
-    c.redraws ? `다시 그림 ${c.redraws}` : "",
-  ].filter(Boolean);
-  return `이번에 그린 그림 ${total}장 (${parts.join(" · ")})`;
+  /*
+   * 부모에게는 책의 쪽 그림 수만 말한다.
+   *
+   * 예전엔 시트까지 합쳐 "8장 (인물 시트 1 · 장소 시트 1 · 본문 6)"이라고 했는데,
+   * 6쪽짜리 책에서 8장이라니 — 시트가 뭔지 모르는 부모에게는 설명이 아니라
+   * 수수께끼였다(사장님 지시로 뺌). 시트 수는 우리 로그로만 충분하다.
+   */
+  return `이번에 그린 그림 ${c.pages + c.redraws}장`;
 }
