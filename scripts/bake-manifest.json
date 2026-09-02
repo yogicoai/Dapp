@@ -1728,7 +1728,7 @@
     "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌지요."
   },
   "folk/haedal/seg-cast-p3-1.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"오빠, 엄마 왜 이렇게 안 오지?\""
@@ -1746,7 +1746,7 @@
     "text": "누이는 오빠 옆에 바짝 붙어 앉았답니다."
   },
   "folk/haedal/say-p3-sister.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "오빠, 엄마 왜 이렇게 안 오지?"
@@ -1764,7 +1764,7 @@
     "text": "해가 뉘엿뉘엿 지는 고갯길,\n커다란 호랑이가 어흥! 하고 나타났어요."
   },
   "folk/haedal/seg-cast-p4-1.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "\"떡 하나 주면 안 잡아먹지!\""
@@ -1776,7 +1776,7 @@
     "text": "어머니는 얼른 떡을 하나 던져 주고 달아났지요."
   },
   "folk/haedal/say-p4-tiger.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "떡 하나 주면 안 잡아먹지!"
@@ -1788,7 +1788,7 @@
     "text": "그런데 다음 고개에서도 호랑이가 또 나타났어요."
   },
   "folk/haedal/seg-cast-p5-1.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "\"떡 하나 주면 안 잡아먹지!\""
@@ -1800,7 +1800,7 @@
     "text": "그다음 고개에서도, 또 그다음 고개에서도.\n어머니의 떡 광주리는 점점 가벼워졌지요."
   },
   "folk/haedal/say-p5-tiger.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "떡 하나 주면 안 잡아먹지!"
@@ -1824,7 +1824,7 @@
     "text": "\"이제… 줄 떡이 없구나.\""
   },
   "folk/haedal/seg-cast-p6-2.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "\"그럼 널 잡아먹어야겠다!\""
@@ -1842,7 +1842,7 @@
     "text": "이제… 줄 떡이 없구나."
   },
   "folk/haedal/say-p6-tiger.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "그럼 널 잡아먹어야겠다!"
@@ -1854,7 +1854,7 @@
     "text": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요.\n똑똑똑."
   },
   "folk/haedal/seg-cast-p7-1.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"얘들아, 엄마 왔단다. 문 열어 주렴.\""
@@ -1872,7 +1872,7 @@
     "text": "오누이는 고개를 갸웃했지요."
   },
   "folk/haedal/say-p7-tiger.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "얘들아, 엄마 왔단다~"
@@ -1896,7 +1896,7 @@
     "text": "문틈으로 쑥 들어온 손은 털이 북슬북슬!"
   },
   "folk/haedal/seg-cast-p8-2.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"호, 호랑이다!\""
@@ -1914,7 +1914,7 @@
     "text": "그럼 문틈으로 손을 보여 주세요."
   },
   "folk/haedal/say-p8-sister.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "호, 호랑이다!"
@@ -1932,7 +1932,7 @@
     "text": "쉿… 뒷문으로 나가자."
   },
   "folk/haedal/say-p9-sister.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "오빠, 무서워…"
@@ -1944,7 +1944,7 @@
     "text": "집 안을 다 뒤진 호랑이가 우물가로 어슬렁어슬렁 왔어요.\n우물 속에 비친 오누이를 보고 소리쳤지요."
   },
   "folk/haedal/seg-cast-p10-1.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"옳지, 너희 우물 속에 숨었구나!\""
@@ -1962,13 +1962,13 @@
     "text": "그 소리에 동생이 그만 웃음을 터뜨리고 말았답니다."
   },
   "folk/haedal/say-p10-tiger.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "옳지, 너희 우물 속에 숨었구나!"
   },
   "folk/haedal/say-p10-sister.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "호호, 바보 호랑이!"
@@ -1980,7 +1980,7 @@
     "text": "웃음소리에 위를 올려다본 호랑이가 물었어요."
   },
   "folk/haedal/seg-cast-p11-1.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"얘들아, 거기는 어떻게 올라갔니?\""
@@ -2010,13 +2010,13 @@
     "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요."
   },
   "folk/haedal/seg-cast-p12-1.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"바보 호랑이! 도끼로 찍으면서 올라와야지!\""
   },
   "folk/haedal/say-p12-sister.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "바보 호랑이! 도끼로 찍으면서 올라와야지!"
@@ -2034,19 +2034,19 @@
     "text": "쿵! 쿵! 호랑이가 도끼로 나무를 찍으며 올라오기 시작했어요.\n나무가 휘청휘청 흔들렸지요.\n오누이는 더 올라갈 데가 없었어요."
   },
   "folk/haedal/seg-cast-p13-1.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"오빠, 어떡해!\""
   },
   "folk/haedal/say-p13-sister.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "오빠, 어떡해!"
   },
   "folk/haedal/say-p13-tiger.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "이제 내려올 데도 없겠구나!"
@@ -2070,7 +2070,7 @@
     "text": "하느님, 동아줄을 내려 주세요!"
   },
   "folk/haedal/say-p14-sister.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "저희를 살려 주세요!"
@@ -2082,13 +2082,13 @@
     "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n그걸 본 호랑이도 얼른 두 손을 모으고 빌었어요."
   },
   "folk/haedal/seg-cast-p15-1.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"하느님, 저도 살려 주시려거든 썩은 동아줄을 내려 주세요!\""
+    "text": "\"하느님, 저도요! 저한테도 동아줄을 내려 주세요!\""
   },
   "folk/haedal/say-p15-tiger.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "동아줄! 동아줄 내놔라!"
@@ -2097,10 +2097,10 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "하늘에서 또 하나의 동아줄이 스르르 내려왔어요.\n호랑이가 빈 그대로, 여기저기 삭아 버린 썩은 동아줄이었지요.\n신이 난 호랑이가 그것도 모르고 반쯤 올라갔을 때 — 뚝!"
+    "text": "하늘에서 또 하나의 동아줄이 스르르 내려왔어요.\n그런데 이번 것은 여기저기 삭아 버린 썩은 동아줄이었지요.\n서두르던 호랑이는 썩은 동아줄인지도 모르고 덥석 잡았어요.\n반쯤 올라갔을 때 — 뚝!"
   },
   "folk/haedal/seg-cast-p16-1.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아이고, 엉덩이야!\""
@@ -2112,7 +2112,7 @@
     "text": "호랑이가 떨어진 수숫대 밭은 그때부터 빨갛게 물들었대요."
   },
   "folk/haedal/say-p16-tiger.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "아이고, 엉덩이야!"
@@ -2178,7 +2178,7 @@
     "text": "우리 아가들… 얼마나 무서웠니."
   },
   "folk/haedal/say-p18-sister.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "엄마!"
@@ -2202,7 +2202,7 @@
     "text": "처음엔 오빠가 해님, 동생이 달님이 되기로 했어요.\n그런데 동생이 소곤소곤."
   },
   "folk/haedal/seg-cast-p19-3.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"오빠… 나 깜깜한 밤은 무서워.\""
@@ -2226,7 +2226,7 @@
     "text": "너희가 세상을 밝혀 주겠니?"
   },
   "folk/haedal/say-p19-sister.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "오빠… 나 깜깜한 밤은 무서워."
@@ -6902,7 +6902,7 @@
     "text": "\"들어와서 같이 드세요. 오늘은 잔칫날인걸요.\""
   },
   "folk/haedal/seg-cast-p6-4.mp3": {
-    "voice": "tc-hakchul",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 속일 수 있겠구나.'"
@@ -6920,7 +6920,7 @@
     "text": "그 소리에 동생이 그만 웃음을 터뜨리고 말았지요."
   },
   "folk/haedal/seg-cast-p10-3.mp3": {
-    "voice": "tc-booqoo",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"호호, 바보 호랑이!\""
@@ -6929,6 +6929,6 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "서두르다 그만 말이 헛나온 줄도 몰랐답니다."
+    "text": "너무 서두르는 바람에, 잘못 말한 줄도 몰랐지요."
   }
 }
