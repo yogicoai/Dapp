@@ -1461,7 +1461,7 @@
     "voice": "tc-najin",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"내가… 여기 있어도 되는 걸까?\""
+    "text": "'내가… 여기 있어도 되는 걸까?'"
   },
   "folk/kongjwi/seg-tc-jungsoon-p12-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1527,7 +1527,7 @@
     "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이 신의 주인이 아까 그 아가씨로구나!\n온 마을을 뒤져서라도 꼭 찾아내야겠다.\""
+    "text": "\"이 신을 돌려주러 가면, 그 아가씨를 다시 만날 수 있겠구나.\""
   },
   "folk/kongjwi/say-p15-magistrate.mp3": {
     "voice": "tc-tian",
@@ -1542,10 +1542,10 @@
     "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요."
   },
   "folk/kongjwi/seg-cast-p16-1.mp3": {
-    "voice": "tc-gahee",
+    "voice": "tc-tian",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"어머, 그 신은 제 것인 것 같습니다, 원님.\""
+    "text": "\"이 꽃신의 주인을 찾고 있습니다.\""
   },
   "folk/kongjwi/seg-tc-jungsoon-p16-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1674,10 +1674,10 @@
     "text": "콩쥐는 두 사람에게 다가가 손을 잡아 주었답니다."
   },
   "folk/kongjwi/seg-cast-p20-3.mp3": {
-    "voice": "tc-najin",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"들어와서 같이 드세요. 오늘은 잔칫날인걸요.\""
+    "voice": "tc-gahee",
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "\"언니… 나도 미안해.\""
   },
   "folk/kongjwi/say-p20-kongjwi.mp3": {
     "voice": "tc-najin",
@@ -6713,7 +6713,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다."
+    "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.\n콩쥐 눈에 그만 눈물이 그렁그렁 맺혔지요."
   },
   "folk/kongjwi/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
@@ -6803,19 +6803,19 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "콩쥐를 뒤따라 나온 원님은\n개울가에서 반짝이는 꽃신 한 짝을 발견했어요."
+    "text": "콩쥐를 뒤따라 나온 원님은 두리번거렸어요.\n하지만 아가씨는 벌써 보이지 않았지요.\n개울가에는 반짝이는 꽃신 한 짝만 동그마니 남아 있었어요.\n원님은 꽃신을 가만히 주워 들고 생각했지요."
   },
   "folk/kongjwi/seg-tc-minjung-p16-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요."
+    "text": "다음 날, 원님은 꽃신을 들고 집집마다 물었어요."
   },
   "folk/kongjwi/seg-tc-minjung-p16-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "팥쥐가 목소리를 곱게 꾸미며 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다."
+    "text": "콩쥐네 집에서는 팥쥐가 쪼르르 달려 나왔지요."
   },
   "folk/kongjwi/seg-tc-minjung-p17-0.mp3": {
     "voice": "tc-minjung",
@@ -6875,6 +6875,30 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
+    "text": "팥쥐도 기어들어가는 목소리로 말했지요."
+  },
+  "folk/kongjwi/seg-cast-p16-3.mp3": {
+    "voice": "tc-gahee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"어머, 그 신은 제 거예요, 원님. 제가 잃어버린 거랍니다.\""
+  },
+  "folk/kongjwi/seg-tc-minjung-p16-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "팥쥐가 목소리를 곱게 꾸미며 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다."
+  },
+  "folk/kongjwi/seg-tc-minjung-p20-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
     "text": "콩쥐는 두 사람에게 다가가 손을 잡아 주었답니다."
+  },
+  "folk/kongjwi/seg-cast-p20-5.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"들어와서 같이 드세요. 오늘은 잔칫날인걸요.\""
   }
 }
