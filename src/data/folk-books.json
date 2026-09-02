@@ -6155,7 +6155,7 @@
         ]
       },
       {
-        "text": "그날 밤 뒤로 형제는 서로를 더욱 아끼며 살았어요.\n마을 사람들은 두 사람을 '의좋은 형제'라 불렀답니다.\n오늘 밤 보름달을 보면 그 논둑길을 떠올려 보세요.",
+        "text": "다음 해 가을에도 형제의 논은 나란히 황금빛으로 물들었어요.\n이번에는 볏단을 반으로 나누지 않았지요.\n\"형님, 어차피 서로 줄 텐데요. 그냥 같이 쓰지요!\"\n\"허허, 그러자꾸나.\"\n이후에도 두 형제는 서로를 위하며 오래오래 행복하게 살았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p12.webp?v=2",
         "hotspots": [
           {
@@ -6187,17 +6187,34 @@
           {
             "who": "narration",
             "src": "/folk/brothers/seg-p12-0.mp3",
-            "text": "그날 밤 뒤로 형제는 서로를 더욱 아끼며 살았어요.\n마을 사람들은 두 사람을 "
+            "text": "다음 해 가을에도 형제의 논은 나란히 황금빛으로 물들었어요.\n이번에는 볏단을 반으로 나누지 않았지요.\n"
+          },
+          {
+            "who": "younger",
+            "src": "/folk/brothers/seg-cast-p12-1.mp3",
+            "text": "\"형님, 어차피 서로 줄 텐데요. 그냥 같이 쓰지요!\"\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/brothers/seg-cast-p12-2.mp3",
+            "text": "\"허허, 그러자꾸나.\""
           },
           {
             "who": "narration",
-            "src": "/folk/brothers/seg-p12-1.mp3",
-            "text": "'의좋은 형제'"
+            "src": "/folk/brothers/seg-p12-3.mp3",
+            "text": "\n이후에도 두 형제는 서로를 위하며 오래오래 행복하게 살았답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "형님, 어차피 서로 줄 텐데요. 그냥 같이 쓰지요!",
+            "who": "younger",
+            "feel": "happy"
           },
           {
-            "who": "narration",
-            "src": "/folk/brothers/seg-p12-2.mp3",
-            "text": "라 불렀답니다.\n오늘 밤 보름달을 보면 그 논둑길을 떠올려 보세요."
+            "text": "허허, 그러자꾸나.",
+            "who": "brother",
+            "feel": "happy"
           }
         ]
       }

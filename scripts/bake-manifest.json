@@ -6359,7 +6359,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그날 밤 뒤로 형제는 서로를 더욱 아끼며 살았어요.\n마을 사람들은 두 사람을"
+    "text": "다음 해 가을에도 형제의 논은 나란히 황금빛으로 물들었어요.\n이번에는 볏단을 반으로 나누지 않았지요."
   },
   "folk/brothers/seg-tc-minjung-p12-1.mp3": {
     "voice": "tc-minjung",
@@ -7092,5 +7092,23 @@
     "emotion": "normal",
     "intensity": null,
     "text": "나무꾼과 어머니는 오래오래 행복하게 살았답니다."
+  },
+  "folk/brothers/seg-cast-p12-1.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"형님, 어차피 서로 줄 텐데요. 그냥 같이 쓰지요!\""
+  },
+  "folk/brothers/seg-cast-p12-2.mp3": {
+    "voice": "tc-gunseok",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"허허, 그러자꾸나.\""
+  },
+  "folk/brothers/seg-tc-minjung-p12-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이후에도 두 형제는 서로를 위하며 오래오래 행복하게 살았답니다."
   }
 }
