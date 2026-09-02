@@ -981,13 +981,13 @@
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p1.webp?v=4",
     "voiceCast": {
       "narration": "tc-minjung",
-      "heungbu": "tc-gunseok",
-      "nolbu": "tc-kijang",
+      "heungbu": "tc-hosun",
+      "nolbu": "tc-byunghun",
       "heungbuwife": "tc-najin",
       "nolbuwife": "tc-yubin",
       "swallow": "tc-sua",
       "dokkaebi": "tc-hakchul",
-      "kids": "tc-hamchu"
+      "kids": "tc-arin"
     },
     "roleOf": {
       "흥부": "heungbu",

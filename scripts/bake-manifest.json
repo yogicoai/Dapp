@@ -444,7 +444,7 @@
     "text": "어느 날 놀부는 흥부네 식구를 마당으로 불러냈어요."
   },
   "folk/heungbu/seg-cast-p2-1.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이 집도 논밭도 다 내 거야. 당장 나가!\""
@@ -468,7 +468,7 @@
     "text": "그래도 흥부네 집에는 웃음이 끊이지 않았어요."
   },
   "folk/heungbu/seg-cast-p4-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아버지, 오늘은 무슨 이야기 들려주실 거예요?\""
@@ -492,7 +492,7 @@
     "text": "흥부는 한참을 말없이 앉아 있었어요."
   },
   "folk/heungbu/seg-cast-p5-2.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"내가 형님한테 한번 가 보겠구려.\""
@@ -504,7 +504,7 @@
     "text": "흥부는 헌 두루마기를 걸치고 집을 나섰지요."
   },
   "folk/heungbu/seg-cast-p6-0.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"형수님, 밥 한 술만 주세요. 아이들이 사흘을 굶었어요.\""
@@ -528,7 +528,7 @@
     "text": "흥부는 뺨이 얼얼했지만, 거기 붙은 밥알을 보고 눈이 번쩍 뜨였어요."
   },
   "folk/heungbu/seg-cast-p7-1.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.\""
@@ -546,7 +546,7 @@
     "text": "형수는 반대쪽 뺨도 철썩 때리고는 문을 쾅 닫아 버렸지요."
   },
   "folk/heungbu/seg-cast-p7-4.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "'이만하면 우리 아이들 저녁은 먹이겠구나.'"
@@ -564,7 +564,7 @@
     "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요."
   },
   "folk/heungbu/seg-cast-p8-1.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"어서 오렴, 제비들아. 우리 집이 좁아도 함께 지내자꾸나.\""
@@ -582,7 +582,7 @@
     "text": "알에서 깬 아기 제비들은 노래하듯 지저귀며 무럭무럭 자랐어요.\n아이들은 날마다 둥지를 올려다보며 인사했지요."
   },
   "folk/heungbu/seg-cast-p9-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"안녕, 아기 제비야! 오늘도 잘 잤니?\""
@@ -612,7 +612,7 @@
     "text": "소리를 듣고 흥부가 한달음에 달려 나왔지요."
   },
   "folk/heungbu/seg-cast-p12-0.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"저런, 다리가 부러졌구나!\""
@@ -624,7 +624,7 @@
     "text": "흥부는 아기 제비를 두 손으로 고이 감싸 안고,\n명주실로 다친 다리를 정성껏 싸매 주었답니다."
   },
   "folk/heungbu/seg-cast-p12-2.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"곧 나을 거야. 걱정하지 마렴.\""
@@ -666,7 +666,7 @@
     "text": "제비는 박씨를 흥부 손바닥에 톡 떨어뜨렸답니다."
   },
   "folk/heungbu/seg-cast-p15-0.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이게 웬 박씨일까?\""
@@ -678,7 +678,7 @@
     "text": "흥부는 박씨를 마당 한켠에 정성껏 심었어요."
   },
   "folk/heungbu/seg-cast-p15-2.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"싹아, 얼른 나오렴!\""
@@ -690,13 +690,13 @@
     "text": "박씨는 무럭무럭 자라 지붕 위까지 덩굴을 뻗었어요.\n가을이 되자 집채만 한 박이 주렁주렁 열렸지요."
   },
   "folk/heungbu/seg-cast-p15-4.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"우아! 이 박으로 박죽이라도 끓여 먹자꾸나.\""
   },
   "folk/heungbu/seg-cast-p16-0.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"슬근슬근, 톱질하세!\""
@@ -720,7 +720,7 @@
     "text": "두 번째 박을 가르자 금은보화가 와르르 쏟아졌어요."
   },
   "folk/heungbu/seg-cast-p17-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아버지, 이게 다 우리 거예요?\""
@@ -732,7 +732,7 @@
     "text": "세 번째 박에서는 고운 비단과 번쩍번쩍한 새 기와집까지 나왔답니다."
   },
   "folk/heungbu/seg-cast-p17-3.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"제비야, 고맙다!\""
@@ -750,7 +750,7 @@
     "text": "이 소식을 들은 놀부는 샘이 나서 견딜 수가 없었어요."
   },
   "folk/heungbu/seg-cast-p18-1.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"흥부는 다친 제비를 고쳐 주고 부자가 됐다지?\n그럼 나도 다친 제비만 있으면 되겠구나!\""
@@ -774,7 +774,7 @@
     "text": "이듬해 봄, 놀부네 제비도 박씨를 물어다 주었어요."
   },
   "folk/heungbu/seg-cast-p20-1.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"옳지! 이제 나도 부자가 되겠구나!\""
@@ -786,7 +786,7 @@
     "text": "놀부는 신이 나서 박씨를 심고, 박이 열리기만 밤낮으로 기다렸답니다."
   },
   "folk/heungbu/seg-cast-p21-0.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"슬근슬근, 톱질하세!\""
@@ -804,7 +804,7 @@
     "text": "놀부와 놀부 부인은 신이 나서 커다란 박을 갈랐어요."
   },
   "folk/heungbu/seg-cast-p21-3.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "'이제 금은보화가 쏟아지겠지!'"
@@ -834,7 +834,7 @@
     "text": "도깨비들은 놀부네 곳간을 탈탈 털고 기와집까지 몽땅 가져가 버렸어요."
   },
   "folk/heungbu/seg-cast-p23-1.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아이고, 나는 망했구나!\""
@@ -858,7 +858,7 @@
     "text": "놀부는 차마 고개를 들지 못했어요."
   },
   "folk/heungbu/seg-cast-p24-2.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"흥부야… 내가 잘못했다.\""
@@ -870,7 +870,7 @@
     "text": "흥부는 형의 손을 꼭 잡았지요."
   },
   "folk/heungbu/seg-cast-p24-4.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"괜찮아요, 형님. 우리 집에서 같이 살아요.\""
@@ -3108,13 +3108,13 @@
     "text": "우리 또 놀러 올게요!"
   },
   "folk/heungbu/say-p2-nolbu.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "이 집도 논밭도 다 내 거야. 당장 나가!"
   },
   "folk/heungbu/say-p4-kids.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "아버지, 오늘은 무슨 이야기 들려주실 거예요?"
@@ -3126,7 +3126,7 @@
     "text": "여보, 쌀독이 비었어요. 아이들이 사흘째 굶었는데…"
   },
   "folk/heungbu/say-p5-heungbu.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "내가 형님한테 한번 가 보겠구려."
@@ -3138,7 +3138,7 @@
     "text": "흥, 밥 한 술도 아까워! 썩 물러가라!"
   },
   "folk/heungbu/say-p6-heungbu.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "형수님, 밥 한 술만 주세요. 아이들이 사흘을 굶었어요."
@@ -3150,19 +3150,19 @@
     "text": "별 이상한 사람을 다 보겠네!"
   },
   "folk/heungbu/say-p7-heungbu.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "형수님… 이쪽 뺨도 한 번만 더 쳐 주세요."
   },
   "folk/heungbu/say-p8-heungbu.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "어서 오렴, 제비들아. 우리 집이 좁아도 함께 지내자꾸나."
   },
   "folk/heungbu/say-p9-kids.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "안녕, 아기 제비야! 오늘도 잘 잤니?"
@@ -3174,7 +3174,7 @@
     "text": "짹짹! 아파요, 아파!"
   },
   "folk/heungbu/say-p12-heungbu.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "저런, 다리가 부러졌구나!"
@@ -3192,13 +3192,13 @@
     "text": "짹짹!"
   },
   "folk/heungbu/say-p15-heungbu.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "우아! 이 박으로 박죽이라도 끓여 먹자꾸나."
   },
   "folk/heungbu/say-p16-heungbu.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "슬근슬근, 톱질하세!"
@@ -3210,19 +3210,19 @@
     "text": "영차영차, 톱질하세!"
   },
   "folk/heungbu/say-p17-kids.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-arin",
     "emotion": "normal",
     "intensity": null,
     "text": "아버지, 이게 다 우리 거예요?"
   },
   "folk/heungbu/say-p17-heungbu.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "제비야, 고맙다!"
   },
   "folk/heungbu/say-p18-nolbu.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "그럼 나도 다친 제비만 있으면 되겠구나!"
@@ -3234,7 +3234,7 @@
     "text": "짹… 왜 일부러 아프게 하는 거예요…"
   },
   "folk/heungbu/say-p20-nolbu.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "옳지! 이제 나도 부자가 되겠구나!"
@@ -3246,7 +3246,7 @@
     "text": "어기여차, 톱질하세!"
   },
   "folk/heungbu/say-p21-nolbu.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "슬근슬근, 톱질하세!"
@@ -3258,19 +3258,19 @@
     "text": "이놈, 욕심쟁이 놀부야! 방망이 맛 좀 봐라!"
   },
   "folk/heungbu/say-p23-nolbu.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "아이고, 나는 망했구나!"
   },
   "folk/heungbu/say-p24-nolbu.mp3": {
-    "voice": "tc-kijang",
+    "voice": "tc-byunghun",
     "emotion": "normal",
     "intensity": null,
     "text": "흥부야… 내가 잘못했다."
   },
   "folk/heungbu/say-p24-heungbu.mp3": {
-    "voice": "tc-gunseok",
+    "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
     "text": "괜찮아요, 형님. 우리 집에서 같이 살아요."

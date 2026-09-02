@@ -183,6 +183,8 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   // 양치기 소년 · 소년 역 (2026-08-31 사장님이 voice id를 직접 주심).
   // ssfm-v21 이라 감정이 넷뿐 — toneup·tonedown·whisper 가 없다.
   { kind: "tc", id: "tc-toby", label: "토비", emoji: "🐑", voiceId: "tc_6080369d3211aa112ab131db", model: "ssfm-v21", desc: "남자 어린이 · 맑고 또렷한 목소리", sample: "늑대다! 늑대가 나타났어요!", emotions: ["normal", "happy", "sad", "angry"] },
+  // 흥부와 놀부 · 놀부 역 (2026-09-01 사장님이 캐스팅 보드에서 지정).
+  { kind: "tc", id: "tc-byunghun", label: "병훈", emoji: "🌾", voiceId: "tc_694395d43f2c8d9d43e9a897", model: "ssfm-v30", desc: "남자 목소리", sample: "이 집도 논밭도 다 내 거야. 당장 나가!" },
 ];
 
 /**
