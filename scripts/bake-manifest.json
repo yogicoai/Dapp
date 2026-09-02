@@ -1087,9 +1087,9 @@
   },
   "folk/hokburi/seg-cast-p9-2.mp3": {
     "voice": "tc-sullock",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"아이고, 욕심을 부리다가 혹만 하나 더 붙였구나...\""
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…\""
   },
   "folk/hokburi/say-p9-dokkaebi.mp3": {
     "voice": "tc-hakchul",
@@ -1107,7 +1107,7 @@
     "voice": "tc-jiyoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "착한 할아버지는 보물을 혼자 갖지 않고 이웃들과 사이좋게 나누었어요."
+    "text": "혹부리 영감님은 보물을 혼자 갖지 않고 이웃들과 사이좋게 나누었어요."
   },
   "folk/hokburi/seg-cast-p10-1.mp3": {
     "voice": "tc-kwonil",
