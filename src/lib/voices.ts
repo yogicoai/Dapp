@@ -185,6 +185,9 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-toby", label: "토비", emoji: "🐑", voiceId: "tc_6080369d3211aa112ab131db", model: "ssfm-v21", desc: "남자 어린이 · 맑고 또렷한 목소리", sample: "늑대다! 늑대가 나타났어요!", emotions: ["normal", "happy", "sad", "angry"] },
   // 흥부와 놀부 · 놀부 역 (2026-09-01 사장님이 캐스팅 보드에서 지정).
   { kind: "tc", id: "tc-byunghun", label: "병훈", emoji: "🌾", voiceId: "tc_694395d43f2c8d9d43e9a897", model: "ssfm-v30", desc: "남자 목소리", sample: "이 집도 논밭도 다 내 거야. 당장 나가!" },
+  // 혹부리 영감 캐스팅 (2026-09-01 사장님 지정).
+  { kind: "tc", id: "tc-changbae", label: "창배", emoji: "🎵", voiceId: "tc_60ad08c829e878c3c7d73965", model: "ssfm-v30", desc: "남자 목소리", sample: "같이 나누면 기쁨이 두 배가 된다오." },
+  { kind: "tc", id: "tc-younggil", label: "영길", emoji: "🎩", voiceId: "tc_5ebea13564afaf00087fc2e7", model: "ssfm-v30", desc: "남자 목소리", sample: "옳거니! 나도 혹을 팔아서 부자가 되어야지!" },
 ];
 
 /**

@@ -906,13 +906,13 @@
     "text": "어느 날 할아버지는 산에 나무를 하러 갔다가 그만 날이 저물고 말았어요.\n깜깜한 밤, 바람은 쌩쌩!\n할아버지는 낡은 빈 오두막을 찾아 들어갔지요."
   },
   "folk/hokburi/seg-cast-p2-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-changbae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"오늘 밤은 여기서 자야겠구나.\""
   },
   "folk/hokburi/say-p2-oldman.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-changbae",
     "emotion": "normal",
     "intensity": null,
     "text": "오늘 밤은 여기서 자야겠구나."
@@ -936,7 +936,7 @@
     "text": "고운 노랫소리가 밤하늘에 울려 퍼졌지요."
   },
   "folk/hokburi/say-p3-oldman.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-changbae",
     "emotion": "normal",
     "intensity": null,
     "text": "얼씨구나 좋구나~ 달님도 별님도 내 친구라네!"
@@ -984,7 +984,7 @@
     "text": "도깨비들은 우기며 혹을 쏙 떼어 가고, 반짝반짝 금은보화를 잔뜩 안겨 주었어요."
   },
   "folk/hokburi/say-p5-oldman.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-changbae",
     "emotion": "normal",
     "intensity": null,
     "text": "이… 이 혹에서 노래가 술술 나온다오."
@@ -1002,13 +1002,13 @@
     "text": "혹도 떼고 보물도 얻은 할아버지!\n덩실덩실 춤을 추며 집으로 돌아왔어요.\n이 소문은 바람처럼 온 마을에 쫙 퍼졌답니다.\n이웃 마을의 욕심쟁이 영감도 소문을 들었지요.\n욕심쟁이 영감의 볼에도 큰 혹이 달려 있었거든요."
   },
   "folk/hokburi/say-p6-oldman.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-changbae",
     "emotion": "normal",
     "intensity": null,
     "text": "혹도 떼고 보물도 얻었구나!"
   },
   "folk/hokburi/seg-cast-p7-0.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-younggil",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야지!\""
@@ -1032,7 +1032,7 @@
     "text": "듣기 싫은 노랫소리가 삐걱삐걱 울렸어요."
   },
   "folk/hokburi/say-p7-greedy.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-younggil",
     "emotion": "normal",
     "intensity": null,
     "text": "애앰~ 애앰~ 노래야 나와라~"
@@ -1044,7 +1044,7 @@
     "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감은 얼른 제 혹을 가리키며 소리쳤지요."
   },
   "folk/hokburi/seg-cast-p8-1.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-younggil",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "\"이 혹에서 고운 노래가 나온다오! 특별히 내가 보물과 바꿔 주겠소!\""
@@ -1062,7 +1062,7 @@
     "text": "\"이놈이구나! 저번에 가져간 혹에서는 아무 노래도 나오지 않았단 말이다!\""
   },
   "folk/hokburi/say-p8-greedy.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-younggil",
     "emotion": "normal",
     "intensity": null,
     "text": "이 혹에서 고운 노래가 나온다오! 어서 보물을 주고 사 가시오!"
@@ -1086,7 +1086,7 @@
     "text": "도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은 엉엉 울며 집으로 돌아갔지요."
   },
   "folk/hokburi/seg-cast-p9-2.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-younggil",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…\""
@@ -1098,7 +1098,7 @@
     "text": "너도 거짓말쟁이구나! 이 혹, 도로 가져가라!"
   },
   "folk/hokburi/say-p9-greedy.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-younggil",
     "emotion": "normal",
     "intensity": null,
     "text": "아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…"
@@ -1110,7 +1110,7 @@
     "text": "혹부리 영감님은 보물을 혼자 갖지 않고 이웃들과 사이좋게 나누었어요."
   },
   "folk/hokburi/seg-cast-p10-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-changbae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"같이 나누면 기쁨이 두 배가 된다오.\""
@@ -1122,7 +1122,7 @@
     "text": "그날부터 마을엔 할아버지의 웃음소리가 가득했답니다.\n정직한 마음과 나누는 마음이 가장 큰 보물이에요."
   },
   "folk/hokburi/say-p10-oldman.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-changbae",
     "emotion": "normal",
     "intensity": null,
     "text": "같이 나누면 기쁨이 두 배가 된다오."
@@ -7118,7 +7118,7 @@
     "text": "도깨비들은 혹을 쏙 떼어 가고, 반짝반짝 금은보화를 잔뜩 안겨 주었어요."
   },
   "folk/hokburi/seg-cast-p5-3.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-changbae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아니, 여보게들! 그건 노래 주머니가 아니라오…\""
@@ -7128,5 +7128,101 @@
     "emotion": "normal",
     "intensity": null,
     "text": "하지만 도깨비들은 벌써 바람처럼 사라진 뒤였답니다."
+  },
+  "folk/hokburi/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 옛날 어느 산골 마을에, 볼에 커다란 혹이 달린 할아버지가 살았어요.\n사람들은"
+  },
+  "folk/hokburi/seg-tc-minjung-p1-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'혹부리 영감'"
+  },
+  "folk/hokburi/seg-tc-minjung-p1-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이라고 불렀어요.\n할아버지는 놀림을 받아도 씩 웃으며 노래를 불렀지요."
+  },
+  "folk/hokburi/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 날 할아버지는 산에 나무를 하러 갔다가 그만 날이 저물고 말았어요.\n깜깜한 밤, 바람은 쌩쌩!\n할아버지는 낡은 빈 오두막을 찾아 들어갔지요."
+  },
+  "folk/hokburi/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "캄캄한 오두막은 조금 무서웠어요. 가슴이 콩닥콩닥.\n그럴 때마다 할아버지는 노래를 불렀어요.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n고운 노랫소리가 밤하늘에 울려 퍼졌지요."
+  },
+  "folk/hokburi/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때였어요! 쿵! 쿵! 쿵!\n문이 벌컥 열리더니 도깨비들이 우르르 몰려왔어요.\n할아버지는 깜짝 놀랐지만, 용기를 내어 노래를 멈추지 않았지요.\n그러자 도깨비들은 어느새 어깨를 들썩이며 노래에 빠져들었어요.\n도깨비 대장이 할아버지의 볼록한 혹을 가리키며 소리쳤지요."
+  },
+  "folk/hokburi/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "할아버지가 미처 아니라고 말하기도 전이었어요."
+  },
+  "folk/hokburi/seg-tc-minjung-p5-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "도깨비들은 혹을 쏙 떼어 가고, 반짝반짝 금은보화를 잔뜩 안겨 주었어요."
+  },
+  "folk/hokburi/seg-tc-minjung-p5-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하지만 도깨비들은 벌써 바람처럼 사라진 뒤였답니다."
+  },
+  "folk/hokburi/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "혹도 떼고 보물도 얻은 할아버지!\n덩실덩실 춤을 추며 집으로 돌아왔어요.\n이 소문은 바람처럼 온 마을에 쫙 퍼졌답니다.\n이웃 마을의 욕심쟁이 영감도 소문을 들었지요.\n욕심쟁이 영감의 볼에도 큰 혹이 달려 있었거든요."
+  },
+  "folk/hokburi/seg-tc-minjung-p7-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자, 혹부리 영감이 부르던 노래를 흉내 내어 억지로 목청을 높였지요.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n같은 노래인데도 삐걱삐걱, 영 딴판으로 들렸답니다."
+  },
+  "folk/hokburi/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감은 얼른 제 혹을 가리키며 소리쳤지요."
+  },
+  "folk/hokburi/seg-tc-minjung-p8-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러자 도깨비 대장이 버럭 화를 냈어요."
+  },
+  "folk/hokburi/seg-tc-minjung-p9-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은 엉엉 울며 집으로 돌아갔지요."
+  },
+  "folk/hokburi/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "혹부리 영감님은 보물을 혼자 갖지 않고 이웃들과 사이좋게 나누었어요."
+  },
+  "folk/hokburi/seg-tc-minjung-p10-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그날부터 마을엔 할아버지의 웃음소리가 가득했답니다.\n정직한 마음과 나누는 마음이 가장 큰 보물이에요."
   }
 }
