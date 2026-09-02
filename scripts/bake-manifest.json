@@ -1041,25 +1041,25 @@
     "voice": "tc-jiyoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요."
+    "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감은 얼른 제 혹을 가리키며 소리쳤지요."
   },
   "folk/hokburi/seg-cast-p8-1.mp3": {
     "voice": "tc-sullock",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"이 혹에서 고운 노래가 나온다오! 어서 보물을 주고 사 가시오!\""
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"이 혹에서 고운 노래가 나온다오! 특별히 내가 보물과 바꿔 주겠소!\""
   },
   "folk/hokburi/seg-tc-jiyoon-p8-2.mp3": {
     "voice": "tc-jiyoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "욕심쟁이 영감이 냉큼 소리쳤지요.\n그러자 도깨비 대장이 버럭 화를 냈어요."
+    "text": "그러자 도깨비 대장이 버럭 화를 냈어요."
   },
   "folk/hokburi/seg-cast-p8-3.mp3": {
     "voice": "tc-hakchul",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"거짓말! 지난번 혹에서도 노래는 나오지 않았다!\""
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"거짓말 마라! 지난번 혹에서도 노래는 나오지 않았다. 방금 그 삐걱대는 소리도 다 들었다!\""
   },
   "folk/hokburi/say-p8-greedy.mp3": {
     "voice": "tc-sullock",
