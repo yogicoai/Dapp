@@ -1833,7 +1833,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "호랑이는 어머니의 옷과 광주리를 빼앗고\n어머니를 깊은 굴에 가둬 버렸답니다."
+    "text": "그때 호랑이 눈에 어머니의 옷이 들어왔어요."
   },
   "folk/haedal/say-p6-mother.mp3": {
     "voice": "tc-najin",
@@ -2079,13 +2079,13 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n그걸 본 호랑이가 나무 아래에서 발을 동동 굴렀어요."
+    "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n그걸 본 호랑이도 얼른 두 손을 모으고 빌었어요."
   },
   "folk/haedal/seg-cast-p15-1.mp3": {
     "voice": "tc-hakchul",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"저 아이들처럼 하면 되는 거지? 동아줄! 동아줄 내놔라!\""
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"하느님, 저도 살려 주시려거든 썩은 동아줄을 내려 주세요!\""
   },
   "folk/haedal/say-p15-tiger.mp3": {
     "voice": "tc-hakchul",
@@ -2097,7 +2097,7 @@
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
-    "text": "하늘에서 또 하나의 동아줄이 스르르 내려왔어요.\n그런데 이번 것은 여기저기 삭아 버린 썩은 동아줄이었지요.\n신이 난 호랑이가 줄을 잡고 반쯤 올라갔을 때 — 뚝!"
+    "text": "하늘에서 또 하나의 동아줄이 스르르 내려왔어요.\n호랑이가 빈 그대로, 여기저기 삭아 버린 썩은 동아줄이었지요.\n신이 난 호랑이가 그것도 모르고 반쯤 올라갔을 때 — 뚝!"
   },
   "folk/haedal/seg-cast-p16-1.mp3": {
     "voice": "tc-hakchul",
@@ -6900,5 +6900,35 @@
     "emotion": "normal",
     "intensity": null,
     "text": "\"들어와서 같이 드세요. 오늘은 잔칫날인걸요.\""
+  },
+  "folk/haedal/seg-cast-p6-4.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 속일 수 있겠구나.'"
+  },
+  "folk/haedal/seg-tc-jungsoon-p6-5.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 어머니의 옷과 광주리만 빼앗고\n어머니를 깊은 굴에 가둬 버렸답니다."
+  },
+  "folk/haedal/seg-tc-jungsoon-p10-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 소리에 동생이 그만 웃음을 터뜨리고 말았지요."
+  },
+  "folk/haedal/seg-cast-p10-3.mp3": {
+    "voice": "tc-booqoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"호호, 바보 호랑이!\""
+  },
+  "folk/haedal/seg-tc-jungsoon-p15-2.mp3": {
+    "voice": "tc-jungsoon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "서두르다 그만 말이 헛나온 줄도 몰랐답니다."
   }
 }
