@@ -4754,11 +4754,13 @@
         "lines": [
           {
             "text": "지금이다!",
-            "who": "chestnut"
+            "who": "chestnut",
+            "feel": "toneup"
           },
           {
             "text": "아야! 내 눈!",
-            "who": "tiger"
+            "who": "tiger",
+            "feel": "toneup"
           }
         ],
         "hotspots": [
@@ -4818,7 +4820,8 @@
           },
           {
             "text": "아이고 아파!",
-            "who": "tiger"
+            "who": "tiger",
+            "feel": "toneup"
           }
         ],
         "hotspots": [
@@ -5009,7 +5012,7 @@
         ]
       },
       {
-        "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n\"어푸어푸! 아이고 무서워라, 얼른 달아나야겠다!\"\n호랑이는 강 건너 산 너머로 걸음아 날 살려라 도망쳤답니다.",
+        "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n물에 젖은 멍석이 스르르 풀렸어요.\n\"어푸어푸! 아이고 무서워라, 얼른 달아나야겠다!\"\n호랑이는 강 건너 산 너머로 걸음아 날 살려라 도망쳤답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p14.webp",
         "lines": [
           {
@@ -5045,7 +5048,7 @@
           {
             "who": "narration",
             "src": "/folk/patjuk-halmae-tiger/seg-p14-0.mp3",
-            "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n"
+            "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n물에 젖은 멍석이 스르르 풀렸어요.\n"
           },
           {
             "who": "tiger",

@@ -2929,8 +2929,8 @@
   },
   "folk/patjuk-halmae-tiger/seg-cast-p10-2.mp3": {
     "voice": "tc-hakchul",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "toneup",
+    "intensity": 0.4,
     "text": "\"아이고 아파!\""
   },
   "folk/patjuk-halmae-tiger/say-p10-turtle.mp3": {
@@ -3039,7 +3039,7 @@
     "voice": "tc-jiyoung",
     "emotion": "normal",
     "intensity": null,
-    "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!"
+    "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n물에 젖은 멍석이 스르르 풀렸어요."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p14-1.mp3": {
     "voice": "tc-hakchul",
@@ -5367,8 +5367,8 @@
   },
   "folk/patjuk-halmae-tiger/seg-cast-p9-1.mp3": {
     "voice": "tc-hamchu",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "toneup",
+    "intensity": 0.4,
     "text": "\"지금이다!\""
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p9-2.mp3": {
@@ -5379,8 +5379,8 @@
   },
   "folk/patjuk-halmae-tiger/seg-cast-p9-3.mp3": {
     "voice": "tc-hakchul",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "toneup",
+    "intensity": 0.4,
     "text": "\"아야! 내 눈!\""
   },
   "folk/haedal/seg-cast-p12-2.mp3": {
