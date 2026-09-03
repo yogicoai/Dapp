@@ -78,7 +78,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       book: "/themes/storybook/icon-book.webp",
     },
     cover: {
-      frame: "/covers/frame-storybook.webp",
+      frame: "/covers/frame-storybook.webp?v=2",
       titleTop: "18.7%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
       titleHeight: "10.9%",
       titleWidth: "58%",
@@ -104,7 +104,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     icons: { voice: "/icons/func-mic.webp", book: "/themes/picturebook/icon-book.webp" },
     cover: {
       // 전용 수채화 틀 — 잠든 여우·책더미·나뭇잎이 그려진 크림빛 프레임.
-      frame: "/covers/frame-picturebook.webp",
+      frame: "/covers/frame-picturebook.webp?v=2",
       titleTop: "16.8%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
       titleHeight: "9.8%",
       titleWidth: "59%",
@@ -123,7 +123,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     colors: { accent: "#16a34a", accentDark: "#15803d", accentSoft: "#f0fdf4" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/dino/icon-book.webp" },
     cover: {
-      frame: "/covers/frame-dino.webp",
+      frame: "/covers/frame-dino.webp?v=2",
       titleTop: "17.4%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
       titleHeight: "11.3%",
       titleWidth: "58%",
@@ -142,7 +142,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     colors: { accent: "#2563eb", accentDark: "#1d4ed8", accentSoft: "#eff6ff" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/car/icon-book.webp" },
     cover: {
-      frame: "/covers/frame-car.webp",
+      frame: "/covers/frame-car.webp?v=2",
       titleTop: "20.9%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
       titleHeight: "9.4%",
       titleWidth: "53%",
@@ -155,7 +155,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     id: "princess",
     label: "공주나라",
     background: "/themes/princess/background.webp",
-    mascot: "/themes/princess/mascot.webp",
+    mascot: "/themes/princess/mascot.webp?v=2",
     mascotName: "루비",
     colors: { accent: "#db2777", accentDark: "#be185d", accentSoft: "#fdf2f8" },
     icons: {
@@ -163,7 +163,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       book: "/themes/princess/icon-book.webp",
     },
     cover: {
-      frame: "/covers/frame-princess.webp",
+      frame: "/covers/frame-princess.webp?v=2",
       // 제목 명패가 넓어진 새 틀(2026-09-01). 값은 그림에서 실제로 재서 넣었다 —
       // 흰 칸 세로 16.3~30.4%(가운데 23.3%), 그림 원 가운데 55.7%.
       titleTop: "23.4%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
@@ -183,7 +183,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     colors: { accent: "#7c3aed", accentDark: "#6d28d9", accentSoft: "#f5f3ff" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/space/icon-book.webp" },
     cover: {
-      frame: "/covers/frame-space.webp",
+      frame: "/covers/frame-space.webp?v=2",
       titleTop: "14.8%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
       titleHeight: "9.6%",
       titleWidth: "58%",
@@ -201,7 +201,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     colors: { accent: "#0891b2", accentDark: "#0e7490", accentSoft: "#ecfeff" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/ocean/icon-book.webp" },
     cover: {
-      frame: "/covers/frame-ocean.webp",
+      frame: "/covers/frame-ocean.webp?v=2",
       titleTop: "16.8%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
       titleHeight: "9.7%",
       titleWidth: "57%",
