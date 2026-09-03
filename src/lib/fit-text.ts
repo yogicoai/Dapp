@@ -49,11 +49,12 @@ export function fitScale(
  * 권마다 재면 그릴 때마다 레이아웃이 출렁이고, 제목 길이는 미리 알 수 있다.
  */
 export function coverTitleScale(title: string): number {
+  // 2026-09-02 명패를 키운 새 틀 기준으로 덜 줄인다 — 예전 얕은 리본 때 값은 더 작았다.
   const n = [...title.trim()].length;
   if (n <= 6) return 1;
   if (n <= 8) return 0.92;
-  if (n <= 10) return 0.84;
-  if (n <= 13) return 0.76;
-  if (n <= 16) return 0.68;
-  return 0.6;
+  if (n <= 10) return 0.85;
+  if (n <= 13) return 0.8;
+  if (n <= 16) return 0.72;
+  return 0.62;
 }

@@ -79,11 +79,11 @@ export const THEMES: Record<ThemeId, Theme> = {
     },
     cover: {
       frame: "/covers/frame-storybook.webp",
-      titleTop: "11.7%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
-      titleHeight: "4.8%",
-      titleWidth: "43%",
-      circleTop: "51.5%",
-      circleWidth: "62%",
+      titleTop: "18.7%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
+      titleHeight: "10.9%",
+      titleWidth: "58%",
+      circleTop: "54.6%",
+      circleWidth: "45%",
       ink: "#b45309", // 금테와 어울리는 앰버
     },
   },
@@ -105,11 +105,11 @@ export const THEMES: Record<ThemeId, Theme> = {
     cover: {
       // 전용 수채화 틀 — 잠든 여우·책더미·나뭇잎이 그려진 크림빛 프레임.
       frame: "/covers/frame-picturebook.webp",
-      titleTop: "14.4%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
-      titleHeight: "6.9%",
-      titleWidth: "44%",
-      circleTop: "52%",
-      circleWidth: "52%",
+      titleTop: "16.8%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
+      titleHeight: "9.8%",
+      titleWidth: "59%",
+      circleTop: "50.0%",
+      circleWidth: "48%",
       ink: "#a15c3e", // 틀의 크림·테라코타와 어울리는 짙은 브라운
     },
   },
@@ -124,11 +124,11 @@ export const THEMES: Record<ThemeId, Theme> = {
     icons: { voice: "/icons/func-mic.webp", book: "/themes/dino/icon-book.webp" },
     cover: {
       frame: "/covers/frame-dino.webp",
-      titleTop: "14.4%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
-      titleHeight: "6.0%",
-      titleWidth: "44%",
-      circleTop: "50.5%",
-      circleWidth: "52%",
+      titleTop: "17.4%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
+      titleHeight: "11.3%",
+      titleWidth: "58%",
+      circleTop: "53.4%",
+      circleWidth: "45.5%",
       ink: "#166534", // 정글 초록
     },
   },
@@ -143,11 +143,11 @@ export const THEMES: Record<ThemeId, Theme> = {
     icons: { voice: "/icons/func-mic.webp", book: "/themes/car/icon-book.webp" },
     cover: {
       frame: "/covers/frame-car.webp",
-      titleTop: "14.0%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
-      titleHeight: "6.3%",
-      titleWidth: "55%",
-      circleTop: "50.5%",
-      circleWidth: "63%",
+      titleTop: "20.9%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
+      titleHeight: "9.4%",
+      titleWidth: "53%",
+      circleTop: "54.4%",
+      circleWidth: "42.5%",
       ink: "#1d4ed8",
     },
   },
@@ -184,11 +184,11 @@ export const THEMES: Record<ThemeId, Theme> = {
     icons: { voice: "/icons/func-mic.webp", book: "/themes/space/icon-book.webp" },
     cover: {
       frame: "/covers/frame-space.webp",
-      titleTop: "12.3%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
-      titleHeight: "6.9%",
-      titleWidth: "59%",
-      circleTop: "49.5%",
-      circleWidth: "58%",
+      titleTop: "14.8%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
+      titleHeight: "9.6%",
+      titleWidth: "58%",
+      circleTop: "50.0%",
+      circleWidth: "43.5%",
       ink: "#4338ca",
     },
   },
@@ -202,11 +202,11 @@ export const THEMES: Record<ThemeId, Theme> = {
     icons: { voice: "/icons/func-mic.webp", book: "/themes/ocean/icon-book.webp" },
     cover: {
       frame: "/covers/frame-ocean.webp",
-      titleTop: "15.0%", // 아래 세 값은 표지 틀 그림에서 실제로 잰 것(리본 흰 칸)
-      titleHeight: "6.2%",
-      titleWidth: "45%",
-      circleTop: "50%",
-      circleWidth: "57%",
+      titleTop: "16.8%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
+      titleHeight: "9.7%",
+      titleWidth: "57%",
+      circleTop: "50.0%",
+      circleWidth: "47.5%",
       ink: "#0f766e",
     },
   },
