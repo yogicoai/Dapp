@@ -103,6 +103,17 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "형" }, { name: "아우" }],
   },
+  "장화 신은 고양이": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "puss",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [
+      { name: "고양이" }, { name: "막내" }, { name: "임금님" },
+      { name: "공주" }, { name: "괴물" }, { name: "마법사" },
+    ],
+  },
   "벌거벗은 임금님": {
     data: "src/data/classic-books.json",
     root: "classic",
