@@ -7574,7 +7574,7 @@
     "text": "어느 날, 하늘 임금님이 두 사람을 불러 서로를 만나게 해 주었어요."
   },
   "folk/gyeonu/seg-cast-p2-1.mp3": {
-    "voice": "tc-wangkwon",
+    "voice": "tc-jongdae",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "\"견우야, 직녀야. 너희는 참 잘 어울리는구나.\""
@@ -7598,7 +7598,7 @@
     "text": "\"우리, 매일매일 이렇게 함께 있어요.\""
   },
   "folk/gyeonu/seg-cast-p3-2.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-hosun",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "\"그래요. 나는 당신만 보고 있어도 하루가 다 가요.\""
@@ -7634,7 +7634,7 @@
     "text": "마침내 하늘 임금님의 귀에까지 이 소식이 들어갔어요.\n임금님은 크게 노하여 두 사람을 불렀지요."
   },
   "folk/gyeonu/seg-cast-p6-1.mp3": {
-    "voice": "tc-wangkwon",
+    "voice": "tc-jongdae",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "\"너희가 맡은 일을 이리 저버리다니!\n오늘부터 은하수 양쪽에 떨어져 살아라!\""
@@ -7652,7 +7652,7 @@
     "text": "\"여보! 가지 말아요!\""
   },
   "folk/gyeonu/seg-cast-p7-2.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-hosun",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"조금만 기다려요. 꼭 다시 만나요!\""
@@ -7730,7 +7730,7 @@
     "text": "\"여보, 얼마나 보고 싶었는지 몰라요.\""
   },
   "folk/gyeonu/seg-cast-p12-2.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-hosun",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "\"이렇게 다시 만나다니, 꿈만 같아요.\""
@@ -7748,7 +7748,7 @@
     "text": "그 모습을 본 하늘 임금님도 마음이 스르르 풀렸어요."
   },
   "folk/gyeonu/seg-cast-p13-1.mp3": {
-    "voice": "tc-wangkwon",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이제 둘 다 일을 참 열심히 하는구나.\n그럼 일 년에 한 번, 칠월 칠석날에는 만나도 좋다.\""
