@@ -2250,14 +2250,14 @@
     "text": "옛날 어느 산골에 부지런한 나무꾼이 살았어요.\n나무꾼은 홀어머니를 모시고\n날마다 산에 올라 열심히 나무를 했답니다."
   },
   "folk/goldaxe/say-p1-woodcutter.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "오늘도 나무하러 갑니다!",
     "tempo": 1.15
   },
   "folk/goldaxe/seg-cast-p2-0.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!\"",
@@ -2270,7 +2270,7 @@
     "text": "나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만,\n나무꾼은 도끼를 보물처럼 아꼈어요."
   },
   "folk/goldaxe/say-p2-woodcutter.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!",
@@ -2283,7 +2283,7 @@
     "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았지요."
   },
   "folk/goldaxe/say-p3-woodcutter.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "이 나무만 하면 오늘 몫은 끝이다!",
@@ -2296,14 +2296,14 @@
     "text": "풍덩! 도끼가 깊은 연못 속으로 가라앉고 말았어요."
   },
   "folk/goldaxe/seg-cast-p4-1.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아이고, 하나뿐인 내 도끼!\"",
     "tempo": 1.15
   },
   "folk/goldaxe/seg-cast-p4-2.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이제 어머니 약값은 어떻게 벌지…\"",
@@ -2316,7 +2316,7 @@
     "text": "나무꾼은 연못가에 주저앉아 엉엉 울었답니다."
   },
   "folk/goldaxe/say-p4-woodcutter.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "이제 어머니 약값은 어떻게 벌지…",
@@ -2341,7 +2341,7 @@
     "text": "나무꾼아, 왜 그리 슬피 우느냐?"
   },
   "folk/goldaxe/seg-cast-p6-0.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\"",
@@ -2354,7 +2354,7 @@
     "text": "산신령님은 고개를 끄덕이더니 연못 속으로 사라졌지요."
   },
   "folk/goldaxe/say-p6-woodcutter.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "어머니 약도 지어 드릴 수가 없어요.",
@@ -2373,7 +2373,7 @@
     "text": "\"이 금도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p7-2.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아니요, 제 도끼가 아닙니다.\"",
@@ -2392,7 +2392,7 @@
     "text": "이 금도끼가 네 도끼냐?"
   },
   "folk/goldaxe/say-p7-woodcutter.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "아니요, 제 도끼가 아닙니다.",
@@ -2411,7 +2411,7 @@
     "text": "\"그럼 이 은도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p8-2.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아니요, 그것도 제 것이 아닙니다.\"",
@@ -2430,7 +2430,7 @@
     "text": "그럼 이 은도끼가 네 도끼냐?"
   },
   "folk/goldaxe/say-p8-woodcutter.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "아니요, 그것도 제 것이 아닙니다.",
@@ -2443,7 +2443,7 @@
     "text": "마지막으로 낡은 쇠도끼를 들고 나오자\n나무꾼의 얼굴이 환해졌어요."
   },
   "folk/goldaxe/seg-cast-p9-1.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"맞아요! 그게 바로 제 도끼입니다!\"",
@@ -2456,7 +2456,7 @@
     "text": "그럼 이건 어떠냐?"
   },
   "folk/goldaxe/say-p9-woodcutter.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "맞아요! 그게 바로 제 도끼입니다!",
@@ -2487,7 +2487,7 @@
     "text": "나무꾼은 도끼 세 자루를 안고 한달음에 집으로 갔어요."
   },
   "folk/goldaxe/seg-cast-p11-1.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"어머니! 산신령님이 이런 선물을 주셨어요!\"",
@@ -2506,7 +2506,7 @@
     "text": "어머니는 아들의 손을 오래오래 쓸어 주었답니다."
   },
   "folk/goldaxe/say-p11-woodcutter.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "어머니! 산신령님이 이런 선물을 주셨어요!",
@@ -2639,7 +2639,7 @@
     "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요."
   },
   "folk/goldaxe/seg-cast-p17-1.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "\"어머니, 저는 도끼 한 자루면 넉넉해요.\"",
@@ -2652,7 +2652,7 @@
     "text": "나무꾼과 어머니는 오래오래 행복하게 살았답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요."
   },
   "folk/goldaxe/say-p17-woodcutter.mp3": {
-    "voice": "tc-hangyeol",
+    "voice": "tc-heejoon",
     "emotion": "normal",
     "intensity": null,
     "text": "어머니, 저는 도끼 한 자루면 넉넉해요.",
