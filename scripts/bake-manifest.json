@@ -7253,7 +7253,7 @@
     "voice": "tc-taeji",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"주인님, 저만 믿으세요. 저에게 장화 한 켤레와 자루 하나만 주세요.\""
+    "text": "\"주인님, 저만 믿으세요. 저에게 장화 한 켤레와 자루 하나만 주세요.\n후회하지 않으실 겁니다. 약속해요.\""
   },
   "classic/puss/seg-cast-p2-2.mp3": {
     "voice": "tc-hosun",
@@ -7554,5 +7554,11 @@
     "emotion": "normal",
     "intensity": null,
     "text": "얼마 뒤, 막내와 공주님은 온 나라의 축복 속에 혼례를 올렸어요.\n장화 신은 고양이는 나라에서 제일가는 귀족이 되었지요.\n그 뒤로 고양이는 쥐를 잡지 않았답니다.\n가끔… 심심할 때 재미로 쫓아다니기만 했대요."
+  },
+  "classic/puss/seg-tc-minjung-p2-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "막내는 마지막 동전을 털어 조그만 장화를 사 주었지요."
   }
 }
