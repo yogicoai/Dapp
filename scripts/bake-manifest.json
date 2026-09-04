@@ -1008,7 +1008,7 @@
     "text": "혹도 떼고 보물도 얻었구나!"
   },
   "folk/hokburi/seg-cast-p7-0.mp3": {
-    "voice": "tc-younggil",
+    "voice": "tc-goat",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야지!\""
@@ -1032,7 +1032,7 @@
     "text": "듣기 싫은 노랫소리가 삐걱삐걱 울렸어요."
   },
   "folk/hokburi/say-p7-greedy.mp3": {
-    "voice": "tc-younggil",
+    "voice": "tc-goat",
     "emotion": "normal",
     "intensity": null,
     "text": "애앰~ 애앰~ 노래야 나와라~"
@@ -1044,7 +1044,7 @@
     "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감은 얼른 제 혹을 가리키며 소리쳤지요."
   },
   "folk/hokburi/seg-cast-p8-1.mp3": {
-    "voice": "tc-younggil",
+    "voice": "tc-goat",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "\"이 혹에서 고운 노래가 나온다오! 특별히 내가 보물과 바꿔 주겠소!\""
@@ -1062,7 +1062,7 @@
     "text": "\"이놈이구나! 저번에 가져간 혹에서는 아무 노래도 나오지 않았단 말이다!\""
   },
   "folk/hokburi/say-p8-greedy.mp3": {
-    "voice": "tc-younggil",
+    "voice": "tc-goat",
     "emotion": "normal",
     "intensity": null,
     "text": "이 혹에서 고운 노래가 나온다오! 어서 보물을 주고 사 가시오!"
@@ -1086,7 +1086,7 @@
     "text": "도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은 엉엉 울며 집으로 돌아갔지요."
   },
   "folk/hokburi/seg-cast-p9-2.mp3": {
-    "voice": "tc-younggil",
+    "voice": "tc-goat",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…\""
@@ -1098,7 +1098,7 @@
     "text": "너도 거짓말쟁이구나! 이 혹, 도로 가져가라!"
   },
   "folk/hokburi/say-p9-greedy.mp3": {
-    "voice": "tc-younggil",
+    "voice": "tc-goat",
     "emotion": "normal",
     "intensity": null,
     "text": "아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…"

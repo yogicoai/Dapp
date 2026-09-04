@@ -5167,7 +5167,7 @@
     "pages": [
       {
         "text": "옛날 옛날 어느 산골 마을에, 볼에 커다란 혹이 달린 할아버지가 살았어요.\n사람들은 '혹부리 영감'이라고 불렀어요.\n할아버지는 놀림을 받아도 씩 웃으며 노래를 불렀지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p1.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p1.webp?v=4",
         "segments": [
           {
             "who": "narration",
@@ -5188,16 +5188,16 @@
       },
       {
         "text": "어느 날 할아버지는 산에 나무를 하러 갔다가 그만 날이 저물고 말았어요.\n깜깜한 밤, 바람은 쌩쌩!\n할아버지는 낡은 빈 오두막을 찾아 들어갔지요.\n\"오늘 밤은 여기서 자야겠구나.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p2.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p2.webp?v=4",
         "hotspots": [
           {
             "label": "oldman",
             "line": "오늘 밤은 여기서 자야겠구나.",
             "box": [
-              312,
-              469,
-              908,
-              631
+              210,
+              230,
+              640,
+              800
             ],
             "audio": "/folk/hokburi/say-p2-oldman.mp3"
           }
@@ -5217,16 +5217,16 @@
       },
       {
         "text": "캄캄한 오두막은 조금 무서웠어요. 가슴이 콩닥콩닥.\n그럴 때마다 할아버지는 노래를 불렀어요.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n고운 노랫소리가 밤하늘에 울려 퍼졌지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p3.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p3.webp?v=4",
         "hotspots": [
           {
             "label": "oldman",
             "line": "얼씨구나 좋구나~ 달님도 별님도 내 친구라네!",
             "box": [
-              275,
-              425,
-              833,
-              719
+              230,
+              210,
+              720,
+              830
             ],
             "audio": "/folk/hokburi/say-p3-oldman.mp3"
           }
@@ -5241,16 +5241,16 @@
       },
       {
         "text": "그때였어요! 쿵! 쿵! 쿵!\n문이 벌컥 열리더니 도깨비들이 우르르 몰려왔어요.\n할아버지는 깜짝 놀랐지만, 용기를 내어 노래를 멈추지 않았지요.\n그러자 도깨비들은 어느새 어깨를 들썩이며 노래에 빠져들었어요.\n도깨비 대장이 할아버지의 볼록한 혹을 가리키며 소리쳤지요.\n\"아하! 저 볼록한 게 바로 노래 주머니로구나!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p4.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p4.webp?v=4",
         "hotspots": [
           {
             "label": "dokkaebi",
             "line": "영감! 그 고운 노래는 어디서 나오는 거냐?",
             "box": [
-              225,
-              431,
-              883,
-              756
+              450,
+              90,
+              900,
+              860
             ],
             "audio": "/folk/hokburi/say-p4-dokkaebi.mp3"
           }
@@ -5277,16 +5277,16 @@
       },
       {
         "text": "할아버지가 미처 아니라고 말하기도 전이었어요.\n\"옳지! 이 노래 주머니는 우리가 사 가마!\"\n도깨비들은 혹을 쏙 떼어 가고, 반짝반짝 금은보화를 잔뜩 안겨 주었어요.\n\"아니, 여보게들! 그건 노래 주머니가 아니라오…\"\n하지만 도깨비들은 벌써 바람처럼 사라진 뒤였답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p5.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p5.webp?v=4",
         "hotspots": [
           {
             "label": "oldman",
             "line": "이… 이 혹에서 노래가 술술 나온다오.",
             "box": [
-              350,
-              156,
-              858,
-              380
+              150,
+              190,
+              500,
+              800
             ],
             "audio": "/folk/hokburi/say-p5-oldman.mp3"
           },
@@ -5294,10 +5294,10 @@
             "label": "dokkaebi",
             "line": "오오! 그 노래 주머니를 나에게 팔아라!",
             "box": [
-              250,
-              390,
-              842,
-              631
+              650,
+              60,
+              1020,
+              560
             ],
             "audio": "/folk/hokburi/say-p5-dokkaebi.mp3"
           }
@@ -5343,16 +5343,16 @@
       },
       {
         "text": "혹도 떼고 보물도 얻은 할아버지!\n덩실덩실 춤을 추며 집으로 돌아왔어요.\n이 소문은 바람처럼 온 마을에 쫙 퍼졌답니다.\n이웃 마을의 욕심쟁이 영감도 소문을 들었지요.\n욕심쟁이 영감의 볼에도 큰 혹이 달려 있었거든요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p6.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p6.webp?v=4",
         "hotspots": [
           {
             "label": "oldman",
             "line": "혹도 떼고 보물도 얻었구나!",
             "box": [
-              233,
-              300,
-              892,
-              612
+              130,
+              90,
+              630,
+              800
             ],
             "audio": "/folk/hokburi/say-p6-oldman.mp3"
           }
@@ -5367,16 +5367,16 @@
       },
       {
         "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야지!\"\n욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자, 혹부리 영감이 부르던 노래를 흉내 내어 억지로 목청을 높였지요.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n같은 노래인데도 삐걱삐걱, 영 딴판으로 들렸답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p7.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p7.webp?v=4",
         "hotspots": [
           {
             "label": "greedy",
             "line": "애앰~ 애앰~ 노래야 나와라~",
             "box": [
-              158,
-              356,
-              933,
-              662
+              210,
+              60,
+              730,
+              820
             ],
             "audio": "/folk/hokburi/say-p7-greedy.mp3"
           }
@@ -5403,16 +5403,16 @@
       },
       {
         "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감은 얼른 제 혹을 가리키며 소리쳤지요.\n\"이 혹에서 고운 노래가 나온다오! 특별히 내가 보물과 바꿔 주겠소!\"\n그러자 도깨비 대장이 버럭 화를 냈어요.\n\"이놈이구나! 저번에 가져간 혹에서는 아무 노래도 나오지 않았단 말이다!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p8.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p8.webp?v=4",
         "hotspots": [
           {
             "label": "greedy",
             "line": "이 혹에서 고운 노래가 나온다오! 어서 보물을 주고 사 가시오!",
             "box": [
-              267,
-              81,
-              933,
-              350
+              130,
+              100,
+              470,
+              860
             ],
             "audio": "/folk/hokburi/say-p8-greedy.mp3"
           },
@@ -5420,10 +5420,10 @@
             "label": "dokkaebi",
             "line": "거짓말! 지난번 혹에서도 노래는 나오지 않았다!",
             "box": [
-              208,
-              400,
-              858,
-              769
+              520,
+              20,
+              930,
+              820
             ],
             "audio": "/folk/hokburi/say-p8-dokkaebi.mp3"
           }
@@ -5465,16 +5465,16 @@
       },
       {
         "text": "\"이 거짓말쟁이 영감 같으니! 이 혹, 도로 가져가라!\"\n도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은 엉엉 울며 집으로 돌아갔지요.\n\"아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p9.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p9.webp?v=4",
         "hotspots": [
           {
             "label": "dokkaebi",
             "line": "너도 거짓말쟁이구나! 이 혹, 도로 가져가라!",
             "box": [
-              108,
-              575,
-              858,
-              831
+              620,
+              90,
+              1000,
+              800
             ],
             "audio": "/folk/hokburi/say-p9-dokkaebi.mp3"
           },
@@ -5482,10 +5482,10 @@
             "label": "greedy",
             "line": "아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…",
             "box": [
-              150,
-              300,
-              950,
-              550
+              270,
+              160,
+              620,
+              780
             ],
             "audio": "/folk/hokburi/say-p9-greedy.mp3"
           }
@@ -5521,16 +5521,16 @@
       },
       {
         "text": "혹부리 영감님은 보물을 혼자 갖지 않고 이웃들과 사이좋게 나누었어요.\n\"같이 나누면 기쁨이 두 배가 된다오.\"\n그날부터 마을엔 할아버지의 웃음소리가 가득했답니다.\n정직한 마음과 나누는 마음이 가장 큰 보물이에요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p10.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p10.webp?v=4",
         "hotspots": [
           {
             "label": "oldman",
             "line": "같이 나누면 기쁨이 두 배가 된다오.",
             "box": [
-              417,
-              456,
-              675,
-              631
+              200,
+              160,
+              480,
+              590
             ],
             "audio": "/folk/hokburi/say-p10-oldman.mp3"
           }
@@ -5563,7 +5563,7 @@
     "voiceCast": {
       "narration": "tc-minjung",
       "oldman": "tc-changbae",
-      "greedy": "tc-younggil",
+      "greedy": "tc-goat",
       "dokkaebi": "tc-hakchul"
     },
     "roleOf": {
