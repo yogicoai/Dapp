@@ -247,6 +247,14 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "할아버지" }, { name: "욕심쟁이" }, { name: "도깨비" }],
   },
+  // 임금님 귀는 당나귀 귀 — 사장님 캐스팅(2026-09-04): 나레이션 민정 · 임금님 종대 · 복두장이 덕구.
+  // 대숲·산수유 소리와 백성들의 말은 따옴표 없이 써서 나레이션이 읽는다.
+  "임금님 귀는 당나귀 귀": {
+    dir: "donkeyears",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "임금님" }, { name: "복두장이" }],
+  },
   // 견우와 직녀 — 사장님 캐스팅(2026-09-04): 나레이션 민정 · 견우 티안 · 직녀 나진 · 임금님 왕권.
   // 이름 없는 무리(사람들·동물들·까치와 까마귀)의 대사는 crowd 배역으로 나레이션 성우가 읽는다.
   "견우와 직녀": {

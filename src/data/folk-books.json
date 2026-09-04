@@ -6605,5 +6605,343 @@
         ]
       }
     ]
+  },
+  {
+    "id": "folk-donkeyears",
+    "lang": "ko",
+    "title": "임금님 귀는 당나귀 귀",
+    "summary": "당나귀 귀가 된 임금님의 비밀을 복두장이가 대숲에 외치고, 임금님이 결국 귀를 드러내는 이야기.",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p1.webp?v=2",
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "king": "tc-jongdae",
+      "hatmaker": "tc-dukgu"
+    },
+    "roleOf": {
+      "임금님": "king",
+      "복두장이": "hatmaker"
+    },
+    "hidden": false,
+    "pages": [
+      {
+        "n": 1,
+        "text": "옛날 신라에 마음씨 착한 임금님이 살았어요.\n그런데 어느 날 아침, 거울을 본 임금님은 깜짝 놀랐지요.\n밤사이 두 귀가 쑥쑥 자라, 당나귀 귀처럼 길쭉해져 있었거든요!",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p1.webp?v=2",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p1-0.mp3",
+            "text": "옛날 신라에 마음씨 착한 임금님이 살았어요.\n그런데 어느 날 아침, 거울을 본 임금님은 깜짝 놀랐지요.\n밤사이 두 귀가 쑥쑥 자라, 당나귀 귀처럼 길쭉해져 있었거든요!"
+          }
+        ]
+      },
+      {
+        "n": 2,
+        "text": "\"이런 귀를 누가 보기라도 하면 어쩌지…\"\n임금님은 부끄러워서 어쩔 줄 몰랐어요.\n그래서 귀를 폭 덮는 커다란 모자를 만들기로 했지요.\n온 나라에서 모자를 제일 잘 만드는 복두장이가 궁궐로 불려 왔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p2.webp?v=1",
+        "lines": [
+          {
+            "text": "이런 귀를 누가 보기라도 하면 어쩌지…",
+            "who": "king"
+          }
+        ],
+        "segments": [
+          {
+            "who": "king",
+            "src": "/folk/donkeyears/seg-cast-p2-0.mp3",
+            "text": "\"이런 귀를 누가 보기라도 하면 어쩌지…\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p2-1.mp3",
+            "text": "\n임금님은 부끄러워서 어쩔 줄 몰랐어요.\n그래서 귀를 폭 덮는 커다란 모자를 만들기로 했지요.\n온 나라에서 모자를 제일 잘 만드는 복두장이가 궁궐로 불려 왔답니다."
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "복두장이는 임금님의 머리 크기를 재다가 그만 긴 귀를 보고 말았어요.\n\"오늘 본 것은 죽을 때까지 아무에게도 말하지 말거라. 알겠느냐?\"\n\"네, 임금님! 절대로, 절대로 말하지 않겠습니다!\"\n복두장이는 귀까지 폭 덮이는 멋진 모자를 만들어 바쳤답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p3.webp?v=1",
+        "lines": [
+          {
+            "text": "오늘 본 것은 죽을 때까지 아무에게도 말하지 말거라. 알겠느냐?",
+            "who": "king",
+            "feel": "normal"
+          },
+          {
+            "text": "네, 임금님! 절대로, 절대로 말하지 않겠습니다!",
+            "who": "hatmaker"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p3-0.mp3",
+            "text": "복두장이는 임금님의 머리 크기를 재다가 그만 긴 귀를 보고 말았어요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/donkeyears/seg-cast-p3-1.mp3",
+            "text": "\"오늘 본 것은 죽을 때까지 아무에게도 말하지 말거라. 알겠느냐?\"\n"
+          },
+          {
+            "who": "hatmaker",
+            "src": "/folk/donkeyears/seg-cast-p3-2.mp3",
+            "text": "\"네, 임금님! 절대로, 절대로 말하지 않겠습니다!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p3-3.mp3",
+            "text": "\n복두장이는 귀까지 폭 덮이는 멋진 모자를 만들어 바쳤답니다."
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "복두장이는 약속을 꼭 지켰어요.\n어느 누구에게도 말하지 않았지요.\n그런데 비밀이란 게 참 이상하지요?\n말하면 안 된다고 생각할수록 입이 근질근질, 자꾸만 말이 나오려고 했답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p4.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p4-0.mp3",
+            "text": "복두장이는 약속을 꼭 지켰어요.\n어느 누구에게도 말하지 않았지요.\n그런데 비밀이란 게 참 이상하지요?\n말하면 안 된다고 생각할수록 입이 근질근질, 자꾸만 말이 나오려고 했답니다."
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "한 해, 두 해, 세 해가 지났어요.\n비밀을 꾹꾹 눌러 담은 복두장이는 가슴이 답답해서 밥도 잘 못 먹게 되었지요.\n\"이러다 정말 병이 나겠어. 딱 한 번만, 아무도 없는 곳에서 말하면 안 될까…\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p5.webp?v=1",
+        "lines": [
+          {
+            "text": "이러다 정말 병이 나겠어. 딱 한 번만, 아무도 없는 곳에서 말하면 안 될까…",
+            "who": "hatmaker",
+            "feel": "sad"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p5-0.mp3",
+            "text": "한 해, 두 해, 세 해가 지났어요.\n비밀을 꾹꾹 눌러 담은 복두장이는 가슴이 답답해서 밥도 잘 못 먹게 되었지요.\n"
+          },
+          {
+            "who": "hatmaker",
+            "src": "/folk/donkeyears/seg-cast-p5-1.mp3",
+            "text": "\"이러다 정말 병이 나겠어. 딱 한 번만, 아무도 없는 곳에서 말하면 안 될까…\""
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "text": "복두장이는 사람이 아무도 없는 깊은 대나무 숲으로 갔어요.\n이쪽저쪽 두리번두리번, 정말 아무도 없는지 살핀 다음\n두 손을 입에 모으고 있는 힘껏 외쳤지요.\n\"임금님 귀는 당나귀 귀! 임금님 귀는 당나귀 귀!\"\n아이고, 속이 다 후련했답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p6.webp?v=1",
+        "lines": [
+          {
+            "text": "임금님 귀는 당나귀 귀! 임금님 귀는 당나귀 귀!",
+            "who": "hatmaker",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p6-0.mp3",
+            "text": "복두장이는 사람이 아무도 없는 깊은 대나무 숲으로 갔어요.\n이쪽저쪽 두리번두리번, 정말 아무도 없는지 살핀 다음\n두 손을 입에 모으고 있는 힘껏 외쳤지요.\n"
+          },
+          {
+            "who": "hatmaker",
+            "src": "/folk/donkeyears/seg-cast-p6-1.mp3",
+            "text": "\"임금님 귀는 당나귀 귀! 임금님 귀는 당나귀 귀!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p6-2.mp3",
+            "text": "\n아이고, 속이 다 후련했답니다."
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "그런데 그날부터 이상한 일이 생겼어요.\n바람이 불 때마다 대나무 숲이 사락사락, 소리를 내는 거예요.\n임금님 귀는 당나귀 귀~ 임금님 귀는 당나귀 귀~\n숲을 지나던 사람들은 귀를 쫑긋 세우고 수군거렸답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p7.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p7-0.mp3",
+            "text": "그런데 그날부터 이상한 일이 생겼어요.\n바람이 불 때마다 대나무 숲이 사락사락, 소리를 내는 거예요.\n임금님 귀는 당나귀 귀~ 임금님 귀는 당나귀 귀~\n숲을 지나던 사람들은 귀를 쫑긋 세우고 수군거렸답니다."
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "소문은 바람보다 빨리 퍼져 마침내 궁궐까지 닿았어요.\n\"뭐라고? 대나무가 그런 말을 한다고?\"\n임금님은 얼굴이 새빨개져서 소리쳤지요.\n\"당장 그 대나무 숲을 몽땅 베어 버려라!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p8.webp?v=1",
+        "lines": [
+          {
+            "text": "뭐라고? 대나무가 그런 말을 한다고?",
+            "who": "king",
+            "feel": "angry"
+          },
+          {
+            "text": "당장 그 대나무 숲을 몽땅 베어 버려라!",
+            "who": "king",
+            "feel": "angry"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p8-0.mp3",
+            "text": "소문은 바람보다 빨리 퍼져 마침내 궁궐까지 닿았어요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/donkeyears/seg-cast-p8-1.mp3",
+            "text": "\"뭐라고? 대나무가 그런 말을 한다고?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p8-2.mp3",
+            "text": "\n임금님은 얼굴이 새빨개져서 소리쳤지요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/donkeyears/seg-cast-p8-3.mp3",
+            "text": "\"당장 그 대나무 숲을 몽땅 베어 버려라!\""
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "신하들은 대나무를 한 그루도 남기지 않고 베어 냈어요.\n그리고 그 자리에 산수유나무를 잔뜩 심었지요.\n\"이제 됐다. 다시는 그 소리를 못 들을 거야.\"\n임금님은 그제야 마음을 놓았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p9.webp?v=1",
+        "lines": [
+          {
+            "text": "이제 됐다. 다시는 그 소리를 못 들을 거야.",
+            "who": "king"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p9-0.mp3",
+            "text": "신하들은 대나무를 한 그루도 남기지 않고 베어 냈어요.\n그리고 그 자리에 산수유나무를 잔뜩 심었지요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/donkeyears/seg-cast-p9-1.mp3",
+            "text": "\"이제 됐다. 다시는 그 소리를 못 들을 거야.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p9-2.mp3",
+            "text": "\n임금님은 그제야 마음을 놓았답니다."
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "그런데 바람이 불자, 이번엔 산수유나무가 살랑살랑 소리를 냈어요.\n임금님 귀는 당나귀 귀다~ 임금님 귀는 당나귀 귀다~\n소리는 작아졌지만 없어지지는 않았지요.\n임금님은 창가에 앉아 곰곰이 생각했어요.\n'아무리 숨겨도 없어지지 않는구나. 숨기려고 할수록 자꾸 새어 나오는구나…'",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p10.webp?v=1",
+        "lines": [
+          {
+            "text": "아무리 숨겨도 없어지지 않는구나. 숨기려고 할수록 자꾸 새어 나오는구나…",
+            "who": "king",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p10-0.mp3",
+            "text": "그런데 바람이 불자, 이번엔 산수유나무가 살랑살랑 소리를 냈어요.\n임금님 귀는 당나귀 귀다~ 임금님 귀는 당나귀 귀다~\n소리는 작아졌지만 없어지지는 않았지요.\n임금님은 창가에 앉아 곰곰이 생각했어요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/donkeyears/seg-cast-p10-1.mp3",
+            "text": "'아무리 숨겨도 없어지지 않는구나. 숨기려고 할수록 자꾸 새어 나오는구나…'"
+          }
+        ]
+      },
+      {
+        "n": 11,
+        "text": "임금님은 복두장이를 궁궐로 불렀어요.\n복두장이는 벌을 받을까 봐 무릎을 덜덜 떨었지요.\n\"임금님, 죄송합니다. 제가 그만…\"\n\"아니다. 네 잘못이 아니야. 내가 자꾸 숨기려고만 했구나.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p11.webp?v=1",
+        "lines": [
+          {
+            "text": "임금님, 죄송합니다. 제가 그만…",
+            "who": "hatmaker",
+            "feel": "sad"
+          },
+          {
+            "text": "아니다. 네 잘못이 아니야. 내가 자꾸 숨기려고만 했구나.",
+            "who": "king"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p11-0.mp3",
+            "text": "임금님은 복두장이를 궁궐로 불렀어요.\n복두장이는 벌을 받을까 봐 무릎을 덜덜 떨었지요.\n"
+          },
+          {
+            "who": "hatmaker",
+            "src": "/folk/donkeyears/seg-cast-p11-1.mp3",
+            "text": "\"임금님, 죄송합니다. 제가 그만…\"\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/donkeyears/seg-cast-p11-2.mp3",
+            "text": "\"아니다. 네 잘못이 아니야. 내가 자꾸 숨기려고만 했구나.\""
+          }
+        ]
+      },
+      {
+        "n": 12,
+        "text": "다음 날, 임금님은 백성들 앞에 나서서 커다란 모자를 천천히 벗었어요.\n길쭉한 당나귀 귀가 쫑긋 드러나자 모두 숨을 죽였지요.\n\"그래, 내 귀는 당나귀 귀다. 부끄러워서 숨겼지만, 숨길 일이 아니었구나.\n이 큰 귀로 너희 이야기를 더 잘 들으마.\"\n그때 한 아이가 임금님 귀가 정말 멋지다고 소리쳤어요.\n그러자 여기저기서 따뜻한 박수가 터져 나왔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p12.webp?v=1",
+        "lines": [
+          {
+            "text": "그래, 내 귀는 당나귀 귀다. 부끄러워서 숨겼지만, 숨길 일이 아니었구나.\n이 큰 귀로 너희 이야기를 더 잘 들으마.",
+            "who": "king",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p12-0.mp3",
+            "text": "다음 날, 임금님은 백성들 앞에 나서서 커다란 모자를 천천히 벗었어요.\n길쭉한 당나귀 귀가 쫑긋 드러나자 모두 숨을 죽였지요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/donkeyears/seg-cast-p12-1.mp3",
+            "text": "\"그래, 내 귀는 당나귀 귀다. 부끄러워서 숨겼지만, 숨길 일이 아니었구나.\n이 큰 귀로 너희 이야기를 더 잘 들으마.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p12-2.mp3",
+            "text": "\n그때 한 아이가 임금님 귀가 정말 멋지다고 소리쳤어요.\n그러자 여기저기서 따뜻한 박수가 터져 나왔답니다."
+          }
+        ]
+      },
+      {
+        "n": 13,
+        "text": "그 뒤로 산수유 숲에서 바람 소리가 나도 아무도 수군거리지 않았어요.\n임금님 귀는 당나귀 귀다~ 그 소리에 임금님도 백성들도 함께 웃었으니까요.\n비밀이 없어진 복두장이는 밥도 잠도 꿀맛이었지요.\n큰 귀를 가진 임금님은 백성들의 작은 이야기까지 잘 들어 주는 임금님이 되었답니다.\n남과 조금 다르다고 숨길 필요는 없어요. 있는 그대로가 제일 멋지니까요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p13.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/donkeyears/seg-p13-0.mp3",
+            "text": "그 뒤로 산수유 숲에서 바람 소리가 나도 아무도 수군거리지 않았어요.\n임금님 귀는 당나귀 귀다~ 그 소리에 임금님도 백성들도 함께 웃었으니까요.\n비밀이 없어진 복두장이는 밥도 잠도 꿀맛이었지요.\n큰 귀를 가진 임금님은 백성들의 작은 이야기까지 잘 들어 주는 임금님이 되었답니다.\n남과 조금 다르다고 숨길 필요는 없어요. 있는 그대로가 제일 멋지니까요."
+          }
+        ]
+      }
+    ]
   }
 ]
