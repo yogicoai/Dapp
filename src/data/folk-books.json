@@ -2680,10 +2680,10 @@
             "label": "mother",
             "line": "문 꼭 잠그고 있으렴!",
             "box": [
-              200,
-              40,
-              560,
-              830
+              46,
+              169,
+              961,
+              473
             ],
             "audio": "/folk/haedal/say-p2-mother.mp3"
           }
@@ -2719,10 +2719,10 @@
             "label": "sister",
             "line": "오빠, 엄마 왜 이렇게 안 오지?",
             "box": [
-              20,
-              300,
-              360,
-              800
+              347,
+              17,
+              926,
+              304
             ],
             "audio": "/folk/haedal/say-p3-sister.mp3"
           },
@@ -2730,10 +2730,10 @@
             "label": "brother",
             "line": "조금만 더 기다려 보자.",
             "box": [
-              280,
-              230,
-              680,
-              800
+              266,
+              236,
+              926,
+              574
             ],
             "audio": "/folk/haedal/say-p3-brother.mp3"
           }
@@ -2769,10 +2769,10 @@
             "label": "tiger",
             "line": "떡 하나 주면 안 잡아먹지!",
             "box": [
-              40,
-              80,
-              560,
-              560
+              93,
+              34,
+              648,
+              473
             ],
             "audio": "/folk/haedal/say-p4-tiger.mp3"
           }
@@ -2803,10 +2803,10 @@
             "label": "tiger",
             "line": "떡 하나 주면 안 잡아먹지!",
             "box": [
-              120,
-              80,
-              560,
-              780
+              93,
+              101,
+              903,
+              473
             ],
             "audio": "/folk/haedal/say-p5-tiger.mp3"
           },
@@ -2814,10 +2814,10 @@
             "label": "mother",
             "line": "이것도 가져가렴… 우리 아이들이 기다린단다.",
             "box": [
-              620,
-              260,
-              1070,
-              830
+              301,
+              524,
+              961,
+              904
             ],
             "audio": "/folk/haedal/say-p5-mother.mp3"
           }
@@ -2862,10 +2862,10 @@
             "label": "mother",
             "line": "이제… 줄 떡이 없구나.",
             "box": [
-              120,
-              290,
-              560,
-              800
+              336,
+              101,
+              926,
+              473
             ],
             "audio": "/folk/haedal/say-p6-mother.mp3"
           },
@@ -2873,10 +2873,10 @@
             "label": "tiger",
             "line": "그럼 널 잡아먹어야겠다!",
             "box": [
-              580,
-              90,
-              1150,
-              800
+              104,
+              490,
+              926,
+              971
             ],
             "audio": "/folk/haedal/say-p6-tiger.mp3"
           }
@@ -2922,10 +2922,10 @@
             "label": "tiger",
             "line": "얘들아, 엄마 왔단다~",
             "box": [
-              420,
-              130,
-              900,
-              830
+              150,
+              355,
+              961,
+              760
             ],
             "audio": "/folk/haedal/say-p7-tiger.mp3"
           },
@@ -2933,10 +2933,10 @@
             "label": "brother",
             "line": "어? 우리 엄마 목소리가 아닌데?",
             "box": [
-              220,
-              430,
-              420,
-              590
+              498,
+              186,
+              683,
+              355
             ],
             "audio": "/folk/haedal/say-p7-brother.mp3"
           }
@@ -2982,10 +2982,10 @@
             "label": "brother",
             "line": "그럼 문틈으로 손을 보여 주세요.",
             "box": [
-              500,
-              60,
-              920,
-              820
+              69,
+              422,
+              949,
+              777
             ],
             "audio": "/folk/haedal/say-p8-brother.mp3"
           },
@@ -2993,10 +2993,10 @@
             "label": "sister",
             "line": "호, 호랑이다!",
             "box": [
-              760,
-              200,
-              1120,
-              800
+              231,
+              642,
+              926,
+              946
             ],
             "audio": "/folk/haedal/say-p8-sister.mp3"
           }
@@ -3042,10 +3042,10 @@
             "label": "brother",
             "line": "쉿… 뒷문으로 나가자.",
             "box": [
-              160,
-              40,
-              400,
-              400
+              46,
+              135,
+              463,
+              338
             ],
             "audio": "/folk/haedal/say-p9-brother.mp3"
           },
@@ -3053,10 +3053,10 @@
             "label": "sister",
             "line": "오빠, 무서워…",
             "box": [
-              280,
-              200,
-              540,
-              560
+              231,
+              236,
+              648,
+              456
             ],
             "audio": "/folk/haedal/say-p9-sister.mp3"
           }
@@ -3087,10 +3087,10 @@
             "label": "tiger",
             "line": "옳지, 너희 우물 속에 숨었구나!",
             "box": [
-              40,
-              380,
-              500,
-              820
+              440,
+              34,
+              949,
+              422
             ],
             "audio": "/folk/haedal/say-p10-tiger.mp3"
           },
@@ -3098,10 +3098,10 @@
             "label": "sister",
             "line": "호호, 바보 호랑이!",
             "box": [
-              700,
-              60,
-              880,
-              340
+              69,
+              591,
+              394,
+              743
             ],
             "audio": "/folk/haedal/say-p10-sister.mp3"
           }
@@ -3137,10 +3137,10 @@
             "label": "brother",
             "line": "참기름을 바르고 올라왔지요!",
             "box": [
-              280,
-              60,
-              560,
-              330
+              69,
+              236,
+              382,
+              473
             ],
             "audio": "/folk/haedal/say-p11-brother.mp3"
           }
@@ -3187,10 +3187,10 @@
             "label": "sister",
             "line": "바보 호랑이! 도끼로 찍으면서 올라와야지!",
             "box": [
-              600,
-              40,
-              830,
-              300
+              46,
+              507,
+              347,
+              701
             ],
             "audio": "/folk/haedal/say-p12-sister.mp3"
           },
@@ -3198,10 +3198,10 @@
             "label": "brother",
             "line": "앗, 안 돼!",
             "box": [
-              790,
-              20,
-              1020,
-              290
+              23,
+              667,
+              336,
+              861
             ],
             "audio": "/folk/haedal/say-p12-brother.mp3"
           }
@@ -3232,10 +3232,10 @@
             "label": "sister",
             "line": "오빠, 어떡해!",
             "box": [
-              780,
-              60,
-              940,
-              260
+              69,
+              659,
+              301,
+              794
             ],
             "audio": "/folk/haedal/say-p13-sister.mp3"
           },
@@ -3243,10 +3243,10 @@
             "label": "tiger",
             "line": "이제 내려올 데도 없겠구나!",
             "box": [
-              280,
-              350,
-              620,
-              830
+              405,
+              236,
+              961,
+              524
             ],
             "audio": "/folk/haedal/say-p13-tiger.mp3"
           }
@@ -3278,10 +3278,10 @@
             "label": "brother",
             "line": "하느님, 동아줄을 내려 주세요!",
             "box": [
-              200,
-              60,
-              390,
-              370
+              69,
+              169,
+              428,
+              329
             ],
             "audio": "/folk/haedal/say-p14-brother.mp3"
           },
@@ -3289,10 +3289,10 @@
             "label": "sister",
             "line": "저희를 살려 주세요!",
             "box": [
-              380,
-              110,
-              550,
-              370
+              127,
+              321,
+              428,
+              465
             ],
             "audio": "/folk/haedal/say-p14-sister.mp3"
           }
@@ -3324,10 +3324,10 @@
             "label": "tiger",
             "line": "동아줄! 동아줄 내놔라!",
             "box": [
-              240,
-              400,
-              560,
-              780
+              463,
+              203,
+              903,
+              473
             ],
             "audio": "/folk/haedal/say-p15-tiger.mp3"
           }
@@ -3360,10 +3360,10 @@
             "label": "tiger",
             "line": "아이고, 엉덩이야!",
             "box": [
-              260,
-              130,
-              860,
-              640
+              150,
+              220,
+              741,
+              726
             ],
             "audio": "/folk/haedal/say-p16-tiger.mp3"
           }
@@ -3394,10 +3394,10 @@
             "label": "king",
             "line": "착하고 지혜로운 아이들아, 소원이 있느냐?",
             "box": [
-              500,
-              40,
-              1180,
-              760
+              46,
+              422,
+              880,
+              997
             ],
             "audio": "/folk/haedal/say-p17-king.mp3"
           },
@@ -3405,10 +3405,10 @@
             "label": "brother",
             "line": "굴에 갇힌 우리 엄마를 구해 주세요!",
             "box": [
-              40,
-              300,
-              300,
-              820
+              347,
+              34,
+              949,
+              253
             ],
             "audio": "/folk/haedal/say-p17-brother.mp3"
           }
@@ -3450,10 +3450,10 @@
             "label": "mother",
             "line": "우리 아가들… 얼마나 무서웠니.",
             "box": [
-              40,
-              100,
-              880,
-              430
+              116,
+              34,
+              498,
+              743
             ],
             "audio": "/folk/haedal/say-p18-mother.mp3"
           },
@@ -3461,10 +3461,10 @@
             "label": "sister",
             "line": "엄마!",
             "box": [
-              230,
-              430,
-              560,
-              800
+              498,
+              194,
+              926,
+              473
             ],
             "audio": "/folk/haedal/say-p18-sister.mp3"
           }
@@ -3509,10 +3509,10 @@
             "label": "king",
             "line": "너희가 세상을 밝혀 주겠니?",
             "box": [
-              600,
-              40,
-              1180,
-              860
+              46,
+              507,
+              995,
+              997
             ],
             "audio": "/folk/haedal/say-p19-king.mp3"
           },
@@ -3520,10 +3520,10 @@
             "label": "sister",
             "line": "오빠… 나 깜깜한 밤은 무서워.",
             "box": [
-              40,
-              370,
-              330,
-              830
+              428,
+              34,
+              961,
+              279
             ],
             "audio": "/folk/haedal/say-p19-sister.mp3"
           },
@@ -3531,10 +3531,10 @@
             "label": "brother",
             "line": "그럼 우리 바꾸자!",
             "box": [
-              300,
-              250,
-              620,
-              830
+              289,
+              253,
+              961,
+              524
             ],
             "audio": "/folk/haedal/say-p19-brother.mp3"
           }
@@ -3622,10 +3622,10 @@
             "label": "woodcutter",
             "line": "오늘도 나무하러 갑니다!",
             "box": [
-              700,
-              220,
-              1060,
-              770
+              255,
+              591,
+              891,
+              895
             ],
             "audio": "/folk/goldaxe/say-p1-woodcutter.mp3"
           }
@@ -3646,10 +3646,10 @@
             "label": "woodcutter",
             "line": "오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!",
             "box": [
-              380,
-              40,
-              890,
-              840
+              46,
+              321,
+              972,
+              752
             ],
             "audio": "/folk/goldaxe/say-p2-woodcutter.mp3"
           }
@@ -3675,10 +3675,10 @@
             "label": "woodcutter",
             "line": "이 나무만 하면 오늘 몫은 끝이다!",
             "box": [
-              100,
-              40,
-              540,
-              650
+              46,
+              84,
+              752,
+              456
             ],
             "audio": "/folk/goldaxe/say-p3-woodcutter.mp3"
           }
@@ -3699,10 +3699,10 @@
             "label": "woodcutter",
             "line": "이제 어머니 약값은 어떻게 벌지…",
             "box": [
-              80,
-              100,
-              620,
-              650
+              116,
+              68,
+              752,
+              524
             ],
             "audio": "/folk/goldaxe/say-p4-woodcutter.mp3"
           }
@@ -3738,10 +3738,10 @@
             "label": "spirit",
             "line": "나무꾼아, 왜 그리 슬피 우느냐?",
             "box": [
-              600,
-              20,
-              1150,
-              700
+              23,
+              507,
+              810,
+              971
             ],
             "audio": "/folk/goldaxe/say-p5-spirit.mp3"
           }
@@ -3775,10 +3775,10 @@
             "label": "woodcutter",
             "line": "어머니 약도 지어 드릴 수가 없어요.",
             "box": [
-              110,
-              260,
-              450,
-              810
+              301,
+              93,
+              938,
+              380
             ],
             "audio": "/folk/goldaxe/say-p6-woodcutter.mp3"
           }
@@ -3814,10 +3814,10 @@
             "label": "spirit",
             "line": "이 금도끼가 네 도끼냐?",
             "box": [
-              60,
-              20,
-              500,
-              800
+              23,
+              51,
+              926,
+              422
             ],
             "audio": "/folk/goldaxe/say-p7-spirit.mp3"
           },
@@ -3825,10 +3825,10 @@
             "label": "woodcutter",
             "line": "아니요, 제 도끼가 아닙니다.",
             "box": [
-              640,
-              250,
-              1060,
-              830
+              289,
+              541,
+              961,
+              895
             ],
             "audio": "/folk/goldaxe/say-p7-woodcutter.mp3"
           }
@@ -3874,10 +3874,10 @@
             "label": "spirit",
             "line": "그럼 이 은도끼가 네 도끼냐?",
             "box": [
-              40,
-              40,
-              500,
-              860
+              46,
+              34,
+              995,
+              422
             ],
             "audio": "/folk/goldaxe/say-p8-spirit.mp3"
           },
@@ -3885,10 +3885,10 @@
             "label": "woodcutter",
             "line": "아니요, 그것도 제 것이 아닙니다.",
             "box": [
-              640,
-              140,
-              1080,
-              860
+              162,
+              541,
+              995,
+              912
             ],
             "audio": "/folk/goldaxe/say-p8-woodcutter.mp3"
           }
@@ -3924,10 +3924,10 @@
             "label": "spirit",
             "line": "그럼 이건 어떠냐?",
             "box": [
-              40,
-              40,
-              560,
-              860
+              46,
+              34,
+              995,
+              473
             ],
             "audio": "/folk/goldaxe/say-p9-spirit.mp3"
           },
@@ -3935,10 +3935,10 @@
             "label": "woodcutter",
             "line": "맞아요! 그게 바로 제 도끼입니다!",
             "box": [
-              560,
-              260,
-              1100,
-              860
+              301,
+              473,
+              995,
+              929
             ],
             "audio": "/folk/goldaxe/say-p9-woodcutter.mp3"
           }
@@ -3970,10 +3970,10 @@
             "label": "spirit",
             "line": "금도끼와 은도끼도 모두 너에게 주마!",
             "box": [
-              40,
-              60,
-              600,
-              860
+              69,
+              34,
+              995,
+              507
             ],
             "audio": "/folk/goldaxe/say-p10-spirit.mp3"
           }
@@ -4009,10 +4009,10 @@
             "label": "woodcutter",
             "line": "어머니! 산신령님이 이런 선물을 주셨어요!",
             "box": [
-              260,
-              40,
-              640,
-              640
+              46,
+              220,
+              741,
+              541
             ],
             "audio": "/folk/goldaxe/say-p11-woodcutter.mp3"
           },
@@ -4020,10 +4020,10 @@
             "label": "mother",
             "line": "네가 바르게 살아 준 덕이구나.",
             "box": [
-              600,
-              100,
-              1010,
-              680
+              116,
+              507,
+              787,
+              853
             ],
             "audio": "/folk/goldaxe/say-p11-mother.mp3"
           }
@@ -4058,10 +4058,10 @@
             "label": "greedy",
             "line": "옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!",
             "box": [
-              100,
-              60,
-              620,
-              860
+              69,
+              84,
+              995,
+              524
             ],
             "audio": "/folk/goldaxe/say-p12-greedy.mp3"
           }
@@ -4092,10 +4092,10 @@
             "label": "greedy",
             "line": "아이고, 내 도끼야! 엉엉!",
             "box": [
-              640,
-              40,
-              1120,
-              840
+              46,
+              541,
+              972,
+              946
             ],
             "audio": "/folk/goldaxe/say-p13-greedy.mp3"
           }
@@ -4138,10 +4138,10 @@
             "label": "spirit",
             "line": "이 금도끼가 네 도끼냐?",
             "box": [
-              60,
-              40,
-              620,
-              860
+              46,
+              51,
+              995,
+              524
             ],
             "audio": "/folk/goldaxe/say-p14-spirit.mp3"
           },
@@ -4149,10 +4149,10 @@
             "label": "greedy",
             "line": "맞아요, 맞아! 그 금도끼가 제 것입니다!",
             "box": [
-              540,
-              200,
-              1160,
-              720
+              231,
+              456,
+              833,
+              980
             ],
             "audio": "/folk/goldaxe/say-p14-greedy.mp3"
           }
@@ -4188,10 +4188,10 @@
             "label": "spirit",
             "line": "거짓말을 하는구나!",
             "box": [
-              40,
-              40,
-              680,
-              860
+              46,
+              34,
+              995,
+              574
             ],
             "audio": "/folk/goldaxe/say-p15-spirit.mp3"
           }
@@ -4222,10 +4222,10 @@
             "label": "greedy",
             "line": "산신령님… 제 도끼라도 돌려주세요…",
             "box": [
-              680,
-              130,
-              1010,
-              780
+              150,
+              574,
+              903,
+              853
             ],
             "audio": "/folk/goldaxe/say-p16-greedy.mp3"
           }
@@ -4256,10 +4256,10 @@
             "label": "woodcutter",
             "line": "어머니, 저는 도끼 한 자루면 넉넉해요.",
             "box": [
-              380,
-              40,
-              840,
-              860
+              46,
+              321,
+              995,
+              709
             ],
             "audio": "/folk/goldaxe/say-p17-woodcutter.mp3"
           },
@@ -4267,10 +4267,10 @@
             "label": "mother",
             "line": "그럼, 그게 제일이지.",
             "box": [
-              60,
-              160,
-              420,
-              860
+              185,
+              51,
+              995,
+              355
             ],
             "audio": "/folk/goldaxe/say-p17-mother.mp3"
           }
@@ -5196,10 +5196,10 @@
             "label": "oldman",
             "line": "오늘 밤은 여기서 자야겠구나.",
             "box": [
-              210,
-              230,
-              640,
-              800
+              266,
+              177,
+              926,
+              541
             ],
             "audio": "/folk/hokburi/say-p2-oldman.mp3"
           }
@@ -5225,10 +5225,10 @@
             "label": "oldman",
             "line": "얼씨구나 좋구나~ 달님도 별님도 내 친구라네!",
             "box": [
-              230,
-              210,
-              720,
-              830
+              243,
+              194,
+              961,
+              608
             ],
             "audio": "/folk/hokburi/say-p3-oldman.mp3"
           }
@@ -5249,10 +5249,10 @@
             "label": "dokkaebi",
             "line": "영감! 그 고운 노래는 어디서 나오는 거냐?",
             "box": [
-              450,
-              90,
-              900,
-              860
+              104,
+              380,
+              995,
+              760
             ],
             "audio": "/folk/hokburi/say-p4-dokkaebi.mp3"
           }
@@ -5285,10 +5285,10 @@
             "label": "oldman",
             "line": "이… 이 혹에서 노래가 술술 나온다오.",
             "box": [
-              150,
-              190,
-              500,
-              800
+              220,
+              127,
+              926,
+              422
             ],
             "audio": "/folk/hokburi/say-p5-oldman.mp3"
           },
@@ -5296,10 +5296,10 @@
             "label": "dokkaebi",
             "line": "오오! 그 노래 주머니를 나에게 팔아라!",
             "box": [
-              650,
-              60,
-              1020,
-              560
+              69,
+              549,
+              648,
+              861
             ],
             "audio": "/folk/hokburi/say-p5-dokkaebi.mp3"
           }
@@ -5351,10 +5351,10 @@
             "label": "oldman",
             "line": "혹도 떼고 보물도 얻었구나!",
             "box": [
-              130,
-              90,
-              630,
-              800
+              104,
+              110,
+              926,
+              532
             ],
             "audio": "/folk/hokburi/say-p6-oldman.mp3"
           }
@@ -5375,10 +5375,10 @@
             "label": "greedy",
             "line": "애앰~ 애앰~ 노래야 나와라~",
             "box": [
-              210,
-              60,
-              730,
-              820
+              69,
+              177,
+              949,
+              617
             ],
             "audio": "/folk/hokburi/say-p7-greedy.mp3"
           }
@@ -5411,10 +5411,10 @@
             "label": "greedy",
             "line": "이 혹에서 고운 노래가 나온다오! 어서 보물을 주고 사 가시오!",
             "box": [
-              130,
-              100,
-              470,
-              860
+              116,
+              110,
+              995,
+              397
             ],
             "audio": "/folk/hokburi/say-p8-greedy.mp3"
           },
@@ -5422,10 +5422,10 @@
             "label": "dokkaebi",
             "line": "거짓말! 지난번 혹에서도 노래는 나오지 않았다!",
             "box": [
-              520,
-              20,
-              930,
-              820
+              23,
+              439,
+              949,
+              785
             ],
             "audio": "/folk/hokburi/say-p8-dokkaebi.mp3"
           }
@@ -5473,10 +5473,10 @@
             "label": "dokkaebi",
             "line": "너도 거짓말쟁이구나! 이 혹, 도로 가져가라!",
             "box": [
-              620,
-              90,
-              1000,
-              800
+              104,
+              524,
+              926,
+              845
             ],
             "audio": "/folk/hokburi/say-p9-dokkaebi.mp3"
           },
@@ -5484,10 +5484,10 @@
             "label": "greedy",
             "line": "아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…",
             "box": [
-              270,
-              160,
-              620,
-              780
+              185,
+              228,
+              903,
+              524
             ],
             "audio": "/folk/hokburi/say-p9-greedy.mp3"
           }
@@ -5529,10 +5529,10 @@
             "label": "oldman",
             "line": "같이 나누면 기쁨이 두 배가 된다오.",
             "box": [
-              200,
-              160,
-              480,
-              590
+              185,
+              169,
+              683,
+              405
             ],
             "audio": "/folk/hokburi/say-p10-oldman.mp3"
           }
