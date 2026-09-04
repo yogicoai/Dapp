@@ -172,6 +172,8 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
    * 가희 — 팥쥐. 숙희(새어머니 쪽)보다 젊고 앙칼져야 자매로 갈린다.
    */
   { kind: "tc", id: "tc-tian", label: "티안", emoji: "🎎", voiceId: "tc_676cda634571635588f87804", model: "ssfm-v30", desc: "남자 · 젊고 반듯한 목소리", sample: "이 꽃신의 주인을 꼭 찾아내야겠다." },
+  /* 한결 — 금도끼 은도끼의 나무꾼. 사장님이 Typecast 목록에서 고른 성우(2026-09-04). */
+  { kind: "tc", id: "tc-hangyeol", label: "한결", emoji: "🪓", voiceId: "tc_677f2aa4a854ddffa0ebda89", model: "ssfm-v30", desc: "남자 · 젊고 씩씩한 목소리", sample: "오늘도 부지런히 나무를 해야지!" },
   /*
    * 태지 — 토끼와 거북이의 거북이. 몽군(어른)에서 아이 목소리로 바꾼 자리다.
    * 느긋함을 나이로 내지 않고 또박또박한 아이 말투로 낸다.

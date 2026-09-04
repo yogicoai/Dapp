@@ -2250,13 +2250,13 @@
     "text": "옛날 어느 산골에 부지런한 나무꾼이 살았어요.\n나무꾼은 홀어머니를 모시고\n날마다 산에 올라 열심히 나무를 했답니다."
   },
   "folk/goldaxe/say-p1-woodcutter.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "오늘도 나무하러 갑니다!"
   },
   "folk/goldaxe/seg-cast-p2-0.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "\"오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!\""
@@ -2268,7 +2268,7 @@
     "text": "나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만,\n나무꾼은 도끼를 보물처럼 아꼈어요."
   },
   "folk/goldaxe/say-p2-woodcutter.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!"
@@ -2280,7 +2280,7 @@
     "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았지요."
   },
   "folk/goldaxe/say-p3-woodcutter.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "이 나무만 하면 오늘 몫은 끝이다!"
@@ -2292,13 +2292,13 @@
     "text": "풍덩! 도끼가 깊은 연못 속으로 가라앉고 말았어요."
   },
   "folk/goldaxe/seg-cast-p4-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아이고, 하나뿐인 내 도끼!\""
   },
   "folk/goldaxe/seg-cast-p4-2.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이제 어머니 약값은 어떻게 벌지…\""
@@ -2310,7 +2310,7 @@
     "text": "나무꾼은 연못가에 주저앉아 엉엉 울었답니다."
   },
   "folk/goldaxe/say-p4-woodcutter.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "이제 어머니 약값은 어떻게 벌지…"
@@ -2322,19 +2322,19 @@
     "text": "그때였어요. 연못 물이 반짝반짝 빛나더니\n하얀 수염을 길게 늘어뜨린 산신령님이 스르르 나타났어요."
   },
   "folk/goldaxe/seg-cast-p5-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"나무꾼아, 왜 그리 슬피 우느냐?\""
   },
   "folk/goldaxe/say-p5-spirit.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "나무꾼아, 왜 그리 슬피 우느냐?"
   },
   "folk/goldaxe/seg-cast-p6-0.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\""
@@ -2346,7 +2346,7 @@
     "text": "산신령님은 고개를 끄덕이더니 연못 속으로 사라졌지요."
   },
   "folk/goldaxe/say-p6-woodcutter.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "어머니 약도 지어 드릴 수가 없어요."
@@ -2358,13 +2358,13 @@
     "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요."
   },
   "folk/goldaxe/seg-cast-p7-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이 금도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p7-2.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아니요, 제 도끼가 아닙니다.\""
@@ -2376,13 +2376,13 @@
     "text": "산신령님은 슬며시 웃으며 다시 물속으로 들어갔지요."
   },
   "folk/goldaxe/say-p7-spirit.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "이 금도끼가 네 도끼냐?"
   },
   "folk/goldaxe/say-p7-woodcutter.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "아니요, 제 도끼가 아닙니다."
@@ -2394,13 +2394,13 @@
     "text": "이번에는 산신령님이 은도끼를 들고 나왔어요."
   },
   "folk/goldaxe/seg-cast-p8-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"그럼 이 은도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p8-2.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "\"아니요, 그것도 제 것이 아닙니다.\""
@@ -2412,13 +2412,13 @@
     "text": "나무꾼은 고개를 살래살래 저었어요."
   },
   "folk/goldaxe/say-p8-spirit.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "그럼 이 은도끼가 네 도끼냐?"
   },
   "folk/goldaxe/say-p8-woodcutter.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "아니요, 그것도 제 것이 아닙니다."
@@ -2430,19 +2430,19 @@
     "text": "마지막으로 낡은 쇠도끼를 들고 나오자\n나무꾼의 얼굴이 환해졌어요."
   },
   "folk/goldaxe/seg-cast-p9-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "\"맞아요! 그게 바로 제 도끼입니다!\""
   },
   "folk/goldaxe/say-p9-spirit.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "그럼 이건 어떠냐?"
   },
   "folk/goldaxe/say-p9-woodcutter.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "맞아요! 그게 바로 제 도끼입니다!"
@@ -2454,13 +2454,13 @@
     "text": "산신령님이 껄껄 웃으며 말했어요."
   },
   "folk/goldaxe/seg-cast-p10-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"참으로 정직하구나. 네 정직한 마음에 감동했으니\n금도끼와 은도끼도 모두 너에게 주마!\""
   },
   "folk/goldaxe/say-p10-spirit.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "금도끼와 은도끼도 모두 너에게 주마!"
@@ -2472,7 +2472,7 @@
     "text": "나무꾼은 도끼 세 자루를 안고 한달음에 집으로 갔어요."
   },
   "folk/goldaxe/seg-cast-p11-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "\"어머니! 산신령님이 이런 선물을 주셨어요!\""
@@ -2490,7 +2490,7 @@
     "text": "어머니는 아들의 손을 오래오래 쓸어 주었답니다."
   },
   "folk/goldaxe/say-p11-woodcutter.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "어머니! 산신령님이 이런 선물을 주셨어요!"
@@ -2508,7 +2508,7 @@
     "text": "나무꾼이 금도끼를 받았다는 소문은 이웃 마을까지 퍼졌어요.\n그 말을 들은 욕심쟁이가 무릎을 탁 쳤지요."
   },
   "folk/goldaxe/seg-cast-p12-1.mp3": {
-    "voice": "tc-homun",
+    "voice": "tc-sullock",
     "emotion": "normal",
     "intensity": null,
     "text": "\"옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!\""
@@ -2520,7 +2520,7 @@
     "text": "욕심쟁이는 그날 밤 잠도 이루지 못했답니다."
   },
   "folk/goldaxe/say-p12-greedy.mp3": {
-    "voice": "tc-homun",
+    "voice": "tc-sullock",
     "emotion": "normal",
     "intensity": null,
     "text": "옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!"
@@ -2532,13 +2532,13 @@
     "text": "이튿날 아침, 욕심쟁이는 연못으로 달려갔어요.\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는\n손등으로 눈을 비비며 거짓 울음을 울었지요."
   },
   "folk/goldaxe/seg-cast-p13-1.mp3": {
-    "voice": "tc-homun",
+    "voice": "tc-sullock",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"아이고, 내 도끼야! 엉엉!\""
   },
   "folk/goldaxe/say-p13-greedy.mp3": {
-    "voice": "tc-homun",
+    "voice": "tc-sullock",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "아이고, 내 도끼야! 엉엉!"
@@ -2550,13 +2550,13 @@
     "text": "연못이 반짝이더니 산신령님이 금도끼를 들고 나타났어요."
   },
   "folk/goldaxe/seg-cast-p14-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이 금도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p14-2.mp3": {
-    "voice": "tc-homun",
+    "voice": "tc-sullock",
     "emotion": "normal",
     "intensity": null,
     "text": "\"맞아요, 맞아! 그 금도끼가 제 것입니다!\""
@@ -2568,13 +2568,13 @@
     "text": "욕심쟁이는 손을 뻗으며 냉큼 외쳤지요."
   },
   "folk/goldaxe/say-p14-spirit.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "이 금도끼가 네 도끼냐?"
   },
   "folk/goldaxe/say-p14-greedy.mp3": {
-    "voice": "tc-homun",
+    "voice": "tc-sullock",
     "emotion": "normal",
     "intensity": null,
     "text": "맞아요, 맞아! 그 금도끼가 제 것입니다!"
@@ -2586,7 +2586,7 @@
     "text": "산신령님의 얼굴이 무섭게 굳어졌어요."
   },
   "folk/goldaxe/seg-cast-p15-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"네 도끼는 낡은 쇠도끼가 아니더냐.\n거짓말을 하는구나!\""
@@ -2598,7 +2598,7 @@
     "text": "산신령님은 연못 속으로 스르르 사라져 버렸지요."
   },
   "folk/goldaxe/say-p15-spirit.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "거짓말을 하는구나!"
@@ -2610,7 +2610,7 @@
     "text": "욕심쟁이는 해가 지도록 연못가에서 기다렸지만\n산신령님은 다시 나오지 않았어요.\n금도끼는커녕 제 쇠도끼까지 잃고\n터덜터덜 빈손으로 돌아갔답니다."
   },
   "folk/goldaxe/say-p16-greedy.mp3": {
-    "voice": "tc-homun",
+    "voice": "tc-sullock",
     "emotion": "normal",
     "intensity": null,
     "text": "산신령님… 제 도끼라도 돌려주세요…"
@@ -2622,7 +2622,7 @@
     "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요."
   },
   "folk/goldaxe/seg-cast-p17-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "\"어머니, 저는 도끼 한 자루면 넉넉해요.\""
@@ -2634,7 +2634,7 @@
     "text": "나무꾼과 어머니는 오래오래 행복하게 살았답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요."
   },
   "folk/goldaxe/say-p17-woodcutter.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
     "text": "어머니, 저는 도끼 한 자루면 넉넉해요."
