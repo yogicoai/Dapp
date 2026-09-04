@@ -4320,7 +4320,10 @@
     },
     "narrators": [
       "tc-minjung"
-    ]
+    ],
+    "voiceTempo": {
+      "woodcutter": 1.15
+    }
   },
   {
     "id": "folk-patjuk",

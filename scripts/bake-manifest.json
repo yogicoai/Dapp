@@ -2253,13 +2253,15 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "오늘도 나무하러 갑니다!"
+    "text": "오늘도 나무하러 갑니다!",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-cast-p2-0.mp3": {
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!\""
+    "text": "\"오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!\"",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p2-1.mp3": {
     "voice": "tc-hosun",
@@ -2271,7 +2273,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!"
+    "text": "오늘도 부지런히 나무를 해서 어머니 약값을 벌어야지!",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p3-0.mp3": {
     "voice": "tc-hosun",
@@ -2283,7 +2286,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "이 나무만 하면 오늘 몫은 끝이다!"
+    "text": "이 나무만 하면 오늘 몫은 끝이다!",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p4-0.mp3": {
     "voice": "tc-hosun",
@@ -2295,13 +2299,15 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"아이고, 하나뿐인 내 도끼!\""
+    "text": "\"아이고, 하나뿐인 내 도끼!\"",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-cast-p4-2.mp3": {
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이제 어머니 약값은 어떻게 벌지…\""
+    "text": "\"이제 어머니 약값은 어떻게 벌지…\"",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p4-3.mp3": {
     "voice": "tc-hosun",
@@ -2313,7 +2319,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "이제 어머니 약값은 어떻게 벌지…"
+    "text": "이제 어머니 약값은 어떻게 벌지…",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p5-0.mp3": {
     "voice": "tc-hosun",
@@ -2337,7 +2344,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\""
+    "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\"",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p6-1.mp3": {
     "voice": "tc-hosun",
@@ -2349,7 +2357,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "어머니 약도 지어 드릴 수가 없어요."
+    "text": "어머니 약도 지어 드릴 수가 없어요.",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p7-0.mp3": {
     "voice": "tc-hosun",
@@ -2367,7 +2376,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"아니요, 제 도끼가 아닙니다.\""
+    "text": "\"아니요, 제 도끼가 아닙니다.\"",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p7-3.mp3": {
     "voice": "tc-hosun",
@@ -2385,7 +2395,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "아니요, 제 도끼가 아닙니다."
+    "text": "아니요, 제 도끼가 아닙니다.",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p8-0.mp3": {
     "voice": "tc-hosun",
@@ -2403,7 +2414,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"아니요, 그것도 제 것이 아닙니다.\""
+    "text": "\"아니요, 그것도 제 것이 아닙니다.\"",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p8-3.mp3": {
     "voice": "tc-hosun",
@@ -2421,7 +2433,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "아니요, 그것도 제 것이 아닙니다."
+    "text": "아니요, 그것도 제 것이 아닙니다.",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p9-0.mp3": {
     "voice": "tc-hosun",
@@ -2433,7 +2446,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"맞아요! 그게 바로 제 도끼입니다!\""
+    "text": "\"맞아요! 그게 바로 제 도끼입니다!\"",
+    "tempo": 1.15
   },
   "folk/goldaxe/say-p9-spirit.mp3": {
     "voice": "tc-jongdae",
@@ -2445,7 +2459,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "맞아요! 그게 바로 제 도끼입니다!"
+    "text": "맞아요! 그게 바로 제 도끼입니다!",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p10-0.mp3": {
     "voice": "tc-hosun",
@@ -2475,7 +2490,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"어머니! 산신령님이 이런 선물을 주셨어요!\""
+    "text": "\"어머니! 산신령님이 이런 선물을 주셨어요!\"",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-cast-p11-2.mp3": {
     "voice": "tc-juha",
@@ -2493,7 +2509,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "어머니! 산신령님이 이런 선물을 주셨어요!"
+    "text": "어머니! 산신령님이 이런 선물을 주셨어요!",
+    "tempo": 1.15
   },
   "folk/goldaxe/say-p11-mother.mp3": {
     "voice": "tc-juha",
@@ -2625,7 +2642,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"어머니, 저는 도끼 한 자루면 넉넉해요.\""
+    "text": "\"어머니, 저는 도끼 한 자루면 넉넉해요.\"",
+    "tempo": 1.15
   },
   "folk/goldaxe/seg-tc-hosun-p17-2.mp3": {
     "voice": "tc-hosun",
@@ -2637,7 +2655,8 @@
     "voice": "tc-hangyeol",
     "emotion": "normal",
     "intensity": null,
-    "text": "어머니, 저는 도끼 한 자루면 넉넉해요."
+    "text": "어머니, 저는 도끼 한 자루면 넉넉해요.",
+    "tempo": 1.15
   },
   "folk/goldaxe/say-p17-mother.mp3": {
     "voice": "tc-juha",
