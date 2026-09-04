@@ -247,6 +247,14 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "할아버지" }, { name: "욕심쟁이" }, { name: "도깨비" }],
   },
+  // 견우와 직녀 — 사장님 캐스팅(2026-09-04): 나레이션 민정 · 견우 티안 · 직녀 나진 · 임금님 왕권.
+  // 이름 없는 무리(사람들·동물들·까치와 까마귀)의 대사는 crowd 배역으로 나레이션 성우가 읽는다.
+  "견우와 직녀": {
+    dir: "gyeonu",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "견우" }, { name: "직녀" }, { name: "임금님" }],
+  },
   "흥부와 놀부": {
     dir: "heungbu",
     // 나레이션을 이야기 할아버지 → 민정으로 (2026-09-01 사장님 캐스팅).

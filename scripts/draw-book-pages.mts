@@ -13,14 +13,17 @@
  *
  * 먼저 캐릭터 시트를 만들려면:
  *   ... --book "금도끼 은도끼" --sheet
+ *
+ * 그림체를 다른 책에 맞추려면 scratch-art/<책>/style-*.webp 에 기준 그림을 넣어 둔다.
+ * 있으면 시트와 쪽 그림 모두에 "이 결로 그려라"는 참고로 붙는다.
  */
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
-import { generateImage, toDataUrl, fromDataUrl } from "../src/lib/gemini.ts";
+import { generateImage, type GeneratedImage } from "../src/lib/gemini.ts";
 
 type Page = { text?: string; image?: string; hotspots?: { label: string; line: string }[] };
-type Book = { title: string; pages: Page[]; artStyleId?: string };
+type Book = { title: string; pages: Page[]; artStyleId?: string; roleOf?: Record<string, string> };
 
 function arg(name: string): string | undefined {
   const i = process.argv.indexOf(`--${name}`);
@@ -28,7 +31,8 @@ function arg(name: string): string | undefined {
 }
 const DRY = process.argv.includes("--dry");
 const SHEET_ONLY = process.argv.includes("--sheet");
-const TITLE = arg("book");
+// ?? "" 로 받아야 함수 안에서도 string 으로 좁혀진다(throw 로 좁힌 건 클로저 안까지 안 간다).
+const TITLE = arg("book") ?? "";
 if (!TITLE) throw new Error('--book "책 제목" 이 필요합니다');
 
 /** 책이 어느 파일에 있는지 찾는다. */
@@ -71,7 +75,104 @@ const STYLE: Record<string, string> = {
     "soft coloured-pencil children's picture book, gentle pastel greens, round friendly animal faces, light paper texture",
   "콩쥐 팥쥐":
     "Korean hanji paper-collage picture book, torn-paper edges, flat muted traditional colours, simple rounded faces",
+  // 빨간 모자와 같은 결 — 사장님이 기준 그림체로 정한 책이다.
+  "흥부와 놀부":
+    "classic European storybook illustration: fine brown ink outlines with light cross-hatching, soft transparent watercolor washes, visible paper texture, warm muted earthy palette (ochre, moss green, terracotta, cream), gentle natural daylight. Flat hand-drawn 2D — NOT 3D render, NOT glossy, NOT plastic, NOT Pixar",
 };
+
+/** 배경 세계. 그림체 기준을 다른 나라 책에서 가져올 때 무대까지 따라오지 않게 못 박는다. */
+const SETTING: Record<string, string> = {
+  "흥부와 놀부":
+    "Joseon-era Korean countryside village: hanok houses (Nolbu's is a grand tiled-roof house with a stone wall and big wooden gate; Heungbu's is a tiny crumbling thatched hut), paper-screen doors, persimmon trees, rice paddies and soft mountains. Everyone wears hanbok. Nothing European — no Western cottages, no Western clothes",
+};
+
+/**
+ * 등장인물 생김새. 시트와 쪽 프롬프트가 **같은 문장**을 쓰게 해서 얼굴·옷이 흔들리지 않게 한다.
+ * 열쇠는 책 JSON의 role 아이디(hotspots.label / roleOf 값)와 같다.
+ */
+const CAST: Record<string, Record<string, string>> = {
+  "흥부와 놀부": {
+    heungbu:
+      "HEUNGBU — the kind younger brother, thin and gentle, warm tired smile, small topknot with a cloth headband, patched worn beige hemp hanbok, straw sandals",
+    nolbu:
+      "NOLBU — the greedy older brother, stout with a big belly, thick scowling eyebrows and a thin moustache, black horsehair gat hat, fine navy silk durumagi coat",
+    heungbuwife:
+      "HEUNGBU'S WIFE — slender and gentle, hair in a low bun with a wooden hairpin, faded pale-green jeogori and grey chima, plain apron",
+    nolbuwife:
+      "NOLBU'S WIFE — plump and haughty with a sharp chin, elaborate braided updo, glossy pink silk hanbok, usually holding a wooden rice paddle",
+    kids:
+      "HEUNGBU'S FOUR CHILDREN — a group of four different small kids (two boys, two girls), cheerful round faces, ragged little hanbok, bare feet",
+    swallow:
+      "THE SWALLOW — a small barn swallow, glossy blue-black back, white belly, rust-red throat, long forked tail",
+    dokkaebi:
+      "DOKKAEBI — Korean goblins, blue-grey skin, one short horn, wild hair, tiger-skin loincloth, knobbly wooden club, mischievous grin",
+  },
+};
+
+/**
+ * 쪽마다 누가 나오는지. hotspots(말풍선 있는 인물)만으로는 부족하다 — 1쪽엔 말풍선이
+ * 없어도 두 형제가 서 있고, 22쪽의 "아내"는 흥부 아내가 아니라 놀부 부인이다.
+ * 본문을 읽고 손으로 적어 둔 명단이 제일 정확하다.
+ */
+const PAGE_CAST: Record<string, Record<number, string[]>> = {
+  "흥부와 놀부": {
+    1: ["heungbu", "nolbu"],
+    2: ["nolbu", "heungbu", "heungbuwife", "kids"],
+    3: ["heungbu", "heungbuwife", "kids"],
+    4: ["heungbu", "kids", "heungbuwife"],
+    5: ["heungbuwife", "heungbu"],
+    6: ["nolbuwife", "heungbu"],
+    7: ["nolbuwife", "heungbu"],
+    8: ["swallow", "heungbu", "heungbuwife", "kids"],
+    9: ["swallow", "kids"],
+    10: ["swallow"],
+    11: ["swallow", "heungbu"],
+    12: ["heungbu", "swallow"],
+    13: ["kids", "swallow"],
+    14: ["swallow", "heungbu"],
+    15: ["heungbu", "kids"],
+    16: ["heungbu", "heungbuwife", "kids"],
+    17: ["heungbu", "heungbuwife", "kids"],
+    18: ["nolbu"],
+    19: ["nolbu", "swallow"],
+    20: ["nolbu", "swallow"],
+    21: ["nolbu", "nolbuwife", "dokkaebi"],
+    22: ["dokkaebi", "nolbu", "nolbuwife"],
+    23: ["nolbu", "swallow"],
+    24: ["heungbu", "nolbu"],
+  },
+};
+
+const cast = CAST[TITLE];
+
+/** 이 쪽에 나오는 인물 설명 줄들. 명단이 있으면 그걸, 없으면 hotspots 라벨을 쓴다. */
+function castLines(page: Page, n: number): string[] {
+  const roles = PAGE_CAST[TITLE]?.[n] ?? (page.hotspots ?? []).map((h) => h.label);
+  return roles.map((r) => cast?.[r] ?? r);
+}
+
+/** 파일 하나를 참고 그림으로 읽는다. */
+function loadImage(file: string): GeneratedImage {
+  const ext = path.extname(file).slice(1).toLowerCase();
+  const mimeType = ext === "jpg" ? "image/jpeg" : `image/${ext}`;
+  return { mimeType, data: fs.readFileSync(file).toString("base64") };
+}
+
+// 그림체 기준 그림 — scratch-art/<책>/style-*.webp. 있으면 시트에도 쪽에도 맨 앞에 붙는다.
+const styleFiles = fs
+  .readdirSync(OUT)
+  .filter((f) => /^style-.*\.(webp|png|jpe?g)$/i.test(f))
+  .sort()
+  .map((f) => path.join(OUT, f));
+const styleRefs = styleFiles.map(loadImage);
+
+function styleLines(): string[] {
+  if (styleRefs.length === 0) return [];
+  return [
+    `STYLE REFERENCE: the first ${styleRefs.length} attached image(s) are pages from a DIFFERENT book. Match their rendering style exactly — same ink line quality, same watercolor washes, same paper texture, same palette and level of detail.`,
+    "Do NOT copy their characters, clothes, buildings or scenes — only the way they are drawn.",
+  ];
+}
 
 /**
  * 쪽 그림 프롬프트를 **본문 문장 그대로**에서 만든다.
@@ -80,17 +181,25 @@ const STYLE: Record<string, string> = {
  * 프롬프트를 썼더니, 본문은 "도끼가 가라앉았다"인데 그림엔 도끼가 물 위에 떠 있었다.
  * 요약하지 말고 본문을 그대로 넘겨 모델이 직접 읽게 한다.
  */
-function pagePrompt(page: Page, n: number, style: string): string {
-  const cast = (page.hotspots ?? []).map((h) => h.label).join(", ");
+function pagePrompt(page: Page, n: number, style: string, hasSheet: boolean): string {
+  const who = castLines(page, n);
+  const setting = SETTING[TITLE];
   return [
     `Korean picture book illustration. Art style: ${style}.`,
+    setting ? `Setting: ${setting}.` : "",
+    "",
+    ...styleLines(),
+    hasSheet
+      ? "CHARACTER SHEET: the last attached image is this book's character reference sheet. Copy each character's face, hair, body shape and clothes EXACTLY from it."
+      : "",
     "",
     "Draw EXACTLY what this page says. Read it sentence by sentence and put every stated fact in the picture — if the text says something sank, it is under the water; if someone is crying, they are crying.",
     "",
     `PAGE ${n} TEXT (Korean):`,
     String(page.text ?? "").trim(),
     "",
-    cast ? `Characters on this page: ${cast}. Copy their faces and clothes EXACTLY from the attached reference sheet.` : "",
+    who.length ? "CHARACTERS ON THIS PAGE (only these people — nobody else):" : "",
+    ...who.map((w) => `- ${w}`),
     "",
     "ABSOLUTE RULES:",
     "(1) NO TEXT anywhere — no letters, no Korean or Chinese characters, no numbers, no speech bubbles, no signature, no watermark.",
@@ -98,6 +207,8 @@ function pagePrompt(page: Page, n: number, style: string): string {
     "(3) The painting must bleed to all four edges — no white margin, no border, no frame.",
     "(4) The lower quarter must be fully painted, never left blank.",
     "(5) Wholesome, innocent, fully clothed, child-friendly.",
+    // 7쪽 시험에서 본문의 두 순간을 좌우 두 칸으로 갈라 그렸다 — 앱은 한 장면만 보여 준다.
+    "(6) ONE continuous scene filling the whole picture — never split it into panels, comic frames or a before/after. If the text describes several moments, draw ONLY the single most important moment.",
   ]
     .filter((l) => l !== "")
     .join("\n");
@@ -107,18 +218,32 @@ const style = STYLE[TITLE] ?? "soft watercolor children's picture book, gentle w
 const size = await bookSize();
 const sheetPath = path.join(OUT, "sheet.webp");
 
+if (styleRefs.length) console.log(`그림체 기준 ${styleRefs.length}장: ${styleFiles.join(", ")}`);
+
 if (SHEET_ONLY) {
-  const names = [...new Set(book.pages.flatMap((p) => (p.hotspots ?? []).map((h) => h.label)))];
+  const entries = cast
+    ? Object.values(cast)
+    : [...new Set(book.pages.flatMap((p) => (p.hotspots ?? []).map((h) => h.label)))];
+  const setting = SETTING[TITLE];
   const prompt = [
     `Character reference sheet for a Korean picture book. Art style: ${style}.`,
-    `Draw EXACTLY ${names.length} characters, full body, front view, standing, evenly spaced left to right on a plain cream background: ${names.join(", ")}.`,
-    "Each character appears EXACTLY ONCE. Make them unmistakably different from each other.",
+    setting ? `Setting: ${setting}.` : "",
+    ...styleLines(),
+    `Draw these ${entries.length} entries, each EXACTLY ONCE, full body, front view, standing, evenly spaced on a plain cream background, in this order (two rows if needed):`,
+    ...entries.map((e, i) => `${i + 1}. ${e}`),
+    "Make them unmistakably different from each other.",
     "Draw every face LARGE and clearly readable — this sheet is the identity reference for every page.",
-    "NO text, no letters, no labels in the image.",
-  ].join("\n");
+    "NO text, no letters, no labels, no numbers in the image.",
+  ]
+    .filter((l) => l !== "")
+    .join("\n");
   console.log(DRY ? "[리허설] 캐릭터 시트\n" + prompt : "캐릭터 시트를 그립니다…");
   if (!DRY) {
-    const img = await generateImage({ prompt, aspectRatio: "4:3" });
+    const img = await generateImage({
+      prompt,
+      aspectRatio: "4:3",
+      references: styleRefs.length ? styleRefs : undefined,
+    });
     await sharp(Buffer.from(img.data, "base64")).webp({ quality: 82 }).toFile(sheetPath);
     console.log("저장:", sheetPath);
   }
@@ -132,15 +257,16 @@ const pages = (arg("pages") ?? "")
 if (pages.length === 0) throw new Error("--pages 4,9 처럼 쪽 번호가 필요합니다");
 
 // 캐릭터 시트가 있으면 참조로 넣는다 — 인물 일관성의 축이다.
-const sheet = fs.existsSync(sheetPath)
-  ? fromDataUrl(toDataUrl({ mimeType: "image/webp", data: fs.readFileSync(sheetPath).toString("base64") }))
-  : null;
+const sheet = fs.existsSync(sheetPath) ? loadImage(sheetPath) : null;
 if (!sheet) console.log("(캐릭터 시트 없음 — --sheet 로 먼저 만들면 인물이 훨씬 잘 이어집니다)");
+
+// 참고 그림 순서: 그림체 기준들 → 캐릭터 시트. 프롬프트의 "first N" / "last" 가 이 순서를 가리킨다.
+const references = [...styleRefs, ...(sheet ? [sheet] : [])];
 
 const ratio = size.width >= size.height ? "4:3" : "3:4";
 for (const n of pages) {
   const page = book.pages[n - 1];
-  const prompt = pagePrompt(page, n, style);
+  const prompt = pagePrompt(page, n, style, !!sheet);
   if (DRY) {
     console.log(`\n===== ${n}쪽 (${ratio}, ${size.width}x${size.height}) =====\n${prompt}`);
     continue;
@@ -149,7 +275,7 @@ for (const n of pages) {
   const img = await generateImage({
     prompt,
     aspectRatio: ratio as "4:3" | "3:4",
-    references: sheet ? [sheet] : undefined,
+    references: references.length ? references : undefined,
   });
   const out = path.join(OUT, `p${n}.webp`);
   await sharp(Buffer.from(img.data, "base64"))

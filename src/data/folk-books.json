@@ -6206,5 +6206,402 @@
         ]
       }
     ]
+  },
+  {
+    "id": "folk-gyeonu",
+    "lang": "ko",
+    "title": "견우와 직녀",
+    "summary": "은하수를 사이에 두고 헤어진 견우와 직녀가 까치와 까마귀가 놓은 오작교에서 일 년에 한 번 만나는 이야기.",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p1.webp?v=1",
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "gyeonu": "tc-tian",
+      "jiknyeo": "tc-najin",
+      "king": "tc-wangkwon",
+      "crowd": "tc-minjung"
+    },
+    "roleOf": {
+      "견우": "gyeonu",
+      "직녀": "jiknyeo",
+      "임금님": "king",
+      "하늘 임금님": "king",
+      "사람들": "crowd",
+      "동물들": "crowd",
+      "까치": "crowd",
+      "까마귀": "crowd",
+      "새들": "crowd"
+    },
+    "hidden": false,
+    "pages": [
+      {
+        "n": 1,
+        "text": "하늘나라에는 반짝이는 은하수가 흐르고 있었어요.\n은하수 동쪽에는 소를 모는 부지런한 목동, 견우가 살았지요.\n은하수 서쪽에는 베를 짜는 손 고운 공주, 직녀가 살았어요.\n직녀가 짠 비단은 노을처럼 곱다고 소문이 자자했답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p1.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p1-0.mp3",
+            "text": "하늘나라에는 반짝이는 은하수가 흐르고 있었어요.\n은하수 동쪽에는 소를 모는 부지런한 목동, 견우가 살았지요.\n은하수 서쪽에는 베를 짜는 손 고운 공주, 직녀가 살았어요.\n직녀가 짠 비단은 노을처럼 곱다고 소문이 자자했답니다."
+          }
+        ]
+      },
+      {
+        "n": 2,
+        "text": "어느 날, 하늘 임금님이 두 사람을 불러 서로를 만나게 해 주었어요.\n\"견우야, 직녀야. 너희는 참 잘 어울리는구나.\"\n견우와 직녀는 첫눈에 서로가 좋아졌지요.\n얼마 뒤, 둘은 온 하늘의 축복 속에 부부가 되었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p2.webp?v=1",
+        "lines": [
+          {
+            "text": "견우야, 직녀야. 너희는 참 잘 어울리는구나.",
+            "who": "king",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p2-0.mp3",
+            "text": "어느 날, 하늘 임금님이 두 사람을 불러 서로를 만나게 해 주었어요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/gyeonu/seg-cast-p2-1.mp3",
+            "text": "\"견우야, 직녀야. 너희는 참 잘 어울리는구나.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p2-2.mp3",
+            "text": "\n견우와 직녀는 첫눈에 서로가 좋아졌지요.\n얼마 뒤, 둘은 온 하늘의 축복 속에 부부가 되었답니다."
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "함께 지내는 나날은 꿈처럼 행복했어요.\n둘은 손을 꼭 잡고 은하수를 거닐며 웃음이 끊이지 않았지요.\n\"우리, 매일매일 이렇게 함께 있어요.\"\n\"그래요. 나는 당신만 보고 있어도 하루가 다 가요.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p3.webp?v=1",
+        "lines": [
+          {
+            "text": "우리, 매일매일 이렇게 함께 있어요.",
+            "who": "jiknyeo",
+            "feel": "happy"
+          },
+          {
+            "text": "그래요. 나는 당신만 보고 있어도 하루가 다 가요.",
+            "who": "gyeonu",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p3-0.mp3",
+            "text": "함께 지내는 나날은 꿈처럼 행복했어요.\n둘은 손을 꼭 잡고 은하수를 거닐며 웃음이 끊이지 않았지요.\n"
+          },
+          {
+            "who": "jiknyeo",
+            "src": "/folk/gyeonu/seg-cast-p3-1.mp3",
+            "text": "\"우리, 매일매일 이렇게 함께 있어요.\"\n"
+          },
+          {
+            "who": "gyeonu",
+            "src": "/folk/gyeonu/seg-cast-p3-2.mp3",
+            "text": "\"그래요. 나는 당신만 보고 있어도 하루가 다 가요.\""
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "그런데 행복에 빠진 두 사람은 그만 할 일을 잊어버렸어요.\n견우는 소에게 풀 먹이는 것도 잊고,\n직녀는 베틀 앞에 앉지도 않았지요.\n\"일은 내일 하면 되죠. 오늘은 당신이랑 놀래요.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p4.webp?v=1",
+        "lines": [
+          {
+            "text": "일은 내일 하면 되죠. 오늘은 당신이랑 놀래요.",
+            "who": "jiknyeo",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p4-0.mp3",
+            "text": "그런데 행복에 빠진 두 사람은 그만 할 일을 잊어버렸어요.\n견우는 소에게 풀 먹이는 것도 잊고,\n직녀는 베틀 앞에 앉지도 않았지요.\n"
+          },
+          {
+            "who": "jiknyeo",
+            "src": "/folk/gyeonu/seg-cast-p4-1.mp3",
+            "text": "\"일은 내일 하면 되죠. 오늘은 당신이랑 놀래요.\""
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "견우의 소들은 비쩍 마르고, 밭에는 잡초만 무성해졌어요.\n직녀의 베틀에는 먼지가 뽀얗게 쌓였지요.\n하늘나라 사람들은 입을 곳도, 덮을 것도 없어 걱정이 늘었어요.\n\"직녀님이 비단을 안 짜시니 큰일이네…\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p5.webp?v=1",
+        "lines": [
+          {
+            "text": "직녀님이 비단을 안 짜시니 큰일이네…",
+            "who": "crowd",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p5-0.mp3",
+            "text": "견우의 소들은 비쩍 마르고, 밭에는 잡초만 무성해졌어요.\n직녀의 베틀에는 먼지가 뽀얗게 쌓였지요.\n하늘나라 사람들은 입을 곳도, 덮을 것도 없어 걱정이 늘었어요.\n"
+          },
+          {
+            "who": "crowd",
+            "src": "/folk/gyeonu/seg-cast-p5-1.mp3",
+            "text": "\"직녀님이 비단을 안 짜시니 큰일이네…\""
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "text": "마침내 하늘 임금님의 귀에까지 이 소식이 들어갔어요.\n임금님은 크게 노하여 두 사람을 불렀지요.\n\"너희가 맡은 일을 이리 저버리다니!\n오늘부터 은하수 양쪽에 떨어져 살아라!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p6.webp?v=1",
+        "lines": [
+          {
+            "text": "너희가 맡은 일을 이리 저버리다니!\n오늘부터 은하수 양쪽에 떨어져 살아라!",
+            "who": "king",
+            "feel": "angry"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p6-0.mp3",
+            "text": "마침내 하늘 임금님의 귀에까지 이 소식이 들어갔어요.\n임금님은 크게 노하여 두 사람을 불렀지요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/gyeonu/seg-cast-p6-1.mp3",
+            "text": "\"너희가 맡은 일을 이리 저버리다니!\n오늘부터 은하수 양쪽에 떨어져 살아라!\""
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "견우는 은하수 동쪽 끝으로, 직녀는 서쪽 끝으로 쫓겨났어요.\n둘 사이에는 깊고 넓은 은하수가 가로놓였지요.\n\"여보! 가지 말아요!\"\n\"조금만 기다려요. 꼭 다시 만나요!\"\n아무리 손을 뻗어도 닿을 수 없었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p7.webp?v=1",
+        "lines": [
+          {
+            "text": "여보! 가지 말아요!",
+            "who": "jiknyeo",
+            "feel": "sad"
+          },
+          {
+            "text": "조금만 기다려요. 꼭 다시 만나요!",
+            "who": "gyeonu",
+            "feel": "sad"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p7-0.mp3",
+            "text": "견우는 은하수 동쪽 끝으로, 직녀는 서쪽 끝으로 쫓겨났어요.\n둘 사이에는 깊고 넓은 은하수가 가로놓였지요.\n"
+          },
+          {
+            "who": "jiknyeo",
+            "src": "/folk/gyeonu/seg-cast-p7-1.mp3",
+            "text": "\"여보! 가지 말아요!\"\n"
+          },
+          {
+            "who": "gyeonu",
+            "src": "/folk/gyeonu/seg-cast-p7-2.mp3",
+            "text": "\"조금만 기다려요. 꼭 다시 만나요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p7-3.mp3",
+            "text": "\n아무리 손을 뻗어도 닿을 수 없었답니다."
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "견우는 날마다 은하수 건너를 바라보며 소를 몰았어요.\n직녀는 눈물을 흘리며 베를 짰지요.\n이제 둘은 누구보다 부지런해졌지만,\n서로를 볼 수 없어 마음은 온통 슬픔뿐이었어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p8.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p8-0.mp3",
+            "text": "견우는 날마다 은하수 건너를 바라보며 소를 몰았어요.\n직녀는 눈물을 흘리며 베를 짰지요.\n이제 둘은 누구보다 부지런해졌지만,\n서로를 볼 수 없어 마음은 온통 슬픔뿐이었어요."
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "두 사람의 눈물은 비가 되어 땅으로 쏟아졌어요.\n그칠 줄 모르는 비에 강이 넘치고 들판이 잠겼지요.\n땅 위의 동물들도 걱정이 이만저만이 아니었어요.\n\"이러다 우리 사는 곳이 다 잠기겠어!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p9.webp?v=1",
+        "lines": [
+          {
+            "text": "이러다 우리 사는 곳이 다 잠기겠어!",
+            "who": "crowd",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p9-0.mp3",
+            "text": "두 사람의 눈물은 비가 되어 땅으로 쏟아졌어요.\n그칠 줄 모르는 비에 강이 넘치고 들판이 잠겼지요.\n땅 위의 동물들도 걱정이 이만저만이 아니었어요.\n"
+          },
+          {
+            "who": "crowd",
+            "src": "/folk/gyeonu/seg-cast-p9-1.mp3",
+            "text": "\"이러다 우리 사는 곳이 다 잠기겠어!\""
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "그때 까치와 까마귀들이 한자리에 모였어요.\n\"은하수만 건널 수 있다면 두 분이 만날 텐데.\"\n\"옳지! 우리가 다리를 놓아 드리자!\"\n새들은 힘을 모아 하늘로, 하늘로 날아올랐답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p10.webp?v=1",
+        "lines": [
+          {
+            "text": "은하수만 건널 수 있다면 두 분이 만날 텐데.",
+            "who": "crowd",
+            "feel": "normal"
+          },
+          {
+            "text": "옳지! 우리가 다리를 놓아 드리자!",
+            "who": "crowd",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p10-0.mp3",
+            "text": "그때 까치와 까마귀들이 한자리에 모였어요.\n"
+          },
+          {
+            "who": "crowd",
+            "src": "/folk/gyeonu/seg-cast-p10-1.mp3",
+            "text": "\"은하수만 건널 수 있다면 두 분이 만날 텐데.\"\n"
+          },
+          {
+            "who": "crowd",
+            "src": "/folk/gyeonu/seg-cast-p10-2.mp3",
+            "text": "\"옳지! 우리가 다리를 놓아 드리자!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p10-3.mp3",
+            "text": "\n새들은 힘을 모아 하늘로, 하늘로 날아올랐답니다."
+          }
+        ]
+      },
+      {
+        "n": 11,
+        "text": "수많은 까치와 까마귀가 은하수 위로 날아가\n서로의 날개를 맞대어 기다란 다리를 만들었어요.\n반짝이는 은하수 위에 놓인 새들의 다리, 오작교였지요.\n\"자, 어서 건너오세요!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p11.webp?v=1",
+        "lines": [
+          {
+            "text": "자, 어서 건너오세요!",
+            "who": "crowd",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p11-0.mp3",
+            "text": "수많은 까치와 까마귀가 은하수 위로 날아가\n서로의 날개를 맞대어 기다란 다리를 만들었어요.\n반짝이는 은하수 위에 놓인 새들의 다리, 오작교였지요.\n"
+          },
+          {
+            "who": "crowd",
+            "src": "/folk/gyeonu/seg-cast-p11-1.mp3",
+            "text": "\"자, 어서 건너오세요!\""
+          }
+        ]
+      },
+      {
+        "n": 12,
+        "text": "견우와 직녀는 오작교를 건너 한달음에 달려갔어요.\n드디어 두 손을 마주 잡은 두 사람!\n\"여보, 얼마나 보고 싶었는지 몰라요.\"\n\"이렇게 다시 만나다니, 꿈만 같아요.\"\n눈물이 이번에는 기쁨의 눈물이 되어 흘렀답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p12.webp?v=1",
+        "lines": [
+          {
+            "text": "여보, 얼마나 보고 싶었는지 몰라요.",
+            "who": "jiknyeo",
+            "feel": "happy"
+          },
+          {
+            "text": "이렇게 다시 만나다니, 꿈만 같아요.",
+            "who": "gyeonu",
+            "feel": "happy"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p12-0.mp3",
+            "text": "견우와 직녀는 오작교를 건너 한달음에 달려갔어요.\n드디어 두 손을 마주 잡은 두 사람!\n"
+          },
+          {
+            "who": "jiknyeo",
+            "src": "/folk/gyeonu/seg-cast-p12-1.mp3",
+            "text": "\"여보, 얼마나 보고 싶었는지 몰라요.\"\n"
+          },
+          {
+            "who": "gyeonu",
+            "src": "/folk/gyeonu/seg-cast-p12-2.mp3",
+            "text": "\"이렇게 다시 만나다니, 꿈만 같아요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p12-3.mp3",
+            "text": "\n눈물이 이번에는 기쁨의 눈물이 되어 흘렀답니다."
+          }
+        ]
+      },
+      {
+        "n": 13,
+        "text": "그 모습을 본 하늘 임금님도 마음이 스르르 풀렸어요.\n\"이제 둘 다 일을 참 열심히 하는구나.\n그럼 일 년에 한 번, 칠월 칠석날에는 만나도 좋다.\"\n견우와 직녀는 임금님께 고맙다고 몇 번이나 인사했지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p13.webp?v=1",
+        "lines": [
+          {
+            "text": "이제 둘 다 일을 참 열심히 하는구나.\n그럼 일 년에 한 번, 칠월 칠석날에는 만나도 좋다.",
+            "who": "king",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p13-0.mp3",
+            "text": "그 모습을 본 하늘 임금님도 마음이 스르르 풀렸어요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/gyeonu/seg-cast-p13-1.mp3",
+            "text": "\"이제 둘 다 일을 참 열심히 하는구나.\n그럼 일 년에 한 번, 칠월 칠석날에는 만나도 좋다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p13-2.mp3",
+            "text": "\n견우와 직녀는 임금님께 고맙다고 몇 번이나 인사했지요."
+          }
+        ]
+      },
+      {
+        "n": 14,
+        "text": "그래서 지금도 해마다 칠월 칠석이 되면,\n까치와 까마귀가 하늘로 올라가 오작교를 놓아 준답니다.\n그 다리를 건너 견우와 직녀가 다시 만나지요.\n칠석날 저녁에 보슬보슬 비가 내리면, 두 사람이 반가워서 흘리는 눈물이래요.\n오늘 밤 하늘을 올려다보세요. 은하수 양쪽에 반짝이는 두 별이 바로 견우와 직녀랍니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p14.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gyeonu/seg-p14-0.mp3",
+            "text": "그래서 지금도 해마다 칠월 칠석이 되면,\n까치와 까마귀가 하늘로 올라가 오작교를 놓아 준답니다.\n그 다리를 건너 견우와 직녀가 다시 만나지요.\n칠석날 저녁에 보슬보슬 비가 내리면, 두 사람이 반가워서 흘리는 눈물이래요.\n오늘 밤 하늘을 올려다보세요. 은하수 양쪽에 반짝이는 두 별이 바로 견우와 직녀랍니다."
+          }
+        ]
+      }
+    ]
   }
 ]
