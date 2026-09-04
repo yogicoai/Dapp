@@ -3765,7 +3765,9 @@
         "lines": [
           {
             "text": "하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.",
-            "who": "woodcutter"
+            "who": "woodcutter",
+            "feel": "sad",
+            "tempo": 0.9
           }
         ],
         "hotspots": [

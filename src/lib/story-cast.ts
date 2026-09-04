@@ -42,6 +42,11 @@ export type CastLine = {
    * (2026-08-27 사장님: 뜨거워 비명 둘이 너무 천천히 나온다)
    */
   feel?: string;
+  /**
+   * 이 줄만의 말 빠르기(1 = 보통). 배역 전체(voiceTempo)가 아니라 한 줄만 다르게 읽을 때.
+   * (2026-09-04 사장님: 금도끼 6쪽 "하나뿐인 쇠도끼를 빠뜨렸습니다"가 너무 촐싹거린다 → 0.9)
+   */
+  tempo?: number;
 };
 
 export type PlannedSegment = {
@@ -54,6 +59,8 @@ export type PlannedSegment = {
   say?: string;
   /** 이 줄에 못 박은 연기(대사집의 feel). 없으면 굽는 쪽이 정한다. */
   feel?: string;
+  /** 이 줄만의 말 빠르기(대사집의 tempo). 없으면 배역 속도(voiceTempo)를 따른다. */
+  tempo?: number;
 };
 
 /** 대사집과 견주기 위해 따옴표·공백·문장부호를 털어낸다. */
@@ -99,7 +106,7 @@ export function planPageVoices(input: {
     }
     const told = script.get(normalize(segment.text));
     if (told) {
-      planned.push({ who: told.who, text: segment.text, dialogue: true, say: told.say, feel: told.feel });
+      planned.push({ who: told.who, text: segment.text, dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo });
       return;
     }
     const name = guessed[i];
@@ -134,7 +141,7 @@ function splitByScript(text: string, script: Script, fallback: string): PlannedS
     hit = true;
     const start = match.index ?? 0;
     if (start > at) push({ who: fallback, text: text.slice(at, start), dialogue: true });
-    push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel });
+    push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo });
     at = start + match[0].length;
   }
   if (!hit) return [whole];
@@ -192,7 +199,7 @@ function rescueShortLines(text: string, script: Script): PlannedSegment[] {
     if (!told) continue;
     const start = match.index ?? 0;
     if (start > at) out.push({ who: NARRATION, text: text.slice(at, start), dialogue: false });
-    out.push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel });
+    out.push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo });
     at = start + match[0].length;
   }
   if (out.length === 0) return [{ who: NARRATION, text, dialogue: false }];

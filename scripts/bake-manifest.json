@@ -2335,9 +2335,10 @@
   },
   "folk/goldaxe/seg-cast-p6-0.mp3": {
     "voice": "tc-heejoon",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\""
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\"",
+    "tempo": 0.9
   },
   "folk/goldaxe/seg-tc-hosun-p6-1.mp3": {
     "voice": "tc-hosun",
