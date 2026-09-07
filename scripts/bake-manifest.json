@@ -8905,5 +8905,53 @@
     "emotion": "normal",
     "intensity": null,
     "text": "왕자는 공주에게 깊이 고개 숙여 고마움을 전했어요.\n임금님도 두 사람을 보며 껄껄 웃으셨지요.\n그날부터 공주는 황금 공보다 소중한 것을 알게 되었답니다.\n작은 약속을 지키는 마음, 그리고 남의 마음을 알아주는 마음이었어요."
+  },
+  "classic/frogprince/say-p2-princess.mp3": {
+    "voice": "tc-arin",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "내 황금 공… 이제 어떡해."
+  },
+  "classic/frogprince/say-p3-frog.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주님, 왜 그리 슬피 우세요?"
+  },
+  "classic/frogprince/say-p4-frog.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "제가 꺼내 드릴게요. 그 대신 저와 친구가 되어 주세요.\n같은 밥상에서 밥을 먹고, 같은 방에서 지내게 해 주세요."
+  },
+  "classic/frogprince/say-p6-frog.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주님, 약속하셨잖아요."
+  },
+  "classic/frogprince/say-p7-king.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "한 번 한 약속은 지키는 것이란다. 상대가 누구든 말이다."
+  },
+  "classic/frogprince/say-p8-frog.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "저는 공주님과 같이 먹는 이 밥이 참 맛있어요."
+  },
+  "classic/frogprince/say-p10-frog.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "저는 사실 마법에 걸린 왕자랍니다.\n마음을 알아주는 사람을 만나야 마법이 풀린대요."
+  },
+  "classic/frogprince/say-p11-princess.mp3": {
+    "voice": "tc-arin",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "미안해. 약속을 지키지 않아서, 그리고 네 마음을 몰라줘서."
   }
 }
