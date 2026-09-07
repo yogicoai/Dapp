@@ -4,8 +4,9 @@
  * Supabase가 붙으면 이 파일의 저장처만 DB로 바뀐다.
  */
 
-import { acctKey, currentUid, getSupabase } from "@/lib/supabase";
-import type { Book } from "@/lib/types";
+// 상대 경로로 부른다 — 테스트 러너가 @/ 별칭을 못 읽는다(story-cast.ts와 같은 이유).
+import { acctKey, currentUid, getSupabase } from "./supabase.ts";
+import type { Book } from "./types.ts";
 
 export type Gender = "girl" | "boy" | "unspecified";
 
@@ -215,14 +216,33 @@ const acctChildKey = (uid: string) => `${CHILD_KEY}:${uid}`;
 // 타이핑 연타(설정에서 이름 한 글자마다 저장) 시 계정 저장은 묶어서 한 번만.
 let childRemoteTimer: ReturnType<typeof setTimeout> | null = null;
 
-export function saveChild(child: ChildPrefs): void {
+/**
+ * 아이 정보를 저장한다 — **넘기지 않은 항목은 건드리지 않는다.**
+ *
+ * 예전엔 통째로 덮어썼다. 그래서 만들기에서 줄거리를 지을 때 부르는
+ * `saveChild({ name, age, gender })` 한 줄이 애써 고른 아이 특징(looks)과
+ * 엄마·아빠 특징(parents)을 로컬에서도 서버에서도 지워 버렸다. 부모 눈에는
+ * "설정에서 골랐는데 동화 한 번 만들면 다 사라진다"로 보였다(2026-09-07).
+ *
+ * 지우고 싶을 때는 빈 값을 **명시해서** 넘기면 된다({ looks: {} } 처럼).
+ * 설정 화면은 늘 다섯 항목을 다 넘기므로 지우기도 그대로 동작한다.
+ */
+export function saveChild(child: Partial<ChildPrefs> & { name: string }): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(acctKey(CHILD_KEY), JSON.stringify(child));
+  const prev = loadChild();
+  const merged: ChildPrefs = {
+    name: child.name,
+    age: child.age !== undefined ? child.age : (prev?.age ?? null),
+    gender: child.gender ?? prev?.gender ?? "unspecified",
+    looks: "looks" in child ? child.looks : prev?.looks,
+    parents: "parents" in child ? child.parents : prev?.parents,
+  };
+  window.localStorage.setItem(acctKey(CHILD_KEY), JSON.stringify(merged));
   // 계정별 로컬 백업 + Supabase 저장 — 로그아웃/재로그인/기기 변경에도 유지된다.
   // 연타를 800ms로 묶어 네트워크를 아낀다.
   if (childRemoteTimer) clearTimeout(childRemoteTimer);
   childRemoteTimer = setTimeout(() => {
-    void saveChildRemote(child).catch(() => {});
+    void saveChildRemote(merged).catch(() => {});
   }, 800);
 }
 
@@ -246,6 +266,28 @@ export async function saveChildRemote(child: ChildPrefs): Promise<void> {
 }
 
 /**
+ * 서버 값과 이 기기 값을 합친다 — 서버가 우선이되, **나중에 생긴 항목은 서버에 없으면 지키다**.
+ *
+ * 아이 특징(looks)과 엄마·아빠 특징(parents)은 앱이 나온 뒤에 생긴 기능이다. 그래서 서버에
+ * 저장된 아이 정보가 이름·나이·성별만 들어 있는 계정이 많다. 통째로 갈아끼우면 방금 고른
+ * 특징이 불러올 때마다 지워져서 "저장이 안 된다"가 된다 — looks 에서 한 번 겪은 사고인데
+ * parents 는 그때 같이 고치지 않아 엄마·아빠 특징만 계속 사라지고 있었다(2026-09-07).
+ *
+ * (다른 기기에서 특징을 **지운** 경우 이 기기 것이 되살아날 수 있지만, 애써 고른 걸
+ *  말없이 잃는 쪽보다 낫다.)
+ */
+export function mergeRemoteChild(
+  remote: ChildPrefs,
+  local: ChildPrefs | null,
+): ChildPrefs {
+  return {
+    ...remote,
+    looks: remote.looks ?? local?.looks,
+    parents: remote.parents ?? local?.parents,
+  };
+}
+
+/**
  * 로그인 계정의 아이 정보를 되살려 로컬 캐시(CHILD_KEY)에 반영한다 (재로그인 복구용).
  * 계정별 로컬 백업을 먼저 보고, Supabase에 값이 있으면 그걸 우선(기기 변경 대응)한다.
  */
@@ -265,15 +307,7 @@ export async function loadChildRemote(): Promise<ChildPrefs | null> {
       .maybeSingle();
     if (!error) {
       const remote = normalizeChild((data as { child?: unknown } | null)?.child);
-      if (remote) {
-        // 서버 값이 우선이되, 서버에 '생김새'가 아예 없으면 로컬 것을 살린다.
-        // 아이 특징은 나중에 생긴 기능이라 서버에 저장된 아이 정보가 이름·나이·성별만
-        // 들어 있는 계정이 많다. 통째로 갈아끼우면 방금 고른 특징이 불러올 때마다
-        // 지워져서 "저장이 안 된다"가 된다.
-        // (다른 기기에서 특징을 지운 경우 이 기기 것이 되살아날 수 있지만,
-        //  애써 고른 걸 말없이 잃는 쪽보다 낫다.)
-        child = { ...remote, looks: remote.looks ?? child?.looks };
-      }
+      if (remote) child = mergeRemoteChild(remote, child);
     }
     if (child && typeof window !== "undefined") {
       // 계정별 키에만 쓴다 — loadChild()가 읽는 자리가 바로 여기다(acctKey(CHILD_KEY)와 같은 키).

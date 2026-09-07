@@ -3,7 +3,7 @@
  *
  * 글 저장과 토큰 지급은 서버 함수(submit_feedback)가 한 번에 처리한다. 앱에서 따로
  * 하면 글만 써지고 토큰이 안 들어가거나, 토큰만 여러 번 받는 일이 생긴다.
- * 테이블·함수는 supabase-feedback.sql 로 만든다.
+ * 테이블·함수는 supabase-setup.sql 로 만든다.
  */
 import { currentUid, getSupabase } from "@/lib/supabase";
 

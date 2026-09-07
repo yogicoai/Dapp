@@ -7,7 +7,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
  *   NEXT_PUBLIC_SUPABASE_URL       프로젝트 URL (Supabase → Project Settings → API)
  *   NEXT_PUBLIC_SUPABASE_ANON_KEY  anon public key (같은 화면)
  *
- * 테이블·정책은 supabase-schema.sql 을 Supabase SQL Editor에 붙여 넣어 만든다.
+ * 테이블·정책은 supabase-setup.sql 을 Supabase SQL Editor에 붙여 넣어 만든다.
  */
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

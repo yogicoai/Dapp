@@ -381,7 +381,7 @@ export async function approveParentVoice(role: string, voiceId: string): Promise
  * 등록 여부만 확인하는 용도라 목소리 id는 가져오지 않는다(남의 목소리를 쓸 일은 없다).
  * 결과: { 회원id: ["mom", "dad"] }.
  *
- * voice_clones에 마스터 열람 정책이 있어야 보인다(supabase-voice-clones.sql).
+ * voice_clones에 마스터 열람 정책이 있어야 보인다(supabase-setup.sql).
  * 정책이 없으면 RLS가 0줄을 돌려주므로 조용히 빈 값이 된다 — 오류로 막지 않는다.
  */
 export async function loadAllParentVoiceRoles(): Promise<Record<string, string[]>> {

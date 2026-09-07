@@ -18,7 +18,7 @@ export const TOKEN_PRICE_KRW = 100;
  * 480이 필요하다(16 × 30). 기존 회원은 이미 받은 잔액이 달라 각자 다르다.
  * 올릴지는 결제 정책과 함께 정할 일이라 여기서 임의로 바꾸지 않는다.
  *
- * 이 값을 바꾸면 supabase-schema.sql의 가입 트리거 숫자도 함께 바꿔야 한다.
+ * 이 값을 바꾸면 supabase-setup.sql의 가입 트리거 숫자도 함께 바꿔야 한다.
  */
 export const SIGNUP_BONUS_TOKENS = 200;
 
