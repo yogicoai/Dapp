@@ -8761,5 +8761,149 @@
     "emotion": "normal",
     "intensity": null,
     "text": "하늘도 땅도 두 사람의 슬픔에 함께 젖어 갔답니다."
+  },
+  "classic/frogprince/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 어느 나라에 예쁜 공주가 살았어요.\n공주에게는 세상에서 제일 아끼는 황금 공이 하나 있었지요.\n햇빛을 받으면 반짝반짝 빛나는 공이었어요.\n공주는 날마다 궁궐 뜰 우물가에서 그 공을 높이 던지며 놀았답니다."
+  },
+  "classic/frogprince/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그런데 어느 날, 공을 너무 높이 던지고 말았어요.\n황금 공은 손끝을 스치더니 우물 속으로 풍덩 빠져 버렸지요.\n우물은 바닥이 보이지 않을 만큼 깊었어요.\n공주는 우물가에 주저앉아 엉엉 울었답니다."
+  },
+  "classic/frogprince/seg-cast-p2-1.mp3": {
+    "voice": "tc-arin",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"내 황금 공… 이제 어떡해.\""
+  },
+  "classic/frogprince/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 우물 속에서 첨벙, 하는 소리가 났어요.\n초록빛 개구리 한 마리가 물 위로 얼굴을 쏙 내밀었지요."
+  },
+  "classic/frogprince/seg-cast-p3-1.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"공주님, 왜 그리 슬피 우세요?\""
+  },
+  "classic/frogprince/seg-tc-minjung-p3-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "말을 하는 개구리라니! 공주는 눈물도 잊고 개구리를 바라보았어요."
+  },
+  "classic/frogprince/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주는 황금 공을 빠뜨렸다고 이야기했어요.\n개구리는 잠시 생각하더니 조용히 말했지요."
+  },
+  "classic/frogprince/seg-cast-p4-1.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"제가 꺼내 드릴게요. 그 대신 저와 친구가 되어 주세요.\n같은 밥상에서 밥을 먹고, 같은 방에서 지내게 해 주세요.\""
+  },
+  "classic/frogprince/seg-tc-minjung-p4-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주는 공만 찾으면 된다는 생각에 얼른 고개를 끄덕였답니다."
+  },
+  "classic/frogprince/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "개구리는 우물 속으로 쏙 들어갔어요.\n한참 뒤, 개구리가 황금 공을 물고 올라왔지요.\n공주는 공을 받아 들자마자 뒤도 돌아보지 않고 궁궐로 달려갔어요.\n개구리가 뒤에서 부르는 소리는 들리지도 않았답니다."
+  },
+  "classic/frogprince/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그날 저녁, 궁궐 문에서 똑똑 소리가 났어요.\n문틈으로 초록빛 개구리가 폴짝 뛰어 들어왔지요.\n공주는 깜짝 놀라 접시를 떨어뜨릴 뻔했어요."
+  },
+  "classic/frogprince/seg-cast-p6-1.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"공주님, 약속하셨잖아요.\""
+  },
+  "classic/frogprince/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주는 아무 말도 못 하고 고개를 푹 숙였어요.\n그 모습을 지켜보던 임금님이 조용히 물었지요.\n공주는 우물가에서 있었던 일을 하나도 빠짐없이 이야기했어요."
+  },
+  "classic/frogprince/seg-cast-p7-1.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"한 번 한 약속은 지키는 것이란다. 상대가 누구든 말이다.\""
+  },
+  "classic/frogprince/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주는 마지못해 개구리를 밥상 위에 올려 주었어요.\n개구리는 공주의 접시에서 밥알을 조금씩 집어 먹었지요.\n공주는 입맛이 뚝 떨어져 숟가락만 만지작거렸어요."
+  },
+  "classic/frogprince/seg-cast-p8-1.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"저는 공주님과 같이 먹는 이 밥이 참 맛있어요.\""
+  },
+  "classic/frogprince/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "밤이 되자 개구리가 방문 앞에서 기다리고 있었어요.\n공주는 한숨을 쉬며 개구리를 방 안 창가에 놓아 주었지요.\n달빛 아래 개구리는 아주 작고 외로워 보였어요.\n공주는 그제야 개구리를 가만히 들여다보았답니다."
+  },
+  "classic/frogprince/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "개구리는 조그만 목소리로 이야기를 꺼냈어요."
+  },
+  "classic/frogprince/seg-cast-p10-1.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"저는 사실 마법에 걸린 왕자랍니다.\n마음을 알아주는 사람을 만나야 마법이 풀린대요.\""
+  },
+  "classic/frogprince/seg-tc-minjung-p10-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주는 그동안 개구리를 밀어내기만 했던 자신이 부끄러워졌어요."
+  },
+  "classic/frogprince/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주는 두 손으로 개구리를 조심스럽게 감싸 안았어요.\n그러고는 진심을 담아 말했지요."
+  },
+  "classic/frogprince/seg-cast-p11-1.mp3": {
+    "voice": "tc-arin",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"미안해. 약속을 지키지 않아서, 그리고 네 마음을 몰라줘서.\""
+  },
+  "classic/frogprince/seg-tc-minjung-p11-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 순간 눈부신 빛이 방 안에 가득 찼어요.\n개구리가 있던 자리에는 다정한 얼굴의 왕자가 서 있었답니다."
+  },
+  "classic/frogprince/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "왕자는 공주에게 깊이 고개 숙여 고마움을 전했어요.\n임금님도 두 사람을 보며 껄껄 웃으셨지요.\n그날부터 공주는 황금 공보다 소중한 것을 알게 되었답니다.\n작은 약속을 지키는 마음, 그리고 남의 마음을 알아주는 마음이었어요."
   }
 }

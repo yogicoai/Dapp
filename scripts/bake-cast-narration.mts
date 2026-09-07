@@ -116,6 +116,15 @@ const BOOKS: Record<string, BookSpec> = {
       { name: "거인" }, { name: "거인 아내" },
     ],
   },
+  // 개구리 왕자 — 사장님 캐스팅(2026-09-07): 나레이션 민정 · 공주 아린 · 개구리 호선 · 임금님 종대.
+  "개구리 왕자": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "frogprince",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "공주" }, { name: "개구리" }, { name: "임금님" }],
+  },
   "장화 신은 고양이": {
     data: "src/data/classic-books.json",
     root: "classic",
