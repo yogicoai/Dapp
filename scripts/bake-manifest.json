@@ -1704,7 +1704,7 @@
     "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다."
   },
   "folk/haedal/seg-cast-p2-0.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-gaeul",
     "emotion": "normal",
     "intensity": null,
     "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 된다!\""
@@ -1716,7 +1716,7 @@
     "text": "어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요."
   },
   "folk/haedal/say-p2-mother.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-gaeul",
     "emotion": "normal",
     "intensity": null,
     "text": "문 꼭 잠그고 있으렴!"
@@ -1806,7 +1806,7 @@
     "text": "떡 하나 주면 안 잡아먹지!"
   },
   "folk/haedal/say-p5-mother.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-gaeul",
     "emotion": "normal",
     "intensity": null,
     "text": "이것도 가져가렴… 우리 아이들이 기다린단다."
@@ -1818,7 +1818,7 @@
     "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요."
   },
   "folk/haedal/seg-cast-p6-1.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-gaeul",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"이제 더 이상 줄 떡이 없어요…\""
@@ -1836,7 +1836,7 @@
     "text": "그때 호랑이 눈에 어머니의 옷이 들어왔어요."
   },
   "folk/haedal/say-p6-mother.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-gaeul",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "이제 더 이상 줄 떡이 없어요…"
@@ -2160,7 +2160,7 @@
     "text": "임금님이 손을 들자 어머니가 사뿐히 내려왔어요."
   },
   "folk/haedal/seg-cast-p18-1.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-gaeul",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"우리 아가들… 얼마나 무서웠니.\""
@@ -2172,7 +2172,7 @@
     "text": "셋은 오래오래 서로를 꼭 안았답니다."
   },
   "folk/haedal/say-p18-mother.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-gaeul",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "우리 아가들… 얼마나 무서웠니."
