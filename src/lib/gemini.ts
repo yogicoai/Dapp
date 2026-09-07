@@ -10,6 +10,14 @@ import sharp from "sharp";
 
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
+/**
+ * 그림을 어느 엔진으로 그릴지 — .env.local의 IMAGE_PROVIDER. 안 적으면 gemini.
+ * openai면 openai-image.ts(gpt-image-1)로 간다. 라우트·스크립트는 그대로 generateImage를 부른다.
+ */
+export function imageProvider(): "gemini" | "openai" {
+  return process.env.IMAGE_PROVIDER?.trim().toLowerCase() === "openai" ? "openai" : "gemini";
+}
+
 export class GeminiError extends Error {
   readonly status?: number;
   /** 서버가 "이만큼 뒤에 다시 오라"고 알려준 값(초). 재시도 간격에 쓴다. */
@@ -239,8 +247,9 @@ export async function generateImage(input: {
   /** 4:3=태블릿(가로), 3:4=핸드폰(세로), 1:1=캐릭터 시트. Gemini가 네이티브로 지원하는 비율. */
   aspectRatio: "4:3" | "3:4" | "1:1";
 }): Promise<GeneratedImage> {
+  const provider = imageProvider();
   const key = process.env.GEMINI_API_KEY;
-  if (!key) {
+  if (provider === "gemini" && !key) {
     throw new GeminiError(
       "GEMINI_API_KEY가 설정되지 않았습니다. .env.local에 키를 넣어주세요.",
       503,
@@ -256,15 +265,15 @@ export async function generateImage(input: {
     { text: input.prompt },
   ];
 
-  /** 한 번 부른다. 다시 걸어 볼 만하면 retryable을 붙여 던진다. */
-  const attemptOnce = async (): Promise<GeneratedImage> => {
+  /** Gemini를 한 번 부른다. 다시 걸어 볼 만하면 retryable을 붙여 던진다. */
+  const attemptGemini = async (): Promise<GeneratedImage> => {
     let res: Response;
     try {
       res = await fetch(`${API_BASE}/${model}:generateContent`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-goog-api-key": key,
+          "x-goog-api-key": key ?? "",
         },
         body: JSON.stringify({
           contents: [{ parts }],
@@ -334,6 +343,16 @@ export async function generateImage(input: {
 
     // 그림 없이 글만 돌아오는 일이 가끔 있다 — 같은 요청을 다시 하면 대개 나온다.
     throw new GeminiError("응답에 이미지가 없습니다. (모델이 텍스트만 반환)", 502);
+  };
+
+  /** 한 번 부른다 — 엔진에 따라 OpenAI 또는 Gemini. 재시도 판단은 아래 고리가 같이 한다. */
+  const attemptOnce = async (): Promise<GeneratedImage> => {
+    if (provider === "openai") {
+      // 순환 import(openai-image → gemini)를 피하려고 여기서 불러온다.
+      const { generateImageOpenAI } = await import("./openai-image.ts");
+      return generateImageOpenAI(input);
+    }
+    return attemptGemini();
   };
 
   const startedAt = Date.now();
