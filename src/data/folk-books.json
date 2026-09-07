@@ -214,38 +214,6 @@
       {
         "text": "흥부는 뺨이 얼얼했지만, 거기 붙은 밥알을 보고 눈이 번쩍 뜨였어요.\n\"형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.\"\n\"별 이상한 사람을 다 보겠네!\"\n형수는 반대쪽 뺨도 철썩 때리고는 문을 쾅 닫아 버렸지요.\n'이만하면 우리 아이들 저녁은 먹이겠구나.'\n흥부는 밥알을 손에 꼭 쥐고 집으로 돌아갔어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p7.webp?v=5",
-        "segments": [
-          {
-            "who": "narration",
-            "src": "/folk/heungbu/seg-p7-0.mp3",
-            "text": "흥부는 뺨이 얼얼했지만, 거기 붙은 밥알을 보고 눈이 번쩍 뜨였어요.\n"
-          },
-          {
-            "who": "heungbu",
-            "src": "/folk/heungbu/seg-cast-p7-1.mp3",
-            "text": "\"형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.\"\n"
-          },
-          {
-            "who": "nolbuwife",
-            "src": "/folk/heungbu/seg-cast-p7-2.mp3",
-            "text": "\"별 이상한 사람을 다 보겠네!\""
-          },
-          {
-            "who": "narration",
-            "src": "/folk/heungbu/seg-p7-3.mp3",
-            "text": "\n형수는 반대쪽 뺨도 철썩 때리고는 문을 쾅 닫아 버렸지요.\n"
-          },
-          {
-            "who": "heungbu",
-            "src": "/folk/heungbu/seg-cast-p7-4.mp3",
-            "text": "'이만하면 우리 아이들 저녁은 먹이겠구나.'"
-          },
-          {
-            "who": "narration",
-            "src": "/folk/heungbu/seg-p7-5.mp3",
-            "text": "\n흥부는 밥알을 손에 꼭 쥐고 집으로 돌아갔어요."
-          }
-        ],
         "lines": [
           {
             "text": "형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.",
@@ -254,6 +222,10 @@
           {
             "text": "별 이상한 사람을 다 보겠네!",
             "who": "nolbuwife"
+          },
+          {
+            "text": "이만하면 우리 아이들 저녁은 먹이겠구나.",
+            "who": "heungbu"
           }
         ],
         "hotspots": [
@@ -2851,6 +2823,11 @@
             "text": "그럼 널 잡아먹어야겠다!",
             "who": "tiger",
             "feel": "angry"
+          },
+          {
+            "text": "옳지! 이 옷을 입고 가면 그 집 아이들까지 잡아먹을 수 있겠구나.",
+            "who": "tiger",
+            "feel": "tonedown"
           }
         ],
         "hotspots": [
@@ -2900,8 +2877,8 @@
             "text": "\n호랑이는 끝내 어머니를 잡아먹고 말았답니다.\n그러고는 어머니의 옷을 걸치고 빈 광주리를 둘러멨어요.\n"
           },
           {
-            "who": "narration",
-            "src": "/folk/haedal/seg-p6-4.mp3",
+            "who": "tiger",
+            "src": "/folk/haedal/seg-cast-p6-4.mp3",
             "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 잡아먹을 수 있겠구나.'"
           }
         ]

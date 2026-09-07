@@ -227,9 +227,9 @@ export function unmatchedLines(pageText: string, lines: CastLine[] = []): CastLi
 /**
  * 속마음인가 — 작은따옴표로 감싼 줄('아, 큰일 났다…').
  *
- * 우리 책의 약속은 "속마음은 나레이션이 읽는다"이다. 그런데 조각내기는 따옴표만 보고
- * 대사로 묶어서, 배역이 없다고 굽기를 막았다(잭과 콩나무 4·13쪽). 실제로 구워진 소리는
- * 나레이션이라 아무 문제가 없었는데 점검기만 헛짚은 것이다.
+ * 조각내기는 따옴표만 보고 대사로 묶으므로, 대사집에 안 적힌 속마음은 배역이 없다.
+ * 그렇다고 굽기를 막으면 안 된다 — 나레이션이 읽어도 말이 되는 자리가 있다.
+ * 그래서 막지는 않고, 대신 narratedThoughts 로 **눈에 보이게** 알린다.
  * 배역을 주고 싶으면 대사집(lines)에 적으면 되고, 그때는 그 배역이 읽는다.
  */
 function innerThought(text: string): boolean {
@@ -239,4 +239,17 @@ function innerThought(text: string): boolean {
 /** 배역이 정해지지 않은 대사 — 굽기 전에 사람이 정해 줘야 한다. */
 export function unassignedDialogue(segments: PlannedSegment[]): PlannedSegment[] {
   return segments.filter((s) => s.dialogue && s.who === NARRATION && !innerThought(s.text));
+}
+
+/**
+ * 나레이션이 읽게 된 속마음 — 굽기 전에 한 번 보여 준다(막지는 않는다).
+ *
+ * 왜 필요한가: 해님 달님 6쪽에서 호랑이의 '옳지! 이 옷을 입고 가면…' 이 나레이션
+ * 목소리로 나갔다. 배역 미정 경고는 속마음을 일부러 빼 두어서 아무 말이 없었고,
+ * 사장님이 앱에서 듣고서야 알았다. 전수 조사해 보니 같은 것이 다섯 군데였다
+ * (흥부 7쪽·해님 달님 6쪽·돼지 삼형제 6쪽·잭과 콩나무 4·13쪽).
+ * 조용히 새는 것이 문제였지 막을 일은 아니므로, 알림만 띄운다.
+ */
+export function narratedThoughts(segments: PlannedSegment[]): PlannedSegment[] {
+  return segments.filter((s) => s.dialogue && s.who === NARRATION && innerThought(s.text));
 }

@@ -6904,9 +6904,9 @@
   },
   "folk/haedal/seg-cast-p6-4.mp3": {
     "voice": "tc-homun",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 속일 수 있겠구나.'"
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 잡아먹을 수 있겠구나.'"
   },
   "folk/haedal/seg-tc-jungsoon-p6-5.mp3": {
     "voice": "tc-jungsoon",
@@ -9397,5 +9397,17 @@
     "emotion": "normal",
     "intensity": null,
     "text": "그 뒤로 낮에는 동생 해님이 세상을 따뜻하게 비추고,\n밤에는 오빠 달님이 어두운 길을 밝혀 주어요.\n어머니는 포근한 저녁노을이 되어 두 아이를 지켜본답니다.\n오늘 밤 달님을 보면 손을 흔들어 주세요. 오빠가 웃고 있을 거예요."
+  },
+  "classic/jack/seg-cast-p4-2.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'엄마 말이 맞아. 내가 바보 같았어…'"
+  },
+  "classic/jack/seg-cast-p13-2.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'딱 한 번만 더 올라가자.'"
   }
 }

@@ -14,7 +14,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { planPageVoices, unmatchedLines, unassignedDialogue, NARRATION } from "../src/lib/story-cast.ts";
+import { planPageVoices, unmatchedLines, unassignedDialogue, narratedThoughts, NARRATION } from "../src/lib/story-cast.ts";
 
 const DRY = process.argv.includes("--dry");
 /**
@@ -521,15 +521,28 @@ if (!cast?.narration) throw new Error("voiceCast가 없습니다");
 
 // ── 굽기 전 점검: 대사집이 본문과 맞는지, 배역 없는 대사가 없는지
 const problems: string[] = [];
+/*
+ * 막지는 않지만 눈에는 띄어야 하는 것 — 나레이션이 읽게 된 속마음.
+ * 조용히 새서 앱에서야 들켰다(해님 달님 6쪽 호랑이 '옳지!…'가 나레이션 목소리로 나갔다).
+ */
+const notices: string[] = [];
 for (const [i, p] of book.pages.entries()) {
   for (const stale of unmatchedLines(String(p.text), p.lines)) {
     problems.push(`${i + 1}쪽 대사집이 본문에 없음: ${stale.text}`);
   }
   const plan = planPageVoices({ text: String(p.text), lines: p.lines, cast: CAST_NAMES, roleOf: book.roleOf });
   for (const s of unassignedDialogue(plan)) problems.push(`${i + 1}쪽 배역 미정: ${s.text.trim()}`);
+  for (const s of narratedThoughts(plan)) {
+    notices.push(`${i + 1}쪽 속마음을 나레이션이 읽습니다: ${s.text.trim()}`);
+  }
   for (const s of plan) {
     if (s.who !== NARRATION && !cast[s.who]) problems.push(`${i + 1}쪽 배역 ${s.who}의 성우가 없음`);
   }
+}
+if (notices.length) {
+  console.log("알림 — 배역을 주려면 대사집(lines)에 적으세요:");
+  for (const n of notices) console.log("  · " + n);
+  console.log("");
 }
 if (problems.length) {
   console.error("굽기 전 문제를 먼저 고쳐야 합니다:");
