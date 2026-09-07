@@ -358,6 +358,10 @@ const ROLE_INTENSITY: Record<string, number> = {
   nolbu: 0.6,
   nolbuwife: 0.55,
   heungbu: 0.5,
+  // 견우와 직녀 — 7쪽 이별의 슬픔과 12쪽 재회의 기쁨이 0.4에서는 밋밋했다.
+  // 둘 다 어른 목소리(호선·나진)라 음정이 깨지는 선(0.6)까지 여유가 있다.
+  gyeonu: 0.55,
+  jiknyeo: 0.55,
 };
 const intensityOf = (role: string) => ROLE_INTENSITY[role] ?? EMOTION_INTENSITY;
 
@@ -422,7 +426,16 @@ let skipped = 0;
  * 같은 문장에 두 번 과금되지 않는다. 다시 구워야 할 때는 지우지 않고 **덮어쓴다**:
  * 지웠다가 합성이 실패하면 멀쩡하던 소리까지 사라진다.
  */
-async function bake(file: string, text: string, voice: string, emotion: string, force = false, tempo?: number) {
+async function bake(
+  file: string,
+  text: string,
+  voice: string,
+  emotion: string,
+  force = false,
+  tempo?: number,
+  /** 어느 배역의 줄인가 — 배역마다 연기 세기가 다르다(ROLE_INTENSITY). 지문이면 비운다. */
+  role?: string,
+) {
   const table = voiceTable();
   const v = table[voice];
   if (!v) throw new Error(`성우 ${voice}를 voices.ts에서 못 찾았습니다`);
@@ -430,10 +443,11 @@ async function bake(file: string, text: string, voice: string, emotion: string, 
   emotion = usableEmotion(v, emotion);
   if (emotion !== wanted) console.log(`  (감정 바꿈) ${voice}는 ${wanted}를 못 냅니다 → ${emotion}`);
   const out = path.join(DIR, file);
+  const strength = intensityOf(role ?? "");
   const recipe: Recipe = {
     voice,
     emotion,
-    intensity: emotion === "normal" ? null : EMOTION_INTENSITY,
+    intensity: emotion === "normal" ? null : strength,
     text,
     ...(tempo && tempo !== 1 ? { tempo } : {}),
   };
@@ -468,7 +482,7 @@ async function bake(file: string, text: string, voice: string, emotion: string, 
       voiceId: v.voiceId,
       model: v.model,
       emotion,
-      intensity: emotion === "normal" ? undefined : EMOTION_INTENSITY,
+      intensity: emotion === "normal" ? undefined : strength,
       tempo,
     }),
   });
@@ -546,7 +560,15 @@ for (const [i, page] of book.pages.entries()) {
       const file = `seg-cast-p${n}-${j}.mp3`;
       // 조건이 달라졌는지는 bake()가 기록을 보고 판단한다. --changed가 아니면 전부 다시.
       // 줄 단위 속도(대사집 tempo)가 있으면 그게 배역 속도(voiceTempo)보다 앞선다.
-      await bake(file, seg.say?.trim() || text, cast[seg.who], seg.feel ?? emotionOf(text), !ONLY_CHANGED, seg.tempo ?? book.voiceTempo?.[seg.who]);
+      await bake(
+        file,
+        seg.say?.trim() || text,
+        cast[seg.who],
+        seg.feel ?? emotionOf(text),
+        !ONLY_CHANGED,
+        seg.tempo ?? book.voiceTempo?.[seg.who],
+        seg.who,
+      );
       segments.push({ who: seg.who, src: `${URL_DIR}/seg-cast-p${n}-${j}.mp3`, text: seg.text });
     }
   }
@@ -564,7 +586,7 @@ for (const [i, page] of book.pages.entries()) {
     // 말풍선도 읽기용 표기를 따로 줄 수 있다(말풍선 글은 h.line 그대로 보인다).
     const spoken = typeof h.say === "string" && h.say.trim() ? h.say.trim() : line;
     // 말풍선도 대사집처럼 연기를 못 박을 수 있다(h.feel) — 자동 판정이 틀리는 줄용.
-    await bake(file, spoken, voice, h.feel ?? emotionOf(line), !ONLY_CHANGED, book.voiceTempo?.[h.label]);
+    await bake(file, spoken, voice, h.feel ?? emotionOf(line), !ONLY_CHANGED, book.voiceTempo?.[h.label], h.label);
   }
 }
 

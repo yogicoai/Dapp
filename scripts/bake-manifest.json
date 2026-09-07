@@ -7595,13 +7595,13 @@
   "folk/gyeonu/seg-cast-p3-1.mp3": {
     "voice": "tc-najin",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.55,
     "text": "\"우리, 매일매일 이렇게 함께 있어요.\""
   },
   "folk/gyeonu/seg-cast-p3-2.mp3": {
     "voice": "tc-hosun",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.55,
     "text": "\"그래요. 나는 당신만 보고 있어도 하루가 다 가요.\""
   },
   "folk/gyeonu/seg-tc-minjung-p4-0.mp3": {
@@ -7613,7 +7613,7 @@
   "folk/gyeonu/seg-cast-p4-1.mp3": {
     "voice": "tc-najin",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.55,
     "text": "\"일은 내일 하면 되죠. 오늘은 당신이랑 놀래요.\""
   },
   "folk/gyeonu/seg-tc-minjung-p5-0.mp3": {
@@ -7649,13 +7649,13 @@
   "folk/gyeonu/seg-cast-p7-1.mp3": {
     "voice": "tc-najin",
     "emotion": "sad",
-    "intensity": 0.4,
+    "intensity": 0.55,
     "text": "\"여보! 가지 말아요!\""
   },
   "folk/gyeonu/seg-cast-p7-2.mp3": {
     "voice": "tc-hosun",
     "emotion": "sad",
-    "intensity": 0.4,
+    "intensity": 0.55,
     "text": "\"조금만 기다려요. 꼭 다시 만나요!\""
   },
   "folk/gyeonu/seg-tc-minjung-p7-3.mp3": {
@@ -7727,13 +7727,13 @@
   "folk/gyeonu/seg-cast-p12-1.mp3": {
     "voice": "tc-najin",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.55,
     "text": "\"여보, 얼마나 보고 싶었는지 몰라요.\""
   },
   "folk/gyeonu/seg-cast-p12-2.mp3": {
     "voice": "tc-hosun",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.55,
     "text": "\"이렇게 다시 만나다니, 꿈만 같아요.\""
   },
   "folk/gyeonu/seg-tc-minjung-p12-3.mp3": {
