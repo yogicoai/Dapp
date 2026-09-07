@@ -5269,29 +5269,13 @@
     "pages": [
       {
         "n": 1,
-        "text": "옛날 어느 마을에 방앗간 집 삼 형제가 살았어요.\n아버지는 삼 형제에게 각각 유산을 남겼어요.\n막내에게 남은 것은 고양이 한 마리뿐이었지요.\n\"고양이야, 너랑 나는 이제 어떻게 살아야 하니…\"\n막내는 고양이를 끌어안고 한숨을 푹 쉬었답니다.",
+        "text": "옛날 어느 마을에 방앗간 집 삼 형제가 살았어요.\n아버지는 삼 형제에게 유산을 하나씩 남겼어요.\n첫째는 방앗간을, 둘째는 당나귀를 받았지만,\n막내에게 남은 것은 고양이 한 마리뿐이었지요.\n막내는 고양이를 끌어안고 한숨을 푹 쉬었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/books/classic/puss/p1.webp?v=1",
-        "lines": [
-          {
-            "text": "고양이야, 너랑 나는 이제 어떻게 살아야 하니…",
-            "who": "master"
-          }
-        ],
         "segments": [
           {
             "who": "narration",
             "src": "/classic/puss/seg-p1-0.mp3",
-            "text": "옛날 어느 마을에 방앗간 집 삼 형제가 살았어요.\n아버지는 삼 형제에게 각각 유산을 남겼어요.\n막내에게 남은 것은 고양이 한 마리뿐이었지요.\n"
-          },
-          {
-            "who": "master",
-            "src": "/classic/puss/seg-cast-p1-1.mp3",
-            "text": "\"고양이야, 너랑 나는 이제 어떻게 살아야 하니…\""
-          },
-          {
-            "who": "narration",
-            "src": "/classic/puss/seg-p1-2.mp3",
-            "text": "\n막내는 고양이를 끌어안고 한숨을 푹 쉬었답니다."
+            "text": "옛날 어느 마을에 방앗간 집 삼 형제가 살았어요.\n아버지는 삼 형제에게 유산을 하나씩 남겼어요.\n첫째는 방앗간을, 둘째는 당나귀를 받았지만,\n막내에게 남은 것은 고양이 한 마리뿐이었지요.\n막내는 고양이를 끌어안고 한숨을 푹 쉬었답니다."
           }
         ]
       },
@@ -5362,7 +5346,7 @@
       },
       {
         "n": 4,
-        "text": "고양이는 자루를 메고 성큼성큼 궁궐로 걸어갔어요.\n\"임금님, 저희 카라바 후작님께서 보내신 선물입니다.\"\n\"카라바 후작? 처음 듣는 이름인데, 참 마음씨가 좋구나.\"\n사실 카라바 후작은 고양이가 방금 지어낸 이름이었답니다.\n고양이는 시치미를 뚝 떼고 꾸벅 절을 했지요.",
+        "text": "고양이는 자루를 메고 성큼성큼 궁궐로 걸어갔어요.\n\"임금님, 저희 카라바 후작님께서 보내신 선물입니다.\"\n\"카라바 후작? 처음 듣는 이름인데, 참 마음씨가 좋은 분이구나.\"\n사실 카라바 후작은 고양이가 방금 지어낸 이름이었답니다.\n고양이는 시치미를 뚝 떼고 꾸벅 절을 했지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/books/classic/puss/p4.webp?v=1",
         "lines": [
           {
@@ -5370,7 +5354,7 @@
             "who": "cat"
           },
           {
-            "text": "카라바 후작? 처음 듣는 이름인데, 참 마음씨가 좋구나.",
+            "text": "카라바 후작? 처음 듣는 이름인데, 참 마음씨가 좋은 분이구나.",
             "who": "king"
           }
         ],
@@ -5388,7 +5372,7 @@
           {
             "who": "king",
             "src": "/classic/puss/seg-cast-p4-2.mp3",
-            "text": "\"카라바 후작? 처음 듣는 이름인데, 참 마음씨가 좋구나.\""
+            "text": "\"카라바 후작? 처음 듣는 이름인데, 참 마음씨가 좋은 분이구나.\""
           },
           {
             "who": "narration",
@@ -5399,16 +5383,12 @@
       },
       {
         "n": 5,
-        "text": "그날부터 고양이는 뻔질나게 궁궐을 드나들었어요.\n어느 날은 커다란 물고기, 어느 날은 버섯 한 바구니.\n\"카라바 후작님의 선물입니다!\"\n임금님은 얼굴도 모르는 후작이 점점 궁금해졌지요.\n\"대체 카라바 후작은 어떤 분일까?\"",
+        "text": "그날부터 고양이는 뻔질나게 궁궐을 드나들었어요.\n어느 날은 커다란 물고기, 어느 날은 버섯 한 바구니.\n\"카라바 후작님의 선물입니다!\"\n임금님은 얼굴도 모르는 후작이 점점 궁금해졌지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/books/classic/puss/p5.webp?v=1",
         "lines": [
           {
             "text": "카라바 후작님의 선물입니다!",
             "who": "cat"
-          },
-          {
-            "text": "대체 카라바 후작은 어떤 분일까?",
-            "who": "king"
           }
         ],
         "segments": [
@@ -5425,12 +5405,7 @@
           {
             "who": "narration",
             "src": "/classic/puss/seg-p5-2.mp3",
-            "text": "\n임금님은 얼굴도 모르는 후작이 점점 궁금해졌지요.\n"
-          },
-          {
-            "who": "king",
-            "src": "/classic/puss/seg-cast-p5-3.mp3",
-            "text": "\"대체 카라바 후작은 어떤 분일까?\""
+            "text": "\n임금님은 얼굴도 모르는 후작이 점점 궁금해졌지요."
           }
         ]
       },
@@ -5501,16 +5476,12 @@
       },
       {
         "n": 8,
-        "text": "\"후작님, 저희와 함께 마차를 타고 가시겠어요?\"\n막내는 얼떨결에 공주님 곁에 앉았어요.\n'고, 고양이야… 이게 다 무슨 일이니?'\n그사이 고양이는 마차보다 먼저 들판 길을 내달렸답니다.\n장화가 반짝반짝, 바람처럼 빨랐지요.",
+        "text": "\"후작님, 저희와 함께 마차를 타고 가시겠어요?\"\n막내는 얼떨결에 공주님 곁에 앉았어요.\n그사이 고양이는 마차보다 먼저 들판 길을 내달렸답니다.\n장화가 반짝반짝, 바람처럼 빨랐지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/books/classic/puss/p8.webp?v=1",
         "lines": [
           {
             "text": "후작님, 저희와 함께 마차를 타고 가시겠어요?",
             "who": "princess"
-          },
-          {
-            "text": "고, 고양이야… 이게 다 무슨 일이니?",
-            "who": "master"
           }
         ],
         "segments": [
@@ -5522,17 +5493,7 @@
           {
             "who": "narration",
             "src": "/classic/puss/seg-p8-1.mp3",
-            "text": "\n막내는 얼떨결에 공주님 곁에 앉았어요.\n"
-          },
-          {
-            "who": "master",
-            "src": "/classic/puss/seg-cast-p8-2.mp3",
-            "text": "'고, 고양이야… 이게 다 무슨 일이니?'"
-          },
-          {
-            "who": "narration",
-            "src": "/classic/puss/seg-p8-3.mp3",
-            "text": "\n그사이 고양이는 마차보다 먼저 들판 길을 내달렸답니다.\n장화가 반짝반짝, 바람처럼 빨랐지요."
+            "text": "\n막내는 얼떨결에 공주님 곁에 앉았어요.\n그사이 고양이는 마차보다 먼저 들판 길을 내달렸답니다.\n장화가 반짝반짝, 바람처럼 빨랐지요."
           }
         ]
       },
@@ -5771,6 +5732,889 @@
             "who": "narration",
             "src": "/classic/puss/seg-p16-0.mp3",
             "text": "얼마 뒤, 막내와 공주님은 온 나라의 축복 속에 혼례를 올렸어요.\n장화 신은 고양이는 나라에서 제일가는 귀족이 되었지요.\n그 뒤로 고양이는 쥐를 잡지 않았답니다.\n가끔… 심심할 때 재미로 쫓아다니기만 했대요."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "classic-jack",
+    "lang": "ko",
+    "title": "잭과 콩나무",
+    "summary": "마법의 콩나무를 타고 구름 위 거인의 성에 오른 잭의 모험",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "jack": "tc-siwoo",
+      "mother": "tc-najin",
+      "old_man": "tc-jongdae",
+      "giant": "tc-homun",
+      "giant_wife": "tc-ina",
+      "fairy": "tc-minjung"
+    },
+    "roleOf": {
+      "잭": "jack",
+      "엄마": "mother",
+      "노인": "old_man",
+      "거인": "giant",
+      "거인 아내": "giant_wife",
+      "요정": "fairy"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "text": "옛날 어느 마을 끝자락에, 잭이 엄마와 단둘이 살았어요.\n집은 낡고 밭은 메말라, 가진 거라곤 젖소 얼룩이 한 마리뿐이었지요.\n그래도 잭은 씩씩했고, 얼룩이를 동생처럼 아꼈답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p1.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p1-0.mp3",
+            "text": "옛날 어느 마을 끝자락에, 잭이 엄마와 단둘이 살았어요.\n집은 낡고 밭은 메말라, 가진 거라곤 젖소 얼룩이 한 마리뿐이었지요.\n그래도 잭은 씩씩했고, 얼룩이를 동생처럼 아꼈답니다."
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "jack",
+            "box": [
+              290,
+              368,
+              850,
+              738
+            ],
+            "audio": "/classic/jack/say-p1-jack.mp3",
+            "line": "얼룩아, 우리 오래오래 같이 살자!"
+          }
+        ]
+      },
+      {
+        "n": 2,
+        "text": "그런데 어느 날부터 얼룩이가 젖을 한 방울도 내지 않았어요.\n엄마는 한숨을 푹 쉬며 말했지요.\n\"잭, 이제 어쩔 수 없구나. 장에 가서 얼룩이를 팔고 오렴.\"\n잭은 얼룩이 목을 꼭 끌어안고 한참을 서 있었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p2.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p2-0.mp3",
+            "text": "그런데 어느 날부터 얼룩이가 젖을 한 방울도 내지 않았어요.\n엄마는 한숨을 푹 쉬며 말했지요.\n"
+          },
+          {
+            "who": "mother",
+            "src": "/classic/jack/seg-cast-p2-1.mp3",
+            "text": "\"잭, 이제 어쩔 수 없구나. 장에 가서 얼룩이를 팔고 오렴.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p2-2.mp3",
+            "text": "\n잭은 얼룩이 목을 꼭 끌어안고 한참을 서 있었답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "잭, 이제 어쩔 수 없구나. 장에 가서 얼룩이를 팔고 오렴.",
+            "who": "mother"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "jack",
+            "box": [
+              330,
+              322,
+              830,
+              662
+            ],
+            "audio": "/classic/jack/say-p2-jack.mp3",
+            "line": "얼룩이랑 헤어지기 싫은데…"
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "장으로 가는 길에, 이상한 노인이 잭을 불러 세웠어요.\n\"얘야, 그 소를 이 콩과 바꾸지 않겠니? 마법의 콩이란다.\"\n노인의 손바닥에는 알록달록한 콩 다섯 알이 놓여 있었지요.\n\"마법의 콩이요? 좋아요!\"\n잭은 얼룩이를 건네고 콩을 꼭 쥐었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p3.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p3-0.mp3",
+            "text": "장으로 가는 길에, 이상한 노인이 잭을 불러 세웠어요.\n"
+          },
+          {
+            "who": "old_man",
+            "src": "/classic/jack/seg-cast-p3-1.mp3",
+            "text": "\"얘야, 그 소를 이 콩과 바꾸지 않겠니? 마법의 콩이란다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p3-2.mp3",
+            "text": "\n노인의 손바닥에는 알록달록한 콩 다섯 알이 놓여 있었지요.\n"
+          },
+          {
+            "who": "jack",
+            "src": "/classic/jack/seg-cast-p3-3.mp3",
+            "text": "\"마법의 콩이요? 좋아요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p3-4.mp3",
+            "text": "\n잭은 얼룩이를 건네고 콩을 꼭 쥐었답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "얘야, 그 소를 이 콩과 바꾸지 않겠니? 마법의 콩이란다.",
+            "who": "old_man"
+          },
+          {
+            "text": "마법의 콩이요? 좋아요!",
+            "who": "jack"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "old_man",
+            "box": [
+              148,
+              528,
+              812,
+              958
+            ],
+            "audio": "/classic/jack/say-p3-old_man.mp3",
+            "line": "이건 아주 특별한 마법의 콩이란다."
+          },
+          {
+            "label": "jack",
+            "box": [
+              252,
+              222,
+              796,
+              492
+            ],
+            "audio": "/classic/jack/say-p3-jack.mp3",
+            "line": "마법의 콩이요? 좋아요!"
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "\"소 한 마리를 콩 다섯 알과 바꿨다고?\"\n엄마는 너무 속상해서 콩을 창밖으로 휙 던져 버렸어요.\n그날 밤 잭은 저녁도 못 먹고 잠자리에 들었지요.\n'엄마 말이 맞아. 내가 바보 같았어…'",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p4.webp",
+        "segments": [
+          {
+            "who": "mother",
+            "src": "/classic/jack/seg-cast-p4-0.mp3",
+            "text": "\"소 한 마리를 콩 다섯 알과 바꿨다고?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p4-1.mp3",
+            "text": "\n엄마는 너무 속상해서 콩을 창밖으로 휙 던져 버렸어요.\n그날 밤 잭은 저녁도 못 먹고 잠자리에 들었지요.\n"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p4-2.mp3",
+            "text": "'엄마 말이 맞아. 내가 바보 같았어…'"
+          }
+        ],
+        "lines": [
+          {
+            "text": "소 한 마리를 콩 다섯 알과 바꿨다고?",
+            "who": "mother"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "mother",
+            "box": [
+              78,
+              258,
+              792,
+              700
+            ],
+            "audio": "/classic/jack/say-p4-mother.mp3",
+            "line": "소를 콩이랑 바꾸다니, 이를 어째!"
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "이튿날 아침, 방 안이 이상하게 어둑어둑했어요.\n창밖을 내다본 잭은 입이 딱 벌어졌지요.\n밤사이 콩나무가 쑥쑥 자라 구름을 뚫고 하늘까지 뻗어 있었거든요!\n\"우아! 정말 마법의 콩이었어!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p5.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p5-0.mp3",
+            "text": "이튿날 아침, 방 안이 이상하게 어둑어둑했어요.\n창밖을 내다본 잭은 입이 딱 벌어졌지요.\n밤사이 콩나무가 쑥쑥 자라 구름을 뚫고 하늘까지 뻗어 있었거든요!\n"
+          },
+          {
+            "who": "jack",
+            "src": "/classic/jack/seg-cast-p5-1.mp3",
+            "text": "\"우아! 정말 마법의 콩이었어!\""
+          }
+        ],
+        "lines": [
+          {
+            "text": "우아! 정말 마법의 콩이었어!",
+            "who": "jack"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "jack",
+            "box": [
+              262,
+              368,
+              812,
+              690
+            ],
+            "audio": "/classic/jack/say-p5-jack.mp3",
+            "line": "우아! 콩나무가 하늘까지 자랐어!"
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "text": "잭은 콩나무 줄기를 붙잡고 오르고, 또 올랐어요.\n구름 위에 올라서자 반짝이는 요정이 잭을 기다리고 있었지요.\n요정은 잭의 집안을 오래도록 지켜본 이였어요.\n요정은 저 멀리 커다란 성을 가리키며, 그 성의 거인이 오래전 잭의 아버지에게서 보물을 몽땅 빼앗아 간 이야기를 들려주었어요.\n'그게 우리 아버지 보물이었구나… 내가 꼭 되찾을 거야.'\n잭은 주먹을 꼭 쥐고 성을 향해 걸어갔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p6.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p6-0.mp3",
+            "text": "잭은 콩나무 줄기를 붙잡고 오르고, 또 올랐어요.\n구름 위에 올라서자 반짝이는 요정이 잭을 기다리고 있었지요.\n요정은 잭의 집안을 오래도록 지켜본 이였어요.\n요정은 저 멀리 커다란 성을 가리키며, 그 성의 거인이 오래전 잭의 아버지에게서 보물을 몽땅 빼앗아 간 이야기를 들려주었어요.\n"
+          },
+          {
+            "who": "jack",
+            "src": "/classic/jack/seg-cast-p6-1.mp3",
+            "text": "'그게 우리 아버지 보물이었구나… 내가 꼭 되찾을 거야.'"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p6-2.mp3",
+            "text": "\n잭은 주먹을 꼭 쥐고 성을 향해 걸어갔답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "'그게 우리 아버지 보물이었구나… 내가 꼭 되찾을 거야.'",
+            "who": "jack"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "jack",
+            "box": [
+              238,
+              30,
+              802,
+              450
+            ],
+            "audio": "/classic/jack/say-p6-jack.mp3",
+            "line": "저 성까지 올라가 볼 거예요!"
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "어젯밤부터 아무것도 못 먹은 잭은 배에서 꼬르륵 소리가 났어요.\n잭은 용기를 내어 커다란 성문을 쿵쿵 두드렸지요.\n문을 연 사람은 산처럼 커다란 거인 아내였어요.\n\"얘야, 여기는 거인의 성이란다. 우리 남편이 오면 큰일 나!\"\n\"죄송해요, 아주머니. 어젯밤부터 아무것도 못 먹었어요. 빵 한 조각만 먹고 갈게요.\"\n마음 약한 거인 아내는 잭을 식탁 위로 올려 주고 빵을 떼어 주었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p7.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p7-0.mp3",
+            "text": "어젯밤부터 아무것도 못 먹은 잭은 배에서 꼬르륵 소리가 났어요.\n잭은 용기를 내어 커다란 성문을 쿵쿵 두드렸지요.\n문을 연 사람은 산처럼 커다란 거인 아내였어요.\n"
+          },
+          {
+            "who": "giant_wife",
+            "src": "/classic/jack/seg-cast-p7-1.mp3",
+            "text": "\"얘야, 여기는 거인의 성이란다. 우리 남편이 오면 큰일 나!\"\n"
+          },
+          {
+            "who": "jack",
+            "src": "/classic/jack/seg-cast-p7-2.mp3",
+            "text": "\"죄송해요, 아주머니. 어젯밤부터 아무것도 못 먹었어요. 빵 한 조각만 먹고 갈게요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p7-3.mp3",
+            "text": "\n마음 약한 거인 아내는 잭을 식탁 위로 올려 주고 빵을 떼어 주었답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "얘야, 여기는 거인의 성이란다. 우리 남편이 오면 큰일 나!",
+            "who": "giant_wife"
+          },
+          {
+            "text": "죄송해요, 아주머니. 어젯밤부터 아무것도 못 먹었어요. 빵 한 조각만 먹고 갈게요.",
+            "who": "jack"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "giant_wife",
+            "box": [
+              58,
+              388,
+              786,
+              860
+            ],
+            "audio": "/classic/jack/say-p7-giant_wife.mp3",
+            "line": "얘야, 남편이 오면 큰일 나!"
+          },
+          {
+            "label": "jack",
+            "box": [
+              495,
+              228,
+              835,
+              385
+            ],
+            "audio": "/classic/jack/say-p7-jack.mp3",
+            "line": "빵 한 조각만 먹고 갈게요."
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "쿵! 쿵! 쿵! 성이 흔들렸어요.\n거인 아내는 잭을 얼른 커다란 화덕 속에 숨겼지요.\n\"킁킁… 어디서 사람 냄새가 나는 것 같은데?\"\n\"사람은 무슨요. 아침에 구운 양고기 냄새겠지요.\"\n거인은 고개를 갸웃하더니 식탁에 털썩 앉았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p8.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p8-0.mp3",
+            "text": "쿵! 쿵! 쿵! 성이 흔들렸어요.\n거인 아내는 잭을 얼른 커다란 화덕 속에 숨겼지요.\n"
+          },
+          {
+            "who": "giant",
+            "src": "/classic/jack/seg-cast-p8-1.mp3",
+            "text": "\"킁킁… 어디서 사람 냄새가 나는 것 같은데?\"\n"
+          },
+          {
+            "who": "giant_wife",
+            "src": "/classic/jack/seg-cast-p8-2.mp3",
+            "text": "\"사람은 무슨요. 아침에 구운 양고기 냄새겠지요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p8-3.mp3",
+            "text": "\n거인은 고개를 갸웃하더니 식탁에 털썩 앉았답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "킁킁… 어디서 사람 냄새가 나는 것 같은데?",
+            "who": "giant"
+          },
+          {
+            "text": "사람은 무슨요. 아침에 구운 양고기 냄새겠지요.",
+            "who": "giant_wife"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "giant",
+            "box": [
+              165,
+              688,
+              520,
+              900
+            ],
+            "audio": "/classic/jack/say-p8-giant.mp3",
+            "line": "킁킁, 사람 냄새가 나는걸?"
+          },
+          {
+            "label": "giant_wife",
+            "box": [
+              155,
+              293,
+              787,
+              666
+            ],
+            "audio": "/classic/jack/say-p8-giant_wife.mp3",
+            "line": "쉿, 얼른 화덕에 숨으렴!"
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "밥을 다 먹은 거인은 금화가 가득 든 자루들을 꺼내 왔어요.\n\"하나, 둘, 셋…\" 금화를 세던 거인은 이내 드르렁 코를 골며 잠이 들었지요.\n잭은 화덕에서 살금살금 나와 금화 자루 하나를 번쩍 들었어요.\n그리고 콩나무를 타고 쭉쭉 내려갔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p9-v2.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p9-0.mp3",
+            "text": "밥을 다 먹은 거인은 금화가 가득 든 자루들을 꺼내 왔어요.\n"
+          },
+          {
+            "who": "giant",
+            "src": "/classic/jack/seg-cast-p9-1.mp3",
+            "text": "\"하나, 둘, 셋…\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p9-2.mp3",
+            "text": " 금화를 세던 거인은 이내 드르렁 코를 골며 잠이 들었지요.\n잭은 화덕에서 살금살금 나와 금화 자루 하나를 번쩍 들었어요.\n그리고 콩나무를 타고 쭉쭉 내려갔답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "하나, 둘, 셋…",
+            "who": "giant",
+            "say": "하냥, 두냥, 세냥…"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "giant",
+            "box": [
+              140,
+              350,
+              785,
+              890
+            ],
+            "audio": "/classic/jack/say-p9-giant.mp3",
+            "line": "하냥, 두냥, 세냥…"
+          },
+          {
+            "label": "jack",
+            "box": [
+              470,
+              105,
+              865,
+              342
+            ],
+            "audio": "/classic/jack/say-p9-jack.mp3",
+            "line": "금화 자루 하나만 살짝…"
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "\"엄마! 아버지의 금화를 되찾아 왔어요!\"\n엄마는 잭을 꼭 안고 기뻐했어요.\n금화 덕분에 두 사람은 한동안 배불리 지냈지요.\n하지만 금화는 언젠가 바닥이 나는 법.\n잭은 다시 콩나무를 타고 구름 위로 올라갔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p10-v2.webp",
+        "segments": [
+          {
+            "who": "jack",
+            "src": "/classic/jack/seg-cast-p10-0.mp3",
+            "text": "\"엄마! 아버지의 금화를 되찾아 왔어요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p10-1.mp3",
+            "text": "\n엄마는 잭을 꼭 안고 기뻐했어요.\n금화 덕분에 두 사람은 한동안 배불리 지냈지요.\n하지만 금화는 언젠가 바닥이 나는 법.\n잭은 다시 콩나무를 타고 구름 위로 올라갔답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "엄마! 아버지의 금화를 되찾아 왔어요!",
+            "who": "jack"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "mother",
+            "box": [
+              80,
+              175,
+              965,
+              452
+            ],
+            "audio": "/classic/jack/say-p10-mother.mp3",
+            "line": "우리 잭, 정말 장하구나!"
+          },
+          {
+            "label": "jack",
+            "box": [
+              250,
+              455,
+              890,
+              900
+            ],
+            "audio": "/classic/jack/say-p10-jack.mp3",
+            "line": "엄마, 금화를 되찾아 왔어요!"
+          }
+        ]
+      },
+      {
+        "n": 11,
+        "text": "성문을 연 거인 아내는 잭을 보고 고개를 갸웃했어요.\n\"너, 지난번 그 아이 아니니? 그날 금화 자루 하나가 없어졌는데…\"\n\"그것 참 이상한 일이네요. 그 얘기라면 저도 뭔가 알 것 같은데… 배가 너무 고파서, 뭘 좀 먹어야 생각이 날 것 같아요.\"\n그 이야기가 궁금해진 거인 아내는 잭에게 빵을 내주었어요.\n그리고 거인의 발소리가 들리자, 이번에도 잭을 얼른 화덕에 숨겨 주었지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p11.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p11-0.mp3",
+            "text": "성문을 연 거인 아내는 잭을 보고 고개를 갸웃했어요.\n"
+          },
+          {
+            "who": "giant_wife",
+            "src": "/classic/jack/seg-cast-p11-1.mp3",
+            "text": "\"너, 지난번 그 아이 아니니? 그날 금화 자루 하나가 없어졌는데…\"\n"
+          },
+          {
+            "who": "jack",
+            "src": "/classic/jack/seg-cast-p11-2.mp3",
+            "text": "\"그것 참 이상한 일이네요. 그 얘기라면 저도 뭔가 알 것 같은데… 배가 너무 고파서, 뭘 좀 먹어야 생각이 날 것 같아요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p11-3.mp3",
+            "text": "\n그 이야기가 궁금해진 거인 아내는 잭에게 빵을 내주었어요.\n그리고 거인의 발소리가 들리자, 이번에도 잭을 얼른 화덕에 숨겨 주었지요."
+          }
+        ],
+        "lines": [
+          {
+            "text": "너, 지난번 그 아이 아니니? 그날 금화 자루 하나가 없어졌는데…",
+            "who": "giant_wife"
+          },
+          {
+            "text": "그것 참 이상한 일이네요. 그 얘기라면 저도 뭔가 알 것 같은데… 배가 너무 고파서, 뭘 좀 먹어야 생각이 날 것 같아요.",
+            "who": "jack"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "giant_wife",
+            "box": [
+              55,
+              458,
+              835,
+              888
+            ],
+            "audio": "/classic/jack/say-p11-giant_wife.mp3",
+            "line": "너, 지난번 그 아이 아니니?"
+          },
+          {
+            "label": "jack",
+            "box": [
+              492,
+              138,
+              890,
+              350
+            ],
+            "audio": "/classic/jack/say-p11-jack.mp3",
+            "line": "배가 고파서 또 왔어요."
+          }
+        ]
+      },
+      {
+        "n": 12,
+        "text": "쿵! 쿵! 쿵! 밥을 다 먹은 거인은 식탁에 암탉 한 마리를 올려놓았어요.\n\"자, 황금알을 낳아 보아라!\"\n그러자 암탉이 번쩍이는 황금알을 톡 낳았고, 거인은 흐뭇하게 바라보다가 이내 드르렁 코를 골며 잠이 들었지요.\n잭은 암탉을 꼭 안고 살금살금 콩나무를 타고 내려갔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p12.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p12-0.mp3",
+            "text": "쿵! 쿵! 쿵! 밥을 다 먹은 거인은 식탁에 암탉 한 마리를 올려놓았어요.\n"
+          },
+          {
+            "who": "giant",
+            "src": "/classic/jack/seg-cast-p12-1.mp3",
+            "text": "\"자, 황금알을 낳아 보아라!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p12-2.mp3",
+            "text": "\n그러자 암탉이 번쩍이는 황금알을 톡 낳았고, 거인은 흐뭇하게 바라보다가 이내 드르렁 코를 골며 잠이 들었지요.\n잭은 암탉을 꼭 안고 살금살금 콩나무를 타고 내려갔답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "자, 황금알을 낳아 보아라!",
+            "who": "giant"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "giant",
+            "box": [
+              125,
+              293,
+              810,
+              912
+            ],
+            "audio": "/classic/jack/say-p12-giant.mp3",
+            "line": "자, 황금알을 낳아 보아라!"
+          }
+        ]
+      },
+      {
+        "n": 13,
+        "text": "\"엄마, 이것 보세요! 황금알을 낳는 암탉이에요!\"\n황금알 덕분에 잭과 엄마는 이제 부자가 되었어요.\n그래도 잭은 성에 남은 아버지의 보물이 자꾸 마음에 걸렸지요.\n'딱 한 번만 더 올라가자.'\n잭은 세 번째로 콩나무를 타고 올라갔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p13.webp",
+        "segments": [
+          {
+            "who": "jack",
+            "src": "/classic/jack/seg-cast-p13-0.mp3",
+            "text": "\"엄마, 이것 보세요! 황금알을 낳는 암탉이에요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p13-1.mp3",
+            "text": "\n황금알 덕분에 잭과 엄마는 이제 부자가 되었어요.\n그래도 잭은 성에 남은 아버지의 보물이 자꾸 마음에 걸렸지요.\n"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p13-2.mp3",
+            "text": "'딱 한 번만 더 올라가자.'"
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p13-3.mp3",
+            "text": "\n잭은 세 번째로 콩나무를 타고 올라갔답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "엄마, 이것 보세요! 황금알을 낳는 암탉이에요!",
+            "who": "jack"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "jack",
+            "box": [
+              205,
+              135,
+              910,
+              465
+            ],
+            "audio": "/classic/jack/say-p13-jack.mp3",
+            "line": "황금알을 낳는 암탉이에요!"
+          }
+        ]
+      },
+      {
+        "n": 14,
+        "text": "이번에는 아주머니에게 들키지 않으려고 살그머니 부엌으로 숨어들었어요.\n그리고 커다란 구리 솥 안에 몸을 웅크렸지요.\n쿵! 쿵! 쿵! \"킁킁, 또 사람 냄새다! 이번엔 틀림없어!\"\n\"지난번 그 녀석이면 화덕에 있겠지요.\"\n거인 아내가 화덕을 열어 보았지만, 아무도 없었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p14.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p14-0.mp3",
+            "text": "이번에는 아주머니에게 들키지 않으려고 살그머니 부엌으로 숨어들었어요.\n그리고 커다란 구리 솥 안에 몸을 웅크렸지요.\n쿵! 쿵! 쿵! "
+          },
+          {
+            "who": "giant",
+            "src": "/classic/jack/seg-cast-p14-1.mp3",
+            "text": "\"킁킁, 또 사람 냄새다! 이번엔 틀림없어!\"\n"
+          },
+          {
+            "who": "giant_wife",
+            "src": "/classic/jack/seg-cast-p14-2.mp3",
+            "text": "\"지난번 그 녀석이면 화덕에 있겠지요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p14-3.mp3",
+            "text": "\n거인 아내가 화덕을 열어 보았지만, 아무도 없었답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "킁킁, 또 사람 냄새다! 이번엔 틀림없어!",
+            "who": "giant"
+          },
+          {
+            "text": "지난번 그 녀석이면 화덕에 있겠지요.",
+            "who": "giant_wife"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "giant",
+            "box": [
+              97,
+              355,
+              780,
+              850
+            ],
+            "audio": "/classic/jack/say-p14-giant.mp3",
+            "line": "킁킁, 또 사람 냄새다!"
+          }
+        ]
+      },
+      {
+        "n": 15,
+        "text": "거인은 황금 하프를 식탁에 올려놓고 소리쳤어요.\n\"어디, 고운 노래를 불러 보아라!\"\n하프는 저 혼자 줄을 튕기며 고운 노래를 불렀지요.\n고운 노래에 거인은 스르르 눈이 감기더니, 이내 드르렁 코를 골았어요.\n'아버지의 하프야. 이번이 마지막이야!'",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p15.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p15-0.mp3",
+            "text": "거인은 황금 하프를 식탁에 올려놓고 소리쳤어요.\n"
+          },
+          {
+            "who": "giant",
+            "src": "/classic/jack/seg-cast-p15-1.mp3",
+            "text": "\"어디, 고운 노래를 불러 보아라!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p15-2.mp3",
+            "text": "\n하프는 저 혼자 줄을 튕기며 고운 노래를 불렀지요.\n고운 노래에 거인은 스르르 눈이 감기더니, 이내 드르렁 코를 골았어요.\n"
+          },
+          {
+            "who": "jack",
+            "src": "/classic/jack/seg-cast-p15-3.mp3",
+            "text": "'아버지의 하프야. 이번이 마지막이야!'"
+          }
+        ],
+        "lines": [
+          {
+            "text": "어디, 고운 노래를 불러 보아라!",
+            "who": "giant"
+          },
+          {
+            "text": "'아버지의 하프야. 이번이 마지막이야!'",
+            "who": "jack"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "giant",
+            "box": [
+              60,
+              0,
+              910,
+              565
+            ],
+            "audio": "/classic/jack/say-p15-giant.mp3",
+            "line": "어디, 고운 노래를 불러 보아라!"
+          },
+          {
+            "label": "jack",
+            "box": [
+              413,
+              690,
+              787,
+              875
+            ],
+            "audio": "/classic/jack/say-p15-jack.mp3",
+            "line": "이번이 마지막이야!"
+          }
+        ]
+      },
+      {
+        "n": 16,
+        "text": "잭은 솥에서 나와 하프를 살며시 안아 들었어요.\n그런데 하프가 갑자기 주인님, 주인님! 하고 소리치는 게 아니겠어요?\n거인이 번쩍 눈을 떴어요.\n\"이놈! 게 섰거라!\"\n잭은 하프를 안고 문 쪽으로 쏜살같이 뛰었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p16.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p16-0.mp3",
+            "text": "잭은 솥에서 나와 하프를 살며시 안아 들었어요.\n그런데 하프가 갑자기 주인님, 주인님! 하고 소리치는 게 아니겠어요?\n거인이 번쩍 눈을 떴어요.\n"
+          },
+          {
+            "who": "giant",
+            "src": "/classic/jack/seg-cast-p16-1.mp3",
+            "text": "\"이놈! 게 섰거라!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p16-2.mp3",
+            "text": "\n잭은 하프를 안고 문 쪽으로 쏜살같이 뛰었답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "이놈! 게 섰거라!",
+            "who": "giant"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "giant",
+            "box": [
+              45,
+              0,
+              415,
+              715
+            ],
+            "audio": "/classic/jack/say-p16-giant.mp3",
+            "line": "이놈, 게 섰거라!"
+          }
+        ]
+      },
+      {
+        "n": 17,
+        "text": "잭은 콩나무를 타고 쭉쭉 미끄러져 내려갔어요.\n쿵! 쿵! 거인도 콩나무를 붙잡고 뒤따라 내려왔지요.\n\"엄마! 도끼요, 도끼 좀 주세요!\"\n땅에 내려선 잭은 엄마가 건넨 도끼로 콩나무를 힘껏 찍었어요.\n한 번, 두 번 — 우지끈! 콩나무가 기우뚱 쓰러지자, 붙잡고 있던 거인도 쿵! 하고 굴러떨어졌지요.\n거인은 저 멀리 산 너머로 데굴데굴 굴러가더니, 그 뒤로 두 번 다시 마을에 나타나지 않았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p17.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p17-0.mp3",
+            "text": "잭은 콩나무를 타고 쭉쭉 미끄러져 내려갔어요.\n쿵! 쿵! 거인도 콩나무를 붙잡고 뒤따라 내려왔지요.\n"
+          },
+          {
+            "who": "jack",
+            "src": "/classic/jack/seg-cast-p17-1.mp3",
+            "text": "\"엄마! 도끼요, 도끼 좀 주세요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p17-2.mp3",
+            "text": "\n땅에 내려선 잭은 엄마가 건넨 도끼로 콩나무를 힘껏 찍었어요.\n한 번, 두 번 — 우지끈! 콩나무가 기우뚱 쓰러지자, 붙잡고 있던 거인도 쿵! 하고 굴러떨어졌지요.\n거인은 저 멀리 산 너머로 데굴데굴 굴러가더니, 그 뒤로 두 번 다시 마을에 나타나지 않았답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "엄마! 도끼요, 도끼 좀 주세요!",
+            "who": "jack"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "jack",
+            "box": [
+              515,
+              320,
+              870,
+              700
+            ],
+            "audio": "/classic/jack/say-p17-jack.mp3",
+            "line": "엄마, 도끼 좀 주세요!"
+          }
+        ]
+      },
+      {
+        "n": 18,
+        "text": "황금알을 낳는 암탉과 노래하는 하프 덕분에\n잭과 엄마는 다시는 배를 곯지 않았어요.\n\"이건 원래 아버지 것이었어요. 우리끼리만 쓰면 안 돼요.\"\n잭은 마을 사람들과 빵과 노래를 나누었지요.\n쓰러진 콩나무 자리에서는 다음 해 봄, 조그만 새싹이 돋아났답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/jack/p18.webp",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p18-0.mp3",
+            "text": "황금알을 낳는 암탉과 노래하는 하프 덕분에\n잭과 엄마는 다시는 배를 곯지 않았어요.\n"
+          },
+          {
+            "who": "jack",
+            "src": "/classic/jack/seg-cast-p18-1.mp3",
+            "text": "\"이건 원래 아버지 것이었어요. 우리끼리만 쓰면 안 돼요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/jack/seg-p18-2.mp3",
+            "text": "\n잭은 마을 사람들과 빵과 노래를 나누었지요.\n쓰러진 콩나무 자리에서는 다음 해 봄, 조그만 새싹이 돋아났답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "이건 원래 아버지 것이었어요. 우리끼리만 쓰면 안 돼요.",
+            "who": "jack"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "jack",
+            "box": [
+              260,
+              330,
+              725,
+              580
+            ],
+            "audio": "/classic/jack/say-p18-jack.mp3",
+            "line": "모두 함께 나눠 먹어요!"
           }
         ]
       }

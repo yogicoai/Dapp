@@ -139,3 +139,18 @@ describe("unmatchedLines", () => {
     assert.equal(stale.length, 1);
   });
 });
+
+describe("속마음", () => {
+  it("작은따옴표 속마음은 배역 미정으로 신고하지 않는다 — 나레이션이 읽는 게 우리 약속", () => {
+    const plan = planPageVoices({
+      text: "잭은 한숨을 쉬었어요.\n'엄마 말이 맞아. 내가 바보 같았어…'\n\"엄마, 죄송해요.\"",
+      lines: [{ text: "엄마, 죄송해요.", who: "jack" }],
+    });
+    assert.deepEqual(unassignedDialogue(plan), []);
+  });
+
+  it("배역 없는 큰따옴표 대사는 여전히 신고한다", () => {
+    const plan = planPageVoices({ text: "누군가 말했어요.\n\"거기 누구세요?\"" });
+    assert.equal(unassignedDialogue(plan).length, 1);
+  });
+});

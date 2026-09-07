@@ -44,3 +44,12 @@ next-env.d.ts
 
 # UI 에셋 원본 PNG 보관용 (배포는 public/의 webp만 쓴다)
 /originals-png/
+.bake-patjuk.mjs
+.upload-patjuk.mjs
+.apply-patjuk-boxes.mjs
+.bake-tortoise-narr.mjs
+.bake-tortoise-char.mjs
+.build-jack.mjs
+.upload-jack.mjs
+.bake-jack.mjs
+.bake-jack-hotspots.mjs

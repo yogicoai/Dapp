@@ -103,6 +103,19 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "형" }, { name: "아우" }],
   },
+  // 잭과 콩나무 — F:\Dong 세션이 2026-09-05 밤에 굽고 등록한 것을 가져옴(캐스팅: 나레이션 민정 ·
+  // 잭 시우 · 엄마 나진 · 노인 종대 · 거인 심호문 · 거인 아내 이나). 요정 대사는 없고 나레이션이 전한다.
+  "잭과 콩나무": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "jack",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [
+      { name: "잭" }, { name: "엄마" }, { name: "노인" },
+      { name: "거인" }, { name: "거인 아내" },
+    ],
+  },
   "장화 신은 고양이": {
     data: "src/data/classic-books.json",
     root: "classic",
@@ -196,16 +209,16 @@ const BOOKS: Record<string, BookSpec> = {
   },
   "토끼와 거북이": {
     dir: "tortoise",
-    // 순서가 곧 화면에 뜨는 순서다 — 대표(아린이)를 맨 위에.
-    // 다빈은 이미 구워 뒀으니 남겨서 둘 중에 고르게 한다(전환은 파일 재생이라 무료).
-    narrators: ["tc-arin", "tc-dabin"],
-    defaultNarrator: "tc-arin",
+    // 나레이션 아린·다빈 → 민정 (2026-09-05 재캐스팅, F:\Dong 세션). 옛 아린·다빈 파일은 남아 있다.
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
     cast: [{ name: "토끼" }, { name: "거북이" }, { name: "부엉이" }],
   },
   "팥죽 할머니와 호랑이": {
     dir: "patjuk-halmae-tiger",
-    narrators: ["tc-jiyoung"],
-    defaultNarrator: "tc-jiyoung",
+    // 나레이션 지윤 → 민정 (2026-09-05 재캐스팅, F:\Dong 세션).
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
     cast: [
       { name: "할머니" }, { name: "호랑이" }, { name: "알밤" },
       { name: "자라" }, { name: "쇠똥" }, { name: "멍석" }, { name: "지게" },

@@ -2656,13 +2656,13 @@
     "voice": "tc-hakchul",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "\"할멈, 널 잡아먹어야겠다!\""
+    "text": "\"널 잡아먹어야겠다!\""
   },
   "folk/patjuk-halmae-tiger/say-p1-tiger.mp3": {
     "voice": "tc-hakchul",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "할멈, 널 잡아먹어야겠다!"
+    "text": "널 잡아먹어야겠다!"
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p2-0.mp3": {
     "voice": "tc-jiyoung",
@@ -2698,7 +2698,7 @@
     "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "좋아! 그럼 그때 다시 오마."
+    "text": "좋아, 그럼 그때 다시 찾아오지."
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p3-0.mp3": {
     "voice": "tc-jiyoung",
@@ -2728,7 +2728,7 @@
     "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"할머니, 왜 울어요?\""
+    "text": "\"할머니, 왜 우세요?\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p4-2.mp3": {
     "voice": "tc-jungsoon",
@@ -2740,7 +2740,7 @@
     "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"팥죽 한 그릇 주시면 제가 아궁이에 숨어 있을게요!\""
+    "text": "\"저에게 팥죽 한 그릇만 주시면, 제가 할머니를 도와드릴게요!\""
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p4-4.mp3": {
     "voice": "tc-jiyoung",
@@ -2758,7 +2758,7 @@
     "voice": "tc-hamchu",
     "emotion": "normal",
     "intensity": null,
-    "text": "제가 아궁이에 숨어 있을게요!"
+    "text": "제가 할머니를 도와드릴게요!"
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p5-0.mp3": {
     "voice": "tc-jiyoung",
@@ -2770,7 +2770,7 @@
     "voice": "tc-monggun",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"할머니, 저도 팥죽 한 그릇만 주신다면\n물동이 속에 숨어 있다가\n호랑이 손을 꽉 물어 줄게요!\""
+    "text": "\"할머니, 저도 팥죽 한 그릇만 주신다면 도와드릴게요!\""
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p5-2.mp3": {
     "voice": "tc-jiyoung",
@@ -2782,7 +2782,7 @@
     "voice": "tc-monggun",
     "emotion": "normal",
     "intensity": null,
-    "text": "호랑이 손을 꽉 물어 줄게요!"
+    "text": "저도 도와드릴게요!"
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p6-0.mp3": {
     "voice": "tc-jiyoung",
@@ -2866,7 +2866,7 @@
     "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"할멈, 약속대로 왔다! 팥죽은 다 익었느냐?\""
+    "text": "\"약속대로 왔다! 팥죽은 다 되었겠지?\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p8-2.mp3": {
     "voice": "tc-jungsoon",
@@ -2884,7 +2884,7 @@
     "voice": "tc-hakchul",
     "emotion": "normal",
     "intensity": null,
-    "text": "할멈, 약속대로 왔다!"
+    "text": "약속대로 왔다!"
   },
   "folk/patjuk-halmae-tiger/say-p8-granny.mp3": {
     "voice": "tc-jungsoon",
@@ -3046,7 +3046,7 @@
     "voice": "tc-hakchul",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "\"어푸어푸! 아이고 무서워라, 얼른 달아나야겠다!\""
+    "text": "\"어푸어푸! 아이고, 호랑이 살려!\""
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p14-2.mp3": {
     "voice": "tc-jiyoung",
@@ -3058,7 +3058,7 @@
     "voice": "tc-hakchul",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "아이고 무서워라, 얼른 달아나야겠다!"
+    "text": "아이고, 호랑이 살려!"
   },
   "folk/patjuk-halmae-tiger/say-p14-carrier.mp3": {
     "voice": "tc-babilon",
@@ -7230,7 +7230,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 어느 마을에 방앗간 집 삼 형제가 살았어요.\n아버지는 삼 형제에게 각각 유산을 남겼어요.\n막내에게 남은 것은 고양이 한 마리뿐이었지요."
+    "text": "옛날 어느 마을에 방앗간 집 삼 형제가 살았어요.\n아버지는 삼 형제에게 유산을 하나씩 남겼어요.\n첫째는 방앗간을, 둘째는 당나귀를 받았지만,\n막내에게 남은 것은 고양이 한 마리뿐이었지요.\n막내는 고양이를 끌어안고 한숨을 푹 쉬었답니다."
   },
   "classic/puss/seg-cast-p1-1.mp3": {
     "voice": "tc-hosun",
@@ -7314,7 +7314,7 @@
     "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"카라바 후작? 처음 듣는 이름인데, 참 마음씨가 좋구나.\""
+    "text": "\"카라바 후작? 처음 듣는 이름인데, 참 마음씨가 좋은 분이구나.\""
   },
   "classic/puss/seg-tc-minjung-p4-3.mp3": {
     "voice": "tc-minjung",
@@ -7398,7 +7398,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "막내는 얼떨결에 공주님 곁에 앉았어요."
+    "text": "막내는 얼떨결에 공주님 곁에 앉았어요.\n그사이 고양이는 마차보다 먼저 들판 길을 내달렸답니다.\n장화가 반짝반짝, 바람처럼 빨랐지요."
   },
   "classic/puss/seg-cast-p8-2.mp3": {
     "voice": "tc-hosun",
@@ -7945,5 +7945,773 @@
     "emotion": "normal",
     "intensity": null,
     "text": "그 뒤로 산수유 숲에서 바람 소리가 나도 아무도 수군거리지 않았어요.\n임금님 귀는 당나귀 귀다~ 그 소리에 임금님도 백성들도 함께 웃었으니까요.\n비밀이 없어진 복두장이는 밥도 잠도 꿀맛이었지요.\n큰 귀를 가진 임금님은 백성들의 작은 이야기까지 잘 들어 주는 임금님이 되었답니다.\n남과 조금 다르다고 숨길 필요는 없어요. 있는 그대로가 제일 멋지니까요."
+  },
+  "classic/jack/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 어느 마을 끝자락에, 잭이 엄마와 단둘이 살았어요.\n집은 낡고 밭은 메말라, 가진 거라곤 젖소 얼룩이 한 마리뿐이었지요.\n그래도 잭은 씩씩했고, 얼룩이를 동생처럼 아꼈답니다."
+  },
+  "classic/jack/say-p1-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "얼룩아, 우리 오래오래 같이 살자!"
+  },
+  "classic/jack/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그런데 어느 날부터 얼룩이가 젖을 한 방울도 내지 않았어요.\n엄마는 한숨을 푹 쉬며 말했지요."
+  },
+  "classic/jack/seg-cast-p2-1.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"잭, 이제 어쩔 수 없구나. 장에 가서 얼룩이를 팔고 오렴.\""
+  },
+  "classic/jack/seg-tc-minjung-p2-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 얼룩이 목을 꼭 끌어안고 한참을 서 있었답니다."
+  },
+  "classic/jack/say-p2-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "얼룩이랑 헤어지기 싫은데…"
+  },
+  "classic/jack/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "장으로 가는 길에, 이상한 노인이 잭을 불러 세웠어요."
+  },
+  "classic/jack/seg-cast-p3-1.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"얘야, 그 소를 이 콩과 바꾸지 않겠니? 마법의 콩이란다.\""
+  },
+  "classic/jack/seg-tc-minjung-p3-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "노인의 손바닥에는 알록달록한 콩 다섯 알이 놓여 있었지요."
+  },
+  "classic/jack/seg-cast-p3-3.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"마법의 콩이요? 좋아요!\""
+  },
+  "classic/jack/seg-tc-minjung-p3-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 얼룩이를 건네고 콩을 꼭 쥐었답니다."
+  },
+  "classic/jack/say-p3-old_man.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이건 아주 특별한 마법의 콩이란다."
+  },
+  "classic/jack/say-p3-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "마법의 콩이요? 좋아요!"
+  },
+  "classic/jack/seg-cast-p4-0.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"소 한 마리를 콩 다섯 알과 바꿨다고?\""
+  },
+  "classic/jack/seg-tc-minjung-p4-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마는 너무 속상해서 콩을 창밖으로 휙 던져 버렸어요.\n그날 밤 잭은 저녁도 못 먹고 잠자리에 들었지요."
+  },
+  "classic/jack/seg-tc-minjung-p4-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'엄마 말이 맞아. 내가 바보 같았어…'"
+  },
+  "classic/jack/say-p4-mother.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "소를 콩이랑 바꾸다니, 이를 어째!"
+  },
+  "classic/jack/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이튿날 아침, 방 안이 이상하게 어둑어둑했어요.\n창밖을 내다본 잭은 입이 딱 벌어졌지요.\n밤사이 콩나무가 쑥쑥 자라 구름을 뚫고 하늘까지 뻗어 있었거든요!"
+  },
+  "classic/jack/seg-cast-p5-1.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"우아! 정말 마법의 콩이었어!\""
+  },
+  "classic/jack/say-p5-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "우아! 콩나무가 하늘까지 자랐어!"
+  },
+  "classic/jack/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 콩나무 줄기를 붙잡고 오르고, 또 올랐어요.\n구름 위에 올라서자 반짝이는 요정이 잭을 기다리고 있었지요.\n요정은 잭의 집안을 오래도록 지켜본 이였어요.\n요정은 저 멀리 커다란 성을 가리키며, 그 성의 거인이 오래전 잭의 아버지에게서 보물을 몽땅 빼앗아 간 이야기를 들려주었어요."
+  },
+  "classic/jack/seg-cast-p6-1.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'그게 우리 아버지 보물이었구나… 내가 꼭 되찾을 거야.'"
+  },
+  "classic/jack/seg-tc-minjung-p6-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 주먹을 꼭 쥐고 성을 향해 걸어갔답니다."
+  },
+  "classic/jack/say-p6-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "저 성까지 올라가 볼 거예요!"
+  },
+  "classic/jack/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어젯밤부터 아무것도 못 먹은 잭은 배에서 꼬르륵 소리가 났어요.\n잭은 용기를 내어 커다란 성문을 쿵쿵 두드렸지요.\n문을 연 사람은 산처럼 커다란 거인 아내였어요."
+  },
+  "classic/jack/seg-cast-p7-1.mp3": {
+    "voice": "tc-ina",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"얘야, 여기는 거인의 성이란다. 우리 남편이 오면 큰일 나!\""
+  },
+  "classic/jack/seg-cast-p7-2.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"죄송해요, 아주머니. 어젯밤부터 아무것도 못 먹었어요. 빵 한 조각만 먹고 갈게요.\""
+  },
+  "classic/jack/seg-tc-minjung-p7-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "마음 약한 거인 아내는 잭을 식탁 위로 올려 주고 빵을 떼어 주었답니다."
+  },
+  "classic/jack/say-p7-giant_wife.mp3": {
+    "voice": "tc-ina",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "얘야, 남편이 오면 큰일 나!"
+  },
+  "classic/jack/say-p7-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "빵 한 조각만 먹고 갈게요."
+  },
+  "classic/jack/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쿵! 쿵! 쿵! 성이 흔들렸어요.\n거인 아내는 잭을 얼른 커다란 화덕 속에 숨겼지요."
+  },
+  "classic/jack/seg-cast-p8-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"킁킁… 어디서 사람 냄새가 나는 것 같은데?\""
+  },
+  "classic/jack/seg-cast-p8-2.mp3": {
+    "voice": "tc-ina",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"사람은 무슨요. 아침에 구운 양고기 냄새겠지요.\""
+  },
+  "classic/jack/seg-tc-minjung-p8-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거인은 고개를 갸웃하더니 식탁에 털썩 앉았답니다."
+  },
+  "classic/jack/say-p8-giant.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "킁킁, 사람 냄새가 나는걸?"
+  },
+  "classic/jack/say-p8-giant_wife.mp3": {
+    "voice": "tc-ina",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쉿, 얼른 화덕에 숨으렴!"
+  },
+  "classic/jack/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "밥을 다 먹은 거인은 금화가 가득 든 자루들을 꺼내 왔어요."
+  },
+  "classic/jack/seg-cast-p9-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하냥, 두냥, 세냥…"
+  },
+  "classic/jack/seg-tc-minjung-p9-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "금화를 세던 거인은 이내 드르렁 코를 골며 잠이 들었지요.\n잭은 화덕에서 살금살금 나와 금화 자루 하나를 번쩍 들었어요.\n그리고 콩나무를 타고 쭉쭉 내려갔답니다."
+  },
+  "classic/jack/say-p9-giant.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하냥, 두냥, 세냥…"
+  },
+  "classic/jack/say-p9-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "금화 자루 하나만 살짝…"
+  },
+  "classic/jack/seg-cast-p10-0.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"엄마! 아버지의 금화를 되찾아 왔어요!\""
+  },
+  "classic/jack/seg-tc-minjung-p10-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마는 잭을 꼭 안고 기뻐했어요.\n금화 덕분에 두 사람은 한동안 배불리 지냈지요.\n하지만 금화는 언젠가 바닥이 나는 법.\n잭은 다시 콩나무를 타고 구름 위로 올라갔답니다."
+  },
+  "classic/jack/say-p10-mother.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "우리 잭, 정말 장하구나!"
+  },
+  "classic/jack/say-p10-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마, 금화를 되찾아 왔어요!"
+  },
+  "classic/jack/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "성문을 연 거인 아내는 잭을 보고 고개를 갸웃했어요."
+  },
+  "classic/jack/seg-cast-p11-1.mp3": {
+    "voice": "tc-ina",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"너, 지난번 그 아이 아니니? 그날 금화 자루 하나가 없어졌는데…\""
+  },
+  "classic/jack/seg-cast-p11-2.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그것 참 이상한 일이네요. 그 얘기라면 저도 뭔가 알 것 같은데… 배가 너무 고파서, 뭘 좀 먹어야 생각이 날 것 같아요.\""
+  },
+  "classic/jack/seg-tc-minjung-p11-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 이야기가 궁금해진 거인 아내는 잭에게 빵을 내주었어요.\n그리고 거인의 발소리가 들리자, 이번에도 잭을 얼른 화덕에 숨겨 주었지요."
+  },
+  "classic/jack/say-p11-giant_wife.mp3": {
+    "voice": "tc-ina",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "너, 지난번 그 아이 아니니?"
+  },
+  "classic/jack/say-p11-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "배가 고파서 또 왔어요."
+  },
+  "classic/jack/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쿵! 쿵! 쿵! 밥을 다 먹은 거인은 식탁에 암탉 한 마리를 올려놓았어요."
+  },
+  "classic/jack/seg-cast-p12-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"자, 황금알을 낳아 보아라!\""
+  },
+  "classic/jack/seg-tc-minjung-p12-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러자 암탉이 번쩍이는 황금알을 톡 낳았고, 거인은 흐뭇하게 바라보다가 이내 드르렁 코를 골며 잠이 들었지요.\n잭은 암탉을 꼭 안고 살금살금 콩나무를 타고 내려갔답니다."
+  },
+  "classic/jack/say-p12-giant.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "자, 황금알을 낳아 보아라!"
+  },
+  "classic/jack/seg-cast-p13-0.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"엄마, 이것 보세요! 황금알을 낳는 암탉이에요!\""
+  },
+  "classic/jack/seg-tc-minjung-p13-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "황금알 덕분에 잭과 엄마는 이제 부자가 되었어요.\n그래도 잭은 성에 남은 아버지의 보물이 자꾸 마음에 걸렸지요."
+  },
+  "classic/jack/seg-tc-minjung-p13-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'딱 한 번만 더 올라가자.'"
+  },
+  "classic/jack/seg-tc-minjung-p13-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 세 번째로 콩나무를 타고 올라갔답니다."
+  },
+  "classic/jack/say-p13-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "황금알을 낳는 암탉이에요!"
+  },
+  "classic/jack/seg-tc-minjung-p14-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이번에는 아주머니에게 들키지 않으려고 살그머니 부엌으로 숨어들었어요.\n그리고 커다란 구리 솥 안에 몸을 웅크렸지요.\n쿵! 쿵! 쿵!"
+  },
+  "classic/jack/seg-cast-p14-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"킁킁, 또 사람 냄새다! 이번엔 틀림없어!\""
+  },
+  "classic/jack/seg-cast-p14-2.mp3": {
+    "voice": "tc-ina",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"지난번 그 녀석이면 화덕에 있겠지요.\""
+  },
+  "classic/jack/seg-tc-minjung-p14-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거인 아내가 화덕을 열어 보았지만, 아무도 없었답니다."
+  },
+  "classic/jack/say-p14-giant.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "킁킁, 또 사람 냄새다!"
+  },
+  "classic/jack/seg-tc-minjung-p15-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거인은 황금 하프를 식탁에 올려놓고 소리쳤어요."
+  },
+  "classic/jack/seg-cast-p15-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"어디, 고운 노래를 불러 보아라!\""
+  },
+  "classic/jack/seg-tc-minjung-p15-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하프는 저 혼자 줄을 튕기며 고운 노래를 불렀지요.\n고운 노래에 거인은 스르르 눈이 감기더니, 이내 드르렁 코를 골았어요."
+  },
+  "classic/jack/seg-cast-p15-3.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'아버지의 하프야. 이번이 마지막이야!'"
+  },
+  "classic/jack/say-p15-giant.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어디, 고운 노래를 불러 보아라!"
+  },
+  "classic/jack/say-p15-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이번이 마지막이야!"
+  },
+  "classic/jack/seg-tc-minjung-p16-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 솥에서 나와 하프를 살며시 안아 들었어요.\n그런데 하프가 갑자기 주인님, 주인님! 하고 소리치는 게 아니겠어요?\n거인이 번쩍 눈을 떴어요."
+  },
+  "classic/jack/seg-cast-p16-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"이놈! 게 섰거라!\""
+  },
+  "classic/jack/seg-tc-minjung-p16-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 하프를 안고 문 쪽으로 쏜살같이 뛰었답니다."
+  },
+  "classic/jack/say-p16-giant.mp3": {
+    "voice": "tc-homun",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "이놈, 게 섰거라!"
+  },
+  "classic/jack/seg-tc-minjung-p17-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 콩나무를 타고 쭉쭉 미끄러져 내려갔어요.\n쿵! 쿵! 거인도 콩나무를 붙잡고 뒤따라 내려왔지요."
+  },
+  "classic/jack/seg-cast-p17-1.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"엄마! 도끼요, 도끼 좀 주세요!\""
+  },
+  "classic/jack/seg-tc-minjung-p17-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "땅에 내려선 잭은 엄마가 건넨 도끼로 콩나무를 힘껏 찍었어요.\n한 번, 두 번 — 우지끈! 콩나무가 기우뚱 쓰러지자, 붙잡고 있던 거인도 쿵! 하고 굴러떨어졌지요.\n거인은 저 멀리 산 너머로 데굴데굴 굴러가더니, 그 뒤로 두 번 다시 마을에 나타나지 않았답니다."
+  },
+  "classic/jack/say-p17-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마, 도끼 좀 주세요!"
+  },
+  "classic/jack/seg-tc-minjung-p18-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "황금알을 낳는 암탉과 노래하는 하프 덕분에\n잭과 엄마는 다시는 배를 곯지 않았어요."
+  },
+  "classic/jack/seg-cast-p18-1.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"이건 원래 아버지 것이었어요. 우리끼리만 쓰면 안 돼요.\""
+  },
+  "classic/jack/seg-tc-minjung-p18-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 마을 사람들과 빵과 노래를 나누었지요.\n쓰러진 콩나무 자리에서는 다음 해 봄, 조그만 새싹이 돋아났답니다."
+  },
+  "classic/jack/say-p18-jack.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "모두 함께 나눠 먹어요!"
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 어느 산골에, 팥 농사를 짓는 할머니가 살았어요.\n어느 날 밭을 매는데, 커다란 호랑이가 어흥! 하고 나타났지요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "할머니는 깜짝 놀랐지만 꾀를 냈어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p2-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 잠시 생각하더니"
+  },
+  "folk/patjuk-halmae-tiger/seg-cast-p2-3.mp3": {
+    "voice": "tc-hakchul",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"좋아, 그럼 그때 다시 찾아오지.\""
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p2-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하고 어슬렁어슬렁 돌아갔어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "가을이 되어 팥이 빨갛게 익었어요.\n할머니는 솥 가득 팥죽을 쒔지요.\n하지만 호랑이가 올 생각을 하니 눈물이 주르륵."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 부엌 아궁이에서 알밤이 톡 튀어나왔어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p4-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "알밤은 냠냠 팥죽을 먹고 아궁이 속에 쏙 숨었어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이번엔 물동이에서 자라가 엉금엉금 기어 나왔어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p5-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "자라는 팥죽을 먹고 물동이 속으로 풍덩 들어갔지요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아와 입을 모았어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쇠똥은 마당 한가운데, 멍석은 마루에,\n지게는 문 뒤에 살그머니 숨었답니다."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "깜깜한 밤, 드디어 호랑이가 어슬렁어슬렁 찾아왔어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p8-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 침을 꿀꺽 삼키며 부엌으로 갔지요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이가 아궁이를 들여다보는 순간 —"
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p9-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "뜨겁게 달궈진 알밤이 탁! 튀어 호랑이 눈을 때렸어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이가 물동이로 눈을 씻으러 달려갔어요.\n물에 손을 넣는 순간, 자라가 콱!"
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "놀란 호랑이가 뒷걸음질을 쳤어요.\n마당 한가운데 쇠똥을 밟고 주르륵 — 쿵!\n호랑이가 벌러덩 나자빠졌지요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 마루에 있던 멍석이 데굴데굴 굴러왔어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p12-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "멍석은 넘어진 호랑이를 순식간에 둘둘 말아 버렸답니다."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p13-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "문 뒤에서 지게가 성큼성큼 걸어 나왔어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p13-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "지게는 멍석에 싸인 호랑이를 번쩍 짊어졌지요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p14-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n물에 젖은 멍석이 스르르 풀렸어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p14-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 강 건너 산 너머로 걸음아 날 살려라 도망쳤답니다."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p15-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "할머니는 팥죽을 맛있게 만들어 줬어요.\n알밤도 자라도, 쇠똥도 멍석도 지게도 마당에 둘러앉았지요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p15-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그날 밤, 오두막에는 웃음소리가 오래오래 이어졌답니다."
+  },
+  "folk/tortoise/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요."
+  },
+  "folk/tortoise/seg-tc-minjung-p1-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 만나는 친구마다 자랑을 늘어놓았지요."
+  },
+  "folk/tortoise/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 숲에는 느릿느릿 거북이도 살고 있었어요.\n거북이는 걸음은 느렸지만,\n무슨 일이든 끝까지 해내는 성실한 친구였답니다."
+  },
+  "folk/tortoise/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 날, 토끼가 거북이를 보고 깔깔 웃었어요."
+  },
+  "folk/tortoise/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북이는 잠시 생각하더니 조용히 말했어요."
+  },
+  "folk/tortoise/seg-tc-minjung-p5-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요."
+  },
+  "folk/tortoise/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "부엉이 할아버지가 심판을 맡았어요."
+  },
+  "folk/tortoise/seg-tc-minjung-p6-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "외침과 함께 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요."
+  },
+  "folk/tortoise/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북이는 한 걸음, 또 한 걸음. 엉금엉금 천천히 걸었어요."
+  },
+  "folk/tortoise/seg-tc-minjung-p7-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거북이는 씩씩하게 앞만 보았답니다."
+  },
+  "folk/tortoise/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "한참을 달린 토끼가 뒤를 돌아보았어요.\n거북이는 점처럼 조그맣게 보였지요."
+  },
+  "folk/tortoise/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 시원한 나무 그늘에 벌렁 누웠어요.\n솔솔 부는 바람이 어찌나 시원한지,\n토끼는 금세 쿨쿨 잠이 들고 말았답니다."
+  },
+  "folk/tortoise/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그동안에도 거북이는 멈추지 않았어요.\n뜨거운 햇살 아래에서도, 가파른 오르막에서도,\n딱 한 번도 쉬지 않고 엉금엉금 걸어갔지요."
+  },
+  "folk/tortoise/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 깨우지 않고 묵묵히 언덕을 올라갔답니다."
+  },
+  "folk/tortoise/seg-tc-minjung-p12-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가 소스라치게 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!"
+  },
+  "folk/tortoise/seg-tc-minjung-p13-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 있는 힘껏 달렸지만 이미 늦었어요. 거북이가 한 발 먼저 큰 소나무를 짚었답니다."
+  },
+  "folk/tortoise/seg-tc-minjung-p13-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "부엉이 할아버지가 크게 외쳤어요."
+  },
+  "folk/tortoise/seg-tc-minjung-p14-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "숲속 친구들이 우레 같은 박수를 보냈어요."
+  },
+  "folk/tortoise/seg-tc-minjung-p14-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "느려도 포기하지 않는 마음이 결국 해낸답니다."
   }
 }

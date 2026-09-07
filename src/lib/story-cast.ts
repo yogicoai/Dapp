@@ -224,7 +224,19 @@ export function unmatchedLines(pageText: string, lines: CastLine[] = []): CastLi
   return lines.filter((l) => !inPage.has(normalize(l.text)));
 }
 
+/**
+ * 속마음인가 — 작은따옴표로 감싼 줄('아, 큰일 났다…').
+ *
+ * 우리 책의 약속은 "속마음은 나레이션이 읽는다"이다. 그런데 조각내기는 따옴표만 보고
+ * 대사로 묶어서, 배역이 없다고 굽기를 막았다(잭과 콩나무 4·13쪽). 실제로 구워진 소리는
+ * 나레이션이라 아무 문제가 없었는데 점검기만 헛짚은 것이다.
+ * 배역을 주고 싶으면 대사집(lines)에 적으면 되고, 그때는 그 배역이 읽는다.
+ */
+function innerThought(text: string): boolean {
+  return /^\s*['‘][^'’]*['’]\s*$/.test(text.trim());
+}
+
 /** 배역이 정해지지 않은 대사 — 굽기 전에 사람이 정해 줘야 한다. */
 export function unassignedDialogue(segments: PlannedSegment[]): PlannedSegment[] {
-  return segments.filter((s) => s.dialogue && s.who === NARRATION);
+  return segments.filter((s) => s.dialogue && s.who === NARRATION && !innerThought(s.text));
 }
