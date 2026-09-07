@@ -1819,9 +1819,9 @@
   },
   "folk/haedal/seg-cast-p6-1.mp3": {
     "voice": "tc-najin",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"이제… 줄 떡이 없구나.\""
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"이제 더 이상 줄 떡이 없어요…\""
   },
   "folk/haedal/seg-cast-p6-2.mp3": {
     "voice": "tc-homun",
@@ -1837,9 +1837,9 @@
   },
   "folk/haedal/say-p6-mother.mp3": {
     "voice": "tc-najin",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "이제… 줄 떡이 없구나."
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "이제 더 이상 줄 떡이 없어요…"
   },
   "folk/haedal/say-p6-tiger.mp3": {
     "voice": "tc-homun",
@@ -9246,7 +9246,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요."
+    "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요.\n어머니는 빈 광주리를 안고 흐느끼며 말했어요."
   },
   "folk/haedal/seg-tc-minjung-p6-3.mp3": {
     "voice": "tc-minjung",
@@ -9258,7 +9258,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 속일 수 있겠구나.'"
+    "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 잡아먹을 수 있겠구나.'"
   },
   "folk/haedal/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
