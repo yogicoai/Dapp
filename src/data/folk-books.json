@@ -3168,7 +3168,7 @@
       },
       {
         "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요.\n\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n\"앗, 안 돼!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p12.webp?v=5",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p12.webp?v=6",
         "lines": [
           {
             "text": "바보 호랑이! 도끼로 찍으면서 올라와야지!",
@@ -3185,10 +3185,10 @@
             "label": "sister",
             "line": "바보 호랑이! 도끼로 찍으면서 올라와야지!",
             "box": [
-              46,
-              507,
+              23,
+              524,
               347,
-              701
+              676
             ],
             "audio": "/folk/haedal/say-p12-sister.mp3"
           },
@@ -3196,10 +3196,10 @@
             "label": "brother",
             "line": "앗, 안 돼!",
             "box": [
-              23,
-              667,
+              0,
+              676,
               336,
-              861
+              853
             ],
             "audio": "/folk/haedal/say-p12-brother.mp3"
           }
@@ -6339,7 +6339,7 @@
       {
         "n": 5,
         "text": "견우의 소들은 비쩍 마르고, 밭에는 잡초만 무성해졌어요.\n직녀의 베틀에는 먼지가 뽀얗게 쌓였지요.\n하늘나라 사람들은 입을 곳도, 덮을 것도 없어 걱정이 늘었어요.\n\"직녀님이 비단을 안 짜시니 큰일이네…\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p5.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p5.webp?v=2",
         "lines": [
           {
             "text": "직녀님이 비단을 안 짜시니 큰일이네…",
