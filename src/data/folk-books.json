@@ -2657,7 +2657,7 @@
     "lang": "ko",
     "title": "해님 달님",
     "summary": "호랑이를 피해 하늘로 올라간 오누이가 해님과 달님이 된 이야기",
-    "narrator": "tc-jungsoon",
+    "narrator": "tc-minjung",
     "pages": [
       {
         "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다.",
@@ -2839,7 +2839,7 @@
         ]
       },
       {
-        "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요.\n\"이제… 줄 떡이 없구나.\"\n\"그럼 널 잡아먹어야겠다!\"\n그때 호랑이 눈에 어머니의 옷이 들어왔어요.\n'옳지! 이 옷을 입고 가면 그 집 아이들까지 속일 수 있겠구나.'\n호랑이는 어머니의 옷과 광주리만 빼앗고\n어머니를 깊은 굴에 가둬 버렸답니다.",
+        "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요.\n\"이제… 줄 떡이 없구나.\"\n\"그럼 널 잡아먹어야겠다!\"\n호랑이는 끝내 어머니를 잡아먹고 말았답니다.\n그러고는 어머니의 옷을 걸치고 빈 광주리를 둘러멨어요.\n'옳지! 이 옷을 입고 가면 그 집 아이들까지 속일 수 있겠구나.'",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p6.webp?v=5",
         "lines": [
           {
@@ -2848,11 +2848,8 @@
           },
           {
             "text": "그럼 널 잡아먹어야겠다!",
-            "who": "tiger"
-          },
-          {
-            "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 속일 수 있겠구나.'",
-            "who": "tiger"
+            "who": "tiger",
+            "feel": "angry"
           }
         ],
         "hotspots": [
@@ -2898,17 +2895,12 @@
           {
             "who": "narration",
             "src": "/folk/haedal/seg-p6-3.mp3",
-            "text": "\n그때 호랑이 눈에 어머니의 옷이 들어왔어요.\n"
-          },
-          {
-            "who": "tiger",
-            "src": "/folk/haedal/seg-cast-p6-4.mp3",
-            "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 속일 수 있겠구나.'"
+            "text": "\n호랑이는 끝내 어머니를 잡아먹고 말았답니다.\n그러고는 어머니의 옷을 걸치고 빈 광주리를 둘러멨어요.\n"
           },
           {
             "who": "narration",
-            "src": "/folk/haedal/seg-p6-5.mp3",
-            "text": "\n호랑이는 어머니의 옷과 광주리만 빼앗고\n어머니를 깊은 굴에 가둬 버렸답니다."
+            "src": "/folk/haedal/seg-p6-4.mp3",
+            "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 속일 수 있겠구나.'"
           }
         ]
       },
@@ -3385,7 +3377,7 @@
         ]
       },
       {
-        "text": "하늘나라 임금님이 오누이를 반겨 주었어요.\n\"착하고 지혜로운 아이들아, 소원이 있느냐?\"\n오누이는 망설임 없이 대답했지요.\n\"굴에 갇힌 우리 엄마를 구해 주세요!\"",
+        "text": "하늘나라 임금님이 오누이를 반겨 주었어요.\n\"착하고 지혜로운 아이들아, 소원이 있느냐?\"\n오누이는 망설임 없이 대답했지요.\n\"우리 엄마를 한 번만 만나게 해 주세요!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p17.webp?v=5",
         "hotspots": [
           {
@@ -3401,7 +3393,7 @@
           },
           {
             "label": "brother",
-            "line": "굴에 갇힌 우리 엄마를 구해 주세요!",
+            "line": "우리 엄마를 한 번만 만나게 해 주세요!",
             "box": [
               347,
               34,
@@ -3413,7 +3405,11 @@
         ],
         "lines": [
           {
-            "text": "굴에 갇힌 우리 엄마를 구해 주세요!",
+            "text": "착하고 지혜로운 아이들아, 소원이 있느냐?",
+            "who": "king"
+          },
+          {
+            "text": "우리 엄마를 한 번만 만나게 해 주세요!",
             "who": "brother"
           }
         ],
@@ -3436,12 +3432,12 @@
           {
             "who": "brother",
             "src": "/folk/haedal/seg-cast-p17-3.mp3",
-            "text": "\"굴에 갇힌 우리 엄마를 구해 주세요!\""
+            "text": "\"우리 엄마를 한 번만 만나게 해 주세요!\""
           }
         ]
       },
       {
-        "text": "임금님이 손을 들자 어머니가 사뿐히 내려왔어요.\n\"우리 아가들… 얼마나 무서웠니.\"\n셋은 오래오래 서로를 꼭 안았답니다.",
+        "text": "임금님이 손을 들자 구름 사이로 어머니가 사뿐히 내려왔어요.\n먼저 하늘에 와서 두 아이를 기다리고 있었던 거예요.\n\"우리 아가들… 얼마나 무서웠니.\"\n셋은 오래오래 서로를 꼭 안았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p18.webp?v=5",
         "hotspots": [
           {
@@ -3454,24 +3450,20 @@
               743
             ],
             "audio": "/folk/haedal/say-p18-mother.mp3"
-          },
+          }
+        ],
+        "lines": [
           {
-            "label": "sister",
-            "line": "엄마!",
-            "box": [
-              498,
-              194,
-              926,
-              473
-            ],
-            "audio": "/folk/haedal/say-p18-sister.mp3"
+            "text": "우리 아가들… 얼마나 무서웠니.",
+            "who": "mother",
+            "feel": "sad"
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/haedal/seg-p18-0.mp3",
-            "text": "임금님이 손을 들자 어머니가 사뿐히 내려왔어요.\n"
+            "text": "임금님이 손을 들자 구름 사이로 어머니가 사뿐히 내려왔어요.\n먼저 하늘에 와서 두 아이를 기다리고 있었던 거예요.\n"
           },
           {
             "who": "mother",
@@ -3583,12 +3575,12 @@
       }
     ],
     "voiceCast": {
-      "narration": "tc-jungsoon",
+      "narration": "tc-minjung",
       "brother": "tc-siwoo",
       "sister": "tc-arin",
       "mother": "tc-najin",
       "tiger": "tc-homun",
-      "king": "tc-kwonil"
+      "king": "tc-jongdae"
     },
     "roleOf": {
       "오빠": "brother",
@@ -3602,7 +3594,7 @@
     },
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p1.webp?v=5",
     "narrators": [
-      "tc-jungsoon"
+      "tc-minjung"
     ]
   },
   {

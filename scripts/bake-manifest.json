@@ -2124,7 +2124,7 @@
     "text": "하늘나라 임금님이 오누이를 반겨 주었어요."
   },
   "folk/haedal/seg-cast-p17-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"착하고 지혜로운 아이들아, 소원이 있느냐?\""
@@ -2139,10 +2139,10 @@
     "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"굴에 갇힌 우리 엄마를 구해 주세요!\""
+    "text": "\"우리 엄마를 한 번만 만나게 해 주세요!\""
   },
   "folk/haedal/say-p17-king.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "착하고 지혜로운 아이들아, 소원이 있느냐?"
@@ -2151,7 +2151,7 @@
     "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "굴에 갇힌 우리 엄마를 구해 주세요!"
+    "text": "우리 엄마를 한 번만 만나게 해 주세요!"
   },
   "folk/haedal/seg-tc-jungsoon-p18-0.mp3": {
     "voice": "tc-jungsoon",
@@ -2190,7 +2190,7 @@
     "text": "임금님이 말했어요."
   },
   "folk/haedal/seg-cast-p19-1.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"너희가 세상을 밝혀 주겠니?\""
@@ -2220,7 +2220,7 @@
     "text": "오빠는 웃으며 달님이 되어 주었답니다."
   },
   "folk/haedal/say-p19-king.mp3": {
-    "voice": "tc-kwonil",
+    "voice": "tc-jongdae",
     "emotion": "normal",
     "intensity": null,
     "text": "너희가 세상을 밝혀 주겠니?"
@@ -9193,5 +9193,209 @@
     "emotion": "normal",
     "intensity": null,
     "text": "네 덕분에 나는 만 년을 살겠구나!"
+  },
+  "folk/haedal/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다."
+  },
+  "folk/haedal/seg-tc-minjung-p2-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요."
+  },
+  "folk/haedal/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌지요."
+  },
+  "folk/haedal/seg-tc-minjung-p3-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "누이는 오빠 옆에 바짝 붙어 앉았답니다."
+  },
+  "folk/haedal/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "해가 뉘엿뉘엿 지는 고갯길,\n커다란 호랑이가 어흥! 하고 나타났어요."
+  },
+  "folk/haedal/seg-tc-minjung-p4-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어머니는 얼른 떡을 하나 던져 주고 달아났지요."
+  },
+  "folk/haedal/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그런데 다음 고개에서도 호랑이가 또 나타났어요."
+  },
+  "folk/haedal/seg-tc-minjung-p5-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그다음 고개에서도, 또 그다음 고개에서도.\n어머니의 떡 광주리는 점점 가벼워졌지요."
+  },
+  "folk/haedal/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요."
+  },
+  "folk/haedal/seg-tc-minjung-p6-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 끝내 어머니를 잡아먹고 말았답니다.\n그러고는 어머니의 옷을 걸치고 빈 광주리를 둘러멨어요."
+  },
+  "folk/haedal/seg-tc-minjung-p6-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'옳지! 이 옷을 입고 가면 그 집 아이들까지 속일 수 있겠구나.'"
+  },
+  "folk/haedal/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요.\n똑똑똑."
+  },
+  "folk/haedal/seg-tc-minjung-p7-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오누이는 고개를 갸웃했지요."
+  },
+  "folk/haedal/seg-tc-minjung-p8-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "문틈으로 쑥 들어온 손은 털이 북슬북슬!"
+  },
+  "folk/haedal/seg-tc-minjung-p8-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오누이는 서로 손을 꼭 잡았어요."
+  },
+  "folk/haedal/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쿵! 쿵! 문이 마구 흔들렸어요.\n오누이는 숨을 죽이고 뒷문으로 살금살금 빠져나갔지요.\n마당을 가로질러, 우물가 큰 나무 위로 쑥쑥.\n그때 뒤에서 문이 와장창 열리는 소리가 났답니다."
+  },
+  "folk/haedal/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "집 안을 다 뒤진 호랑이가 우물가로 어슬렁어슬렁 왔어요.\n우물 속에 비친 오누이를 보고 소리쳤지요."
+  },
+  "folk/haedal/seg-tc-minjung-p10-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 소리에 동생이 그만 웃음을 터뜨리고 말았지요."
+  },
+  "folk/haedal/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "웃음소리에 위를 올려다본 호랑이가 물었어요."
+  },
+  "folk/haedal/seg-tc-minjung-p11-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오빠가 꾀를 내어 대답했지요."
+  },
+  "folk/haedal/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요."
+  },
+  "folk/haedal/seg-tc-minjung-p13-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쿵! 쿵! 호랑이가 도끼로 나무를 찍으며 올라오기 시작했어요.\n나무가 휘청휘청 흔들렸지요.\n오누이는 더 올라갈 데가 없었어요."
+  },
+  "folk/haedal/seg-tc-minjung-p14-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오누이는 두 손을 꼭 모으고 하늘을 올려다보았어요."
+  },
+  "folk/haedal/seg-tc-minjung-p15-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n그걸 본 호랑이도 얼른 두 손을 모으고 빌었어요."
+  },
+  "folk/haedal/seg-tc-minjung-p16-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하늘에서 또 하나의 동아줄이 스르르 내려왔어요.\n그런데 이번 것은 여기저기 삭아 버린 썩은 동아줄이었지요.\n서두르던 호랑이는 썩은 동아줄인지도 모르고 덥석 잡았어요.\n반쯤 올라갔을 때 — 뚝!"
+  },
+  "folk/haedal/seg-tc-minjung-p16-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이가 떨어진 수숫대 밭은 그때부터 빨갛게 물들었대요."
+  },
+  "folk/haedal/seg-tc-minjung-p17-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하늘나라 임금님이 오누이를 반겨 주었어요."
+  },
+  "folk/haedal/seg-tc-minjung-p17-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오누이는 망설임 없이 대답했지요."
+  },
+  "folk/haedal/seg-tc-minjung-p18-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "임금님이 손을 들자 구름 사이로 어머니가 사뿐히 내려왔어요.\n먼저 하늘에 와서 두 아이를 기다리고 있었던 거예요."
+  },
+  "folk/haedal/seg-tc-minjung-p18-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "셋은 오래오래 서로를 꼭 안았답니다."
+  },
+  "folk/haedal/seg-tc-minjung-p19-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "임금님이 말했어요."
+  },
+  "folk/haedal/seg-tc-minjung-p19-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "처음엔 오빠가 해님, 동생이 달님이 되기로 했어요.\n그런데 동생이 소곤소곤."
+  },
+  "folk/haedal/seg-tc-minjung-p19-5.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오빠는 웃으며 달님이 되어 주었답니다."
+  },
+  "folk/haedal/seg-tc-minjung-p20-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 뒤로 낮에는 동생 해님이 세상을 따뜻하게 비추고,\n밤에는 오빠 달님이 어두운 길을 밝혀 주어요.\n어머니는 포근한 저녁노을이 되어 두 아이를 지켜본답니다.\n오늘 밤 달님을 보면 손을 흔들어 주세요. 오빠가 웃고 있을 거예요."
   }
 }

@@ -244,9 +244,9 @@ const BOOKS: Record<string, BookSpec> = {
   },
   "해님 달님": {
     dir: "haedal",
-    // 나레이션은 정순 — 앱에 있던 수아는 여자 어린이라 누이와 목소리가 겹쳤다.
-    narrators: ["tc-jungsoon"],
-    defaultNarrator: "tc-jungsoon",
+    // 나레이션 정순 → 민정 (2026-09-07 사장님 캐스팅). 임금님도 권일 → 종대.
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
     cast: [
       { name: "오빠" }, { name: "누이" }, { name: "동생" },
       { name: "어머니" }, { name: "호랑이" }, { name: "임금님" },
