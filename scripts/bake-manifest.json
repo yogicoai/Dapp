@@ -5121,13 +5121,13 @@
     "text": "차린 건 없지만 많이 먹으렴!"
   },
   "classic/twomice/seg-cast-p3-1.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 진수성찬이 가득한데!\n나랑 같이 가 보자!\""
   },
   "classic/twomice/say-p3-city.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 진수성찬이 가득한데!\n나랑 같이 가 보자!"
@@ -5139,7 +5139,7 @@
     "text": "\"우와아…\""
   },
   "classic/twomice/seg-cast-p4-3.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"따라와. 좋은 건 이제부터야.\""
@@ -5151,43 +5151,43 @@
     "text": "우와아…"
   },
   "classic/twomice/say-p4-city.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "따라와. 좋은 건 이제부터야."
   },
   "classic/twomice/seg-cast-p5-1.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"자, 마음껏 먹으렴!\""
   },
   "classic/twomice/say-p5-city.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "자, 마음껏 먹으렴!"
   },
   "classic/twomice/seg-cast-p6-1.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"숨어!\""
   },
   "classic/twomice/say-p6-city.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "숨어!"
   },
   "classic/twomice/seg-cast-p8-1.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"괜찮아, 늘 있는 일이야. 금방 익숙해져.\""
   },
   "classic/twomice/say-p8-city.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "괜찮아, 늘 있는 일이야. 금방 익숙해져."
@@ -5235,7 +5235,7 @@
     "text": "\"여름엔 시골로 산딸기 먹으러 오렴!\""
   },
   "classic/twomice/seg-cast-p12-2.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"겨울엔 도시 구경 시켜 줄게!\""
@@ -5247,7 +5247,7 @@
     "text": "여름엔 시골로 산딸기 먹으러 오렴!"
   },
   "classic/twomice/say-p12-city.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "겨울엔 도시 구경 시켜 줄게!"
