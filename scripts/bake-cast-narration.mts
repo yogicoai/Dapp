@@ -277,6 +277,13 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "임금님" }, { name: "복두장이" }],
   },
+  // 삼년 고개 — 사장님 캐스팅(2026-09-07): 나레이션 민정 · 할아버지 종대 · 할머니 주하 · 소년 시우.
+  "삼년 고개": {
+    dir: "samnyeon",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "할아버지" }, { name: "할머니" }, { name: "소년" }],
+  },
   // 견우와 직녀 — 사장님 캐스팅(2026-09-04): 나레이션 민정 · 견우 티안 · 직녀 나진 · 임금님 왕권.
   // 이름 없는 무리(사람들·동물들·까치와 까마귀)의 대사는 crowd 배역으로 나레이션 성우가 읽는다.
   "견우와 직녀": {

@@ -6961,5 +6961,439 @@
         ]
       }
     ]
+  },
+  {
+    "id": "folk-samnyeon",
+    "lang": "ko",
+    "title": "삼년 고개",
+    "summary": "넘어지면 삼 년밖에 못 산다는 고개에서 넘어진 할아버지를, 한 아이가 생각을 뒤집어 일으켜 세우는 이야기.",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p1.webp?v=1",
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "grandpa": "tc-jongdae",
+      "grandma": "tc-juha",
+      "boy": "tc-siwoo"
+    },
+    "roleOf": {
+      "할아버지": "grandpa",
+      "할머니": "grandma",
+      "소년": "boy",
+      "덕이": "boy"
+    },
+    "hidden": false,
+    "pages": [
+      {
+        "n": 1,
+        "text": "옛날 어느 마을 앞에 나지막한 고개가 하나 있었어요.\n사람들은 그 고개를 '삼년 고개'라고 불렀지요.\n저 고개에서 넘어지면 삼 년밖에 못 산다는 이야기가 오래오래 전해 왔거든요.\n그래서 마을 사람들은 그 고개를 넘을 때면 발끝까지 조심조심 걸었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p1.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p1-0.mp3",
+            "text": "옛날 어느 마을 앞에 나지막한 고개가 하나 있었어요.\n사람들은 그 고개를 "
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p1-1.mp3",
+            "text": "'삼년 고개'"
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p1-2.mp3",
+            "text": "라고 불렀지요.\n저 고개에서 넘어지면 삼 년밖에 못 산다는 이야기가 오래오래 전해 왔거든요.\n그래서 마을 사람들은 그 고개를 넘을 때면 발끝까지 조심조심 걸었답니다."
+          }
+        ]
+      },
+      {
+        "n": 2,
+        "text": "마을에는 마음씨 좋은 할아버지가 살았어요.\n어느 가을날, 할아버지는 장에서 산 감을 지게에 지고 삼년 고개를 넘고 있었지요.\n\"오늘도 무사히 넘어가야 할 텐데.\"\n할아버지는 한 걸음 한 걸음 조심스럽게 발을 내디뎠어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p2.webp?v=1",
+        "lines": [
+          {
+            "text": "오늘도 무사히 넘어가야 할 텐데.",
+            "who": "grandpa"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "grandpa",
+            "line": "오늘도 무사히 넘어가야 할 텐데.",
+            "box": [
+              93,
+              211,
+              764,
+              473
+            ],
+            "audio": "/folk/samnyeon/say-p2-grandpa.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p2-0.mp3",
+            "text": "마을에는 마음씨 좋은 할아버지가 살았어요.\n어느 가을날, 할아버지는 장에서 산 감을 지게에 지고 삼년 고개를 넘고 있었지요.\n"
+          },
+          {
+            "who": "grandpa",
+            "src": "/folk/samnyeon/seg-cast-p2-1.mp3",
+            "text": "\"오늘도 무사히 넘어가야 할 텐데.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p2-2.mp3",
+            "text": "\n할아버지는 한 걸음 한 걸음 조심스럽게 발을 내디뎠어요."
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "그런데 그만, 돌부리에 발이 걸리고 말았어요.\n할아버지는 데굴데굴 굴러 고갯길에 벌렁 넘어졌지요.\n지게에서 쏟아진 감들이 사방으로 또르르 굴러갔어요.\n\"아이고, 이를 어쩌나! 내가 삼년 고개에서 넘어졌구나!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p3.webp?v=1",
+        "lines": [
+          {
+            "text": "아이고, 이를 어쩌나! 내가 삼년 고개에서 넘어졌구나!",
+            "who": "grandpa",
+            "feel": "sad"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "grandpa",
+            "line": "아이고, 이를 어쩌나! 내가 삼년 고개에서 넘어졌구나!",
+            "box": [
+              231,
+              194,
+              694,
+              591
+            ],
+            "audio": "/folk/samnyeon/say-p3-grandpa.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p3-0.mp3",
+            "text": "그런데 그만, 돌부리에 발이 걸리고 말았어요.\n할아버지는 데굴데굴 굴러 고갯길에 벌렁 넘어졌지요.\n지게에서 쏟아진 감들이 사방으로 또르르 굴러갔어요.\n"
+          },
+          {
+            "who": "grandpa",
+            "src": "/folk/samnyeon/seg-cast-p3-1.mp3",
+            "text": "\"아이고, 이를 어쩌나! 내가 삼년 고개에서 넘어졌구나!\""
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "할아버지는 감도 줍지 못하고 터덜터덜 집으로 돌아왔어요.\n그러고는 이불을 뒤집어쓰고 자리에 누워 버렸지요.\n\"이제 나는 삼 년밖에 못 사는구나…\"\n할머니가 아무리 달래도 할아버지는 고개만 저었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p4.webp?v=1",
+        "lines": [
+          {
+            "text": "이제 나는 삼 년밖에 못 사는구나…",
+            "who": "grandpa",
+            "feel": "sad"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "grandpa",
+            "line": "이제 나는 삼 년밖에 못 사는구나…",
+            "box": [
+              336,
+              118,
+              579,
+              338
+            ],
+            "audio": "/folk/samnyeon/say-p4-grandpa.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p4-0.mp3",
+            "text": "할아버지는 감도 줍지 못하고 터덜터덜 집으로 돌아왔어요.\n그러고는 이불을 뒤집어쓰고 자리에 누워 버렸지요.\n"
+          },
+          {
+            "who": "grandpa",
+            "src": "/folk/samnyeon/seg-cast-p4-1.mp3",
+            "text": "\"이제 나는 삼 년밖에 못 사는구나…\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p4-2.mp3",
+            "text": "\n할머니가 아무리 달래도 할아버지는 고개만 저었답니다."
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "하루가 지나고 이틀이 지나도 할아버지는 일어나지 못했어요.\n밥도 잘 넘기지 못하고, 얼굴은 나날이 야위어 갔지요.\n할머니는 걱정이 되어 눈물이 다 났어요.\n\"영감, 제발 기운 좀 차려 보세요.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p5.webp?v=1",
+        "lines": [
+          {
+            "text": "영감, 제발 기운 좀 차려 보세요.",
+            "who": "grandma",
+            "feel": "sad"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "grandma",
+            "line": "영감, 제발 기운 좀 차려 보세요.",
+            "box": [
+              185,
+              591,
+              833,
+              870
+            ],
+            "audio": "/folk/samnyeon/say-p5-grandma.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p5-0.mp3",
+            "text": "하루가 지나고 이틀이 지나도 할아버지는 일어나지 못했어요.\n밥도 잘 넘기지 못하고, 얼굴은 나날이 야위어 갔지요.\n할머니는 걱정이 되어 눈물이 다 났어요.\n"
+          },
+          {
+            "who": "grandma",
+            "src": "/folk/samnyeon/seg-cast-p5-1.mp3",
+            "text": "\"영감, 제발 기운 좀 차려 보세요.\""
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "text": "그 소식을 들은 이웃집 덕이가 할아버지를 찾아왔어요.\n덕이는 마을에서 꾀 많기로 소문난 아이였지요.\n덕이는 누워 있는 할아버지 곁에 조용히 앉았어요.\n\"할아버지, 삼년 고개에서 넘어지셨다면서요?\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p6.webp?v=1",
+        "lines": [
+          {
+            "text": "할아버지, 삼년 고개에서 넘어지셨다면서요?",
+            "who": "boy"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "boy",
+            "line": "할아버지, 삼년 고개에서 넘어지셨다면서요?",
+            "box": [
+              220,
+              625,
+              741,
+              845
+            ],
+            "audio": "/folk/samnyeon/say-p6-boy.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p6-0.mp3",
+            "text": "그 소식을 들은 이웃집 덕이가 할아버지를 찾아왔어요.\n덕이는 마을에서 꾀 많기로 소문난 아이였지요.\n덕이는 누워 있는 할아버지 곁에 조용히 앉았어요.\n"
+          },
+          {
+            "who": "boy",
+            "src": "/folk/samnyeon/seg-cast-p6-1.mp3",
+            "text": "\"할아버지, 삼년 고개에서 넘어지셨다면서요?\""
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "할아버지는 힘없이 고개를 끄덕였어요.\n덕이는 잠시 생각하더니 눈을 반짝 빛냈지요.\n\"할아버지, 그럼 한 번 더 넘어지시면 삼 년을 더 사시겠네요?\"\n할아버지는 무슨 소리냐는 듯 덕이를 빤히 바라보았어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p7.webp?v=1",
+        "lines": [
+          {
+            "text": "할아버지, 그럼 한 번 더 넘어지시면 삼 년을 더 사시겠네요?",
+            "who": "boy"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "boy",
+            "line": "할아버지, 그럼 한 번 더 넘어지시면 삼 년을 더 사시겠네요?",
+            "box": [
+              231,
+              583,
+              810,
+              853
+            ],
+            "audio": "/folk/samnyeon/say-p7-boy.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p7-0.mp3",
+            "text": "할아버지는 힘없이 고개를 끄덕였어요.\n덕이는 잠시 생각하더니 눈을 반짝 빛냈지요.\n"
+          },
+          {
+            "who": "boy",
+            "src": "/folk/samnyeon/seg-cast-p7-1.mp3",
+            "text": "\"할아버지, 그럼 한 번 더 넘어지시면 삼 년을 더 사시겠네요?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p7-2.mp3",
+            "text": "\n할아버지는 무슨 소리냐는 듯 덕이를 빤히 바라보았어요."
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "덕이는 손가락을 하나씩 꼽으며 말을 이었어요.\n\"두 번 넘어지면 육 년, 세 번 넘어지면 구 년.\n열 번 넘어지면 삼십 년도 사실 수 있잖아요!\"\n할아버지는 눈이 점점 커지더니, 이불을 걷어차고 벌떡 일어났답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p8.webp?v=1",
+        "lines": [
+          {
+            "text": "두 번 넘어지면 육 년, 세 번 넘어지면 구 년.\n열 번 넘어지면 삼십 년도 사실 수 있잖아요!",
+            "who": "boy"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "boy",
+            "line": "두 번 넘어지면 육 년, 세 번 넘어지면 구 년.\n열 번 넘어지면 삼십 년도 사실 수 있잖아요!",
+            "box": [
+              255,
+              591,
+              741,
+              836
+            ],
+            "audio": "/folk/samnyeon/say-p8-boy.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p8-0.mp3",
+            "text": "덕이는 손가락을 하나씩 꼽으며 말을 이었어요.\n"
+          },
+          {
+            "who": "boy",
+            "src": "/folk/samnyeon/seg-cast-p8-1.mp3",
+            "text": "\"두 번 넘어지면 육 년, 세 번 넘어지면 구 년.\n열 번 넘어지면 삼십 년도 사실 수 있잖아요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p8-2.mp3",
+            "text": "\n할아버지는 눈이 점점 커지더니, 이불을 걷어차고 벌떡 일어났답니다."
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "할아버지는 그길로 삼년 고개로 달려갔어요.\n그러고는 고갯길에 벌렁 누워 데굴데굴 구르기 시작했지요.\n한 번, 두 번, 세 번, 네 번…\n\"어이쿠, 십 년! 어이쿠, 이십 년!\"\n할아버지의 웃음소리가 고개 너머까지 퍼져 나갔어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p9.webp?v=1",
+        "lines": [
+          {
+            "text": "어이쿠, 십 년! 어이쿠, 이십 년!",
+            "who": "grandpa",
+            "feel": "happy"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "grandpa",
+            "line": "어이쿠, 십 년! 어이쿠, 이십 년!",
+            "box": [
+              347,
+              253,
+              718,
+              608
+            ],
+            "audio": "/folk/samnyeon/say-p9-grandpa.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p9-0.mp3",
+            "text": "할아버지는 그길로 삼년 고개로 달려갔어요.\n그러고는 고갯길에 벌렁 누워 데굴데굴 구르기 시작했지요.\n한 번, 두 번, 세 번, 네 번…\n"
+          },
+          {
+            "who": "grandpa",
+            "src": "/folk/samnyeon/seg-cast-p9-1.mp3",
+            "text": "\"어이쿠, 십 년! 어이쿠, 이십 년!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p9-2.mp3",
+            "text": "\n할아버지의 웃음소리가 고개 너머까지 퍼져 나갔어요."
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "그 모습을 본 마을 사람들도 하나둘 고개로 모여들었어요.\n무섭기만 하던 고갯길이 웃음소리로 가득 찼지요.\n아이들도 어른들도 데굴데굴 구르며 깔깔 웃었답니다.\n그날부터 사람들은 그 고개를 '삼년 고개'가 아니라 '만년 고개'라고 불렀어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p10.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p10-0.mp3",
+            "text": "그 모습을 본 마을 사람들도 하나둘 고개로 모여들었어요.\n무섭기만 하던 고갯길이 웃음소리로 가득 찼지요.\n아이들도 어른들도 데굴데굴 구르며 깔깔 웃었답니다.\n그날부터 사람들은 그 고개를 "
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p10-1.mp3",
+            "text": "'삼년 고개'가 아니라 "
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p10-2.mp3",
+            "text": "'만년 고개'"
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p10-3.mp3",
+            "text": "라고 불렀어요."
+          }
+        ]
+      },
+      {
+        "n": 11,
+        "text": "할아버지는 다시 밥도 잘 드시고 기운을 되찾았어요.\n덕이를 만날 때마다 등을 토닥이며 고마워했지요.\n\"네 덕분에 나는 만 년을 살겠구나!\"\n무서운 일도 생각을 바꾸면 웃음이 된답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p11.webp?v=1",
+        "lines": [
+          {
+            "text": "네 덕분에 나는 만 년을 살겠구나!",
+            "who": "grandpa",
+            "feel": "happy"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "grandpa",
+            "line": "네 덕분에 나는 만 년을 살겠구나!",
+            "box": [
+              150,
+              507,
+              810,
+              760
+            ],
+            "audio": "/folk/samnyeon/say-p11-grandpa.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p11-0.mp3",
+            "text": "할아버지는 다시 밥도 잘 드시고 기운을 되찾았어요.\n덕이를 만날 때마다 등을 토닥이며 고마워했지요.\n"
+          },
+          {
+            "who": "grandpa",
+            "src": "/folk/samnyeon/seg-cast-p11-1.mp3",
+            "text": "\"네 덕분에 나는 만 년을 살겠구나!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/samnyeon/seg-p11-2.mp3",
+            "text": "\n무서운 일도 생각을 바꾸면 웃음이 된답니다."
+          }
+        ]
+      }
+    ]
   }
 ]
