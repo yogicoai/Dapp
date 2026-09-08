@@ -171,6 +171,28 @@ export function isIndoorPlace(name: string, description = ""): boolean | null {
   return null;
 }
 
+/**
+ * 차 안(달리는 차의 실내)인가.
+ *
+ * 왜 따로 보는가 — 자동차 실내는 그림이 가장 자주 무너지는 자리다. 좌석이 앞뒤로
+ * 겹쳐 보이는 좁은 공간이라, 사람을 여럿 넣으면 누가 어느 자리에 앉았는지가
+ * 뒤엉킨다. 실제로 엄마가 앞자리와 뒷자리 사이에 떠 있는 그림이 나왔다(사장님 확인).
+ * 다른 장소에는 없는 문제라, 이 장면에만 좌석 규칙을 더 붙이려고 가려낸다.
+ *
+ * '주차장·정비소'처럼 차가 나오지만 실내가 아닌 곳은 뺀다 — 그 장면의 문제는 다르다.
+ */
+// 앞 글자를 본다 — '기차·열차·전차·마차·유모차'는 자동차가 아니다.
+// 이걸 안 보면 "기차를 타고 할머니 댁에"가 차 안으로 잡혀 엉뚱한 쪽에 좌석 규칙이 붙는다.
+const IN_CAR_WORDS =
+  /(?<![기열전마모])(차 ?안|차안|자동차 ?안|승용차|택시 ?안|버스 ?안|카시트|뒷좌석|뒷자리|앞좌석|조수석|운전석|차창|차를 ?타|드라이브)/;
+const NOT_IN_CAR_WORDS = /(주차장|정비소|세차|차고|주유소)/;
+
+export function isInsideCar(name: string, description = ""): boolean {
+  const text = `${name} ${description}`;
+  if (NOT_IN_CAR_WORDS.test(text)) return false;
+  return IN_CAR_WORDS.test(text);
+}
+
 /** 목록에 있는 장소인가 — 있으면 계열 이름, 없으면 null. */
 export function knownPlaceFamily(name: string): string | null {
   return inferLocationFromText(name)?.family ?? null;

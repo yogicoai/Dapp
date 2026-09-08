@@ -380,13 +380,20 @@ function locationKeyFromImagePrompt(prompt: string): string {
 type LocationSheet = { key: string; name: string; description: string; image: string };
 
 /**
- * 장면(쪽) 수는 6으로 고정한다 (사장님 결정, 2026-08-28).
+ * 장면(쪽) 수는 5로 고정한다 (사장님 결정, 2026-09-08. 그전엔 6이었다).
  *
- * 예전엔 3~8 가운데 고르게 했다. 쪽수가 곧 그림 장수(=크레딧)라, 장수를 고르게
- * 두면 책마다 값이 달라져 크레딧을 셈하고 안내하기가 어려워진다. 한 권 = 6쪽 =
- * 늘 같은 값이면 부모도 우리도 헷갈리지 않는다. 길이 조절은 '넉넉하게' 스위치로 한다.
+ * 왜 고정인가 — 예전엔 3~8 가운데 고르게 했다. 쪽수가 곧 그림 장수(=크레딧)라,
+ * 장수를 고르게 두면 책마다 값이 달라져 크레딧을 셈하고 안내하기가 어려워진다.
+ * 한 권이 늘 같은 값이면 부모도 우리도 헷갈리지 않는다.
+ *
+ * 왜 6에서 5로 — 6장이면 그리다 실패하는 일이 잦았다(사장님). 그림 한 장은 표지도
+ * 캐릭터 시트도 아닌 본문 한 쪽이고, 한 권에 시트까지 더하면 요청이 8~9번 나간다.
+ * 장수를 줄이면 한 권을 만드는 동안 429(몰림)에 걸릴 자리가 그만큼 줄고, 한 장이
+ * 끝내 실패했을 때 책에서 비는 비율도 준다. 값도 한 권 12토큰에서 10토큰으로 내려간다.
+ *
+ * 길이 조절은 '넉넉하게' 스위치로 한다 — 쪽수가 아니라 쪽마다의 글 양이 는다.
  */
-const FIXED_PAGE_COUNT = 6;
+const FIXED_PAGE_COUNT = 5;
 
 /** 조사를 떼어 지칭어를 만든다 — "친구랑"→"친구", "동생이랑"→"동생". */
 function companionTerm(who: string): string {
@@ -1071,7 +1078,7 @@ export default function CreatePage() {
     loadParentVoices().then(setParentVoices).catch(() => {});
   }, []);
   // 이야기 길이 — 쪽수가 적어도 각 쪽을 더 길고 풍부하게 연출할지.
-  // 이야기 길이는 늘 '넉넉하게' — 고르는 칸은 없앴다(사장님 결정, 2026-08-28). 6쪽 고정과 짝.
+  // 이야기 길이는 늘 '넉넉하게' — 고르는 칸은 없앴다(사장님 결정, 2026-08-28). 쪽수 고정과 짝.
   const longerStory = true;
   // 성우를 고르면 미리 구운 샘플(진짜 그 성우 목소리, static mp3)을 들려준다 — 크레딧 0.
   const narratorPreviewRef = useRef<HTMLAudioElement | null>(null);
@@ -3039,7 +3046,7 @@ export default function CreatePage() {
 
               {/* 화면 비율 선택은 없앴다 — 항상 4:3 가로(screenShape 참고). */}
 
-              {/* 장면 수 — 6쪽 고정. 고르는 칸 대신 값만 알려 준다(쪽수 = 그림 장수 = 크레딧이라
+              {/* 장면 수 — 고정(FIXED_PAGE_COUNT). 고르는 칸 대신 값만 알려 준다(쪽수 = 그림 장수 = 크레딧이라
                   고르게 두면 책마다 값이 달라져 크레딧 안내가 어려웠다). */}
               <div>
                 <p className="mb-1.5 text-xs font-bold text-neutral-400">

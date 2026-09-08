@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
 import { pickLocationDetail } from "@/lib/scene-edit";
-import { isIndoorPlace, locationKeyOf } from "@/lib/story-quality";
+import { isIndoorPlace, isInsideCar, locationKeyOf } from "@/lib/story-quality";
 import {
   GeminiError,
   detectBlankCanvasBorder,
@@ -165,6 +165,18 @@ export async function POST(request: Request) {
   /** 실내(true)·실외(false)·모름(null) — 배경 지시와 품질검사가 이걸 본다. */
   const indoor = currentLocation ? isIndoorPlace(currentLocation.name, currentLocation.description) : null;
   /*
+   * 차 안인가 — 이 장면에만 좌석 규칙을 더 붙인다.
+   *
+   * 자동차 실내는 그림이 가장 자주 무너지는 자리다. 앞뒤 좌석이 겹쳐 보이는 좁은
+   * 공간이라 사람을 여럿 넣으면 누가 어느 자리에 앉았는지가 뒤엉킨다 —
+   * 실제로 엄마가 앞자리와 뒷자리 사이에 떠 있는 그림이 나왔다.
+   * 규칙은 늘 붙이지 않는다. 프롬프트가 길어질수록 각 문장이 묽어지기 때문에,
+   * 차 장면일 때만 붙여 그때 확실히 듣게 한다.
+   */
+  const inCar =
+    (currentLocation ? isInsideCar(currentLocation.name, currentLocation.description) : false) ||
+    isInsideCar(scene, storyText);
+  /*
    * 붙이는 그림의 순서 — 인물 시트 → 장소 시트 → 승인 쪽. 프롬프트의 각 문장이
    * "몇 번째 그림"을 말하는지 여기서 정한다. 셋이 다 있으면 '첨부된 그림'이라는 말만으로는
    * 어느 것인지 모델이 헷갈린다.
@@ -321,6 +333,29 @@ export async function POST(request: Request) {
       "Korean cars are LEFT-hand drive: the steering wheel and the driver are on the LEFT side of the car.",
       "Indoors at home Koreans do not wear shoes, and shoes are left at the entrance, not in the middle of the living room. Inside a car, shoes stay ON.",
     ].join("\n"),
+    /*
+     * 차 안 좌석 — 이 장면에서만 붙인다.
+     *
+     * 자동차 실내는 앞뒤 좌석이 겹쳐 보이는 좁은 공간이라, 사람을 여럿 넣으면
+     * 누가 어느 자리에 앉았는지가 그림에서 뒤엉킨다. 실제로 엄마가 앞자리와
+     * 뒷자리 사이에 떠 있는 그림이 나왔다(사장님 확인, 2026-09-08).
+     *
+     * 그래서 두 갈래로 막는다.
+     *  ① 자리를 말로 못 박는다 — 운전석은 왼쪽 앞, 아이는 뒷자리, 한 자리에 한 사람.
+     *  ② **구도를 아이 쪽으로 당긴다** — 어른은 앞좌석 등받이 너머로 뒤통수나 어깨만
+     *     보이게 한다. 차 안 전체를 한 화면에 담으려 하지 않으면 애초에 뒤엉킬 자리가
+     *     없어진다. 그림책이 실제로 쓰는 방법이고, '엄마 아빠와 함께'라는 글도 살아 있다.
+     */
+    inCar
+      ? [
+          "CAR INTERIOR — this scene happens inside a moving car. Car cabins are the easiest place to draw wrong, so follow these exactly.",
+          "SEATS: a Korean car is LEFT-hand drive. The driver sits in the FRONT-LEFT seat with both hands on the steering wheel. The front passenger sits FRONT-RIGHT. Children sit in the REAR seats, never in front.",
+          "ONE PERSON PER SEAT, and every person sits properly ON a seat — never between two seats, never floating in the aisle, never half in the front row and half in the back. Draw the seat backs and headrests clearly so it is obvious which row each person is in.",
+          "FRAME IT CLOSE ON THE CHILD. Put the camera inside the cabin beside the child in the rear seat, close enough that the child fills much of the picture. Adults appear only partly — the back of a head, a shoulder, or a face turned in profile past the front seat back. Do not attempt a wide view of the whole cabin with every passenger fully visible.",
+          "Everyone wears a seat belt, clearly visible across chest and lap. The child faces FORWARD, seated, belt fastened. Never kneeling, standing, turned around, or leaning out of a window.",
+          "The window shows the passing scenery outside; do not draw a second car interior, a mirrored cabin, or a doubled row of seats.",
+        ].join("\n")
+      : "",
     "Do NOT add traditional Korean architecture that the scene did not ask for — no tiled-roof pavilion, no hanok, no thatched roof, no wooden gate, no paper-screen door, no stone jar terrace. If the location line does not name such a building, none appears in the picture.",
     /*
      * 물건 잠금 — 장소와 같은 이유로 넣는다. 다만 요구는 반대다: 장소는 '더 구체적으로',
