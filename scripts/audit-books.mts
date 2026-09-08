@@ -25,7 +25,7 @@ import { restAfter } from "../src/lib/reading-rest.ts";
 
 type Seg = { who: string; src: string; text: string };
 type Hot = { label: string; line: string; say?: string; box: number[]; audio?: string };
-type Page = { text: string; image?: string; video?: string; segments?: Seg[]; hotspots?: Hot[]; lines?: { text: string; who: string; say?: string }[] };
+type Page = { text: string; image?: string; video?: string; unspoken?: string[]; segments?: Seg[]; hotspots?: Hot[]; lines?: { text: string; who: string; say?: string }[] };
 type Book = {
   id: string; title: string; hidden?: boolean; pages: Page[];
   narrator?: string; narrators?: string[];
@@ -115,7 +115,21 @@ for (const b of books) {
         const spokenAs = new Set(
           (pg.lines ?? []).filter((l) => l.say?.trim()).map((l) => l.say!.trim()),
         );
-        if (rec && rec.text.trim() !== seg.text.trim() && !spokenAs.has(rec.text.trim())) {
+        /*
+         * '안 읽는 말'(unspoken)이 있는 쪽은 화면 글과 읽은 글이 일부러 다르다
+         * (해님 달님 7쪽 "똑똑똑." — 합성이 뭉개져서 글에만 남기고 소리에선 뺐다).
+         * 그 말을 빼고 견줘야 진짜 어긋남만 걸린다.
+         */
+        const withoutUnspoken = (pg.unspoken ?? [])
+          .reduce((t, w) => (w ? t.split(w).join(" ") : t), seg.text)
+          .replace(/\s+/g, " ")
+          .trim();
+        if (
+          rec &&
+          rec.text.trim() !== seg.text.trim() &&
+          rec.text.trim() !== withoutUnspoken &&
+          !spokenAs.has(rec.text.trim())
+        ) {
           add(b.title, n, "글과 소리 어긋남",
             `${path.basename(src)}\n      원고: ${seg.text.trim().slice(0, 60)}\n      소리: ${rec.text.trim().slice(0, 60)}`);
         }

@@ -47,6 +47,15 @@ export type CastLine = {
    * (2026-09-04 사장님: 금도끼 6쪽 "하나뿐인 쇠도끼를 빠뜨렸습니다"가 너무 촐싹거린다 → 0.9)
    */
   tempo?: number;
+  /**
+   * 이 줄만의 연기 세기(0.3~0.65). 없으면 배역 세기(ROLE_INTENSITY)를 따른다.
+   *
+   * 배역 단위로 올리면 그 배역의 **다른 줄까지** 같이 세진다. 해님 달님 누이가
+   * 그랬다 — 8쪽 "호, 호랑이다!"를 겁에 질리게 하려고 누이 세기를 올렸더니
+   * 19쪽 "나 깜깜한 밤은 무서워"까지 세져서, 조용히 털어놓아야 할 말이 울부짖음이 됐다.
+   * 그래서 줄 단위로 준다.
+   */
+  intensity?: number;
 };
 
 export type PlannedSegment = {
@@ -61,6 +70,8 @@ export type PlannedSegment = {
   feel?: string;
   /** 이 줄만의 말 빠르기(대사집의 tempo). 없으면 배역 속도(voiceTempo)를 따른다. */
   tempo?: number;
+  /** 이 줄만의 연기 세기(대사집의 intensity). 없으면 배역 세기를 따른다. */
+  intensity?: number;
 };
 
 /** 대사집과 견주기 위해 따옴표·공백·문장부호를 털어낸다. */
@@ -106,7 +117,7 @@ export function planPageVoices(input: {
     }
     const told = script.get(normalize(segment.text));
     if (told) {
-      planned.push({ who: told.who, text: segment.text, dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo });
+      planned.push({ who: told.who, text: segment.text, dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo, intensity: told.intensity });
       return;
     }
     const name = guessed[i];
@@ -141,7 +152,7 @@ function splitByScript(text: string, script: Script, fallback: string): PlannedS
     hit = true;
     const start = match.index ?? 0;
     if (start > at) push({ who: fallback, text: text.slice(at, start), dialogue: true });
-    push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo });
+    push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo, intensity: told.intensity });
     at = start + match[0].length;
   }
   if (!hit) return [whole];
@@ -199,7 +210,7 @@ function rescueShortLines(text: string, script: Script): PlannedSegment[] {
     if (!told) continue;
     const start = match.index ?? 0;
     if (start > at) out.push({ who: NARRATION, text: text.slice(at, start), dialogue: false });
-    out.push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo });
+    out.push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo, intensity: told.intensity });
     at = start + match[0].length;
   }
   if (out.length === 0) return [{ who: NARRATION, text, dialogue: false }];

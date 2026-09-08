@@ -442,6 +442,22 @@ let skipped = 0;
  * 같은 문장에 두 번 과금되지 않는다. 다시 구워야 할 때는 지우지 않고 **덮어쓴다**:
  * 지웠다가 합성이 실패하면 멀쩡하던 소리까지 사라진다.
  */
+/**
+ * 읽을 글에서 '소리로는 읽지 않을 말'을 뺀다.
+ *
+ * 글에서 지우는 게 아니라 **합성에 보낼 때만** 뺀다. 화면 글과 조각의 text 는
+ * 그대로라 글자 색칠이 어긋나지 않는다. 빼고 나서 남는 게 없으면 빈 문자열을 준다.
+ */
+function unspokenOut(text: string, list?: string[]): string {
+  if (!list?.length) return text.trim();
+  let out = text;
+  for (const word of list) {
+    if (!word) continue;
+    out = out.split(word).join(" ");
+  }
+  return out.replace(/\s+/g, " ").trim();
+}
+
 async function bake(
   file: string,
   text: string,
@@ -451,6 +467,8 @@ async function bake(
   tempo?: number,
   /** 어느 배역의 줄인가 — 배역마다 연기 세기가 다르다(ROLE_INTENSITY). 지문이면 비운다. */
   role?: string,
+  /** 이 줄만의 연기 세기(대사집·말풍선의 intensity). 있으면 배역 세기보다 앞선다. */
+  lineIntensity?: number,
 ) {
   const table = voiceTable();
   const v = table[voice];
@@ -459,7 +477,9 @@ async function bake(
   emotion = usableEmotion(v, emotion);
   if (emotion !== wanted) console.log(`  (감정 바꿈) ${voice}는 ${wanted}를 못 냅니다 → ${emotion}`);
   const out = path.join(DIR, file);
-  const strength = intensityOf(role ?? "");
+  // 줄에 적힌 세기가 배역 세기를 이긴다 — 한 줄만 세게 하려고 배역 전체를 올리면
+  // 그 배역의 다른 줄까지 같이 세진다(해님 달님 누이 19쪽이 그렇게 망가질 뻔했다).
+  const strength = Math.min(0.65, Math.max(0.3, lineIntensity ?? intensityOf(role ?? "")));
   const recipe: Recipe = {
     voice,
     emotion,
@@ -578,9 +598,25 @@ for (const [i, page] of book.pages.entries()) {
       continue;
     }
     if (seg.who === NARRATION) {
+      /*
+       * 화면에는 두고 소리로는 읽지 않을 말(page.unspoken).
+       *
+       * 소리 흉내 중에는 합성이 유독 뭉개지는 것이 있다 — 해님 달님 7쪽의 "똑똑똑."
+       * 이 그랬다(사장님이 듣고 잡아 주셨다). 글에서 빼면 그림책의 맛이 사라지고,
+       * 그대로 두면 소리가 깨진다. 그래서 **읽을 때만** 뺀다.
+       * 조각의 text 는 그대로 두므로 글자 색칠은 화면 글과 계속 맞는다.
+       */
+      const spoken = unspokenOut(text, page.unspoken);
+      if (!spoken) {
+        // 통째로 안 읽는 조각 — 소리를 만들지 않고 글만 앞 조각에 붙인다.
+        const prev = segments[segments.length - 1];
+        if (prev) prev.text += seg.text;
+        else console.log(`  (건너뜀) ${n}쪽 첫 조각이 통째로 안 읽는 말입니다`);
+        continue;
+      }
       // 지문은 고를 수 있는 성우마다 한 벌씩. 뷰어가 seg- 뒤에 성우를 끼워 넣는다.
       for (const voice of BAKED_NARRATORS) {
-        await bake(`seg-${voice}-p${n}-${j}.mp3`, text, voice, "normal");
+        await bake(`seg-${voice}-p${n}-${j}.mp3`, spoken, voice, "normal");
       }
       segments.push({ who: NARRATION, src: `${URL_DIR}/seg-p${n}-${j}.mp3`, text: seg.text });
     } else {
@@ -597,6 +633,7 @@ for (const [i, page] of book.pages.entries()) {
         !ONLY_CHANGED,
         seg.tempo ?? book.voiceTempo?.[seg.who],
         seg.who,
+        seg.intensity,
       );
       segments.push({ who: seg.who, src: `${URL_DIR}/seg-cast-p${n}-${j}.mp3`, text: seg.text });
     }
@@ -615,7 +652,7 @@ for (const [i, page] of book.pages.entries()) {
     // 말풍선도 읽기용 표기를 따로 줄 수 있다(말풍선 글은 h.line 그대로 보인다).
     const spoken = typeof h.say === "string" && h.say.trim() ? h.say.trim() : line;
     // 말풍선도 대사집처럼 연기를 못 박을 수 있다(h.feel) — 자동 판정이 틀리는 줄용.
-    await bake(file, spoken, voice, h.feel ?? emotionOf(line), !ONLY_CHANGED, book.voiceTempo?.[h.label], h.label);
+    await bake(file, spoken, voice, h.feel ?? emotionOf(line), !ONLY_CHANGED, book.voiceTempo?.[h.label], h.label, h.intensity);
   }
 }
 

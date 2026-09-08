@@ -2920,6 +2920,9 @@
             "who": "brother"
           }
         ],
+        "unspoken": [
+          "똑똑똑."
+        ],
         "segments": [
           {
             "who": "narration",
@@ -2967,7 +2970,9 @@
               926,
               946
             ],
-            "audio": "/folk/haedal/say-p8-sister.mp3"
+            "audio": "/folk/haedal/say-p8-sister.mp3",
+            "feel": "angry",
+            "intensity": 0.55
           }
         ],
         "lines": [
@@ -2977,7 +2982,9 @@
           },
           {
             "text": "호, 호랑이다!",
-            "who": "sister"
+            "who": "sister",
+            "feel": "angry",
+            "intensity": 0.55
           }
         ],
         "segments": [

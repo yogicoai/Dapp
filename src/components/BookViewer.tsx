@@ -343,6 +343,21 @@ export function BookViewer({ book }: { book: Book }) {
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영
   useEffect(() => setBgmOn(loadBgmOn()), []);
 
+  /*
+   * 배속 단추 — 지금은 감춰 둔다(사장님 판단, 2026-09-08).
+   *
+   * 왜: 브라우저가 속도를 바꾸는 방식은 소리를 잘라 이어 붙이는 '시간 늘리기'다.
+   * 음높이는 지켜지지만 사람 목소리에는 금속성 울림이 남는다. 1.5·2배속에서
+   * 특히 심하고, 하필 사람들이 손대는 자리가 거기다. 동화 낭독은 성우 속도가
+   * 곧 연출이고, 이제 쉼(reading-rest)까지 그 속도에 맞춰 설계해 두었다.
+   * 네 살 아이가 만지는 화면에서 단추 하나를 더는 것도 이득이다.
+   *
+   * 지우지 않고 감춘다 — 값·저장·적용 코드는 그대로라 여기만 true 로 되돌리면 살아난다.
+   * 감출 때는 저장된 값을 무시하고 1배속으로 간다. 안 그러면 예전에 2배속으로
+   * 맞춰 둔 사람이 바꿀 방법 없이 2배속에 갇힌다.
+   */
+  const SPEED_CONTROL_ENABLED = false;
+
   // 재생 속도 — 뷰어 안에서 바로 바꾼다(유튜브식). 설정값을 초기값으로.
   // rateRef는 readPage가 매번 최신 속도를 읽게 하고, 재생 중이면 즉시 반영한다.
   const [rate, setRate] = useState(DEFAULT_VOICE_RATE);
@@ -366,11 +381,12 @@ export function BookViewer({ book }: { book: Book }) {
     ? "opacity-0 pointer-events-none transition-opacity duration-500"
     : "opacity-100 transition-opacity duration-300";
   useEffect(() => {
-    const r = loadVoiceRate();
+    // 단추를 감춘 동안에는 저장된 값을 쓰지 않는다 — 바꿀 방법이 없으니 갇힌다.
+    const r = SPEED_CONTROL_ENABLED ? loadVoiceRate() : DEFAULT_VOICE_RATE;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 저장된 속도를 마운트 후 반영
     setRate(r);
     rateRef.current = r;
-  }, []);
+  }, [SPEED_CONTROL_ENABLED]);
   // 이야기 끝남 — 마지막 쪽 낭독이 끝나면 "다시 듣기"를 띄운다.
   const [ended, setEnded] = useState(false);
 
@@ -2349,7 +2365,8 @@ export function BookViewer({ book }: { book: Book }) {
         </button>
       </div>
 
-      {/* 재생 속도 (유튜브식) — 왼쪽 아래. 눌러서 배속을 고른다. 재생 중이면 즉시 반영. */}
+      {/* 재생 속도 (유튜브식) — 왼쪽 아래. 지금은 감춰 두었다(위 SPEED_CONTROL_ENABLED). */}
+      {SPEED_CONTROL_ENABLED && (
       <div className={`absolute bottom-4 left-[3.75rem] z-10 sm:bottom-5 sm:left-5 ${chromeCls}`}>
         {speedMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
@@ -2384,6 +2401,7 @@ export function BookViewer({ book }: { book: Book }) {
           <span>{rate}<span className="sm:hidden">×</span><span className="hidden sm:inline">배속</span></span>
         </button>
       </div>
+      )}
 
       {/* 손잡이 — 단추가 감춰졌을 때만 뜬다. 누르면 다시 나오고, 그 뒤로는
           읽기가 끝날 때까지 그대로 있는다(읽는 내내 깜빡이면 더 거슬린다). */}
