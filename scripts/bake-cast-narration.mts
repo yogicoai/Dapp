@@ -116,6 +116,19 @@ const BOOKS: Record<string, BookSpec> = {
       { name: "거인" }, { name: "거인 아내" },
     ],
   },
+  // 헨젤과 그레텔 — 사장님 캐스팅(2026-09-08): 나레이션 민정 · 헨젤 시우 · 그레텔 햄쭈 ·
+  // 마녀 가희 · 아버지 호선. 마녀는 8쪽에서 다정한 척, 9쪽부터 본색이라 폭이 넓어야 한다.
+  "헨젤과 그레텔": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "hansel",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [
+      { name: "헨젤" }, { name: "그레텔" }, { name: "마녀" },
+      { name: "할머니" }, { name: "아버지" },
+    ],
+  },
   // 개구리 왕자 — 사장님 캐스팅(2026-09-07): 나레이션 민정 · 공주 아린 · 개구리 호선 · 임금님 종대.
   "개구리 왕자": {
     data: "src/data/classic-books.json",

@@ -6998,5 +6998,359 @@
         ]
       }
     ]
+  },
+  {
+    "id": "classic-hansel",
+    "lang": "ko",
+    "title": "헨젤과 그레텔",
+    "summary": "빵 부스러기로 길을 표시한 남매가 과자 집에서 지혜로 빠져나와 아버지 품으로 돌아오는 이야기",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p7.webp?v=1",
+    "pages": [
+      {
+        "text": "깊은 숲 가장자리에 가난한 나무꾼이 두 아이와 살았어요.\n오빠 헨젤은 야무졌고, 동생 그레텔은 겁이 많지만 마음이 단단했지요.\n형편이 어려워 빵 한 조각도 나누어 먹었지만, 세 식구는 늘 함께였답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p1.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p1-0.mp3",
+            "text": "깊은 숲 가장자리에 가난한 나무꾼이 두 아이와 살았어요.\n오빠 헨젤은 야무졌고, 동생 그레텔은 겁이 많지만 마음이 단단했지요.\n형편이 어려워 빵 한 조각도 나누어 먹었지만, 세 식구는 늘 함께였답니다."
+          }
+        ]
+      },
+      {
+        "text": "그해 겨울은 유난히 길고 배가 고팠어요.\n저녁상에 오른 것은 딱딱한 빵 한 조각뿐이었지요.\n아버지가 힘겹게 말했어요.\n\"내일 아침 숲으로 가자. 먹을 것을 찾아보자꾸나.\"\n헨젤은 제 몫의 빵을 다 먹지 않고, 절반을 슬며시 주머니에 넣었어요.\n숲은 넓고, 길은 쉽게 잃는 법이니까요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p2.webp?v=1",
+        "lines": [
+          {
+            "text": "내일 아침 숲으로 가자. 먹을 것을 찾아보자꾸나.",
+            "who": "father"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p2-0.mp3",
+            "text": "그해 겨울은 유난히 길고 배가 고팠어요.\n저녁상에 오른 것은 딱딱한 빵 한 조각뿐이었지요.\n아버지가 힘겹게 말했어요.\n"
+          },
+          {
+            "who": "father",
+            "src": "/classic/hansel/seg-cast-p2-1.mp3",
+            "text": "\"내일 아침 숲으로 가자. 먹을 것을 찾아보자꾸나.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p2-2.mp3",
+            "text": "\n헨젤은 제 몫의 빵을 다 먹지 않고, 절반을 슬며시 주머니에 넣었어요.\n숲은 넓고, 길은 쉽게 잃는 법이니까요."
+          }
+        ]
+      },
+      {
+        "text": "이튿날 아침, 숲으로 들어가는 동안 헨젤은 빵을 조금씩 뜯어 떨어뜨렸어요.\n그레텔이 작은 소리로 물었지요.\n\"오빠, 그건 왜 떨어뜨려?\"\n\"돌아갈 때 길을 찾으려고. 걱정 마, 내가 다 표시해 뒀어.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p3.webp?v=1",
+        "lines": [
+          {
+            "text": "오빠, 그건 왜 떨어뜨려?",
+            "who": "gretel"
+          },
+          {
+            "text": "돌아갈 때 길을 찾으려고. 걱정 마, 내가 다 표시해 뒀어.",
+            "who": "hansel"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p3-0.mp3",
+            "text": "이튿날 아침, 숲으로 들어가는 동안 헨젤은 빵을 조금씩 뜯어 떨어뜨렸어요.\n그레텔이 작은 소리로 물었지요.\n"
+          },
+          {
+            "who": "gretel",
+            "src": "/classic/hansel/seg-cast-p3-1.mp3",
+            "text": "\"오빠, 그건 왜 떨어뜨려?\"\n"
+          },
+          {
+            "who": "hansel",
+            "src": "/classic/hansel/seg-cast-p3-2.mp3",
+            "text": "\"돌아갈 때 길을 찾으려고. 걱정 마, 내가 다 표시해 뒀어.\""
+          }
+        ]
+      },
+      {
+        "text": "숲 깊은 곳에 이르자 아버지가 걸음을 멈추고 힘겹게 말했어요.\n\"미안하다. 먹을 것을 구해 올 동안 여기서 잠깐만 기다리렴.\"\n해가 기울도록 기다려도 아버지는 돌아오지 않았어요.\n아무리 불러도 대답이 없고, 나무들만 우뚝우뚝 서 있었지요.\n\"오빠… 아버지가 우리를 잊어버린 걸까?\"\n그레텔의 눈에 눈물이 그렁그렁 맺혔어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p4.webp?v=1",
+        "lines": [
+          {
+            "text": "미안하다. 먹을 것을 구해 올 동안 여기서 잠깐만 기다리렴.",
+            "who": "father"
+          },
+          {
+            "text": "오빠… 아버지가 우리를 잊어버린 걸까?",
+            "who": "gretel"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p4-0.mp3",
+            "text": "숲 깊은 곳에 이르자 아버지가 걸음을 멈추고 힘겹게 말했어요.\n"
+          },
+          {
+            "who": "father",
+            "src": "/classic/hansel/seg-cast-p4-1.mp3",
+            "text": "\"미안하다. 먹을 것을 구해 올 동안 여기서 잠깐만 기다리렴.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p4-2.mp3",
+            "text": "\n해가 기울도록 기다려도 아버지는 돌아오지 않았어요.\n아무리 불러도 대답이 없고, 나무들만 우뚝우뚝 서 있었지요.\n"
+          },
+          {
+            "who": "gretel",
+            "src": "/classic/hansel/seg-cast-p4-3.mp3",
+            "text": "\"오빠… 아버지가 우리를 잊어버린 걸까?\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p4-4.mp3",
+            "text": "\n그레텔의 눈에 눈물이 그렁그렁 맺혔어요."
+          }
+        ]
+      },
+      {
+        "text": "헨젤은 동생의 손을 꼭 잡고 말했어요.\n\"울지 마. 내가 빵으로 길을 표시해 뒀어.\"\n그런데 돌아선 길에는 빵 부스러기가 하나도 없었어요.\n배고픈 새들이 포르르 날아와 몽땅 쪼아 먹어 버린 거예요.\n돌아갈 길이 한꺼번에 사라지고 말았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p5.webp?v=1",
+        "lines": [
+          {
+            "text": "울지 마. 내가 빵으로 길을 표시해 뒀어.",
+            "who": "hansel"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p5-0.mp3",
+            "text": "헨젤은 동생의 손을 꼭 잡고 말했어요.\n"
+          },
+          {
+            "who": "hansel",
+            "src": "/classic/hansel/seg-cast-p5-1.mp3",
+            "text": "\"울지 마. 내가 빵으로 길을 표시해 뒀어.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p5-2.mp3",
+            "text": "\n그런데 돌아선 길에는 빵 부스러기가 하나도 없었어요.\n배고픈 새들이 포르르 날아와 몽땅 쪼아 먹어 버린 거예요.\n돌아갈 길이 한꺼번에 사라지고 말았답니다."
+          }
+        ]
+      },
+      {
+        "text": "밤이 오고 하얀 안개가 나무 사이로 밀려왔어요.\n남매는 밤새도록 숲을 헤매고 또 헤맸지요.\n배가 고파 다리가 후들거렸지만\n두 아이는 끝까지 서로의 손을 놓지 않았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p6.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p6-0.mp3",
+            "text": "밤이 오고 하얀 안개가 나무 사이로 밀려왔어요.\n남매는 밤새도록 숲을 헤매고 또 헤맸지요.\n배가 고파 다리가 후들거렸지만\n두 아이는 끝까지 서로의 손을 놓지 않았답니다."
+          }
+        ]
+      },
+      {
+        "text": "날이 밝을 무렵, 남매는 나무 사이에서 이상한 집을 발견했어요.\n지붕은 초콜릿, 창틀은 사탕, 담장은 알록달록한 과자로 되어 있었지요.\n밤새 아무것도 먹지 못한 두 아이는 눈이 휘둥그레졌어요.\n\"오빠, 이 집… 먹을 수 있는 거야?\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p7.webp?v=1",
+        "lines": [
+          {
+            "text": "오빠, 이 집… 먹을 수 있는 거야?",
+            "who": "gretel"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p7-0.mp3",
+            "text": "날이 밝을 무렵, 남매는 나무 사이에서 이상한 집을 발견했어요.\n지붕은 초콜릿, 창틀은 사탕, 담장은 알록달록한 과자로 되어 있었지요.\n밤새 아무것도 먹지 못한 두 아이는 눈이 휘둥그레졌어요.\n"
+          },
+          {
+            "who": "gretel",
+            "src": "/classic/hansel/seg-cast-p7-1.mp3",
+            "text": "\"오빠, 이 집… 먹을 수 있는 거야?\""
+          }
+        ]
+      },
+      {
+        "text": "아이들이 과자를 한 조각 떼어 먹는 순간, 문이 삐걱 열렸어요.\n허리가 굽은 할머니가 지팡이를 짚고 나와 다정하게 웃었지요.\n\"배가 고팠구나. 어서 들어오렴. 따뜻한 수프가 있단다.\"\n그 웃음 뒤에 무엇이 숨어 있는지 아이들은 알지 못했답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p8.webp?v=1",
+        "lines": [
+          {
+            "text": "배가 고팠구나. 어서 들어오렴. 따뜻한 수프가 있단다.",
+            "who": "witch"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p8-0.mp3",
+            "text": "아이들이 과자를 한 조각 떼어 먹는 순간, 문이 삐걱 열렸어요.\n허리가 굽은 할머니가 지팡이를 짚고 나와 다정하게 웃었지요.\n"
+          },
+          {
+            "who": "witch",
+            "src": "/classic/hansel/seg-cast-p8-1.mp3",
+            "text": "\"배가 고팠구나. 어서 들어오렴. 따뜻한 수프가 있단다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p8-2.mp3",
+            "text": "\n그 웃음 뒤에 무엇이 숨어 있는지 아이들은 알지 못했답니다."
+          }
+        ]
+      },
+      {
+        "text": "할머니는 사실 아이들을 잡아먹는 마녀였어요.\n마녀는 헨젤을 작은 방에 넣고 문을 잠가 버렸지요.\n그레텔에게는 날마다 부엌일을 시켰답니다.\n\"오빠를 살찌워야 하니 너는 부지런히 일해라!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p9.webp?v=1",
+        "lines": [
+          {
+            "text": "오빠를 살찌워야 하니 너는 부지런히 일해라!",
+            "who": "witch"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p9-0.mp3",
+            "text": "할머니는 사실 아이들을 잡아먹는 마녀였어요.\n마녀는 헨젤을 작은 방에 넣고 문을 잠가 버렸지요.\n그레텔에게는 날마다 부엌일을 시켰답니다.\n"
+          },
+          {
+            "who": "witch",
+            "src": "/classic/hansel/seg-cast-p9-1.mp3",
+            "text": "\"오빠를 살찌워야 하니 너는 부지런히 일해라!\""
+          }
+        ]
+      },
+      {
+        "text": "마녀는 눈이 몹시 나빠 코앞에 있는 것도 흐릿하게만 보였어요.\n그것을 알아챈 헨젤은 손가락 대신 가느다란 나뭇가지를 내밀었지요.\n\"이것 보세요. 아직도 이렇게 말랐답니다.\"\n마녀는 몇 날 며칠이 지나도 고개를 갸웃할 뿐이었어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p10.webp?v=1",
+        "lines": [
+          {
+            "text": "이것 보세요. 아직도 이렇게 말랐답니다.",
+            "who": "hansel"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p10-0.mp3",
+            "text": "마녀는 눈이 몹시 나빠 코앞에 있는 것도 흐릿하게만 보였어요.\n그것을 알아챈 헨젤은 손가락 대신 가느다란 나뭇가지를 내밀었지요.\n"
+          },
+          {
+            "who": "hansel",
+            "src": "/classic/hansel/seg-cast-p10-1.mp3",
+            "text": "\"이것 보세요. 아직도 이렇게 말랐답니다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p10-2.mp3",
+            "text": "\n마녀는 몇 날 며칠이 지나도 고개를 갸웃할 뿐이었어요."
+          }
+        ]
+      },
+      {
+        "text": "참다못한 마녀가 화덕에 불을 지피며 그레텔을 불렀어요.\n\"안이 뜨거운지 네가 먼저 들여다보아라.\"\n그레텔은 겁이 났지만 침착하게 대답했지요.\n\"저는 키가 작아서 안이 안 보여요. 할머니가 보여 주세요.\"\n마녀가 허리를 굽혀 화덕 앞으로 몸을 기울였어요.\n바로 그 옆에는 캄캄한 광이 문을 활짝 열어 둔 채였답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p11.webp?v=1",
+        "lines": [
+          {
+            "text": "안이 뜨거운지 네가 먼저 들여다보아라.",
+            "who": "witch"
+          },
+          {
+            "text": "저는 키가 작아서 안이 안 보여요. 할머니가 보여 주세요.",
+            "who": "gretel"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p11-0.mp3",
+            "text": "참다못한 마녀가 화덕에 불을 지피며 그레텔을 불렀어요.\n"
+          },
+          {
+            "who": "witch",
+            "src": "/classic/hansel/seg-cast-p11-1.mp3",
+            "text": "\"안이 뜨거운지 네가 먼저 들여다보아라.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p11-2.mp3",
+            "text": "\n그레텔은 겁이 났지만 침착하게 대답했지요.\n"
+          },
+          {
+            "who": "gretel",
+            "src": "/classic/hansel/seg-cast-p11-3.mp3",
+            "text": "\"저는 키가 작아서 안이 안 보여요. 할머니가 보여 주세요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p11-4.mp3",
+            "text": "\n마녀가 허리를 굽혀 화덕 앞으로 몸을 기울였어요.\n바로 그 옆에는 캄캄한 광이 문을 활짝 열어 둔 채였답니다."
+          }
+        ]
+      },
+      {
+        "text": "그레텔은 있는 힘을 다해 마녀를 광 안으로 밀어 넣고 빗장을 철컥 걸었어요.\n그러고는 한달음에 달려가 오빠의 방문을 열어 주었지요.\n\"오빠, 어서 나와! 우리 집으로 가자!\"\n남매는 손을 꼭 잡고 과자 집을 빠져나왔답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p12.webp?v=1",
+        "lines": [
+          {
+            "text": "오빠, 어서 나와! 우리 집으로 가자!",
+            "who": "gretel"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p12-0.mp3",
+            "text": "그레텔은 있는 힘을 다해 마녀를 광 안으로 밀어 넣고 빗장을 철컥 걸었어요.\n그러고는 한달음에 달려가 오빠의 방문을 열어 주었지요.\n"
+          },
+          {
+            "who": "gretel",
+            "src": "/classic/hansel/seg-cast-p12-1.mp3",
+            "text": "\"오빠, 어서 나와! 우리 집으로 가자!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p12-2.mp3",
+            "text": "\n남매는 손을 꼭 잡고 과자 집을 빠져나왔답니다."
+          }
+        ]
+      },
+      {
+        "text": "남매는 해가 뜨는 쪽으로 걷고 또 걸었어요.\n숲을 빠져나오자 저만치서 아버지가 아이들을 찾아 헤매고 있었지요.\n세 식구는 서로를 껴안고 한참을 울었어요.\n그날 밤 식탁에는 빵 한 조각뿐이었지만, 세상에서 제일 맛있었답니다.\n이제 아버지는 두 번 다시 아이들의 손을 놓지 않았어요.\n창밖에는 여전히 깜깜한 숲이 서 있었지만,\n세 식구가 함께 있는 방 안은 조금도 무섭지 않았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/hansel/p13.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/hansel/seg-p13-0.mp3",
+            "text": "남매는 해가 뜨는 쪽으로 걷고 또 걸었어요.\n숲을 빠져나오자 저만치서 아버지가 아이들을 찾아 헤매고 있었지요.\n세 식구는 서로를 껴안고 한참을 울었어요.\n그날 밤 식탁에는 빵 한 조각뿐이었지만, 세상에서 제일 맛있었답니다.\n이제 아버지는 두 번 다시 아이들의 손을 놓지 않았어요.\n창밖에는 여전히 깜깜한 숲이 서 있었지만,\n세 식구가 함께 있는 방 안은 조금도 무섭지 않았답니다."
+          }
+        ]
+      }
+    ],
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "hansel": "tc-siwoo",
+      "gretel": "tc-hamchu",
+      "witch": "tc-gahee",
+      "father": "tc-hosun"
+    },
+    "roleOf": {
+      "헨젤": "hansel",
+      "오빠": "hansel",
+      "그레텔": "gretel",
+      "동생": "gretel",
+      "마녀": "witch",
+      "할머니": "witch",
+      "아버지": "father"
+    }
   }
 ]
