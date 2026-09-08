@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { attributeSpeakers, segmentTones, speakerTone } from "./speaker-tone.ts";
+import { attributeSpeakers, segmentTones, speakerTone, splitDialogue } from "./speaker-tone.ts";
 
 /*
  * splitDialogue와 같은 방식으로 쪼갠 모양을 손으로 만든다.
@@ -149,5 +149,53 @@ describe("낱말 한가운데를 배역으로 읽지 않는다", () => {
       { name: "하온", description: "네 살 남자아이\n엄마 | 어깨까지 오는 검은 머리\n아주머니 | 동네 어른" },
     ];
     assert.equal(speakerTone("하온", cast).label, "아이");
+  });
+});
+
+describe("splitDialogue — 이름을 감싼 작은따옴표는 문장을 자르지 않는다", () => {
+  it("한 문장 안의 '삼년 고개'가 조각을 만들지 않는다", () => {
+    // 사장님이 듣고 잡아 주신 자리 — 조각 넷으로 갈라져 문장 한가운데가 끊겼다.
+    const text = "그날부터 사람들은 그 고개를 '삼년 고개'가 아니라 '만년 고개'라고 불렀어요.";
+    const segs = splitDialogue(text);
+    assert.equal(segs.length, 1);
+    assert.equal(segs[0].text, text);
+    assert.equal(segs[0].dialogue, false);
+  });
+
+  it("이어 붙이면 원문과 정확히 같다 — 글자 색칠이 글자 수로 돌기 때문", () => {
+    const text =
+      "사람들은 그 고개를 '삼년 고개'라고 불렀지요.\n저 고개에서 넘어지면 삼 년밖에 못 산다지요.";
+    assert.equal(splitDialogue(text).map((s) => s.text).join(""), text);
+  });
+
+  it("진짜 대사는 그대로 갈라진다", () => {
+    const segs = splitDialogue(
+      ['할아버지가 말했어요.', '"이제 어쩌면 좋으냐!"', "덕이가 웃었지요."].join("\n"),
+    );
+    assert.equal(segs.length, 3);
+    assert.deepEqual(segs.map((s) => s.dialogue), [false, true, false]);
+  });
+
+  it("문장으로 끝나는 작은따옴표(속마음)는 여전히 대사다", () => {
+    const segs = splitDialogue(
+      ["호랑이는 생각했어요.", "'옳지! 이 옷을 입고 가면 되겠구나.'"].join("\n"),
+    );
+    assert.equal(segs.length, 2);
+    assert.deepEqual(segs.map((s) => s.dialogue), [false, true]);
+  });
+
+  it("이름 인용이 옆의 진짜 대사를 삼키지 않는다", () => {
+    // 지문끼리 붙이는 규칙이 대사까지 끌어들이면 배역 목소리가 통째로 사라진다.
+    const text = [
+      "사람들은 그 고개를 '삼년 고개'라고 불렀지요.",
+      '"조심해서 걸어라!"',
+      "어머니가 당부했어요.",
+    ].join("\n");
+    const segs = splitDialogue(text);
+    assert.deepEqual(
+      segs.map((s) => s.dialogue),
+      [false, true, false],
+    );
+    assert.equal(segs.map((s) => s.text).join(""), text);
   });
 });

@@ -33,6 +33,14 @@ const SPEAKER_CHANGE = 220;
 /** 쪽이 넘어갈 때 — 그림이 바뀌므로 조각 사이보다 넉넉히 쉰다. */
 const PAGE_TURN = 900;
 
+/**
+ * 문장이 아직 안 끝났을 때(줄이 안 바뀜) — 거의 쉬지 않는다.
+ *
+ * 따옴표 때문에 문장 한가운데가 잘리는 자리가 있다("안 돼!" 하고 외쳤어요).
+ * 거기서 마침표만큼 쉬면 한 문장이 두 문장처럼 들린다.
+ */
+const SAME_LINE = 90;
+
 /** 아무리 빨리 읽어도 이보다 짧게는 안 쉰다(ms). */
 const MIN = 120;
 /** 아무리 느리게 읽어도 이보다 길게는 안 쉰다(ms) — 끊긴 것처럼 들리면 안 된다. */
@@ -60,6 +68,18 @@ function tailOf(text: string): string {
  *             빨리 읽는데 쉼만 그대로면 뚝뚝 끊긴다.
  */
 export function restAfter(prev: RestSegment, next: RestSegment | null, rate = 1): number {
+  const speakerChanged = Boolean(next) && next!.who !== prev.who;
+
+  /*
+   * 줄이 바뀌었나 — 원고에서 줄바꿈은 곧 '문장이 끝났다'는 표시다.
+   * 줄바꿈은 앞 조각 끝에 붙기도 하고 다음 조각 앞에 붙기도 해서 둘 다 본다.
+   */
+  if (next && !/\n\s*$/.test(prev.text) && !/^\s*\n/.test(next.text)) {
+    // 한 문장이 이어지는 중이다. 여기서 길게 쉬면 두 문장처럼 들린다.
+    const ms = SAME_LINE + (speakerChanged ? 60 : 0);
+    return Math.round(Math.min(MAX, Math.max(MIN, ms / (rate > 0 ? rate : 1))));
+  }
+
   const tail = tailOf(prev.text);
   let ms: number;
   if (/[…‥]$|\.\.\.$/.test(tail)) ms = TRAIL;
@@ -70,7 +90,7 @@ export function restAfter(prev: RestSegment, next: RestSegment | null, rate = 1)
   if (!next) {
     // 쪽의 마지막 조각 — 그림이 바뀌는 만큼 넉넉히. 끝맺음 규칙보다 이쪽이 세다.
     ms = Math.max(ms, PAGE_TURN);
-  } else if (next.who !== prev.who) {
+  } else if (speakerChanged) {
     ms += SPEAKER_CHANGE;
   }
 

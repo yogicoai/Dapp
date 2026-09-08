@@ -1,0 +1,713 @@
+{
+  "folk-heungbu": {
+    "title": "흥부와 놀부",
+    "pages": [
+      {
+        "hotspots": [
+          {
+            "label": "nolbu",
+            "box": [
+              575,
+              119,
+              842,
+              245
+            ],
+            "audio": "/folk/heungbu/say-p1-nolbu.mp3",
+            "line": "흥! 나는 이 마을 제일가는 부자, 놀부다!"
+          },
+          {
+            "label": "heungbu",
+            "box": [
+              612,
+              570,
+              847,
+              712
+            ],
+            "audio": "/folk/heungbu/say-p1-heungbu.mp3",
+            "line": "우리 집은 가난하지만, 웃음만은 부자란다!"
+          }
+        ],
+        "page": 1
+      },
+      {
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              276,
+              363,
+              836,
+              638
+            ],
+            "audio": "/folk/heungbu/say-p2-heungbu.mp3",
+            "line": "옛날 옛적에… 오늘은 어떤 이야기를 들려줄까?"
+          }
+        ],
+        "page": 2
+      },
+      {
+        "hotspots": [
+          {
+            "label": "swallow",
+            "box": [
+              145,
+              354,
+              310,
+              504
+            ],
+            "audio": "/folk/heungbu/say-p3-swallow.mp3",
+            "line": "짹짹! 처마 밑에 우리 집을 지어야지!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              138,
+              534,
+              274,
+              672
+            ],
+            "audio": "/folk/heungbu/say-p3-swallow.mp3",
+            "line": "짹짹! 처마 밑에 우리 집을 지어야지!"
+          },
+          {
+            "label": "heungbu",
+            "box": [
+              413,
+              219,
+              826,
+              452
+            ],
+            "audio": "/folk/heungbu/say-p3-heungbu.mp3",
+            "line": "어서 오렴, 제비들아! 우리 집에서 함께 지내자."
+          }
+        ],
+        "page": 3
+      },
+      {
+        "hotspots": [
+          {
+            "label": "swallow",
+            "box": [
+              290,
+              680,
+              366,
+              759
+            ],
+            "audio": "/folk/heungbu/say-p4-swallow.mp3",
+            "line": "짹짹짹! 나는 아기 제비야. 안녕!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              287,
+              752,
+              365,
+              836
+            ],
+            "audio": "/folk/heungbu/say-p4-swallow.mp3",
+            "line": "짹짹짹! 나는 아기 제비야. 안녕!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              282,
+              829,
+              360,
+              903
+            ],
+            "audio": "/folk/heungbu/say-p4-swallow.mp3",
+            "line": "짹짹짹! 나는 아기 제비야. 안녕!"
+          }
+        ],
+        "page": 4
+      },
+      {
+        "hotspots": [
+          {
+            "label": "swallow",
+            "box": [
+              531,
+              270,
+              796,
+              520
+            ],
+            "audio": "/folk/heungbu/say-p5-swallow.mp3",
+            "line": "짹짹! 도와주세요! 다리를 다쳤어요…"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              261,
+              686,
+              366,
+              769
+            ],
+            "audio": "/folk/heungbu/say-p5-swallow.mp3",
+            "line": "짹짹! 도와주세요! 다리를 다쳤어요…"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              263,
+              759,
+              363,
+              856
+            ],
+            "audio": "/folk/heungbu/say-p5-swallow.mp3",
+            "line": "짹짹! 도와주세요! 다리를 다쳤어요…"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              251,
+              846,
+              356,
+              929
+            ],
+            "audio": "/folk/heungbu/say-p5-swallow.mp3",
+            "line": "짹짹! 도와주세요! 다리를 다쳤어요…"
+          }
+        ],
+        "page": 5
+      },
+      {
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              81,
+              381,
+              903,
+              715
+            ],
+            "audio": "/folk/heungbu/say-p6-heungbu.mp3",
+            "line": "가엾은 아기 제비야, 곧 나을 거야. 걱정 마렴."
+          },
+          {
+            "label": "swallow",
+            "box": [
+              542,
+              461,
+              711,
+              568
+            ],
+            "audio": "/folk/heungbu/say-p6-swallow.mp3",
+            "line": "고마워요, 흥부 아저씨. 이제 하나도 안 아파요!"
+          }
+        ],
+        "page": 6
+      },
+      {
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              503,
+              353,
+              827,
+              521
+            ],
+            "audio": "/folk/heungbu/say-p7-heungbu.mp3",
+            "line": "잘 가렴, 제비야! 내년 봄에 또 만나자!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              122,
+              357,
+              344,
+              592
+            ],
+            "audio": "/folk/heungbu/say-p7-swallow.mp3",
+            "line": "짹짹! 이 은혜는 꼭 갚을게요!"
+          }
+        ],
+        "page": 7
+      },
+      {
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              304,
+              65,
+              808,
+              373
+            ],
+            "audio": "/folk/heungbu/say-p8-heungbu.mp3",
+            "line": "아니, 이게 웬 박씨일까? 고맙다, 제비야!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              203,
+              389,
+              432,
+              549
+            ],
+            "audio": "/folk/heungbu/say-p8-swallow.mp3",
+            "line": "은혜 갚는 박씨예요! 얼른 심어 보세요!"
+          }
+        ],
+        "page": 8
+      },
+      {
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              534,
+              203,
+              851,
+              396
+            ],
+            "audio": "/folk/heungbu/say-p9-heungbu.mp3",
+            "line": "우아, 박이 집채만 하게 열렸구나!"
+          }
+        ],
+        "page": 9
+      },
+      {
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              353,
+              190,
+              831,
+              388
+            ],
+            "audio": "/folk/heungbu/say-p10-heungbu.mp3",
+            "line": "슬근슬근 톱질하세! 영차영차!"
+          }
+        ],
+        "page": 10
+      },
+      {
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              394,
+              304,
+              836,
+              557
+            ],
+            "audio": "/folk/heungbu/say-p11-heungbu.mp3",
+            "line": "보물이 쏟아진다! 제비야, 정말 고맙다!"
+          }
+        ],
+        "page": 11
+      },
+      {
+        "hotspots": [
+          {
+            "label": "nolbu",
+            "box": [
+              282,
+              137,
+              911,
+              452
+            ],
+            "audio": "/folk/heungbu/say-p12-nolbu.mp3",
+            "line": "흥부가 부자가 됐다고? 배가 아파 못 살겠네!"
+          },
+          {
+            "label": "swallow",
+            "box": [
+              617,
+              376,
+              915,
+              545
+            ],
+            "audio": "/folk/heungbu/say-p12-swallow.mp3",
+            "line": "짹… 왜 일부러 아프게 하는 거예요…"
+          }
+        ],
+        "page": 12
+      },
+      {
+        "hotspots": [
+          {
+            "label": "nolbu",
+            "box": [
+              76,
+              237,
+              829,
+              631
+            ],
+            "audio": "/folk/heungbu/say-p13-nolbu.mp3",
+            "line": "옳지! 박씨야, 어서 자라라! 나도 보물 부자다!"
+          }
+        ],
+        "page": 13
+      },
+      {
+        "hotspots": [
+          {
+            "label": "nolbu",
+            "box": [
+              359,
+              107,
+              821,
+              452
+            ],
+            "audio": "/folk/heungbu/say-p14-nolbu.mp3",
+            "line": "으악! 이게 뭐야! 도깨비잖아!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              175,
+              680,
+              311,
+              794
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              204,
+              796,
+              362,
+              944
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              275,
+              606,
+              423,
+              699
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              330,
+              681,
+              508,
+              804
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              334,
+              532,
+              496,
+              617
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              433,
+              542,
+              545,
+              658
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              498,
+              678,
+              618,
+              778
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              415,
+              771,
+              578,
+              897
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              344,
+              796,
+              440,
+              885
+            ],
+            "audio": "/folk/heungbu/say-p14-dokkaebi.mp3",
+            "line": "우르르 쿵쿵! 심술쟁이 놀부를 혼내 주자!"
+          }
+        ],
+        "page": 14
+      },
+      {
+        "hotspots": [
+          {
+            "label": "nolbu",
+            "box": [
+              435,
+              118,
+              844,
+              329
+            ],
+            "audio": "/folk/heungbu/say-p15-nolbu.mp3",
+            "line": "엉엉… 내가 잘못했어. 욕심부려서 미안해…"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              366,
+              451,
+              626,
+              574
+            ],
+            "audio": "/folk/heungbu/say-p15-dokkaebi.mp3",
+            "line": "욕심쟁이는 벌을 받는 법이지!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              531,
+              506,
+              751,
+              604
+            ],
+            "audio": "/folk/heungbu/say-p15-dokkaebi.mp3",
+            "line": "욕심쟁이는 벌을 받는 법이지!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              508,
+              679,
+              582,
+              754
+            ],
+            "audio": "/folk/heungbu/say-p15-dokkaebi.mp3",
+            "line": "욕심쟁이는 벌을 받는 법이지!"
+          },
+          {
+            "label": "dokkaebi",
+            "box": [
+              541,
+              663,
+              845,
+              804
+            ],
+            "audio": "/folk/heungbu/say-p15-dokkaebi.mp3",
+            "line": "욕심쟁이는 벌을 받는 법이지!"
+          }
+        ],
+        "page": 15
+      },
+      {
+        "hotspots": [
+          {
+            "label": "heungbu",
+            "box": [
+              380,
+              311,
+              846,
+              501
+            ],
+            "audio": "/folk/heungbu/say-p16-heungbu.mp3",
+            "line": "형님, 우리 함께 살아요. 가족이잖아요."
+          },
+          {
+            "label": "nolbu",
+            "box": [
+              254,
+              432,
+              842,
+              686
+            ],
+            "audio": "/folk/heungbu/say-p16-nolbu.mp3",
+            "line": "고맙다, 흥부야… 이 형이 미안했다."
+          }
+        ],
+        "page": 16
+      }
+    ]
+  },
+  "folk-haedal": {
+    "title": "해님 달님",
+    "pages": [
+      {
+        "hotspots": [
+          {
+            "label": "mother",
+            "box": [
+              250,
+              150,
+              850,
+              500
+            ],
+            "audio": "/folk/haedal/say-p2-mother.wav",
+            "line": "문 꼭 잠그고 있으렴!"
+          }
+        ],
+        "page": 2
+      },
+      {
+        "hotspots": [
+          {
+            "label": "tiger",
+            "box": [
+              250,
+              450,
+              850,
+              900
+            ],
+            "audio": "/folk/haedal/say-p3-tiger.wav",
+            "line": "떡 하나 주면 안 잡아먹지!"
+          }
+        ],
+        "page": 3
+      },
+      {
+        "hotspots": [
+          {
+            "label": "tiger",
+            "box": [
+              250,
+              350,
+              850,
+              750
+            ],
+            "audio": "/folk/haedal/say-p5-tiger.wav",
+            "line": "얘들아, 엄마 왔단다~"
+          }
+        ],
+        "page": 5
+      },
+      {
+        "hotspots": [
+          {
+            "label": "brother",
+            "box": [
+              300,
+              550,
+              800,
+              900
+            ],
+            "audio": "/folk/haedal/say-p6-brother.wav",
+            "line": "우리 엄마 목소리가 아닌데?"
+          }
+        ],
+        "page": 6
+      },
+      {
+        "hotspots": [
+          {
+            "label": "sister",
+            "box": [
+              200,
+              550,
+              650,
+              900
+            ],
+            "audio": "/folk/haedal/say-p7-sister.wav",
+            "line": "호호, 바보 호랑이!"
+          }
+        ],
+        "page": 7
+      },
+      {
+        "hotspots": [
+          {
+            "label": "brother",
+            "box": [
+              200,
+              550,
+              650,
+              900
+            ],
+            "audio": "/folk/haedal/say-p8-brother.wav",
+            "line": "참기름을 바르고 올라왔지요!"
+          }
+        ],
+        "page": 8
+      },
+      {
+        "hotspots": [
+          {
+            "label": "brother",
+            "box": [
+              150,
+              300,
+              600,
+              700
+            ],
+            "audio": "/folk/haedal/say-p10-brother.wav",
+            "line": "하느님, 동아줄을 내려 주세요!"
+          }
+        ],
+        "page": 10
+      },
+      {
+        "video": "/folk/haedal/p11.mp4",
+        "page": 11
+      },
+      {
+        "hotspots": [
+          {
+            "label": "tiger",
+            "box": [
+              300,
+              300,
+              850,
+              700
+            ],
+            "audio": "/folk/haedal/say-p12-tiger.wav",
+            "line": "아이고 엉덩이야!"
+          }
+        ],
+        "page": 12
+      },
+      {
+        "hotspots": [
+          {
+            "label": "sister",
+            "box": [
+              300,
+              550,
+              800,
+              850
+            ],
+            "audio": "/folk/haedal/say-p14-sister.wav",
+            "line": "오빠, 나 밤은 무서워…"
+          },
+          {
+            "label": "brother",
+            "box": [
+              300,
+              150,
+              800,
+              500
+            ],
+            "audio": "/folk/haedal/say-p14-brother.wav",
+            "line": "그럼 우리 바꾸자!"
+          }
+        ],
+        "page": 14
+      }
+    ]
+  }
+}

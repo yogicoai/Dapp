@@ -215,9 +215,31 @@ export function splitDialogue(text: string): { text: string; dialogue: boolean }
   const parts = text.split(QUOTED_SPLIT).filter((s) => s.length > 0);
   const segs = parts.map((s) => ({ text: s, dialogue: isQuotedLine(s) }));
 
+  /*
+   * 대사가 아닌 조각끼리는 도로 붙인다.
+   *
+   * 자르기는 따옴표만 보는데, 이름을 감싼 작은따옴표('삼년 고개')는 대사가 아니다
+   * (isQuotedLine 이 false 를 준다). 그런데도 잘린 채로 두면 한 문장이 조각 여럿으로
+   * 갈라지고, 조각마다 따로 합성되어 문장 한가운데에서 호흡이 끊긴다 —
+   * 삼년 고개 10쪽 "…그 고개를 '삼년 고개'가 아니라 '만년 고개'라고 불렀어요."
+   * 한 문장이 조각 넷이었다(사장님이 듣고 잡아 주셨다).
+   *
+   * 대사 조각끼리는 붙이지 않는다 — 서로 다른 배역일 수 있다.
+   * 이어 붙여도 글은 원문 그대로라 글자 색칠에는 영향이 없다.
+   */
+  const joined: { text: string; dialogue: boolean }[] = [];
+  for (const s of segs) {
+    const prev = joined[joined.length - 1];
+    if (prev && !prev.dialogue && !s.dialogue) {
+      prev.text += s.text;
+      continue;
+    }
+    joined.push({ ...s });
+  }
+
   // 짧은 조각은 앞 조각에 붙인다. 맨 앞이 짧으면 뒤 조각에 붙인다.
   const merged: { text: string; dialogue: boolean }[] = [];
-  for (const s of segs) {
+  for (const s of joined) {
     const prev = merged[merged.length - 1];
     if (prev && tooShort(s.text)) {
       prev.text += s.text;
