@@ -192,35 +192,104 @@ export async function changePassword(newPw: string): Promise<{ ok: boolean; erro
   return { ok: true };
 }
 
-/** 토큰 차감 — 잔액이 충분하면 깎고 true, 부족/실패면 false. (베타: 조회 후 갱신) */
-export async function spendTokens(n: number): Promise<boolean> {
-  const sb = getSupabase();
-  if (!sb) return false;
-  const profile = await fetchProfile();
-  if (!profile) return false;
-  /*
-   * 마스터는 토큰을 쓰지 않는다.
-   *
-   * 콘텐츠를 만들고 점검하는 계정이라 잔액이 떨어져 확인이 막히면 안 된다.
-   * 권수 상한은 이미 면제였는데 토큰은 아니어서, 결국 마스터도 잔액이 바닥나면
-   * 더 만들 수 없었다 — 반쪽짜리 면제였다.
-   *
-   * 쓰는 쪽마다 조건을 다는 대신 여기 한 곳에서 막는다. 동화 만들기·부모 목소리
-   * 등 토큰을 쓰는 자리가 전부 이 함수를 지나므로, 새 기능이 생겨도 자동으로 면제된다.
-   */
-  if (profile.is_master) return true;
-  if (profile.tokens < n) return false;
-  const { error } = await sb.from("profiles").update({ tokens: profile.tokens - n }).eq("id", profile.id);
-  return !error;
+/* ── 토큰 ─────────────────────────────────────────────────────────────────
+ *
+ * 토큰은 DB 가 지킨다. 예전엔 브라우저가 profiles 를 직접 update 해서 깎았는데,
+ * RLS 정책이 "내 줄인가"만 보고 어느 칸인지는 안 봤다. 그래서 로그인한 사람이
+ * 콘솔에서 한 줄이면 끝이었다 — update({ tokens: 999999 }).
+ * is_master 도 같은 방법으로 켤 수 있었다.
+ *
+ * 이제 supabase-tokens.sql 의 함수로만 바뀐다(spend_tokens · refund_tokens ·
+ * grant_tokens). 그 SQL 을 아직 안 돌렸으면 함수가 없으므로, 옛 방식으로 물러선다 —
+ * SQL 을 돌리기 전에 배포해도 앱이 멈추지 않게.
+ */
+
+/** 함수가 아직 DB 에 없다(= SQL 을 안 돌렸다). 그러면 옛 방식으로 물러선다. */
+function rpcMissing(error: { message?: string; code?: string } | null): boolean {
+  if (!error) return false;
+  const m = (error.message ?? "").toLowerCase();
+  return error.code === "42883" || m.includes("could not find the function") || m.includes("does not exist");
 }
 
-/** 토큰 충전(베타). */
-export async function addTokens(n: number): Promise<void> {
+/** 토큰을 쓴 기록. 실패해서 되돌릴 때 이 값을 넘긴다. 마스터는 null(면제). */
+export type SpendEntry = string | null;
+
+/**
+ * 토큰 차감 — 잔액이 충분하면 깎고 장부 id 를, 모자라면 null 을 준다.
+ *
+ * 마스터는 토큰을 쓰지 않는다. 콘텐츠를 만들고 점검하는 계정이라 잔액이 떨어져
+ * 확인이 막히면 안 된다. 토큰을 쓰는 자리가 전부 이 함수를 지나므로 한 곳에서 면제한다.
+ */
+export async function spendTokensEntry(
+  n: number,
+  reason = "",
+): Promise<{ ok: true; entry: SpendEntry } | { ok: false; error: string }> {
+  const sb = getSupabase();
+  if (!sb) return { ok: false, error: "서버(Supabase)가 설정되지 않았어요." };
+
+  const { data, error } = await sb.rpc("spend_tokens", { p_amount: n, p_reason: reason });
+  if (!error) return { ok: true, entry: (data as string | null) ?? null };
+
+  if (!rpcMissing(error)) {
+    // 잔액 부족·권한 없음 등 진짜 거절.
+    return { ok: false, error: friendly(error.message) };
+  }
+
+  // ── 물러서기: supabase-tokens.sql 을 아직 안 돌린 DB
+  const profile = await fetchProfile();
+  if (!profile) return { ok: false, error: "회원 정보를 찾을 수 없어요." };
+  if (profile.is_master) return { ok: true, entry: null };
+  if (profile.tokens < n) return { ok: false, error: "토큰이 부족해요." };
+  const { error: upErr } = await sb
+    .from("profiles")
+    .update({ tokens: profile.tokens - n })
+    .eq("id", profile.id);
+  return upErr ? { ok: false, error: friendly(upErr.message) } : { ok: true, entry: null };
+}
+
+/** 예전 이름 — 성공 여부만 필요한 자리에서 그대로 쓴다. */
+export async function spendTokens(n: number, reason = ""): Promise<boolean> {
+  return (await spendTokensEntry(n, reason)).ok;
+}
+
+/**
+ * 쓴 토큰을 되돌린다 — 실패했을 때만.
+ *
+ * 장부 id 로만 되돌린다. 그래야 "환불"을 반복해 토큰을 찍어내는 길이 없다.
+ * entry 가 null 이면(마스터거나 옛 DB) 되돌릴 것도 없다.
+ */
+export async function refundTokens(entry: SpendEntry, fallbackAmount = 0): Promise<void> {
   const sb = getSupabase();
   if (!sb) return;
+  if (entry) {
+    const { error } = await sb.rpc("refund_tokens", { p_entry: entry });
+    if (!error || !rpcMissing(error)) return;
+  }
+  if (!fallbackAmount) return;
+  // 물러서기: 옛 DB 에서는 장부가 없으므로 예전처럼 되돌린다.
   const profile = await fetchProfile();
   if (!profile) return;
-  await sb.from("profiles").update({ tokens: profile.tokens + n }).eq("id", profile.id);
+  await sb.from("profiles").update({ tokens: profile.tokens + fallbackAmount }).eq("id", profile.id);
+}
+
+/**
+ * 토큰 충전 — 마스터만.
+ *
+ * 예전엔 누구나 자기 토큰을 늘릴 수 있었다(베타 충전 단추). 결제가 붙기 전까지는
+ * 마스터가 넣어 주는 방식으로 둔다. 대상은 회원 uuid.
+ */
+export async function grantTokens(userId: string, n: number): Promise<boolean> {
+  const sb = getSupabase();
+  if (!sb) return false;
+  const { error } = await sb.rpc("grant_tokens", { p_user: userId, p_amount: n });
+  if (!error) return true;
+  if (!rpcMissing(error)) return false;
+  // 물러서기: 옛 DB
+  const { data } = await sb.from("profiles").select("tokens").eq("id", userId).maybeSingle();
+  const cur = (data as { tokens?: number } | null)?.tokens;
+  if (typeof cur !== "number") return false;
+  const { error: upErr } = await sb.from("profiles").update({ tokens: cur + n }).eq("id", userId);
+  return !upErr;
 }
 
 /**

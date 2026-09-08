@@ -1592,7 +1592,7 @@ export default function CreatePage() {
       const story = data.story as Story;
       if (!master && !scriptCharged) {
         const cost = scriptTokenCost(story.pages.length);
-        if (!(await spendTokens(cost))) {
+        if (!(await spendTokens(cost, "story"))) {
           setError(`토큰이 부족해요. 대본을 만들려면 ${cost}개가 필요해요.`);
           return; // 줄거리 화면에 그대로 남는다 — 대본은 버린다
         }
@@ -2116,7 +2116,7 @@ export default function CreatePage() {
     if (cost > 0) {
       // 차감 결과를 반드시 확인한다: 서버 잔액이 부족하거나 갱신에 실패하면 저장하지
       // 않고 이유를 알린다(무료 생성 방지 + 부모가 원인을 알 수 있게).
-      if (!(await spendTokens(cost))) {
+      if (!(await spendTokens(cost, "illustration"))) {
         setError(
           `토큰이 부족해서 저장하지 못했어요. (그림에 ${cost}개 필요) 충전한 뒤 '그림 만들기'를 다시 눌러 주세요.`,
         );

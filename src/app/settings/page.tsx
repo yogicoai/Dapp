@@ -8,12 +8,14 @@ import { ThemePicker } from "@/components/ThemePicker";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import {
-  addTokens,
+  grantTokens,
   loadAllUsers,
   loadSession,
   logOut,
-  spendTokens,
+  refundTokens,
+  spendTokensEntry,
   type Profile,
+  type SpendEntry,
 } from "@/lib/auth";
 import {
   AGES,
@@ -371,9 +373,20 @@ export default function SettingsPage() {
     setOpenMember((cur) => (cur === id ? null : id));
   }
 
-  // 토큰 충전(베타) — 결제 붙기 전 임시. 30개씩 넣어 테스트.
+  /*
+   * 토큰 충전(베타) — 지금은 단추가 잠겨 있다(결제 전).
+   *
+   * 예전엔 여기서 브라우저가 자기 profiles 를 직접 update 해서 토큰을 늘렸다.
+   * 그 길이 곧 구멍이었다 — 콘솔에서 같은 호출로 999999 를 넣을 수 있었다.
+   * 이제는 마스터만 되는 서버 함수를 지난다. 결제를 붙일 때는 결제 확인 뒤
+   * 서버가 넣어 주는 방식이어야 한다(이 단추를 그대로 열면 안 된다).
+   */
   async function topUp() {
-    await addTokens(30);
+    if (!uid) return;
+    if (!(await grantTokens(uid, 30))) {
+      setCloneErr("토큰 충전은 관리자만 할 수 있어요.");
+      return;
+    }
     setAcctTokens((t) => t + 30);
     flashSaved();
   }
@@ -620,18 +633,20 @@ export default function SettingsPage() {
     cloneBusyRef.current = true;
     setCloneErr("");
     setCloningRole(roleFromLabel(v.label));
+    let entry: SpendEntry = null;
     let charged = false;
     try {
       const blob = await loadVoiceAudio(v.id);
       if (!blob) throw new Error("녹음을 찾지 못했어요. 다시 녹음해 주세요.");
       // 선차감 — 서버 잔액 기준. 부족하면 여기서 끝(복제 호출 자체를 안 한다).
       if (!master) {
-        const ok = await spendTokens(COST_PARENT_VOICE);
-        if (!ok) {
+        const res = await spendTokensEntry(COST_PARENT_VOICE, "parent-voice");
+        if (!res.ok) {
           throw new Error(
-            `토큰이 부족해요. 목소리 만들기에는 ${COST_PARENT_VOICE}토큰이 필요해요.`,
+            `${res.error} 목소리 만들기에는 ${COST_PARENT_VOICE}토큰이 필요해요.`,
           );
         }
+        entry = res.entry;
         charged = true;
         setAcctTokens((t) => Math.max(0, t - COST_PARENT_VOICE));
       }
@@ -646,7 +661,8 @@ export default function SettingsPage() {
     } catch (e) {
       // 복제 실패 — 선차감했던 토큰을 돌려준다.
       if (charged) {
-        await addTokens(COST_PARENT_VOICE).catch(() => {});
+        // 쓴 그 건만 되돌린다 — 장부 id 로만 환불되므로 반복해서 찍어낼 수 없다.
+        await refundTokens(entry, COST_PARENT_VOICE).catch(() => {});
         setAcctTokens((t) => t + COST_PARENT_VOICE);
       }
       setCloneErr(e instanceof Error ? e.message : "목소리 만들기에 실패했어요.");
