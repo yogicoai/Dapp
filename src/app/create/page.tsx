@@ -1591,7 +1591,22 @@ export default function CreatePage() {
        * 이제 대본을 먼저 읽고 고친 뒤 "이걸로 그림 만들자" 할 때 그림 값을 낸다.
        */
       const story = data.story as Story;
-      if (!master && !scriptCharged) {
+      /*
+       * 값은 이제 서버가 받는다 — 만들기 전에, 그리고 '같은 줄거리로 다시 쓰기'
+       * 횟수까지 DB 가 센다(supabase-tokens.sql 의 charge_story).
+       *
+       * 예전엔 여기 브라우저에서 깎았다. 그래서 경로를 직접 부르면 대본이 공짜였다.
+       * 서버가 이미 받았으면(charge 가 오면) 여기서는 잔액 표시만 맞춘다.
+       * 아직 SQL 을 안 돌린 DB 면 charge 가 없다 — 그때만 예전처럼 여기서 깎는다.
+       */
+      const charge = data.charge as
+        | { charged: number; rewrites: number; tokens: number }
+        | null
+        | undefined;
+      if (charge) {
+        setTokens(charge.tokens);
+        setStoryRewrites(charge.rewrites);
+      } else if (!master && !scriptCharged) {
         const cost = scriptTokenCost(story.pages.length);
         if (!(await spendTokens(cost, "story"))) {
           setError(`토큰이 부족해요. 대본을 만들려면 ${cost}개가 필요해요.`);
@@ -1600,7 +1615,7 @@ export default function CreatePage() {
         setTokens((t) => Math.max(0, t - cost));
       }
       setScriptCharged(true);
-      if (isRewrite) setStoryRewrites((n) => n + 1);
+      if (!charge && isRewrite) setStoryRewrites((n) => n + 1);
       setEditingPage(null); // 새 대본이니 고치던 자리는 닫는다
       setEditingTitle(false);
       /*
