@@ -12,6 +12,7 @@
  */
 import { loadBookWithOwner, updateBookData } from "@/lib/prefs";
 import type { Book } from "@/lib/types";
+import { authedFetch } from "@/lib/supabase";
 
 export type MigrateProgress = {
   /** 지금 몇 번째 책인지 (1부터) */
@@ -65,7 +66,7 @@ async function shrink(dataUrl: string, maxSide = 1280, quality = 0.82): Promise<
 /** 그림 한 장을 cafe24에 올리고 URL을 돌려준다. 실패하면 null(그 장은 그대로 둔다). */
 async function upload(owner: string, bookId: string, name: string, dataUrl: string): Promise<string | null> {
   try {
-    const res = await fetch("/api/upload-art", {
+    const res = await authedFetch("/api/upload-art", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ owner, bookId, name, image: await shrink(dataUrl) }),

@@ -8,6 +8,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { VoiceInput } from "@/components/VoiceInput";
 import { ART_STYLES } from "@/lib/art-styles";
 import { loadSession, spendTokens } from "@/lib/auth";
+import { authedFetch } from "@/lib/supabase";
 import {
   loadChild,
   loadChildRemote,
@@ -995,7 +996,7 @@ export default function CreatePage() {
     for (let i = 0; i < jobs.length; i++) {
       const job = jobs[i];
       try {
-        const res = await fetch("/api/upload-art", {
+        const res = await authedFetch("/api/upload-art", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ owner, bookId, name: job.name, image: job.dataUrl }),
@@ -1424,7 +1425,7 @@ export default function CreatePage() {
     // 다음에 또 만들 때 아이 정보를 다시 안 묻도록 저장해 둔다.
     saveChild({ name: name.trim(), age, gender });
     try {
-      const r = await fetch("/api/outline", {
+      const r = await authedFetch("/api/outline", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -1564,7 +1565,7 @@ export default function CreatePage() {
     const ac = new AbortController();
     abortRef.current = ac;
     try {
-      const r = await fetch("/api/story", {
+      const r = await authedFetch("/api/story", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -1696,7 +1697,7 @@ export default function CreatePage() {
       const heroLooksEn = looksToDrawingPrompt(child?.looks);
       let sheet = saved?.sheet ?? null;
       if (!sheet) {
-        const sheetRes = await fetch("/api/character-sheet", {
+        const sheetRes = await authedFetch("/api/character-sheet", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
@@ -1766,7 +1767,7 @@ export default function CreatePage() {
       for (const want of wanted) {
         if (ac.signal.aborted) break;
         try {
-          const r = await fetch("/api/location-sheet", {
+          const r = await authedFetch("/api/location-sheet", {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
@@ -1896,7 +1897,7 @@ export default function CreatePage() {
                 sameLocationReference?.scene ??
                 (styleFallback && styleSeed >= 0 ? s.pages[styleSeed].imagePrompt : "");
               await pace();
-              const r = await fetch("/api/illustrate-page", {
+              const r = await authedFetch("/api/illustrate-page", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
                 body: JSON.stringify({

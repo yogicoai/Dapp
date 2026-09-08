@@ -29,6 +29,7 @@ import {
   storyWeightForFont,
 } from "@/lib/prefs";
 import { loadSession } from "@/lib/auth";
+import { authedFetch } from "@/lib/supabase";
 import { fitScale } from "@/lib/fit-text";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
@@ -528,7 +529,7 @@ export function BookViewer({ book }: { book: Book }) {
         (here ? others.find((p) => placeOf(p.imagePrompt) === here) : undefined) ?? others[0];
       // 만들 때 그린 장소 시트가 있으면 그것이 장소의 기준이다.
       const locationSheet = here ? book.locationSheets?.find((s) => s.key === here)?.image ?? "" : "";
-      const res = await fetch("/api/illustrate-page", {
+      const res = await authedFetch("/api/illustrate-page", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -559,7 +560,7 @@ export function BookViewer({ book }: { book: Book }) {
        */
       let stored = data.image;
       try {
-        const up = await fetch("/api/upload-art", {
+        const up = await authedFetch("/api/upload-art", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({

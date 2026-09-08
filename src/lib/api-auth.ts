@@ -19,6 +19,8 @@ const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 /** 부른 사람. 로그인 안 했으면 null 이다. */
 export type Caller = {
   uid: string;
+  /** 회원 아이디. 올린 그림을 사람이 폴더로 찾아볼 수 있어야 해서 함께 담는다. */
+  username: string;
   isMaster: boolean;
   /** 이 사람의 권한 그대로 질의하는 클라이언트 — RLS 가 그대로 걸린다. */
   db: SupabaseClient;
@@ -53,11 +55,16 @@ export async function callerOf(request: Request): Promise<Caller | null> {
 
   const { data: profile } = await db
     .from("profiles")
-    .select("is_master")
+    .select("username,is_master")
     .eq("id", uid)
     .maybeSingle();
 
-  return { uid, isMaster: Boolean(profile?.is_master), db };
+  return {
+    uid,
+    username: String((profile as { username?: string } | null)?.username ?? ""),
+    isMaster: Boolean(profile?.is_master),
+    db,
+  };
 }
 
 /** 복제된 개인 목소리인가 — Typecast 는 uc_ 로 시작하는 아이디를 준다. */

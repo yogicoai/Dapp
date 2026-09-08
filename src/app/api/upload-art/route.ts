@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { callerOf } from "@/lib/api-auth";
 import { uploadToCafe24 } from "@/lib/cafe24";
 
 /**
@@ -26,7 +27,18 @@ function safeSegment(v: unknown, fallback: string): string {
   return cleaned.slice(0, 40) || fallback;
 }
 
+/*
+ * 회원만 올릴 수 있고, 폴더는 **부른 사람에게서** 가져온다.
+ *
+ * 예전엔 인증이 없고 폴더 이름(owner)을 요청 본문에서 그대로 받았다. 그래서 아무나
+ * 사장님이 결제한 카페24 호스팅에, 아무 회원 폴더로나 이미지를 올릴 수 있었다.
+ * 이제 owner 는 로그인한 사람의 id 다 — 보내 주는 값은 무시한다.
+ */
 export async function POST(request: Request) {
+  const caller = await callerOf(request);
+  if (!caller) {
+    return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  }
   let body: unknown;
   try {
     body = await request.json();
@@ -34,7 +46,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "요청 본문이 JSON이 아닙니다." }, { status: 400 });
   }
 
-  const input = body as { owner?: unknown; bookId?: unknown; name?: unknown; image?: unknown };
+  // owner 는 더 이상 쓰지 않는다 — 폴더는 로그인한 사람에게서 가져온다.
+  const input = body as { bookId?: unknown; name?: unknown; image?: unknown };
 
   const image = typeof input.image === "string" ? input.image : "";
   const m = /^data:image\/(png|jpeg|jpg|webp);base64,(.+)$/.exec(image);
@@ -44,7 +57,8 @@ export async function POST(request: Request) {
   const ext = m[1] === "jpeg" ? "jpg" : m[1];
   const data = Buffer.from(m[2], "base64");
 
-  const owner = safeSegment(input.owner, "guest");
+  // 폴더는 로그인한 사람 것으로 못 박는다 — 요청이 보내 준 owner 는 쓰지 않는다.
+  const owner = safeSegment(caller.username || caller.uid, "member");
   const bookId = safeSegment(input.bookId, "book");
   const name = safeSegment(input.name, "p");
 

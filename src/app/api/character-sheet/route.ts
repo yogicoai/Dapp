@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
 import { GeminiError, fromDataUrl, generateImage, loadReferenceImage, shrinkForReference, toDataUrl } from "@/lib/gemini";
 import { heroIdentity } from "@/lib/child-looks";
@@ -18,7 +19,22 @@ export const maxDuration = 60;
  * 8쪽 내내 같은 얼굴이 나온다. 우리는 사진 없이 클로드가 쓴 인물 묘사(@@CHARACTER@@)
  * 로 시트를 만든다. 역할 분담: 클로드가 묘사를 쓰고, Gemini는 그리기만 한다.
  */
+/*
+ * 회원만 부를 수 있다.
+ *
+ * 예전엔 인증이 한 줄도 없어서, 주소만 알면 로그인 없이 Gemini·GPT 그림(장당 약 55원) 크레딧을
+ * 태울 수 있었다. 토큰 차감마저 브라우저가 해서, 경로를 직접 부르면 토큰도 안 깎였다.
+ * 막고 있던 것은 화면뿐이었다.
+ *
+ * 비회원은 깨지지 않는다 — 만들기 화면 자체가 로그인 없으면 되돌려 보내고,
+ * 첫 화면의 만들기 단추도 비회원이면 /login 으로 간다.
+ * 굽기 스크립트도 이 경로를 부르지 않는다(/api/tts 만 쓴다).
+ */
 export async function POST(request: Request) {
+  const caller = await callerOf(request);
+  if (!caller) {
+    return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  }
   let body: unknown;
   try {
     body = await request.json();
