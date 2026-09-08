@@ -133,16 +133,35 @@ set search_path = public as $$
 $$;
 
 -- 가입하면 프로필을 자동으로 만든다 (아이디는 회원가입 때 metadata 로 넘어온다).
+--
+-- 구글 로그인은 username 을 안 넘긴다. 그때는 이메일 앞부분을 쓰는데, username 이
+-- unique 라 이미 같은 아이디가 있으면 여기서 터지고 **계정 생성 자체가 롤백된다**
+-- (구글 로그인이 알 수 없는 오류로 실패한다). 흔한 지메일 앞부분은 아이디로도 흔해서
+-- 반드시 부딪친다. 그래서 겹치면 뒤에 숫자를 붙여 비는 이름을 찾는다.
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer
 set search_path = public as $$
+declare
+  base_name text;
+  try_name  text;
+  n         integer := 1;
 begin
+  base_name := nullif(trim(coalesce(new.raw_user_meta_data->>'username', split_part(new.email,'@',1))), '');
+  base_name := coalesce(base_name, 'user');
+  try_name  := base_name;
+  while exists (select 1 from public.profiles where username = try_name) loop
+    n := n + 1;
+    try_name := base_name || n::text;
+  end loop;
+
   insert into public.profiles (id, username, tokens, is_master)
   values (
     new.id,
-    coalesce(new.raw_user_meta_data->>'username', split_part(new.email,'@',1)),
+    try_name,
     200,   -- 가입 축하 토큰. 앱의 SIGNUP_BONUS_TOKENS 와 같아야 한다(8쪽 그림동화 12권치)
-    coalesce(new.raw_user_meta_data->>'username','') = 'yogico'   -- 마스터 아이디
+    -- 마스터 아이디 둘. 아이디로 가입한 경우에만 준다 — 구글 계정의 이메일 앞부분이
+    -- 우연히 'fe' 라고 해서 관리자가 되면 안 된다.
+    coalesce(new.raw_user_meta_data->>'username','') in ('yogico', 'fe')
   );
   return new;
 end; $$;

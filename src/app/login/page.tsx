@@ -1,9 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
-import { enterGuest, logIn, signUp } from "@/lib/auth";
+import {
+  enterGuest,
+  finishOAuthLogin,
+  isGoogleLoginEnabled,
+  logIn,
+  signInWithGoogle,
+  signUp,
+} from "@/lib/auth";
 import { SIGNUP_BONUS_TOKENS } from "@/lib/tokens";
 
 /**
@@ -20,6 +27,38 @@ export default function LoginPage() {
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  /*
+   * 구글에서 돌아왔을 때 — 크롬이 이 화면으로 되돌려 보낸다.
+   * 로그인이 됐으면 아이디 로그인과 같은 뒷정리를 하고 서재로 보낸다.
+   * 그냥 로그인 화면을 연 경우에는 아무 일도 일어나지 않는다.
+   */
+  useEffect(() => {
+    if (!isGoogleLoginEnabled()) return;
+    let alive = true;
+    finishOAuthLogin()
+      .then((res) => {
+        if (!alive || !res) return;
+        if (res.ok) router.replace("/");
+        else setError(res.error);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [router]);
+
+  async function google() {
+    if (busy) return;
+    setError("");
+    setBusy(true);
+    const res = await signInWithGoogle();
+    // 성공하면 화면이 구글로 넘어가므로 여기로 돌아오지 않는다.
+    if (!res.ok) {
+      setError(res.error ?? "구글 로그인을 시작하지 못했어요.");
+      setBusy(false);
+    }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -118,12 +157,34 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* 비회원 둘러보기 — 전래동화·세계명작만 열람. 만들기·내 책장은 로그인 필요. */}
           <div className="mt-4 flex items-center gap-3">
             <span className="h-px flex-1 bg-neutral-200" />
             <span className="text-xs font-bold text-neutral-400">또는</span>
             <span className="h-px flex-1 bg-neutral-200" />
           </div>
+
+          {/*
+            구글로 시작하기 — 설정을 켠 뒤에만 보인다(NEXT_PUBLIC_GOOGLE_LOGIN=1).
+            안 켠 채로 단추만 있으면 눌렀을 때 오류만 나므로 아예 감춘다.
+          */}
+          {isGoogleLoginEnabled() && (
+            <button
+              type="button"
+              onClick={google}
+              disabled={busy}
+              className="mt-3 flex w-full items-center justify-center gap-2.5 rounded-full border-2 border-neutral-200 bg-white px-4 py-3 text-sm font-extrabold text-neutral-700 transition hover:bg-neutral-50 disabled:opacity-60"
+            >
+              <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
+                <path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-3.2-.4-4.7H24v8.9h11.8c-.5 2.7-2 5-4.4 6.6v5.5h7.1c4.2-3.8 6.6-9.5 6.6-16.3z" />
+                <path fill="#34A853" d="M24 46c6 0 11-2 14.5-5.2l-7.1-5.5c-2 1.3-4.5 2.1-7.4 2.1-5.7 0-10.5-3.8-12.2-9H4.5v5.7C8 41.3 15.4 46 24 46z" />
+                <path fill="#FBBC05" d="M11.8 28.4c-.4-1.3-.7-2.7-.7-4.4s.3-3 .7-4.4v-5.7H4.5C2.9 17.1 2 20.4 2 24s.9 6.9 2.5 10.1l7.3-5.7z" />
+                <path fill="#EA4335" d="M24 10.4c3.2 0 6.1 1.1 8.4 3.3l6.3-6.3C34.9 3.9 30 2 24 2 15.4 2 8 6.7 4.5 13.9l7.3 5.7c1.7-5.2 6.5-9.2 12.2-9.2z" />
+              </svg>
+              구글로 시작하기
+            </button>
+          )}
+
+          {/* 비회원 둘러보기 — 전래동화·세계명작만 열람. 만들기·내 책장은 로그인 필요. */}
           <button
             type="button"
             onClick={() => {

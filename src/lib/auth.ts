@@ -20,8 +20,13 @@ import { currentUid, getSupabase, rememberUid } from "@/lib/supabase";
 const EMAIL_DOMAIN = "voice-storybook.com";
 const GUEST_KEY = "voice-storybook:guest";
 
-/** 마스터(관리자) 아이디 — 트리거가 이 아이디에 is_master=true를 준다. */
-export const MASTER_ID = "yogico";
+/**
+ * 마스터(관리자) 아이디 — 트리거가 이 아이디들에 is_master=true를 준다.
+ * supabase-setup.sql 의 handle_new_user 와 같은 목록이어야 한다.
+ */
+export const MASTER_IDS = ["yogico", "fe"] as const;
+/** 대표 마스터 아이디 — 예전 코드가 쓰던 이름을 남겨 둔다. */
+export const MASTER_ID = MASTER_IDS[0];
 
 export type Profile = {
   id: string;
@@ -117,6 +122,57 @@ export async function logIn(idRaw: string, password: string): Promise<AuthResult
   return { ok: true, profile };
 }
 
+/* ── 구글 로그인 ──────────────────────────────────────────────────────────
+ *
+ * 왜 넣나: 지금은 아이디·비밀번호를 직접 쳐야 하고, 가짜 이메일을 쓰기 때문에
+ * 비밀번호를 잃으면 되찾을 방법이 아예 없다. 구글로 들어오면 진짜 이메일이 생긴다.
+ *
+ * 안드로이드는 TWA(웹앱을 크롬으로 감싼 것)라 앱 안에서도 평범한 웹 로그인이 그대로
+ * 된다. 구글이 막는 것은 앱에 박힌 웹뷰인데 TWA 는 크롬이라 해당되지 않는다.
+ *
+ * 켜는 법(사장님):
+ *   ① 구글 클라우드 콘솔에서 OAuth 클라이언트(웹) 만들기
+ *   ② Supabase → Authentication → Providers → Google 켜고 ID·시크릿 넣기
+ *   ③ Supabase → Authentication → URL Configuration 에 앱 주소 넣기
+ *   ④ .env.local 에 NEXT_PUBLIC_GOOGLE_LOGIN=1
+ * ④ 를 넣기 전에는 로그인 화면에 단추가 안 나온다 — 설정 전에 눌러 실패하는 일이 없게.
+ */
+export function isGoogleLoginEnabled(): boolean {
+  return process.env.NEXT_PUBLIC_GOOGLE_LOGIN === "1";
+}
+
+/**
+ * 구글로 로그인 — 크롬으로 넘어갔다가 돌아온다.
+ *
+ * 돌아온 뒤 처리(게스트 해제·아이 정보 복구)는 여기서 못 한다. 화면이 통째로
+ * 다시 뜨기 때문이다. 그래서 finishOAuthLogin 을 로그인 화면이 돌아왔을 때 부른다.
+ */
+export async function signInWithGoogle(): Promise<{ ok: boolean; error?: string }> {
+  const sb = getSupabase();
+  if (!sb) return { ok: false, error: "서버(Supabase)가 설정되지 않았어요." };
+  const redirectTo =
+    typeof window !== "undefined" ? `${window.location.origin}/login` : undefined;
+  const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
+  if (error) return { ok: false, error: friendly(error.message) };
+  return { ok: true }; // 성공하면 이 줄 뒤로 화면이 크롬으로 넘어간다
+}
+
+/**
+ * 구글에서 돌아온 뒤 마무리 — 아이디 로그인의 logIn 과 같은 뒷정리를 한다.
+ * 로그인된 게 아니면 아무것도 하지 않는다(그냥 로그인 화면을 연 경우).
+ */
+export async function finishOAuthLogin(): Promise<AuthResult | null> {
+  const sb = getSupabase();
+  if (!sb) return null;
+  const uid = await currentUid();
+  if (!uid) return null;
+  clearGuest();
+  const profile = await fetchProfile(uid);
+  if (!profile) return { ok: false, error: "로그인은 됐는데 프로필을 못 읽었어요." };
+  await loadChildRemote().catch(() => {});
+  return { ok: true, profile };
+}
+
 export async function logOut(): Promise<void> {
   // 지우기 전에 현재 아이 정보를 계정 백업에 확실히 넣어둔다(재로그인 복구용).
   await backupChildBeforeLogout().catch(() => {});
@@ -167,11 +223,14 @@ export async function addTokens(n: number): Promise<void> {
   await sb.from("profiles").update({ tokens: profile.tokens + n }).eq("id", profile.id);
 }
 
-/** 전체 회원 목록 (마스터만 RLS로 허용). 마스터 자신은 뺀다. */
+/** 전체 회원 목록 (마스터만 RLS로 허용). 마스터 계정들은 뺀다. */
 export async function loadAllUsers(): Promise<Profile[]> {
   const sb = getSupabase();
   if (!sb) return [];
-  const { data } = await sb.from("profiles").select("id,username,tokens,is_master").neq("username", MASTER_ID);
+  const { data } = await sb
+    .from("profiles")
+    .select("id,username,tokens,is_master")
+    .not("username", "in", `(${MASTER_IDS.join(",")})`);
   return (data as Profile[]) ?? [];
 }
 
