@@ -353,6 +353,7 @@ export async function POST(request: Request) {
           "ONE PERSON PER SEAT, and every person sits properly ON a seat — never between two seats, never floating in the aisle, never half in the front row and half in the back. Draw the seat backs and headrests clearly so it is obvious which row each person is in.",
           "FRAME IT CLOSE ON THE CHILD. Put the camera inside the cabin beside the child in the rear seat, close enough that the child fills much of the picture. Adults appear only partly — the back of a head, a shoulder, or a face turned in profile past the front seat back. Do not attempt a wide view of the whole cabin with every passenger fully visible.",
           "Everyone wears a seat belt, clearly visible across chest and lap. The child faces FORWARD, seated, belt fastened. Never kneeling, standing, turned around, or leaning out of a window.",
+          "EACH PERSON APPEARS EXACTLY ONCE IN THE CAR. An adult who is in a front seat must NOT also appear in the back seat, and vice versa. Count the people before you finish: the picture contains each named person one single time.",
           "The window shows the passing scenery outside; do not draw a second car interior, a mirrored cabin, or a doubled row of seats.",
         ].join("\n")
       : "",

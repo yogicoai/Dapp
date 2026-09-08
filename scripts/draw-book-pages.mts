@@ -21,9 +21,25 @@ import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { generateImage, type GeneratedImage } from "../src/lib/gemini.ts";
+import { isInsideCar } from "../src/lib/story-quality.ts";
 
 type Page = { text?: string; image?: string; hotspots?: { label: string; line: string }[] };
-type Book = { title: string; pages: Page[]; artStyleId?: string; roleOf?: Record<string, string> };
+type Book = {
+  title: string;
+  pages: Page[];
+  artStyleId?: string;
+  roleOf?: Record<string, string>;
+  /*
+   * 아래 넷은 책 파일이 직접 들고 올 수 있다.
+   * 없으면 이 스크립트 안의 표(STYLE·SETTING·CAST·PAGE_CAST)를 쓴다.
+   * 표에만 둘 수 있으면 책 하나 그려 보려고 코드를 고쳐야 한다 — 앱에서 만든
+   * 동화처럼 임시로 그려 보는 책은 파일에 적어 두는 편이 낫다.
+   */
+  style?: string;
+  setting?: string;
+  cast?: Record<string, string>;
+  pageCast?: Record<string, string[]>;
+};
 
 function arg(name: string): string | undefined {
   const i = process.argv.indexOf(`--${name}`);
@@ -36,8 +52,17 @@ const TITLE = arg("book") ?? "";
 if (!TITLE) throw new Error('--book "책 제목" 이 필요합니다');
 
 /** 책이 어느 파일에 있는지 찾는다. */
+/**
+ * 책을 찾는다. `--file <경로>` 를 주면 그 파일에서만 찾는다.
+ *
+ * 왜 필요한가 — 부모가 앱에서 만든 동화는 Supabase 에 있어 이 저장소에 없다.
+ * 그런 책의 그림을 다시 그려 보려면(예: 그림 만드는 곳을 바꾼 뒤 어떻게 달라지는지)
+ * 원고를 같은 모양의 파일 하나로 적어 두고 그것을 가리키면 된다.
+ */
 function findBook(): { book: Book; file: string } {
-  for (const file of ["src/data/folk-books.json", "src/data/classic-books.json"]) {
+  const only = arg("file");
+  const files = only ? [only] : ["src/data/folk-books.json", "src/data/classic-books.json"];
+  for (const file of files) {
     const list = JSON.parse(fs.readFileSync(file, "utf8")) as Book[];
     const book = list.find((b) => b.title === TITLE);
     if (book) return { book, file };
@@ -143,11 +168,11 @@ const PAGE_CAST: Record<string, Record<number, string[]>> = {
   },
 };
 
-const cast = CAST[TITLE];
+const cast = book.cast ?? CAST[TITLE];
 
 /** 이 쪽에 나오는 인물 설명 줄들. 명단이 있으면 그걸, 없으면 hotspots 라벨을 쓴다. */
 function castLines(page: Page, n: number): string[] {
-  const roles = PAGE_CAST[TITLE]?.[n] ?? (page.hotspots ?? []).map((h) => h.label);
+  const roles = book.pageCast?.[String(n)] ?? PAGE_CAST[TITLE]?.[n] ?? (page.hotspots ?? []).map((h) => h.label);
   return roles.map((r) => cast?.[r] ?? r);
 }
 
@@ -183,7 +208,7 @@ function styleLines(): string[] {
  */
 function pagePrompt(page: Page, n: number, style: string, hasSheet: boolean): string {
   const who = castLines(page, n);
-  const setting = SETTING[TITLE];
+  const setting = book.setting ?? SETTING[TITLE];
   return [
     `Korean picture book illustration. Art style: ${style}.`,
     setting ? `Setting: ${setting}.` : "",
@@ -209,12 +234,25 @@ function pagePrompt(page: Page, n: number, style: string, hasSheet: boolean): st
     "(5) Wholesome, innocent, fully clothed, child-friendly.",
     // 7쪽 시험에서 본문의 두 순간을 좌우 두 칸으로 갈라 그렸다 — 앱은 한 장면만 보여 준다.
     "(6) ONE continuous scene filling the whole picture — never split it into panels, comic frames or a before/after. If the text describes several moments, draw ONLY the single most important moment.",
+    /*
+     * 차 안은 앱과 같은 규칙을 태운다(illustrate-page 라우트와 같은 취지).
+     * 좁은 실내에 사람을 여럿 넣으면 좌석이 뒤엉킨다 — 자리를 못 박고 구도를 아이 쪽으로 당긴다.
+     */
+    isInsideCar(String(page.text ?? ""))
+      ? [
+          "(7) CAR INTERIOR — a Korean car is LEFT-hand drive: the driver sits FRONT-LEFT with both hands on the wheel; the front passenger sits FRONT-RIGHT; children sit in the REAR seats, never in front.",
+          "(8) ONE PERSON PER SEAT, each sitting properly ON a seat — never between two seats, never floating between rows. Draw seat backs and headrests clearly so it is obvious which row each person is in.",
+          "(9) FRAME IT CLOSE ON THE CHILD in the rear seat. Adults appear only partly — the back of a head, a shoulder, or a face in profile past the front seat back. Do not attempt a wide view of the whole cabin.",
+          "(10) Everyone wears a visible seat belt. The child faces forward, seated — never kneeling, standing or turned around.",
+          "(11) EACH PERSON APPEARS EXACTLY ONCE IN THE CAR. An adult who is in a front seat must NOT also appear in the back seat, and vice versa. Count the people before you finish: the picture contains each named person one single time.",
+        ].join("\n")
+      : "",
   ]
     .filter((l) => l !== "")
     .join("\n");
 }
 
-const style = STYLE[TITLE] ?? "soft watercolor children's picture book, gentle warm palette";
+const style = book.style ?? STYLE[TITLE] ?? "soft watercolor children's picture book, gentle warm palette";
 const size = await bookSize();
 const sheetPath = path.join(OUT, "sheet.webp");
 
@@ -224,7 +262,7 @@ if (SHEET_ONLY) {
   const entries = cast
     ? Object.values(cast)
     : [...new Set(book.pages.flatMap((p) => (p.hotspots ?? []).map((h) => h.label)))];
-  const setting = SETTING[TITLE];
+  const setting = book.setting ?? SETTING[TITLE];
   const prompt = [
     `Character reference sheet for a Korean picture book. Art style: ${style}.`,
     setting ? `Setting: ${setting}.` : "",
