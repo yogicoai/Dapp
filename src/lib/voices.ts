@@ -691,6 +691,10 @@ export type PendingSegment = {
   pace?: VoicePace;
   /** 이 조각을 어떤 배역 톤으로 읽을지 — 지문은 언제나 '그대로'다. */
   tone?: SpeakerTone;
+  /** 이 조각이 읽는 글. 조각 사이에 얼마나 쉴지 정하는 데 쓴다(reading-rest). */
+  text: string;
+  /** 지문인가 대사인가 — 바뀌는 자리에서 한 박자 더 쉰다. */
+  who: "narration" | "dialogue";
 };
 
 /**
@@ -736,6 +740,8 @@ export function startTypecastPageAudio(
       to: text.length,
       audio: synthEmo(text, "normal"),
       pace: direction?.pace,
+      text,
+      who: "narration",
     }];
   }
 
@@ -755,6 +761,8 @@ export function startTypecastPageAudio(
       audio: synthEmo(s.text, emotion),
       pace: direction?.pace,
       tone: tones[index],
+      text: s.text,
+      who: s.dialogue ? "dialogue" : "narration",
     });
   });
   return out;

@@ -61,6 +61,7 @@ import { loadParentVoices, type ParentVoice } from "@/lib/parent-voice";
 import { OrientationHint } from "./OrientationHint";
 import { useTheme } from "./ThemeProvider";
 import { currentReadingChunk, splitStorySentences } from "@/lib/reading-chunks";
+import { restAfter } from "@/lib/reading-rest";
 
 const SWIPE_THRESHOLD_PX = 50;
 
@@ -751,6 +752,51 @@ export function BookViewer({ book }: { book: Book }) {
   const sayRef = useRef<HTMLAudioElement | null>(null);
   // 대사가 나오는 동안 낭독을 잠깐 멈춘 상태 — TTS 추정 타이머도 같이 멈춘다.
   const narrPausedRef = useRef(false);
+
+  /*
+   * 조각과 조각 사이의 '숨'.
+   *
+   * 조각으로 나눠 구운 뒤로 한 조각이 끝나면 다음 조각이 0초 만에 이어졌다.
+   * 사람이 읽어 줄 때는 마침표에서 한 번, 말하는 사람이 바뀔 때 한 번 더 쉰다.
+   * 얼마나 쉴지는 reading-rest 가 정하고, 여기서는 '기다리는 일'만 한다.
+   *
+   * 캐릭터를 눌러 대사가 나오는 중이면 시간이 다 됐어도 넘어가지 않는다 —
+   * 그냥 넘어가면 대사와 다음 조각이 겹쳐서 아이가 둘 다 못 알아듣는다.
+   */
+  const restTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /**
+   * 멈출 때 아직 안 끝난 숨 — 다시 읽기를 누르면 여기서 잇는다.
+   *
+   * 숨 중에는 오디오가 이미 끝나 있어서 '이어들을 자리'가 없다. 이걸 안 들고 있으면
+   * 정지 후 다시 누를 때 그 쪽을 처음부터 다시 읽는다(베타 피드백 6번이 되살아난다).
+   */
+  const restHeld = useRef<{ run: number; go: () => void } | null>(null);
+  /** 타이머만 지운다 — 들고 있던 숨은 남긴다(정지 후 이어듣기용). */
+  const holdRest = () => {
+    if (restTimer.current) clearTimeout(restTimer.current);
+    restTimer.current = null;
+  };
+  /** 타이머도 들고 있던 숨도 버린다 — 쪽을 넘겨 재생이 갈아탈 때. */
+  const clearRest = () => {
+    holdRest();
+    restHeld.current = null;
+  };
+  const restThen = (ms: number, go: () => void) => {
+    clearRest();
+    restHeld.current = { run: runIdRef.current, go };
+    const wait = (delay: number) => {
+      restTimer.current = setTimeout(() => {
+        restTimer.current = null;
+        if (narrPausedRef.current) {
+          wait(120); // 대사가 끝날 때까지 기다렸다 이어 읽는다
+          return;
+        }
+        restHeld.current = null;
+        go();
+      }, delay);
+    };
+    wait(ms);
+  };
   const [speaking, setSpeaking] = useState<{
     page: number;
     label: string;
@@ -782,7 +828,12 @@ export function BookViewer({ book }: { book: Book }) {
       narrPausedRef.current = false;
       // 대사를 듣는 사이 쪽을 넘겼거나 정지했으면 건드리지 않는다.
       if (run !== runIdRef.current || !readingRef.current) return;
-      narr?.play().catch(() => {});
+      /*
+       * 조각 사이의 '숨' 중에 눌렀다면 오디오는 이미 끝나 있다. 끝난 오디오에
+       * play()를 부르면 처음으로 되감겨 방금 읽은 조각을 다시 읽는다.
+       * 이럴 땐 건드리지 않는다 — 기다리던 숨이 알아서 다음 조각으로 넘어간다.
+       */
+      if (narr && !narr.ended) narr.play().catch(() => {});
       if (typeof window !== "undefined") window.speechSynthesis?.resume();
     };
 
@@ -802,6 +853,7 @@ export function BookViewer({ book }: { book: Book }) {
   const haltPlayback = () => {
     runIdRef.current++;
     narrPausedRef.current = false;
+    clearRest();
     setHighlight(0);
     clearFallback();
     pausedRef.current = null; // 핸들러를 떼므로 여기서 멈춘 건 이어들을 수 없다
@@ -823,6 +875,7 @@ export function BookViewer({ book }: { book: Book }) {
    */
   const pausePlayback = useCallback(() => {
     narrPausedRef.current = false;
+    holdRest(); // 들고 있던 숨은 남긴다 — 다시 읽기를 누르면 거기서 잇는다
     setPreparing(false);
     clearFallback();
     if (typeof window !== "undefined") window.speechSynthesis?.cancel();
@@ -872,8 +925,12 @@ export function BookViewer({ book }: { book: Book }) {
       clearFallback();
       if (!readingRef.current) return;
       if (i < lastIndex) {
-        setIndex(i + 1);
-        readPage(i + 1);
+        // 쪽을 넘길 때가 제일 길게 쉬는 자리다 — 그림이 바뀌기 때문.
+        restThen(restAfter({ text: page.text, who: "narration" }, null, rateRef.current), () => {
+          if (run !== runIdRef.current || !readingRef.current) return;
+          setIndex(i + 1);
+          readPage(i + 1);
+        });
       } else {
         readingRef.current = false;
         setReading(false);
@@ -916,7 +973,9 @@ export function BookViewer({ book }: { book: Book }) {
      * 글자 색칠은 조각의 글자 수로 나눠 이어 붙인다 — 통짜 하나를 시간 비례로
      * 칠하는 것보다 정확하다.
      */
-    const playFileSequence = (srcs: { src: string; chars: number }[]) => {
+    const playFileSequence = (
+      srcs: { src: string; chars: number; who: string; text: string }[],
+    ) => {
       const el = audioRef.current ?? new Audio();
       audioRef.current = el;
       const all = srcs.reduce((n, s) => n + s.chars, 0) || 1;
@@ -940,7 +999,13 @@ export function BookViewer({ book }: { book: Book }) {
         };
         el.onended = () => {
           before += seg.chars;
-          next();
+          const after = srcs[i]; // i 는 이미 다음 조각을 가리킨다
+          // 마지막 조각이면 여기서 쉬지 않는다 — 쪽 넘김 쉼을 finishThen 이 준다.
+          if (!after) {
+            next();
+            return;
+          }
+          restThen(restAfter(seg, after, rateBoost), next);
         };
         /*
          * 한 조각이 없거나 깨졌으면 거기서 멈추지 말고 다음 조각으로 넘어간다 —
@@ -995,6 +1060,8 @@ export function BookViewer({ book }: { book: Book }) {
                 ? seg.src.replace("seg-", `seg-${selectedId}-`)
                 : seg.src,
             chars: seg.text.length,
+            who: seg.who,
+            text: seg.text,
           })),
         );
         return;
@@ -1058,7 +1125,12 @@ export function BookViewer({ book }: { book: Book }) {
         };
         el.onended = () => {
           URL.revokeObjectURL(url);
-          void playNext();
+          const after = segments[si]; // si 는 이미 다음 조각을 가리킨다
+          if (!after) {
+            void playNext(); // 마지막 조각 — 쪽 넘김 쉼은 finishThen 이 준다
+            return;
+          }
+          restThen(restAfter(seg, after, rateBoost), () => void playNext());
         };
         el.play()
           .then(() => {
@@ -1213,6 +1285,19 @@ export function BookViewer({ book }: { book: Book }) {
     setVoiceMenu(false);
     // 정지했던 자리가 살아 있으면(같은 쪽·같은 재생) 처음부터가 아니라 그 지점부터 잇는다.
     // 오디오 엘리먼트가 멈춘 위치와 핸들러를 그대로 들고 있어서 play()만 하면 이어진다.
+    /*
+     * 조각 사이의 '숨' 중에 멈췄다면 오디오는 이미 끝나 있어 이어들을 자리가 없다.
+     * 대신 들고 있던 숨을 짧게 다시 세고 다음 조각으로 넘어간다 — 처음부터 다시
+     * 읽지 않게.
+     */
+    const held = restHeld.current;
+    if (held && held.run === runIdRef.current) {
+      restHeld.current = null;
+      readingRef.current = true;
+      setReading(true);
+      restThen(240, held.go);
+      return;
+    }
     const p = pausedRef.current;
     const el = audioRef.current;
     if (p && p.run === runIdRef.current && p.page === index && el && !el.ended) {
@@ -1347,6 +1432,22 @@ export function BookViewer({ book }: { book: Book }) {
   }, []);
   // 화면을 떠날 때(서재로 나가기·주소 이동 등) 캐릭터 대사 음성도 확실히 끊는다.
   useEffect(() => () => stopSay(), [stopSay]);
+  /*
+   * 떠날 때 기다리던 '숨'과 낭독도 확실히 끊는다.
+   * 안 끊으면 서재로 나간 뒤에 타이머가 깨어나 다음 조각이 혼자 울린다.
+   */
+  useEffect(() => () => {
+    if (restTimer.current) clearTimeout(restTimer.current);
+    restTimer.current = null;
+    restHeld.current = null;
+    const el = audioRef.current;
+    if (el) {
+      el.onended = null;
+      el.ontimeupdate = null;
+      el.onerror = null;
+      el.pause();
+    }
+  }, []);
   useEffect(() => () => exitStoryMode(), []);
 
   // 배경음 — 켜면 잔잔히 반복, 끄면 멈춘다. 낭독을 덮지 않게 볼륨을 아주 낮게.
