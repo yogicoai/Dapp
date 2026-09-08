@@ -223,15 +223,18 @@ export async function addTokens(n: number): Promise<void> {
   await sb.from("profiles").update({ tokens: profile.tokens + n }).eq("id", profile.id);
 }
 
-/** 전체 회원 목록 (마스터만 RLS로 허용). 마스터 계정들은 뺀다. */
+/**
+ * 전체 회원 목록 (마스터만 RLS로 허용). 마스터 계정들은 뺀다.
+ *
+ * 거르기는 받아 놓고 여기서 한다 — 질의로 빼면 아이디 목록을 문자열로 엮어야 하고,
+ * 문법이 조금만 틀려도 오류 대신 빈 목록이 와서 "회원이 없다"로 보인다.
+ */
 export async function loadAllUsers(): Promise<Profile[]> {
   const sb = getSupabase();
   if (!sb) return [];
-  const { data } = await sb
-    .from("profiles")
-    .select("id,username,tokens,is_master")
-    .not("username", "in", `(${MASTER_IDS.join(",")})`);
-  return (data as Profile[]) ?? [];
+  const { data } = await sb.from("profiles").select("id,username,tokens,is_master");
+  const masters: readonly string[] = MASTER_IDS;
+  return ((data as Profile[]) ?? []).filter((p) => !masters.includes(p.username));
 }
 
 /* ── 게스트(비회원) — 서버 계정이 아니라 이 기기 플래그 ── */
