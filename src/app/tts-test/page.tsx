@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { authedFetch } from "@/lib/supabase";
 
 /**
  * Typecast 목소리 시청실 (개발용 — 메뉴에 노출하지 않는다, 주소로만 접근).
@@ -57,7 +58,7 @@ export default function TtsTestPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    fetch("/api/tts/voices")
+    authedFetch("/api/tts/voices")
       .then(async (r) => {
         const data = (await r.json()) as { voices?: Voice[]; error?: string };
         if (!r.ok) throw new Error(data.error ?? `HTTP ${r.status}`);
@@ -71,7 +72,7 @@ export default function TtsTestPage() {
     setBusyId(v.id);
     setError(null);
     try {
-      const r = await fetch("/api/tts", {
+      const r = await authedFetch("/api/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, voiceId: v.id, model: v.model }),

@@ -8,7 +8,7 @@
  *   지정 문장만 녹음하는 이유: 유출돼도 무해한 내용이라 부모 불안을 구조로 푼다.
  */
 
-import { acctKey } from "@/lib/supabase";
+import { acctKey, authedFetch } from "@/lib/supabase";
 import {
   segmentTones,
   splitDialogue,
@@ -605,7 +605,8 @@ export async function fetchElevenAudio(voiceId: string, text: string): Promise<B
 export async function fetchTypecastVoiceAudio(voiceId: string, text: string): Promise<Blob> {
   const cacheId = `tcvoice:${voiceId}:${hashText(text)}`;
   return fetchCachedVoiceAudio(cacheId, async () => {
-    const r = await fetch("/api/tts", {
+    // 복제된 부모 목소리는 주인만 쓸 수 있다 — 서버가 확인하도록 토큰을 함께 보낸다.
+    const r = await authedFetch("/api/tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, voiceId, model: "ssfm-v30" }),

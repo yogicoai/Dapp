@@ -49,6 +49,30 @@ export async function currentUid(): Promise<string | null> {
   }
 }
 
+/**
+ * 로그인 토큰을 붙여 우리 서버(/api/...)를 부른다.
+ *
+ * 서버가 "부른 사람이 누구인지" 알아야 하는 자리에 쓴다 — 부모 목소리처럼 남의
+ * 것을 건드리면 안 되는 것, 그리고 돈이 나가는 합성·그림 만들기.
+ * 로그인 안 했으면 헤더 없이 그냥 보낸다(서버가 401로 막는다).
+ */
+export async function authedFetch(input: string, init: RequestInit = {}): Promise<Response> {
+  const sb = getSupabase();
+  let token: string | null = null;
+  if (sb) {
+    try {
+      const { data } = await sb.auth.getSession();
+      token = data.session?.access_token ?? null;
+    } catch {
+      /* 무시 — 토큰 없이 보내고 서버 판단에 맡긴다 */
+    }
+  }
+  if (!token) return fetch(input, init);
+  const headers = new Headers(init.headers);
+  headers.set("Authorization", `Bearer ${token}`);
+  return fetch(input, { ...init, headers });
+}
+
 /* ── 계정별 설정 저장 ──
  * 아이 정보·나라·성우·글자 위치 같은 설정은 계정마다 따로 남아야 한다(사장님 지시).
  * 그런데 이 값들은 화면이 뜰 때 '동기적으로' 읽히고, 회원 id는 비동기로만 알 수 있다.

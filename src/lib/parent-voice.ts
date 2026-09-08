@@ -18,7 +18,7 @@ import {
   noiseGate,
   trimSilence,
 } from "@/lib/voice-dsp";
-import { currentUid, getSupabase } from "@/lib/supabase";
+import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
 import { capPieceLengths } from "@/lib/voice-trim";
 
 export type ParentVoice = {
@@ -282,7 +282,7 @@ export async function cloneParentVoice(role: string, name: string, audio: Blob):
   const form = new FormData();
   form.append("name", name);
   form.append("audio", wav, "voice.wav");
-  const r = await fetch("/api/voice/clone", { method: "POST", body: form });
+  const r = await authedFetch("/api/voice/clone", { method: "POST", body: form });
   if (!r.ok) {
     const d = (await r.json().catch(() => null)) as { error?: string } | null;
     throw new Error(d?.error ?? `복제 실패 (HTTP ${r.status})`);
@@ -483,7 +483,7 @@ function saveOrphans(uid: string, list: string[]): void {
 /** Typecast에서 클론 하나를 지운다. 지워졌으면 true. 예외를 던지지 않는다. */
 async function deleteCloneRemote(voiceId: string): Promise<boolean> {
   try {
-    const r = await fetch("/api/voice/clone", {
+    const r = await authedFetch("/api/voice/clone", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ voiceId }),

@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { TypecastError, synthesize } from "@/lib/typecast";
+import { callerOf, isClonedVoice, ownsVoice } from "@/lib/api-auth";
 
 /**
  * 문장 → 성우 음성(Typecast). 글자 수만큼 무료 크레딧(월 3만 자)이 나가므로
  * 한 번에 500자까지만 받는다 — 책 한 쪽(최대 100자)에는 넉넉하다.
+ *
+ * 복제된 부모 목소리(uc_...)로 합성하려면 **그 목소리가 자기 것이어야 한다.**
+ * 예전엔 아무나 아무 voiceId 나 넘길 수 있어서, 남의 아빠 목소리로 500자까지
+ * 아무 문장이나 만들 수 있었다. 배역 성우(tc_...)는 우리가 고른 공용 목소리라
+ * 그대로 둔다 — 여기에 로그인을 걸면 비회원 둘러보기의 낭독이 막힌다.
  */
 export async function POST(request: Request) {
   let body: unknown;
@@ -39,6 +45,17 @@ export async function POST(request: Request) {
   }
   if (!voiceId) {
     return NextResponse.json({ error: "voiceId가 필요합니다." }, { status: 400 });
+  }
+
+  // 복제된 개인 목소리는 주인만 쓸 수 있다.
+  if (isClonedVoice(voiceId)) {
+    const caller = await callerOf(request);
+    if (!caller) {
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+    }
+    if (!(await ownsVoice(caller, voiceId))) {
+      return NextResponse.json({ error: "내 목소리가 아닙니다." }, { status: 403 });
+    }
   }
 
   try {
