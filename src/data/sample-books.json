@@ -328,5 +328,101 @@
         "image": "/legacy/max-potty/p8.png"
       }
     ]
+  },
+  {
+    "id": "haon-bubble-day",
+    "lang": "ko",
+    "title": "하온이의 비눗방울 하루",
+    "summary": "피노키오 책 속 물방울에서 시작해 공원 비눗방울 놀이와 뮤직테라피까지, 하온이의 신났던 하루",
+    "style": "classic European storybook illustration: fine brown ink outlines with light cross-hatching, soft transparent watercolor washes, visible paper texture, warm muted palette (cream, soft sky blue, moss green, apricot), gentle natural daylight. Flat hand-drawn 2D — NOT 3D render, NOT glossy, NOT plastic, NOT Pixar",
+    "setting": "present-day Korea — a bright modern daycare playroom and a nearby city park. Contemporary children's clothes, no hanbok, no fantasy elements.",
+    "cast": {
+      "haon": "HAON — a five-year-old Korean girl, short bob haircut with a small yellow hair clip, round cheeks, bright curious eyes, mustard-yellow t-shirt and sky-blue trousers, white sneakers",
+      "friend1": "FRIEND A — a five-year-old boy, short black hair, striped green t-shirt and navy shorts",
+      "friend2": "FRIEND B — a five-year-old girl, two small pigtails, pink cardigan over a white tee, denim skirt"
+    },
+    "pageCast": {
+      "1": [
+        "haon",
+        "friend1",
+        "friend2"
+      ],
+      "2": [
+        "haon",
+        "friend1",
+        "friend2"
+      ],
+      "3": [
+        "haon",
+        "friend1",
+        "friend2"
+      ],
+      "4": [
+        "haon",
+        "friend1",
+        "friend2"
+      ],
+      "5": [
+        "haon"
+      ]
+    },
+    "pages": [
+      {
+        "text": "어린이집 놀이방 카펫 위에 하온이랑 친구들이 동그랗게 모여 앉았어요. 하온이가 피노키오 책을 펼치자 고래 뱃속 그림에 동글동글한 물방울이 가득했어요. \"이거 봐, 비눗방울 같아!\" 하온이가 손가락으로 하나둘 세어 보았어요. 옆에 있던 친구들도 눈을 동그랗게 뜨고 함께 들여다보았어요.",
+        "imagePrompt": "등장인물 3명: 하온, 친구, 다른 친구.\n장소: 어린이집 놀이방 — 밝은 나무 마루, 커다란 책장 하나, 크림색 벽과 큰 창, 알록달록한 카펫, 오전의 밝은 햇빛.\n물건: 피노키오 책 — 파란색 네모난 그림책, 아이 두 손만 한 크기, 펼친 면에 동그란 물방울 그림.\n하온이는 카펫 가운데 앉아 책을 펼쳐 들고 손가락으로 물방울을 짚는다. 친구들은 양옆에 앉아 책을 함께 들여다본다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/sample/haon-bubble/p1.webp?v=1",
+        "voiceDirection": {
+          "narration": "normal",
+          "dialogue": "happy",
+          "intensity": 0.5,
+          "pace": "normal"
+        }
+      },
+      {
+        "text": "친구들도 다 같이 물방울을 세다가 눈이 반짝반짝해졌어요. \"우리 진짜 비눗방울 불러 나가요!\" 친구가 두 팔을 번쩍 들며 소리쳤어요. 하온이도 벌떡 일어나 신발장으로 뛰어갔어요. 그렇게 책 읽기 시간은 어느새 공원으로 가는 시간이 되어버렸어요.",
+        "imagePrompt": "등장인물 3명: 하온, 친구, 다른 친구.\n장소: 공원 — 노란 미끄럼틀과 둥근 모래밭, 나무 벤치.\n물건: 피노키오 책 — 파란색 네모난 그림책, 아이 두 손만 한 크기, 펼친 면에 동그란 물방울 그림.\n친구은 카펫에서 일어나 두 팔을 번쩍 든다. 하온이는 그 옆에서 벌떡 일어나 신발장 쪽을 바라본다. 다른 친구는 웃으며 함께 일어선다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/sample/haon-bubble/p2.webp?v=1",
+        "voiceDirection": {
+          "narration": "normal",
+          "dialogue": "happy",
+          "intensity": 0.5,
+          "pace": "normal"
+        }
+      },
+      {
+        "text": "공원에 나온 하온이는 두 팔을 번쩍 들고 뛰어다녔어요. 바람을 타고 둥실둥실 떠다니는 비눗방울을 눈으로 쫓다가, 손을 쭉 뻗어 톡 잡아 보았어요. \"잡았다!\" 하온이가 소리치며 깔깔 웃었어요. 친구들도 손을 뻗으며 비눗방울을 따라 뛰었어요.",
+        "imagePrompt": "등장인물 3명: 하온, 친구, 다른 친구.\n장소: 공원 — 노란 미끄럼틀과 둥근 모래밭, 나무 벤치.\n물건: 비눗방울 — 하늘색 동그란 방울들, 아이 주먹만 한 크기, 여러 개가 둥실둥실 떠 있음.\n하온이는 잔디 가운데서 두 팔을 뻗어 비눗방울을 잡는다. 친구은 왼쪽에서, 다른 친구는 오른쪽에서 손을 뻗으며 비눗방울을 쫓는다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/sample/haon-bubble/p3.webp?v=1",
+        "voiceDirection": {
+          "narration": "normal",
+          "dialogue": "happy",
+          "intensity": 0.5,
+          "pace": "normal"
+        }
+      },
+      {
+        "text": "어린이집으로 돌아온 하온이는 뮤직테라피 시간에 '의좋은 형제' 이야기를 들었어요. 지게에 볏단을 실어 나르는 흉내도 내 보고, 친구들과 나란히 앉아 핑거심벌즈를 톡톡 부딪혔어요. 하온이는 노래에 맞춰 짤랑짤랑 소리를 냈어요. 친구들도 리듬에 맞춰 신나게 따라 쳤어요.",
+        "imagePrompt": "등장인물 3명: 하온, 친구, 다른 친구.\n장소: 어린이집 놀이방 — 밝은 나무 마루, 커다란 책장 하나, 크림색 벽과 큰 창, 알록달록한 카펫, 오전의 밝은 햇빛.\n물건: 핑거심벌즈 — 은색 동그란 심벌즈 한 쌍, 아이 손바닥만 한 크기.\n물건: 지게 — 갈색 나무 지게, 등에 메는 크기, 위에 노란 볏단 다발.\n하온이는 카펫 가운데 앉아 두 손으로 핑거심벌즈를 부딪힌다. 친구는 옆에서 지게를 메는 흉내를 낸다. 다른 친구는 하온이 반대편에서 심벌즈를 함께 친다.\n옷·악기·벽 어디에도 글자를 쓰지 않는다. 의성어(톡톡 같은 소리말)를 그림 안에 적지 않는다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/sample/haon-bubble/p4.webp?v=1",
+        "voiceDirection": {
+          "narration": "normal",
+          "dialogue": "normal",
+          "intensity": 0.5,
+          "pace": "normal"
+        }
+      },
+      {
+        "text": "집으로 가는 길, 하온이는 손에 남은 핑거심벌즈 소리를 흥얼거렸어요. 아까 공원에서 잡았던 비눗방울이 아직도 눈앞에 동실동실 떠 있는 것만 같았어요. \"비눗방울도 잡고 짤랑짤랑도 하고, 오늘 진짜 신났어!\" 하온이가 웃으며 폴짝 뛰었어요. 발걸음마다 콧노래가 절로 따라나왔어요.",
+        "imagePrompt": "등장인물 1명: 하온.\n장소: 공원 — 노란 미끄럼틀과 둥근 모래밭, 나무 벤치.\n하온이는 현관 쪽으로 걸어가며 두 팔을 벌리고 폴짝 뛴다. 얼굴에는 웃음이 가득하다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/sample/haon-bubble/p5.webp?v=1",
+        "voiceDirection": {
+          "narration": "normal",
+          "dialogue": "happy",
+          "intensity": 0.5,
+          "pace": "normal"
+        }
+      }
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/sample/haon-bubble/p1.webp?v=1"
   }
 ]

@@ -53,3 +53,4 @@ next-env.d.ts
 .upload-jack.mjs
 .bake-jack.mjs
 .bake-jack-hotspots.mjs
+tmp-stories/
