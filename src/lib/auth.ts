@@ -199,7 +199,7 @@ export async function changePassword(newPw: string): Promise<{ ok: boolean; erro
  * 콘솔에서 한 줄이면 끝이었다 — update({ tokens: 999999 }).
  * is_master 도 같은 방법으로 켤 수 있었다.
  *
- * 이제 supabase-tokens.sql 의 함수로만 바뀐다(spend_tokens · refund_tokens ·
+ * 이제 supabase-setup.sql 의 함수로만 바뀐다(spend_tokens · refund_tokens ·
  * grant_tokens). 그 SQL 을 아직 안 돌렸으면 함수가 없으므로, 옛 방식으로 물러선다 —
  * SQL 을 돌리기 전에 배포해도 앱이 멈추지 않게.
  */
@@ -235,7 +235,7 @@ export async function spendTokensEntry(
     return { ok: false, error: friendly(error.message) };
   }
 
-  // ── 물러서기: supabase-tokens.sql 을 아직 안 돌린 DB
+  // ── 물러서기: supabase-setup.sql 을 아직 안 돌린 DB
   const profile = await fetchProfile();
   if (!profile) return { ok: false, error: "회원 정보를 찾을 수 없어요." };
   if (profile.is_master) return { ok: true, entry: null };

@@ -83,7 +83,7 @@ export async function POST(request: Request) {
   /*
    * 값을 **만들기 전에** 받는다. 잔액이 없는데 Anthropic 을 먼저 부르면 그 돈은 그냥 나간다.
    * 같은 줄거리로 다시 쓰기는 정해진 횟수까지 공짜다 — 그 셈을 DB 가 한다.
-   * supabase-tokens.sql 을 아직 안 돌린 DB 면 함수가 없다. 그때는 charged 를 null 로
+   * supabase-setup.sql 을 아직 안 돌린 DB 면 함수가 없다. 그때는 charged 를 null 로
    * 돌려주고 브라우저가 예전처럼 깎는다(배포가 SQL 보다 먼저 나가도 안 멈추게).
    */
   const outlineKey = outlineKeyOf(outline);

@@ -1600,7 +1600,7 @@ export default function CreatePage() {
       const story = data.story as Story;
       /*
        * 값은 이제 서버가 받는다 — 만들기 전에, 그리고 '같은 줄거리로 다시 쓰기'
-       * 횟수까지 DB 가 센다(supabase-tokens.sql 의 charge_story).
+       * 횟수까지 DB 가 센다(supabase-setup.sql 의 charge_story).
        *
        * 예전엔 여기 브라우저에서 깎았다. 그래서 경로를 직접 부르면 대본이 공짜였다.
        * 서버가 이미 받았으면(charge 가 오면) 여기서는 잔액 표시만 맞춘다.
