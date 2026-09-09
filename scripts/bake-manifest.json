@@ -9619,5 +9619,83 @@
     "emotion": "normal",
     "intensity": null,
     "text": "남매는 해가 뜨는 쪽으로 걷고 또 걸었어요.\n숲을 빠져나오자 저만치서 아버지가 아이들을 찾아 헤매고 있었지요.\n세 식구는 서로를 껴안고 한참을 울었어요.\n그날 밤 식탁에는 빵 한 조각뿐이었지만, 세상에서 제일 맛있었답니다.\n이제 아버지는 두 번 다시 아이들의 손을 놓지 않았어요.\n창밖에는 여전히 깜깜한 숲이 서 있었지만,\n세 식구가 함께 있는 방 안은 조금도 무섭지 않았답니다."
+  },
+  "sample/haon-bubble/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어린이집 놀이방 카펫 위에 하온이랑 친구들이 동그랗게 모여 앉았어요. 하온이가 피노키오 책을 펼치자 고래 뱃속 그림에 동글동글한 물방울이 가득했어요."
+  },
+  "sample/haon-bubble/seg-cast-p1-1.mp3": {
+    "voice": "tc-sua",
+    "emotion": "happy",
+    "intensity": 0.55,
+    "text": "\"이거 봐, 비눗방울 같아!\""
+  },
+  "sample/haon-bubble/seg-tc-minjung-p1-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하온이가 손가락으로 하나둘 세어 보았어요. 옆에 있던 친구들도 눈을 동그랗게 뜨고 함께 들여다보았어요."
+  },
+  "sample/haon-bubble/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "친구들도 다 같이 물방울을 세다가 눈이 반짝반짝해졌어요."
+  },
+  "sample/haon-bubble/seg-cast-p2-1.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "happy",
+    "intensity": 0.6,
+    "text": "\"우리 진짜 비눗방울 불러 나가요!\""
+  },
+  "sample/haon-bubble/seg-tc-minjung-p2-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "친구가 두 팔을 번쩍 들며 소리쳤어요. 하온이도 벌떡 일어나 신발장으로 뛰어갔어요. 그렇게 책 읽기 시간은 어느새 공원으로 가는 시간이 되어버렸어요."
+  },
+  "sample/haon-bubble/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공원에 나온 하온이는 두 팔을 번쩍 들고 뛰어다녔어요. 바람을 타고 둥실둥실 떠다니는 비눗방울을 눈으로 쫓다가, 손을 쭉 뻗어 톡 잡아 보았어요."
+  },
+  "sample/haon-bubble/seg-cast-p3-1.mp3": {
+    "voice": "tc-sua",
+    "emotion": "happy",
+    "intensity": 0.6,
+    "text": "\"잡았다!\""
+  },
+  "sample/haon-bubble/seg-tc-minjung-p3-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하온이가 소리치며 깔깔 웃었어요. 친구들도 손을 뻗으며 비눗방울을 따라 뛰었어요."
+  },
+  "sample/haon-bubble/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어린이집으로 돌아온 하온이는 뮤직테라피 시간에 '의좋은 형제' 이야기를 들었어요. 지게에 볏단을 실어 나르는 흉내도 내 보고, 친구들과 나란히 앉아 핑거심벌즈를 톡톡 부딪혔어요. 하온이는 노래에 맞춰 짤랑짤랑 소리를 냈어요. 친구들도 리듬에 맞춰 신나게 따라 쳤어요."
+  },
+  "sample/haon-bubble/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "집으로 가는 길, 하온이는 손에 남은 핑거심벌즈 소리를 흥얼거렸어요. 아까 공원에서 잡았던 비눗방울이 아직도 눈앞에 동실동실 떠 있는 것만 같았어요."
+  },
+  "sample/haon-bubble/seg-cast-p5-1.mp3": {
+    "voice": "tc-sua",
+    "emotion": "happy",
+    "intensity": 0.55,
+    "text": "\"비눗방울도 잡고 짤랑짤랑도 하고, 오늘 진짜 신났어!\""
+  },
+  "sample/haon-bubble/seg-tc-minjung-p5-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하온이가 웃으며 폴짝 뛰었어요. 발걸음마다 콧노래가 절로 따라나왔어요."
   }
 }

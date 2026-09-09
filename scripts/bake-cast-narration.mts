@@ -97,6 +97,20 @@ type BookSpec = {
   cast: { name: string }[];
 };
 const BOOKS: Record<string, BookSpec> = {
+  /*
+   * 알림장으로 만든 데모 한 권 (2026-09-09). 선생님이 적어 준 하루를 그대로
+   * 넣어 5장이 버티는지 본 책이라, 원고가 sample-books.json 에 있고
+   * 마스터에게만 보인다. 캐스팅: 나레이션 민정 · 하온 수아 · 친구 시우.
+   */
+  "하온이의 비눗방울 하루": {
+    data: "src/data/sample-books.json",
+    root: "sample",
+    dir: "haon-bubble",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "하온" }, { name: "친구" }],
+  },
+
   "의좋은 형제": {
     dir: "brothers",
     narrators: ["tc-minjung"],
@@ -525,6 +539,7 @@ async function bake(
   }
   const res = await fetch(`${BASE}/api/tts`, {
     method: "POST",
+    redirect: "manual", // 되돌림을 따라가면 남의 앱 로그인 화면(HTML)을 소리로 저장한다
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       text,
@@ -539,7 +554,25 @@ async function bake(
     const body = await res.text().catch(() => "");
     throw new Error(`${file} 실패 (HTTP ${res.status}) ${body.slice(0, 200)}`);
   }
-  fs.writeFileSync(out, Buffer.from(await res.arrayBuffer()));
+  /*
+   * 받은 것이 진짜 소리인지 확인한다.
+   *
+   * 2026-09-09 에 13개를 헛구웠다. BAKE_BASE 가 가리킨 3000번 포트에 **다른 프로젝트**가
+   * 떠 있었고, 그 앱이 /api/tts 를 /login 으로 되돌려서(307) fetch 가 따라갔다.
+   * 돌아온 건 HTML 인데 res.ok 가 참이라 그대로 mp3 로 저장됐다 — 13개 파일이 모두
+   * 13,549 바이트로 똑같았다. 게다가 기록(manifest)까지 남아서 다시 구우려 해도
+   * "이미 있다"고 건너뛴다. 조용히 망가지는 길이라 여기서 막는다.
+   */
+  const kind = res.headers.get("content-type") ?? "";
+  const bytes = Buffer.from(await res.arrayBuffer());
+  if (!/^audio\//i.test(kind)) {
+    throw new Error(
+      `${file} — 소리가 아니라 ${kind || "알 수 없는 것"} 이 왔습니다 (${bytes.length}바이트). ` +
+        `BAKE_BASE(${BASE}) 가 이 프로젝트의 개발 서버를 가리키는지 확인하세요.`,
+    );
+  }
+  fs.writeFileSync(out, bytes);
+
   made += 1;
   console.log(`  구움 ${file}  ${voice}/${emotion}  ${text.length}자`);
   // 몰아치지 않게 살짝 쉰다.
