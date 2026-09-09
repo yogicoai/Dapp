@@ -138,7 +138,14 @@ limit 50;
 
 
 -- B-4. 마스터(관리자) 지정.
--- update public.profiles set is_master = true where username = 'yogico'
+--
+-- ⚠ 가입 트리거(handle_new_user)는 **가입하는 순간에만** is_master 를 정한다.
+--    나중에 마스터 아이디를 늘려도 **이미 있는 계정은 안 바뀐다.**
+--    2026-09-09 에 실제로 걸렸다 — fe 를 마스터 목록에 넣었는데 fe 계정이
+--    그 전에 만들어져서, 앱에서 마스터 전용 책장이 안 보였다.
+--    마스터 아이디를 늘렸으면 이 줄을 꼭 한 번 돌려라.
+--
+-- update public.profiles set is_master = true where username in ('fe', 'yogico')
 -- returning username, is_master;
 
 
