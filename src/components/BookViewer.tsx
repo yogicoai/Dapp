@@ -564,6 +564,8 @@ export function BookViewer({ book }: { book: Book }) {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
+            // 서버는 이 owner 를 믿지 않는다. 마스터가 남의 책을 다시 그리면 서버가 bookId 로
+            // 책 주인을 찾아 그 주인 폴더에 쓴다(upload-art ownerFolderOf).
             owner: redrawOwner,
             bookId: book.id,
             name: `p${index + 1}-redraw-${Date.now().toString(36)}`,

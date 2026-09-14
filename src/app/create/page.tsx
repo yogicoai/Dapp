@@ -7,8 +7,29 @@ import { BookViewer } from "@/components/BookViewer";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceInput } from "@/components/VoiceInput";
 import { ART_STYLES } from "@/lib/art-styles";
-import { loadSession, spendTokens } from "@/lib/auth";
-import { authedFetch } from "@/lib/supabase";
+import { fetchProfile, loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
+import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
+import {
+  capFailures,
+  chargeProblem,
+  cloneJob,
+  insertJob,
+  isEmbeddedImage,
+  isJobId,
+  jobWriteProblem,
+  planFromJob,
+  readJob,
+  readJobResult,
+  readPaidMarker,
+  recoverFromChargeRefusal,
+  storyManuscript,
+  stripEmbeddedArt,
+  updateJob,
+  waitAtMost,
+  type DrawingNow,
+  type JobFailure,
+  type PaidMarker,
+} from "@/lib/book-jobs";
 import {
   loadChild,
   loadChildRemote,
@@ -521,7 +542,61 @@ type CreateDraft = {
   scriptCharged?: boolean;
   storyRewrites?: number;
   locationDetail?: string;
+  /**
+   * 만들기 기록(book_jobs) id — 서버가 대본을 쓰면서 만든 줄.
+   * 새로고침·이어 하기에도 같은 기록에 이어 적어야 한 번의 만들기가 한 줄로 보인다.
+   */
+  jobId?: string | null;
 };
+
+/*
+ * '그림 값은 냈는데 책장에 못 넣은' 표시 — 그리기 보관 열쇠마다 하나.
+ * 저장이 실패하면 그리기 보관을 지우지 않는다. 그 뒤 다시 저장할 때 값을 또 받지 않게 한다.
+ * (읽기 판단은 book-jobs.ts 의 readPaidMarker)
+ */
+const PAID_MARKER_KEY = "voice-storybook:unsaved-paid";
+function loadPaidMarker(progressKey: string): PaidMarker | null {
+  if (typeof window === "undefined" || !progressKey) return null;
+  try {
+    return readPaidMarker(window.localStorage.getItem(`${PAID_MARKER_KEY}:${progressKey}`), Date.now());
+  } catch {
+    return null;
+  }
+}
+function savePaidMarker(progressKey: string, marker: PaidMarker): void {
+  if (typeof window === "undefined" || !progressKey) return;
+  try {
+    window.localStorage.setItem(`${PAID_MARKER_KEY}:${progressKey}`, JSON.stringify(marker));
+  } catch {
+    /* 표시를 못 남겨도 기록(book_jobs)으로 한 번 더 가린다 */
+  }
+}
+function clearPaidMarker(progressKey: string): void {
+  if (typeof window === "undefined" || !progressKey) return;
+  try {
+    window.localStorage.removeItem(`${PAID_MARKER_KEY}:${progressKey}`);
+  } catch {
+    /* 무시 */
+  }
+}
+
+/*
+ * 새 책 id. 시각 뒤에 난수 꼬리를 붙인다(2026-09-14 고침).
+ * 예전 id(my-<밀리초>)는 다른 회원 책과 겹칠 수 있었다. 겹치면 저장이 권한 오류로 막히는데,
+ * 그 id 는 그림 값과 함께 기록에 못 박혀 바꿀 수 없어 '다시 저장하기'가 영원히 실패했다.
+ * 모양은 charge_illustration 의 ^my-[A-Za-z0-9_-]{1,77}$ 안이다.
+ */
+function newBookId(): string {
+  let tail = "";
+  try {
+    const bytes = new Uint8Array(6);
+    crypto.getRandomValues(bytes);
+    tail = Array.from(bytes, (b) => (b % 36).toString(36)).join("");
+  } catch {
+    tail = Math.random().toString(36).slice(2, 8);
+  }
+  return `my-${Date.now().toString(36)}-${tail}`;
+}
 
 function createDraftKey(owner: string): string {
   return `${CREATE_DRAFT_KEY}:${owner}`;
@@ -756,8 +831,6 @@ export default function CreatePage() {
       setTokens(s.profile?.tokens ?? 0);
       setMaster(s.isMaster);
       setDraftOwner(s.uid);
-      // 삽화를 cafe24에 올릴 때 회원별 폴더 이름으로 쓴다.
-      setAcctId(s.profile?.username ?? null);
       // 권수 상한 확인용 — 숫자만 센다. 예전엔 책을 통째로 받아 세느라(삽화 포함)
       // 만들기 화면을 열 때마다 수십 MB가 오갔다.
       setBookCount(await countMyBooks());
@@ -828,8 +901,6 @@ export default function CreatePage() {
     return () => window.removeEventListener("beforeunload", warn);
   }, [step]);
 
-  // 로그인한 아이디 — 삽화를 올릴 cafe24 폴더 이름(books/<아이디>/…)으로 쓴다.
-  const [acctId, setAcctId] = useState<string | null>(null);
   const [draftOwner, setDraftOwner] = useState<string | null>(null);
   const [pendingDraft, setPendingDraft] = useState<CreateDraft | null>(null);
   const [draftReady, setDraftReady] = useState(false);
@@ -966,8 +1037,18 @@ export default function CreatePage() {
    * cafe24는 이미 결제해 둔 파일 창고라 추가 비용이 없다.
    *
    * 한 장씩 따로 올린다 — 한 번에 다 보내면 서버 요청 한도(4.5MB)에 걸린다.
-   * 실패한 장은 원래 base64를 그대로 쓴다. 그림도 다 그렸고 토큰도 이미 냈는데
-   * 파일 올리기가 안 됐다고 동화를 통째로 잃게 할 수는 없다.
+   * 이미 주소(https://…)인 것은 건너뛴다 — '다시 저장하기'가 못 올린 장만 다시 올리게.
+   *
+   * 못 올린 장은 어떻게 하나 (2026-09-14 정함):
+   *  · 먼저 한 번 더 올려 본다. 실패의 대부분은 순간 끊김이다.
+   *  · 그래도 안 되면 **쪽 그림·표지는 base64 로 책에 남긴다.** 부모가 값을 내고 받은
+   *    그림이고, 저장 전에 1280px 로 줄여 둬서 한 장에 수백 KB 다. 버리면 빈 쪽이 된다.
+   *  · **인물 시트·장소 시트는 못 올리면 책에서 뺀다.** 줄이지 않은 원본이라 한 장에
+   *    1~2MB 인데, 읽는 사람에게는 안 보이고 나중에 한 쪽 다시 그릴 때 기준으로만 쓴다
+   *    (없으면 뷰어가 옆 쪽 그림을 기준으로 삼는다). 이걸 넣으면 책 한 줄이 수 MB 가 되어
+   *    바로 그 저장이 더 잘 실패한다 — 그림 하나 때문에 책 전체를 잃는 셈이다.
+   *    원본은 그리기 보관(IndexedDB)과 화면 메모리에 남아 '다시 저장하기' 때 다시 올린다.
+   *  · 몇 장을 못 올렸는지·왜인지는 failures 로 돌려준다 — 기록(book_jobs)에 남긴다.
    */
   async function hostArtwork(
     bookId: string,
@@ -980,49 +1061,93 @@ export default function CreatePage() {
     cover: string | null;
     sheet: string | null;
     locationSheets: LocationSheet[];
+    failures: JobFailure[];
   }> {
-    const jobs: { name: string; dataUrl: string; put: (url: string) => void }[] = [];
+    type UploadJob = { name: string; page?: number; kind: "art" | "sheet"; dataUrl: string; put: (url: string) => void; drop: () => void };
+    const jobs: UploadJob[] = [];
     const images = [...pageArt];
     let coverOut = cover;
     let sheetOut = sheet;
-    const locationsOut = locationSheets.map((s) => ({ ...s }));
+    let locationsOut = locationSheets.map((s) => ({ ...s }));
+    const droppedLocations = new Set<number>();
 
-    if (cover) jobs.push({ name: "cover", dataUrl: cover, put: (u) => (coverOut = u) });
-    if (sheet) jobs.push({ name: "sheet", dataUrl: sheet, put: (u) => (sheetOut = u) });
+    if (isEmbeddedImage(cover)) {
+      jobs.push({ name: "cover", kind: "art", dataUrl: cover, put: (u) => (coverOut = u), drop: () => {} });
+    }
+    if (isEmbeddedImage(sheet)) {
+      jobs.push({ name: "sheet", kind: "sheet", dataUrl: sheet, put: (u) => (sheetOut = u), drop: () => (sheetOut = null) });
+    }
     locationsOut.forEach((s, i) => {
-      jobs.push({ name: `loc${i + 1}`, dataUrl: s.image, put: (u) => (locationsOut[i].image = u) });
+      if (!isEmbeddedImage(s.image)) return;
+      jobs.push({
+        name: `loc${i + 1}`,
+        kind: "sheet",
+        dataUrl: s.image,
+        put: (u) => (locationsOut[i].image = u),
+        drop: () => droppedLocations.add(i),
+      });
     });
     pageArt.forEach((im, i) => {
-      if (im) jobs.push({ name: `p${i + 1}`, dataUrl: im, put: (u) => (images[i] = u) });
+      if (isEmbeddedImage(im)) {
+        jobs.push({ name: `p${i + 1}`, page: i + 1, kind: "art", dataUrl: im, put: (u) => (images[i] = u), drop: () => {} });
+      }
     });
-    if (jobs.length === 0) return { images, cover: coverOut, sheet: sheetOut, locationSheets: locationsOut };
+    const result = (failures: JobFailure[]) => {
+      locationsOut = locationsOut.filter((_, i) => !droppedLocations.has(i));
+      return { images, cover: coverOut, sheet: sheetOut, locationSheets: locationsOut, failures };
+    };
+    if (jobs.length === 0) return result([]);
 
-    setUploading({ done: 0, total: jobs.length });
-    // 회원 아이디로 폴더를 나눈다 — 나중에 사람이 직접 찾아보거나 지울 수 있게.
-    const owner = acctId ?? "guest";
-    for (let i = 0; i < jobs.length; i++) {
-      const job = jobs[i];
+    /** 한 장 올리기 — 성공하면 null, 실패하면 이유. 절대 던지지 않는다. */
+    const uploadOne = async (job: UploadJob): Promise<string | null> => {
       try {
         const res = await authedFetch("/api/upload-art", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ owner, bookId, name: job.name, image: job.dataUrl }),
+          // 폴더는 서버가 부른 사람(마스터면 책 주인)으로 정한다 — owner 는 보내지 않는다.
+          body: JSON.stringify({ bookId, name: job.name, image: job.dataUrl }),
         });
         if (res.ok) {
-          const { url } = (await res.json()) as { url?: string };
-          if (url) job.put(url);
-        } else {
-          console.warn("[hostArtwork] 올리기 실패", job.name, res.status);
+          const { url } = (await res.json().catch(() => ({}))) as { url?: string };
+          if (url) {
+            job.put(url);
+            return null;
+          }
+          return "서버가 주소를 돌려주지 않았어요";
         }
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        return `${data.error ?? "올리기 실패"} (HTTP ${res.status})`;
       } catch (e) {
-        // 이 장만 base64로 남는다 — 다음 장을 계속 올린다.
-        // 조용히 넘기면 책이 통째로 base64가 되어 수 MB짜리 줄이 DB에 들어간다(실제로 났다).
-        console.warn("[hostArtwork] 올리기 실패", job.name, e);
+        return (e as Error)?.message || "네트워크 오류";
       }
+    };
+
+    setUploading({ done: 0, total: jobs.length });
+    const failed: { job: UploadJob; reason: string }[] = [];
+    for (let i = 0; i < jobs.length; i++) {
+      const reason = await uploadOne(jobs[i]);
+      if (reason) failed.push({ job: jobs[i], reason });
       setUploading({ done: i + 1, total: jobs.length });
     }
+    // 못 올린 장은 잠깐 쉬었다 한 번 더 — 조용히 넘기면 책이 통째로 base64가 되어
+    // 수 MB짜리 줄이 DB에 들어간다(실제로 났다).
+    const failures: JobFailure[] = [];
+    if (failed.length > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      for (const f of failed) {
+        const again = await uploadOne(f.job);
+        if (!again) continue;
+        console.warn("[hostArtwork] 올리기 실패", f.job.name, again);
+        if (f.job.kind === "sheet") f.job.drop(); // 위 설명: 시트는 base64 로 넣지 않는다
+        failures.push({
+          page: f.job.page,
+          stage: "upload",
+          reason: `${f.job.name}: ${again}${f.job.kind === "sheet" ? " — 책에서 뺌" : " — base64로 남김"}`,
+        });
+      }
+    }
     setUploading(null);
-    return { images, cover: coverOut, sheet: sheetOut, locationSheets: locationsOut };
+    return result(failures);
   }
 
   /** 올린 그림을 캔버스로 줄여 data URL로 만든다 — 원본 사진은 몇 MB라 그대로 보내면 느리다. */
@@ -1226,6 +1351,60 @@ export default function CreatePage() {
   const [drawSummary, setDrawSummary] = useState("");
   /** 이 대본으로 그리다 만 그림이 몇 장 남아 있는지 — 버튼 글씨에 쓴다. */
   const [resumablePages, setResumablePages] = useState(0);
+  /** 이 대본으로 그림 값을 이미 냈는데 책장에 못 넣은 책이 있는지 — 버튼 글씨·잔액 검사에 쓴다. */
+  const [unsavedPaid, setUnsavedPaid] = useState(false);
+
+  /*
+   * 만들기 기록(book_jobs) id.
+   *
+   * 서버가 대본을 쓰면서 한 줄을 만들어 id 를 돌려준다. 그 뒤 그리기·올리기·저장 단계를
+   * 같은 줄에 적는다 — 컴플레인이 오면 마스터가 "어디까지 갔고 왜 멈췄나"를 본다.
+   * state 는 임시저장에 담기 위해, ref 는 오래 걸리는 그리기·저장 도중에 최신 값을 읽기 위해 둘 다 둔다.
+   * 기록 표가 없는 DB 면 늘 null 이고, 그래도 만들기는 예전처럼 돈다.
+   */
+  const [jobId, setJobIdState] = useState<string | null>(null);
+  const jobIdRef = useRef<string | null>(null);
+  const setJobId = (id: string | null) => {
+    jobIdRef.current = id;
+    setJobIdState(id);
+  };
+  /*
+   * 기록 쓰기는 한 줄로 세워 보낸다 — 쪽 그림 진행을 묶어 보내는 사이에 '저장 중'이 먼저
+   * 도착했다가 늦게 온 '그리는 중'에 덮이는 일이 없게. 실패해도 흐름은 막지 않는다.
+   */
+  const jobQueueRef = useRef<Promise<unknown>>(Promise.resolve());
+  function recordJob(patch: Record<string, unknown>, id?: string | null): Promise<boolean> {
+    if (id === null) return Promise.resolve(false);
+    // 부를 때의 기록 id 로 적는다(저장 성공 뒤 곧바로 id 를 비워도 '저장됨'이 그 기록에 가게).
+    // 부를 때 아직 id 가 없으면 **차례가 왔을 때의** id 로 적는다 — 그리기 시작에서 기록을 새로
+    // 여는 일도 같은 줄에 서 있어서, 그 사이에 부른 기록이 버려지지 않게.
+    const fixed = id === undefined ? jobIdRef.current : id;
+    const run = jobQueueRef.current
+      .then(() => updateJob(getSupabase(), fixed ?? jobIdRef.current, patch))
+      .catch(() => false);
+    jobQueueRef.current = run;
+    return run;
+  }
+  /**
+   * 대본을 버리고 끝낸 기록을 '취소'로 닫는다.
+   * 아직 그림 값을 안 낸 단계(writing·script·drawing)만 닫는다 — 값을 내고 저장을 못 한
+   * 기록은 취소가 아니라 마스터가 처리할 사고라 그대로 둔다.
+   */
+  async function closeJobAsCancelled(id: string | null): Promise<void> {
+    if (!id) return;
+    const job = await readJob(getSupabase(), id);
+    if (!job || job.illustration_entry || !["writing", "script", "drawing"].includes(job.status)) return;
+    await recordJob({ status: "cancelled" }, id);
+  }
+  /** 이번 그리기에서 쪽마다 못 그린 이유 — 저장 단계 기록에도 함께 남긴다. */
+  const drawFailuresRef = useRef<JobFailure[]>([]);
+  /*
+   * 책장에 넣지 못한 책.
+   *
+   * 저장이 실패하면 완성 화면으로 넘어가지 않고 이 책을 붙들고 '다시 저장하기'를 띄운다.
+   * 그림 값은 이미 나갔다 — 책을 버리면 안 된다.
+   */
+  const [saveFailure, setSaveFailure] = useState<{ book: Book; reason: string; illustrated: boolean } | null>(null);
 
   // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
   const [confirmMake, setConfirmMake] = useState(false);
@@ -1238,7 +1417,7 @@ export default function CreatePage() {
     happening, extra, place, todayEvent, feeling, ending, emotion, situation,
     artStyle, screenShape, narratorVoice, narrationStyle, longerStory, pageCount, outline, story,
     directMode, directOpening, directDevelopment, directCrisis, directEnding, directText,
-    outlineRetries, scriptCharged, storyRewrites, locationDetail,
+    outlineRetries, scriptCharged, storyRewrites, locationDetail, jobId,
   });
 
   useEffect(() => {
@@ -1273,13 +1452,15 @@ export default function CreatePage() {
    */
   useEffect(() => {
     let cancelled = false;
-    const lookup =
-      step === "story" && story
-        ? loadDrawProgress(drawProgressKey(draftOwner ?? "guest", story, artStyle))
-        : Promise.resolve(null);
+    const key = step === "story" && story ? drawProgressKey(draftOwner ?? "guest", story, artStyle) : "";
+    const lookup = key ? loadDrawProgress(key) : Promise.resolve(null);
     void lookup.then((progress) => {
       if (cancelled) return;
       setResumablePages(progress ? progress.images.filter(Boolean).length : 0);
+      // 그림 값을 내고 책장에 못 넣은 책 — 다시 누르면 값 없이 저장만 다시 한다.
+      // 표시만 본다(2026-09-14 고침) — 그리기 보관이 용량 초과 등으로 안 남았어도 값은 이미 냈다.
+      // 예전엔 보관이 없으면 이 안내가 안 뜨고, 잔액이 모자라면 버튼이 잠겨 다시 저장할 길이 없었다.
+      setUnsavedPaid(Boolean(key && loadPaidMarker(key)));
     });
     return () => {
       cancelled = true;
@@ -1315,6 +1496,8 @@ export default function CreatePage() {
     setScriptCharged(draft.scriptCharged ?? false);
     setStoryRewrites(draft.storyRewrites ?? 0);
     setLocationDetail(draft.locationDetail ?? "");
+    // 만들기 기록 — 이어서 만들어도 같은 줄에 적는다.
+    setJobId(isJobId(draft.jobId) ? draft.jobId : null);
     // 적어 둔 것이 있으면 손댄 것으로 본다 — 이어서 만들 때 덮어쓰지 않게.
     locationTouchedRef.current = Boolean(draft.locationDetail);
     setArtStyle(ART_STYLES.some((style) => style.id === draft.artStyle) ? draft.artStyle : ART_STYLES[0].id);
@@ -1333,6 +1516,9 @@ export default function CreatePage() {
   }
 
   function discardCreateDraft(): void {
+    // 이어 만들지 않기로 했다 — 그 대본의 기록은 '취소'로 닫는다(사고 목록에 멈춘 건으로 안 뜨게).
+    // 그림 값을 내고 저장 못 한 기록이면 닫지 않는다: 그건 취소가 아니라 처리할 사고다.
+    if (isJobId(pendingDraft?.jobId)) void closeJobAsCancelled(pendingDraft.jobId);
     clearCreateDraft(draftOwner);
     draftBaselineRef.current = null;
     setPendingDraft(null);
@@ -1423,6 +1609,9 @@ export default function CreatePage() {
     setError("");
     if (isRetry) setOutlineRetries((n) => n + 1);
     // 새 줄거리 = 다른 이야기다. 대본을 새로 만들면 글 값을 다시 받는다.
+    // 앞 대본의 기록은 '취소(다른 대본으로 바꿈)'로 닫고, 새 대본은 새 줄에 적는다.
+    if (jobIdRef.current) void closeJobAsCancelled(jobIdRef.current);
+    setJobId(null);
     setScriptCharged(false);
     setStoryRewrites(0);
     setLocationDetail("");
@@ -1566,6 +1755,20 @@ export default function CreatePage() {
       );
       return;
     }
+    /*
+     * 그림 값을 내고 책장에 못 넣은 책이 이 대본에 있으면 먼저 묻는다.
+     * 다시 쓰면 대본이 바뀌어 그 책을 이 화면에서 다시 저장할 길이 없어진다(기록은 서버에 남아
+     * 마스터가 되살릴 수 있다). 기록 id 도 보내지 않는다 — 값 낸 기록을 되열지 않게(서버도 막는다).
+     */
+    const keepPaidJob = isRewrite && unsavedPaid;
+    if (
+      keepPaidJob &&
+      !window.confirm(
+        "그림 값을 낸 책이 아직 책장에 들어가지 않았어요.\n다시 쓰면 그 책은 이 화면에서 다시 저장할 수 없어요. (고객센터에서는 찾아 드릴 수 있어요)\n그래도 다시 쓸까요?",
+      )
+    ) {
+      return;
+    }
     busyRef.current = true;
     setBusy(true);
     setError("");
@@ -1582,10 +1785,14 @@ export default function CreatePage() {
           mood: mood.ko,
           longer: longerStory,
           narrationStyle,
+          // 같은 줄거리로 다시 쓰기면 같은 기록을 고치게 한다(새 줄을 만들지 않게).
+          jobId: isRewrite && !keepPaidJob ? jobIdRef.current : null,
         }),
         signal: ac.signal,
       });
       const data = await r.json();
+      // 서버가 만든(또는 고친) 기록 id — 실패했어도 받아 둔다(실패 기록과 이어지게).
+      if (isJobId(data?.jobId)) setJobId(data.jobId);
       if (!r.ok) {
         const detail = Array.isArray(data.detail) ? data.detail.slice(0, 2).join(" ") : "";
         throw new Error([data.error ?? "동화를 만들지 못했어요.", detail].filter(Boolean).join(" "));
@@ -1701,6 +1908,82 @@ export default function CreatePage() {
     const saved = await loadDrawProgress(progressKey);
     const counts: DrawCounts = { ...EMPTY_COUNTS, ...(saved?.counts ?? {}) };
     drawCountsRef.current = counts;
+    setSaveFailure(null);
+
+    /*
+     * 만들기 기록 — 그리기 시작. 부모가 대본 화면에서 고친 본문·그림체·장소 설명까지 원고로 남긴다
+     * (마스터가 되살리거나 빈 쪽을 다시 그릴 때 이 원고를 쓴다).
+     * 쪽 진행은 몇 초마다 묶어서 적는다 — 쪽마다 쓰면 요청이 많고, 안 쓰면 30분 멈춤 판정에 걸린다.
+     */
+    const pageFailures: JobFailure[] = [];
+    drawFailuresRef.current = pageFailures;
+    const failedPages = new Set<number>();
+    /*
+     * 값을 내고 저장 못 한 책이면 그 값을 낸 기록으로 잇는다(2026-09-14 고침).
+     * 임시저장은 그리기·완성 단계에서 안 쓰여서, 그때 열거나 갈아탄 기록 id 는 임시저장에 없다.
+     * 표시를 먼저 안 보면 여기서 빈 'drawing' 줄을 새로 열었다가 finish 에서 표시의 기록으로 갈아타,
+     * 영영 멈춘 줄이 남고 하루 60줄 상한도 깎였다.
+     */
+    const paidAtStart = loadPaidMarker(progressKey);
+    if (paidAtStart?.jobId) setJobId(paidAtStart.jobId);
+    const drawingManuscript = {
+      ...storyManuscript(s),
+      artStyleId: artStyle,
+      shape: screenShape,
+      locationDetail: locationDetail.trim() || undefined,
+    };
+    // 기록 열기·원고 적기는 기록 줄에 세워 뒤에서 한다 — 기다리지 않는다(기록은 보조 수단).
+    jobQueueRef.current = jobQueueRef.current
+      .then(async () => {
+        const sb = getSupabase();
+        if (!jobIdRef.current) {
+          // 기록 없이 온 대본 — 이 기능을 넣기 전에 만든 임시저장이거나, 서버가 기록을 못 만든 경우.
+          // 여기서라도 한 줄을 연다. 그래야 그림 값이 기록에 이어진다(못 열면 예전처럼 기록 없이 간다).
+          const uid = await currentUid();
+          const opened = uid
+            ? await insertJob(sb, { owner: uid, status: "drawing", page_count: s.pages.length, manuscript: drawingManuscript })
+            : null;
+          if (opened && !jobIdRef.current) setJobId(opened);
+          return;
+        }
+        const id = jobIdRef.current;
+        const base = { status: "drawing", page_count: s.pages.length, error: null };
+        /*
+         * 값을 낸 기록(책 id·그림 값이 붙음)의 원고는 덮지 않는다(2026-09-14 고침).
+         * 그 원고에는 저장 직전에 적은 올린 그림 주소가 들어 있다 — 마스터가 책을 되살리는 재료다.
+         * 그림 없는 대본 원고로 덮은 뒤 도중에 멈추면 그림 없는 책만 되살아난다.
+         * 읽지 못하면(모름) 역시 덮지 않는다.
+         */
+        if (paidAtStart) {
+          await updateJob(sb, id, base);
+          return;
+        }
+        const read = await readJobResult(sb, id);
+        const paid = !read.ok || Boolean(read.job && (read.job.book_id || read.job.illustration_entry));
+        await updateJob(sb, id, paid ? base : { ...base, manuscript: drawingManuscript });
+      })
+      .catch(() => false);
+    let lastReport = 0;
+    let reportTimer: ReturnType<typeof setTimeout> | null = null;
+    const reportDraw = (now = false) => {
+      const send = () => {
+        reportTimer = null;
+        lastReport = Date.now();
+        void recordJob({
+          drawn: Math.min(200, images.filter(Boolean).length),
+          draw_failed: Math.min(200, failedPages.size),
+          failures: capFailures(pageFailures),
+        });
+      };
+      if (now) {
+        if (reportTimer) clearTimeout(reportTimer);
+        send();
+      } else if (Date.now() - lastReport > 5000) {
+        send();
+      } else if (!reportTimer) {
+        reportTimer = setTimeout(send, 5000);
+      }
+    };
     const persist = () =>
       void saveDrawProgress({
         key: progressKey,
@@ -1980,12 +2263,15 @@ export default function CreatePage() {
              * 사라졌다 — 부모도 우리도 왜 안 됐는지 알 길이 없었다.
              */
             if (!first.ok) {
-              drawFailures.push(
+              const reason =
                 first.data.error ||
-                  (first.status === 413
-                    ? "참고 그림이 너무 커서 서버가 요청을 거절했어요."
-                    : `서버가 그림을 돌려주지 않았어요 (오류 ${first.status}).`),
-              );
+                (first.status === 413
+                  ? "참고 그림이 너무 커서 서버가 요청을 거절했어요."
+                  : `서버가 그림을 돌려주지 않았어요 (오류 ${first.status}).`);
+              drawFailures.push(reason);
+              pageFailures.push({ page: i + 1, stage: "draw", reason: `${reason} (HTTP ${first.status})` });
+            } else if (!first.data.image) {
+              pageFailures.push({ page: i + 1, stage: "draw", reason: "그림 없이 성공 응답이 왔어요" });
             }
             let image = first.ok ? (first.data.image ?? null) : null;
             /*
@@ -2040,6 +2326,8 @@ export default function CreatePage() {
 
             images[i] = image; // 그린 그림은 검사 결과와 무관하게 남긴다
             passed[i] = ok;
+            if (image) failedPages.delete(i);
+            else failedPages.add(i);
             persist(); // 한 장 그릴 때마다 보관 — 여기서 나가도 이 장은 남는다
             if (image && ok) {
               const locationKey = locationKeyFromImagePrompt(s.pages[i].imagePrompt);
@@ -2053,11 +2341,14 @@ export default function CreatePage() {
             // 다만 이유는 반드시 남긴다(예전엔 여기서 조용히 사라졌다).
             console.warn("[illustrate] 쪽 그림 실패", i + 1, e);
             drawFailures.push((e as Error).message || "알 수 없는 오류");
+            pageFailures.push({ page: i + 1, stage: "draw", reason: (e as Error).message || "알 수 없는 오류" });
+            failedPages.add(i);
             images[i] = null;
           }
           done++;
           setDrawn(done);
           setPageImages([...images]);
+          reportDraw();
           if (singlePage) return;
         }
       };
@@ -2105,6 +2396,13 @@ export default function CreatePage() {
       // 시트는 쪽 그림에 돈이 나가기 '전'이라 여기서 돌려보내도 손해가 없다.
       if ((e as Error).name !== "AbortError") {
         console.warn("[illustrate]", e);
+        if (reportTimer) clearTimeout(reportTimer);
+        // 기록: 인물 시트에서 멈춰 대본 단계로 돌아갔다.
+        void recordJob({
+          status: "script",
+          error: `인물 시트 실패: ${(e as Error).message || "알 수 없는 오류"}`.slice(0, 500),
+          failures: capFailures([...pageFailures, { stage: "sheet", reason: (e as Error).message || "알 수 없는 오류" }]),
+        });
         setError((e as Error).message || "삽화를 그리지 못했어요. 다시 시도해주세요.");
         setStep("story");
         return;
@@ -2130,6 +2428,8 @@ export default function CreatePage() {
         ].join(""),
       );
     }
+    // 그리기 끝 — 묶어 두던 진행을 마지막으로 한 번 적는다.
+    reportDraw(true);
     // 취소했더라도 그때까지 그린 쪽으로 완성 화면을 보여준다 (나머지는 플레이스홀더).
     setPageImages(images);
     await finish(images, s);
@@ -2142,25 +2442,79 @@ export default function CreatePage() {
    */
   async function finish(images: (string | null)[], s: Story | null = story) {
     if (!s) return;
+    setSaveFailure(null);
     /*
      * 여기서는 '그림 값'만 받는다 — 글 값은 대본이 나왔을 때 이미 받았다.
      * 그림 없이 끝내면 더 받을 것이 없다(글 동화 한 권 값을 이미 낸 셈이다).
      */
     const illustrated = images.some(Boolean);
     const cost = illustrated ? illustrationTokenCost(s.pages.length) : 0;
-    if (cost > 0) {
-      // 차감 결과를 반드시 확인한다: 서버 잔액이 부족하거나 갱신에 실패하면 저장하지
-      // 않고 이유를 알린다(무료 생성 방지 + 부모가 원인을 알 수 있게).
-      if (!(await spendTokens(cost, "illustration"))) {
+    const progressKey = drawProgressKeyRef.current;
+
+    /*
+     * 책 id 는 **그림 값을 받기 전에** 한 번만 정한다.
+     *
+     * 값을 받는 함수(charge_illustration)가 결제와 함께 기록에 책 id 를 못 박는다. 그래야
+     * 저장이 실패해도 "이 결제는 이 책 id 였다"가 남아 마스터가 찾고 되살릴 수 있다.
+     * 지난번에 값을 내고 저장만 실패한 책이면 그때 정한 id 를 그대로 쓰고 값은 다시 받지 않는다:
+     *  ① 이 기기의 표시(localStorage) ② 기록(book_jobs)에 붙은 그림 값 — 둘 중 하나라도 있으면.
+     */
+    // 앞서 보낸 기록 쓰기가 끝난 뒤에 읽는다 — 단 3초까지만. 기록 요청이 매달려도 값 받기·저장은 간다.
+    await waitAtMost(jobQueueRef.current, 3000, undefined);
+    const paidMarker = progressKey ? loadPaidMarker(progressKey) : null;
+    // 값을 낸 그 기록으로 잇는다(임시저장에 남은 id 는 값을 내기 전 것일 수 있다).
+    if (paidMarker?.jobId) setJobId(paidMarker.jobId);
+    let bookId = paidMarker?.bookId ?? newBookId();
+    let alreadyPaid = Boolean(paidMarker);
+    const drawingNow: DrawingNow = { pageTexts: s.pages.map((p) => p.text), artStyleId: artStyle };
+    const sb = getSupabase();
+    if (jobIdRef.current && !paidMarker) {
+      const read = await readJobResult(sb, jobIdRef.current);
+      if (read.ok && read.job) {
+        // 같은 그림일 때만 '값 냈음'을 인정한다(planFromJob 설명) — 그림체·대본을 바꿔 새로 그렸으면 새 책이다.
+        const plan = planFromJob(read.job, drawingNow);
+        if (!plan.reuse) {
+          // 이미 끝난 기록(저장됨·취소)이거나 다른 그림 — 새로 만드는 것이니 새 줄에 적는다.
+          setJobId(await cloneJob(sb, read.job, await currentUid(), "uploading"));
+        } else if (plan.bookId) {
+          bookId = plan.bookId;
+          alreadyPaid = plan.alreadyPaid;
+        }
+      }
+      // 못 읽었으면(모름) 여기서 정하지 않는다. 값을 받는 함수가 '이미 값이 붙은 기록'이라고
+      // 거절하면 chargeIllustration 이 기록을 다시 읽고 정한다 — 모르는 채로 새로 받지 않는다.
+    }
+
+    if (cost > 0 && !alreadyPaid) {
+      const charged = await chargeIllustration(cost, bookId, drawingNow);
+      if (!charged.ok) {
+        // 값을 못 받았으면(또는 받았는지 모르면) 저장하지 않는다. 그리기 보관은 남아 있어 다시 누르면 이어서 된다.
+        void recordJob({ status: "script", error: `그림 값 받기 실패: ${charged.error}`.slice(0, 500) });
         setError(
-          `토큰이 부족해서 저장하지 못했어요. (그림에 ${cost}개 필요) 충전한 뒤 '그림 만들기'를 다시 눌러 주세요.`,
+          charged.insufficient
+            ? `토큰이 부족해서 저장하지 못했어요. (그림에 ${cost}개 필요) 충전한 뒤 '그림 만들기'를 다시 눌러 주세요.`
+            : charged.uncertain
+              ? charged.error
+              : `그림 값을 받지 못해서 저장을 멈췄어요. 그린 그림은 남아 있으니 잠시 뒤 '이어서 그리기'를 다시 눌러 주세요. (${charged.error})`,
         );
         setStep("story");
         return;
       }
+      // 기록을 다시 읽어 보니 이미 값을 낸 책이었으면 그 책 id 로 저장한다.
+      bookId = charged.bookId;
       // 마스터는 실제로 차감되지 않으니 화면 잔액도 그대로 둔다(안 그러면 숫자만 줄어 헷갈린다).
-      if (!master) setTokens((t) => Math.max(0, t - cost));
+      // 이미 낸 값이면(alreadyPaid) 이번에 줄어든 것이 없다.
+      if (!master && !charged.alreadyPaid) {
+        if (typeof charged.tokens === "number") setTokens(charged.tokens);
+        else setTokens((t) => Math.max(0, t - cost));
+      }
+      // 값을 냈다는 표시 — 저장이 실패해 다시 올 때 또 받지 않게. 저장에 성공하면 지운다.
+      savePaidMarker(progressKey, { bookId, jobId: jobIdRef.current, at: Date.now() });
+    } else if (jobIdRef.current) {
+      // 값을 받지 않는 경우(글만·이미 냄)도 올리기 단계와 책 id 를 적는다.
+      void recordJob({ status: "uploading", book_id: bookId });
     }
+
     // 저장 전에 삽화를 화면 크기로 줄인다 — 원본(장당 약 1MB)을 그대로 넣으면 책이
     // 8MB가 되어 책장·책 열기가 둘 다 느려진다. 표지는 더 작게 따로 만들어 두어
     // 책장이 본문을 안 받고도 표지를 보여줄 수 있게 한다.
@@ -2176,12 +2530,8 @@ export default function CreatePage() {
      * 예전엔 그림을 base64로 책 데이터 안에 넣었는데, 그러면 책을 열 때마다 그림
      * 전체가 Supabase에서 빠져나간다 — 회원 4명으로도 한 달 전송량이 무료 한도의
      * 두 배를 넘겼다(2026-08-06 실측). cafe24는 이미 결제해 둔 파일 창고라 추가
-     * 비용이 없고, 책 여는 속도도 빨라진다.
-     *
-     * 올리기가 실패하면 그 장만 base64로 그대로 둔다 — 여기서 막으면 애써 만든
-     * 동화가 통째로 날아간다. 그림은 이미 다 그려졌고 토큰도 이미 냈다.
+     * 비용이 없고, 책 여는 속도도 빨라진다. 못 올린 장을 어떻게 하는지는 hostArtwork 설명.
      */
-    const bookId = `my-${Date.now().toString(36)}`;
     const hosted = await hostArtwork(bookId, slim, cover, sheetImageRef.current, locationSheetsRef.current);
 
     const book: Book = {
@@ -2209,12 +2559,188 @@ export default function CreatePage() {
         image: hosted.images[i] ?? null,
       })),
     };
-    await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
+    await commitBook(book, illustrated, hosted.failures);
+  }
+
+  /**
+   * 그림 값 받기 — 가능하면 결제와 기록 연결을 한 번에(charge_illustration).
+   *
+   * 따로 하면(spend_tokens 뒤 기록 고치기) 두 번째가 끊겼을 때 "돈은 나갔는데 어느 기록에도
+   * 안 이어진 결제"가 된다. 기록이 없거나 함수가 없는 옛 DB 면 예전처럼 spend_tokens 로 물러선다.
+   * 금액·과금 규칙은 바꾸지 않는다(쪽수 × 단가 그대로).
+   *
+   * 이중 과금 막기(2026-09-14 고침):
+   *  · '이미 그림 값이 붙은 기록'이라는 거절은 곧바로 새로 받을 신호가 아니다. 앞선 판단이 기록을
+   *    못 읽었다는 뜻일 수 있다(응답만 끊긴 결제). 기록을 다시 읽어 recoverFromChargeRefusal 로 정하고,
+   *    못 읽으면 받지 않고 멈춘다.
+   *  · 응답이 끊기면 '못 받음'이 아니라 '모름'이다. 기록(옛 DB 면 잔액)으로 확인한 뒤 정한다.
+   */
+  async function chargeIllustration(
+    cost: number,
+    bookId: string,
+    now: DrawingNow,
+  ): Promise<
+    | { ok: true; bookId: string; alreadyPaid: boolean; tokens?: number }
+    | { ok: false; error: string; insufficient: boolean; uncertain?: boolean }
+  > {
+    const UNCERTAIN =
+      "그림 값이 나갔는지 확인하지 못했어요(인터넷 연결이 불안해요). 잠시 뒤 다시 눌러 주세요 — 다시 누르면 먼저 기록을 확인해서, 이미 받았으면 또 받지 않아요.";
+    const sb = getSupabase();
+    if (sb && jobIdRef.current) {
+      const callRpc = async (job: string, id: string) => {
+        try {
+          let q = sb.rpc("charge_illustration", { p_job: job, p_amount: cost, p_book_id: id });
+          // 돈 요청이 끝없이 매달리면 부모 화면이 멈춘다 — 20초가 넘으면 '모름'으로 다룬다.
+          if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") {
+            q = q.abortSignal(AbortSignal.timeout(20_000));
+          }
+          return await q;
+        } catch (e) {
+          return { data: null, error: { code: "", message: (e as Error)?.message ?? String(e) } };
+        }
+      };
+      /** 응답이 끊겼을 때 — 기록에 이 책 id 로 값이 붙었는지 본다. 모르면 null. */
+      const chargedAfterAll = async (job: string, id: string): Promise<boolean | null> => {
+        const read = await readJobResult(sb, job);
+        if (!read.ok) return null;
+        const j = read.job;
+        // 마스터는 장부 id 가 null 로 붙는다(면제) — 책 id 로만 본다.
+        return Boolean(j && j.book_id === id && (j.illustration_entry || master));
+      };
+
+      let targetBook = bookId;
+      let res = await callRpc(jobIdRef.current, targetBook);
+      let kind = res.error ? chargeProblem(res.error) : null;
+      let fallbackToSpend = kind === "missing" || kind === "no-job";
+
+      if (kind === "already-charged" || kind === "other-book") {
+        const read = await readJobResult(sb, jobIdRef.current);
+        const recovery = recoverFromChargeRefusal(read, now);
+        if (recovery.action === "already-paid") {
+          return { ok: true, bookId: recovery.bookId, alreadyPaid: true };
+        }
+        if (recovery.action === "stop" || !read.ok || !read.job) {
+          return { ok: false, insufficient: false, uncertain: true, error: UNCERTAIN };
+        }
+        if (recovery.action === "retry-same-job") {
+          // 값은 없고 책 id 만 정해진 줄(마스터·글만 책) — 그 책 id 로 다시 받는다.
+          targetBook = recovery.bookId ?? bookId;
+          res = await callRpc(jobIdRef.current, targetBook);
+          kind = res.error ? chargeProblem(res.error) : null;
+        } else {
+          // new-job: 기록을 **읽고 확인한** 끝난 기록·다른 그림 — 새 책이니 새 값이 맞다(예전 규칙).
+          const fresh = await cloneJob(sb, read.job, await currentUid(), "drawing");
+          if (fresh) {
+            setJobId(fresh);
+            res = await callRpc(fresh, targetBook);
+            kind = res.error ? chargeProblem(res.error) : null;
+          } else {
+            // 새 줄을 못 열었다(하루 상한 등). 확인된 새 책이라 기록 없이 받는다 — 옛 줄에는 잇지 않는다
+            // (옛 줄의 그림 값·책 id 는 지킴이가 못 바꾸게 해서 어차피 거절된다).
+            setJobId(null);
+            fallbackToSpend = true;
+          }
+        }
+      }
+
+      if (!fallbackToSpend) {
+        if (!res.error) {
+          const d = (res.data ?? {}) as { entry?: string | null; tokens?: number };
+          return {
+            ok: true,
+            bookId: targetBook,
+            alreadyPaid: false,
+            tokens: typeof d.tokens === "number" ? d.tokens : undefined,
+          };
+        }
+        if (kind === "other" && jobWriteProblem(res.error) === "network" && jobIdRef.current) {
+          const confirmed = await chargedAfterAll(jobIdRef.current, targetBook);
+          if (confirmed === true) return { ok: true, bookId: targetBook, alreadyPaid: false };
+          if (confirmed === null) return { ok: false, insufficient: false, uncertain: true, error: UNCERTAIN };
+          // 기록에 값이 안 붙었다 = 안 나갔다. 아래 보통 실패로 알린다(다시 눌러도 안전하다).
+        }
+        return {
+          ok: false,
+          insufficient: kind === "insufficient",
+          error: String(res.error.message ?? "알 수 없는 오류").slice(0, 120),
+        };
+      }
+      // missing(옛 DB) · no-job(기록 없음) · 새 줄을 못 연 확인된 새 책 → 아래 옛 방식으로 받는다
+    }
+
+    /*
+     * 옛 방식(spend_tokens). 기록으로 '받았나'를 확인할 수 없으니 잔액으로 본다:
+     * 응답이 끊겨 실패로 보여도 잔액이 값만큼 줄었으면 받은 것이다. 그걸 실패로 알리면 부모가 다시
+     * 눌러 한 번 더 깎였다. 잔액을 못 읽으면 '모름'으로 알리고 잔액 확인을 부탁한다.
+     */
+    const before = master ? null : await fetchProfile().catch(() => null);
+    const spent = await spendTokensEntry(cost, "illustration");
+    if (!spent.ok) {
+      if (/부족/.test(spent.error)) return { ok: false, insufficient: true, error: spent.error };
+      if (!master) {
+        const after = await fetchProfile().catch(() => null);
+        if (before && after && before.tokens - after.tokens >= cost) {
+          void recordJob({ book_id: bookId, status: "uploading" });
+          return { ok: true, bookId, alreadyPaid: false, tokens: after.tokens };
+        }
+        if (!before || !after) {
+          return {
+            ok: false,
+            insufficient: false,
+            uncertain: true,
+            error:
+              "그림 값이 나갔는지 확인하지 못했어요. 설정에서 잔액을 먼저 확인해 주세요 — 줄었으면 다시 누르지 말고 '의견 보내기'로 알려 주세요.",
+          };
+        }
+      }
+      return { ok: false, insufficient: false, error: spent.error };
+    }
+    // 옛 방식으로 받았으면 기록에 따로 잇는다(끊기면 사고 목록이 '안 이어진 결제'로 찾아 준다).
+    void recordJob({ illustration_entry: spent.entry ?? undefined, book_id: bookId, status: "uploading" });
+    return { ok: true, bookId, alreadyPaid: false };
+  }
+
+  /**
+   * 책장에 넣기 — 성공이 확인된 뒤에만 임시저장·그리기 보관을 지우고 완성 화면으로 간다.
+   *
+   * 예전엔 저장 결과를 안 보고 곧바로 둘 다 지웠다. 저장이 실패하면 책은 서버에도
+   * 기기에도 없고 토큰만 나갔다(2026-09-14 확인된 사고). 이제:
+   *  ① 저장 전에 원고(주소만)·못 올린 장수를 기록에 적는다 — 저장이 실패해도 원고는 서버에 남는다
+   *  ② 저장이 실패하면 책을 붙들고 이유와 '다시 저장하기'를 보여 준다. 보관은 안 지운다
+   *     (새로고침해도 '이어서 그리기'로 값 없이 다시 저장할 수 있다)
+   */
+  async function commitBook(book: Book, illustrated: boolean, uploadFailures: JobFailure[]) {
+    const { manuscript } = stripEmbeddedArt(book);
+    // 원고를 먼저 적되 4초까지만 기다린다 — 기록 요청이 매달려도 책 저장은 시작해야 한다.
+    await waitAtMost(recordJob({
+      status: "saving",
+      book_id: book.id,
+      manuscript,
+      upload_failed: Math.min(200, uploadFailures.length),
+      failures: capFailures([...drawFailuresRef.current, ...uploadFailures]),
+    }), 4000, false);
+
+    const saved = await saveMyBook(book); // Supabase에 저장 (뷰어가 /book/[id]로 열 수 있게)
+    if (!saved.ok) {
+      console.error("[finish] 책 저장 실패", saved.code, saved.reason);
+      void recordJob({ status: "failed", error: `책 저장 실패(${saved.code}): ${saved.reason}`.slice(0, 500) });
+      setSaveFailure({ book, reason: saved.reason, illustrated });
+      setStep("illustrate"); // 실패 안내는 그리기 화면 자리에 띄운다(창 닫기 경고도 그대로 걸린다)
+      return;
+    }
+
+    void recordJob({ status: "saved", error: null });
+    setSaveFailure(null);
     clearCreateDraft(draftOwner);
     draftBaselineRef.current = null;
     // 책이 저장됐으니 그리기 진행 보관은 지운다. 그린 장수는 완성 화면에 보여 준다.
-    if (drawProgressKeyRef.current) void clearDrawProgress(drawProgressKeyRef.current);
+    if (drawProgressKeyRef.current) {
+      void clearDrawProgress(drawProgressKeyRef.current);
+      clearPaidMarker(drawProgressKeyRef.current);
+    }
+    setJobId(null); // 이 만들기는 끝났다 — 다음 책은 새 기록
     setResumablePages(0);
+    setUnsavedPaid(false);
     setDrawSummary(illustrated ? describeDrawCounts(drawCountsRef.current) : "");
 
     /*
@@ -2239,6 +2765,43 @@ export default function CreatePage() {
 
     setFinalBook(book);
     setStep("done");
+  }
+
+  /**
+   * '다시 저장하기' — 값은 다시 받지 않는다. 못 올린 그림만 다시 올리고 저장을 다시 시도한다.
+   * 시트는 저장 전에 책에서 뺐을 수 있으니(hostArtwork 설명) 화면 메모리의 원본으로 다시 올려 본다.
+   */
+  async function retrySave() {
+    if (!saveFailure || busyRef.current) return;
+    busyRef.current = true;
+    setBusy(true);
+    try {
+      const { book, illustrated } = saveFailure;
+      const sheetSource = book.characterSheet ?? sheetImageRef.current;
+      // 이미 올린 장소 시트는 주소를, 못 올려 뺀 것은 메모리의 원본을 쓴다.
+      const locationSource = locationSheetsRef.current.length
+        ? locationSheetsRef.current.map((l) => book.locationSheets?.find((b) => b.key === l.key && b.image) ?? l)
+        : (book.locationSheets ?? []);
+      setSaveFailure(null); // 올리는 동안은 진행 막대를 보여 준다
+      const hosted = await hostArtwork(
+        book.id,
+        book.pages.map((p) => p.image ?? null),
+        book.coverImage ?? null,
+        sheetSource,
+        locationSource,
+      );
+      const next: Book = {
+        ...book,
+        coverImage: hosted.cover,
+        characterSheet: hosted.sheet,
+        locationSheets: hosted.locationSheets.length ? hosted.locationSheets : undefined,
+        pages: book.pages.map((p, i) => ({ ...p, image: hosted.images[i] ?? null })),
+      };
+      await commitBook(next, illustrated, hosted.failures);
+    } finally {
+      busyRef.current = false;
+      setBusy(false);
+    }
   }
 
   // 완성 → 저장해 둔 책을 뷰어로 보여준다.
@@ -3161,8 +3724,37 @@ export default function CreatePage() {
             </section>
           )}
 
+          {/* ── 5-1. 책장에 넣지 못함 ──
+              저장이 실패하면 완성 화면으로 가지 않는다. 그림 값은 이미 나갔으니 책을 붙들고
+              이유와 '다시 저장하기'를 보여 준다. 그리기 보관을 지우지 않았으므로 창을 닫아도
+              다시 들어와 '저장 못 한 책 다시 저장하기'로 이어 갈 수 있다. */}
+          {step === "illustrate" && saveFailure && (
+            <section className="flex flex-col items-center gap-4 py-4">
+              <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
+                책장에 넣지 못했어요
+              </h1>
+              <p className="break-keep rounded-2xl bg-red-50 px-4 py-3 text-center text-sm font-bold text-red-700">
+                {saveFailure.reason}
+              </p>
+              <p className="break-keep text-center text-sm font-medium leading-relaxed text-neutral-600">
+                {saveFailure.illustrated && !master
+                  ? "그림 값은 이미 받았어요. 다시 저장해도 값을 또 받지 않아요."
+                  : "만든 동화는 아직 이 화면에 그대로 있어요."}
+                <br />
+                창을 닫아도 이 기기에 이레 동안 남아 있어요. 다시 만들기에 들어오면
+                &lsquo;저장 못 한 책 다시 저장하기&rsquo;가 보여요.
+              </p>
+              <BigButton accent={accent} accentDark={accentDark} onClick={retrySave} disabled={busy}>
+                {busy ? "저장하는 중…" : "다시 저장하기 📚"}
+              </BigButton>
+              <p className="break-keep text-center text-[11px] font-medium text-neutral-400">
+                여러 번 해도 안 되면 &lsquo;의견 보내기&rsquo;로 알려 주세요. 만든 기록이 남아 있어서 찾아 드릴 수 있어요.
+              </p>
+            </section>
+          )}
+
           {/* ── 5. 그림 그리는 중 ── */}
-          {step === "illustrate" && story && (
+          {step === "illustrate" && story && !saveFailure && (
             <section className="flex flex-col items-center gap-5 py-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -3171,7 +3763,7 @@ export default function CreatePage() {
                 className="h-24 w-24 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white shadow-lg"
               />
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
-                {uploading ? "동화를 책장에 넣고 있어요…" : "동화를 그리고 있어요…"}
+                {uploading || busy ? "동화를 책장에 넣고 있어요…" : "동화를 그리고 있어요…"}
               </h1>
               {/* 남은 시간 어림 — 지금까지 그린 속도로 계산한다. 언제 끝날지 알면
                   같은 시간도 훨씬 짧게 느껴진다(피드백 2번). */}
@@ -3571,13 +4163,18 @@ export default function CreatePage() {
                     <BigButton
                       accent={accent}
                       accentDark={accentDark}
-                      disabled={shortOnImageTokens}
+                      disabled={shortOnImageTokens && !unsavedPaid}
                       onClick={() => {
-                        if (shortOnImageTokens) return;
+                        if (shortOnImageTokens && !unsavedPaid) return;
                         illustrate(story);
                       }}
                     >
-                      {resumablePages > 0
+                      {unsavedPaid
+                        ? resumablePages > 0
+                          ? "저장 못 한 책 다시 저장하기 📚 (그림 값은 이미 냈어요)"
+                          : // 그리기 보관이 이 기기에 안 남았다 — 다시 그려야 하지만 값은 또 받지 않는다.
+                            "다시 그려서 저장하기 🎨 (그림 값은 이미 냈어요)"
+                        : resumablePages > 0
                         ? `이어서 그리기 🎨 (그려 둔 ${resumablePages}장 있음)`
                         : "이 글로 그림 그리기 🎨"}
                     </BigButton>
@@ -3598,7 +4195,7 @@ export default function CreatePage() {
                   )}
                 </div>
                 {IMAGES_ENABLED &&
-                  (shortOnImageTokens ? (
+                  (shortOnImageTokens && !unsavedPaid ? (
                     <p className="break-keep text-center text-xs font-bold text-red-600">
                       그림을 그리려면 토큰 {illustrationTokenCost(story.pages.length)}개가 더 필요해요
                       (내 잔액 {tokens}개).
@@ -3645,6 +4242,8 @@ export default function CreatePage() {
                     ) {
                       return;
                     }
+                    void closeJobAsCancelled(jobIdRef.current);
+                    setJobId(null);
                     setStory(null);
                     setOutline(null);
                     setScriptCharged(false);

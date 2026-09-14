@@ -69,6 +69,8 @@ async function upload(owner: string, bookId: string, name: string, dataUrl: stri
     const res = await authedFetch("/api/upload-art", {
       method: "POST",
       headers: { "content-type": "application/json" },
+      // owner 는 참고용일 뿐 서버가 믿지 않는다 — 마스터가 옮기면 서버가 bookId 로 책 주인을
+      // 찾아 그 주인 폴더에 쓴다(upload-art ownerFolderOf). 회원이 부르면 언제나 자기 폴더다.
       body: JSON.stringify({ owner, bookId, name, image: await shrink(dataUrl) }),
     });
     if (!res.ok) return null;

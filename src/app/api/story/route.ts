@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { callerOf } from "@/lib/api-auth";
+import { canReopenForRewrite, insertJob, isJobId, readJobResult, storyManuscript, updateJob } from "@/lib/book-jobs";
 import { createHash } from "node:crypto";
 import { generateStory } from "@/lib/anthropic";
 import { StoryParseError } from "@/lib/story-format";
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
     mood?: unknown;
     longer?: unknown;
     narrationStyle?: unknown;
+    jobId?: unknown;
   };
 
   let child, outline, material, occasion, mood;
@@ -107,9 +109,62 @@ export async function POST(request: Request) {
     }
   }
 
+  /*
+   * 만들기 기록(book_jobs) — 값을 받은 직후, 대본을 쓰기 전에 적는다.
+   *
+   * 대본 쓰기는 1분 넘게 걸리고 도중에 실패할 수 있다. 먼저 적어 두어야 "값은 냈는데 대본이
+   * 안 나왔다"는 컴플레인에 대본 값 장부 id 와 줄거리가 남는다.
+   * 같은 줄거리로 다시 쓰기면(브라우저가 jobId 를 보냄) 새 줄 없이 그 줄을 고친다.
+   * 대본 값 장부 id 는 그 줄에 이미 붙어 있으니 건드리지 않는다(지킴이가 바꾸기를 막는다).
+   * 단, 그림 값·책 id 가 붙은 줄(값 내고 저장 못 한 책)은 되열지 않는다 — 먼저 읽어 보고
+   * canReopenForRewrite 가 아니면 새 줄을 만든다. 되열면 되살릴 원고(올린 그림 주소)가 새 대본으로
+   * 덮이고, 그 줄의 '그림 값 냈음'이 새 대본에 옮겨 붙어 새 그림을 값 없이 저장하게 됐다(2026-09-14 고침).
+   * 새 줄에는 옛 줄의 대본 값 장부 id 를 옮긴다 — 다시 쓰기는 값을 안 받아 새 장부 id 가 없다.
+   * 기록 쓰기가 실패해도(표 없음·상한·네트워크) 대본 만들기는 그대로 간다 — 함수들이 던지지 않는다.
+   * jobId 가 남의 것이면 RLS 에 막혀 0줄이 되고, 그러면 새 줄을 만든다.
+   */
+  const pageCount = outline.scenes.length;
+  let jobId: string | null = null;
+  let carriedStoryEntry: string | null = null;
+  if (isJobId(input.jobId)) {
+    const read = await readJobResult(caller.db, input.jobId);
+    if (read.ok && canReopenForRewrite(read.job)) {
+      const reused = await updateJob(caller.db, input.jobId, {
+        status: "writing",
+        page_count: pageCount,
+        error: null,
+      });
+      if (reused) jobId = input.jobId;
+    } else if (read.ok && read.job) {
+      carriedStoryEntry = read.job.story_entry;
+    }
+    // 못 읽었으면(read.ok=false) 되열지 않는다 — 값 낸 줄인지 모르니 새 줄이 안전하다.
+  }
+  if (!jobId) {
+    const row = {
+      owner: caller.uid,
+      status: "writing",
+      page_count: pageCount,
+      manuscript: { outline, narrationStyle },
+    };
+    const entry = charge?.entry ?? carriedStoryEntry;
+    jobId = await insertJob(caller.db, { ...row, story_entry: entry ?? null });
+    // 옮긴 장부 id 가 대조에 걸리면(환불로 지워짐 등) 장부 id 없이라도 줄은 남긴다.
+    if (!jobId && entry && !charge?.entry) jobId = await insertJob(caller.db, row);
+  }
+
   try {
     const story = await generateStory({ child, material, outline, occasion, mood, longer, narrationStyle });
-    return NextResponse.json({ story, charge });
+    // 대본이 나왔다 — 원고(그림 없는 Book 모양)를 적는다. 이게 있어야 마스터가 되살릴 재료가 된다.
+    // 응답을 먼저 보내고 적는다(after). 대본 쓰기가 함수 제한 시간 가까이 걸린 때 기록 쓰기까지
+    // 기다리면, 응답 전에 함수가 끊겨 대본 값만 나가고 대본은 못 받는다(환불도 안 돈다).
+    const scriptJob = jobId;
+    after(() => updateJob(caller.db, scriptJob, {
+      status: "script",
+      page_count: story.pages.length,
+      manuscript: storyManuscript(story),
+    }));
+    return NextResponse.json({ story, charge, jobId });
   } catch (e) {
     // 만들다 실패했으면 낸 값을 되돌린다. '값 냈다'는 기록도 함께 지워야
     // 다음 시도가 '다시 쓰기'로 세어져 공짜 횟수를 헛되이 깎지 않는다.
@@ -120,19 +175,26 @@ export async function POST(request: Request) {
         /* 되돌리기 실패는 본래 오류를 덮지 않는다 — 장부에 기록이 남아 손으로 볼 수 있다 */
       }
     }
+    // 기록: 대본 쓰기 실패. 이유를 한 줄 남긴다(값은 위에서 되돌렸다).
+    const reason =
+      e instanceof StoryQualityError
+        ? `품질 검사 불통과: ${e.issues.join(" / ")}`
+        : `${(e as Error)?.name ?? "Error"}: ${(e as Error)?.message ?? String(e)}`;
+    const failedJob = jobId;
+    after(() => updateJob(caller.db, failedJob, { status: "failed", error: `대본 실패 — ${reason}`.slice(0, 1000) }));
     if (e instanceof StoryParseError) {
       return NextResponse.json(
-        { error: "본문 형식이 어긋났습니다. 다시 시도해주세요.", detail: e.message },
+        { error: "본문 형식이 어긋났습니다. 다시 시도해주세요.", detail: e.message, jobId },
         { status: 502 },
       );
     }
     if (e instanceof StoryQualityError) {
       return NextResponse.json(
-        { error: "동화 품질 검사를 통과하지 못했어요. 다시 만들면 새로운 구성으로 시도합니다.", detail: e.issues },
+        { error: "동화 품질 검사를 통과하지 못했어요. 다시 만들면 새로운 구성으로 시도합니다.", detail: e.issues, jobId },
         { status: 502 },
       );
     }
     console.error("[story]", e);
-    return NextResponse.json({ error: "본문을 만들지 못했습니다." }, { status: 500 });
+    return NextResponse.json({ error: "본문을 만들지 못했습니다.", jobId }, { status: 500 });
   }
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { callerOf } from "@/lib/api-auth";
+import { callerOf, type Caller } from "@/lib/api-auth";
 import { uploadToCafe24 } from "@/lib/cafe24";
 
 /**
@@ -25,6 +25,65 @@ function safeSegment(v: unknown, fallback: string): string {
   const s = typeof v === "string" ? v.trim().toLowerCase() : "";
   const cleaned = s.replace(/[^a-z0-9_-]/g, "");
   return cleaned.slice(0, 40) || fallback;
+}
+
+/**
+ * 마스터가 남의 책을 고칠 때 — 그 책의 **실제 주인** 폴더 이름을 DB 에서 찾는다.
+ *
+ * 왜: 폴더를 부른 사람으로 못 박은 뒤로, 마스터가 뷰어에서 고객 책 한 쪽을 다시 그리면
+ * 그림이 books/<마스터>/<책id>/ 로 갔다. 같은 책 id 가 두 폴더에 흩어지고, 나중에 회원
+ * 폴더 단위로 정리하면 살아 있는 책의 그림이 빠진다(cafe24 에서 fe 7장·yogico 1장으로 확인).
+ *
+ * 요청 본문의 owner 는 믿지 않는다 — 누구든 적어 보낼 수 있다. 대신 책 id 로 DB 에 묻는다.
+ * 부른 사람의 토큰으로 묻기 때문에, 마스터 열람 정책이 있는 마스터만 남의 책이 보인다.
+ * 책이 아직 없으면(저장 전·저장 실패로 되살리는 중) 만들기 기록(book_jobs)에서 찾는다.
+ * 못 찾으면 null — 부르는 쪽이 마스터 자기 폴더로 둔다.
+ */
+async function ownerFolderOf(caller: Caller, rawBookId: unknown): Promise<{ folder: string | null; why: string }> {
+  const bookId = typeof rawBookId === "string" ? rawBookId.trim() : "";
+  if (!/^[A-Za-z0-9_-]{1,80}$/.test(bookId)) return { folder: null, why: "책 id 모양이 아님" };
+  try {
+    let ownerId: string | null = null;
+    const { data: book, error: bookErr } = await caller.db
+      .from("books")
+      .select("owner")
+      .eq("id", bookId)
+      .maybeSingle();
+    if (bookErr) console.warn("[upload-art] 책 주인 조회 오류", bookErr.code, bookErr.message);
+    ownerId = (book as { owner?: string } | null)?.owner ?? null;
+
+    if (!ownerId) {
+      // 칸을 적어 읽는다 — select('*') 는 칸 권한 오류가 난다.
+      // 그림 값이 붙은 줄만 믿는다(2026-09-14 고침). book_id 칸은 회원이 insert/update 로 아무 값이나
+      // 적을 수 있어서, 남이 마스터의 새 책 id 를 미리 심어 두면 마스터 그림이 그 회원 폴더로 가고
+      // 그 회원이 같은 경로를 덮어쓸 수 있었다. 그림 값 장부 id 는 charge_illustration 이 책 id 모양을
+      // 검사하며 붙이고 지킴이가 장부 주인을 대조하므로, 그 줄의 주인은 실제로 값을 낸 사람이다.
+      const { data: jobs, error: jobErr } = await caller.db
+        .from("book_jobs")
+        .select("owner")
+        .eq("book_id", bookId)
+        .not("illustration_entry", "is", null)
+        .limit(5);
+      if (jobErr) console.warn("[upload-art] 기록 주인 조회 오류", jobErr.code, jobErr.message);
+      const owners = new Set(((jobs as { owner?: string }[] | null) ?? []).map((j) => j.owner).filter(Boolean));
+      // 같은 책 id 가 여러 회원 기록에 있으면 누구 것인지 모른다 — 짐작해서 남의 폴더에 쓰지 않는다.
+      if (owners.size > 1) return { folder: null, why: "같은 책 id 의 기록 주인이 여럿" };
+      ownerId = owners.size === 1 ? ([...owners][0] as string) : null;
+    }
+    if (!ownerId) return { folder: null, why: "책도 기록도 없음" };
+    if (ownerId === caller.uid) return { folder: null, why: "마스터 자기 책" };
+
+    const { data: profile } = await caller.db
+      .from("profiles")
+      .select("username")
+      .eq("id", ownerId)
+      .maybeSingle();
+    const username = (profile as { username?: string } | null)?.username;
+    // 아이디가 없는 회원이면 만들 때와 같은 규칙(회원 id)으로 — 만들 때 폴더와 맞춘다.
+    return { folder: safeSegment(username || ownerId, "member"), why: "책 주인" };
+  } catch (e) {
+    return { folder: null, why: `조회 실패: ${(e as Error)?.message ?? String(e)}` };
+  }
 }
 
 /*
@@ -58,7 +117,16 @@ export async function POST(request: Request) {
   const data = Buffer.from(m[2], "base64");
 
   // 폴더는 로그인한 사람 것으로 못 박는다 — 요청이 보내 준 owner 는 쓰지 않는다.
-  const owner = safeSegment(caller.username || caller.uid, "member");
+  let owner = safeSegment(caller.username || caller.uid, "member");
+  // 단, 마스터가 남의 책을 고칠 때만은 DB 에서 찾은 책 주인 폴더로 (위 ownerFolderOf 설명).
+  // 마스터가 아니면 여기를 지나지 않는다 — 회원은 언제나 자기 폴더에만 쓴다.
+  if (caller.isMaster) {
+    const found = await ownerFolderOf(caller, input.bookId);
+    if (found.folder) owner = found.folder;
+    else if (found.why !== "마스터 자기 책") {
+      console.warn("[upload-art] 마스터 업로드 — 책 주인을 못 찾아 마스터 폴더에 둠:", found.why, String(input.bookId).slice(0, 80));
+    }
+  }
   const bookId = safeSegment(input.bookId, "book");
   const name = safeSegment(input.name, "p");
 

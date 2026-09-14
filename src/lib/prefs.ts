@@ -7,6 +7,7 @@
 // 상대 경로로 부른다 — 테스트 러너가 @/ 별칭을 못 읽는다(story-cast.ts와 같은 이유).
 import { acctKey, currentUid, getSupabase } from "./supabase.ts";
 import type { Book } from "./types.ts";
+import { interpretBookSave, type SaveBookResult } from "./book-jobs.ts";
 
 export type Gender = "girl" | "boy" | "unspecified";
 
@@ -1037,18 +1038,48 @@ export async function updateBookData(id: string, book: Book): Promise<boolean> {
   return !error && Array.isArray(data) && data.length > 0;
 }
 
-export async function saveMyBook(book: Book): Promise<void> {
+/**
+ * 새 책을 책장(Supabase books)에 넣는다 — 성공했는지와 이유를 돌려준다.
+ *
+ * 예전엔 결과를 한 글자도 안 읽고 Promise<void> 로 끝났다. 그래서 저장이 실패해도
+ * 만들기 화면은 "완성!"을 띄우고 임시저장·그리기 보관까지 지웠다 — 토큰은 나갔는데
+ * 책은 어디에도 없는 사고가 실제로 났다(2026-09-14). 이제:
+ *  · upsert 의 error 를 읽고, .select("id") 로 줄이 실제로 남았는지까지 본다
+ *    (RLS 에 막히면 오류 없이 0줄이 오기도 한다 — updateBookData 와 같은 교훈)
+ *  · 로그인이 풀렸으면 성공인 척 return 하지 않고 실패로 돌려준다
+ *  · 네트워크가 잠깐 끊긴 것일 수 있으니 한 번은 조금 기다렸다 다시 해 본다
+ * 판단은 book-jobs.ts 의 interpretBookSave(시험 있음)가 한다.
+ */
+export async function saveMyBook(book: Book): Promise<SaveBookResult> {
   const sb = getSupabase();
-  if (!sb) return;
-  const uid = await currentUid();
-  if (!uid) return;
-  await sb.from("books").upsert({
-    id: book.id,
-    owner: uid,
-    title: book.title,
-    data: book,
-    hidden: !!book.hidden,
-  });
+  if (!sb) {
+    return { ok: false, code: "no-server", retryable: false, reason: "서버가 설정되지 않아 저장하지 못했어요." };
+  }
+  let last: SaveBookResult = { ok: false, code: "unknown", retryable: true, reason: "저장하지 못했어요." };
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, 1500));
+    const uid = await currentUid();
+    if (!uid) return interpretBookSave({ uid, error: null, rows: null });
+    try {
+      const { data, error } = await sb
+        .from("books")
+        .upsert({
+          id: book.id,
+          owner: uid,
+          title: book.title,
+          data: book,
+          hidden: !!book.hidden,
+        })
+        .select("id");
+      last = interpretBookSave({ uid, error, rows: data });
+    } catch (e) {
+      // supabase-js 는 대개 던지지 않지만, 본문을 JSON 으로 못 만들 때 등은 던진다.
+      last = interpretBookSave({ uid, error: { message: (e as Error)?.message ?? String(e) }, rows: null });
+    }
+    if (last.ok || !last.retryable) return last;
+    console.warn("[saveMyBook] 저장 실패", attempt + 1, last.code, last.reason);
+  }
+  return last;
 }
 
 /**
