@@ -1710,6 +1710,18 @@ export default function SettingsPage() {
           {master && (
             <section className="flex flex-col gap-2.5">
               <h2 className="text-sm font-extrabold text-amber-600">👑 관리자 · 회원 ({members.length})</h2>
+              {/* 관리실 — 사고 목록·환불·되살리기·토큰 충전. 이 링크는 마스터에게만 보이지만
+                  막는 것은 링크가 아니라 /api/admin/* 서버 경로의 마스터 확인이다. */}
+              <Link
+                href="/admin"
+                className="flex items-center justify-between rounded-2xl bg-amber-50 px-4 py-3 text-sm font-extrabold text-amber-800 transition hover:bg-amber-100"
+              >
+                <span>
+                  관리실 열기
+                  <span className="ml-1.5 text-xs font-bold text-amber-700/70">사고 목록 · 환불 · 책 되살리기</span>
+                </span>
+                <span aria-hidden>→</span>
+              </Link>
               <p className="-mt-1 text-xs font-medium text-neutral-400">
                 가입한 회원과 각자 만든 동화·부모 목소리 등록 여부를 볼 수 있어요. 회원을 누르면 그 사람의 책장이 펼쳐져요.
               </p>
