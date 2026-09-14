@@ -21,8 +21,11 @@ const EMAIL_DOMAIN = "voice-storybook.com";
 const GUEST_KEY = "voice-storybook:guest";
 
 /**
- * 마스터(관리자) 아이디 — 트리거가 이 아이디들에 is_master=true를 준다.
- * supabase-setup.sql 의 handle_new_user 와 같은 목록이어야 한다.
+ * 마스터(관리자) 아이디 — 회원 목록에서 마스터를 빼고 보여 줄 때만 쓴다.
+ *
+ * **권한 판단에는 쓰지 않는다.** 마스터인지는 DB 의 profiles.is_master 칸이 정하고,
+ * 그 칸은 SQL 편집기에서만 켠다(supabase-tools.sql B-4). 가입 데이터의 아이디로
+ * 마스터를 주던 트리거는 누구나 'fe' 라고 적어 보내 마스터가 되는 구멍이라 없앴다.
  */
 export const MASTER_IDS = ["yogico", "fe"] as const;
 /** 대표 마스터 아이디 — 예전 코드가 쓰던 이름을 남겨 둔다. */
