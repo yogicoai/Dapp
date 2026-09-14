@@ -31,6 +31,15 @@ export const MASTER_IDS = ["yogico", "fe"] as const;
 /** 대표 마스터 아이디 — 예전 코드가 쓰던 이름을 남겨 둔다. */
 export const MASTER_ID = MASTER_IDS[0];
 
+/**
+ * 데모 책장(src/data/sample-books.json)을 보여 줄 마스터 — yogico 하나.
+ *
+ * 예전엔 '마스터면 누구나' 데모 책을 책장에 띄웠다. fe 가 마스터가 되자 fe 책장에도 yogico 가
+ * 만든 데모(아린이·하준이·토리)가 떴다. fe 는 사장님 개인 개발 계정이라 두 계정 책장이 섞이면 안 된다
+ * (사장님 요청 2026-09-14). 보여 주기만 가르는 값이다 — 권한 판단에는 쓰지 않는다(데모 책은 원래 공개 정적 데이터).
+ */
+export const DEMO_SHELF_OWNER = "yogico";
+
 export type Profile = {
   id: string;
   username: string;

@@ -8,7 +8,7 @@ import { BgVideo } from "@/components/BgVideo";
 import { Bookshelf } from "@/components/Bookshelf";
 import { useTheme } from "@/components/ThemeProvider";
 import { UpdateNotice } from "@/components/UpdateNotice";
-import { loadSession } from "@/lib/auth";
+import { DEMO_SHELF_OWNER, loadSession } from "@/lib/auth";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
@@ -33,6 +33,8 @@ export default function Home() {
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [guest, setGuest] = useState(false);
   const [master, setMaster] = useState(false);
+  // 데모 책장(sample-books.json)을 띄울 계정인가 — yogico 하나. DEMO_SHELF_OWNER 설명 참고.
+  const [demoShelf, setDemoShelf] = useState(false);
   const [tokens, setTokens] = useState(0);
   // 책장에는 제목·표지·쪽수만 있으면 된다 — 본문·삽화까지 받으면 책 한 권이 수 MB다.
   const [myBooks, setMyBooks] = useState<ShelfBook[]>([]);
@@ -68,6 +70,7 @@ export default function Home() {
       setAuthed(true);
       setGuest(s.guest);
       setMaster(s.isMaster);
+      setDemoShelf(s.isMaster && s.profile?.username === DEMO_SHELF_OWNER);
       setTokens(s.profile?.tokens ?? 0);
       try {
         if (s.uid) {
@@ -94,9 +97,9 @@ export default function Home() {
   useEffect(() => setLang(loadLang()), []);
   // (myBooks는 위 로그인 세션 확인 useEffect에서 Supabase로 불러온다.)
   // "우리 가족 책장" = 내가 만든 책(최신 먼저, 숨긴 건 제외).
-  // 샘플 3권(sample-books.json)은 마스터가 만든 데모라 마스터에게만 보인다 — 일반 회원엔
-  // 안 보인다(빈 책장부터 시작). 책 관리는 설정(⚙️) › "내 동화"에서 한다.
-  const mine = [...myBooks, ...(master ? all.map(toShelfBook) : [])].filter(
+  // 샘플 3권(sample-books.json)은 yogico 가 만든 데모라 yogico 책장에만 보인다 — 일반 회원도,
+  // 다른 마스터(fe, 사장님 개인 개발 계정)도 안 보인다. 책 관리는 설정(⚙️) › "내 동화"에서 한다.
+  const mine = [...myBooks, ...(demoShelf ? all.map(toShelfBook) : [])].filter(
     (b) => b.lang === lang && !b.hidden,
   );
 
