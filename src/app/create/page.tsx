@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BookViewer } from "@/components/BookViewer";
+import { WaitShowcase } from "@/components/WaitShowcase";
+import classicBooksJson from "@/data/classic-books.json";
+import folkBooksJson from "@/data/folk-books.json";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceInput } from "@/components/VoiceInput";
 import { ART_STYLES } from "@/lib/art-styles";
@@ -64,6 +67,19 @@ import {
   scriptTokenCost,
 } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
+import { alertIfAway, primeChime } from "@/lib/away-notice";
+import {
+  busyWaitText,
+  drawProgressLine,
+  noticeFor,
+  noticeText,
+  pickShowcaseBooks,
+  waitLine,
+  type BusyKind,
+  type NoticeKind,
+  type NoticeState,
+} from "@/lib/waiting";
+import { asBooks } from "@/lib/types";
 import type { Book, NarrationStyle, VoiceDirection } from "@/lib/types";
 import { fetchTypecastVoiceAudio, findTypecast, NARRATOR_PRESETS, prewarmBookAudio, TYPECAST_VOICES } from "@/lib/voices";
 import { loadParentVoices, PARENT_VOICE_TEST_TEXT, type ParentVoice } from "@/lib/parent-voice";
@@ -847,6 +863,13 @@ function BigButton({
   );
 }
 
+/*
+ * 기다리는 동안 감상할 제공 동화 — 전래동화·세계명작 서가 그대로(뷰어가 '다음 동화'로 찾는 목록과 같다).
+ * 표지 줄은 숨긴 책·표지 없는 책을 뺀 것만 보여 준다(pickShowcaseBooks).
+ */
+const SHELF_BOOKS: Book[] = [...asBooks(folkBooksJson), ...asBooks(classicBooksJson)];
+const SHOWCASE_BOOKS = pickShowcaseBooks(asBooks(folkBooksJson), asBooks(classicBooksJson));
+
 export default function CreatePage() {
   // 주제 입력 상태 이름이 theme이라, UI 테마는 ui로 받는다.
   const { theme: ui } = useTheme();
@@ -917,7 +940,18 @@ export default function CreatePage() {
   const abortRef = useRef<AbortController | null>(null);
   // Enter 연타 등으로 같은 요청이 두 번 나가는 것을 막는다 (state와 달리 즉시 반영).
   const busyRef = useRef(false);
-  useEscClose(() => abortRef.current?.abort(), busy || step === "illustrate");
+  /*
+   * 기다리는 동안 띄워 보는 제공 동화(id). null 이면 안 띄웠다.
+   *
+   * 다른 페이지(/book/…)로 가지 않고 이 화면 위에 띄운다 — 이 화면이 사라지면 아래
+   * '화면을 떠나면 요청을 끊는다'가 돌아 그리던 그림·쓰던 대본이 끊긴다.
+   */
+  const [showcaseId, setShowcaseId] = useState<string | null>(null);
+  /*
+   * ⚠ 책을 띄워 둔 동안은 이 ESC(=그리기·대본 멈춤)를 끈다.
+   * 뷰어도 ESC 로 닫히는데, 둘 다 켜 두면 책을 닫으려던 ESC 한 번에 그리던 그림까지 멈춘다.
+   */
+  useEscClose(() => abortRef.current?.abort(), (busy || step === "illustrate") && !showcaseId);
   // 화면을 떠나면 진행 중인 요청도 끊는다 — 아무도 안 볼 삽화에 비용을 쓰지 않는다.
   useEffect(() => () => abortRef.current?.abort(), []);
 
@@ -1334,6 +1368,28 @@ export default function CreatePage() {
   // 완성해 책장에 저장한 책 — done 화면은 이걸 뷰어로 보여준다(id="new" 대신 진짜 id).
   const [finalBook, setFinalBook] = useState<Book | null>(null);
   /*
+   * 줄거리·대본을 기다린 시간(ms) — 기다림 막 아래에 "1분 12초 지났어요"로 보인다.
+   * 그림은 위 drawStartRef·tick 으로 따로 센다. 끝나면 0으로 돌린다.
+   */
+  const [busyElapsed, setBusyElapsed] = useState(0);
+  /*
+   * 기다림 막이 무엇을 기다리나 — 줄거리·대본·다시 저장. 단추를 누를 때 정한다(만들기 함수는 그대로).
+   * null 이면 단계로 어림한다(예전 셈). 막이 걷히면 비운다.
+   */
+  const [busyKind, setBusyKind] = useState<BusyKind | null>(null);
+  /** 이번 그리기에서 '이어서 그리기'로 되살린 장수 — 그림 그리기 단추를 누를 때 적는다. */
+  const drawRestoredRef = useRef(0);
+  useEffect(() => {
+    if (!busy) return;
+    const startedAt = Date.now();
+    const id = setInterval(() => setBusyElapsed(Date.now() - startedAt), 1000);
+    return () => {
+      clearInterval(id);
+      setBusyElapsed(0);
+      setBusyKind(null); // 막이 걷히면 무엇을 기다렸는지도 비운다
+    };
+  }, [busy]);
+  /*
    * 이야기를 다시 지은 횟수.
    *
    * 다시 짓기는 회원 토큰이 안 드는 단계다(토큰은 책이 저장될 때 한 번만 빠진다).
@@ -1443,6 +1499,137 @@ export default function CreatePage() {
    * 그림 값은 이미 나갔다 — 책을 버리면 안 된다.
    */
   const [saveFailure, setSaveFailure] = useState<{ book: Book; reason: string; illustrated: boolean } | null>(null);
+
+  /*
+   * 다 됐을 때 알리기 — 대본이 나옴·동화 완성·책장에 못 넣음.
+   *
+   * 무엇이 바뀌었는지는 앞 화면 상태와 비교해 noticeFor 가 고른다(만들기 흐름은 건드리지 않고 보기만 한다).
+   *  · 부모가 다른 탭·앱을 보고 있으면: 탭 제목·짧은 소리(alertIfAway). 보고 있으면 조용히.
+   *  · 띄운 책을 보고 있으면: 책 위에 배너("✅ 동화가 완성됐어요 [보러 가기]").
+   */
+  const [notice, setNotice] = useState<NoticeKind | null>(null);
+  const noticeStateRef = useRef<NoticeState>({ step, busy, saveFailed: false });
+  const showcaseOpenRef = useRef(false);
+  useEffect(() => {
+    showcaseOpenRef.current = showcaseId !== null;
+  }, [showcaseId]);
+  useEffect(() => {
+    const next: NoticeState = { step, busy, saveFailed: saveFailure !== null };
+    const kind = noticeFor(noticeStateRef.current, next);
+    noticeStateRef.current = next;
+    if (!kind) return;
+    alertIfAway(kind);
+    if (showcaseOpenRef.current) setNotice(kind);
+  }, [step, busy, saveFailure]);
+  /*
+   * 띄운 책은 방문 기록(history)에 한 칸을 남긴다.
+   *
+   * 왜: 부모는 책을 닫으려고 휴대폰 뒤로 버튼(TWA)·뒤로 가기 몸짓을 쓴다. 기록이 없으면
+   * 브라우저가 만들기 앞 화면으로 돌아가고, 이 화면이 사라지면서(언마운트) 쓰던 대본·그리던
+   * 그림 요청이 끊긴다. 한 칸을 남겨 두면 뒤로 가기는 그 칸만 걷어내고 → popstate 에서 책만 닫는다.
+   * 주소(url)는 바꾸지 않는다 — 같은 /create 에 머물러 Next 라우터가 화면을 새로 그리지 않는다.
+   * 닫기 단추·ESC 로 닫으면 남긴 칸을 history.back() 으로 걷어낸다(앞으로 가기에 책이 남지 않게).
+   */
+  const showcasePushedRef = useRef(false);
+  const openShowcase = (id: string) => {
+    if (!showcasePushedRef.current && typeof window !== "undefined") {
+      try {
+        window.history.pushState({ showcase: id }, "");
+        showcasePushedRef.current = true;
+      } catch {
+        // 기록을 못 남겨도 책은 연다(닫기 단추·ESC 는 그대로 된다).
+      }
+    }
+    setShowcaseId(id);
+  };
+  const closeShowcase = () => {
+    setShowcaseId(null);
+    setNotice(null);
+    if (showcasePushedRef.current) {
+      showcasePushedRef.current = false;
+      window.history.back();
+    }
+  };
+  useEffect(() => {
+    if (!showcaseId) return;
+    const onPop = () => {
+      // 우리가 남긴 칸이 걷혔다 = 뒤로 가기로 책을 닫았다. 페이지는 그대로 둔다.
+      if (!showcasePushedRef.current) return;
+      showcasePushedRef.current = false;
+      setShowcaseId(null);
+      setNotice(null);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [showcaseId]);
+  /*
+   * 책을 띄운 동안 뒤 만들기 화면이 쓸려 움직이지 않게 몸통 스크롤을 잠근다.
+   * (대본 미리 읽기로 긴 그림 화면 — 쪽을 넘기려고 쓸다가 뒤 화면이 따라 움직이면 닫았을 때 자리가 바뀐다.)
+   */
+  useEffect(() => {
+    if (!showcaseId) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [showcaseId]);
+  const showcaseBook = showcaseId ? SHELF_BOOKS.find((b) => b.id === showcaseId) ?? null : null;
+  /*
+   * 띄운 책 — 두 기다림(대본·그림) 어디서 열어도 같은 자리에 뜬다.
+   * z-[60]: 임시저장 물음(z-50)·기다림 막(z-20)보다 위. 뷰어는 fixed 라 제 안의 z 는 이 안에 갇힌다.
+   *
+   * ⚠ 이 요소는 화면 맨 앞 자리(key="showcase")에 둔다 — 그림 화면과 완성 화면 모두.
+   *   자리가 다르면 동화가 완성되는 순간 React 가 뷰어를 새로 만들어, 듣던 낭독이 끊기고 첫 쪽으로 돌아간다.
+   */
+  const showcaseOverlay = showcaseBook ? (
+    <div
+      key="showcase"
+      className="fixed inset-0 z-[60] overscroll-contain"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${showcaseBook.title} 보기`}
+    >
+      <BookViewer
+        key={showcaseBook.id}
+        book={showcaseBook}
+        onClose={closeShowcase}
+        onOpenBook={(id) => setShowcaseId(id)}
+      />
+      {notice && (
+        <div
+          className="pointer-events-none fixed inset-x-0 z-10 flex justify-center px-4"
+          style={{ top: "calc(4rem + env(safe-area-inset-top))" }}
+        >
+          <div
+            role="status"
+            className="pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-x-2 gap-y-2 rounded-3xl bg-white/95 py-2 pl-4 pr-2 shadow-2xl"
+          >
+            <span className="break-keep text-[14px] font-extrabold text-neutral-800">
+              {noticeText(notice).banner}
+            </span>
+            <button
+              type="button"
+              onClick={closeShowcase}
+              className="rounded-full px-4 py-2 text-sm font-extrabold text-white shadow"
+              style={{ background: accent }}
+            >
+              {noticeText(notice).action}
+            </button>
+            {/* 이 책은 끝까지 듣고 가고 싶을 때 — 배너만 치우고 책·낭독은 그대로 둔다. */}
+            <button
+              type="button"
+              onClick={() => setNotice(null)}
+              aria-label="알림 닫고 계속 읽기"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-base font-extrabold text-neutral-400 hover:bg-neutral-100"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  ) : null;
 
   // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
   const [confirmMake, setConfirmMake] = useState(false);
@@ -2942,6 +3129,12 @@ export default function CreatePage() {
 
   // 완성 → 저장해 둔 책을 뷰어로 보여준다.
   if (step === "done" && finalBook) {
+    /*
+     * 제공 동화를 보던 중에 완성됐으면 그 책을 갑자기 치우지 않는다 — 배너의 '보러 가기'나
+     * 닫기를 누르면 그때 완성된 책을 연다. 두 뷰어를 겹쳐 띄우면 방향키·ESC 가 둘 다 먹는다.
+     * 아래 그림 화면과 똑같이 맨 앞 자리에 두어야 듣던 책이 새로 열리지 않는다(showcaseOverlay 설명 참고).
+     */
+    if (showcaseOverlay) return <>{showcaseOverlay}</>;
     return (
       <>
         <BookViewer book={finalBook} />
@@ -2961,7 +3154,14 @@ export default function CreatePage() {
     );
   }
 
+  // 그리기 시작부터 흐른 시간 — tick 이 1초마다 바뀌어 다시 그리므로 그때마다 새로 잰다.
+  void tick;
+  const drawElapsedMs = step === "illustrate" ? Date.now() - drawStartRef.current : 0;
+
   return (
+    <>
+    {/* 띄운 책은 맨 앞 자리 — 완성 화면으로 바뀌어도 같은 자리라 뷰어가 이어진다. */}
+    {showcaseOverlay}
     <div className="relative min-h-dvh w-full overflow-hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -3004,19 +3204,41 @@ export default function CreatePage() {
         </Link>
 
         {/* 로딩 오버레이 */}
-        {busy && (
-          <div className="fixed inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-black/40 backdrop-blur-sm">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={ui.mascot}
-              alt=""
-              className="h-24 w-24 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white"
-            />
-            <p className="text-lg font-extrabold text-white drop-shadow">
-              {step === "outline" ? "동화를 그리고 있어요…" : "대본을 쓰고 있어요…"}
-            </p>
-          </div>
-        )}
+        {/*
+          busy 는 세 곳에서 켜진다: 줄거리 짓기(그림체·성우 화면, 줄거리 화면의 '다시 짓기'), 대본 쓰기(줄거리 화면), 다시 저장하기(그림 화면).
+          예전엔 줄거리 화면에서 "동화를 그리고 있어요", 나머지는 모두 "대본을 쓰고 있어요"라 거꾸로 보였다.
+          단계(step)만으로는 줄거리 다시 짓기와 대본 쓰기를 못 가르므로, 단추를 누를 때 정한 busyKind 로 고른다.
+          대본은 2분 넘게 걸리니 흐르는 시간과 감상할 동화를 함께 둔다.
+        */}
+        {busy && (() => {
+          const wait = busyWaitText(
+            busyKind ?? (step === "illustrate" ? "save" : step === "outline" ? "story" : "outline"),
+          );
+          return (
+            // justify-center 를 바깥에 두면 낮은 화면(가로 폰)에서 넘친 윗부분이 스크롤로도 안 닿는다 — 안쪽 my-auto 로 가운데 맞춘다.
+            <div className="fixed inset-0 z-20 flex flex-col overflow-y-auto bg-black/40 px-4 py-6 backdrop-blur-sm">
+              <div className="my-auto flex w-full flex-col items-center gap-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={ui.mascot}
+                  alt=""
+                  className="h-24 w-24 shrink-0 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white motion-reduce:animate-none"
+                />
+                <p className="break-keep text-center text-lg font-extrabold text-white drop-shadow">{wait.headline}</p>
+                {wait.line && (
+                  <p className="break-keep text-center text-sm font-bold text-white/90 drop-shadow">
+                    {waitLine(wait.line, busyElapsed)}
+                  </p>
+                )}
+                {wait.showcase && (
+                  <div className="mt-2 w-full max-w-md">
+                    <WaitShowcase books={SHOWCASE_BOOKS} onOpen={openShowcase} tone="dark" />
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
         <div className="rounded-[28px] bg-white/85 p-7 shadow-xl backdrop-blur">
           {/* ── 1. 아이 정보 ── */}
@@ -3851,6 +4073,7 @@ export default function CreatePage() {
                       setError("함께 동화를 읽어줄 성우를 먼저 골라주세요 🎙️");
                       return;
                     }
+                    setBusyKind("outline");
                     makeOutline();
                   }}
                 >
@@ -3882,7 +4105,12 @@ export default function CreatePage() {
                   ? "창을 닫아도 이 기기에 이레 동안 남아 있어요. 다시 만들기에 들어오면 ‘저장 못 한 책 다시 저장하기’가 보여요."
                   : "이 화면에서 ‘다시 저장하기’를 눌러 주세요. 창을 닫으면 다시 만들어야 해요."}
               </p>
-              <BigButton accent={accent} accentDark={accentDark} onClick={retrySave} disabled={busy}>
+              <BigButton accent={accent} accentDark={accentDark} onClick={() => {
+                  // 저장이 끝나(또 실패해) 알릴 때 소리를 낼 수 있게 — 누른 순간 소리 장치를 깨워 둔다.
+                  primeChime();
+                  setBusyKind("save");
+                  retrySave();
+                }} disabled={busy}>
                 {busy ? "저장하는 중…" : "다시 저장하기 📚"}
               </BigButton>
               <p className="break-keep text-center text-[11px] font-medium text-neutral-400">
@@ -3898,7 +4126,7 @@ export default function CreatePage() {
               <img
                 src={ui.mascot}
                 alt=""
-                className="h-24 w-24 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white shadow-lg"
+                className="h-24 w-24 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white shadow-lg motion-reduce:animate-none"
               />
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 {uploading || busy ? "동화를 책장에 넣고 있어요…" : "동화를 그리고 있어요…"}
@@ -3910,16 +4138,8 @@ export default function CreatePage() {
                   // '그림 N장'이라고 하면 그린 장수로 읽힌다 — 이건 표지 썸네일·시트까지 포함한 파일 수다.
                   `파일 ${uploading.done} / ${uploading.total} 올리는 중 (표지·시트 포함)`
                 ) : (
-                  <>
-                    {drawn} / {story.pages.length} 쪽
-                    {(() => {
-                      void tick; // 1초마다 다시 계산되게 하는 의존값
-                      if (drawn === 0 || drawn >= story.pages.length) return "";
-                      const perPage = (Date.now() - drawStartRef.current) / drawn;
-                      const left = Math.ceil((perPage * (story.pages.length - drawn)) / 1000);
-                      return left > 0 ? ` · 약 ${left}초 남았어요` : "";
-                    })()}
-                  </>
+                  // 첫 쪽이 나오기 전(인물·장소 시트 준비)엔 "0 / 5 쪽" 대신 준비 중이라고 말한다.
+                  drawProgressLine(drawn, story.pages.length, drawElapsedMs, drawRestoredRef.current)
                 )}
               </p>
               <div className="h-3 w-full overflow-hidden rounded-full bg-neutral-100">
@@ -3933,10 +4153,24 @@ export default function CreatePage() {
                   }}
                 />
               </div>
-              {/* 닫으면 그때까지 그린 그림이 사라지고 그림 값을 다시 낸다 — 미리 말해 준다. */}
+              {/* 흐르는 시간 — 그리기 시작부터. 막대가 안 움직이는 시트 준비 동안에도 초가 올라간다. */}
+              {!uploading && (
+                <p className="break-keep text-center text-xs font-bold text-neutral-500">
+                  {/* 이어서 그리기면 남은 쪽 수로 '보통'을 잡는다 — 한 장 남았는데 "보통 4분"이라 하지 않게. */}
+                  {waitLine("draw", drawElapsedMs, Math.max(0, story.pages.length - drawRestoredRef.current))}
+                </p>
+              )}
+              {/*
+                닫아도 그린 그림은 사라지지 않는다 — 그리기 보관(draw-progress)이 이 기기에 남아
+                다시 들어오면 '이어서 그리기'로 그린 장을 건너뛰고, 값을 낸 책은 '다시 저장하기'로 값 없이 저장된다.
+                예전 문구("닫으면 그리던 그림이 사라져요")는 보관이 생긴 뒤로 틀린 말이었다.
+              */}
               <p className="break-keep text-center text-[11px] font-medium text-neutral-400">
-                이 화면을 닫으면 그리던 그림이 사라져요. 잠깐만 기다려 주세요.
+                창을 닫아도 그린 그림은 이 기기에 남아, 다시 만들기에 들어오면 이어서 그려요.
+                <br />
+                이 화면을 열어 두시면 다 그린 뒤 바로 책장에 넣어 드려요.
               </p>
+              <WaitShowcase books={SHOWCASE_BOOKS} onOpen={openShowcase} tone="light" />
               {/* 기다리는 동안 이야기를 먼저 읽는다 — 글은 이미 다 나와 있으니
                   그림을 기다리며 한 쪽씩 보여준다. 빈 화면을 보며 기다리지 않게. */}
               <div className="w-full rounded-3xl bg-white/80 px-5 py-4 shadow-inner">
@@ -4101,6 +4335,9 @@ export default function CreatePage() {
                         onClick={() => {
                           if (shortOnTokens || bookLimitReached) return;
                           setConfirmMake(false);
+                          // 대본이 나왔을 때 소리를 낼 수 있게 — 누른 이 순간에 소리 장치를 깨워 둔다.
+                          primeChime();
+                          setBusyKind("story");
                           makeStory();
                         }}
                       >
@@ -4119,7 +4356,11 @@ export default function CreatePage() {
                 )}
                 <button
                   type="button"
-                  onClick={() => makeOutline(true)}
+                  onClick={() => {
+                    // 줄거리 화면에서 눌러도 기다리는 건 줄거리(30초)다 — 대본 문구·감상 줄을 띄우지 않게.
+                    setBusyKind("outline");
+                    makeOutline(true);
+                  }}
                   disabled={!master && outlineRetries >= MAX_OUTLINE_RETRIES}
                   className="text-sm font-bold text-neutral-500 underline disabled:no-underline disabled:opacity-50"
                 >
@@ -4304,6 +4545,10 @@ export default function CreatePage() {
                       disabled={shortOnImageTokens && !unsavedPaid}
                       onClick={() => {
                         if (shortOnImageTokens && !unsavedPaid) return;
+                        // 다 그렸을 때 소리를 낼 수 있게 — 누른 이 순간에 소리 장치를 깨워 둔다.
+                        primeChime();
+                        // 이어서 그리기면 되살릴 장수를 기억한다 — 진행 줄이 그 장들을 '방금 그린 장'으로 세지 않게.
+                        drawRestoredRef.current = resumablePages;
                         illustrate(story);
                       }}
                     >
@@ -4404,5 +4649,6 @@ export default function CreatePage() {
         </div>
       </main>
     </div>
+    </>
   );
 }

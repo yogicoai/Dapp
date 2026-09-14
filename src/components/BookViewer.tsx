@@ -208,7 +208,23 @@ const HOTSPOT_KO: Record<string, string> = {
   greedy: "욕심쟁이",
 };
 
-export function BookViewer({ book }: { book: Book }) {
+/**
+ * @param onClose 다른 화면 위에 띄워 쓸 때만 준다(만들기 화면에서 기다리며 제공 동화 보기).
+ *   주면 '서재로' 나가는 자리(← 서재·ESC·이야기 끝의 서재로)가 페이지 이동 대신 이걸 부른다.
+ *   띄운 쪽이 페이지를 떠나면 그리던 그림·쓰던 대본이 끊기기 때문이다. 안 주면 예전 그대로다.
+ *   닫으면 뷰어가 사라지면서(언마운트) 낭독·대사·배경음이 멈춘다.
+ * @param onOpenBook 띄운 모드에서 '다음 동화 보기' — 주소로 가지 않고 이걸로 바꿔 띄운다.
+ *   onClose 만 주고 이걸 안 주면 '다음 동화' 단추는 숨긴다.
+ */
+export function BookViewer({
+  book,
+  onClose,
+  onOpenBook,
+}: {
+  book: Book;
+  onClose?: () => void;
+  onOpenBook?: (id: string) => void;
+}) {
   const router = useRouter();
   // 그림 없는 쪽의 배경으로 쓴다 — 글 동화도 테마(동화나라) 안에서 읽힌다.
   const { theme: ui } = useTheme();
@@ -1519,14 +1535,17 @@ export function BookViewer({ book }: { book: Book }) {
       if (e.key === "ArrowRight") go(index + 1);
       else if (e.key === "ArrowLeft") go(index - 1);
       // ESC — 읽는 중이면 먼저 멈추고, 아니면 서재로 나간다 ("← 서재"와 같다).
+      // 띄운 모드면 뷰어만 닫는다(닫히면 소리도 멈춘다) — 아래 화면이 ESC 로 하던 일(그리기 멈춤 등)은
+      // 띄운 쪽이 뷰어가 떠 있는 동안 꺼 둔다.
       else if (e.key === "Escape") {
-        if (readingRef.current) stopReading();
+        if (onClose) onClose();
+        else if (readingRef.current) stopReading();
         else router.push("/");
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [index, go, router, stopReading]);
+  }, [index, go, router, stopReading, onClose]);
 
   const swipeOriginX = useRef<number | null>(null);
   const onTouchStart = (e: React.TouchEvent) => {
@@ -2270,14 +2289,27 @@ export function BookViewer({ book }: { book: Book }) {
         className={`absolute left-3 z-10 flex items-center gap-1.5 sm:left-4 sm:gap-2 ${chromeCls}`}
         style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
       >
-        <Link
-          href="/"
-          aria-label="서재로 돌아가기"
-          className="flex h-9 w-9 items-center justify-center gap-1 rounded-full bg-black/40 p-0 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 min-[360px]:w-auto min-[360px]:px-3 sm:px-4"
-        >
-          <span aria-hidden>←</span>
-          <span className="hidden min-[360px]:inline">서재</span>
-        </Link>
+        {onClose ? (
+          // 띄운 모드 — 서재로 가지 않고 닫기만 한다(아래 만들기 화면이 계속 그린다).
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="책 닫기"
+            className="flex h-9 w-9 items-center justify-center gap-1 rounded-full bg-black/40 p-0 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 min-[360px]:w-auto min-[360px]:px-3 sm:px-4"
+          >
+            <span aria-hidden>✕</span>
+            <span className="hidden min-[360px]:inline">닫기</span>
+          </button>
+        ) : (
+          <Link
+            href="/"
+            aria-label="서재로 돌아가기"
+            className="flex h-9 w-9 items-center justify-center gap-1 rounded-full bg-black/40 p-0 text-sm text-white/90 backdrop-blur transition hover:bg-black/60 min-[360px]:w-auto min-[360px]:px-3 sm:px-4"
+          >
+            <span aria-hidden>←</span>
+            <span className="hidden min-[360px]:inline">서재</span>
+          </Link>
+        )}
         {/* 가로로 보기 — 클릭(제스처) 안에서 전체화면 + 가로 고정을 요청한다.
             미지원 기기는 조용히 무시되고 회전 안내 힌트가 대신한다.
             좁은 폰에선 아이콘만(글자 숨김) 보여 좌우 버튼 겹침을 막는다. */}
@@ -2496,7 +2528,21 @@ export function BookViewer({ book }: { book: Book }) {
 
             {/* 다음 동화 — 끝나면 "다음 것도 보자"가 자연스럽다. 서재로 나갔다
                 다시 고르게 하지 않는다. 마지막 책이면 이 버튼은 안 뜬다. */}
-            {nextBook && (
+            {nextBook && onClose && onOpenBook && (
+              // 띄운 모드 — 주소로 가면 아래 화면이 사라지므로 띄운 쪽에 바꿔 달라고 한다.
+              <button
+                type="button"
+                onClick={() => onOpenBook(nextBook.id)}
+                style={{ background: ui.colors.accent }}
+                className="flex max-w-[18rem] flex-col items-center gap-0.5 rounded-3xl px-7 py-3.5 text-white shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <span className="text-base font-extrabold">▶ 다음 동화 보기</span>
+                <span className="line-clamp-1 break-keep text-[13px] font-bold text-white/85">
+                  {nextBook.title}
+                </span>
+              </button>
+            )}
+            {nextBook && !onClose && (
               <Link
                 href={`/book/${nextBook.id}`}
                 style={{ background: ui.colors.accent }}
@@ -2520,12 +2566,22 @@ export function BookViewer({ book }: { book: Book }) {
               >
                 🔄 처음부터 다시 듣기
               </button>
-              <Link
-                href="/"
-                className="rounded-full bg-neutral-100 px-7 py-3.5 text-base font-extrabold text-neutral-500 transition hover:bg-neutral-200"
-              >
-                ← 서재로
-              </Link>
+              {onClose ? (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="rounded-full bg-neutral-100 px-7 py-3.5 text-base font-extrabold text-neutral-500 transition hover:bg-neutral-200"
+                >
+                  ✕ 닫기
+                </button>
+              ) : (
+                <Link
+                  href="/"
+                  className="rounded-full bg-neutral-100 px-7 py-3.5 text-base font-extrabold text-neutral-500 transition hover:bg-neutral-200"
+                >
+                  ← 서재로
+                </Link>
+              )}
             </div>
           </div>
         </div>
