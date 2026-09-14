@@ -42,6 +42,41 @@ const MOVE_PATTERN =
 type LocationHint = { family: string; name: string; description: string; index: number };
 
 /*
+ * '탈것에서 내렸다'로 치는 말.
+ *
+ * 뒤를 막는 것이 중요하다 — '내려다보니'(위에서 아래를 봄)·'내리는 비'·'내릴 준비'·'나오는 연기'는
+ * 내린 게 아니다. 예전엔 낱말 앞부분만 맞춰 봐서 "2층 버스에서 내려다보니 남산이"를 '내렸다'로 읽었고,
+ * 버스 위층 쪽의 장소 잠금이 빠지고 "바깥에 그려라"가 붙어 맞게 그린 그림이 검수에서 떨어졌다.
+ */
+const GOT_OFF_RE =
+  /(?:내렸|내린(?!\s*(?:비|눈))|내려(?!\s*다\s*[보본봤볼]|\s*놓|\s*놨)|내리(?!기\s*전|는\s*(?:비|눈|햇))|내릴(?!\s*(?:준비|거|때까지))|나왔|나와|나온(?!\s*(?:연기|김))|나오(?!는)|빠져나)/;
+
+/**
+ * 탈것 낱말 **바로 뒤** 글을 보고 '거기서 내렸나'를 정한다.
+ *
+ * 예전엔 '버스에서' 바로 다음에 '내려'가 와야만 알아봤다. 그래서 "버스에서 천천히 내려",
+ * "버스에서 폴짝 내렸어요", "버스가 멈추자 가족은 내렸어요"는 모두 '버스 안'이 됐고,
+ * 궁궐 마당이어야 할 장소 줄이 또 시내버스 실내로 바뀌었다(my-mu0issap 3쪽과 같은 사고).
+ * 이제 같은 문장 안 짧은 창(열 글자쯤, 어절 서넛)까지 본다. 창을 넓히면 "기차 안에서 창밖을 보니
+ * 눈이 내렸어요" 같은 말까지 걸리므로 좁게 두고, 비·눈이 내리는 말은 따로 뺀다.
+ */
+function gotOffAfter(after: string): boolean {
+  const clause = after.split(/[.!?\n]/)[0] ?? "";
+  // 탈것 낱말에 붙는 말 — 안에서 · 밖으로 · 가 멈추자
+  const lead = /^\s*(?:안\s*)?(?:에서(?:는|도)?|밖으로|(?:가|이)\s*(?:멈추|멈춰|멈췄|서자|섰))?/.exec(clause)?.[0] ?? "";
+  const rest = clause.slice(lead.length);
+  const m = GOT_OFF_RE.exec(rest);
+  if (!m) return false;
+  const between = rest.slice(0, m.index);
+  // 붙는 말이 없으면 곧바로 이어져야 한다("버스 내려서"). "버스를 타고 산에서 내려왔어요"는 버스에서 내린 게 아니다.
+  if (!lead.trim()) return /^\s*$/.test(between);
+  if (m.index > 10 || (between.match(/\s+/g) ?? []).length > 3) return false;
+  // "눈이 내렸어요"·"비가 내리는" — 하늘에서 내리는 것.
+  if (/(?:비|눈|눈발|햇살|햇빛|어둠)\s*(?:가|이)?\s*$/.test(between)) return false;
+  return true;
+}
+
+/*
  * 본문에서 '어디인지'를 읽어 내는 목록.
  *
  * 여기 없는 곳은 못 알아본다. 그리고 못 알아보면 **앞 쪽 장소로 되돌려 버린다** —
@@ -60,6 +95,8 @@ function inferLocationFromText(text: string): LocationHint | null {
 }
 
 /** 글에 나오는 장소 낱말을 전부 찾는다(점수 포함). 고르는 일은 부르는 쪽이 한다. */
+const VEHICLE_FAMILIES = new Set(["car", "tourbus", "transit"]);
+
 function locationHints(text: string): (LocationHint & { score: number })[] {
   const definitions = [
     {
@@ -107,19 +144,45 @@ function locationHints(text: string): (LocationHint & { score: number })[] {
      */
     {
       family: "car",
-      re: /(자동차\s*(?:안|에서)|(?<![기전마])차\s*(?:안|에서)|카시트|뒷자리|뒷좌석)/g,
+      // 버스와 같은 이유로 '차에서 내려'는 차 안이 아니다 — 내린 말은 아래 모으는 자리에서 거른다.
+      re: /((?:자동차|(?<![기열전마모녹홍풍찻유주세])차)\s*(?:안|에서)|카시트|뒷자리|뒷좌석)/g,
       description: "뒷좌석 안전벨트와 창문, 앞자리 등받이가 보이는 승용차 안, 창밖으로 흐르는 도시 풍경",
     },
+    /*
+     * 2층 관광버스 위층은 시내버스 실내와 다른 곳이다.
+     *
+     * 예전엔 둘 다 "천장 손잡이가 달린 차량 안"으로 뭉쳐서, 지붕 없는 관광버스 위층 장면에
+     * 천장과 손잡이가 들어갈 자리가 생겼다. 위층은 하늘이 트인 바깥 좌석이다.
+     * '관광버스'만으로는 켜지 않는다 — 창문 있는 단층 관광버스 안 장면이 "지붕 없는 위층"이 됐다.
+     * 2층·이층·시티투어·오픈탑이거나 '버스 위층'일 때만.
+     */
+    {
+      family: "tourbus",
+      re: /((?:2층|이층|오픈\s*탑)\s*[가-힣]{0,8}버스(?:\s*(?:위층|2층|안|에서))?|시티\s*투어\s*버스(?:\s*(?:위층|2층|안|에서))?|버스\s*(?:위층|2층|이층))/g,
+      description: "지붕 없이 하늘이 트인 2층 관광버스 위층, 줄지어 놓인 좌석과 낮은 난간, 옆으로 지나가는 도시 풍경",
+    },
+    /*
+     * '버스에서'는 뒤를 봐야 한다.
+     *
+     * 실제 사고(my-mu0issap 3쪽) — 본문 "버스에서 내려 커다란 문을 지나자"의 '버스에서'를
+     * 버스 안으로 읽어, 경복궁 마당이어야 할 장소 줄이 시내버스 실내로 바뀌었다. 그림은
+     * 버스 안에서 카시트에 앉은 아이가 나왔다. '에서' 뒤에 내리·나오가 오면 떠난 것이다
+     * (아래 모으는 자리에서 gotOffAfter 로 거른다 — 부사가 끼어도 알아본다).
+     */
     {
       family: "transit",
-      re: /(버스\s*(?:안|에서)|지하철|전철|기차\s*(?:안|에서))/g,
-      description: "나란히 놓인 좌석과 천장 손잡이, 창밖 풍경이 흐르는 차량 안",
+      re: /((?<!(?:2층|이층|오픈\s*탑|시티\s*투어)\s*[가-힣]{0,8})버스\s*(?:안|에서)|지하철|전철|기차\s*(?:안|에서))/g,
+      description: "나란히 놓인 좌석과 손잡이, 창밖 풍경이 흐르는 시내버스·지하철 같은 대중교통 안",
     },
   ];
   const hints: (LocationHint & { score: number })[] = [];
   for (const definition of definitions) {
     for (const match of text.matchAll(definition.re)) {
       const at = match.index ?? 0;
+      // 탈것에서 내린 말("버스에서 천천히 내려")은 그 탈것에 있는 게 아니다 — 장소 단서로 치지 않는다.
+      if (VEHICLE_FAMILIES.has(definition.family) && vehicleState(text.slice(at, at + match[0].length + 24)).gotOff) {
+        continue;
+      }
       const after = text.slice(at + match[0].length, at + match[0].length + 12);
       hints.push({
         family: definition.family,
@@ -181,16 +244,111 @@ export function isIndoorPlace(name: string, description = ""): boolean | null {
  *
  * '주차장·정비소'처럼 차가 나오지만 실내가 아닌 곳은 뺀다 — 그 장면의 문제는 다르다.
  */
-// 앞 글자를 본다 — '기차·열차·전차·마차·유모차'는 자동차가 아니다.
-// 이걸 안 보면 "기차를 타고 할머니 댁에"가 차 안으로 잡혀 엉뚱한 쪽에 좌석 규칙이 붙는다.
-const IN_CAR_WORDS =
-  /(?<![기열전마모])(차 ?안|차안|자동차 ?안|승용차|택시 ?안|버스 ?안|카시트|뒷좌석|뒷자리|앞좌석|조수석|운전석|차창|차를 ?타|드라이브)/;
-const NOT_IN_CAR_WORDS = /(주차장|정비소|세차|차고|주유소)/;
-
 export function isInsideCar(name: string, description = ""): boolean {
   const text = `${name} ${description}`;
   if (NOT_IN_CAR_WORDS.test(text)) return false;
-  return IN_CAR_WORDS.test(text);
+  const byName = placeVehicleKind(name);
+  if (byName) return byName === "car";
+  return vehicleState(text).kind === "car";
+}
+
+/** 승용차·택시(car) / 버스·기차·지하철(transit). 둘은 안전 규칙이 정반대다. */
+export type VehicleKind = "car" | "transit";
+
+/*
+ * '타고 있다'로 칠 때 탈것 낱말 뒤에 오는 말 — 안에서 · 좌석 · 를 타고 · 가 달리자.
+ *
+ * 맨 낱말(자동차·택시·버스·기차)만으로는 타고 있다고 보지 않는다. 예전엔 "장난감 자동차를 가지고
+ * 놀았어요", "빨간 택시가 지나가는 거리", "창밖으로 버스가 지나가요", 장소 이름 "자동차 박물관"까지
+ * 탈것 안으로 읽어, 거실·거리 장면에 차 안 좌석 규칙(뒷좌석에 앉혀 벨트를 채워라)이 붙었다.
+ * 맨 낱말은 '근처에 탈것 이야기가 있나'(mentionsVehicle)에만 쓴다.
+ * 앞보기(?=)로 둔다 — 찾은 글이 탈것 낱말뿐이어야 그 뒤에서 '내렸나'를 볼 수 있다.
+ */
+const RIDE_AHEAD = String.raw`(?=\s*(?:안|속|위층|아래층|2층|이층|객실|좌석|자리|뒷자리|뒷좌석|앞자리|앞좌석|창가|창문|에서|밖으로|(?:를|을)\s*(?:타|탔|탄|탑니)|에\s*(?:타|탔|탄|올라|앉)|(?:가|이)\s*(?:멈추|멈춰|멈췄|서자|섰|출발|달리|달렸|떠나|떠났)))`;
+/*
+ * 승용차 낱말. 앞 글자를 본다 — '기차·열차·전차·마차·유모차'는 자동차가 아니고,
+ * '녹차·홍차·풍차·주차·세차'도 아니다. 이걸 안 보면 "기차를 타고 할머니 댁에"가 차 안으로 잡혀
+ * 엉뚱한 쪽에 좌석 규칙이 붙는다.
+ *
+ * '버스 안'·'차창'은 뺐다. 버스를 승용차로 읽어, 2층 관광버스 위층에 앉은 가족 셋이
+ * 전부 안전벨트를 맨 그림이 나왔다(my-mu0issap 2쪽). 버스는 아래 대중교통 낱말이 맡는다.
+ */
+const CAR_NOUN = "(?:자동차|승용차|택시|(?<![기열전마모녹홍풍찻유주세])차)";
+const CAR_STRONG = new RegExp(String.raw`${CAR_NOUN}${RIDE_AHEAD}|카시트|조수석|드라이브`, "g");
+/*
+ * 자리 낱말 — 차에도 버스에도 있다. '버스 뒷자리'가 승용차가 되면 안 되므로,
+ * 같은 글에 대중교통이 나오면 그쪽을 따른다.
+ */
+const CAR_SEAT = /(?:뒷좌석|뒷자리|앞좌석|운전석)/g;
+/*
+ * 대중교통 낱말. 정류장·터미널·역은 탈것 안이 아니다 — 거기서 "좌석에 앉는다"는 규칙이 붙으면
+ * 정류장 벤치 장면이 버스 안이 된다. (타는 말이 붙어야 하므로 '버스 정류장'은 애초에 안 걸린다.)
+ */
+const TRANSIT_NOUN = "(?:버스|기차|열차|지하철|전철|KTX|케이티엑스|트램|케이블카)";
+const TRANSIT_WORDS = new RegExp(`${TRANSIT_NOUN}${RIDE_AHEAD}`, "g");
+/** 탈것 이야기가 조금이라도 있나 — 맨 낱말도 센다. */
+const ANY_VEHICLE_WORDS = new RegExp(
+  String.raw`(?:자동차|승용차|택시|카시트|조수석|뒷좌석|뒷자리|버스(?!\s*(?:정류|정거장|터미널))|기차(?!\s*역|놀이)|열차|지하철(?!\s*역)|전철(?!\s*역)|KTX|케이티엑스|트램|케이블카|(?<![기열전마모녹홍풍찻유주세])차\s*(?:안|에서|를\s*타|에\s*타))`,
+);
+const NOT_IN_CAR_WORDS = /(주차장|정비소|세차|차고|주유소)/;
+
+/**
+ * 이 글이 '지금 탈것 안'을 말하는가, '탈것에서 내렸다'를 말하는가.
+ *
+ * 탈것 낱말을 전부 찾아 **마지막에 나온 것**을 따른다 — "택시에서 내려 기차를 탔다"는 기차,
+ * "버스를 타고 가다 버스에서 내려"는 내린 것. 내린 뒤라면 kind는 없고 gotOff가 선다.
+ * 기다리는 탈것("버스를 기다렸어요")은 아직 탄 게 아니라 셈하지 않는다.
+ */
+export function vehicleState(text: string): { kind: VehicleKind | null; gotOff: boolean } {
+  const source = (text ?? "").normalize("NFC");
+  type Mention = { kind: VehicleKind; index: number; off: boolean; seatOnly: boolean };
+  const mentions: Mention[] = [];
+  const collect = (re: RegExp, kind: VehicleKind, seatOnly: boolean) => {
+    for (const m of source.matchAll(new RegExp(re.source, "g"))) {
+      const at = m.index ?? 0;
+      const after = source.slice(at + m[0].length, at + m[0].length + 24);
+      if (/^\s*(?:를|을|가|이)?\s*기다/.test(after)) continue;
+      mentions.push({ kind, index: at, off: gotOffAfter(after), seatOnly });
+    }
+  };
+  collect(CAR_STRONG, "car", false);
+  collect(CAR_SEAT, "car", true);
+  collect(TRANSIT_WORDS, "transit", false);
+  if (mentions.length === 0) return { kind: null, gotOff: false };
+  const last = mentions.reduce((a, b) => (b.index >= a.index ? b : a));
+  if (last.off) return { kind: null, gotOff: true };
+  if (last.kind === "car" && last.seatOnly && mentions.some((m) => m.kind === "transit" && !m.off)) {
+    return { kind: "transit", gotOff: false };
+  }
+  return { kind: last.kind, gotOff: false };
+}
+
+/**
+ * 장소 **이름**이 탈것인가 — 이름은 끝말(머리 명사)로 본다.
+ *
+ * "아빠 차"·"승용차"·"지하철 안"·"2층 관광버스 위층"은 탈것이고, "자동차 박물관"·"택시 승강장"·
+ * "장난감 기차 가게"는 아니다. 예전엔 이름 어디든 탈것 낱말이 있으면 탈것으로 봐서, 박물관 장소 시트가
+ * 차 한 대로 그려질 뻔했고, 반대로 "아빠 차"는 못 알아봐 진짜 차 안 쪽에 "벨트 없음"이 붙었다.
+ * 이름 끝에 없으면 타는 말 꼴("버스에서" — 옛 판정이 박아 둔 이름)만 본다.
+ */
+export function placeVehicleKind(name: string): VehicleKind | null {
+  const n = (name ?? "").normalize("NFC").trim();
+  if (!n || NOT_IN_CAR_WORDS.test(n)) return null;
+  const tail = String.raw`(?:\s*(?:안|속|위층|아래층|2층|이층|객실|칸|좌석|창가|뒷자리|뒷좌석|앞자리|앞좌석))?$`;
+  if (new RegExp(`${TRANSIT_NOUN}${tail}`).test(n)) return "transit";
+  if (new RegExp(`${CAR_NOUN}${tail}`).test(n)) return "car";
+  if (/^(?:뒷자리|뒷좌석|카시트|조수석)$/.test(n)) return "car";
+  return vehicleState(n).kind;
+}
+
+/** 글에 탈것 이야기가 조금이라도 있는가 — 탈것이 아닌 쪽에 "벨트 없음"을 따로 일러 줄지 정한다. */
+export function mentionsVehicle(text: string): boolean {
+  return ANY_VEHICLE_WORDS.test((text ?? "").normalize("NFC"));
+}
+
+/** '주차장·세차장·주유소'처럼 차가 나오지만 차 안은 아닌 곳을 말하나. */
+export function mentionsNotInCar(text: string): boolean {
+  return NOT_IN_CAR_WORDS.test((text ?? "").normalize("NFC"));
 }
 
 /** 목록에 있는 장소인가 — 있으면 계열 이름, 없으면 null. */
@@ -250,7 +408,7 @@ export function locationKeyOf(name: string): string {
 const VENUE_FAMILIES = new Set(["school", "library", "shop", "restaurant", "hospital", "zoo", "pool"]);
 const HOME_PART_FAMILIES = new Set(["home", "entrance", "corridor", "yard", "veranda", "kitchen"]);
 /** 여기로 옮기면 앞의 큰 장소를 떠난 것이다. */
-const LEAVES_VENUE = new Set(["car", "transit", "home", "street"]);
+const LEAVES_VENUE = new Set(["car", "transit", "tourbus", "home", "street"]);
 const VENUE_PART: Record<string, Record<string, string>> = {
   school: {
     entrance: "나무 신발장이 줄지어 선 어린이집 현관, 낮은 문턱과 밝은 타일 바닥",

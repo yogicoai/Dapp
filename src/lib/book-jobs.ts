@@ -38,6 +38,14 @@ export type JobRow = {
   story_entry: string | null;
   illustration_entry: string | null;
   manuscript: Record<string, unknown> | null;
+  /**
+   * 그림 값 장부 줄이 환불됐나 — 표의 칸이 아니라 readJobResult 가 장부(token_ledger)를 따로 읽어 채운다.
+   * true 환불됨 · false 안 됨 · null/없음 모름(못 읽음).
+   *
+   * 왜: 마스터 환불(master_refund_entry)은 장부 줄을 지우지 않고 refunded_at 만 채운다. 그래서 기록의
+   * illustration_entry 는 그대로 남아, 환불받은 뒤에도 '값 냈음'으로 인정돼 같은 책을 값 없이 다시 저장했다.
+   */
+  illustration_refunded?: boolean | null;
 };
 export const JOB_READ_COLUMNS = "id,book_id,status,page_count,story_entry,illustration_entry,manuscript";
 
@@ -323,24 +331,31 @@ export function readPaidMarker(raw: string | null, now: number): PaidMarker | nu
 export type DrawingNow = { pageTexts: string[]; artStyleId: string };
 
 /**
- * 기록 원고가 지금 대본·그림체와 같은가.
+ * 기록 원고가 지금 대본·그림체와 같은가 — 같음 · 다름 · 모름.
  *  · 쪽 본문이 하나라도 다르거나 쪽수가 다르면 다른 그림이다.
  *  · 원고에 그림체가 적혀 있으면 그것도 같아야 한다.
- *  · 원고에 쪽이 없으면(원고 쓰기가 모두 실패·90일 지나 비움) '모름' — 같은 것으로 본다.
- *    모를 때 다르다고 하면 값을 낸 부모에게 한 번 더 받게 된다. 이중 과금이 더 큰 사고라 이쪽으로 기운다.
+ *  · 원고에 쪽이 없으면(원고 쓰기가 모두 실패·90일 지나 비움) '모름'이다.
  */
-export function sameDrawing(manuscript: Record<string, unknown> | null | undefined, now: DrawingNow | undefined): boolean {
-  if (!now) return true;
+export function drawingMatch(
+  manuscript: Record<string, unknown> | null | undefined,
+  now: DrawingNow | undefined,
+): "same" | "different" | "unknown" {
+  if (!now) return "same";
   const pages = manuscript && Array.isArray(manuscript.pages) ? (manuscript.pages as unknown[]) : null;
-  if (!pages || pages.length === 0) return true;
-  if (pages.length !== now.pageTexts.length) return false;
+  if (!pages || pages.length === 0) return "unknown";
+  if (pages.length !== now.pageTexts.length) return "different";
   for (let i = 0; i < pages.length; i++) {
     const t = pages[i] && typeof pages[i] === "object" ? (pages[i] as Record<string, unknown>).text : undefined;
-    if (typeof t !== "string" || t !== now.pageTexts[i]) return false;
+    if (typeof t !== "string" || t !== now.pageTexts[i]) return "different";
   }
   const style = manuscript?.artStyleId;
-  if (typeof style === "string" && style !== now.artStyleId) return false;
-  return true;
+  if (typeof style === "string" && style !== now.artStyleId) return "different";
+  return "same";
+}
+
+/** 예전 모양 — '모름'을 같은 것으로 본다. 돈 판단은 planFromJob 이 drawingMatch 로 따로 한다. */
+export function sameDrawing(manuscript: Record<string, unknown> | null | undefined, now: DrawingNow | undefined): boolean {
+  return drawingMatch(manuscript, now) !== "different";
 }
 
 /**
@@ -352,28 +367,45 @@ export function sameDrawing(manuscript: Record<string, unknown> | null | undefin
  *    바꿔 전 쪽을 새로 그리면, 예전엔 그 새 그림 한 벌을 값 없이 저장했다. 값 면제는
  *    '같은 그림으로 저장만 다시'로 좁히고, 다른 그림이면 새 기록에서 예전처럼 값을 받는다.
  *    (책 id 가 못 박힌 줄이라 새 그림을 그 줄에 이어 쓸 수도 없다 — 그래서 reuse 도 false)
+ *  · 그림 값이 **환불된** 기록은 값을 낸 기록이 아니다 — 새 줄에서 받는다(환불 받고 책도 받는 길을 막는다).
+ *  · 값이 붙었는데 원고에 쪽이 없어 같은 그림인지 모르면 needsCheck — 받지도, 공짜로 저장하지도 않고 멈춘다.
+ *    예전엔 '모름'을 같은 것으로 봐, 그림체를 바꾼 새 그림 한 벌을 값 없이 저장할 수 있었다.
+ *    (지금은 값을 받기 직전에 원고를 적으므로 이 모양은 기록 쓰기가 줄줄이 실패한 드문 경우뿐이다)
  */
 export function planFromJob(
-  job: Pick<JobRow, "status" | "book_id" | "illustration_entry"> & { manuscript?: JobRow["manuscript"] } | null,
+  job:
+    | (Pick<JobRow, "status" | "book_id" | "illustration_entry"> & {
+        manuscript?: JobRow["manuscript"];
+        illustration_refunded?: boolean | null;
+      })
+    | null,
   now?: DrawingNow,
 ): {
   reuse: boolean;
   bookId: string | null;
   alreadyPaid: boolean;
+  needsCheck?: true;
 } {
   if (!job) return { reuse: false, bookId: null, alreadyPaid: false };
   if (job.status === "saved" || job.status === "restored" || job.status === "cancelled") {
     return { reuse: false, bookId: null, alreadyPaid: false };
   }
-  const bookId = job.book_id && /^my-[A-Za-z0-9_-]{1,77}$/.test(job.book_id) ? job.book_id : null;
-  if ((bookId || job.illustration_entry) && !sameDrawing(job.manuscript, now)) {
+  if (job.illustration_entry && job.illustration_refunded === true) {
     return { reuse: false, bookId: null, alreadyPaid: false };
+  }
+  const bookId = job.book_id && /^my-[A-Za-z0-9_-]{1,77}$/.test(job.book_id) ? job.book_id : null;
+  if (bookId || job.illustration_entry) {
+    const match = drawingMatch(job.manuscript, now);
+    if (match === "different") return { reuse: false, bookId: null, alreadyPaid: false };
+    if (match === "unknown" && job.illustration_entry) {
+      return { reuse: true, bookId, alreadyPaid: false, needsCheck: true };
+    }
   }
   return { reuse: true, bookId, alreadyPaid: Boolean(bookId && job.illustration_entry) };
 }
 
 /** 기록 읽기 결과 — '못 읽음(모름)'과 '그런 기록 없음'을 가른다. 돈 판단에서 둘을 섞으면 이중 과금이 난다. */
-export type JobRead = { ok: true; job: JobRow | null } | { ok: false };
+export type JobRead = { ok: true; job: JobRow | null } | { ok: false; missing?: boolean };
 
 export type ChargeRecovery =
   | { action: "already-paid"; bookId: string }
@@ -395,10 +427,46 @@ export type ChargeRecovery =
 export function recoverFromChargeRefusal(read: JobRead, now?: DrawingNow): ChargeRecovery {
   if (!read.ok || !read.job) return { action: "stop" };
   const plan = planFromJob(read.job, now);
+  if (plan.needsCheck) return { action: "stop" };
   if (!plan.reuse) return { action: "new-job" };
   if (plan.alreadyPaid && plan.bookId) return { action: "already-paid", bookId: plan.bookId };
   if (read.job.illustration_entry) return { action: "stop" }; // 값은 붙었는데 책 id 모양이 이상하다 — 사람 확인
   return { action: "retry-same-job", bookId: plan.bookId };
+}
+
+/** 장부 한 줄(회원이 읽을 수 있는 칸만). */
+export type LedgerRow = { id: string; amount: number; refunded_at: string | null };
+
+/**
+ * 옛 방식(spend_tokens)이 오류로 돌아왔을 때 — 정말 안 나갔나, 나갔나, 모르나.
+ *
+ * 예전엔 잔액 차이(전 − 후 ≥ 값)를 '받았다'의 증거로 썼다. 잔액은 계정 전체의 증감이라 다른 탭의
+ * 대본 값·다른 책 그림 값이 섞이면 **값 없이 저장**됐고, 그 사이 마스터 충전·환불이 섞이거나 끊긴 요청이
+ * 뒤늦게 커밋되면 '안 나갔다, 다시 누르라'고 해 **두 번 깎였다**. 이제 장부의 그림 값 줄로만 본다:
+ *  · 서버가 분명히 거절했다(네트워크 끊김이 아님) → not-paid. 함수 안에서 거절되면 차감도 함께 취소된다.
+ *  · 끊긴 요청이면 장부를 본다: 시작 전에 없던 그림 값 줄이 정확히 하나, 금액이 같고 환불 안 됨 → paid
+ *  · 그 밖(장부를 못 읽음 · 새 줄이 없음(뒤늦게 커밋될 수 있다) · 둘 이상 · 금액이 다름) → unknown.
+ *    다시 누르라고 하지 않는다.
+ */
+export function judgeSpendAfterError(input: {
+  before: LedgerRow[] | null;
+  after: LedgerRow[] | null;
+  cost: number;
+  networkish: boolean;
+}): { verdict: "paid"; entry: string } | { verdict: "not-paid" } | { verdict: "unknown" } {
+  if (!input.networkish) return { verdict: "not-paid" };
+  if (!input.before || !input.after) return { verdict: "unknown" };
+  const seen = new Set(input.before.map((r) => r.id));
+  const fresh = input.after.filter((r) => !seen.has(r.id) && !r.refunded_at);
+  if (fresh.length === 1 && fresh[0].amount === input.cost) return { verdict: "paid", entry: fresh[0].id };
+  return { verdict: "unknown" };
+}
+
+/** 돈 요청 오류 문구가 '연결이 끊김'인가 — 끊겼으면 서버에서는 커밋됐을 수 있다. */
+export function looksNetworkish(message: string): boolean {
+  return /failed to fetch|networkerror|fetch failed|network request failed|load failed|abort|timed? ?out|timeout|연결/i.test(
+    message ?? "",
+  );
 }
 
 /**
@@ -497,12 +565,19 @@ export async function updateJob(
   db: SupabaseClient | null,
   id: string | null | undefined,
   patch: Record<string, unknown>,
+  /**
+   * 이 상태일 때만 고친다 — 늦게 도착한 쓰기가 앞선 단계를 되돌리지 않게.
+   * 예: 서버가 응답 뒤(after)에 적는 '대본 끝(script)'이, 그 사이 브라우저가 적은 'drawing'과 원고를 덮었다.
+   */
+  onlyStatus?: JobStatus[],
 ): Promise<boolean> {
   if (!db || !isJobId(id) || Date.now() < missingUntil) return false;
   const body = pickWritable(patch);
   if (Object.keys(body).length === 0) return false;
   try {
-    let q = db.from("book_jobs").update(body).eq("id", id).select("id");
+    let q = onlyStatus?.length
+      ? db.from("book_jobs").update(body).eq("id", id).in("status", onlyStatus).select("id")
+      : db.from("book_jobs").update(body).eq("id", id).select("id");
     const signal = timeoutSignal(JOB_TIMEOUT_MS);
     if (signal) q = q.abortSignal(signal);
     const { data, error } = await q;
@@ -525,20 +600,60 @@ export async function updateJob(
  */
 export async function readJobResult(db: SupabaseClient | null, id: string | null | undefined): Promise<JobRead> {
   if (!isJobId(id)) return { ok: true, job: null };
-  if (!db || Date.now() < missingUntil) return { ok: false };
+  if (!db) return { ok: false };
+  // missing — 기록 표가 없는 옛 DB. '못 읽음'과 달리 기다려도 안 생기므로 부르는 쪽이 예전 방식으로 간다.
+  if (Date.now() < missingUntil) return { ok: false, missing: true };
   try {
     let q = db.from("book_jobs").select(JOB_READ_COLUMNS).eq("id", id);
     const signal = timeoutSignal(JOB_TIMEOUT_MS);
     if (signal) q = q.abortSignal(signal);
     const { data, error } = await q.maybeSingle();
     if (error) {
-      report("read", error);
-      return { ok: false };
+      return report("read", error) === "missing" ? { ok: false, missing: true } : { ok: false };
     }
-    return { ok: true, job: (data as unknown as JobRow | null) ?? null };
+    const job = (data as unknown as JobRow | null) ?? null;
+    if (job?.illustration_entry) job.illustration_refunded = await readRefunded(db, job.illustration_entry);
+    return { ok: true, job };
   } catch (e) {
     report("read", { message: String(e) });
     return { ok: false };
+  }
+}
+
+/** 장부 줄이 환불됐나. 못 읽으면 null(모름) — 모를 때는 예전처럼 '값 냈음'으로 둔다(두 번 받지 않게). */
+async function readRefunded(db: SupabaseClient, entry: string): Promise<boolean | null> {
+  try {
+    let q = db.from("token_ledger").select("id,refunded_at").eq("id", entry);
+    const signal = timeoutSignal(JOB_TIMEOUT_MS);
+    if (signal) q = q.abortSignal(signal);
+    const { data, error } = await q.maybeSingle();
+    if (error || !data) return null;
+    return Boolean((data as { refunded_at?: string | null }).refunded_at);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 내 그림 값 장부 줄 최근 몇 개 — 옛 방식(spend_tokens) 결제가 끊겼을 때 '나갔나'를 확인한다
+ * (judgeSpendAfterError). 못 읽으면 null.
+ */
+export async function readRecentIllustrationLedger(db: SupabaseClient | null): Promise<LedgerRow[] | null> {
+  if (!db) return null;
+  try {
+    let q = db
+      .from("token_ledger")
+      .select("id,amount,refunded_at")
+      .eq("reason", "illustration")
+      .order("created_at", { ascending: false })
+      .limit(20);
+    const signal = timeoutSignal(JOB_TIMEOUT_MS);
+    if (signal) q = q.abortSignal(signal);
+    const { data, error } = await q;
+    if (error || !Array.isArray(data)) return null;
+    return data as LedgerRow[];
+  } catch {
+    return null;
   }
 }
 
@@ -558,16 +673,23 @@ export async function cloneJob(
   from: JobRow,
   owner: string | null,
   status: JobStatus = "drawing",
+  /**
+   * 새 줄에 적을 원고 — **지금 그리는** 원고를 넘긴다.
+   * 옛 줄의 원고(옛 그림체·고치기 전 본문)를 그대로 물려받으면, 새 줄에 값만 붙고 원고가 안 바뀐 채 멈췄을 때
+   * 다음 판단이 늘 '다른 그림'이 되어 그림 값을 한 번 더 받았다. 안 주면 예전처럼 옛 원고를 옮긴다.
+   */
+  manuscript?: Record<string, unknown>,
 ): Promise<string | null> {
   if (!owner) return null;
+  const body = manuscript ?? from.manuscript ?? {};
   const copied = await insertJob(db, {
     owner,
     status,
     page_count: from.page_count,
     story_entry: from.story_entry,
-    manuscript: from.manuscript ?? {},
+    manuscript: body,
   });
   if (copied) return copied;
   // 대본 값 장부가 지워졌거나(환불) 대조에 걸리면 장부 id 없이라도 기록은 남긴다.
-  return insertJob(db, { owner, status, page_count: from.page_count, manuscript: from.manuscript ?? {} });
+  return insertJob(db, { owner, status, page_count: from.page_count, manuscript: body });
 }

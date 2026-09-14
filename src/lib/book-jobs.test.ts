@@ -7,6 +7,8 @@ import {
   chargeProblem,
   interpretBookSave,
   isJobId,
+  judgeSpendAfterError,
+  looksNetworkish,
   jobWriteProblem,
   pickWritable,
   planFromJob,
@@ -303,5 +305,51 @@ describe("waitAtMost — 보조 요청은 정해진 시간까지만", () => {
     assert.equal(await waitAtMost(slow, 10, "넘김"), "넘김");
     assert.equal(await waitAtMost(Promise.resolve("옴"), 100, "넘김"), "옴");
     assert.equal(await waitAtMost(Promise.reject(new Error("x")), 100, "넘김"), "넘김");
+  });
+});
+
+describe("planFromJob — 환불된 값 · 모르는 원고", () => {
+  it("그림 값이 환불된 기록은 값 낸 기록이 아니다 — 새 줄에서 받는다", () => {
+    const refunded = { ...job({ status: "failed", book_id: "my-a", illustration_entry: "e", manuscript: MS_SAME }), illustration_refunded: true };
+    assert.deepEqual(planFromJob(refunded, NOW), { reuse: false, bookId: null, alreadyPaid: false });
+    assert.deepEqual(recoverFromChargeRefusal({ ok: true, job: refunded }, NOW), { action: "new-job" });
+  });
+  it("환불 여부를 모르면(못 읽음) 예전처럼 값 낸 것으로 — 두 번 받지 않게", () => {
+    const unknown = { ...job({ status: "failed", book_id: "my-a", illustration_entry: "e", manuscript: MS_SAME }), illustration_refunded: null };
+    assert.deepEqual(planFromJob(unknown, NOW), { reuse: true, bookId: "my-a", alreadyPaid: true });
+  });
+  it("값이 붙었는데 원고에 쪽이 없으면 — 받지도 공짜로 저장하지도 않고 멈춘다", () => {
+    const blank = job({ status: "failed", book_id: "my-a", illustration_entry: "e", manuscript: { outline: {} } });
+    const plan = planFromJob(blank, NOW);
+    assert.equal(plan.needsCheck, true);
+    assert.equal(plan.alreadyPaid, false);
+    assert.deepEqual(recoverFromChargeRefusal({ ok: true, job: blank }, NOW), { action: "stop" });
+  });
+  it("값 없이 책 id 만 있고 원고가 비었으면(마스터·글만) 예전처럼 이어 쓴다", () => {
+    const blank = job({ status: "saving", book_id: "my-m", illustration_entry: null, manuscript: {} });
+    assert.deepEqual(planFromJob(blank, NOW), { reuse: true, bookId: "my-m", alreadyPaid: false });
+  });
+});
+
+describe("judgeSpendAfterError — 옛 방식 결제가 오류로 돌아왔을 때", () => {
+  const before = [{ id: "old", amount: 50, refunded_at: null }];
+  it("서버가 분명히 거절했으면 안 나갔다(다시 눌러도 안전)", () => {
+    assert.deepEqual(judgeSpendAfterError({ before: null, after: null, cost: 50, networkish: false }), { verdict: "not-paid" });
+  });
+  it("끊긴 요청 — 새 그림 값 줄이 정확히 하나·같은 금액이면 나갔다", () => {
+    const after = [{ id: "new", amount: 50, refunded_at: null }, ...before];
+    assert.deepEqual(judgeSpendAfterError({ before, after, cost: 50, networkish: true }), { verdict: "paid", entry: "new" });
+  });
+  it("끊긴 요청 — 새 줄이 없거나(뒤늦게 커밋될 수 있다) 장부를 못 읽으면 모름", () => {
+    assert.deepEqual(judgeSpendAfterError({ before, after: before, cost: 50, networkish: true }), { verdict: "unknown" });
+    assert.deepEqual(judgeSpendAfterError({ before: null, after: before, cost: 50, networkish: true }), { verdict: "unknown" });
+  });
+  it("다른 탭의 다른 금액 결제가 섞이면 받았다고 보지 않는다", () => {
+    const after = [{ id: "other", amount: 30, refunded_at: null }, ...before];
+    assert.deepEqual(judgeSpendAfterError({ before, after, cost: 50, networkish: true }), { verdict: "unknown" });
+  });
+  it("네트워크 오류 문구를 알아본다", () => {
+    assert.equal(looksNetworkish("TypeError: Failed to fetch"), true);
+    assert.equal(looksNetworkish("토큰이 부족합니다."), false);
   });
 });

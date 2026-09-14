@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { pickLocationDetail, rewriteScene, suggestLocationDetail } from "./scene-edit.ts";
+import { detailMixesOtherPlaces, pickLocationDetail, rewriteScene, suggestLocationDetail } from "./scene-edit.ts";
 
 describe("pickLocationDetail — 이 쪽 장소에 해당하는 부분만", () => {
   const detail = "계곡은 회색 자갈 바닥에 넓적한 바위 하나 · 거실은 밝은 나무 마루와 파란 소파 · 아이스크림은 분홍색 한 덩이";
@@ -126,5 +126,68 @@ describe("rewriteScene", () => {
     // 그 쪽만 400 오류로 그림 없이 남는 일이 없다.
     const longText = "가".repeat(400);
     assert.ok(rewriteScene(scene, longText).length <= 700);
+  });
+});
+
+/*
+ * 장소 칸이 쪽마다 섞이지 않게 — 실제로 버스 설명과 궁궐 설명이 모든 쪽·장소 시트에 함께 들어가,
+ * 경복궁 문과 2층 버스 노란 좌석이 한 장에 섞였다(my-mu0issap).
+ */
+describe("장소 칸 — 탈것과 다른 이름난 곳이 섞이지 않게", () => {
+  const prompts = [
+    "등장인물 3명: 하온, 엄마, 아빠. 장소: 2층 서울시티투어버스 위층 — 지붕 없는 위층과 노란 좌석. 셋이 앉는다.",
+    "등장인물 3명: 하온, 엄마, 아빠. 장소: 2층 서울시티투어버스 위층 — 지붕 없는 위층과 노란 좌석. 남산이 보인다.",
+    "등장인물 3명: 하온, 엄마, 아빠. 장소: 경복궁 — 커다란 나무 문과 넓은 흙마당. 셋이 문을 지난다.",
+  ];
+
+  it("미리 채우는 칸에서 탈것이 머무는 장소보다 앞에 서지 않는다", () => {
+    const out = suggestLocationDetail(prompts);
+    assert.ok(out.indexOf("경복궁") >= 0 && out.indexOf("경복궁") < out.indexOf("버스"), out);
+  });
+
+  it("경복궁 쪽에는 버스 설명이 빠진다", () => {
+    const detail = suggestLocationDetail(prompts);
+    const out = pickLocationDetail(detail, "경복궁 앞마당");
+    assert.ok(out.includes("경복궁은"), out);
+    assert.ok(!out.includes("버스"), out);
+  });
+
+  it("버스 쪽에는 경복궁 설명이 빠진다", () => {
+    const detail = suggestLocationDetail(prompts);
+    const out = pickLocationDetail(detail, "2층 서울시티투어버스 위층");
+    assert.ok(out.includes("버스"), out);
+    assert.ok(!out.includes("경복궁"), out);
+  });
+
+  it("물건은 여전히 모든 쪽에 남는다", () => {
+    const out = pickLocationDetail("경복궁은 나무 문 · 풍선은 빨간색", "2층 버스 위층");
+    assert.ok(out.includes("풍선은"), out);
+  });
+});
+
+describe("장소 칸 한 덩어리 · 옛 섞인 시트", () => {
+  it("한 조각이라도 탈것 설명이면 궁궐 쪽에는 빠진다", () => {
+    assert.equal(pickLocationDetail("2층 서울시티투어버스 위층은 지붕 없는 위층과 노란 좌석", "경복궁 앞마당"), "");
+  });
+
+  it("한 조각 탈것 설명은 그 탈것 쪽에는 남는다", () => {
+    const one = "2층 서울시티투어버스 위층은 지붕 없는 위층과 노란 좌석";
+    assert.equal(pickLocationDetail(one, "2층 서울시티투어버스 위층"), one);
+  });
+
+  it("장소를 버린 쪽(이름 없음)에는 물건만 남는다", () => {
+    const out = pickLocationDetail("2층 서울시티투어버스 위층은 노란 좌석 · 경복궁은 커다란 나무 문 · 풍선은 빨간색", "");
+    assert.equal(out, "풍선은 빨간색");
+  });
+
+  it("버스·궁궐이 섞인 장소 칸이면 옛 시트가 섞였을 수 있다고 본다", () => {
+    const detail = "2층 서울시티투어버스 위층은 지붕 없는 위층과 노란 좌석 · 경복궁은 커다란 나무 문";
+    assert.equal(detailMixesOtherPlaces(detail, "경복궁 앞마당"), true);
+  });
+
+  it("목록의 다른 장소(계곡·거실)만 있으면 옛 시트도 깨끗하다", () => {
+    const detail = "계곡은 회색 자갈 바닥 · 거실은 밝은 나무 마루 · 아이스크림은 분홍색";
+    assert.equal(detailMixesOtherPlaces(detail, "계곡"), false);
+    assert.equal(detailMixesOtherPlaces("", "계곡"), false);
   });
 });

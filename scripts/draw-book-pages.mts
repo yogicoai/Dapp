@@ -21,9 +21,15 @@ import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { generateImage, type GeneratedImage } from "../src/lib/gemini.ts";
-import { isInsideCar } from "../src/lib/story-quality.ts";
+import { pageVehicle, safetyRuleLines } from "../src/lib/illustration-rules.ts";
 
 type Page = { text?: string; image?: string; hotspots?: { label: string; line: string }[] };
+
+/** 탈것 이야기가 있는 쪽의 안전 줄 — 없으면 아무것도 붙이지 않는다. */
+function vehicleSafetyLines(text: string): string[] {
+  const vehicle = pageVehicle({ storyText: text });
+  return vehicle.vehicle || vehicle.gotOff || vehicle.vehicleNearby ? safetyRuleLines(vehicle, null) : [];
+}
 type Book = {
   title: string;
   pages: Page[];
@@ -235,18 +241,13 @@ function pagePrompt(page: Page, n: number, style: string, hasSheet: boolean): st
     // 7쪽 시험에서 본문의 두 순간을 좌우 두 칸으로 갈라 그렸다 — 앱은 한 장면만 보여 준다.
     "(6) ONE continuous scene filling the whole picture — never split it into panels, comic frames or a before/after. If the text describes several moments, draw ONLY the single most important moment.",
     /*
-     * 차 안은 앱과 같은 규칙을 태운다(illustrate-page 라우트와 같은 취지).
-     * 좁은 실내에 사람을 여럿 넣으면 좌석이 뒤엉킨다 — 자리를 못 박고 구도를 아이 쪽으로 당긴다.
+     * 탈것 안전 규칙은 앱과 **같은 함수**로 붙인다(illustration-rules.ts).
+     * 예전엔 여기에 따로 적은 차 안 판정이 '버스 안·차창'도 승용차로 읽었다 — 버스 장면에 벨트가 붙는다.
+     * 한 곳에 두어 앱을 고치면 여기도 함께 고쳐지게 한다. 전래동화 대본엔 장소 줄이 없어 본문만 본다.
+     * 단 탈것 이야기가 있는 쪽에만 붙인다 — 예전 이 스크립트는 차 장면에만 차 줄을 붙였고, 금도끼·흥부 같은
+     * 옛이야기 쪽에 'seat belt' 낱말이 새로 들어가면 없던 벨트를 부를 수 있다. 프롬프트만 길어지기도 한다.
      */
-    isInsideCar(String(page.text ?? ""))
-      ? [
-          "(7) CAR INTERIOR — a Korean car is LEFT-hand drive: the driver sits FRONT-LEFT with both hands on the wheel; the front passenger sits FRONT-RIGHT; children sit in the REAR seats, never in front.",
-          "(8) ONE PERSON PER SEAT, each sitting properly ON a seat — never between two seats, never floating between rows. Draw seat backs and headrests clearly so it is obvious which row each person is in.",
-          "(9) FRAME IT CLOSE ON THE CHILD in the rear seat. Adults appear only partly — the back of a head, a shoulder, or a face in profile past the front seat back. Do not attempt a wide view of the whole cabin.",
-          "(10) Everyone wears a visible seat belt. The child faces forward, seated — never kneeling, standing or turned around.",
-          "(11) EACH PERSON APPEARS EXACTLY ONCE IN THE CAR. An adult who is in a front seat must NOT also appear in the back seat, and vice versa. Count the people before you finish: the picture contains each named person one single time.",
-        ].join("\n")
-      : "",
+    ...vehicleSafetyLines(String(page.text ?? "")),
   ]
     .filter((l) => l !== "")
     .join("\n");

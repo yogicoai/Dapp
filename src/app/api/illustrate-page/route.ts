@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
 import { pickLocationDetail } from "@/lib/scene-edit";
-import { isIndoorPlace, isInsideCar, locationKeyOf } from "@/lib/story-quality";
+import { checkRuleLines, heroLockLines, pageVehicle, readHero, safetyRuleLines } from "@/lib/illustration-rules";
+import { isIndoorPlace, locationKeyOf } from "@/lib/story-quality";
 import {
   GeminiError,
   detectBlankCanvasBorder,
@@ -64,6 +65,8 @@ export async function POST(request: Request) {
     qualityCorrection?: unknown;
     locationDetail?: unknown;
     locationSheet?: unknown;
+    /** 주인공 이름·성별·생김새 — 쪽마다 "주인공은 남자아이"를 못 박는다. 옛 책은 없다. */
+    hero?: unknown;
   };
 
   // 어느 화면에서 볼 동화인가 — 핸드폰은 세로(3:4), 태블릿은 가로(4:3)로 그린다.
@@ -133,7 +136,32 @@ export async function POST(request: Request) {
   };
   const props = readProps(scene);
 
-  const currentLocation = readLocation(scene);
+  // 잠금 줄(등장인물·장소·물건)을 뺀 '장면 문장'만 — 장소 이름에 든 사람 이름에 안 걸리게.
+  const sceneBody = scene
+    .split(/\r?\n/)
+    .filter((line) => !/^\s*(?:등장인물|장소\s*:|물건\s*:)/.test(line))
+    .join(" ")
+    .replace(/등장인물\s*\d+\s*명(?:\s*:[^.\n]*)?\.?/g, "")
+    .replace(/(?:장소|물건)\s*:[^.\n]*\.?/g, "");
+  const parsedLocation = readLocation(scene);
+  /*
+   * 탈것 안인가 · 탈것에서 내렸나 — 안전 줄과 검수가 이걸 본다(판단은 illustration-rules.ts).
+   *
+   * 예전엔 장소 줄이든 본문 낱말이든 '버스 안·차창'이 스치면 승용차로 봤고, 벨트 문장은 아예
+   * 모든 쪽에 붙었다. 관광버스 위층과 궁궐 마당에 벨트가 그려진 까닭이다(my-mu0issap).
+   */
+  const vehicleInfo = pageVehicle({
+    locationName: parsedLocation?.name,
+    locationDescription: parsedLocation?.description,
+    sceneBody,
+    storyText,
+    bookContext: locationDetail,
+  });
+  /*
+   * 본문은 "버스에서 내려"인데 장소 줄이 버스 실내면, 그 장소 줄은 옛 판정이 잘못 박아 둔 것이다.
+   * 따르면 다시 그려도 또 버스 안이 나온다 — 장소 잠금·장소 시트·검수 정답에서 뺀다.
+   */
+  const currentLocation = vehicleInfo.staleVehicleLocation ? null : parsedLocation;
   const referenceLocation = readLocation(styleReferenceScene);
   // 이름 글자가 아니라 계열로 본다 — "놀이터"와 "동네 놀이터"는 같은 곳이다.
   const sameReferenceLocation = Boolean(
@@ -145,7 +173,9 @@ export async function POST(request: Request) {
    * 인물 시트가 얼굴을 잡듯 이것이 장소를 잡는다. 만들 때 장소마다 한 장 그려 둔다.
    */
   const locationSheet =
-    typeof input.locationSheet === "string" ? await loadReferenceImage(input.locationSheet) : null;
+    typeof input.locationSheet === "string" && currentLocation
+      ? await loadReferenceImage(input.locationSheet)
+      : null;
   /*
    * 다른 장소의 그림은 참조로 넣지 않는다.
    *
@@ -161,21 +191,15 @@ export async function POST(request: Request) {
    */
   const pageLocationDetail = currentLocation
     ? pickLocationDetail(locationDetail, currentLocation.name)
-    : locationDetail;
+    : vehicleInfo.staleVehicleLocation
+      ? /*
+         * 틀린 장소 줄(탈것 실내)을 버린 쪽 — 장소 칸 원문을 통째로 넣으면 그 안의 버스 노란 좌석 설명이
+         * '가장 우선'으로 들어가 궁궐 마당에 버스 좌석을 또 부른다. 이름난 곳·탈것 부분은 빼고 물건만 넘긴다.
+         */
+        pickLocationDetail(locationDetail, "")
+      : locationDetail;
   /** 실내(true)·실외(false)·모름(null) — 배경 지시와 품질검사가 이걸 본다. */
   const indoor = currentLocation ? isIndoorPlace(currentLocation.name, currentLocation.description) : null;
-  /*
-   * 차 안인가 — 이 장면에만 좌석 규칙을 더 붙인다.
-   *
-   * 자동차 실내는 그림이 가장 자주 무너지는 자리다. 앞뒤 좌석이 겹쳐 보이는 좁은
-   * 공간이라 사람을 여럿 넣으면 누가 어느 자리에 앉았는지가 뒤엉킨다 —
-   * 실제로 엄마가 앞자리와 뒷자리 사이에 떠 있는 그림이 나왔다.
-   * 규칙은 늘 붙이지 않는다. 프롬프트가 길어질수록 각 문장이 묽어지기 때문에,
-   * 차 장면일 때만 붙여 그때 확실히 듣게 한다.
-   */
-  const inCar =
-    (currentLocation ? isInsideCar(currentLocation.name, currentLocation.description) : false) ||
-    isInsideCar(scene, storyText);
   /*
    * 붙이는 그림의 순서 — 인물 시트 → 장소 시트 → 승인 쪽. 프롬프트의 각 문장이
    * "몇 번째 그림"을 말하는지 여기서 정한다. 셋이 다 있으면 '첨부된 그림'이라는 말만으로는
@@ -224,16 +248,20 @@ export async function POST(request: Request) {
    * 그리라는 뜻이므로 보탠다. 본문(storyText)은 등장인물 줄이 아예 없을 때만 쓴다.
    */
   const castLine = /등장인물\s*(\d+)\s*명(?:\s*:\s*([^\n.]*))?/.exec(scene);
-  // 잠금 줄(등장인물·장소·물건)을 뺀 '장면 문장'만 — 장소 이름에 든 사람 이름에 안 걸리게.
-  const sceneBody = scene
-    .split(/\r?\n/)
-    .filter((line) => !/^\s*(?:등장인물|장소\s*:|물건\s*:)/.test(line))
-    .join(" ")
-    .replace(/등장인물\s*\d+\s*명(?:\s*:[^.\n]*)?\.?/g, "")
-    .replace(/(?:장소|물건)\s*:[^.\n]*\.?/g, "");
   const sceneCast = castLine
     ? cast.filter((c) => (castLine[2] ?? "").includes(c.name) || sceneBody.includes(c.name))
     : cast.filter((c) => scene.includes(c.name) || storyText.includes(c.name));
+  /*
+   * 주인공 — 요청에 없으면(옛 책) 등장인물 첫 사람과 그 설명으로 물러선다.
+   * 이 쪽에 주인공이 보일 때만 고정 줄을 붙인다. 없는 쪽에 이름을 넣으면 없던 주인공이 그려진다.
+   * 등장인물 목록 자체가 없는 옛 책은 본문에 이름이 있으면 보인다고 본다.
+   */
+  const hero = readHero(input.hero, cast);
+  const heroOnPage = Boolean(
+    hero &&
+      (sceneCast.some((c) => c.name === hero.name) ||
+        (cast.length === 0 && `${scene} ${storyText}`.includes(hero.name))),
+  );
 
   const prompt = [
     knownStyle
@@ -282,6 +310,11 @@ export async function POST(request: Request) {
           .filter(Boolean)
           .join("\n")
       : "",
+    /*
+     * 주인공 고정 — 장소 잠금 바로 뒤, 장면보다 앞에 둔다.
+     * 뒤쪽 긴 안전·구도 문장 사이에 끼면 묽어진다. 성별·머리는 이 책에서 가장 눈에 띄는 약속이다.
+     */
+    heroOnPage ? heroLockLines(hero, storyText).join("\n") : "",
     `Scene: ${scene}`,
     /*
      * 구도 — 아래가 텅 비지 않게.
@@ -325,38 +358,11 @@ export async function POST(request: Request) {
      * 벨트 없이 뒷자리에서 무릎으로 서서 창문 쪽으로 몸을 돌리고 있었다.
      * 또 "소파에서 벌떡 일어났어요"를 소파 **위에 올라선** 모습으로 그렸다.
      * 네 살 아이가 보고 그대로 따라 하는 그림이라, 이건 품질이 아니라 안전 문제다.
-     */
-    [
-      "CHILD SAFETY — a small child copies what they see in a picture book. Never draw a child in a posture that would be dangerous in real life.",
-      "In a moving car the child is seated facing FORWARD in a rear seat with the seat belt clearly fastened across their chest and lap (or strapped into a child seat). Never draw a child kneeling, standing, turned backwards, leaning out, or without a visible belt while the car is moving. Adults in the car wear their belts too.",
-      "Never draw a child standing on a sofa, chair, table, window sill, railing or stair rail. If the text says they jumped up or sprang up, draw them standing on the floor or sitting up on the seat.",
-      "Korean cars are LEFT-hand drive: the steering wheel and the driver are on the LEFT side of the car.",
-      "Indoors at home Koreans do not wear shoes, and shoes are left at the entrance, not in the middle of the living room. Inside a car, shoes stay ON.",
-    ].join("\n"),
-    /*
-     * 차 안 좌석 — 이 장면에서만 붙인다.
      *
-     * 자동차 실내는 앞뒤 좌석이 겹쳐 보이는 좁은 공간이라, 사람을 여럿 넣으면
-     * 누가 어느 자리에 앉았는지가 그림에서 뒤엉킨다. 실제로 엄마가 앞자리와
-     * 뒷자리 사이에 떠 있는 그림이 나왔다(사장님 확인, 2026-09-08).
-     *
-     * 그래서 두 갈래로 막는다.
-     *  ① 자리를 말로 못 박는다 — 운전석은 왼쪽 앞, 아이는 뒷자리, 한 자리에 한 사람.
-     *  ② **구도를 아이 쪽으로 당긴다** — 어른은 앞좌석 등받이 너머로 뒤통수나 어깨만
-     *     보이게 한다. 차 안 전체를 한 화면에 담으려 하지 않으면 애초에 뒤엉킬 자리가
-     *     없어진다. 그림책이 실제로 쓰는 방법이고, '엄마 아빠와 함께'라는 글도 살아 있다.
+     * 벨트·카시트·차 안 좌석 문장은 승용차·택시 안일 때만 붙는다 — 어느 줄이 언제 붙는지는
+     * safetyRuleLines 와 그 시험에 있다.
      */
-    inCar
-      ? [
-          "CAR INTERIOR — this scene happens inside a moving car. Car cabins are the easiest place to draw wrong, so follow these exactly.",
-          "SEATS: a Korean car is LEFT-hand drive. The driver sits in the FRONT-LEFT seat with both hands on the steering wheel. The front passenger sits FRONT-RIGHT. Children sit in the REAR seats, never in front.",
-          "ONE PERSON PER SEAT, and every person sits properly ON a seat — never between two seats, never floating in the aisle, never half in the front row and half in the back. Draw the seat backs and headrests clearly so it is obvious which row each person is in.",
-          "FRAME IT CLOSE ON THE CHILD. Put the camera inside the cabin beside the child in the rear seat, close enough that the child fills much of the picture. Adults appear only partly — the back of a head, a shoulder, or a face turned in profile past the front seat back. Do not attempt a wide view of the whole cabin with every passenger fully visible.",
-          "Everyone wears a seat belt, clearly visible across chest and lap. The child faces FORWARD, seated, belt fastened. Never kneeling, standing, turned around, or leaning out of a window.",
-          "EACH PERSON APPEARS EXACTLY ONCE IN THE CAR. An adult who is in a front seat must NOT also appear in the back seat, and vice versa. Count the people before you finish: the picture contains each named person one single time.",
-          "The window shows the passing scenery outside; do not draw a second car interior, a mirrored cabin, or a doubled row of seats.",
-        ].join("\n")
-      : "",
+    safetyRuleLines(vehicleInfo, indoor).join("\n"),
     "Do NOT add traditional Korean architecture that the scene did not ask for — no tiled-roof pavilion, no hanok, no thatched roof, no wooden gate, no paper-screen door, no stone jar terrace. If the location line does not name such a building, none appears in the picture.",
     /*
      * 물건 잠금 — 장소와 같은 이유로 넣는다. 다만 요구는 반대다: 장소는 '더 구체적으로',
@@ -566,6 +572,8 @@ export async function POST(request: Request) {
         : "",
       cast: sceneCast,
       stylePrompt: style.prompt,
+      // 주인공 성별·머리, 벨트, 내린 뒤 장면 — 이 쪽에 주인공이 없으면 주인공 규칙은 빼고 보낸다.
+      extraRules: checkRuleLines({ hero: heroOnPage ? hero : null, page: vehicleInfo, storyText }),
     });
     /*
      * 글자가 그려진 건 다른 지적과 성격이 다르다.

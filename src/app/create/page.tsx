@@ -7,7 +7,7 @@ import { BookViewer } from "@/components/BookViewer";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceInput } from "@/components/VoiceInput";
 import { ART_STYLES } from "@/lib/art-styles";
-import { fetchProfile, loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
+import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
 import {
   capFailures,
@@ -17,10 +17,13 @@ import {
   isEmbeddedImage,
   isJobId,
   jobWriteProblem,
+  judgeSpendAfterError,
+  looksNetworkish,
   planFromJob,
   readJob,
   readJobResult,
   readPaidMarker,
+  readRecentIllustrationLedger,
   recoverFromChargeRefusal,
   storyManuscript,
   stripEmbeddedArt,
@@ -42,6 +45,7 @@ import {
   saveMyBook,
 } from "@/lib/prefs";
 import { looksToDrawingPrompt } from "@/lib/child-looks";
+import { heroFromStory } from "@/lib/illustration-rules";
 import { locationKeyOf } from "@/lib/story-quality";
 import { pickLocationDetail } from "@/lib/scene-edit";
 import {
@@ -398,7 +402,7 @@ function locationKeyFromImagePrompt(prompt: string): string {
 }
 
 /** 만들 때 그린 장소 기준 그림 한 장. */
-type LocationSheet = { key: string; name: string; description: string; image: string };
+type LocationSheet = { key: string; name: string; description: string; image: string; onePlace?: boolean };
 
 /**
  * 장면(쪽) 수는 5로 고정한다 (사장님 결정, 2026-09-08. 그전엔 6이었다).
@@ -575,6 +579,40 @@ function clearPaidMarker(progressKey: string): void {
   if (typeof window === "undefined" || !progressKey) return;
   try {
     window.localStorage.removeItem(`${PAID_MARKER_KEY}:${progressKey}`);
+  } catch {
+    /* 무시 */
+  }
+}
+
+/*
+ * '그림 값 요청을 보냈다' 표시 — 결제 요청 **직전에** 남긴다(값을 냈다는 표시가 아니다).
+ *
+ * 왜: 그리기 시작이나 finish 가 새로 열거나 갈아탄 기록 id 는 임시저장에 안 쓰인다. 결제가 서버에서
+ * 커밋됐는데 응답이 오기 전(최대 20초) 부모가 새로고침·창 닫기를 하면 '값 냈음' 표시는 안 남고 기록 id 도
+ * 잃는다. 돌아와 다시 그리면 새 줄을 열어 그 줄에 값을 또 받았다. 이 표시가 있으면 다음 finish 가
+ * 그 기록을 읽어 확인한 뒤 이어 간다(값이 붙었으면 받지 않고, 안 붙었으면 그 줄에서 받는다).
+ */
+const CHARGING_MARKER_KEY = "voice-storybook:charging";
+function loadChargingMarker(progressKey: string): PaidMarker | null {
+  if (typeof window === "undefined" || !progressKey) return null;
+  try {
+    return readPaidMarker(window.localStorage.getItem(`${CHARGING_MARKER_KEY}:${progressKey}`), Date.now());
+  } catch {
+    return null;
+  }
+}
+function saveChargingMarker(progressKey: string, marker: PaidMarker): void {
+  if (typeof window === "undefined" || !progressKey) return;
+  try {
+    window.localStorage.setItem(`${CHARGING_MARKER_KEY}:${progressKey}`, JSON.stringify(marker));
+  } catch {
+    /* 못 남기면 예전과 같다 — 기록 읽기로 한 번 더 가린다 */
+  }
+}
+function clearChargingMarker(progressKey: string): void {
+  if (typeof window === "undefined" || !progressKey) return;
+  try {
+    window.localStorage.removeItem(`${CHARGING_MARKER_KEY}:${progressKey}`);
   } catch {
     /* 무시 */
   }
@@ -1926,6 +1964,11 @@ export default function CreatePage() {
      */
     const paidAtStart = loadPaidMarker(progressKey);
     if (paidAtStart?.jobId) setJobId(paidAtStart.jobId);
+    // 결제 요청을 보낸 채 창이 닫혔던 기록도 그 줄로 잇는다 — 값이 붙었는지는 아래 읽기와 finish 가 본다.
+    else {
+      const chargingAtStart = loadChargingMarker(progressKey);
+      if (chargingAtStart?.jobId) setJobId(chargingAtStart.jobId);
+    }
     const drawingManuscript = {
       ...storyManuscript(s),
       artStyleId: artStyle,
@@ -2087,7 +2130,8 @@ export default function CreatePage() {
           });
           const data = (await r.json().catch(() => ({}))) as { image?: string; error?: string };
           if (r.ok && data.image) {
-            locationSheetsRef.current.push({ ...want, image: data.image });
+            // onePlace — 탈것·다른 곳을 섞지 않는 규칙으로 그린 시트. 뷰어가 섞였을지 모르는 옛 시트와 가른다.
+            locationSheetsRef.current.push({ ...want, image: data.image, onePlace: true });
             counts.location += 1;
             persist();
           } else {
@@ -2229,6 +2273,12 @@ export default function CreatePage() {
                         ? `${c.description}, ${heroLooksEn || heroLooks}`
                         : c.description,
                   })),
+                  // 주인공 성별·생김새 — 시트에만 가고 쪽 그림엔 안 가서 남자아이가 단발·꽃핀으로 나왔다.
+                  hero: heroFromStory(
+                    s.characters,
+                    gender !== "unspecified" ? gender : child?.gender,
+                    heroLooksEn || heroLooks,
+                  ),
                 }),
                 signal: ac.signal,
               });
@@ -2461,32 +2511,92 @@ export default function CreatePage() {
      */
     // 앞서 보낸 기록 쓰기가 끝난 뒤에 읽는다 — 단 3초까지만. 기록 요청이 매달려도 값 받기·저장은 간다.
     await waitAtMost(jobQueueRef.current, 3000, undefined);
-    const paidMarker = progressKey ? loadPaidMarker(progressKey) : null;
+    let paidMarker = progressKey ? loadPaidMarker(progressKey) : null;
+    const drawingNow: DrawingNow = { pageTexts: s.pages.map((p) => p.text), artStyleId: artStyle };
+    /** 지금 그리는 원고 — 값을 받기 직전·새 줄을 열 때 기록에 적는다(같은 그림인지 가리는 근거). */
+    const drawingManuscript = {
+      ...storyManuscript(s),
+      artStyleId: artStyle,
+      shape: screenShape,
+      locationDetail: locationDetail.trim() || undefined,
+    };
+    const sb = getSupabase();
+    /** 값을 받지 않고 멈춘다 — 받았는지 모르거나 기록을 못 적었을 때. 그린 그림은 보관에 남아 있다. */
+    const stopBeforeCharge = (message: string) => {
+      void recordJob({ status: "script", error: `그림 값 받기 전 멈춤: ${message}`.slice(0, 500) });
+      setError(message);
+      setStep("story");
+    };
+    /*
+     * 표시가 있어도 기록을 읽을 수 있으면 환불 여부를 본다(2026-09-14 더함).
+     * 마스터가 그림 값을 환불해 준 뒤에도 이 기기 표시(이레)로 '값 냈음'이 되어, 같은 책을 값 없이 다시 저장했다.
+     * 환불된 값은 낸 값이 아니다 — 표시를 지우고 아래에서 새 줄로 받는다. 못 읽으면 예전처럼 표시를 믿는다.
+     */
+    if (paidMarker?.jobId) {
+      const markerRead = await readJobResult(sb, paidMarker.jobId);
+      if (markerRead.ok && markerRead.job?.illustration_entry && markerRead.job.illustration_refunded === true) {
+        clearPaidMarker(progressKey);
+        paidMarker = null;
+        setJobId(markerRead.job.id);
+      }
+    }
+    // 결제 요청을 보낸 채 끊겼던 흔적 — 그 기록·책 id 로 잇는다. 값을 냈다는 뜻은 아니라 아래에서 기록으로 확인한다.
+    const chargingMarker = progressKey && !paidMarker ? loadChargingMarker(progressKey) : null;
     // 값을 낸 그 기록으로 잇는다(임시저장에 남은 id 는 값을 내기 전 것일 수 있다).
     if (paidMarker?.jobId) setJobId(paidMarker.jobId);
-    let bookId = paidMarker?.bookId ?? newBookId();
+    else if (chargingMarker?.jobId) setJobId(chargingMarker.jobId);
+    let bookId = paidMarker?.bookId ?? chargingMarker?.bookId ?? newBookId();
     let alreadyPaid = Boolean(paidMarker);
-    const drawingNow: DrawingNow = { pageTexts: s.pages.map((p) => p.text), artStyleId: artStyle };
-    const sb = getSupabase();
     if (jobIdRef.current && !paidMarker) {
       const read = await readJobResult(sb, jobIdRef.current);
       if (read.ok && read.job) {
         // 같은 그림일 때만 '값 냈음'을 인정한다(planFromJob 설명) — 그림체·대본을 바꿔 새로 그렸으면 새 책이다.
         const plan = planFromJob(read.job, drawingNow);
-        if (!plan.reuse) {
-          // 이미 끝난 기록(저장됨·취소)이거나 다른 그림 — 새로 만드는 것이니 새 줄에 적는다.
-          setJobId(await cloneJob(sb, read.job, await currentUid(), "uploading"));
-        } else if (plan.bookId) {
-          bookId = plan.bookId;
-          alreadyPaid = plan.alreadyPaid;
+        if (plan.needsCheck && cost > 0) {
+          stopBeforeCharge(
+            "이 책의 그림 값 기록을 확인하지 못했어요. 두 번 받지 않도록 여기서 멈췄어요 — '의견 보내기'로 알려 주시면 확인해 드릴게요.",
+          );
+          return;
         }
+        if (!plan.reuse) {
+          // 이미 끝난 기록(저장됨·취소)·다른 그림·환불된 값 — 새로 만드는 것이니 새 줄에 **지금 원고로** 적는다.
+          // 옛 줄의 책 id 는 그 줄에 못 박혀 있으니 새 책 id 를 쓴다.
+          setJobId(await cloneJob(sb, read.job, await currentUid(), "uploading", drawingManuscript));
+          bookId = newBookId();
+        } else {
+          if (plan.bookId) {
+            bookId = plan.bookId;
+            alreadyPaid = plan.alreadyPaid;
+          }
+          /*
+           * 값을 받기 **직전에** 지금 원고를 기록에 적는다(2026-09-14 더함).
+           * 그리기 시작의 원고 쓰기는 기다리지 않고, 못 읽으면 덮지도 않는다. 그래서 부모가 대본을 고친 뒤
+           * 망이 불안하면 기록엔 고치기 전 원고가 남았고, 결제만 붙은 채 멈추면 다음 판단이 '다른 그림'이 되어
+           * 그림 값을 한 번 더 받았다. 값이 아직 안 붙은 줄만 적는다 — 붙은 줄의 원고(올린 그림 주소)는 지킨다.
+           * 못 적으면 받지 않고 멈춘다(돈은 아직 안 나갔다).
+           */
+          if (cost > 0 && !alreadyPaid && !read.job.illustration_entry) {
+            const wrote = await updateJob(sb, jobIdRef.current, { manuscript: drawingManuscript });
+            if (!wrote) {
+              stopBeforeCharge("인터넷 연결이 불안해서 그림 값 받기를 멈췄어요. 그린 그림은 남아 있으니 잠시 뒤 다시 눌러 주세요.");
+              return;
+            }
+          }
+        }
+      } else if (!read.ok && !read.missing && cost > 0) {
+        /*
+         * 못 읽었으면(모름) 받지 않고 멈춘다(2026-09-14 고침). 예전엔 그대로 받으러 가서 결제 함수의 거절에 기댔는데,
+         * 그 사이 원고를 못 적어 뒤의 '같은 그림' 판단이 흐려졌다. 기록을 못 읽을 망이면 결제 응답도 끊기기 쉽다.
+         */
+        stopBeforeCharge("인터넷 연결이 불안해서 만들기 기록을 확인하지 못했어요. 그린 그림은 남아 있으니 잠시 뒤 다시 눌러 주세요.");
+        return;
       }
-      // 못 읽었으면(모름) 여기서 정하지 않는다. 값을 받는 함수가 '이미 값이 붙은 기록'이라고
-      // 거절하면 chargeIllustration 이 기록을 다시 읽고 정한다 — 모르는 채로 새로 받지 않는다.
     }
 
     if (cost > 0 && !alreadyPaid) {
-      const charged = await chargeIllustration(cost, bookId, drawingNow);
+      const charged = await chargeIllustration(cost, bookId, drawingNow, drawingManuscript);
+      // 받았거나 분명히 못 받았으면 '요청 보냄' 표시는 끝났다. 모르면 남겨 두어 다음에 그 기록부터 확인한다.
+      if (charged.ok || !charged.uncertain) clearChargingMarker(progressKey);
       if (!charged.ok) {
         // 값을 못 받았으면(또는 받았는지 모르면) 저장하지 않는다. 그리기 보관은 남아 있어 다시 누르면 이어서 된다.
         void recordJob({ status: "script", error: `그림 값 받기 실패: ${charged.error}`.slice(0, 500) });
@@ -2511,6 +2621,11 @@ export default function CreatePage() {
       // 값을 냈다는 표시 — 저장이 실패해 다시 올 때 또 받지 않게. 저장에 성공하면 지운다.
       savePaidMarker(progressKey, { bookId, jobId: jobIdRef.current, at: Date.now() });
     } else if (jobIdRef.current) {
+      // 기록으로 '이미 냄'을 확인한 경우도 표시를 남긴다 — 저장이 또 실패하면 다시 만들기 화면에
+      // '저장 못 한 책 다시 저장하기'가 뜨게(실패 화면이 그렇게 약속한다).
+      if (cost > 0 && alreadyPaid && !paidMarker) {
+        savePaidMarker(progressKey, { bookId, jobId: jobIdRef.current, at: Date.now() });
+      }
       // 값을 받지 않는 경우(글만·이미 냄)도 올리기 단계와 책 id 를 적는다.
       void recordJob({ status: "uploading", book_id: bookId });
     }
@@ -2552,6 +2667,12 @@ export default function CreatePage() {
       locationSheets: hosted.locationSheets.length ? hosted.locationSheets : undefined,
       locationDetail: locationDetail.trim() || undefined,
       cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
+      // 한 쪽만 다시 그릴 때도 주인공 성별·생김새를 못 박게 남긴다.
+      hero: heroFromStory(
+        s.characters,
+        gender !== "unspecified" ? gender : loadChild()?.gender,
+        looksToDrawingPrompt(loadChild()?.looks),
+      ),
       pages: s.pages.map((p, i) => ({
         text: p.text,
         imagePrompt: p.imagePrompt,
@@ -2579,15 +2700,21 @@ export default function CreatePage() {
     cost: number,
     bookId: string,
     now: DrawingNow,
+    /** 지금 그리는 원고 — 새 줄을 열거나 그 줄에서 다시 받기 전에 기록에 적는다. */
+    drawingManuscript: Record<string, unknown>,
   ): Promise<
     | { ok: true; bookId: string; alreadyPaid: boolean; tokens?: number }
     | { ok: false; error: string; insufficient: boolean; uncertain?: boolean }
   > {
     const UNCERTAIN =
       "그림 값이 나갔는지 확인하지 못했어요(인터넷 연결이 불안해요). 잠시 뒤 다시 눌러 주세요 — 다시 누르면 먼저 기록을 확인해서, 이미 받았으면 또 받지 않아요.";
+    /** 결제 요청 직전 표시 — 응답 전에 창이 닫혀도 다음에 이 기록부터 확인한다(saveChargingMarker 설명). */
+    const markCharging = (job: string | null, id: string) =>
+      saveChargingMarker(drawProgressKeyRef.current, { bookId: id, jobId: job, at: Date.now() });
     const sb = getSupabase();
     if (sb && jobIdRef.current) {
       const callRpc = async (job: string, id: string) => {
+        markCharging(job, id);
         try {
           let q = sb.rpc("charge_illustration", { p_job: job, p_amount: cost, p_book_id: id });
           // 돈 요청이 끝없이 매달리면 부모 화면이 멈춘다 — 20초가 넘으면 '모름'으로 다룬다.
@@ -2624,12 +2751,17 @@ export default function CreatePage() {
         }
         if (recovery.action === "retry-same-job") {
           // 값은 없고 책 id 만 정해진 줄(마스터·글만 책) — 그 책 id 로 다시 받는다.
+          // 받기 전에 지금 원고를 적는다 — 값만 붙고 원고가 옛것이면 다음 판단이 '다른 그림'이 된다. 못 적으면 멈춘다.
           targetBook = recovery.bookId ?? bookId;
+          if (!(await updateJob(sb, jobIdRef.current, { manuscript: drawingManuscript }))) {
+            return { ok: false, insufficient: false, error: "만들기 기록을 적지 못했어요(인터넷 연결). 잠시 뒤 다시 눌러 주세요." };
+          }
           res = await callRpc(jobIdRef.current, targetBook);
           kind = res.error ? chargeProblem(res.error) : null;
         } else {
           // new-job: 기록을 **읽고 확인한** 끝난 기록·다른 그림 — 새 책이니 새 값이 맞다(예전 규칙).
-          const fresh = await cloneJob(sb, read.job, await currentUid(), "drawing");
+          // 새 줄에는 옛 원고가 아니라 지금 원고를 적는다(cloneJob 설명).
+          const fresh = await cloneJob(sb, read.job, await currentUid(), "drawing", drawingManuscript);
           if (fresh) {
             setJobId(fresh);
             res = await callRpc(fresh, targetBook);
@@ -2669,21 +2801,24 @@ export default function CreatePage() {
     }
 
     /*
-     * 옛 방식(spend_tokens). 기록으로 '받았나'를 확인할 수 없으니 잔액으로 본다:
-     * 응답이 끊겨 실패로 보여도 잔액이 값만큼 줄었으면 받은 것이다. 그걸 실패로 알리면 부모가 다시
-     * 눌러 한 번 더 깎였다. 잔액을 못 읽으면 '모름'으로 알리고 잔액 확인을 부탁한다.
+     * 옛 방식(spend_tokens). 기록으로 '받았나'를 확인할 수 없으니 장부의 그림 값 줄로 본다(judgeSpendAfterError).
+     * 응답이 끊겨 실패로 보여도 새 그림 값 줄이 생겼으면 받은 것이다. 그걸 실패로 알리면 부모가 다시 눌러
+     * 한 번 더 깎였다. 예전엔 잔액 차이로 봤는데, 다른 탭의 결제·마스터 충전이 섞여 공짜 저장이나 두 번 결제가
+     * 났다(2026-09-14 고침). 확인이 안 되면 '모름'으로 알리고 다시 누르지 말라고 한다.
      */
-    const before = master ? null : await fetchProfile().catch(() => null);
+    const before = master ? null : await readRecentIllustrationLedger(getSupabase());
+    markCharging(null, bookId);
     const spent = await spendTokensEntry(cost, "illustration");
     if (!spent.ok) {
       if (/부족/.test(spent.error)) return { ok: false, insufficient: true, error: spent.error };
       if (!master) {
-        const after = await fetchProfile().catch(() => null);
-        if (before && after && before.tokens - after.tokens >= cost) {
-          void recordJob({ book_id: bookId, status: "uploading" });
-          return { ok: true, bookId, alreadyPaid: false, tokens: after.tokens };
+        const after = await readRecentIllustrationLedger(getSupabase());
+        const judged = judgeSpendAfterError({ before, after, cost, networkish: looksNetworkish(spent.error) });
+        if (judged.verdict === "paid") {
+          void recordJob({ illustration_entry: judged.entry, book_id: bookId, status: "uploading" });
+          return { ok: true, bookId, alreadyPaid: false };
         }
-        if (!before || !after) {
+        if (judged.verdict === "unknown") {
           return {
             ok: false,
             insufficient: false,
@@ -2737,6 +2872,7 @@ export default function CreatePage() {
     if (drawProgressKeyRef.current) {
       void clearDrawProgress(drawProgressKeyRef.current);
       clearPaidMarker(drawProgressKeyRef.current);
+      clearChargingMarker(drawProgressKeyRef.current);
     }
     setJobId(null); // 이 만들기는 끝났다 — 다음 책은 새 기록
     setResumablePages(0);
@@ -3741,8 +3877,10 @@ export default function CreatePage() {
                   ? "그림 값은 이미 받았어요. 다시 저장해도 값을 또 받지 않아요."
                   : "만든 동화는 아직 이 화면에 그대로 있어요."}
                 <br />
-                창을 닫아도 이 기기에 이레 동안 남아 있어요. 다시 만들기에 들어오면
-                &lsquo;저장 못 한 책 다시 저장하기&rsquo;가 보여요.
+                {/* 글만 있는 책은 '값 냈음' 표시가 안 남아 다시 만들기 화면에 그 버튼이 뜨지 않는다 — 지킬 수 없는 약속을 하지 않는다. */}
+                {saveFailure.illustrated
+                  ? "창을 닫아도 이 기기에 이레 동안 남아 있어요. 다시 만들기에 들어오면 ‘저장 못 한 책 다시 저장하기’가 보여요."
+                  : "이 화면에서 ‘다시 저장하기’를 눌러 주세요. 창을 닫으면 다시 만들어야 해요."}
               </p>
               <BigButton accent={accent} accentDark={accentDark} onClick={retrySave} disabled={busy}>
                 {busy ? "저장하는 중…" : "다시 저장하기 📚"}

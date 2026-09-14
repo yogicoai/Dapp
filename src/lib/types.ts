@@ -133,6 +133,13 @@ export type Book = {
    */
   artStyleId?: string;
   cast?: { name: string; description: string }[];
+  /**
+   * 주인공 이름·성별·생김새 — 한 쪽만 다시 그릴 때도 "주인공은 남자아이"를 못 박으려고 남긴다.
+   *
+   * 쪽 그림 요청에 성별이 한 번도 안 가서, 남자아이가 단발머리에 꽃핀을 달고 나왔다(my-mu0issap).
+   * 옛 책에는 없다 — 없으면 서버가 cast 첫 사람과 그 설명으로 물러선다.
+   */
+  hero?: { name: string; gender?: "boy" | "girl"; looks?: string };
   /** 만들 때 고른 화면 모양 — 다시 그릴 때 같은 비율로 그리기 위해. */
   shape?: "phone" | "tablet";
   /**
@@ -158,7 +165,7 @@ export type Book = {
    * 나중에 한 쪽만 다시 그릴 때 참조로 넣는다. key는 장소 이름을 묶은 열쇠
    * (locationKeyOf) — "놀이터"와 "동네 놀이터"가 같은 곳이 되게.
    */
-  locationSheets?: { key: string; name: string; description: string; image: string }[];
+  locationSheets?: { key: string; name: string; description: string; image: string; onePlace?: boolean }[];
   pages: BookPage[];
 };
 

@@ -37,6 +37,7 @@ import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
 import { locationKeyOf } from "@/lib/story-quality";
+import { detailMixesOtherPlaces } from "@/lib/scene-edit";
 import {
   applyPlaybackRate,
   buildPresetUtterance,
@@ -528,7 +529,16 @@ export function BookViewer({ book }: { book: Book }) {
       const sibling =
         (here ? others.find((p) => placeOf(p.imagePrompt) === here) : undefined) ?? others[0];
       // 만들 때 그린 장소 시트가 있으면 그것이 장소의 기준이다.
-      const locationSheet = here ? book.locationSheets?.find((s) => s.key === here)?.image ?? "" : "";
+      const sheetEntry = here ? book.locationSheets?.find((s) => s.key === here) : undefined;
+      /*
+       * 단, '한 장에 한 곳' 규칙 전에 그린 시트이고 장소 칸에 다른 탈것·이름난 곳 설명이 섞여 있으면 붙이지 않는다.
+       * 그 시트는 궁궐 문과 버스 좌석이 한 장에 섞였을 수 있다(my-mu0issap). 붙이면 다시 그려도 섞인 그림을 따라가고,
+       * 검수도 그 시트를 정답으로 본다. 빼면 장소는 장소 줄 글과 같은 장소의 옆 쪽 그림으로 잡는다.
+       */
+      const sheetMayBeMixed = Boolean(
+        sheetEntry && !sheetEntry.onePlace && detailMixesOtherPlaces(book.locationDetail ?? "", sheetEntry.name),
+      );
+      const locationSheet = sheetEntry && !sheetMayBeMixed ? (sheetEntry.image ?? "") : "";
       const res = await authedFetch("/api/illustrate-page", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -542,6 +552,8 @@ export function BookViewer({ book }: { book: Book }) {
           styleReferenceScene: sibling?.imagePrompt ?? "",
           shape: book.shape,
           cast: book.cast ?? [],
+          // 주인공 성별·생김새 — 옛 책엔 없어서 서버가 cast 첫 사람과 그 설명으로 물러선다.
+          hero: book.hero,
           // 만들 때 부모가 적어 둔 장소 — 이게 있어야 다시 그린 쪽도 같은 곳이 된다.
           locationDetail: book.locationDetail ?? "",
           locationSheet,

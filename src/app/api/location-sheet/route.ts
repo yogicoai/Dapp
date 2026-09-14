@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
 import { GeminiError, generateImage, loadReferenceImage, shrinkForReference, toDataUrl } from "@/lib/gemini";
-import { isIndoorPlace } from "@/lib/story-quality";
+import { isIndoorPlace, placeVehicleKind } from "@/lib/story-quality";
 
 /*
  * 그리는 데 20~30초가 걸린다(검사에 걸려 다시 그리면 그 두 배).
@@ -63,6 +63,8 @@ export async function POST(request: Request) {
   const style = ART_STYLES.find((s) => s.id === input.artStyleId) ?? ART_STYLES[0];
   const phone = input.shape === "phone";
   const indoor = isIndoorPlace(name, description);
+  // 이름만 본다 — 설명에 "버스가 지나가는 길"이 있다고 그 장소를 탈것으로 치면 안 된다.
+  const vehicle = placeVehicleKind(name);
   // 부모가 고른 그림체 견본(여우 그림)을 참조로 — 문구만으로는 그림체가 매번 조금씩 다르다.
   const styleSample = style.image
     ? await loadReferenceImage(new URL(style.image, request.url).toString()).catch(() => null)
@@ -88,6 +90,16 @@ export async function POST(request: Request) {
           "Build the place from this description — the same ground, the same big landmark, the same colours. These are things to draw, never words to write.",
         ].join("\n")
       : "",
+    /*
+     * 한 장에 한 곳만.
+     *
+     * 실제로 장소 칸에 버스 설명과 궁궐 설명이 함께 들어가, 경복궁 문과 2층 버스 노란 좌석이
+     * 한 장에 섞인 시트가 나왔다(my-mu0issap). 이 시트는 검수를 안 받는데, 쪽 검수는 이 시트를
+     * 반드시 따를 정답으로 쓴다 — 섞인 시트 한 장이 그 장소의 모든 쪽을 틀리게 만든다.
+     */
+    vehicle
+      ? `ONE PLACE ONLY — draw only this vehicle, "${name}": its seats and its deck or cabin. Do not put another page's destination (a palace, a gate, a park, a building entrance) on or in front of it; any scenery outside is plain and generic.`
+      : `ONE PLACE ONLY — draw only "${name}". Do not mix in any other place, and draw NO vehicle of any kind here: no bus, no car, no train, no vehicle seats.`,
     [
       "Show the WHOLE place in one wide, eye-level view: the ground it stands on, its one big landmark, and its main colours, arranged so that another artist could redraw the same place from a different camera angle.",
       "Draw it as an EMPTY STAGE: NO people, NO children, NO adults, NO faces, NO animals, NO characters of any kind. The characters will be placed into this scene on later pages.",

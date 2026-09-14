@@ -20,7 +20,8 @@ export type DrawCounts = {
   redraws: number;
 };
 
-export type DrawLocationSheet = { key: string; name: string; description: string; image: string };
+/** onePlace — '한 장에 한 곳' 규칙(탈것·다른 이름난 곳 섞지 않기) 뒤에 그린 시트. 옛 시트와 가르려고 남긴다. */
+export type DrawLocationSheet = { key: string; name: string; description: string; image: string; onePlace?: boolean };
 
 export type DrawProgress = {
   key: string;

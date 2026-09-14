@@ -133,6 +133,12 @@ export async function POST(request: Request) {
         status: "writing",
         page_count: pageCount,
         error: null,
+        // 지난 그리기의 장수·실패 이유도 비운다 — 안 비우면 새 대본 줄이 사고 목록에서
+        // '대본 단계인데 3장 그림·실패 이유 있음'으로 잘못 보인다.
+        drawn: 0,
+        draw_failed: 0,
+        upload_failed: 0,
+        failures: [],
       });
       if (reused) jobId = input.jobId;
     } else if (read.ok && read.job) {
@@ -158,12 +164,14 @@ export async function POST(request: Request) {
     // 대본이 나왔다 — 원고(그림 없는 Book 모양)를 적는다. 이게 있어야 마스터가 되살릴 재료가 된다.
     // 응답을 먼저 보내고 적는다(after). 대본 쓰기가 함수 제한 시간 가까이 걸린 때 기록 쓰기까지
     // 기다리면, 응답 전에 함수가 끊겨 대본 값만 나가고 대본은 못 받는다(환불도 안 돈다).
+    // 아직 'writing' 일 때만 적는다 — 이 쓰기가 늦게 도착하는 사이 부모가 곧바로 '그림 그리기'를 누르면
+    // 브라우저가 적은 'drawing'과 부모가 고친 원고(그림체 포함)를 대본 단계로 되돌렸다. 지킴이는 상태 순서를 안 본다.
     const scriptJob = jobId;
     after(() => updateJob(caller.db, scriptJob, {
       status: "script",
       page_count: story.pages.length,
       manuscript: storyManuscript(story),
-    }));
+    }, ["writing"]));
     return NextResponse.json({ story, charge, jobId });
   } catch (e) {
     // 만들다 실패했으면 낸 값을 되돌린다. '값 냈다'는 기록도 함께 지워야
