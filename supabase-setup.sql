@@ -11,10 +11,10 @@
 --    그건 supabase-tools.sql 에 따로 있다. 돌릴 때마다 결과가 달라지는 것들이라
 --    이 파일에 섞으면 실수로 토큰이 두 배가 되는 사고가 난다.
 --
--- 담긴 표 아홉: profiles(회원) · books(만든 동화) · voice_clones(부모 목소리)
---               feedback(의견) · tts_usage(음성 사용량)
---               token_ledger(토큰 장부) · story_charges(대본 값 기록)
---               book_jobs(만들기 기록) · book_events(책 저장·삭제 흔적)
+-- 담긴 표 열: profiles(회원) · books(만든 동화) · voice_clones(부모 목소리)
+--             feedback(의견) · tts_usage(음성 사용량)
+--             token_ledger(토큰 장부) · token_grants(토큰 충전 기록) · story_charges(대본 값 기록)
+--             book_jobs(만들기 기록) · book_events(책 저장·삭제 흔적)
 --
 -- 뒤쪽 8~13번이 토큰을 지키는 부분이다. 이걸 안 돌리면 로그인한 사람이
 -- 브라우저 콘솔 한 줄로 자기 토큰을 999999 로 만들 수 있다.
@@ -492,7 +492,59 @@ end; $$;
 -- ────────────────────────────────────────────────────────────────────────
 -- 앱의 설정 화면에서 마스터가 회원 토큰을 채워 주는 자리. 예전엔 브라우저에서
 -- profiles 를 직접 update 했는데, 그 길은 위 2번에서 막혔다.
-create or replace function public.grant_tokens(p_user uuid, p_amount integer)
+--
+-- 충전 기록(token_grants) — 누가·언제·누구에게·얼마·왜 채웠나 (2026-09-14 더함)
+--  왜: 예전엔 충전이 잔액만 바꾸고 흔적이 없었다. "토큰이 왜 늘었죠?"·"보상 받았나요?"에 답할 길이 없었다.
+--  token_ledger 에 넣지 않는 까닭: 그 표는 '쓴 양(양수)' 장부다. 마스터 환불(master_refund_entry)은
+--  줄의 종류(reason)를 가리지 않으므로, 충전 줄이 섞이면 그 줄을 '환불'해 토큰이 한 번 더 생긴다.
+--  잔액을 바꾸지 않는 **따로 표**에 적는다.
+--  잠금: 회원·비회원은 못 본다 — 사유는 마스터 내부 메모다('상습 컴플레인 보상' 같은 말이 들어간다).
+--        마스터는 표로 본다. 쓰기는 grant_tokens 함수만 한다(insert/update/delete 권한을 주지 않는다).
+--  회원 줄은 회원 계정을 지우면 함께 지워진다(token_ledger 와 같다). 충전한 마스터 칸은 비워진다.
+create table if not exists public.token_grants (
+  id           uuid primary key default gen_random_uuid(),
+  owner        uuid not null references auth.users(id) on delete cascade,   -- 받은 회원
+  amount       integer not null,                                            -- 채운 양(빼면 음수)
+  reason       text,                                                        -- 사유(옛 앱이 부르면 비어 있다)
+  granted_by   uuid references auth.users(id) on delete set null,           -- 채운 마스터
+  tokens_after integer,                                                     -- 채운 뒤 잔액
+  created_at   timestamptz not null default now()
+);
+create index if not exists token_grants_owner_idx on public.token_grants (owner, created_at desc);
+create index if not exists token_grants_created_idx on public.token_grants (created_at desc);
+
+alter table public.token_grants enable row level security;
+revoke all on public.token_grants from anon;
+revoke all on public.token_grants from authenticated;
+grant select on public.token_grants to authenticated;   -- 줄은 아래 정책이 마스터로 좁힌다
+
+drop policy if exists "token_grants 마스터 열람" on public.token_grants;
+create policy "token_grants 마스터 열람" on public.token_grants for select
+  using (public.is_master_user());
+
+-- 사유 칸을 더했다 — 모양을 두 개로 둔다. 둘 다 기본값이 없다.
+--   · grant_tokens(p_user, p_amount, p_reason) — 본체. 충전하고 token_grants 에 적는다.
+--   · grant_tokens(p_user, p_amount)           — 옛 앱·SQL 편집기용 얇은 포장. 본체를 사유 없이 부른다.
+-- 왜 두 모양인가: PostgREST 는 보낸 인자 이름으로 함수를 고른다. 기본값이 없으면 {p_user,p_amount} 는
+--   두 인자 모양에만, {p_user,p_amount,p_reason} 은 세 인자 모양에만 맞아 헷갈릴 일이 없다.
+--   예전 안(세 인자에 기본값 null 하나만)은, 누가 옛 파일(이 판 이전의 supabase-setup.sql)을 다시 붙이면
+--   두 인자 모양이 새로 생겨 {p_user,p_amount} 가 두 모양 모두에 맞고 → "고를 수 없음"으로 충전이 전부 막혔다.
+--   지금 모양이면 옛 파일을 다시 붙여도 두 인자 모양의 본문만 옛것으로 바뀌어(사유 기록만 안 남음) 충전은 계속 된다.
+-- 앞선 다음판을 붙인 DB 에는 기본값 있는 세 인자 모양이 있다. 기본값은 create or replace 로 뺄 수 없어
+-- 그때만 지우고 다시 만든다(지우면 권한도 사라지므로 아래에서 다시 준다).
+do $$
+begin
+  if exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+              where n.nspname = 'public' and p.proname = 'grant_tokens'
+                and p.oid = 'public.grant_tokens(uuid, integer, text)'::regprocedure
+                and p.pronargdefaults > 0) then
+    drop function public.grant_tokens(uuid, integer, text);
+  end if;
+exception when undefined_function then
+  null;   -- 세 인자 모양이 아직 없다(처음 올리는 DB)
+end $$;
+
+create or replace function public.grant_tokens(p_user uuid, p_amount integer, p_reason text)
 returns integer
 language plpgsql security definer
 set search_path = public as $$
@@ -510,8 +562,25 @@ begin
   if left_tokens is null then
     raise exception '회원을 찾을 수 없습니다.' using errcode = '42501';
   end if;
+  -- 같은 트랜잭션에서 적는다 — 기록이 실패하면 충전도 취소된다(흔적 없는 충전이 생기지 않게).
+  insert into public.token_grants (owner, amount, reason, granted_by, tokens_after)
+  values (p_user, p_amount, left(nullif(btrim(coalesce(p_reason, '')), ''), 500), auth.uid(), left_tokens);
   return left_tokens;
 end; $$;
+
+-- 옛 두 인자 모양 — 운영 DB 에 이미 있는 함수의 본문만 갈아 끼운다(권한 줄은 그대로 다시 준다).
+create or replace function public.grant_tokens(p_user uuid, p_amount integer)
+returns integer
+language plpgsql security definer
+set search_path = public as $$
+begin
+  return public.grant_tokens(p_user, p_amount, null::text);   -- 검사·기록은 본체 한 곳에만 둔다
+end; $$;
+
+revoke all on function public.grant_tokens(uuid, integer, text) from public, anon;
+grant execute on function public.grant_tokens(uuid, integer, text) to authenticated;
+revoke all on function public.grant_tokens(uuid, integer) from public, anon;
+grant execute on function public.grant_tokens(uuid, integer) to authenticated;
 
 
 -- ════════════════════════════════════════════════════════════════════════
@@ -667,8 +736,16 @@ end; $$;
 --    20. 사고 목록(master_book_incidents) — 급한 순서로.
 --    21. 원고 90일 보관(purge_old_manuscripts) — 지나면 원고를 비운다.
 --
---  기존 함수(spend_tokens · refund_tokens · grant_tokens · charge_story · refund_story)는
+--  기존 함수(spend_tokens · refund_tokens · charge_story · refund_story)는
 --  한 글자도 바꾸지 않는다. 앱이 지금 그대로 부르고 있다.
+--  grant_tokens 만 12번에서 사유를 받는 세 인자 모양을 더했다 — 옛 두 인자 모양은 그 본체를 부르는 포장으로 남아 그대로 된다.
+--
+--  2026-09-14 다음판에서 더한 것:
+--    12. 충전 기록(token_grants) + grant_tokens 사유
+--    15. 지킴이 — 처리 끝 표시만 바뀐 update 는 updated_at 을 그대로 둔다
+--              · 회원은 저장된(saved·restored) 기록을 되돌리거나 원고를 고칠 수 없다
+--    16. 책이 들어오면 그 책 id 의 기록을 DB 가 '저장됨'으로 닫는다(books_mark_job_saved)
+--    18. 마스터 장부 읽기(master_ledger_entries) — 환불 사유·처리 마스터
 -- ════════════════════════════════════════════════════════════════════════
 
 
@@ -744,6 +821,39 @@ create unique index if not exists book_jobs_illustration_entry_uq
 --  · 한 번 붙은 장부 id·책 id·주인은 바꿀 수 없다(돈 낸 흔적을 지워 사고 목록에서 숨기기 방지)
 --    단, 관리자가 장부 줄 자체를 지워 외래키가 칸을 비우는 경우는 통과시킨다(선언과 동작을 맞춘다).
 --  · 'restored' 는 마스터 되살리기 함수만 만들 수 있다
+--  · 회원은 저장된 기록(saved·restored)의 상태를 다른 값으로 바꾸거나 원고를 고칠 수 없다(2026-09-14 더함).
+--    앱은 '값을 낸 열린 기록'이면 그림 값 없이 다시 저장해 준다(planFromJob). 회원이 콘솔로 저장된 기록을
+--    'failed' 로 되돌리고 원고를 새 그림에 맞추면 새 책 한 권을 공짜로 받는다 — 앱 코드로는 못 막는다.
+--    앱의 정상 흐름은 저장 뒤에 그 줄을 다시 고치지 않는다(commitBook 이 'saved' 를 적고 곧바로 기록 id 를 비운다.
+--    같은 대본으로 또 만들면 cloneJob 이 새 줄을 연다). 'saved' 를 한 번 더 적는 것(같은 상태)은 된다.
+--    마스터·SQL 편집기(원고 90일 정리 포함)는 막지 않는다.
+--    ⚠️ '저장됨'을 회원이 적는 값에만 맡기면 회원이 마지막 'saved' 쓰기만 막아 이 규칙을 비껴간다.
+--    그래서 책이 books 에 들어오는 순간 DB 가 그 책 id 의 기록을 'saved' 로 닫는다(16번 books_mark_job_saved).
+--    그 탓에 늦게 도착한 앱의 'saving' 쓰기(원고·못 올린 장수)가 이미 닫힌 기록에 닿을 수 있다(기록 쓰기가
+--    4초 넘게 걸린 드문 경우). 그 쓰기의 원고가 **실제로 저장된 책과 같은 이야기·그림**이면 받아 주고
+--    상태는 'saved' 로 둔다(원고가 옛것으로 남지 않게). 다르면 지금처럼 거절한다.
+--  · updated_at 은 DB 가 찍는다. 단 마스터의 처리 끝 표시(resolved_at·resolved_by·master_note)**만** 바뀐
+--    update 는 시각을 그대로 둔다(2026-09-14 고침). 예전엔 처리 끝을 누르면 시각이 새로 찍혀, 멈춘 기록이
+--    30분 동안 '진행 중'처럼 보이고 되살리기가 막혔다. 다른 칸이 하나라도 바뀌면 지금처럼 새로 찍는다.
+--    회원은 그 세 칸의 쓰기 권한이 없으므로(아래 칸 권한) 이 예외로 '멈춤' 판정을 속일 수 없다 —
+--    그래도 한 번 더 막으려고 회원이 부른 update 에는 예외를 적용하지 않는다.
+-- 원고·책의 '이야기와 그림' 서명 — 제목과 쪽마다 [본문, 그림 주소]. 올리지 못한 base64 그림은 비운 것으로 본다
+-- (지킴이가 원고에서 비우는 것과 맞춘다). 늦게 온 '저장 중' 원고가 실제 저장된 책과 같은지 볼 때만 쓴다.
+create or replace function public.book_page_signature(doc jsonb)
+returns jsonb
+language sql immutable
+set search_path = public as $$
+  select jsonb_build_array(
+    doc->>'title',
+    (select coalesce(jsonb_agg(jsonb_build_array(
+               case when jsonb_typeof(pg) = 'object' then pg->>'text' end,
+               case when jsonb_typeof(pg) = 'object' and not coalesce((pg->>'image') ~* '^\s*data:', false)
+                    then pg->>'image' end) order by ord), '[]'::jsonb)
+       from jsonb_array_elements(case when jsonb_typeof(doc->'pages') = 'array' then doc->'pages' else '[]'::jsonb end)
+            with ordinality as x(pg, ord)));
+$$;
+revoke all on function public.book_page_signature(jsonb) from public, anon, authenticated;
+
 -- security definer 인 까닭: 장부(token_ledger)를 RLS 와 상관없이 정확히 대조하려고.
 create or replace function public.book_jobs_guard()
 returns trigger
@@ -870,6 +980,29 @@ begin
   end if;
   new.error := left(new.error, 2000);   -- 긴 오류문은 잘라 둔다(막지는 않는다 — 실패 기록이 더 중요하다)
 
+  -- 저장된 기록 되돌리기 금지 ─── (회원만. 원고 비교는 base64 를 비운 뒤의 값으로 한다)
+  if tg_op = 'UPDATE' and is_member and old.status in ('saved', 'restored') then
+    -- 늦게 온 앱의 '저장 중' 쓰기 — 실제 저장된 책과 같은 원고면 받고 상태는 'saved' 로 둔다(위 설명).
+    if old.status = 'saved' and new.status = 'saving' and old.book_id is not null
+       and exists (select 1 from public.books b
+                    where b.id = old.book_id and b.owner = old.owner
+                      and public.book_page_signature(b.data) = public.book_page_signature(new.manuscript)) then
+      new.status := 'saved';
+      new.error  := null;
+    end if;
+    if new.status is distinct from old.status then
+      raise exception '저장된 기록의 상태는 바꿀 수 없습니다(%→%). 새로 만들면 새 기록이 생깁니다.',
+        old.status, new.status using errcode = '42501';
+    end if;
+    if new.manuscript is distinct from old.manuscript
+       and not (old.status = 'saved' and old.book_id is not null
+                and exists (select 1 from public.books b
+                             where b.id = old.book_id and b.owner = old.owner
+                               and public.book_page_signature(b.data) = public.book_page_signature(new.manuscript))) then
+      raise exception '저장된 기록의 원고는 고칠 수 없습니다.' using errcode = '42501';
+    end if;
+  end if;
+
   -- 회원 한 명당 상한 ─── (마스터·SQL 편집기는 세지 않는다)
   if is_member then
     if tg_op = 'INSERT' then
@@ -905,7 +1038,18 @@ begin
   if new.status = 'saved' and new.saved_at is null then
     new.saved_at := now();
   end if;
-  new.updated_at := now();   -- "오래 멈춘 기록"을 가리는 기준. 앱이 보낸 값은 믿지 않는다
+  -- "오래 멈춘 기록"을 가리는 기준. 앱이 보낸 값은 믿지 않는다.
+  -- 처리 끝 표시 세 칸만 실제로 바뀐 update(회원이 아닌 쪽)는 시각을 그대로 둔다(위 설명).
+  -- 비교는 지킴이가 값을 고친 뒤(base64 비우기·오류문 자르기·saved_at)의 줄로 한다.
+  if tg_op = 'UPDATE' and not is_member
+     and (new.resolved_at, new.resolved_by, new.master_note)
+         is distinct from (old.resolved_at, old.resolved_by, old.master_note)
+     and (to_jsonb(new) - array['resolved_at','resolved_by','master_note','updated_at'])
+         = (to_jsonb(old) - array['resolved_at','resolved_by','master_note','updated_at']) then
+    new.updated_at := old.updated_at;
+  else
+    new.updated_at := now();
+  end if;
   if tg_op = 'INSERT' then
     new.created_at := now();
   end if;
@@ -1014,6 +1158,44 @@ create trigger books_log_event
   after insert or delete on public.books
   for each row execute function public.books_log_event();
 
+-- 책이 들어오면 그 책 id 의 기록을 '저장됨'으로 닫는다 (2026-09-14 더함)
+--  왜: 15번 지킴이는 '저장된 기록(saved)'을 회원이 되돌리지 못하게 막는다. 그런데 'saved' 를 적는 쪽이 회원(앱)이면
+--    회원이 그 마지막 쓰기만 막아(콘솔·네트워크 차단) 기록을 'saving' 에 세워 둘 수 있다. 그 뒤 책을 지우고
+--    원고를 새 이야기로 바꾸고 'failed' 로 돌리면, 앱은 '값을 낸 열린 기록'으로 보고 그림 값 없이 새 책을 저장해 준다.
+--    그래서 '저장됨'을 회원이 적는 값이 아니라 **DB 가 본 사실(책이 들어옴)**로 정한다.
+--  무엇을: 회원이 **자기 책**을 새로 넣으면(auth.uid() = 주인), 같은 주인·같은 책 id 이고 아직 저장됨·되살림이 아닌
+--    기록을 'saved' 로 바꾼다. 앱이 곧이어 보내는 'saved' 는 같은 상태라 그대로 통과한다.
+--    · 마스터 되살리기(master_restore_book)는 부르는 사람이 주인이 아니라 건드리지 않는다 — 그 함수가 'restored' 로 적는다.
+--    · SQL 편집기·관리자 넣기(auth.uid() 없음)도 건드리지 않는다.
+--    · 이미 있는 책을 덮어쓰는 저장(upsert 의 update)은 넣기가 아니라 건드리지 않는다 — 다시 그리는 중인 기록을 닫지 않게.
+--  ⚠️ 이 트리거가 실패해도 책 저장은 취소되면 안 된다. 그래서 기록 바꾸기를 통째로 감싸 오류를 삼킨다.
+--  books_log_event 와 나눈 까닭: 그 트리거는 '검사 없이 한 줄 넣기만' 하도록 일부러 단순하게 두었다.
+create or replace function public.books_mark_job_saved()
+returns trigger
+language plpgsql security definer
+set search_path = public as $$
+begin
+  if auth.uid() is null or auth.uid() <> new.owner then
+    return new;
+  end if;
+  begin
+    update public.book_jobs
+       set status = 'saved', error = null
+     where owner = new.owner and book_id = new.id
+       and status not in ('saved', 'restored');
+  exception when others then
+    null;   -- 기록을 못 닫아도 책은 저장한다(기록은 앱의 'saved' 쓰기나 마스터가 맞춘다)
+  end;
+  return new;
+end; $$;
+
+revoke all on function public.books_mark_job_saved() from public, anon, authenticated;
+
+drop trigger if exists books_mark_job_saved on public.books;
+create trigger books_mark_job_saved
+  after insert on public.books
+  for each row execute function public.books_mark_job_saved();
+
 
 -- ────────────────────────────────────────────────────────────────────────
 -- 17. 그림 값 받기 — 값을 받는 것과 기록에 잇는 것을 한 번에
@@ -1086,7 +1268,7 @@ alter table public.token_ledger add column if not exists refunded_by uuid refere
 alter table public.token_ledger add column if not exists refund_note text;
 
 -- 장부 읽기도 칸 단위로 — 환불 사유(refund_note)·처리 마스터(refunded_by)는 고객에게 안 보인다.
--- (앱은 token_ledger 를 직접 읽지 않는다. 마스터는 사고 목록 함수로 본다.)
+-- (마스터는 사고 목록 함수나 아래 master_ledger_entries 로 본다.)
 revoke select on public.token_ledger from anon;
 revoke select on public.token_ledger from authenticated;
 grant select (id, owner, amount, reason, refunded_at, created_at) on public.token_ledger to authenticated;
@@ -1158,6 +1340,47 @@ end; $$;
 
 revoke all on function public.master_refund_entry(uuid, text, boolean) from public, anon;
 grant execute on function public.master_refund_entry(uuid, text, boolean) to authenticated;
+
+
+-- 마스터 장부 읽기 — 결제 여러 건의 환불 사유·처리 마스터까지 (2026-09-14 더함)
+--  왜: refunded_by·refund_note 는 위 칸 권한으로 가려져 있다(마스터도 같은 authenticated 역할이라 표로 못 읽는다).
+--  사고 목록(master_book_incidents)에 줄이 없는 결제 — 처리 끝으로 내린 건·고객 한 명의 지난 결제 — 는
+--  관리실이 "누가 왜 환불했나"를 읽을 길이 없었다. 장부 id 여러 개를 받아 한 번에 돌려준다.
+--  마스터만 부른다(함수 안에서 확인 + 비회원 실행 권한 없음). 한 번에 200건까지 — 관리실 한 화면이면 충분하고,
+--  더 큰 요청으로 DB 를 붙들지 못하게. 없는 id 는 조용히 빠진다.
+create or replace function public.master_ledger_entries(p_entries uuid[])
+returns table (
+  id                   uuid,
+  owner                uuid,
+  amount               integer,
+  reason               text,
+  refunded_at          timestamptz,
+  refunded_by          uuid,
+  refunded_by_username text,
+  refund_note          text,
+  created_at           timestamptz
+)
+language plpgsql security definer stable
+set search_path = public as $$
+#variable_conflict use_column
+begin
+  if not public.is_master_user() then
+    raise exception '권한이 없습니다.' using errcode = '42501';
+  end if;
+  if coalesce(cardinality(p_entries), 0) > 200 then
+    raise exception '한 번에 200건까지 읽을 수 있습니다(받은 수 %).', cardinality(p_entries) using errcode = '22023';
+  end if;
+  return query
+    select l.id, l.owner, l.amount, l.reason, l.refunded_at, l.refunded_by, p.username,
+           l.refund_note, l.created_at
+      from public.token_ledger l
+      left join public.profiles p on p.id = l.refunded_by
+     where l.id = any(coalesce(p_entries, '{}'::uuid[]))
+     order by l.created_at desc;
+end; $$;
+
+revoke all on function public.master_ledger_entries(uuid[]) from public, anon;
+grant execute on function public.master_ledger_entries(uuid[]) to authenticated;
 
 
 -- ────────────────────────────────────────────────────────────────────────
@@ -1649,6 +1872,11 @@ end $$;
 --
 --    await supabase.rpc('master_refund_entry', { p_entry: '<장부 id>', p_note: '저장 실패 컴플레인' })
 --    await supabase.rpc('master_restore_book', { p_job: '<기록 id>' })
+--    await supabase.rpc('master_ledger_entries', { p_entries: ['<장부 id>', '<장부 id>'] })
+--      → 환불 사유·처리 마스터 아이디까지 (200건까지)
+--    await supabase.rpc('grant_tokens', { p_user: '<회원 id>', p_amount: 50, p_reason: '저장 실패 보상' })
+--      → 충전 + token_grants 에 기록. p_reason 을 빼면 두 인자 모양이 불린다(옛 앱, 사유 빈 기록)
+--    ⚠️ 이 판을 붙인 뒤 옛 파일을 다시 붙여도 충전은 된다. 다만 두 인자 호출의 기록이 안 남으니 이 파일을 다시 붙인다.
 --
 --  가짜 마스터 확인 (SQL Editor):
 --    select username, is_master from public.profiles where is_master;   -- yogico·fe 만 나와야 한다
@@ -1656,13 +1884,13 @@ end $$;
 
 
 -- ════════════════════════════════════════════════════════════════════════
--- 끝. 아래를 함께 돌리면 표 아홉 개가 다 있는지 눈으로 확인할 수 있다.
--- (profiles · books · voice_clones · feedback · tts_usage · token_ledger · story_charges
---  · book_jobs · book_events)
+-- 끝. 아래를 함께 돌리면 표 열 개가 다 있는지 눈으로 확인할 수 있다.
+-- (profiles · books · voice_clones · feedback · tts_usage · token_ledger · token_grants
+--  · story_charges · book_jobs · book_events)
 -- ════════════════════════════════════════════════════════════════════════
 select table_name as 표
 from information_schema.tables
 where table_schema = 'public'
   and table_name in ('profiles','books','voice_clones','feedback','tts_usage',
-                     'token_ledger','story_charges','book_jobs','book_events')
+                     'token_ledger','token_grants','story_charges','book_jobs','book_events')
 order by table_name;
