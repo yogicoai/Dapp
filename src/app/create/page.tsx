@@ -2075,9 +2075,21 @@ export default function CreatePage() {
       for (const index of locationSeedPages) {
         await drawWorker(true, index);
       }
-      // 장소 기준이 모두 준비된 뒤 나머지 장면은 최대 3장씩 병렬 생성한다.
+      /*
+       * 장소 기준이 모두 준비된 뒤 나머지 장면을 병렬로 그린다.
+       *
+       * ⚠ 반드시 `() => drawWorker()` 로 감싼다. `Array.from(…, drawWorker)` 로 쓰면
+       *   Array.from 이 mapFn 을 (값, 인덱스)로 부르기 때문에 drawWorker(undefined, 0)·
+       *   drawWorker(undefined, 1) 이 되어, 두 번째 인자가 requestedIndex('이 쪽만 그려라')
+       *   로 새어 들어간다. drawWorker 첫 줄이 `if (claimedPages.has(requestedIndex)) return`
+       *   이라 결과가 이랬다:
+       *     · 0쪽은 바로 위에서 이미 찜했으므로 **첫 일꾼은 언제나 즉시 종료**
+       *     · 1쪽이 장소 시드로 찜혀 있으면 둘째 일꾼도 즉시 종료
+       *       → **2쪽부터 끝까지 한 장도 안 그려진다**
+       *   "그림이 다 안 생긴다"는 신고의 원인이었다(2026-09-14 확인).
+       */
       await Promise.all(
-        Array.from({ length: Math.min(CONCURRENT_IMAGES, s.pages.length) }, drawWorker),
+        Array.from({ length: Math.min(CONCURRENT_IMAGES, s.pages.length) }, () => drawWorker()),
       );
       /*
        * 여기서 막지 않는다.
