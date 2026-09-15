@@ -218,10 +218,10 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  *   QuotaFailure(violations[].quotaId: "...PerMinute" / "...PerDay")가 들어 있다.
  * 이걸 안 읽으면 "그냥 실패"로만 보여서, 기다리면 될 일과 오늘은 안 될 일을 못 가른다.
  */
-export function readQuotaHint(body: string): { retryDelay?: string; daily: boolean } {
+export function readQuotaHint(body: string): { retryDelay?: string; daily: boolean; spendCap: boolean } {
   try {
     const parsed = JSON.parse(body) as {
-      error?: { details?: Record<string, unknown>[] };
+      error?: { message?: string; details?: Record<string, unknown>[] };
     };
     const details = parsed.error?.details ?? [];
     const typeOf = (d: Record<string, unknown>) => String(d["@type"] ?? "");
@@ -233,11 +233,57 @@ export function readQuotaHint(body: string): { retryDelay?: string; daily: boole
     const daily = violations.some((v) =>
       /per\s*day|perday/i.test(`${v.quotaId ?? ""} ${v.quotaMetric ?? ""}`),
     );
-    return { retryDelay, daily };
+    /*
+     * 지출 한도·결제 막힘 — 이것도 기다려서 풀리지 않는다.
+     *
+     * 2026-09-15 운영에서 실제로 났다: "Your project has exceeded its monthly spending cap."
+     * 429 RESOURCE_EXHAUSTED 인데 details 가 비어 있어 PerDay 로도 안 걸렸고, 앱은 '잠깐 몰림'으로
+     * 읽어 13초씩 헛되이 다시 시도하다 포기했다. 이 경우는 사장님이 AI Studio 에서 한도를 올려야 풀린다.
+     */
+    const spendCap = /spend(ing)?\s*cap|billing|prepay|credit|exceeded your current quota/i.test(
+      String(parsed.error?.message ?? ""),
+    );
+    return { retryDelay, daily, spendCap };
   } catch {
     // 본문이 JSON이 아니면(프록시 오류 페이지 등) 판단하지 않는다 — 기본 재시도로 간다.
-    return { daily: false };
+    return { daily: false, spendCap: false };
   }
+}
+
+/**
+ * Gemini 가 한도·결제로 막혔을 때 OpenAI(gpt-image)로 대신 그릴지.
+ *
+ * 사장님 요청(2026-09-15): "제미나이가 토큰이 부족하면 GPT 로 생성되게." 막힌 사이 부모의 만들기가
+ * 통째로 멈추는 것보다, 값이 조금 더 드는 GPT 로라도 그려 주는 편이 낫다(장당 약 60~100원, Gemini ≈54원).
+ * 몰림(분당 한도)·안전필터·요청 오류는 GPT 로 넘기지 않는다 — 기다리면 되거나 GPT 도 같은 결과다.
+ * IMAGE_FALLBACK=off 면 넘기지 않는다. OpenAI 키가 없으면 넘길 수 없다.
+ */
+export function shouldFallbackToOpenAI(
+  err: unknown,
+  env: { openaiKey?: string | undefined; fallback?: string | undefined },
+): boolean {
+  return openAIFallbackAvailable(env) && err instanceof GeminiError && err.quotaExhausted === true;
+}
+
+/** GPT 로 넘길 수 있는 설정인가 — 키가 있고 IMAGE_FALLBACK=off 가 아니다. */
+export function openAIFallbackAvailable(env: { openaiKey?: string | undefined; fallback?: string | undefined }): boolean {
+  if (env.fallback?.trim().toLowerCase() === "off") return false;
+  return Boolean(env.openaiKey?.trim());
+}
+
+/*
+ * 한 번 막히면 한동안 Gemini 를 건너뛴다 — 쪽마다 막힌 곳을 다시 두드려 시간을 버리지 않게.
+ * 서버 인스턴스 안에서만 기억한다(다른 인스턴스는 한 번 두드려 보고 같은 판단을 한다).
+ * 30분 뒤엔 다시 Gemini 를 먼저 해 본다 — 사장님이 한도를 올렸으면 원래대로 돌아가야 한다.
+ */
+const GEMINI_BLOCK_MS = 30 * 60 * 1000;
+let geminiBlockedUntil = 0;
+export function geminiBlocked(now = Date.now()): boolean {
+  return now < geminiBlockedUntil;
+}
+/** 시험에서만 쓴다 — 막힘 기억을 지운다. */
+export function resetImageFallbackForTests(): void {
+  geminiBlockedUntil = 0;
 }
 
 export async function generateImage(input: {
@@ -300,13 +346,15 @@ export async function generateImage(input: {
          */
         const hint = readQuotaHint(body);
         const err = new GeminiError(
-          hint.daily
-            ? "오늘 그릴 수 있는 그림 수를 다 썼어요. 내일 다시 하시거나 결제 설정을 확인해 주세요."
-            : "그림 요청이 한꺼번에 몰렸어요. 잠시 뒤 다시 그려 볼게요.",
+          hint.spendCap
+            ? "그림 예산 한도에 닿았어요. 결제 설정을 확인해 주세요."
+            : hint.daily
+              ? "오늘 그릴 수 있는 그림 수를 다 썼어요. 내일 다시 하시거나 결제 설정을 확인해 주세요."
+              : "그림 요청이 한꺼번에 몰렸어요. 잠시 뒤 다시 그려 볼게요.",
           429,
         );
         err.retryAfter = res.headers.get("retry-after") ?? hint.retryDelay ?? null;
-        err.quotaExhausted = hint.daily;
+        err.quotaExhausted = hint.daily || hint.spendCap;
         throw err;
       }
       const err = new GeminiError(
@@ -314,6 +362,10 @@ export async function generateImage(input: {
         res.status,
       );
       err.retryAfter = res.headers.get("retry-after");
+      // 결제가 꺼졌거나 막힌 경우(403 등) — 이것도 기다려서 풀리지 않으니 한도 소진과 같이 본다.
+      if (res.status === 403 && /billing|spend(ing)?\s*cap|prepay|credit/i.test(body)) {
+        err.quotaExhausted = true;
+      }
       throw err;
     }
 
@@ -345,40 +397,55 @@ export async function generateImage(input: {
     throw new GeminiError("응답에 이미지가 없습니다. (모델이 텍스트만 반환)", 502);
   };
 
-  /** 한 번 부른다 — 엔진에 따라 OpenAI 또는 Gemini. 재시도 판단은 아래 고리가 같이 한다. */
-  const attemptOnce = async (): Promise<GeneratedImage> => {
-    if (provider === "openai") {
-      // 순환 import(openai-image → gemini)를 피하려고 여기서 불러온다.
-      const { generateImageOpenAI } = await import("./openai-image.ts");
-      return generateImageOpenAI(input);
-    }
-    return attemptGemini();
+  /** OpenAI 로 한 번 부른다. 순환 import(openai-image → gemini)를 피하려고 여기서 불러온다. */
+  const attemptOpenAI = async (): Promise<GeneratedImage> => {
+    const { generateImageOpenAI } = await import("./openai-image.ts");
+    return generateImageOpenAI(input);
   };
 
-  const startedAt = Date.now();
-  let lastError: unknown;
-  for (let attempt = 1; attempt <= IMAGE_ATTEMPTS; attempt++) {
-    try {
-      return await attemptOnce();
-    } catch (e) {
-      lastError = e;
-      const err = e instanceof GeminiError ? e : null;
-      if (!err || err.status === undefined) break;
-      // 오늘치를 다 썼으면 기다려도 소용없다 — 바로 알리는 편이 낫다.
-      if (err.quotaExhausted) break;
-      if (!isRetryableStatus(err.status) || attempt === IMAGE_ATTEMPTS) break;
-      const crowded = err.status === 429;
-      const delay = retryDelayMs(
-        attempt,
-        err.retryAfter,
-        crowded ? RATE_LIMIT_MAX_WAIT_MS : 10_000,
-      );
-      const deadline = crowded ? RATE_LIMIT_DEADLINE_MS : RETRY_DEADLINE_MS;
-      if (Date.now() - startedAt + delay > deadline) break;
-      await sleep(delay);
+  /** 한 엔진을 정해진 규칙대로 몇 번 다시 걸어 본다. */
+  const withRetries = async (attemptOnce: () => Promise<GeneratedImage>): Promise<GeneratedImage> => {
+    const startedAt = Date.now();
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= IMAGE_ATTEMPTS; attempt++) {
+      try {
+        return await attemptOnce();
+      } catch (e) {
+        lastError = e;
+        const err = e instanceof GeminiError ? e : null;
+        if (!err || err.status === undefined) break;
+        // 오늘치를 다 썼거나 지출 한도에 닿았으면 기다려도 소용없다 — 바로 알리는 편이 낫다.
+        if (err.quotaExhausted) break;
+        if (!isRetryableStatus(err.status) || attempt === IMAGE_ATTEMPTS) break;
+        const crowded = err.status === 429;
+        const delay = retryDelayMs(
+          attempt,
+          err.retryAfter,
+          crowded ? RATE_LIMIT_MAX_WAIT_MS : 10_000,
+        );
+        const deadline = crowded ? RATE_LIMIT_DEADLINE_MS : RETRY_DEADLINE_MS;
+        if (Date.now() - startedAt + delay > deadline) break;
+        await sleep(delay);
+      }
     }
+    throw lastError;
+  };
+
+  if (provider === "openai") return withRetries(attemptOpenAI);
+
+  const fallbackEnv = { openaiKey: process.env.OPENAI_API_KEY, fallback: process.env.IMAGE_FALLBACK };
+  // 방금 막힌 게 확인됐으면 Gemini 를 다시 두드리지 않고 곧장 GPT 로.
+  if (openAIFallbackAvailable(fallbackEnv) && geminiBlocked()) return withRetries(attemptOpenAI);
+
+  try {
+    return await withRetries(attemptGemini);
+  } catch (e) {
+    if (!shouldFallbackToOpenAI(e, fallbackEnv)) throw e;
+    geminiBlockedUntil = Date.now() + GEMINI_BLOCK_MS;
+    // 서버 로그(Vercel)에 남긴다 — 사장님이 "왜 GPT 그림이 섞였지?" 할 때 찾을 수 있게.
+    console.warn("[image] Gemini 한도·결제 막힘 → 30분 동안 OpenAI(gpt-image)로 그립니다:", (e as Error).message);
+    return withRetries(attemptOpenAI);
   }
-  throw lastError;
 }
 
 /**
@@ -406,7 +473,12 @@ export async function validateIllustration(input: {
   extraRules?: string[];
 }): Promise<IllustrationCheck> {
   const key = process.env.GEMINI_API_KEY;
-  if (!key) return { ok: true, checked: false, issues: "" };
+  /*
+   * Gemini 가 한도·결제로 막힌 동안엔 검수를 건너뛴다(검사 못 함).
+   * 검수도 같은 Gemini 프로젝트라 어차피 막혀 있고, 쪽마다 몇 번씩 다시 시도하며 기다리면
+   * GPT 로 넘어가 그린 그림까지 늦어진다.
+   */
+  if (!key || geminiBlocked()) return { ok: true, checked: false, issues: "" };
 
   /*
    * 검수 모델. gemini-2.5-flash 는 2026-08 기준 신규 사용이 막혀 404를 돌려준다 —

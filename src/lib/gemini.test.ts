@@ -3,10 +3,16 @@ import { describe, it } from "node:test";
 import sharp from "sharp";
 import {
   detectBlankCanvasBorder,
+  GeminiError,
+  generateImage,
+  geminiBlocked,
   isRetryableStatus,
+  openAIFallbackAvailable,
   readQuotaHint,
   repairBlankCanvasBorder,
+  resetImageFallbackForTests,
   retryDelayMs,
+  shouldFallbackToOpenAI,
 } from "./gemini.ts";
 
 async function imageWithSvg(svg: string) {
@@ -78,6 +84,96 @@ describe("retryDelayMs", () => {
 
 const MINUTE_BODY = '{"error":{"code":429,"status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"35s"}]}}';
 const DAY_BODY = '{"error":{"code":429,"status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaId":"GenerateRequestsPerDayPerProjectPerModel"}]}]}}';
+const SPEND_CAP_BODY = '{"error":{"code":429,"message":"Your project has exceeded its monthly spending cap. Please go to AI Studio at https://ai.studio/spend to manage your project spend cap. Learn more at https://ai.google.dev/gemini-api/docs/billing#project-spend-caps.","status":"RESOURCE_EXHAUSTED"}}';
+
+describe("Gemini 가 한도·결제로 막히면 GPT 로 대신 그린다", () => {
+  const exhausted = Object.assign(new GeminiError("한도", 429), { quotaExhausted: true });
+  const crowded = new GeminiError("몰림", 429);
+
+  it("넘길지: 한도·결제 막힘이고 OpenAI 키가 있을 때만", () => {
+    assert.equal(shouldFallbackToOpenAI(exhausted, { openaiKey: "sk-x" }), true);
+    assert.equal(shouldFallbackToOpenAI(crowded, { openaiKey: "sk-x" }), false, "몰림은 기다리면 된다");
+    assert.equal(shouldFallbackToOpenAI(new GeminiError("안전필터", 422), { openaiKey: "sk-x" }), false);
+    assert.equal(shouldFallbackToOpenAI(exhausted, { openaiKey: "" }), false, "키가 없으면 넘길 수 없다");
+    assert.equal(shouldFallbackToOpenAI(exhausted, { openaiKey: "sk-x", fallback: "off" }), false, "끄면 안 넘긴다");
+    assert.equal(shouldFallbackToOpenAI(new Error("그냥 오류"), { openaiKey: "sk-x" }), false);
+    assert.equal(openAIFallbackAvailable({ openaiKey: " sk-x ", fallback: "on" }), true);
+  });
+
+  it("실제 흐름: 지출 한도 429 → 다시 시도하지 않고 GPT 로 그리고, 다음 그림은 Gemini 를 건너뛴다", async () => {
+    const saved = {
+      fetch: globalThis.fetch,
+      provider: process.env.IMAGE_PROVIDER,
+      gkey: process.env.GEMINI_API_KEY,
+      okey: process.env.OPENAI_API_KEY,
+      fallback: process.env.IMAGE_FALLBACK,
+      warn: console.warn,
+    };
+    const calls: string[] = [];
+    try {
+      resetImageFallbackForTests();
+      delete process.env.IMAGE_PROVIDER;
+      delete process.env.IMAGE_FALLBACK;
+      process.env.GEMINI_API_KEY = "g-test";
+      process.env.OPENAI_API_KEY = "sk-test";
+      console.warn = () => {};
+      globalThis.fetch = (async (url: string | URL) => {
+        const u = String(url);
+        calls.push(u.includes("openai.com") ? "openai" : "gemini");
+        if (u.includes("openai.com")) {
+          return new Response(JSON.stringify({ data: [{ b64_json: "R1BU" }] }), { status: 200 });
+        }
+        return new Response(SPEND_CAP_BODY, { status: 429 });
+      }) as typeof fetch;
+
+      const first = await generateImage({ prompt: "사과", aspectRatio: "1:1" });
+      assert.equal(first.data, "R1BU", "GPT 가 그린 그림이 돌아온다");
+      assert.deepEqual(calls, ["gemini", "openai"], "Gemini 는 한 번만 두드리고(다시 시도 없음) GPT 로 넘어간다");
+      assert.equal(geminiBlocked(), true);
+
+      calls.length = 0;
+      await generateImage({ prompt: "배", aspectRatio: "1:1" });
+      assert.deepEqual(calls, ["openai"], "막힌 동안엔 Gemini 를 건너뛴다");
+    } finally {
+      globalThis.fetch = saved.fetch;
+      console.warn = saved.warn;
+      for (const [k, v] of [["IMAGE_PROVIDER", saved.provider], ["GEMINI_API_KEY", saved.gkey], ["OPENAI_API_KEY", saved.okey], ["IMAGE_FALLBACK", saved.fallback]] as const) {
+        if (v === undefined) delete process.env[k]; else process.env[k] = v;
+      }
+      resetImageFallbackForTests();
+    }
+  });
+
+  it("몰림(분당 한도)은 GPT 로 넘기지 않는다 — 기다렸다 Gemini 로 다시", async () => {
+    const saved = { fetch: globalThis.fetch, gkey: process.env.GEMINI_API_KEY, okey: process.env.OPENAI_API_KEY };
+    const calls: string[] = [];
+    try {
+      resetImageFallbackForTests();
+      process.env.GEMINI_API_KEY = "g-test";
+      process.env.OPENAI_API_KEY = "sk-test";
+      let n = 0;
+      globalThis.fetch = (async (url: string | URL) => {
+        const u = String(url);
+        calls.push(u.includes("openai.com") ? "openai" : "gemini");
+        n += 1;
+        if (n === 1) return new Response(MINUTE_BODY.replace('"35s"', '"0.01s"'), { status: 429 });
+        return new Response(
+          JSON.stringify({ candidates: [{ content: { parts: [{ inlineData: { mimeType: "image/png", data: "R0VN" } }] } }] }),
+          { status: 200 },
+        );
+      }) as typeof fetch;
+      const img = await generateImage({ prompt: "사과", aspectRatio: "1:1" });
+      assert.equal(img.data, "R0VN");
+      assert.deepEqual(calls, ["gemini", "gemini"]);
+      assert.equal(geminiBlocked(), false);
+    } finally {
+      globalThis.fetch = saved.fetch;
+      if (saved.gkey === undefined) delete process.env.GEMINI_API_KEY; else process.env.GEMINI_API_KEY = saved.gkey;
+      if (saved.okey === undefined) delete process.env.OPENAI_API_KEY; else process.env.OPENAI_API_KEY = saved.okey;
+      resetImageFallbackForTests();
+    }
+  });
+});
 
 describe("readQuotaHint — 429가 '잠깐 몰림'인지 '오늘 다 씀'인지 가른다", () => {
   it("분당 한도면 기다릴 시간을 읽고 daily는 아니다", () => {
@@ -91,8 +187,18 @@ describe("readQuotaHint — 429가 '잠깐 몰림'인지 '오늘 다 씀'인지 
   });
 
   it("JSON이 아니어도 터지지 않는다 (프록시 오류 페이지 등)", () => {
-    assert.deepEqual(readQuotaHint("<html>502</html>"), { daily: false });
-    assert.deepEqual(readQuotaHint(""), { daily: false });
+    assert.deepEqual(readQuotaHint("<html>502</html>"), { daily: false, spendCap: false });
+    assert.deepEqual(readQuotaHint(""), { daily: false, spendCap: false });
+  });
+
+  it("월 지출 한도(2026-09-15 운영에서 실제로 받은 원문)는 spendCap — details 가 비어 있어도 잡는다", () => {
+    const hint = readQuotaHint(SPEND_CAP_BODY);
+    assert.equal(hint.spendCap, true);
+    assert.equal(hint.daily, false);
+  });
+
+  it("분당 한도(몰림)는 spendCap 이 아니다 — 기다리면 되는 경우를 GPT 로 넘기지 않게", () => {
+    assert.equal(readQuotaHint(MINUTE_BODY).spendCap, false);
   });
 
   it("구글이 주는 \"35s\" 꼴을 재시도 간격으로 쓸 수 있다", () => {
