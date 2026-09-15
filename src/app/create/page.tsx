@@ -67,13 +67,16 @@ import {
   scriptTokenCost,
 } from "@/lib/tokens";
 import { useEscClose } from "@/lib/use-esc-close";
+import { useScreenWakeLock } from "@/lib/use-wake-lock";
 import { alertIfAway, primeChime } from "@/lib/away-notice";
 import {
   busyWaitText,
+  drawNotice,
   drawProgressLine,
   noticeFor,
   noticeText,
   pickShowcaseBooks,
+  uploadLine,
   waitLine,
   type BusyKind,
   type NoticeKind,
@@ -1194,12 +1197,13 @@ export default function CreatePage() {
       }
     };
 
-    setUploading({ done: 0, total: jobs.length });
+    const pageJobs = jobs.filter((j) => j.page !== undefined).length;
+    setUploading({ done: 0, total: jobs.length, pages: pageJobs });
     const failed: { job: UploadJob; reason: string }[] = [];
     for (let i = 0; i < jobs.length; i++) {
       const reason = await uploadOne(jobs[i]);
       if (reason) failed.push({ job: jobs[i], reason });
-      setUploading({ done: i + 1, total: jobs.length });
+      setUploading({ done: i + 1, total: jobs.length, pages: pageJobs });
     }
     // 못 올린 장은 잠깐 쉬었다 한 번 더 — 조용히 넘기면 책이 통째로 base64가 되어
     // 수 MB짜리 줄이 DB에 들어간다(실제로 났다).
@@ -1355,7 +1359,8 @@ export default function CreatePage() {
    * 다 그린 그림을 cafe24로 올리는 단계(저장 직전). null이면 아직 그 단계가 아니다.
    * 한 장씩 순서대로 올리느라 몇 초 걸려서, 화면이 멈춘 것처럼 보이지 않게 진행을 보여준다.
    */
-  const [uploading, setUploading] = useState<{ done: number; total: number } | null>(null);
+  /** pages — 올릴 것 중 쪽 그림 장수(나머지는 표지·인물·장소 기준 그림). */
+  const [uploading, setUploading] = useState<{ done: number; total: number; pages: number } | null>(null);
   // 그리기 시작 시각 — 지금까지 걸린 시간으로 남은 시간을 어림한다.
   const drawStartRef = useRef(0);
   // 기다리는 동안 1초마다 다시 그려 남은 시간·미리보기가 살아 움직이게 한다.
@@ -1499,6 +1504,8 @@ export default function CreatePage() {
    * 그림 값은 이미 나갔다 — 책을 버리면 안 된다.
    */
   const [saveFailure, setSaveFailure] = useState<{ book: Book; reason: string; illustrated: boolean } | null>(null);
+  // 대본을 기다리거나 그림을 그리는(책장에 넣는) 동안 화면이 저절로 꺼지지 않게 — 꺼지면 그리기가 멈춘다.
+  const screenHeld = useScreenWakeLock(busy || (step === "illustrate" && !saveFailure));
 
   /*
    * 다 됐을 때 알리기 — 대본이 나옴·동화 완성·책장에 못 넣음.
@@ -2478,7 +2485,7 @@ export default function CreatePage() {
                 qualityChecked?: boolean;
                 qualityPassed?: boolean;
                 qualityWarning?: string;
-                qualityIssue?: "text" | "other";
+                qualityIssue?: "text" | "border" | "other";
               };
               return { ok: r.ok, status: r.status, data };
             };
@@ -2557,6 +2564,15 @@ export default function CreatePage() {
                 ok = true;
               } else if (isTextIssue && second.ok && second.data.image && second.data.qualityIssue !== "text") {
                 // 글자는 지워졌고 다른 지적만 남았다면 그쪽이 낫다 — 글자보다는 낫다.
+                image = second.data.image;
+              } else if (
+                first.data.qualityIssue === "border" &&
+                second.ok &&
+                second.data.image &&
+                second.data.qualityIssue !== "border" &&
+                second.data.qualityIssue !== "text"
+              ) {
+                // 흰 여백은 없어지고 취향 지적만 남았다 — 흰 테두리가 보이는 그림보다 낫다.
                 image = second.data.image;
               }
             }
@@ -4135,8 +4151,8 @@ export default function CreatePage() {
                   같은 시간도 훨씬 짧게 느껴진다(피드백 2번). */}
               <p className="break-keep text-center text-sm font-bold text-neutral-500">
                 {uploading ? (
-                  // '그림 N장'이라고 하면 그린 장수로 읽힌다 — 이건 표지 썸네일·시트까지 포함한 파일 수다.
-                  `파일 ${uploading.done} / ${uploading.total} 올리는 중 (표지·시트 포함)`
+                  // 5쪽 책에 "파일 8"만 보이면 무엇이 8장인지 모른다 — 쪽 그림과 표지·기준 그림을 갈라 말한다.
+                  uploadLine(uploading.done, uploading.total, uploading.pages)
                 ) : (
                   // 첫 쪽이 나오기 전(인물·장소 시트 준비)엔 "0 / 5 쪽" 대신 준비 중이라고 말한다.
                   drawProgressLine(drawn, story.pages.length, drawElapsedMs, drawRestoredRef.current)
@@ -4155,7 +4171,7 @@ export default function CreatePage() {
               </div>
               {/* 흐르는 시간 — 그리기 시작부터. 막대가 안 움직이는 시트 준비 동안에도 초가 올라간다. */}
               {!uploading && (
-                <p className="break-keep text-center text-xs font-bold text-neutral-500">
+                <p className="break-keep text-center text-sm font-bold text-neutral-600">
                   {/* 이어서 그리기면 남은 쪽 수로 '보통'을 잡는다 — 한 장 남았는데 "보통 4분"이라 하지 않게. */}
                   {waitLine("draw", drawElapsedMs, Math.max(0, story.pages.length - drawRestoredRef.current))}
                 </p>
@@ -4165,10 +4181,18 @@ export default function CreatePage() {
                 다시 들어오면 '이어서 그리기'로 그린 장을 건너뛰고, 값을 낸 책은 '다시 저장하기'로 값 없이 저장된다.
                 예전 문구("닫으면 그리던 그림이 사라져요")는 보관이 생긴 뒤로 틀린 말이었다.
               */}
-              <p className="break-keep text-center text-[11px] font-medium text-neutral-400">
-                창을 닫아도 그린 그림은 이 기기에 남아, 다시 만들기에 들어오면 이어서 그려요.
+              {/*
+                솔직하게 말한다 — 그리기는 이 기기가 한다. 아래 동화를 열어 읽는 건 괜찮지만(같은 화면 위에 뜬다),
+                창을 닫거나 기기를 끄면 멈춘다. 멈춰도 그린 장은 남아 이어서 그린다.
+                화면 붙잡기(wake lock)가 된 기기에서만 "화면이 꺼지지 않게"를 약속한다.
+              */}
+              <p className="break-keep text-center text-[11px] font-medium leading-relaxed text-neutral-400">
+                {screenHeld
+                  ? "다 그릴 때까지 화면이 꺼지지 않게 해 둘게요. "
+                  : "다 그릴 때까지 화면을 켜 두세요. "}
+                아래 동화를 열어 읽으셔도 그림은 계속 그려져요.
                 <br />
-                이 화면을 열어 두시면 다 그린 뒤 바로 책장에 넣어 드려요.
+                창을 닫거나 기기를 끄면 잠시 멈추고, 다시 만들기에 들어오면 그린 장부터 이어서 그려요.
               </p>
               <WaitShowcase books={SHOWCASE_BOOKS} onOpen={openShowcase} tone="light" />
               {/* 기다리는 동안 이야기를 먼저 읽는다 — 글은 이미 다 나와 있으니
@@ -4592,7 +4616,8 @@ export default function CreatePage() {
                       {master
                         ? "관리자는 토큰이 들지 않아요"
                         : `그림을 그리면 토큰 ${illustrationTokenCost(story.pages.length)}개가 더 들어요 (내 잔액 ${tokens}개)`}
-                      <br />그림은 1~2분 정도 걸려요
+                      <br />
+                      {drawNotice(story.pages.length)} · 그동안 명작·전래동화를 읽고 계셔도 돼요
                     </p>
                   ))}
                 {/*

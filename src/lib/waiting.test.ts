@@ -2,12 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   busyWaitText,
+  drawNotice,
   drawProgressLine,
   formatDuration,
   formatUsual,
   noticeFor,
   noticeText,
   pickShowcaseBooks,
+  uploadLine,
   usualDrawSec,
   USUAL_WAIT,
   waitLine,
@@ -37,6 +39,18 @@ test("usualDrawSec — 시트 준비 + 두 장씩 묶음", () => {
   assert.equal(usualDrawSec(4), USUAL_WAIT.sheetsSec + 2 * USUAL_WAIT.pageBatchSec);
   // 실측(그림 전체 3~5분) 안에 들어야 한다.
   assert.ok(five >= 180 && five <= 300, `5쪽 보통 ${five}초`);
+});
+
+test("drawNotice — 누르기 전 안내가 기다리는 화면의 '보통'과 같다", () => {
+  assert.equal(drawNotice(5), "그림은 보통 4분쯤 걸려요");
+  assert.match(waitLine("draw", 0, 5), /보통 4분쯤/);
+  assert.doesNotMatch(drawNotice(5), /1~2분/);
+});
+
+test("uploadLine — 5쪽 책의 8장이 무엇인지 말한다", () => {
+  assert.equal(uploadLine(3, 8, 5), "책장에 넣는 중 · 3 / 8 (그림 5장 + 표지·기준 그림 3장)");
+  // 다시 저장하기로 못 올린 쪽만 남았으면 덧말을 붙이지 않는다.
+  assert.equal(uploadLine(1, 2, 2), "책장에 넣는 중 · 1 / 2");
 });
 
 test("waitLine — 흘러간 시간과 '보통' 시간", async (t) => {

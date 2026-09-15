@@ -62,6 +62,8 @@ export async function generateImageOpenAI(input: {
       form.append("prompt", input.prompt);
       form.append("size", size);
       form.append("quality", quality);
+      // 투명 배경 금지 — auto 면 가장자리를 투명하게 비워 둘 때가 있고, 화면에선 흰 테두리로 보인다.
+      form.append("background", "opaque");
       form.append("n", "1");
       refs.forEach((r, i) => {
         const blob = new Blob([Buffer.from(r.data, "base64")], { type: r.mimeType });
@@ -76,7 +78,7 @@ export async function generateImageOpenAI(input: {
       res = await fetch("https://api.openai.com/v1/images/generations", {
         method: "POST",
         headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-        body: JSON.stringify({ model, prompt: input.prompt, size, quality, n: 1 }),
+        body: JSON.stringify({ model, prompt: input.prompt, size, quality, background: "opaque", n: 1 }),
       });
     }
   } catch (e) {

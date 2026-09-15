@@ -62,7 +62,9 @@ export type IllustrationCheck = {
 export async function detectBlankCanvasBorder(image: GeneratedImage): Promise<string | null> {
   try {
     const { data, info } = await sharp(Buffer.from(image.data, "base64"))
-      .removeAlpha()
+      // 투명한 띠도 흰 띠로 본다 — removeAlpha 는 투명 칸을 검정으로 남겨 못 잡았다.
+      // 화면에서는 투명 칸이 뒤 바탕(흰색)으로 비쳐 똑같이 흰 테두리로 보인다.
+      .flatten({ background: "#ffffff" })
       .resize(160, 120, { fit: "fill" })
       .raw()
       .toBuffer({ resolveWithObject: true });
@@ -110,42 +112,91 @@ export async function detectBlankCanvasBorder(image: GeneratedImage): Promise<st
 }
 
 /**
- * 감지된 흰 테두리를 잘라낸 뒤 원래 픽셀 크기와 비율로 복원한다. 추가 AI 호출은 없다.
+ * 감지된 흰 테두리를 잘라낸 뒤 원래 픽셀 크기와 비율로 **확대해** 채운다. 추가 AI 호출은 없다.
  *
- * **얼마나 잘렸는지에 상한을 둔다.** 감지기(detectBlankCanvasBorder)는 가장자리 12%까지만
- * 세는데 trim은 멈추지 않는다 — 밝은 크림색 벽이나 흐린 하늘이 이어지면 그림의 30%를
- * 잘라내고 남은 부분을 확대해서, 가장자리에 서 있던 아이가 통째로 사라졌다(실제로 났다).
- * 진짜 두꺼운 여백은 AI 품질검사가 잡아 다시 그리게 하는 편이 안전하다.
+ * **띠만 정확히 잰다.** 예전엔 sharp.trim 으로 잘랐는데, trim 은 흰 띠 옆의 밝은 크림색 벽·냉장고·
+ * 흐린 하늘까지 이어서 먹는다. 그러면 잘림이 상한(12%)을 넘어 '원본 유지'로 빠졌고, 흰 띠가
+ * 그대로 책에 들어갔다(2026-09-15 하온이 소풍 1쪽 — 왼쪽·위 흰 띠, 옆이 크림색 부엌 벽).
+ * 이제 가장자리부터 **줄 전체가 거의 다 흰(또는 투명한) 줄**만 세어 띠 두께를 정한다 —
+ * 줄 한가운데 그림이 조금이라도 있으면 거기서 멈추므로 밝은 벽을 띠로 먹지 않는다.
+ *
+ * **상한은 여전히 둔다.** 띠가 한 변의 20%를 넘으면 확대로 가리기엔 그림이 너무 많이 잘린다
+ * (가장자리 아이가 사라진다). 그때는 손대지 않고, 부르는 쪽이 다시 그리게 한다.
  */
-const MAX_BORDER_TRIM_RATIO = 0.12;
+const MAX_BORDER_TRIM_RATIO = 0.2;
+/** 띠 경계의 흐릿한 줄(안티앨리어싱)까지 가리려고 띠보다 조금 더 자른다 — 한 변의 0.6%. */
+const BORDER_TRIM_MARGIN_RATIO = 0.006;
+
+/** 가장자리마다 '거의 다 흰 줄'이 몇 픽셀 이어지나 — 원본 해상도로 센다. */
+export async function measureBlankBands(
+  image: GeneratedImage,
+): Promise<{ width: number; height: number; top: number; bottom: number; left: number; right: number } | null> {
+  try {
+    const { data, info } = await sharp(Buffer.from(image.data, "base64"))
+      .flatten({ background: "#ffffff" })
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const { width, height, channels } = info;
+    const white = (x: number, y: number) => {
+      const at = (y * width + x) * channels;
+      const r = data[at];
+      const g = data[at + 1];
+      const b = data[at + 2];
+      return r >= 236 && g >= 236 && b >= 236 && Math.max(r, g, b) - Math.min(r, g, b) <= 14;
+    };
+    const rowBlank = (y: number) => {
+      let n = 0;
+      for (let x = 0; x < width; x++) if (white(x, y)) n++;
+      return n / width >= 0.97;
+    };
+    const colBlank = (x: number) => {
+      let n = 0;
+      for (let y = 0; y < height; y++) if (white(x, y)) n++;
+      return n / height >= 0.97;
+    };
+    // 한 변의 절반까지만 센다 — 통째로 흰 그림에서 끝없이 돌지 않게.
+    const run = (length: number, blank: (n: number) => boolean, reverse: boolean) => {
+      let count = 0;
+      while (count < Math.floor(length / 2) && blank(reverse ? length - 1 - count : count)) count++;
+      return count;
+    };
+    return {
+      width,
+      height,
+      top: run(height, rowBlank, false),
+      bottom: run(height, rowBlank, true),
+      left: run(width, colBlank, false),
+      right: run(width, colBlank, true),
+    };
+  } catch {
+    return null;
+  }
+}
 
 export async function repairBlankCanvasBorder(image: GeneratedImage): Promise<GeneratedImage> {
   try {
-    const source = Buffer.from(image.data, "base64");
-    const metadata = await sharp(source).metadata();
-    if (!metadata.width || !metadata.height) return image;
-    // 먼저 잘라만 보고 '얼마나 없어졌는지'를 잰다.
-    const { data: trimmed, info } = await sharp(source)
-      .trim({ background: "#ffffff", threshold: 20 })
-      .toBuffer({ resolveWithObject: true });
-    const cutX = metadata.width - info.width;
-    const cutY = metadata.height - info.height;
-    if (cutX <= 0 && cutY <= 0) return image; // 자를 게 없었다
+    const bands = await measureBlankBands(image);
+    if (!bands) return image;
+    const { width, height } = bands;
+    if (!bands.top && !bands.bottom && !bands.left && !bands.right) return image; // 자를 게 없었다
+    const pad = (band: number, side: number) => (band > 0 ? Math.ceil(band + side * BORDER_TRIM_MARGIN_RATIO) : 0);
+    const top = pad(bands.top, height);
+    const bottom = pad(bands.bottom, height);
+    const left = pad(bands.left, width);
+    const right = pad(bands.right, width);
     if (
-      cutX > metadata.width * MAX_BORDER_TRIM_RATIO ||
-      cutY > metadata.height * MAX_BORDER_TRIM_RATIO
+      left + right > width * MAX_BORDER_TRIM_RATIO ||
+      top + bottom > height * MAX_BORDER_TRIM_RATIO
     ) {
-      // 밝은 벽·하늘을 여백으로 오인한 경우다 — 손대지 않는다.
-      console.warn("[repairBlankCanvasBorder] 잘림이 너무 커서 원본 유지", {
-        cutX,
-        cutY,
-        width: metadata.width,
-        height: metadata.height,
-      });
+      // 여백이 너무 두껍다 — 확대하면 가장자리 인물이 잘린다. 다시 그리게 둔다.
+      console.warn("[repairBlankCanvasBorder] 흰 여백이 너무 두꺼워 원본 유지", { ...bands });
       return image;
     }
-    const repaired = await sharp(trimmed)
-      .resize(metadata.width, metadata.height, { fit: "cover", position: "centre" })
+    const repaired = await sharp(Buffer.from(image.data, "base64"))
+      .flatten({ background: "#ffffff" })
+      .extract({ left, top, width: width - left - right, height: height - top - bottom })
+      // 원래 크기·비율로 확대해 채운다. 잘린 양이 가로·세로 다르면 cover 가 가운데를 기준으로 맞춘다.
+      .resize(width, height, { fit: "cover", position: "centre" })
       .png()
       .toBuffer();
     return { mimeType: "image/png", data: repaired.toString("base64") };

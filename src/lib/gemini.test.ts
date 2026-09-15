@@ -7,6 +7,7 @@ import {
   generateImage,
   geminiBlocked,
   isRetryableStatus,
+  measureBlankBands,
   openAIFallbackAvailable,
   readQuotaHint,
   repairBlankCanvasBorder,
@@ -43,6 +44,52 @@ describe("detectBlankCanvasBorder", () => {
     const metadata = await sharp(Buffer.from(repaired.data, "base64")).metadata();
     assert.deepEqual([metadata.width, metadata.height], [400, 300]);
     assert.equal(await detectBlankCanvasBorder(repaired), null);
+  });
+
+  // 2026-09-15 하온이 소풍 1쪽: 왼쪽·위 흰 띠 옆이 크림색 부엌 벽·냉장고였다. 예전 trim 은 벽까지 먹어
+  // 잘림 상한을 넘겼고 '원본 유지'로 흰 띠가 책에 그대로 들어갔다.
+  const KITCHEN_WITH_BANDS =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300">' +
+    '<rect width="400" height="300" fill="#f4eee2"/>' + // 크림색 벽 (밝지만 흰색은 아님)
+    '<rect x="0" y="0" width="90" height="220" fill="#f7f4ee"/>' + // 거의 흰 냉장고
+    '<rect x="0" y="220" width="400" height="80" fill="#c89a6a"/>' + // 나무 바닥
+    '<rect x="180" y="120" width="60" height="120" fill="#3b6fb6"/>' + // 아이
+    '<rect width="24" height="300" fill="white"/><rect width="400" height="12" fill="white"/></svg>';
+
+  it("흰 띠 옆이 밝은 벽이어도 띠만 잘라 확대해 채운다", async () => {
+    const image = await imageWithSvg(KITCHEN_WITH_BANDS);
+    assert.match((await detectBlankCanvasBorder(image)) ?? "", /top.*left|left.*top/);
+    const bands = await measureBlankBands(image);
+    assert.ok(bands && bands.left >= 24 && bands.left < 30, `왼쪽 띠 ${bands?.left}`);
+    assert.ok(bands && bands.top >= 12 && bands.top < 18, `위 띠 ${bands?.top}`);
+    const repaired = await repairBlankCanvasBorder(image);
+    const meta = await sharp(Buffer.from(repaired.data, "base64")).metadata();
+    assert.deepEqual([meta.width, meta.height], [400, 300]);
+    assert.equal(await detectBlankCanvasBorder(repaired), null, "흰 띠가 남지 않는다");
+    // 아이(파란 네모)는 잘리지 않고 남아 있다.
+    const { data, info } = await sharp(Buffer.from(repaired.data, "base64")).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+    const at = (Math.round(info.height * 0.55) * info.width + Math.round(info.width * 0.52)) * info.channels;
+    assert.ok(data[at + 2] > 150 && data[at] < 100, "가운데 아이가 그대로 있다");
+  });
+
+  it("투명한 띠도 흰 테두리로 잡아 고친다 — 화면에선 흰색으로 비친다", async () => {
+    const png = await sharp({ create: { width: 400, height: 300, channels: 4, background: { r: 107, g: 155, b: 103, alpha: 1 } } })
+      .composite([{ input: await sharp({ create: { width: 30, height: 300, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 1 } } }).png().toBuffer(), left: 0, top: 0, blend: "dest-out" }])
+      .png()
+      .toBuffer();
+    const image = { mimeType: "image/png", data: png.toString("base64") };
+    assert.match((await detectBlankCanvasBorder(image)) ?? "", /left/);
+    const repaired = await repairBlankCanvasBorder(image);
+    assert.equal(await detectBlankCanvasBorder(repaired), null);
+  });
+
+  it("여백이 너무 두꺼우면(한 변 20% 넘음) 확대하지 않고 남긴다 — 라우트가 다시 그리게 한다", async () => {
+    const image = await imageWithSvg(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="400" height="300" fill="#6b9b67"/><rect width="100" height="300" fill="white"/></svg>',
+    );
+    const repaired = await repairBlankCanvasBorder(image);
+    assert.equal(repaired.data, image.data, "원본 그대로");
+    assert.ok(await detectBlankCanvasBorder(repaired), "흰 띠가 남았다고 알린다");
   });
 });
 

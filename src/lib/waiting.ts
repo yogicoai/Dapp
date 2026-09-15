@@ -47,6 +47,28 @@ export function usualDrawSec(pageCount: number): number {
   return USUAL_WAIT.sheetsSec + batches * USUAL_WAIT.pageBatchSec;
 }
 
+/**
+ * 그림 그리기 단추 아래 안내 — "그림은 보통 4분쯤 걸려요".
+ *
+ * 예전 문구는 "그림은 1~2분 정도 걸려요"로 박혀 있었는데, 실제는 5쪽에 3~5분이다. 누르기 전에
+ * 짧다고 들으면 2분이 지난 순간부터 멈춘 줄 안다. 기다리는 화면의 '보통' 값과 같은 셈을 쓴다.
+ */
+export function drawNotice(pageCount: number): string {
+  return `그림은 보통 ${formatUsual(usualDrawSec(pageCount))}쯤 걸려요`;
+}
+
+/**
+ * 책장에 넣는 중 한 줄 — "책장에 넣는 중 · 3 / 8 (그림 5장 + 표지·기준 그림 3장)".
+ *
+ * 예전엔 "파일 3 / 8 올리는 중 (표지·시트 포함)"이라, 5쪽 책에 왜 8장이냐는 물음이 나왔다(사장님).
+ * 8 = 쪽 그림 5 + 표지 1(1쪽 그림을 줄인 것 — 새로 그린 게 아니다) + 인물 기준 그림 1 + 장소 기준 그림 1.
+ */
+export function uploadLine(done: number, total: number, pages: number): string {
+  const extra = Math.max(0, total - pages);
+  const parts = extra > 0 ? ` (그림 ${pages}장 + 표지·기준 그림 ${extra}장)` : "";
+  return `책장에 넣는 중 · ${done} / ${total}${parts}`;
+}
+
 /** 이 기다림이 보통 몇 초인가. 그림은 쪽 수에 따라 다르다. */
 export function usualWaitSec(kind: WaitKind, pageCount = 5): number {
   if (kind === "outline") return USUAL_WAIT.outlineSec;

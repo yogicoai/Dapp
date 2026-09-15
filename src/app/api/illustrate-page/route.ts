@@ -558,9 +558,15 @@ export async function POST(request: Request) {
     // 흰 테두리는 재생성하지 않고 로컬 이미지 처리로 잘라내므로 AI 토큰이 들지 않는다.
     const borderIssue = await detectBlankCanvasBorder(image);
     if (borderIssue) image = await repairBlankCanvasBorder(image);
+    /*
+     * 잘라 확대해도 흰 띠가 남았다(여백이 너무 두꺼웠다) — 부모에게 흰 테두리를 보여 주지 않는다.
+     * AI 검수 결과와 상관없이 '떨어짐'으로 돌려줘 부르는 쪽이 다시 그리게 한다. 이 판정은 픽셀 검사라
+     * Gemini 가 막혀 AI 검수를 건너뛴 때(checked=false)에도 믿을 수 있다.
+     */
+    const borderLeft = borderIssue ? await detectBlankCanvasBorder(image) : null;
 
     // 판매용 품질 기준: 이미지 생성보다 훨씬 저렴한 멀티모달 검수는 항상 수행한다.
-    const check = await validateIllustration({
+    const aiCheck = await validateIllustration({
       image,
       reference: sheet,
       styleReference: usedStyleReference,
@@ -575,6 +581,9 @@ export async function POST(request: Request) {
       // 주인공 성별·머리, 벨트, 내린 뒤 장면 — 이 쪽에 주인공이 없으면 주인공 규칙은 빼고 보낸다.
       extraRules: checkRuleLines({ hero: heroOnPage ? hero : null, page: vehicleInfo, storyText }),
     });
+    const check = borderLeft
+      ? { ok: false, checked: true, issues: [borderLeft, aiCheck.ok ? "" : aiCheck.issues].filter(Boolean).join(" ") }
+      : aiCheck;
     /*
      * 글자가 그려진 건 다른 지적과 성격이 다르다.
      *
@@ -598,7 +607,8 @@ export async function POST(request: Request) {
       // 검사를 실제로 했는지 — 부르는 쪽이 '통과'와 '검사 못 함'을 갈라 쓴다.
       qualityChecked: check.checked,
       qualityPassed: check.ok,
-      ...(check.ok ? {} : { qualityWarning: check.issues, qualityIssue: textIssue ? "text" : "other" }),
+      // border — 흰 여백이 남았다. 부르는 쪽이 다시 그린 그림에 흰 여백만 없으면 다른 지적이 있어도 그쪽을 쓴다.
+      ...(check.ok ? {} : { qualityWarning: check.issues, qualityIssue: textIssue ? "text" : borderLeft ? "border" : "other" }),
     });
   } catch (e) {
     if (e instanceof GeminiError) {
