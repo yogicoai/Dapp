@@ -420,6 +420,19 @@ export default function FeedbackPage() {
                       {p.content}
                     </p>
                   )}
+
+                  {/* 관리자가 단 답변 — 관리실에서 적은 글이 여기 그대로 보인다(2026-09-16). */}
+                  {p.reply && !editing && (
+                    <div className="mt-3 rounded-xl bg-white/80 px-3.5 py-3">
+                      <p className="text-[11px] font-extrabold text-neutral-500">
+                        💬 만든 사람 답변
+                        {p.repliedAt ? ` · ${new Date(p.repliedAt).toLocaleDateString("ko-KR")}` : ""}
+                      </p>
+                      <p className="mt-1 whitespace-pre-wrap break-keep text-[14px] font-medium leading-relaxed text-neutral-700">
+                        {p.reply}
+                      </p>
+                    </div>
+                  )}
                 </article>
               );
             })

@@ -53,7 +53,7 @@ import {
   type Gender,
 } from "@/lib/prefs";
 import { migrateBookArt, type MigrateProgress } from "@/lib/migrate-art";
-import { COST_PARENT_VOICE, TOKEN_PRICE_KRW } from "@/lib/tokens";
+import { usePricing } from "@/lib/use-pricing";
 import { useEscClose } from "@/lib/use-esc-close";
 import {
   PRESET_VOICES,
@@ -183,6 +183,8 @@ const GENDERS: { value: Gender; label: string; icon: string }[] = [
  */
 export default function SettingsPage() {
   const router = useRouter();
+  // 부모 목소리 값·1토큰 가격은 관리실 가격표에서 읽는다.
+  const pricing = usePricing();
   const { theme } = useTheme();
   const { accent } = theme.colors;
 
@@ -607,7 +609,7 @@ export default function SettingsPage() {
 
   /**
    * 녹음 → 복제(목소리 만들기). 성공하면 계정에 저장되고 동화에서 그 목소리로 읽을 수 있다.
-   * 만들기 1회 = COST_PARENT_VOICE 토큰(실측 원가 기반, 마스터 면제).
+   * 만들기 1회 = 가격표의 cost_parent_voice 토큰(실측 원가 기반, 마스터 면제).
    * 과금은 '선차감 → 복제 실패 시 환불' — 차감이 서버 잔액 기준이라(다른 탭에서 잔액이
    * 바뀌어도) 무과금 복제가 생기지 않고, 복제가 실패하면 토큰이 돌아온다.
    */
@@ -619,7 +621,7 @@ export default function SettingsPage() {
     if (
       !master &&
       !window.confirm(
-        `${v.label} 목소리를 다시 만들까요?\n\n토큰 ${COST_PARENT_VOICE}개가 나가고, 지금 목소리는 새 목소리로 바뀌어요.`,
+        `${v.label} 목소리를 다시 만들까요?\n\n토큰 ${pricing.cost_parent_voice}개가 나가고, 지금 목소리는 새 목소리로 바뀌어요.`,
       )
     ) {
       return;
@@ -640,15 +642,15 @@ export default function SettingsPage() {
       if (!blob) throw new Error("녹음을 찾지 못했어요. 다시 녹음해 주세요.");
       // 선차감 — 서버 잔액 기준. 부족하면 여기서 끝(복제 호출 자체를 안 한다).
       if (!master) {
-        const res = await spendTokensEntry(COST_PARENT_VOICE, "parent-voice");
+        const res = await spendTokensEntry(pricing.cost_parent_voice, "parent-voice");
         if (!res.ok) {
           throw new Error(
-            `${res.error} 목소리 만들기에는 ${COST_PARENT_VOICE}토큰이 필요해요.`,
+            `${res.error} 목소리 만들기에는 ${pricing.cost_parent_voice}토큰이 필요해요.`,
           );
         }
         entry = res.entry;
         charged = true;
-        setAcctTokens((t) => Math.max(0, t - COST_PARENT_VOICE));
+        setAcctTokens((t) => Math.max(0, t - pricing.cost_parent_voice));
       }
       const role = roleFromLabel(v.label);
       const voiceId = await cloneParentVoice(role, v.label, blob);
@@ -662,8 +664,8 @@ export default function SettingsPage() {
       // 복제 실패 — 선차감했던 토큰을 돌려준다.
       if (charged) {
         // 쓴 그 건만 되돌린다 — 장부 id 로만 환불되므로 반복해서 찍어낼 수 없다.
-        await refundTokens(entry, COST_PARENT_VOICE).catch(() => {});
-        setAcctTokens((t) => t + COST_PARENT_VOICE);
+        await refundTokens(entry, pricing.cost_parent_voice).catch(() => {});
+        setAcctTokens((t) => t + pricing.cost_parent_voice);
       }
       setCloneErr(e instanceof Error ? e.message : "목소리 만들기에 실패했어요.");
     } finally {
@@ -799,7 +801,7 @@ export default function SettingsPage() {
                   ) : (
                     <>
                       <span aria-hidden className="mr-0.5 inline-block rounded-full align-[-0.1em]" style={{ width: 13, height: 13, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
-                      토큰 {acctTokens}개 <span className="text-neutral-400">(1개 ≈ ₩{TOKEN_PRICE_KRW})</span>
+                      토큰 {acctTokens}개 <span className="text-neutral-400">(1개 ≈ ₩{pricing.token_price_krw})</span>
                     </>
                   )}
                 </p>
@@ -1246,7 +1248,7 @@ export default function SettingsPage() {
                           <img src="/icons/func-remake.webp" alt="" aria-hidden className="mr-0.5 inline-block h-4 w-4 object-contain align-[-0.2em]" />
                           {cloningRole === roleFromLabel(v.label)
                             ? "만드는 중…"
-                            : `다시 만들기${master ? "" : ` (${COST_PARENT_VOICE}토큰)`}`}
+                            : `다시 만들기${master ? "" : ` (${pricing.cost_parent_voice}토큰)`}`}
                         </button>
                       </>
                     ) : (
@@ -1258,7 +1260,7 @@ export default function SettingsPage() {
                       >
                         {cloningRole === roleFromLabel(v.label)
                           ? "만드는 중…"
-                          : `🎙️ 목소리 만들기${master ? "" : ` (${COST_PARENT_VOICE}토큰)`}`}
+                          : `🎙️ 목소리 만들기${master ? "" : ` (${pricing.cost_parent_voice}토큰)`}`}
                       </button>
                     )}
                     <button
@@ -1368,9 +1370,9 @@ export default function SettingsPage() {
 
             <p className="break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
               <b>엄마와 아빠를 각각</b> 만들 수 있어요. 녹음한 뒤 <b>🎙️ 목소리 만들기</b>를
-              누르면 그 목소리로 복제돼요(한 명당 {COST_PARENT_VOICE}토큰).
+              누르면 그 목소리로 복제돼요(한 명당 {pricing.cost_parent_voice}토큰).
               그다음 동화에서 <b>엄마·아빠 목소리</b>로 읽는 건 무료예요.
-              수정하려면 기존 목소리를 지우고 다시 만들면 되며, 만들 때마다 {COST_PARENT_VOICE}
+              수정하려면 기존 목소리를 지우고 다시 만들면 되며, 만들 때마다 {pricing.cost_parent_voice}
               토큰이에요. (✕로 지우면 서버에서도 완전히 삭제돼요.)
             </p>
           </section>

@@ -11,7 +11,7 @@ import {
   signInWithGoogle,
   signUp,
 } from "@/lib/auth";
-import { SIGNUP_BONUS_TOKENS } from "@/lib/tokens";
+import { usePricing } from "@/lib/use-pricing";
 
 /**
  * 회원가입 / 로그인 — 베타. 아이디·비밀번호만.
@@ -19,6 +19,8 @@ import { SIGNUP_BONUS_TOKENS } from "@/lib/tokens";
  */
 export default function LoginPage() {
   const router = useRouter();
+  // 가입 지급 토큰은 관리실 가격표에서 읽는다(못 읽으면 지금까지 쓰던 값).
+  const pricing = usePricing();
   const { theme } = useTheme();
   const { accent, accentDark } = theme.colors;
 
@@ -144,7 +146,7 @@ export default function LoginPage() {
 
             {mode === "signup" && (
               <p className="rounded-xl bg-neutral-50 px-3 py-2 text-center text-xs font-bold text-neutral-500">
-                🎁 가입하면 무료 토큰 {SIGNUP_BONUS_TOKENS}개를 드려요
+                🎁 가입하면 무료 토큰 {pricing.signup_bonus_tokens}개를 드려요
               </p>
             )}
 

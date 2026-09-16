@@ -61,12 +61,10 @@ import {
   type DrawCounts,
 } from "@/lib/draw-progress";
 import { rewriteScene, suggestLocationDetail } from "@/lib/scene-edit";
-import {
-  illustrationTokenCost,
-  MAX_BOOKS_PER_USER,
-  scriptTokenCost,
-} from "@/lib/tokens";
+import { illustrationTokenCost, scriptTokenCost } from "@/lib/tokens";
+import { illustrationCost, scriptCost as scriptCostOf } from "@/lib/pricing";
 import { useEscClose } from "@/lib/use-esc-close";
+import { usePricing } from "@/lib/use-pricing";
 import { useScreenWakeLock } from "@/lib/use-wake-lock";
 import { alertIfAway, primeChime } from "@/lib/away-notice";
 import {
@@ -878,6 +876,9 @@ export default function CreatePage() {
   const { theme: ui } = useTheme();
   const { accent, accentDark, accentSoft } = ui.colors;
   const router = useRouter();
+  // 값 안내 숫자(대본 값·그림 값·권수 상한)는 관리실에서 정한 가격표에서 읽는다.
+  // 못 읽으면 지금까지 쓰던 상수 그대로다 — 화면이 비거나 만들기가 막히지 않는다.
+  const pricing = usePricing();
 
   // 로그인 게이트 + 토큰 잔액 + 이미 만든 권수(5권 제한). 로그인 안 했으면 로그인으로.
   const [tokens, setTokens] = useState(0);
@@ -918,7 +919,7 @@ export default function CreatePage() {
     };
   }, [router]);
   // 베타 권수 제한(마스터 제외).
-  const bookLimitReached = !master && bookCount >= MAX_BOOKS_PER_USER;
+  const bookLimitReached = !master && bookCount >= pricing.max_books_per_user;
   /*
    * 갈래를 새로 고르면 결말을 비운다.
    *
@@ -1351,7 +1352,7 @@ export default function CreatePage() {
    * 잔액은 대본 값을 낸 뒤의 것이라, 여기서 다시 본다.
    */
   const shortOnImageTokens =
-    !master && story ? tokens < illustrationTokenCost(story.pages.length) : false;
+    !master && story ? tokens < illustrationCost(story.pages.length, pricing) : false;
   // 쪽별 삽화(data URL). 실패한 쪽은 null → 뷰어가 플레이스홀더를 그린다.
   const [pageImages, setPageImages] = useState<(string | null)[]>([]);
   const [drawn, setDrawn] = useState(0);
@@ -2053,7 +2054,7 @@ export default function CreatePage() {
         setTokens(charge.tokens);
         setStoryRewrites(charge.rewrites);
       } else if (!master && !scriptCharged) {
-        const cost = scriptTokenCost(story.pages.length);
+        const cost = scriptCostOf(story.pages.length, pricing);
         if (!(await spendTokens(cost, "story"))) {
           setError(`토큰이 부족해요. 대본을 만들려면 ${cost}개가 필요해요.`);
           return; // 줄거리 화면에 그대로 남는다 — 대본은 버린다
@@ -2701,7 +2702,7 @@ export default function CreatePage() {
      * 그림 없이 끝내면 더 받을 것이 없다(글 동화 한 권 값을 이미 낸 셈이다).
      */
     const illustrated = images.some(Boolean);
-    const cost = illustrated ? illustrationTokenCost(s.pages.length) : 0;
+    const cost = illustrated ? illustrationCost(s.pages.length, pricing) : 0;
     const progressKey = drawProgressKeyRef.current;
 
     /*
@@ -4340,11 +4341,11 @@ export default function CreatePage() {
                       {outline.scenes.length}장 ·{" "}
                       {master
                         ? "관리자는 토큰이 들지 않아요"
-                        : `지금은 대본 값 ${scriptTokenCost(outline.scenes.length)}개만 나가요 (내 잔액 ${tokens}개). 그림은 대본을 읽어 보고 정해요.`}
+                        : `지금은 대본 값 ${scriptCostOf(outline.scenes.length, pricing)}개만 나가요 (내 잔액 ${tokens}개). 그림은 대본을 읽어 보고 정해요.`}
                     </p>
                     {bookLimitReached ? (
                       <p className="text-center text-xs font-bold text-red-600">
-                        베타에서는 아이디당 최대 {MAX_BOOKS_PER_USER}권까지 만들 수 있어요.
+                        베타에서는 아이디당 최대 {pricing.max_books_per_user}권까지 만들 수 있어요.
                         <br />설정 › 내 동화에서 지우면 다시 만들 수 있어요.
                       </p>
                     ) : shortOnTokens ? (
@@ -4604,7 +4605,7 @@ export default function CreatePage() {
                 {IMAGES_ENABLED &&
                   (shortOnImageTokens && !unsavedPaid ? (
                     <p className="break-keep text-center text-xs font-bold text-red-600">
-                      그림을 그리려면 토큰 {illustrationTokenCost(story.pages.length)}개가 더 필요해요
+                      그림을 그리려면 토큰 {illustrationCost(story.pages.length, pricing)}개가 더 필요해요
                       (내 잔액 {tokens}개).
                       <br />
                       <span className="font-medium text-neutral-500">
@@ -4615,7 +4616,7 @@ export default function CreatePage() {
                     <p className="break-keep text-center text-[11px] font-medium text-neutral-400">
                       {master
                         ? "관리자는 토큰이 들지 않아요"
-                        : `그림을 그리면 토큰 ${illustrationTokenCost(story.pages.length)}개가 더 들어요 (내 잔액 ${tokens}개)`}
+                        : `그림을 그리면 토큰 ${illustrationCost(story.pages.length, pricing)}개가 더 들어요 (내 잔액 ${tokens}개)`}
                       <br />
                       {drawNotice(story.pages.length)} · 그동안 명작·전래동화를 읽고 계셔도 돼요
                     </p>
@@ -4645,7 +4646,7 @@ export default function CreatePage() {
                     if (
                       !master &&
                       !window.confirm(
-                        `지금 이야기를 버리고 재료부터 새로 만들까요?\n이미 낸 이야기 값 ${scriptTokenCost(story.pages.length)}개는 돌려받을 수 없어요.`,
+                        `지금 이야기를 버리고 재료부터 새로 만들까요?\n이미 낸 이야기 값 ${scriptCostOf(story.pages.length, pricing)}개는 돌려받을 수 없어요.`,
                       )
                     ) {
                       return;

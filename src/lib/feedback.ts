@@ -25,17 +25,25 @@ export type FeedbackPost = {
   createdAt: string;
   /** 글쓴이 아이디. 프로필을 함께 못 읽으면 null. */
   username: string | null;
+  /** 관리자가 단 답변 — 있으면 글 아래에 보여 준다(2026-09-16). */
+  reply?: string | null;
+  repliedAt?: string | null;
 };
 
 /** 게시판 글 목록 (최신 먼저). 로그인 회원이면 모두 볼 수 있다. */
 export async function loadFeedback(limit = 50): Promise<FeedbackPost[]> {
   const sb = getSupabase();
   if (!sb) return [];
-  const { data, error } = await sb
-    .from("feedback")
-    .select("id,owner,category,content,created_at")
-    .order("created_at", { ascending: false })
-    .limit(limit);
+  /*
+   * 답변 칸(reply·replied_at)을 함께 읽는다. 아직 SQL 을 안 붙인 DB 면 그 칸이 없어 42703 이 나므로,
+   * 그때는 옛 칸만으로 한 번 더 읽는다 — 배포가 SQL 보다 먼저 나가도 게시판이 비지 않게.
+   */
+  const COLUMNS_NEW = "id,owner,category,content,created_at,reply,replied_at";
+  const COLUMNS_OLD = "id,owner,category,content,created_at";
+  const read = async (columns: string) =>
+    sb.from("feedback").select(columns).order("created_at", { ascending: false }).limit(limit);
+  let { data, error } = (await read(COLUMNS_NEW)) as { data: unknown; error: unknown };
+  if (error) ({ data, error } = (await read(COLUMNS_OLD)) as { data: unknown; error: unknown });
   if (error || !data) return [];
 
   const rows = data as {
@@ -44,6 +52,8 @@ export async function loadFeedback(limit = 50): Promise<FeedbackPost[]> {
     category: string;
     content: string;
     created_at: string;
+    reply?: string | null;
+    replied_at?: string | null;
   }[];
 
   // 글쓴이 아이디를 한 번에 붙인다(글마다 조회하면 느리다). 못 읽으면 이름 없이 보여준다.
@@ -63,6 +73,8 @@ export async function loadFeedback(limit = 50): Promise<FeedbackPost[]> {
     content: r.content,
     createdAt: r.created_at,
     username: nameById.get(r.owner) ?? null,
+    reply: r.reply ?? null,
+    repliedAt: r.replied_at ?? null,
   }));
 }
 
