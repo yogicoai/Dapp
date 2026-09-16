@@ -278,52 +278,6 @@ export function PricingSection({ api, say, clock }: { api: Api; say: (m: string)
           <p className="mt-4 rounded-xl bg-[#ffeff0] px-4 py-3 text-[13px] font-bold text-[#f04452]">{invalid}</p>
         ) : null}
 
-        {canEdit && changes.length > 0 ? (
-          <div className="mt-5 rounded-2xl bg-[#f2f4f6] p-4">
-            <p className="mb-2 text-[13px] font-bold text-[#4e5968]">바뀌는 값 {changes.length}개</p>
-            <ul className="mb-3 flex flex-col gap-1">
-              {changes.map((c) => (
-                <li key={c.key} className="flex items-center justify-between text-[13px] font-medium text-[#6b7684]">
-                  <span>{FIELD_LABEL[c.key]}</span>
-                  <span className="font-bold tabular-nums text-[#191f28]">
-                    {c.from} <span className="text-[#b0b8c1]">→</span> <span className="text-[#3182f6]">{c.to}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-[13px] font-bold text-[#4e5968]">왜 바꾸나요? (필수)</span>
-              <input
-                value={note}
-                onChange={(e) => setNote(e.target.value.slice(0, 200))}
-                placeholder="예: 그림 원가가 올라서"
-                className="rounded-xl border border-[#e5e8eb] bg-white px-3.5 py-2.5 text-sm font-medium text-[#191f28] outline-none placeholder:text-[#c4cad1] focus:border-[#3182f6]"
-              />
-            </label>
-            <p className="mt-2 text-[12px] font-medium leading-relaxed text-[#8b95a1]">
-              지금 만들고 있는 책의 값은 바뀌지 않아요. 대본 값은 이미 받았고, 그림 값은 다음 화면부터예요.
-            </p>
-            <div className="mt-3 flex gap-2">
-              <Button
-                tone="primary"
-                disabled={busy || !!invalid || note.trim().length < 2}
-                onClick={() => setConfirming(true)}
-              >
-                {busy ? "저장하는 중…" : "이 값으로 바꾸기"}
-              </Button>
-              <Button
-                tone="ghost"
-                disabled={busy}
-                onClick={() => {
-                  setDraft(draftOf(current));
-                  setNote("");
-                }}
-              >
-                되돌리기
-              </Button>
-            </div>
-          </div>
-        ) : null}
       </Card>
 
       {/*
@@ -393,6 +347,57 @@ export function PricingSection({ api, say, clock }: { api: Api; say: (m: string)
           </p>
         </div>
       </Card>
+
+      {/*
+        저장 막대 — 두 카드(값 정하기 · 파는 값) 어느 쪽을 고쳐도 눈에 들어오게 아래에 붙여 둔다.
+        예전엔 '값 정하기' 카드 안에만 있어서, 구독 값을 고치면 저장 단추가 화면 위로 밀려 안 보였다.
+      */}
+      {canEdit && changes.length > 0 ? (
+        <div className="sticky bottom-4 z-20 rounded-2xl bg-[#f2f4f6] p-4 shadow-[0_6px_24px_rgba(0,0,0,0.10)]">
+            <p className="mb-2 text-[13px] font-bold text-[#4e5968]">바뀌는 값 {changes.length}개</p>
+            <ul className="mb-3 flex flex-col gap-1">
+              {changes.map((c) => (
+                <li key={c.key} className="flex items-center justify-between text-[13px] font-medium text-[#6b7684]">
+                  <span>{FIELD_LABEL[c.key]}</span>
+                  <span className="font-bold tabular-nums text-[#191f28]">
+                    {c.from} <span className="text-[#b0b8c1]">→</span> <span className="text-[#3182f6]">{c.to}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-[13px] font-bold text-[#4e5968]">왜 바꾸나요? (필수)</span>
+              <input
+                value={note}
+                onChange={(e) => setNote(e.target.value.slice(0, 200))}
+                placeholder="예: 그림 원가가 올라서"
+                className="rounded-xl border border-[#e5e8eb] bg-white px-3.5 py-2.5 text-sm font-medium text-[#191f28] outline-none placeholder:text-[#c4cad1] focus:border-[#3182f6]"
+              />
+            </label>
+            <p className="mt-2 text-[12px] font-medium leading-relaxed text-[#8b95a1]">
+              지금 만들고 있는 책의 값은 바뀌지 않아요. 대본 값은 이미 받았고, 그림 값은 다음 화면부터예요.
+            </p>
+            <div className="mt-3 flex gap-2">
+              <Button
+                tone="primary"
+                disabled={busy || !!invalid || note.trim().length < 2}
+                onClick={() => setConfirming(true)}
+              >
+                {busy ? "저장하는 중…" : "이 값으로 바꾸기"}
+              </Button>
+              <Button
+                tone="ghost"
+                disabled={busy}
+                onClick={() => {
+                  setDraft(draftOf(current));
+                  setNote("");
+                }}
+              >
+                되돌리기
+              </Button>
+            </div>
+          </div>
+        ) : null}
 
       <Card>
         <CardTitle hint={state?.log.length ? `${state.log.length}건` : "아직 없어요"}>바꾼 이력</CardTitle>
