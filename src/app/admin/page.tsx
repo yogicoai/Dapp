@@ -33,6 +33,7 @@ import { authedFetch } from "@/lib/supabase";
 import { useEscClose } from "@/lib/use-esc-close";
 import { FeedbackSection } from "@/components/admin/FeedbackSection";
 import { PricingSection } from "@/components/admin/PricingSection";
+import type { CustomersResponse } from "@/app/api/admin/customers/route";
 
 /**
  * 보이스 동화 관리실 — 마스터(yogico·fe)가 "토큰은 나갔는데 책이 없어요" 컴플레인을 처리하는 곳.
@@ -122,6 +123,8 @@ export default function AdminPage() {
   const [gate, setGate] = useState<"checking" | "ok">("checking");
   const [me, setMe] = useState("");
   const [tab, setTab] = useState<Section>("home");
+  // 한 번이라도 연 화면 — 그 뒤로는 감추기만 해서 쓰던 내용이 살아 있게 한다.
+  const [seen, setSeen] = useState<ReadonlySet<Section>>(new Set<Section>(["home"]));
   // 사이드바 배지 — 의견 화면이 읽어 알려 준다.
   const [openFeedback, setOpenFeedback] = useState<number | null>(null);
 
@@ -136,6 +139,9 @@ export default function AdminPage() {
   const [detailError, setDetailError] = useState<string | null>(null);
 
   const [query, setQuery] = useState("");
+  // 가입한 회원 목록 — 고객 화면에 들어가면 아이디를 몰라도 다 보인다(베타 테스터 관리).
+  const [people, setPeople] = useState<CustomersResponse | null>(null);
+  const [peopleError, setPeopleError] = useState<string | null>(null);
   const [customer, setCustomer] = useState<CustomerResponse | null>(null);
   const [custError, setCustError] = useState<string | null>(null);
   const [custLoading, setCustLoading] = useState(false);
@@ -223,11 +229,16 @@ export default function AdminPage() {
       setMe(s.profile?.username ?? "");
       setGate("ok");
       void loadIncidents(false);
+      // 남은 의견 수 — 왼쪽 메뉴 배지에 바로 뜨게 첫 화면에서 한 번 센다.
+      // (의견 화면을 한 번 열어야만 숫자가 생기던 것을 고침)
+      void api<{ openCount: number }>("/api/admin/feedback?open=1").then((r) => {
+        if (r.ok) setOpenFeedback(r.data.openCount);
+      });
     });
     return () => {
       alive = false;
     };
-  }, [router, loadIncidents]);
+  }, [router, loadIncidents, api]);
 
   const loadDetail = useCallback(
     async (o: Open) => {
@@ -262,6 +273,14 @@ export default function AdminPage() {
     lastRow.current?.focus();
   }, []);
   useEscClose(closePanel, !!open && !dialog);
+
+  const loadPeople = useCallback(async () => {
+    const r = await api<CustomersResponse>("/api/admin/customers");
+    if (r.ok) {
+      setPeople(r.data);
+      setPeopleError(null);
+    } else setPeopleError(r.error);
+  }, [api]);
 
   const loadCustomer = useCallback(
     async (name: string) => {
@@ -306,6 +325,12 @@ export default function AdminPage() {
   );
   const now = clock;
 
+  // 고객 화면에 들어가면 회원 목록을 한 번 읽는다(훅은 조건부 return 앞에 둔다).
+  useEffect(() => {
+    if (tab !== "cust" || people || peopleError) return;
+    void Promise.resolve().then(loadPeople);
+  }, [tab, people, peopleError, loadPeople]);
+
   if (gate !== "ok") {
     return (
       <main className="flex min-h-dvh items-center justify-center bg-[#f2f4f6] px-4 text-sm font-bold text-[#8b95a1]">
@@ -323,13 +348,14 @@ export default function AdminPage() {
         {/* 왼쪽 메뉴 — 폰에서는 아래 가로줄로 내려간다 */}
         <nav
           aria-label="관리 메뉴"
-          className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-[#e5e8eb] bg-white px-2 py-1.5 sm:static sm:z-auto sm:w-[200px] sm:shrink-0 sm:flex-col sm:justify-start sm:gap-1 sm:border-0 sm:bg-transparent sm:px-0 sm:py-8"
+          className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-[#e5e8eb] bg-white px-2 py-1.5 sm:static sm:z-auto sm:my-8 sm:h-fit sm:w-[208px] sm:shrink-0 sm:flex-col sm:justify-start sm:gap-1 sm:rounded-2xl sm:border-0 sm:p-3"
         >
-          <div className="hidden px-3 pb-5 sm:block">
+          <div className="hidden px-2 pb-3 sm:block">
             <Link href="/settings" className="text-[12px] font-bold text-[#b0b8c1] hover:text-[#6b7684]">
               ← 설정으로
             </Link>
-            <h1 className="mt-2 text-[19px] font-bold tracking-tight text-[#191f28]">관리실</h1>
+            {/* 문서의 h1 은 내용 쪽 제목이다 — 폭에 따라 사라지는 자리에 h1 을 두지 않는다. */}
+            <p className="mt-2 text-[19px] font-bold tracking-tight text-[#191f28]">관리실</p>
             <p className="mt-0.5 text-[12px] font-medium text-[#8b95a1]">{me || inc?.me || "…"} 님</p>
           </div>
           {MENU.map((m) => {
@@ -340,12 +366,15 @@ export default function AdminPage() {
                 key={m.key}
                 type="button"
                 aria-current={on ? "page" : undefined}
-                onClick={() => setTab(m.key)}
+                onClick={() => {
+                  setTab(m.key);
+                  setSeen((prev) => (prev.has(m.key) ? prev : new Set(prev).add(m.key)));
+                }}
                 className={`flex flex-1 flex-col items-center gap-0.5 rounded-xl px-2 py-1.5 text-[11px] font-bold transition sm:w-full sm:flex-none sm:flex-row sm:gap-2.5 sm:px-3 sm:py-2.5 sm:text-[15px] ${
-                  on ? "bg-[#e8f3ff] text-[#1b64da] sm:bg-white sm:text-[#191f28]" : "text-[#8b95a1] sm:hover:bg-white/70"
+                  on ? "bg-[#e8f3ff] text-[#1b64da]" : "text-[#4e5968] hover:bg-[#f2f4f6]"
                 }`}
               >
-                <span aria-hidden className={`text-[15px] ${on ? "text-[#3182f6]" : "text-[#b0b8c1]"}`}>
+                <span aria-hidden className={`text-[15px] ${on ? "text-[#3182f6]" : "text-[#8b95a1]"}`}>
                   {m.icon}
                 </span>
                 <span>{m.label}</span>
@@ -402,48 +431,65 @@ export default function AdminPage() {
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => setTab("inc")}
+                    onClick={() => {
+                      setTab("inc");
+                      setSeen((prev) => (prev.has("inc") ? prev : new Set(prev).add("inc")));
+                    }}
                     className="rounded-xl bg-[#3182f6] px-4 py-2.5 text-sm font-bold text-white"
                   >
                     사고 보기
                   </button>
                   <button
                     type="button"
-                    onClick={() => setTab("voice")}
+                    onClick={() => {
+                      setTab("voice");
+                      setSeen((prev) => (prev.has("voice") ? prev : new Set(prev).add("voice")));
+                    }}
                     className="rounded-xl bg-[#f2f4f6] px-4 py-2.5 text-sm font-bold text-[#4e5968]"
                   >
                     의견 보기{openFeedback ? ` (${openFeedback})` : ""}
                   </button>
                 </div>
               </div>
-              <div className="rounded-2xl bg-white p-5">
-                <p className="text-[15px] font-bold text-[#191f28]">이 화면에 fe 계정 기록은 안 보여요</p>
-                <p className="mt-1 text-[13px] font-medium leading-relaxed text-[#8b95a1]">
-                  fe 는 사장님 개인 개발 계정이라, 회사 계정(yogico)의 관리실에서는 숨겨져 있어요.
-                  fe 로 로그인하면 fe 기록이 보여요. 위 숫자에도 fe 것은 빠져 있어요.
-                </p>
-              </div>
+              {/*
+                계정 구성(누가 마스터이고 누구 기록이 가려지는지)은 화면에 적지 않는다.
+                이 관리실은 회사 계정으로도 열리는 곳이라, 내부 사정이 그대로 드러나면 안 된다
+                (2026-09-16 사장님 지시). 격리는 DB(master_can_see)가 조용히 한다.
+              */}
             </div>
           )}
 
-          {tab === "price" && <PricingSection api={api} say={say} clock={now} />}
+          {/*
+            한 번 연 화면은 **감추기만** 한다(언마운트하지 않는다).
+            예전엔 메뉴를 옮기면 통째로 사라져서, 의견에 답을 길게 쓰다가 글쓴이를 눌러 고객을 확인하고
+            돌아오면 쓰던 답변이 없어졌다. 가격 화면도 고치던 값이 초기화됐다.
+            처음 열기 전에는 아예 만들지 않는다 — 안 쓰는 화면이 서버를 부르지 않게.
+          */}
+          {seen.has("price") && (
+            <div hidden={tab !== "price"}>
+              <PricingSection api={api} say={say} clock={now} />
+            </div>
+          )}
 
-          {tab === "voice" && (
-            <FeedbackSection
-              api={api}
-              say={say}
-              clock={now}
-              onCount={setOpenFeedback}
-              onOpenCustomer={(username) => {
-                setTab("cust");
-                setQuery(username);
-                void loadCustomer(username);
-              }}
-            />
+          {seen.has("voice") && (
+            <div hidden={tab !== "voice"}>
+              <FeedbackSection
+                api={api}
+                say={say}
+                clock={now}
+                onCount={setOpenFeedback}
+                onOpenCustomer={(username) => {
+                  setTab("cust");
+                  setSeen((prev) => (prev.has("cust") ? prev : new Set(prev).add("cust")));
+                  setQuery(username);
+                  void loadCustomer(username);
+                }}
+              />
+            </div>
           )}
 
           {tab === "inc" ? (
-          <section role="tabpanel" aria-label="사고 목록">
+          <section aria-label="사고 목록">
             <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2.5 pt-3.5">
               <div className="flex flex-wrap gap-1.5" aria-label="사고 종류로 거르기">
                 {[{ kind: "", count: rows.length }, ...chips].map((c) => {
@@ -545,10 +591,78 @@ export default function AdminPage() {
               {custError && (
                 <div className="rounded-2xl bg-white p-5 text-sm font-medium text-[#6b7684]">{custError}</div>
               )}
-              {!customer && !custError && (
-                <div className="rounded-2xl bg-white p-5 text-[13px] font-medium leading-relaxed text-[#8b95a1]">
-                  고객 아이디로 찾으면 잔액·책 수·만들기 기록이 한 번에 보여요. 토큰 충전도 여기서 해요.
-                </div>
+              {/* 가입한 회원 — 아이디를 몰라도 여기서 고른다. 누르면 그 사람 기록이 열린다. */}
+              {!customer && (
+                <section aria-label="가입한 회원" className="overflow-hidden rounded-2xl bg-white">
+                  <header className="flex items-center justify-between px-5 py-3.5">
+                    <h3 className="text-[15px] font-bold text-[#191f28]">
+                      가입한 회원
+                      {people ? <span className="ml-1.5 text-[13px] font-bold text-[#8b95a1]">{people.total}명</span> : null}
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => void loadPeople()}
+                      className="text-[13px] font-bold text-[#8b95a1] hover:text-[#4e5968]"
+                    >
+                      새로 읽기
+                    </button>
+                  </header>
+                  {peopleError ? (
+                    <p className="px-5 pb-5 text-[13px] font-bold text-[#f04452]">{peopleError}</p>
+                  ) : !people ? (
+                    <p className="px-5 pb-6 text-[13px] font-medium text-[#b0b8c1]">회원을 읽는 중…</p>
+                  ) : people.customers.length === 0 ? (
+                    <p className="px-5 pb-6 text-[13px] font-medium text-[#8b95a1]">아직 가입한 회원이 없어요.</p>
+                  ) : (
+                    <ul>
+                      {people.customers.map((p) => (
+                        <li key={p.id}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setQuery(p.username);
+                              void loadCustomer(p.username);
+                            }}
+                            className="flex w-full items-center gap-3 border-t border-[#f2f4f6] px-5 py-3.5 text-left transition hover:bg-[#f9fafb]"
+                          >
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-[15px] font-bold text-[#191f28]">{p.username}</span>
+                              <span className="text-[12px] font-medium text-[#8b95a1]">
+                                {p.createdAt ? `${formatDateKo(p.createdAt)} 가입` : "가입일 모름"}
+                              </span>
+                            </span>
+                            {p.openFeedback > 0 && (
+                              <span className="rounded-full bg-[#fff4e0] px-2 py-0.5 text-[11px] font-bold text-[#c77700]">
+                                의견 {p.openFeedback}
+                              </span>
+                            )}
+                            <span className="shrink-0 text-right">
+                              <span className="block text-[13px] font-bold tabular-nums text-[#4e5968]">
+                                {p.books}권
+                              </span>
+                              <span className="text-[12px] font-medium tabular-nums text-[#8b95a1]">
+                                {p.tokens}토큰
+                              </span>
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              )}
+              {customer && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCustomer(null);
+                    setCustError(null);
+                    setQuery("");
+                  }}
+                  className="self-start text-[13px] font-bold text-[#8b95a1] hover:text-[#4e5968]"
+                >
+                  ← 회원 목록으로
+                </button>
               )}
               {customer && (
                 <CustomerView
@@ -603,7 +717,8 @@ export default function AdminPage() {
       <div
         role="status"
         aria-live="polite"
-        className={`pointer-events-none fixed bottom-6 left-1/2 z-[60] max-w-[calc(100%-32px)] -translate-x-1/2 rounded-xl bg-[#191f28] px-4 py-2.5 text-sm font-bold text-white transition-opacity ${
+        // 폰에서는 아래 가로 메뉴(약 58px) 위로 띄운다 — 안 그러면 알림이 메뉴 글자를 덮는다.
+        className={`pointer-events-none fixed bottom-20 left-1/2 z-[60] max-w-[calc(100%-32px)] -translate-x-1/2 rounded-xl bg-[#191f28] px-4 py-2.5 text-sm font-bold text-white transition-opacity sm:bottom-6 ${
           toast ? "opacity-100" : "opacity-0"
         }`}
       >

@@ -29,6 +29,14 @@ export type Pricing = {
   max_books_per_user: number;
   feedback_bonus_tokens: number;
   max_free_rewrites: number;
+  /** 파는 값 — 정해 두는 금액이다. 실제 결제(PG)는 아직 안 붙었다. */
+  single_book_krw: number;
+  sub_weekly_krw: number;
+  sub_weekly_tokens: number;
+  sub_monthly_krw: number;
+  sub_monthly_tokens: number;
+  sub_yearly_krw: number;
+  sub_yearly_tokens: number;
   updated_at?: string | null;
 };
 
@@ -42,9 +50,19 @@ export const DEFAULT_PRICING: Pricing = {
   max_books_per_user: MAX_BOOKS_PER_USER,
   feedback_bonus_tokens: 100,
   max_free_rewrites: 2,
+  single_book_krw: 1500,
+  sub_weekly_krw: 2900,
+  sub_weekly_tokens: 30,
+  sub_monthly_krw: 9900,
+  sub_monthly_tokens: 120,
+  sub_yearly_krw: 99000,
+  sub_yearly_tokens: 1440,
 };
 
 export const PRICING_COLUMNS =
+  "token_price_krw,signup_bonus_tokens,cost_text_per_page,cost_illustrated_per_page,cost_parent_voice,max_books_per_user,feedback_bonus_tokens,max_free_rewrites,single_book_krw,sub_weekly_krw,sub_weekly_tokens,sub_monthly_krw,sub_monthly_tokens,sub_yearly_krw,sub_yearly_tokens,updated_at";
+/** 옛 DB(구독 칸이 없는)에서 다시 읽을 때 쓰는 칸 목록 — 없는 칸을 적으면 42703 이 난다. */
+export const PRICING_COLUMNS_BASE =
   "token_price_krw,signup_bonus_tokens,cost_text_per_page,cost_illustrated_per_page,cost_parent_voice,max_books_per_user,feedback_bonus_tokens,max_free_rewrites,updated_at";
 
 /** 관리실 화면에서 쓰는 칸 설명 — 이름·단위·무슨 뜻인지 한 줄. */
@@ -57,13 +75,27 @@ export const PRICING_FIELDS = [
   { key: "max_books_per_user", label: "권수 상한", unit: "권", help: "한 계정이 만들 수 있는 동화 수예요." },
 ] as const;
 
+/** 파는 값 — 구독과 단권. 결제가 붙기 전이라 '정해 두는 금액'이다. */
+export const PRICING_FIELDS_SALES = [
+  { key: "single_book_krw", label: "동화 한 권", unit: "원", help: "구독 없이 한 권만 살 때 받는 값이에요." },
+  { key: "sub_weekly_krw", label: "주 구독", unit: "원 / 주", help: "일주일 이용권 값이에요." },
+  { key: "sub_weekly_tokens", label: "주 구독 토큰", unit: "토큰", help: "주 구독을 하면 드리는 토큰이에요." },
+  { key: "sub_monthly_krw", label: "월 구독", unit: "원 / 달", help: "한 달 이용권 값이에요." },
+  { key: "sub_monthly_tokens", label: "월 구독 토큰", unit: "토큰", help: "월 구독을 하면 매달 드리는 토큰이에요." },
+  { key: "sub_yearly_krw", label: "연 구독", unit: "원 / 해", help: "1년 이용권 값이에요. 월 구독 12달치보다 싸야 해요." },
+  { key: "sub_yearly_tokens", label: "연 구독 토큰", unit: "토큰", help: "연 구독을 하면 드리는 토큰이에요." },
+] as const;
+
 /** 고급 — 자주 만지지 않는 값. 화면에서는 접어 둔다. */
 export const PRICING_FIELDS_ADVANCED = [
   { key: "feedback_bonus_tokens", label: "의견 첫 글 보상", unit: "토큰", help: "게시판에 처음 글을 남기면 드리는 토큰이에요." },
   { key: "max_free_rewrites", label: "무료 다시쓰기", unit: "회", help: "같은 줄거리로 대본을 공짜로 다시 쓸 수 있는 횟수예요." },
 ] as const;
 
-export type PricingField = (typeof PRICING_FIELDS)[number]["key"] | (typeof PRICING_FIELDS_ADVANCED)[number]["key"];
+export type PricingField =
+  | (typeof PRICING_FIELDS)[number]["key"]
+  | (typeof PRICING_FIELDS_SALES)[number]["key"]
+  | (typeof PRICING_FIELDS_ADVANCED)[number]["key"];
 
 /** 받은 값에서 숫자 칸만 추려 온전한 가격표로 만든다(모르는 칸·빈 칸은 기본값). */
 export function asPricing(raw: unknown): Pricing {
@@ -81,6 +113,13 @@ export function asPricing(raw: unknown): Pricing {
     max_books_per_user: num("max_books_per_user", DEFAULT_PRICING.max_books_per_user),
     feedback_bonus_tokens: num("feedback_bonus_tokens", DEFAULT_PRICING.feedback_bonus_tokens),
     max_free_rewrites: num("max_free_rewrites", DEFAULT_PRICING.max_free_rewrites),
+    single_book_krw: num("single_book_krw", DEFAULT_PRICING.single_book_krw),
+    sub_weekly_krw: num("sub_weekly_krw", DEFAULT_PRICING.sub_weekly_krw),
+    sub_weekly_tokens: num("sub_weekly_tokens", DEFAULT_PRICING.sub_weekly_tokens),
+    sub_monthly_krw: num("sub_monthly_krw", DEFAULT_PRICING.sub_monthly_krw),
+    sub_monthly_tokens: num("sub_monthly_tokens", DEFAULT_PRICING.sub_monthly_tokens),
+    sub_yearly_krw: num("sub_yearly_krw", DEFAULT_PRICING.sub_yearly_krw),
+    sub_yearly_tokens: num("sub_yearly_tokens", DEFAULT_PRICING.sub_yearly_tokens),
     updated_at: typeof row.updated_at === "string" ? row.updated_at : null,
   };
 }
@@ -127,8 +166,12 @@ export async function loadPricing(): Promise<Pricing> {
   if (!sb) return DEFAULT_PRICING;
   inFlight = (async () => {
     try {
-      const { data, error } = await sb.from("app_pricing").select(PRICING_COLUMNS).eq("id", 1).maybeSingle();
-      // 표가 아직 없는 DB(42P01)·칸 권한 오류(42703)여도 만들기를 막지 않는다 — 기본값으로 간다.
+      let { data, error } = await sb.from("app_pricing").select(PRICING_COLUMNS).eq("id", 1).maybeSingle();
+      // 구독 칸이 없는 옛 DB 면 한 번 더 — 그 칸만 빼고 읽는다(42703).
+      if (error) {
+        ({ data, error } = await sb.from("app_pricing").select(PRICING_COLUMNS_BASE).eq("id", 1).maybeSingle());
+      }
+      // 표가 아직 없는 DB(42P01)여도 만들기를 막지 않는다 — 기본값으로 간다.
       if (error || !data) return DEFAULT_PRICING;
       cached = asPricing(data);
       return cached;

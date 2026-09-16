@@ -7,7 +7,7 @@
  * 처리 끝으로 표시하면 '남은 의견'에서 빠진다 — 사고 목록과 같은 방식이다.
  * 다른 마스터(fe)가 남긴 글은 애초에 목록에 오지 않는다(DB 가 거른다).
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { AdminFeedbackResponse, AdminFeedbackRow } from "@/app/api/admin/feedback/route";
 import { Button, Card, Chip, Empty, when } from "./ui";
 
@@ -43,11 +43,19 @@ export function FeedbackSection({
   const [reply, setReply] = useState("");
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
+  /** 남은 의견 수 — 사이드바 배지와 칩이 같은 수를 말하게 한 곳에 둔다. */
+  const [openCount, setOpenCount] = useState<number | null>(null);
+  /** 늦게 온 옛 응답을 버리는 번호 — 사고·고객 목록(page.tsx)이 쓰는 것과 같은 방식이다. */
+  const seqRef = useRef(0);
 
   const load = useCallback(
     async (open: boolean) => {
+      const seq = ++seqRef.current;
       setLoading(true);
       const r = await api<AdminFeedbackResponse>(`/api/admin/feedback${open ? "?open=1" : ""}`);
+      // '남은 의견'과 '전체'를 연달아 누르면 두 요청이 겹친다. 먼저 보낸 것이 늦게 오면
+      // 칩은 '전체'인데 목록만 남은 것이 보이는 어긋남이 생기므로, 마지막 요청 것만 화면에 넣는다.
+      if (seq !== seqRef.current) return;
       setLoading(false);
       if (!r.ok) {
         setError(r.error);
@@ -55,7 +63,18 @@ export function FeedbackSection({
       }
       setError(null);
       setData(r.data);
-      if (open) onCount?.(r.data.openCount);
+      if (open) {
+        setOpenCount(r.data.openCount);
+        onCount?.(r.data.openCount);
+        return;
+      }
+      // '전체' 응답의 openCount 는 서버의 200건 상한에 걸려 못 믿는다 — 남은 수는 따로 센다.
+      // 이게 없으면 '전체' 로 두고 글을 처리했을 때 배지가 옛 숫자에 멈춘다.
+      void api<AdminFeedbackResponse>("/api/admin/feedback?open=1").then((x) => {
+        if (seq !== seqRef.current || !x.ok) return;
+        setOpenCount(x.data.openCount);
+        onCount?.(x.data.openCount);
+      });
     },
     [api, onCount],
   );
@@ -85,23 +104,30 @@ export function FeedbackSection({
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
         <Chip tone="gray" pressed={onlyOpen} onClick={() => setOnlyOpen(true)}>
-          남은 의견 {data ? data.openCount : ""}
+          남은 의견 {openCount ?? ""}
         </Chip>
         <Chip tone="gray" pressed={!onlyOpen} onClick={() => setOnlyOpen(false)}>
           전체
         </Chip>
+        {/* 못 읽었을 때 '0건' 은 "오늘은 의견이 없구나" 로 읽히므로 아무 말도 하지 않는다. */}
         <span className="ml-auto text-[13px] font-medium text-[#8b95a1]">
-          {loading ? "불러오는 중…" : `${posts.length}건`}
+          {loading ? "불러오는 중…" : error ? "" : `${posts.length}건`}
         </span>
       </div>
 
       {error ? (
         <Card className="bg-[#ffeff0]">
           <p className="text-sm font-bold text-[#f04452]">{error}</p>
+          <div className="mt-3">
+            <Button tone="secondary" size="sm" disabled={loading} onClick={() => void load(onlyOpen)}>
+              {loading ? "읽는 중…" : "다시 읽기"}
+            </Button>
+          </div>
         </Card>
       ) : null}
 
-      {posts.length === 0 && !loading ? (
+      {/* 빈 화면 문구는 '정말 없다'는 뜻이라, 못 읽었을 때(error)와 아직 못 받았을 때(data 없음)는 띄우지 않는다. */}
+      {!error && data && posts.length === 0 && !loading ? (
         <Empty>{onlyOpen ? "처리할 의견이 없어요 👏" : "아직 남긴 의견이 없어요"}</Empty>
       ) : null}
 

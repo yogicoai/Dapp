@@ -19,16 +19,19 @@ import {
   illustrationCost,
   PRICING_FIELDS,
   PRICING_FIELDS_ADVANCED,
+  PRICING_FIELDS_SALES,
   scriptCost,
   tokensToWon,
   type Pricing,
 } from "@/lib/pricing";
+import { useEscClose } from "@/lib/use-esc-close";
 import { Button, Card, CardTitle, Chip, NumberField, when } from "./ui";
 
 type ApiResult<T> = { ok: true; data: T } | { ok: false; status: number; error: string };
 type Api = <T>(path: string, body?: unknown) => Promise<ApiResult<T>>;
 
-const ALL_FIELDS = [...PRICING_FIELDS, ...PRICING_FIELDS_ADVANCED] as const;
+// 파는 값도 여기 넣어야 draft·changes·저장·이력이 한꺼번에 따라온다 — 빠뜨리면 화면에서 고쳐도 저장되지 않는다.
+const ALL_FIELDS = [...PRICING_FIELDS, ...PRICING_FIELDS_SALES, ...PRICING_FIELDS_ADVANCED] as const;
 type FieldKey = (typeof ALL_FIELDS)[number]["key"];
 
 const FIELD_LABEL: Record<string, string> = Object.fromEntries(ALL_FIELDS.map((f) => [f.key, f.label]));
@@ -43,6 +46,11 @@ function draftOf(p: Pricing): Draft {
 /** 5쪽 한 권이 얼마인지 — 가격을 바꿀 때 가장 먼저 보고 싶은 값. */
 const SAMPLE_PAGES = 5;
 
+/** '6.6권치'처럼 — 딱 떨어지면 소수점은 안 보여 준다. */
+function oneDp(n: number): string {
+  return Number.isInteger(n) ? String(n) : n.toFixed(1);
+}
+
 export function PricingSection({ api, say, clock }: { api: Api; say: (m: string) => void; clock: number }) {
   const [state, setState] = useState<PricingResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -51,9 +59,13 @@ export function PricingSection({ api, say, clock }: { api: Api; say: (m: string)
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  // 값이 아직 안 왔는지 알아야 한다 — 모르는 동안 기본 상수를 '지금 값'처럼 보여 주면 안 되기 때문이다.
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
+    setLoading(true);
     const r = await api<PricingResponse>("/api/admin/pricing");
+    setLoading(false);
     if (!r.ok) {
       setError(r.error);
       return;
@@ -67,6 +79,10 @@ export function PricingSection({ api, say, clock }: { api: Api; say: (m: string)
     // 마이크로태스크로 미룬다 — 효과 본문에서 곧바로 setState 하면 렌더가 한 번 더 돈다.
     void Promise.resolve().then(load);
   }, [load]);
+
+  // 확인창은 관리실의 다른 확인창(환불·되살리기)과 같게 — Esc 로 닫힌다.
+  // enabled 에 confirming 을 같이 넣어 창이 닫힌 뒤에는 키 듣는 일이 남지 않게 한다. 저장 중에는 안 닫는다.
+  useEscClose(() => setConfirming(false), confirming && !busy);
 
   const current = state?.pricing ?? DEFAULT_PRICING;
   const canEdit = state?.canEdit ?? false;
@@ -88,6 +104,10 @@ export function PricingSection({ api, say, clock }: { api: Api; say: (m: string)
     for (const c of changes) next[c.key] = c.to;
     return next;
   }, [current, changes]);
+
+  /** 연 구독이 월 구독 12달치보다 몇 달치 싼지 — 0 이하면 이득이 없다는 뜻이라 문구를 바꾼다. */
+  const yearlyGainMonths =
+    preview.sub_monthly_krw > 0 ? (preview.sub_monthly_krw * 12 - preview.sub_yearly_krw) / preview.sub_monthly_krw : 0;
 
   const save = async () => {
     if (changes.length === 0) return;
@@ -115,6 +135,45 @@ export function PricingSection({ api, say, clock }: { api: Api; say: (m: string)
       : preview.cost_text_per_page * 20 > 1000 || preview.cost_illustrated_per_page * 20 > 1000
         ? "20쪽짜리가 1000토큰을 넘으면 결제가 막혀요. 값을 낮춰 주세요."
         : null;
+
+  // 아직 못 읽었으면 숫자를 아예 그리지 않는다.
+  // 기본 상수를 그려 두면 사장님이 "값이 언제 10으로 돌아갔지" 하고 잘못 읽는다 — 관리실에서는 그것만으로 사고다.
+  if (!state) {
+    return (
+      <div className="flex flex-col gap-4">
+        {error ? (
+          <Card className="bg-[#ffeff0]">
+            <p className="text-sm font-bold text-[#f04452]">{error}</p>
+            <p className="mt-1 text-[13px] font-medium text-[#f04452]">
+              지금 값을 읽지 못해서, 숫자는 보여 드리지 않았어요.
+            </p>
+            <div className="mt-3">
+              <Button tone="secondary" size="sm" disabled={loading} onClick={() => void load()}>
+                {loading ? "읽는 중…" : "다시 읽기"}
+              </Button>
+            </div>
+          </Card>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3" aria-hidden>
+              {[0, 1, 2].map((i) => (
+                <Card key={i} className="flex flex-col gap-2">
+                  <span className="h-3 w-24 rounded bg-[#f2f4f6]" />
+                  <span className="h-7 w-20 rounded bg-[#f2f4f6]" />
+                  <span className="h-3 w-16 rounded bg-[#f2f4f6]" />
+                </Card>
+              ))}
+            </div>
+            <Card>
+              <p role="status" className="text-[13px] font-medium text-[#8b95a1]">
+                가격을 읽는 중…
+              </p>
+            </Card>
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -166,13 +225,13 @@ export function PricingSection({ api, say, clock }: { api: Api; say: (m: string)
       </div>
 
       <Card>
-        <CardTitle hint={state ? (canEdit ? "바꾸면 다음 만들기부터 적용돼요" : `${state.me} 계정은 보기만 돼요`) : ""}>
+        <CardTitle hint={state ? (canEdit ? "바꾸면 다음 만들기부터 적용돼요" : "이 계정은 보기만 돼요") : ""}>
           값 정하기
         </CardTitle>
 
         {!canEdit ? (
           <p className="mb-4 rounded-xl bg-[#f2f4f6] px-4 py-3 text-[13px] font-bold text-[#6b7684]">
-            가격은 회사 계정(yogico)에서만 바꿀 수 있어요. 지금 값은 그대로 보실 수 있어요.
+            이 계정에서는 값을 바꿀 수 없어요. 지금 값은 그대로 보실 수 있어요.
           </p>
         ) : null}
 
@@ -267,6 +326,74 @@ export function PricingSection({ api, say, clock }: { api: Api; say: (m: string)
         ) : null}
       </Card>
 
+      {/*
+        파는 값 — 구독(주·월·연)과 단권. 아직 결제(PG)가 붙지 않아 '정해 두는 금액'이다.
+        숫자만 늘어놓으면 표가 맞는지 모르므로, 한 권 값 대비 몇 권치인지 바로 옆에서 환산해 보여 준다.
+      */}
+      <Card>
+        <CardTitle hint="결제 붙이기 전, 금액만 정해 두는 곳이에요">파는 값 · 구독</CardTitle>
+        <p className="mb-4 rounded-xl bg-[#f2f4f6] px-4 py-3 text-[13px] font-medium leading-relaxed text-[#6b7684]">
+          아직 결제가 붙어 있지 않아서 여기서 정한 금액으로 실제 돈이 오가지는 않아요. 먼저 정해 두면 결제를
+          붙일 때 이 값이 그대로 쓰여요.
+        </p>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {PRICING_FIELDS_SALES.map((f) => (
+            <NumberField
+              key={f.key}
+              label={f.label}
+              unit={f.unit}
+              help={f.help}
+              value={draft[f.key]}
+              original={current[f.key]}
+              disabled={!canEdit || busy}
+              onChange={(v) => setDraft((d) => ({ ...d, [f.key]: v }))}
+            />
+          ))}
+        </div>
+
+        {/* 표가 맞는지 한눈에 — 구독이 단권보다, 긴 구독이 짧은 구독보다 이득이어야 한다. */}
+        <div className="mt-4 grid grid-cols-1 gap-2 rounded-2xl bg-[#f9fafb] p-4 sm:grid-cols-3">
+          <p className="text-[13px] font-medium text-[#6b7684]">
+            한 권 사면 <b className="font-bold text-[#191f28]">{formatWon(preview.single_book_krw)}</b>
+          </p>
+          <p className="text-[13px] font-medium text-[#6b7684]">
+            월 구독이면{" "}
+            <b className="font-bold text-[#191f28]">
+              {Math.floor(preview.sub_monthly_tokens / Math.max(1, bookCost(SAMPLE_PAGES, preview)))}권치
+            </b>{" "}
+            · 한 권당{" "}
+            <b className="font-bold text-[#3182f6]">
+              {formatWon(
+                Math.round(
+                  preview.sub_monthly_krw /
+                    Math.max(1, Math.floor(preview.sub_monthly_tokens / Math.max(1, bookCost(SAMPLE_PAGES, preview)))),
+                ),
+              )}
+            </b>
+          </p>
+          <p className="text-[13px] font-medium text-[#6b7684]">
+            연 구독은 월 구독{" "}
+            <b className="font-bold text-[#191f28]">
+              {preview.sub_monthly_krw > 0
+                ? (preview.sub_yearly_krw / preview.sub_monthly_krw).toFixed(1)
+                : "–"}
+              달치
+            </b>{" "}
+            {/* '10.0달치'만 보면 이득인지 암산해야 한다 — 12달치와의 차이를 그대로 말해 준다. */}
+            <span className={yearlyGainMonths > 0 ? "text-[#3182f6]" : "text-[#8b95a1]"}>
+              {preview.sub_monthly_krw <= 0
+                ? "(월 구독 값을 정하면 알려 드려요)"
+                : yearlyGainMonths > 0
+                  ? `(${oneDp(yearlyGainMonths)}달치 이득)`
+                  : yearlyGainMonths === 0
+                    ? "(12달치와 값이 같아요)"
+                    : `(12달치보다 ${oneDp(-yearlyGainMonths)}달치 비싸요)`}
+            </span>
+          </p>
+        </div>
+      </Card>
+
       <Card>
         <CardTitle hint={state?.log.length ? `${state.log.length}건` : "아직 없어요"}>바꾼 이력</CardTitle>
         {state && state.log.length > 0 ? (
@@ -292,8 +419,18 @@ export function PricingSection({ api, say, clock }: { api: Api; say: (m: string)
       </Card>
 
       {confirming ? (
-        <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 p-4 sm:items-center">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6">
+        // 바뀐 항목이 많으면 폰에서 목록이 화면 밖으로 밀려 [바꾸기] 가 잘린다 — 바깥·안쪽 모두 스크롤되게 둔다.
+        <div
+          className="fixed inset-0 z-40 flex items-end justify-center overflow-y-auto bg-black/40 p-4 sm:items-center"
+          onClick={() => !busy && setConfirming(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="이 값으로 바꿀까요?"
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-[calc(100dvh-32px)] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6"
+          >
             <h3 className="text-[17px] font-bold text-[#191f28]">이 값으로 바꿀까요?</h3>
             <ul className="my-4 flex flex-col gap-1.5">
               {changes.map((c) => (

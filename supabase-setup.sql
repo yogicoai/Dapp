@@ -21,7 +21,7 @@
 --
 -- 14~21번은 컴플레인 처리(만들기 기록 · 마스터 환불 · 책 되살리기 · 사고 목록 · 원고 90일 보관).
 --
--- 22~24번은 관리실 운영(2026-09-16): 가격을 관리실에서 정하기(yogico 만) · 권수 상한을 DB 가 지키기
+-- 22~24번은 관리실 운영(2026-09-16): 값·구독료·단권 값을 관리실에서 정하기(yogico 만) · 권수 상한을 DB 가 지키기
 --          · 의견 게시판을 관리실에서 답하고 처리하기.
 -- 그리고 마스터끼리는 서로의 기록이 안 보인다 — 6번 master_can_see (fe 는 사장님 개인 개발 계정).
 -- ════════════════════════════════════════════════════════════════════════
@@ -164,12 +164,32 @@ create table if not exists public.app_pricing (
   max_books_per_user        integer not null default 30,    -- 계정당 권수 상한
   feedback_bonus_tokens     integer not null default 100,   -- 의견 첫 글 보상
   max_free_rewrites         integer not null default 2,     -- 같은 줄거리 무료 다시쓰기
+  /*
+   * 파는 값 (2026-09-16 더함) — **정해 두는 금액**이다. 실제 결제(PG)는 아직 붙어 있지 않다.
+   * 1차 제안값으로 채워 둔다(사장님 요청). 클라이언트가 관리실에서 바꾼다.
+   *   단권 1,500원 · 주 2,900원(3권치) · 월 9,900원(12권치) · 연 99,000원(월 대비 2개월치 이득)
+   * 토큰 지급량은 그 값으로 만들 수 있는 5쪽 그림동화 권수에 맞춘 값이다(한 권 10토큰 기준).
+   */
+  single_book_krw           integer not null default 1500,  -- 책 한 권만 살 때(원)
+  sub_weekly_krw            integer not null default 2900,  -- 주 구독료(원)
+  sub_weekly_tokens         integer not null default 30,    -- 주 구독에 주는 토큰(3권치)
+  sub_monthly_krw           integer not null default 9900,  -- 월 구독료(원)
+  sub_monthly_tokens        integer not null default 120,   -- 월 구독에 주는 토큰(12권치)
+  sub_yearly_krw            integer not null default 99000, -- 연 구독료(원)
+  sub_yearly_tokens         integer not null default 1440,  -- 연 구독에 주는 토큰(월 120 × 12)
   updated_at                timestamptz not null default now(),
   updated_by                uuid references auth.users(id) on delete set null
 );
 alter table public.app_pricing add column if not exists feedback_bonus_tokens integer not null default 100;
 alter table public.app_pricing add column if not exists max_free_rewrites     integer not null default 2;
 alter table public.app_pricing add column if not exists updated_by            uuid references auth.users(id) on delete set null;
+alter table public.app_pricing add column if not exists single_book_krw       integer not null default 1500;
+alter table public.app_pricing add column if not exists sub_weekly_krw        integer not null default 2900;
+alter table public.app_pricing add column if not exists sub_weekly_tokens     integer not null default 30;
+alter table public.app_pricing add column if not exists sub_monthly_krw       integer not null default 9900;
+alter table public.app_pricing add column if not exists sub_monthly_tokens    integer not null default 120;
+alter table public.app_pricing add column if not exists sub_yearly_krw        integer not null default 99000;
+alter table public.app_pricing add column if not exists sub_yearly_tokens     integer not null default 1440;
 -- 한 줄만 만든다. 이미 있으면 그대로 둔다 — 다시 붙여도 사장님이 정한 값을 덮지 않는다.
 insert into public.app_pricing (id) values (1) on conflict (id) do nothing;
 
@@ -179,7 +199,9 @@ revoke all on public.app_pricing from authenticated;
 -- 값은 누구나 읽는다(로그인 전 화면도 가입 지급 토큰을 보여 준다). 고친 사람(updated_by)만 가린다.
 grant select (id, token_price_krw, signup_bonus_tokens, cost_text_per_page,
               cost_illustrated_per_page, cost_parent_voice, max_books_per_user,
-              feedback_bonus_tokens, max_free_rewrites, updated_at)
+              feedback_bonus_tokens, max_free_rewrites, single_book_krw,
+              sub_weekly_krw, sub_weekly_tokens, sub_monthly_krw, sub_monthly_tokens,
+              sub_yearly_krw, sub_yearly_tokens, updated_at)
   on public.app_pricing to anon, authenticated;
 drop policy if exists "app_pricing 모두 읽기" on public.app_pricing;
 create policy "app_pricing 모두 읽기" on public.app_pricing for select using (true);
@@ -209,6 +231,13 @@ begin
     r.max_books_per_user := 30;
     r.feedback_bonus_tokens := 100;
     r.max_free_rewrites := 2;
+    r.single_book_krw := 1500;
+    r.sub_weekly_krw := 2900;
+    r.sub_weekly_tokens := 30;
+    r.sub_monthly_krw := 9900;
+    r.sub_monthly_tokens := 120;
+    r.sub_yearly_krw := 99000;
+    r.sub_yearly_tokens := 1440;
     r.updated_at := now();
   end if;
   -- 칸이 비어 있는 옛 줄도 기본값으로 메운다(alter 로 칸을 더한 직후 등).
@@ -220,6 +249,13 @@ begin
   r.max_books_per_user        := coalesce(r.max_books_per_user, 30);
   r.feedback_bonus_tokens     := coalesce(r.feedback_bonus_tokens, 100);
   r.max_free_rewrites         := coalesce(r.max_free_rewrites, 2);
+  r.single_book_krw           := coalesce(r.single_book_krw, 1500);
+  r.sub_weekly_krw            := coalesce(r.sub_weekly_krw, 2900);
+  r.sub_weekly_tokens         := coalesce(r.sub_weekly_tokens, 30);
+  r.sub_monthly_krw           := coalesce(r.sub_monthly_krw, 9900);
+  r.sub_monthly_tokens        := coalesce(r.sub_monthly_tokens, 120);
+  r.sub_yearly_krw            := coalesce(r.sub_yearly_krw, 99000);
+  r.sub_yearly_tokens         := coalesce(r.sub_yearly_tokens, 1440);
   return r;
 end; $$;
 
@@ -614,6 +650,25 @@ begin
   end if;
   if entry.created_at < now() - interval '1 day' then
     raise exception '너무 오래된 기록입니다.' using errcode = '22023';
+  end if;
+  /*
+   * **받은 책이 있으면 돌려주지 않는다** (2026-09-16 막음).
+   *
+   * 이 함수는 원래 "만들다 실패했을 때 되돌리기"다. 그런데 장부 id 는 앱이 브라우저에 그대로
+   * 건네주므로, 동화를 정상으로 만들어 책장에 넣은 뒤 콘솔에서 이 함수를 부르면 책은 그대로 둔 채
+   * 값만 돌려받을 수 있었다 — 무한히 공짜로 만들 수 있는 길이었다.
+   * 그래서 이 결제로 만들어진 책이 실제로 있으면 거절한다. 실패한 만들기(책 없음)는 예전처럼 된다.
+   * 마스터 환불(master_refund_entry)은 이 함수를 쓰지 않으므로 컴플레인 처리는 그대로다.
+   */
+  if exists (
+    select 1
+      from public.book_jobs j
+      join public.books b on b.id = j.book_id and b.owner = j.owner
+     where j.owner = entry.owner
+       and (j.story_entry = entry.id or j.illustration_entry = entry.id)
+  ) then
+    raise exception '이미 만들어진 동화의 값은 되돌릴 수 없어요. 문제가 있으면 의견 보내기로 알려 주세요.'
+      using errcode = '42501';
   end if;
 
   update public.token_ledger set refunded_at = now() where id = entry.id;
@@ -1396,23 +1451,35 @@ begin
    * 원고의 pages 가 배열이 아닐 수 있으므로(회원이 쓰는 칸) 타입을 먼저 본다.
    */
   per := greatest(0, price.cost_illustrated_per_page - price.cost_text_per_page);
-  pages := (select sc.pages
-              from public.story_charges sc
-             where sc.entry is not null and sc.entry = job.story_entry and sc.owner = job.owner
-             limit 1);
-  if pages is null or pages < 1 then
-    pages := greatest(
-      coalesce(job.page_count, 0),
-      case when jsonb_typeof(job.manuscript -> 'pages') = 'array'
-           then jsonb_array_length(job.manuscript -> 'pages') else 0 end);
-  end if;
+  /*
+   * 쪽수는 **셋 중 가장 큰 값**을 쓴다(2026-09-16 고침).
+   * 셋 다 회원이 손댈 여지가 있어서 — 기록의 쪽수·원고는 직접 쓰고, 대본 값 장부 id 는 싼 줄을
+   * 가리키게 바꿀 수 있다 — 하나만 믿으면 그 하나를 낮춰 적게 낼 수 있다. 가장 큰 값을 쓰면
+   * 어느 하나를 낮춰도 나머지가 제값을 지킨다.
+   */
+  pages := greatest(
+    coalesce((select sc.pages
+                from public.story_charges sc
+               where sc.entry is not null and sc.entry = job.story_entry and sc.owner = job.owner
+               limit 1), 0),
+    coalesce(job.page_count, 0),
+    case when jsonb_typeof(job.manuscript -> 'pages') = 'array'
+         then jsonb_array_length(job.manuscript -> 'pages') else 0 end);
   if pages >= 1 then
     amount := least(pages, 40) * per;
   else
     amount := least(greatest(coalesce(p_amount, 0), 0), 40 * per);
   end if;
 
-  entry := public.spend_tokens(amount, 'illustration');   -- 마스터면 null (면제)
+  /*
+   * 받을 값이 0 이면 결제를 걸지 않는다 — spend_tokens 는 0 을 '올바르지 않은 값'으로 거절한다.
+   * 그림 단가와 글 단가를 같게 정하면(그림 값을 안 받겠다는 뜻) 여기로 온다.
+   */
+  if amount > 0 then
+    entry := public.spend_tokens(amount, 'illustration');   -- 마스터면 null (면제)
+  else
+    entry := null;
+  end if;
 
   update public.book_jobs
      set illustration_entry = entry, book_id = p_book_id, status = 'uploading'
@@ -2100,7 +2167,11 @@ declare
   ni    integer;
   allowed text[] := array['token_price_krw','signup_bonus_tokens','cost_text_per_page',
                           'cost_illustrated_per_page','cost_parent_voice','max_books_per_user',
-                          'feedback_bonus_tokens','max_free_rewrites'];
+                          'feedback_bonus_tokens','max_free_rewrites',
+                          'single_book_krw','sub_weekly_krw','sub_weekly_tokens',
+                          'sub_monthly_krw','sub_monthly_tokens','sub_yearly_krw','sub_yearly_tokens'];
+  -- 파는 값은 '원'이라 토큰 값(0~100000)보다 큰 수를 받는다(연 구독 99,000원 같은 값).
+  won_fields text[] := array['single_book_krw','sub_weekly_krw','sub_monthly_krw','sub_yearly_krw'];
 begin
   if not public.is_pricing_admin() then
     raise exception '가격은 yogico 계정에서만 바꿀 수 있어요.' using errcode = '42501';
@@ -2124,8 +2195,20 @@ begin
     if jsonb_typeof(p_patch -> k) <> 'number' then
       raise exception '% 값은 숫자여야 합니다.', k using errcode = '22023';
     end if;
+    -- 3.5 · 1e9 같은 값은 ::integer 에서 영문 오류가 난다 — 먼저 정수인지, 범위 안인지 본다.
+    if (p_patch ->> k)::numeric <> trunc((p_patch ->> k)::numeric)
+       or (p_patch ->> k)::numeric > 2000000000 or (p_patch ->> k)::numeric < 0 then
+      raise exception '% 값은 0 이상의 정수로 적어 주세요.', k using errcode = '22023';
+    end if;
     v := (p_patch ->> k)::integer;
-    if v is null or v < 0 or v > 100000 then
+    if v is null or v < 0 then
+      raise exception '% 값이 올바르지 않습니다.', k using errcode = '22023';
+    end if;
+    if k = any(won_fields) then
+      if v > 10000000 then
+        raise exception '% 값이 너무 큽니다(1000만 원까지).', k using errcode = '22023';
+      end if;
+    elsif v > 100000 then
       raise exception '% 값이 올바르지 않습니다(0~100000).', k using errcode = '22023';
     end if;
   end loop;
@@ -2154,6 +2237,23 @@ begin
   end if;
   if coalesce((p_patch ->> 'token_price_krw')::integer, cur.token_price_krw) < 1 then
     raise exception '1토큰 가격은 1원 이상이어야 해요.' using errcode = '22023';
+  end if;
+  /*
+   * 구독은 길수록 이득이어야 한다 — 둘 다 정해져 있을 때만 본다(0 은 '아직 안 정함').
+   * 이 검사가 없으면 "연 구독이 월 구독 12달치보다 비싼" 표가 만들어져 고객이 손해를 본다.
+   */
+  if coalesce((p_patch ->> 'sub_yearly_krw')::integer, cur.sub_yearly_krw) > 0
+     and coalesce((p_patch ->> 'sub_monthly_krw')::integer, cur.sub_monthly_krw) > 0
+     and coalesce((p_patch ->> 'sub_yearly_krw')::integer, cur.sub_yearly_krw)
+         > coalesce((p_patch ->> 'sub_monthly_krw')::integer, cur.sub_monthly_krw) * 12 then
+    raise exception '연 구독료가 월 구독료 12달치보다 비싸요. 다시 확인해 주세요.' using errcode = '22023';
+  end if;
+  if coalesce((p_patch ->> 'sub_monthly_krw')::integer, cur.sub_monthly_krw) > 0
+     and coalesce((p_patch ->> 'sub_weekly_krw')::integer, cur.sub_weekly_krw) > 0
+     and coalesce((p_patch ->> 'sub_monthly_krw')::integer, cur.sub_monthly_krw)
+         > coalesce((p_patch ->> 'sub_weekly_krw')::integer, cur.sub_weekly_krw) * 5 then
+    -- 한 달은 4.3주다. 5주치보다 비싸면 주 구독을 다섯 번 사는 게 싸다 — 그건 표가 잘못된 것이다.
+    raise exception '월 구독료가 주 구독료 5주치보다 비싸요. 다시 확인해 주세요.' using errcode = '22023';
   end if;
 
   select username into who from public.profiles where id = auth.uid();
@@ -2199,6 +2299,42 @@ begin
     values ('max_free_rewrites', cur.max_free_rewrites, (p_patch ->> 'max_free_rewrites')::integer, note, auth.uid(), who);
     n := n + 1;
   end if;
+  -- 파는 값 일곱 칸 — 바뀐 것만 남긴다.
+  if p_patch ? 'single_book_krw' and (p_patch ->> 'single_book_krw')::integer <> cur.single_book_krw then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('single_book_krw', cur.single_book_krw, (p_patch ->> 'single_book_krw')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'sub_weekly_krw' and (p_patch ->> 'sub_weekly_krw')::integer <> cur.sub_weekly_krw then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('sub_weekly_krw', cur.sub_weekly_krw, (p_patch ->> 'sub_weekly_krw')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'sub_weekly_tokens' and (p_patch ->> 'sub_weekly_tokens')::integer <> cur.sub_weekly_tokens then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('sub_weekly_tokens', cur.sub_weekly_tokens, (p_patch ->> 'sub_weekly_tokens')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'sub_monthly_krw' and (p_patch ->> 'sub_monthly_krw')::integer <> cur.sub_monthly_krw then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('sub_monthly_krw', cur.sub_monthly_krw, (p_patch ->> 'sub_monthly_krw')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'sub_monthly_tokens' and (p_patch ->> 'sub_monthly_tokens')::integer <> cur.sub_monthly_tokens then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('sub_monthly_tokens', cur.sub_monthly_tokens, (p_patch ->> 'sub_monthly_tokens')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'sub_yearly_krw' and (p_patch ->> 'sub_yearly_krw')::integer <> cur.sub_yearly_krw then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('sub_yearly_krw', cur.sub_yearly_krw, (p_patch ->> 'sub_yearly_krw')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'sub_yearly_tokens' and (p_patch ->> 'sub_yearly_tokens')::integer <> cur.sub_yearly_tokens then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('sub_yearly_tokens', cur.sub_yearly_tokens, (p_patch ->> 'sub_yearly_tokens')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
 
   update public.app_pricing set
     token_price_krw           = coalesce((p_patch ->> 'token_price_krw')::integer, cur.token_price_krw),
@@ -2209,6 +2345,13 @@ begin
     max_books_per_user        = coalesce((p_patch ->> 'max_books_per_user')::integer, cur.max_books_per_user),
     feedback_bonus_tokens     = coalesce((p_patch ->> 'feedback_bonus_tokens')::integer, cur.feedback_bonus_tokens),
     max_free_rewrites         = coalesce((p_patch ->> 'max_free_rewrites')::integer, cur.max_free_rewrites),
+    single_book_krw           = coalesce((p_patch ->> 'single_book_krw')::integer, cur.single_book_krw),
+    sub_weekly_krw            = coalesce((p_patch ->> 'sub_weekly_krw')::integer, cur.sub_weekly_krw),
+    sub_weekly_tokens         = coalesce((p_patch ->> 'sub_weekly_tokens')::integer, cur.sub_weekly_tokens),
+    sub_monthly_krw           = coalesce((p_patch ->> 'sub_monthly_krw')::integer, cur.sub_monthly_krw),
+    sub_monthly_tokens        = coalesce((p_patch ->> 'sub_monthly_tokens')::integer, cur.sub_monthly_tokens),
+    sub_yearly_krw            = coalesce((p_patch ->> 'sub_yearly_krw')::integer, cur.sub_yearly_krw),
+    sub_yearly_tokens         = coalesce((p_patch ->> 'sub_yearly_tokens')::integer, cur.sub_yearly_tokens),
     updated_at = now(), updated_by = auth.uid()
   where id = 1;
 
@@ -2268,16 +2411,24 @@ begin
   if coalesce((select is_master from public.profiles where id = new.owner), false) then
     return new;
   end if;
+  /*
+   * 이미 **값을 낸** 책은 막지 않는다 — 막으면 돈만 나가고 책을 못 받는다.
+   * 단 장부 줄이 실제로 있고, 그 줄이 이 회원 것이며, 환불되지 않았을 때만 인정한다
+   * (기록의 장부 id 칸은 회원이 쓸 수 있어서, 아무 값이나 적어 상한을 비껴가던 길을 막는다).
+   */
   if exists (select 1 from public.book_jobs j
+               join public.token_ledger l
+                 on l.id in (j.story_entry, j.illustration_entry)
               where j.owner = new.owner and j.book_id = new.id
-                and (j.story_entry is not null or j.illustration_entry is not null)) then
-    return new;                                   -- 이미 값을 낸 책 — 막으면 돈만 나간다
+                and l.owner = new.owner and l.refunded_at is null) then
+    return new;
   end if;
   lim := greatest(1, (public.pricing_now()).max_books_per_user);
   select count(*) into cnt from public.books where owner = new.owner;
   if cnt >= lim then
+    -- 54000 은 앱이 '책이 너무 커요'(원고 상한)로 읽는 코드라 쓰지 않는다 — 안내가 엉뚱해진다.
     raise exception '동화는 계정당 %권까지 만들 수 있어요. 오래된 책을 지우고 다시 저장해 주세요.', lim
-      using errcode = '54000';
+      using errcode = 'P0001';
   end if;
   return new;
 end; $$;
@@ -2318,18 +2469,22 @@ language plpgsql security definer
 set search_path = public as $$
 begin
   if tg_op = 'DELETE' then
-    if old.reply is not null and auth.uid() = old.owner then
+    if old.reply is not null and auth.uid() = old.owner and not public.is_master_user() then
       raise exception '관리자 답변이 달린 글은 지울 수 없어요.' using errcode = '42501';
     end if;
     return old;
   end if;
   -- 고객이 자기 글을 고치는 경우만 막는다(마스터 함수는 auth.uid() 가 글 주인이 아니다).
-  if auth.uid() = old.owner and old.reply is not null
+  if auth.uid() = old.owner and old.reply is not null and not public.is_master_user()
      and (new.content is distinct from old.content or new.category is distinct from old.category) then
     raise exception '관리자 답변이 달린 글은 고칠 수 없어요.' using errcode = '42501';
   end if;
-  -- 답변·처리 칸은 회원이 못 건드린다(칸 권한으로도 막지만 한 번 더).
-  if auth.uid() = old.owner then
+  /*
+   * 답변·처리 칸은 회원이 못 건드린다(칸 권한으로도 막지만 한 번 더).
+   * **마스터는 뺀다** — 마스터가 자기 글에 답을 달면 이 되돌리기가 그 답을 조용히 지웠다
+   * (화면은 성공이라 했다. 2026-09-16 고침). 마스터도 표로는 답변 칸 쓰기 권한이 없어 안전하다.
+   */
+  if auth.uid() = old.owner and not public.is_master_user() then
     new.reply       := old.reply;
     new.replied_at  := old.replied_at;
     new.replied_by  := old.replied_by;

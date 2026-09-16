@@ -8,7 +8,6 @@ import { loadSession } from "@/lib/auth";
 import { acctKey } from "@/lib/supabase";
 import {
   deleteFeedback,
-  FEEDBACK_BONUS,
   FEEDBACK_CATEGORIES,
   feedbackRewardTaken,
   loadFeedback,
@@ -16,6 +15,7 @@ import {
   updateFeedback,
   type FeedbackPost,
 } from "@/lib/feedback";
+import { usePricing } from "@/lib/use-pricing";
 
 /**
  * 베타 의견 게시판 — "우리 가족 의견 나무".
@@ -26,7 +26,12 @@ import {
  *
  * 생김새는 동화책 결을 따른다 — 쪽지가 붙은 나무. 부모가 쓰는 화면이지만 아이도
  * 옆에서 보는 화면이라, 딱딱한 고객센터가 아니라 동화의 한 장면처럼 보이게 했다.
- * 관리자는 모든 글을 고치고 지울 수 있다(권한 판단은 서버 RLS가 한다).
+ *
+ * 고치기·떼기는 **자기 글만**이다. 관리자 일(답변·처리·내부 메모)은 관리실이 전담한다
+ * (FeedbackSection → /api/admin/feedback → master_feedback_reply). 예전엔 여기서도
+ * 관리자에게 남의 글 단추를 띄웠는데, DB 는 마스터끼리 서로 못 보게 막아 둬서
+ * (master_can_see) 다른 마스터 글에서는 눌러도 "권한이 없어요" 만 나왔다.
+ * 답변이 달린 글은 아예 잠긴다 — feedback_guard 트리거가 막는다.
  */
 
 /** 쪽지 색 — 글마다 돌려 쓰면 게시판이 알록달록한 쪽지 벽처럼 보인다. */
@@ -42,10 +47,11 @@ export default function FeedbackPage() {
   const router = useRouter();
   const { theme } = useTheme();
   const { accent } = theme.colors;
+  // 보상 토큰은 관리실에서 정한 값(app_pricing)을 읽어 쓴다 — 약속한 숫자와 실제 지급이 같아야 한다.
+  const pricing = usePricing();
 
   const [ready, setReady] = useState(false);
   const [uid, setUid] = useState<string | null>(null);
-  const [master, setMaster] = useState(false);
   const [posts, setPosts] = useState<FeedbackPost[]>([]);
   const [rewardTaken, setRewardTaken] = useState(true);
 
@@ -55,6 +61,11 @@ export default function FeedbackPage() {
   const busyRef = useRef(false); // 연타로 두 번 올라가는 것을 즉시 막는다
   const [error, setError] = useState("");
   const [done, setDone] = useState<{ bonus: number } | null>(null);
+  /*
+   * 쪽지별 오류 — 고치기·떼기가 실패한 까닭은 그 쪽지 안에 띄운다.
+   * 예전엔 글쓰기 카드 한 곳에만 떠서, 목록 아래쪽 쪽지에서 누른 사람에게는 아무 말도 안 보였다.
+   */
+  const [postErr, setPostErr] = useState<{ id: string; msg: string } | null>(null);
 
   // 공지 접기 — 읽고 나면 닫을 수 있게. 계정별로 기억하고, 언제든 다시 펼 수 있다.
   const NOTICE_KEY = "voice-storybook:feedback-notice-closed";
@@ -80,7 +91,7 @@ export default function FeedbackPage() {
     }
   }
 
-  // 고치는 중인 글 — 관리자(모든 글)와 글쓴이(자기 글)가 쓴다.
+  // 고치는 중인 글 — 글쓴이가 자기 글을 고칠 때만 쓴다.
   const [editId, setEditId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   const [editCat, setEditCat] = useState<string>(FEEDBACK_CATEGORIES[0].t);
@@ -96,7 +107,6 @@ export default function FeedbackPage() {
         return;
       }
       setUid(s.uid);
-      setMaster(s.isMaster);
       const [list, taken] = await Promise.all([loadFeedback(), feedbackRewardTaken()]);
       if (!alive) return;
       setPosts(list);
@@ -129,13 +139,13 @@ export default function FeedbackPage() {
 
   async function remove(id: string) {
     if (!window.confirm("이 쪽지를 떼어낼까요?")) return;
-    setError("");
+    setPostErr(null);
     try {
       await deleteFeedback(id);
       // 지운 뒤에는 서버에서 다시 받아 온다 — 화면에서만 사라지는 착시를 막는다.
       setPosts(await loadFeedback());
     } catch (e) {
-      setError((e as Error).message);
+      setPostErr({ id, msg: (e as Error).message });
       setPosts(await loadFeedback()); // 실패했으면 원래 글이 그대로 보이게 되돌린다
     }
   }
@@ -144,20 +154,21 @@ export default function FeedbackPage() {
     setEditId(p.id);
     setEditText(p.content);
     setEditCat(p.category);
-    setError("");
+    setPostErr(null);
   }
 
   async function saveEdit() {
     if (!editId) return;
-    setError("");
+    const id = editId;
+    setPostErr(null);
     try {
-      await updateFeedback(editId, editCat, editText);
+      await updateFeedback(id, editCat, editText);
       setPosts((prev) =>
-        prev.map((p) => (p.id === editId ? { ...p, content: editText.trim(), category: editCat } : p)),
+        prev.map((p) => (p.id === id ? { ...p, content: editText.trim(), category: editCat } : p)),
       );
       setEditId(null);
     } catch (e) {
-      setError((e as Error).message);
+      setPostErr({ id, msg: (e as Error).message });
     }
   }
 
@@ -195,7 +206,7 @@ export default function FeedbackPage() {
           </p>
           {!rewardTaken && (
             <p className="animate-pulse break-keep rounded-full bg-amber-100 px-4 py-1.5 text-sm font-extrabold text-amber-700 shadow-sm">
-              🎁 첫 쪽지를 남기면 {FEEDBACK_BONUS}토큰을 드려요
+              🎁 첫 쪽지를 남기면 {pricing.feedback_bonus_tokens}토큰을 드려요
             </p>
           )}
         </header>
@@ -268,7 +279,6 @@ export default function FeedbackPage() {
         <section className="flex flex-col gap-4 pb-8">
           <h2 className="text-sm font-extrabold text-neutral-500">
             붙은 쪽지 {posts.length > 0 && `${posts.length}장`}
-            {master && <span className="ml-1 text-amber-600">· 👑 관리자는 모두 고치고 뗄 수 있어요</span>}
           </h2>
 
           {/* 관리자 공지 — 늘 맨 위에 붙어 있는 쪽지. DB 글이 아니라 화면에 박아 두었다:
@@ -315,7 +325,7 @@ export default function FeedbackPage() {
               ].join("\n")}
             </p>
             <p className="mt-2.5 break-keep rounded-xl bg-white/70 px-3 py-2 text-[13px] font-extrabold text-amber-800">
-              🎁 처음 쪽지를 남겨주시는 분께 {FEEDBACK_BONUS}토큰을 드려요
+              🎁 처음 쪽지를 남겨주시는 분께 {pricing.feedback_bonus_tokens}토큰을 드려요
             </p>
           </article>
           )}
@@ -333,8 +343,9 @@ export default function FeedbackPage() {
               const skin = NOTE_SKINS[i % NOTE_SKINS.length];
               const tilt = TILTS[i % TILTS.length];
               const mine = p.owner === uid;
-              const canEdit = mine || master;
               const editing = editId === p.id;
+              // 답변이 달린 글은 DB(feedback_guard)가 잠근다 — 눌러도 안 되는 단추를 띄우지 않는다.
+              const locked = Boolean(p.reply);
               return (
                 <article
                   key={p.id}
@@ -354,7 +365,7 @@ export default function FeedbackPage() {
                     <span className="text-[11px] font-bold text-neutral-400">
                       {p.username ?? "회원"} · {new Date(p.createdAt).toLocaleDateString("ko-KR")}
                     </span>
-                    {canEdit && !editing && (
+                    {mine && !editing && !locked && (
                       <span className="ml-auto flex gap-2">
                         <button
                           type="button"
@@ -370,6 +381,11 @@ export default function FeedbackPage() {
                         >
                           떼기
                         </button>
+                      </span>
+                    )}
+                    {mine && !editing && locked && (
+                      <span className="ml-auto break-keep text-[11px] font-bold text-neutral-400">
+                        답변이 달린 글은 고치거나 지울 수 없어요
                       </span>
                     )}
                   </div>
@@ -419,6 +435,11 @@ export default function FeedbackPage() {
                     <p className="mt-1.5 whitespace-pre-wrap break-keep text-[14px] font-medium leading-relaxed text-neutral-700">
                       {p.content}
                     </p>
+                  )}
+
+                  {/* 고치기·떼기가 실패했으면 그 까닭을 이 쪽지 안에서 바로 보여 준다. */}
+                  {postErr?.id === p.id && (
+                    <p className="mt-2 break-keep text-[12px] font-bold text-rose-600">{postErr.msg}</p>
                   )}
 
                   {/* 관리자가 단 답변 — 관리실에서 적은 글이 여기 그대로 보인다(2026-09-16). */}

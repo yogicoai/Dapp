@@ -21,6 +21,13 @@ const FIELDS = [
   "max_books_per_user",
   "feedback_bonus_tokens",
   "max_free_rewrites",
+  "single_book_krw",
+  "sub_weekly_krw",
+  "sub_weekly_tokens",
+  "sub_monthly_krw",
+  "sub_monthly_tokens",
+  "sub_yearly_krw",
+  "sub_yearly_tokens",
 ] as const;
 
 export type PricingLogRow = {
@@ -80,7 +87,10 @@ export const POST = masterOnly(async (caller, request) => {
     if (typeof value !== "number" || !Number.isFinite(value) || !Number.isInteger(value)) {
       return fail("값은 정수로 적어 주세요.", 400);
     }
-    if (value < 0 || value > 100000) return fail("값이 올바르지 않아요(0~100000).", 400);
+    // 구독료·단권 값은 '원'이라 더 큰 수를 받는다(연 구독 99,000원 같은 값).
+    const isWon = key.endsWith("_krw");
+    const max = isWon ? 10_000_000 : 100_000;
+    if (value < 0 || value > max) return fail(`값이 올바르지 않아요(0~${max.toLocaleString("ko-KR")}).`, 400);
     patch[key] = value;
   }
   if (Object.keys(patch).length === 0) return fail("바꿀 항목이 없어요.", 400);
