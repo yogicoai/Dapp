@@ -11,15 +11,19 @@
 --    그건 supabase-tools.sql 에 따로 있다. 돌릴 때마다 결과가 달라지는 것들이라
 --    이 파일에 섞으면 실수로 토큰이 두 배가 되는 사고가 난다.
 --
--- 담긴 표 열: profiles(회원) · books(만든 동화) · voice_clones(부모 목소리)
---             feedback(의견) · tts_usage(음성 사용량)
---             token_ledger(토큰 장부) · token_grants(토큰 충전 기록) · story_charges(대본 값 기록)
---             book_jobs(만들기 기록) · book_events(책 저장·삭제 흔적)
+-- 담긴 표 열둘: profiles(회원) · books(만든 동화) · voice_clones(부모 목소리)
+--              feedback(의견) · tts_usage(음성 사용량) · app_pricing(가격표)
+--              token_ledger(토큰 장부) · token_grants(토큰 충전 기록) · story_charges(대본 값 기록)
+--              book_jobs(만들기 기록) · book_events(책 저장·삭제 흔적) · pricing_changes(가격 바꾼 이력)
 --
 -- 뒤쪽 8~13번이 토큰을 지키는 부분이다. 이걸 안 돌리면 로그인한 사람이
 -- 브라우저 콘솔 한 줄로 자기 토큰을 999999 로 만들 수 있다.
 --
 -- 14~21번은 컴플레인 처리(만들기 기록 · 마스터 환불 · 책 되살리기 · 사고 목록 · 원고 90일 보관).
+--
+-- 22~24번은 관리실 운영(2026-09-16): 가격을 관리실에서 정하기(yogico 만) · 권수 상한을 DB 가 지키기
+--          · 의견 게시판을 관리실에서 답하고 처리하기.
+-- 그리고 마스터끼리는 서로의 기록이 안 보인다 — 6번 master_can_see (fe 는 사장님 개인 개발 계정).
 -- ════════════════════════════════════════════════════════════════════════
 
 
@@ -117,6 +121,18 @@ create table if not exists public.feedback (
   created_at timestamptz not null default now()
 );
 
+-- 관리실에서 답하고 처리 표시를 하기 위한 칸 (2026-09-16). 옛 DB 도 여기서 맞춘다.
+--  · reply·replied_at  — 고객에게 보이는 답변. 게시판 글 아래에 그대로 뜬다.
+--  · handled_at        — "처리 끝" 표시. 관리실 목록에서 남은 글만 보려고.
+--  · master_note       — 고객에게 보이지 않는 내부 메모(칸 권한으로 가린다).
+alter table public.feedback add column if not exists reply       text;
+alter table public.feedback add column if not exists replied_at  timestamptz;
+alter table public.feedback add column if not exists replied_by  uuid references auth.users(id) on delete set null;
+alter table public.feedback add column if not exists handled_at  timestamptz;
+alter table public.feedback add column if not exists handled_by  uuid references auth.users(id) on delete set null;
+alter table public.feedback add column if not exists master_note text;
+create index if not exists feedback_open_idx on public.feedback (created_at desc) where handled_at is null;
+
 
 -- ────────────────────────────────────────────────────────────────────────
 -- 5. 음성 사용량 (tts_usage) — 달마다 글자 수를 세어 한도를 지킨다
@@ -125,6 +141,87 @@ create table if not exists public.tts_usage (
   period text primary key,          -- 'YYYY-MM'
   chars  bigint not null default 0
 );
+
+
+-- ────────────────────────────────────────────────────────────────────────
+-- 5-A. 가격표 (app_pricing) — 토큰 값·지급량을 관리실에서 정한다 (2026-09-16)
+-- ────────────────────────────────────────────────────────────────────────
+--
+-- 왜 표인가: 예전엔 값이 src/lib/tokens.ts 상수와 이 파일 여기저기(가입 200·의견 100)에
+-- 흩어져 있어서, 값을 바꾸려면 배포를 해야 했고 앱과 DB 가 서로 다른 값을 믿을 수 있었다.
+-- 이제 **DB 한 줄이 유일한 기준**이고, 앱은 이 값을 읽어 보여 준다. 차감도 이 값으로 한다.
+--
+-- 기본값 여덟 개는 지금 상수와 글자 그대로 같다(100·200·1·2·15·30·100·2).
+-- 그래서 이 파일을 붙여도 잔액·차감액이 1토큰도 달라지지 않는다.
+-- 값은 아무도 직접 못 고친다 — 오직 master_set_pricing(22번)으로만, 그것도 yogico 만.
+create table if not exists public.app_pricing (
+  id                        smallint primary key default 1 check (id = 1),  -- 늘 한 줄
+  token_price_krw           integer not null default 100,   -- 1토큰의 표시 가격(원)
+  signup_bonus_tokens       integer not null default 200,   -- 가입 축하 토큰
+  cost_text_per_page        integer not null default 1,     -- 대본 쪽당 토큰
+  cost_illustrated_per_page integer not null default 2,     -- 그림동화 쪽당 토큰(대본 포함)
+  cost_parent_voice         integer not null default 15,    -- 부모 목소리 1회
+  max_books_per_user        integer not null default 30,    -- 계정당 권수 상한
+  feedback_bonus_tokens     integer not null default 100,   -- 의견 첫 글 보상
+  max_free_rewrites         integer not null default 2,     -- 같은 줄거리 무료 다시쓰기
+  updated_at                timestamptz not null default now(),
+  updated_by                uuid references auth.users(id) on delete set null
+);
+alter table public.app_pricing add column if not exists feedback_bonus_tokens integer not null default 100;
+alter table public.app_pricing add column if not exists max_free_rewrites     integer not null default 2;
+alter table public.app_pricing add column if not exists updated_by            uuid references auth.users(id) on delete set null;
+-- 한 줄만 만든다. 이미 있으면 그대로 둔다 — 다시 붙여도 사장님이 정한 값을 덮지 않는다.
+insert into public.app_pricing (id) values (1) on conflict (id) do nothing;
+
+alter table public.app_pricing enable row level security;
+revoke all on public.app_pricing from anon;
+revoke all on public.app_pricing from authenticated;
+-- 값은 누구나 읽는다(로그인 전 화면도 가입 지급 토큰을 보여 준다). 고친 사람(updated_by)만 가린다.
+grant select (id, token_price_krw, signup_bonus_tokens, cost_text_per_page,
+              cost_illustrated_per_page, cost_parent_voice, max_books_per_user,
+              feedback_bonus_tokens, max_free_rewrites, updated_at)
+  on public.app_pricing to anon, authenticated;
+drop policy if exists "app_pricing 모두 읽기" on public.app_pricing;
+create policy "app_pricing 모두 읽기" on public.app_pricing for select using (true);
+-- insert·update·delete 권한은 아무에게도 주지 않는다 → 함수로만 바뀐다.
+
+/*
+ * 지금 가격 한 줄을 돌려준다. 트리거·차감 함수가 부르므로 execute 를 회수하지 않는다.
+ *
+ * ⚠ 줄이 없어도 **절대 빈 값을 돌려주지 않는다.** 예전 설계처럼 NULL 로우를 돌려주면
+ *   `쪽수 × 단가` 가 null 이 되어 대본·그림 결제가 통째로 막힌다. 줄이 사라진 DB 에서도
+ *   지금 상수와 같은 기본값으로 굴러가게 한다.
+ */
+create or replace function public.pricing_now()
+returns public.app_pricing
+language plpgsql security definer stable
+set search_path = public as $$
+declare r public.app_pricing%rowtype;
+begin
+  select * into r from public.app_pricing where id = 1;
+  if not found then
+    r.id := 1;
+    r.token_price_krw := 100;
+    r.signup_bonus_tokens := 200;
+    r.cost_text_per_page := 1;
+    r.cost_illustrated_per_page := 2;
+    r.cost_parent_voice := 15;
+    r.max_books_per_user := 30;
+    r.feedback_bonus_tokens := 100;
+    r.max_free_rewrites := 2;
+    r.updated_at := now();
+  end if;
+  -- 칸이 비어 있는 옛 줄도 기본값으로 메운다(alter 로 칸을 더한 직후 등).
+  r.token_price_krw           := coalesce(r.token_price_krw, 100);
+  r.signup_bonus_tokens       := coalesce(r.signup_bonus_tokens, 200);
+  r.cost_text_per_page        := coalesce(r.cost_text_per_page, 1);
+  r.cost_illustrated_per_page := coalesce(r.cost_illustrated_per_page, 2);
+  r.cost_parent_voice         := coalesce(r.cost_parent_voice, 15);
+  r.max_books_per_user        := coalesce(r.max_books_per_user, 30);
+  r.feedback_bonus_tokens     := coalesce(r.feedback_bonus_tokens, 100);
+  r.max_free_rewrites         := coalesce(r.max_free_rewrites, 2);
+  return r;
+end; $$;
 
 
 -- ════════════════════════════════════════════════════════════════════════
@@ -137,6 +234,41 @@ create or replace function public.is_master_user()
 returns boolean language sql security definer stable
 set search_path = public as $$
   select coalesce((select is_master from public.profiles where id = auth.uid()), false);
+$$;
+
+/*
+ * 마스터가 **이 주인의 줄을 봐도 되나** (2026-09-16, 사장님 지시).
+ *
+ * 사장님 말: "yogico 는 fe 가 안 보이지만 fe 는 fe 가 보이게". fe 는 사장님 개인 개발 계정이라
+ * 회사 계정(yogico)의 관리실에 섞이면 안 된다. 기록을 지우는 게 아니라 **가린다** —
+ * fe 로 들어가면 fe 기록이 그대로 보인다.
+ *
+ * 규칙 한 줄: 마스터는 **자기 것**과 **일반 회원 것**을 본다. 다른 마스터 것은 못 본다.
+ * (대칭이라 fe 도 yogico 것을 못 본다. 새 마스터가 생겨도 규칙이 저절로 적용된다.)
+ *
+ * is_master_user() 는 건드리지 않는다 — 이름이 같고 인자만 다른 모양을 만들면 PostgREST 가
+ * 어느 것을 부를지 헷갈린다(12번 grant_tokens 사고와 같은 자리).
+ * execute 를 회수하지 않는다 — 정책은 **부르는 사람의 권한**으로 평가되므로, authenticated 에서
+ * 회수하면 마스터 열람이 통째로 막힌다(is_master_user 도 같은 이유로 회수하지 않았다).
+ */
+create or replace function public.master_can_see(p_owner uuid)
+returns boolean language sql security definer stable
+set search_path = public as $$
+  select public.is_master_user()
+     and (p_owner = auth.uid()
+          or not coalesce((select is_master from public.profiles where id = p_owner), false));
+$$;
+
+/*
+ * 가격을 바꿀 수 있는 사람인가 — 회사 계정(yogico)만. fe 는 보기만 한다(사장님 지시).
+ * 아이디로 판단하는 까닭: 가격은 회사 결정이고, 계정이 둘뿐이라 칸을 새로 만들어
+ * 켜는 절차를 늘리는 것보다 이 편이 헷갈리지 않는다. 바꿀 일이 생기면 이 함수 한 줄만 고친다.
+ */
+create or replace function public.is_pricing_admin()
+returns boolean language sql security definer stable
+set search_path = public as $$
+  select coalesce((select is_master and username = 'yogico'
+                     from public.profiles where id = auth.uid()), false);
 $$;
 
 -- 가입하면 프로필을 자동으로 만든다 (아이디는 회원가입 때 metadata 로 넘어온다).
@@ -165,7 +297,9 @@ begin
   values (
     new.id,
     try_name,
-    200,   -- 가입 축하 토큰. 앱의 SIGNUP_BONUS_TOKENS 와 같아야 한다(5쪽 그림동화 20권치)
+    -- 가입 축하 토큰 — 가격표(5-A)에서 읽는다. 관리실에서 바꾸면 다음 가입부터 그 값으로 준다.
+    -- 예전엔 여기에 200 이 박혀 있어, 앱 상수와 이 파일 두 곳을 같이 고쳐야 했다.
+    (public.pricing_now()).signup_bonus_tokens,
     /*
      * 가입으로는 **절대 마스터가 되지 않는다.**
      *
@@ -188,7 +322,8 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
--- 의견 남기기 + 첫 한 번만 100토큰. 저장과 보상을 한 번에 처리해 중복 보상을 막는다.
+-- 의견 남기기 + 첫 한 번만 보상 토큰. 저장과 보상을 한 번에 처리해 중복 보상을 막는다.
+-- 보상 액수는 가격표(5-A)의 feedback_bonus_tokens — 관리실에서 바꾼다(기본 100).
 create or replace function public.submit_feedback(p_category text, p_content text)
 returns json
 language plpgsql
@@ -200,6 +335,7 @@ declare
   v_rewarded timestamptz;
   v_bonus    int := 0;
   v_tokens   int;
+  v_reward   int := greatest(0, (public.pricing_now()).feedback_bonus_tokens);
 begin
   v_uid := auth.uid();
   if v_uid is null then
@@ -220,11 +356,11 @@ begin
   select feedback_reward_at into v_rewarded from public.profiles where id = v_uid;
   if v_rewarded is null then
     update public.profiles
-       set tokens = tokens + 100,
+       set tokens = tokens + v_reward,
            feedback_reward_at = now()
      where id = v_uid
     returning tokens into v_tokens;
-    v_bonus := 100;
+    v_bonus := v_reward;
   else
     select tokens into v_tokens from public.profiles where id = v_uid;
   end if;
@@ -288,7 +424,7 @@ create policy "profiles: 본인" on public.profiles for all
 
 drop policy if exists "profiles: 마스터 열람" on public.profiles;
 create policy "profiles: 마스터 열람" on public.profiles for select
-  using (public.is_master_user());
+  using (public.master_can_see(id));
 
 -- 만든 동화 ─────────────────────────
 drop policy if exists "books: 본인 CRUD" on public.books;
@@ -297,11 +433,11 @@ create policy "books: 본인 CRUD" on public.books for all
 
 drop policy if exists "books: 마스터 열람" on public.books;
 create policy "books: 마스터 열람" on public.books for select
-  using (public.is_master_user());
+  using (public.master_can_see(owner));
 
 drop policy if exists "books master update" on public.books;
 create policy "books master update" on public.books for update
-  using (public.is_master_user()) with check (public.is_master_user());
+  using (public.master_can_see(owner)) with check (public.master_can_see(owner));
 
 -- 부모 목소리 ───────────────────────
 drop policy if exists "voice_clones own select" on public.voice_clones;
@@ -322,7 +458,7 @@ create policy "voice_clones own delete" on public.voice_clones
 
 drop policy if exists "voice_clones master select" on public.voice_clones;
 create policy "voice_clones master select" on public.voice_clones
-  for select using (public.is_master_user());
+  for select using (public.master_can_see(owner));
 
 -- 의견 ─────────────────────────────
 -- 읽기는 로그인한 사람 모두(다른 부모의 의견도 보이는 게 의도다).
@@ -336,13 +472,13 @@ create policy "feedback insert own" on public.feedback
 
 drop policy if exists "feedback update own or master" on public.feedback;
 create policy "feedback update own or master" on public.feedback
-  for update using (auth.uid() = owner or public.is_master_user())
-  with check (auth.uid() = owner or public.is_master_user());
+  for update using (auth.uid() = owner or public.master_can_see(owner))
+  with check (auth.uid() = owner or public.master_can_see(owner));
 
 drop policy if exists "feedback delete own" on public.feedback;
 drop policy if exists "feedback delete own or master" on public.feedback;
 create policy "feedback delete own or master" on public.feedback
-  for delete using (auth.uid() = owner or public.is_master_user());
+  for delete using (auth.uid() = owner or public.master_can_see(owner));
 
 -- ════════════════════════════════════════════════════════════════════════
 --  여기부터 — 토큰을 브라우저가 아니라 DB 가 지키게 한다
@@ -392,7 +528,7 @@ create policy "token_ledger 본인 열람" on public.token_ledger for select
 
 drop policy if exists "token_ledger 마스터 열람" on public.token_ledger;
 create policy "token_ledger 마스터 열람" on public.token_ledger for select
-  using (public.is_master_user());
+  using (public.master_can_see(owner));
 
 
 -- ────────────────────────────────────────────────────────────────────────
@@ -520,7 +656,7 @@ grant select on public.token_grants to authenticated;   -- 줄은 아래 정책�
 
 drop policy if exists "token_grants 마스터 열람" on public.token_grants;
 create policy "token_grants 마스터 열람" on public.token_grants for select
-  using (public.is_master_user());
+  using (public.master_can_see(owner));
 
 -- 사유 칸을 더했다 — 모양을 두 개로 둔다. 둘 다 기본값이 없다.
 --   · grant_tokens(p_user, p_amount, p_reason) — 본체. 충전하고 token_grants 에 적는다.
@@ -557,7 +693,9 @@ begin
   if p_amount is null or p_amount = 0 or abs(p_amount) > 100000 then
     raise exception '토큰 수가 올바르지 않습니다.' using errcode = '22023';
   end if;
-  update public.profiles set tokens = greatest(0, tokens + p_amount) where id = p_user
+  -- 다른 마스터 계정에는 충전하지 못한다 — 서로의 관리실에 안 보이는 계정이라 기록만 남고 헷갈린다.
+  update public.profiles set tokens = greatest(0, tokens + p_amount)
+   where id = p_user and public.master_can_see(id)
     returning tokens into left_tokens;
   if left_tokens is null then
     raise exception '회원을 찾을 수 없습니다.' using errcode = '42501';
@@ -612,9 +750,15 @@ create table if not exists public.story_charges (
   outline_key text not null,                 -- 줄거리 지문(sha256 앞 40자)
   paid        integer not null,              -- 이 줄거리로 낸 토큰
   rewrites    integer not null default 0,    -- 같은 줄거리로 다시 쓴 횟수
+  pages       integer,                       -- 값을 받을 때의 쪽수 (서버가 적는다)
   created_at  timestamptz not null default now(),
   primary key (owner, outline_key)
 );
+-- 쪽수와 장부 id 를 남기는 까닭: 그림 값(17번)이 "이 대본 값 줄의 쪽수"를 정확히 찾아 읽는다.
+-- book_jobs.page_count·manuscript 는 회원이 직접 쓰는 칸이라 믿을 수 없다(2026-09-16 더함).
+alter table public.story_charges add column if not exists pages integer;
+alter table public.story_charges add column if not exists entry uuid references public.token_ledger(id) on delete set null;
+create index if not exists story_charges_entry_idx on public.story_charges (entry) where entry is not null;
 
 alter table public.story_charges enable row level security;
 
@@ -624,7 +768,7 @@ create policy "story_charges 본인 열람" on public.story_charges for select
 
 drop policy if exists "story_charges 마스터 열람" on public.story_charges;
 create policy "story_charges 마스터 열람" on public.story_charges for select
-  using (public.is_master_user());
+  using (public.master_can_see(owner));
 
 
 -- 대본 값을 받는다. 돌려주는 값(json):
@@ -645,6 +789,9 @@ declare
   seen   public.story_charges%rowtype;
   amount integer;
   entry  uuid;
+  -- 값·무료 다시쓰기 횟수는 **가격표에서 읽는다**(5-A). 브라우저가 보낸 p_max_free_rewrites 는 쓰지 않는다 —
+  -- 콘솔에서 큰 수를 보내면 공짜 다시쓰기가 무제한이었다(2026-09-16 고침).
+  price  public.app_pricing%rowtype := public.pricing_now();
 begin
   if auth.uid() is null then
     raise exception '로그인이 필요합니다.' using errcode = '42501';
@@ -671,8 +818,8 @@ begin
    for update;
 
   if found then
-    -- 같은 줄거리로 다시 쓰기 — 정해진 횟수까지 공짜.
-    if seen.rewrites >= p_max_free_rewrites then
+    -- 같은 줄거리로 다시 쓰기 — 가격표가 정한 횟수까지 공짜.
+    if seen.rewrites >= greatest(0, price.max_free_rewrites) then
       raise exception '같은 줄거리로 다시 쓰기 횟수를 다 썼어요.' using errcode = '22023';
     end if;
     update public.story_charges set rewrites = rewrites + 1
@@ -681,8 +828,8 @@ begin
     return json_build_object('charged', 0, 'entry', null, 'rewrites', seen.rewrites, 'tokens', me.tokens);
   end if;
 
-  -- 이 줄거리로는 처음 — 쪽당 1토큰(앱의 COST_TEXT_PER_PAGE 와 같아야 한다).
-  amount := p_pages;
+  -- 이 줄거리로는 처음 — 쪽당 값은 가격표(cost_text_per_page, 기본 1)로 서버가 계산한다.
+  amount := p_pages * greatest(0, price.cost_text_per_page);
   if me.tokens < amount then
     raise exception '토큰이 부족합니다.' using errcode = '22003';
   end if;
@@ -690,7 +837,8 @@ begin
   update public.profiles set tokens = tokens - amount where id = me.id;
   insert into public.token_ledger (owner, amount, reason) values (me.id, amount, 'story')
    returning id into entry;
-  insert into public.story_charges (owner, outline_key, paid) values (me.id, p_outline_key, amount);
+  insert into public.story_charges (owner, outline_key, paid, pages, entry)
+  values (me.id, p_outline_key, amount, p_pages, entry);
 
   return json_build_object('charged', amount, 'entry', entry, 'rewrites', 0, 'tokens', me.tokens - amount);
 end; $$;
@@ -1080,7 +1228,7 @@ create policy "book_jobs 본인 고치기" on public.book_jobs for update
 
 drop policy if exists "book_jobs 마스터 열람" on public.book_jobs;
 create policy "book_jobs 마스터 열람" on public.book_jobs for select
-  using (public.is_master_user());
+  using (public.master_can_see(owner));
 
 -- 칸 권한 — Supabase 는 새 표를 anon·authenticated 에 통째로 열어 준다. 필요한 칸만 다시 준다.
 --  · 읽기: 마스터 메모(master_note)·처리한 마스터(restored_by·resolved_by)는 뺀다.
@@ -1211,8 +1359,12 @@ returns json
 language plpgsql security definer
 set search_path = public as $$
 declare
-  job   public.book_jobs%rowtype;
-  entry uuid;
+  job    public.book_jobs%rowtype;
+  entry  uuid;
+  price  public.app_pricing%rowtype := public.pricing_now();
+  per    integer;        -- 그림 한 쪽에 더 드는 값 (그림 단가 - 글 단가)
+  pages  integer;        -- 서버가 믿는 쪽수
+  amount integer;        -- 실제로 받을 값
 begin
   if auth.uid() is null then
     raise exception '로그인이 필요합니다.' using errcode = '42501';
@@ -1232,13 +1384,42 @@ begin
     raise exception '이 기록에는 이미 다른 책 id 가 정해져 있습니다.' using errcode = '22023';
   end if;
 
-  entry := public.spend_tokens(p_amount, 'illustration');   -- 마스터면 null (면제)
+  /*
+   * 값은 **서버가 계산한다** (2026-09-16). 예전엔 브라우저가 보낸 p_amount 를 그대로 받아,
+   * 콘솔에서 1 을 보내면 5쪽 그림책을 1토큰에 저장할 수 있었다.
+   *
+   * 쪽수를 믿는 순서 — 회원이 못 고치는 값부터:
+   *   ① story_charges.pages (대본 값을 받을 때 서버가 적은 쪽수. 13번)
+   *   ② book_jobs.page_count · 원고의 쪽 수 (회원이 쓰는 칸이라 둘 중 큰 값)
+   * 어느 것도 못 읽으면 **막지 않고** 보내온 값을 받되 상한(40쪽어치)으로 깎는다 —
+   * 이 함수는 그림을 다 그린 뒤에 불린다. 여기서 막으면 부모는 그림 값을 못 내 저장에 실패한다.
+   * 원고의 pages 가 배열이 아닐 수 있으므로(회원이 쓰는 칸) 타입을 먼저 본다.
+   */
+  per := greatest(0, price.cost_illustrated_per_page - price.cost_text_per_page);
+  pages := (select sc.pages
+              from public.story_charges sc
+             where sc.entry is not null and sc.entry = job.story_entry and sc.owner = job.owner
+             limit 1);
+  if pages is null or pages < 1 then
+    pages := greatest(
+      coalesce(job.page_count, 0),
+      case when jsonb_typeof(job.manuscript -> 'pages') = 'array'
+           then jsonb_array_length(job.manuscript -> 'pages') else 0 end);
+  end if;
+  if pages >= 1 then
+    amount := least(pages, 40) * per;
+  else
+    amount := least(greatest(coalesce(p_amount, 0), 0), 40 * per);
+  end if;
+
+  entry := public.spend_tokens(amount, 'illustration');   -- 마스터면 null (면제)
 
   update public.book_jobs
      set illustration_entry = entry, book_id = p_book_id, status = 'uploading'
    where id = job.id;
 
   return json_build_object('entry', entry,
+                           'charged', amount,
                            'tokens', (select tokens from public.profiles where id = auth.uid()));
 end; $$;
 
@@ -1301,6 +1482,10 @@ begin
   -- for update — 마스터 둘(yogico·fe)이 동시에 같은 건을 눌러도 한 번만 된다.
   select * into entry from public.token_ledger where id = p_entry for update;
   if not found then
+    raise exception '되돌릴 기록이 없습니다.' using errcode = '22023';
+  end if;
+  -- 다른 마스터의 줄은 건드리지 못한다(6번 master_can_see — fe 는 yogico 의 관리실에 안 보인다).
+  if not public.master_can_see(entry.owner) then
     raise exception '되돌릴 기록이 없습니다.' using errcode = '22023';
   end if;
   if entry.refunded_at is not null then
@@ -1376,6 +1561,7 @@ begin
       from public.token_ledger l
       left join public.profiles p on p.id = l.refunded_by
      where l.id = any(coalesce(p_entries, '{}'::uuid[]))
+       and public.master_can_see(l.owner)   -- 다른 마스터의 장부는 빼고 돌려준다
      order by l.created_at desc;
 end; $$;
 
@@ -1421,7 +1607,8 @@ begin
   end if;
 
   select * into job from public.book_jobs where id = p_job for update;
-  if not found then
+  -- 다른 마스터의 기록은 없는 것으로 본다(6번 master_can_see).
+  if not found or not public.master_can_see(job.owner) then
     raise exception '만들기 기록이 없습니다.' using errcode = '22023';
   end if;
 
@@ -1492,10 +1679,11 @@ begin
   if not public.is_master_user() then
     raise exception '권한이 없습니다.' using errcode = '42501';
   end if;
+  -- 다른 마스터의 줄은 건드리지 못한다(6번 master_can_see — fe 는 yogico 의 관리실에 안 보인다).
   update public.book_jobs
      set resolved_at = now(), resolved_by = auth.uid(),
          master_note = left(nullif(btrim(coalesce(p_note, '')), ''), 1000)
-   where id = p_job;
+   where id = p_job and public.master_can_see(owner);
   if not found then
     raise exception '만들기 기록이 없습니다.' using errcode = '22023';
   end if;
@@ -1521,7 +1709,7 @@ begin
     raise exception '권한이 없습니다.' using errcode = '42501';
   end if;
   select * into entry from public.token_ledger where id = p_entry for update;
-  if not found then
+  if not found or not public.master_can_see(entry.owner) then
     raise exception '결제 기록이 없습니다.' using errcode = '22023';
   end if;
   if entry.reason not in ('story', 'illustration') then
@@ -1683,6 +1871,8 @@ begin
      where (p_owner is null or bj.owner = p_owner)
        and (p_username is null or p.username = p_username)
        and (p_include_resolved or bj.resolved_at is null)
+       -- 다른 마스터의 기록은 목록에 넣지 않는다(6번 master_can_see — fe 기록은 yogico 에게 안 보인다).
+       and public.master_can_see(bj.owner)
   ),
   counted as (
     select base.*,
@@ -1743,6 +1933,7 @@ begin
        and l.created_at < now() - stale
        and (p_owner is null or l.owner = p_owner)
        and (p_username is null or p.username = p_username)
+       and public.master_can_see(l.owner)     -- 다른 마스터의 결제도 빼고 본다
        and not exists (select 1 from public.book_jobs x where x.story_entry = l.id)
        and not exists (select 1 from public.book_jobs x where x.illustration_entry = l.id)
        and exists (select 1 from public.book_jobs y
@@ -1863,6 +2054,385 @@ exception when others then
 end $$;
 
 -- ════════════════════════════════════════════════════════════════════════
+-- 22. 가격 바꾸기 · 이력 (2026-09-16) — 관리실에서 정하고, 왜 바꿨는지 남긴다
+-- ════════════════════════════════════════════════════════════════════════
+--
+--  값 자체는 5-A(app_pricing) 한 줄에 있다. 여기서는 **바꾸는 길**만 만든다.
+--   · 바꾸는 사람: yogico 만(is_pricing_admin). fe 는 보기만 한다 — 사장님 지시.
+--   · 반드시 사유를 적는다. 칸 단위로 "무엇이 얼마에서 얼마로, 왜, 누가, 언제"를 남긴다.
+--   · 말이 안 되는 값은 DB 가 거절한다(그림 단가 < 글 단가, 20쪽이 1000토큰을 넘는 값 …).
+--     1000 은 spend_tokens 한 번의 상한이라, 넘으면 그림 값 결제가 통째로 막힌다.
+
+create table if not exists public.pricing_changes (
+  id                  bigint generated always as identity primary key,
+  field               text not null,        -- 'cost_illustrated_per_page' 같은 칸 이름
+  old_value           integer,
+  new_value           integer not null,
+  note                text,                 -- 사장님이 적은 사유
+  changed_by          uuid references auth.users(id) on delete set null,
+  changed_by_username text,                 -- 계정이 지워져도 누가 바꿨는지 남게 이름을 함께 적는다
+  at                  timestamptz not null default now()
+);
+create index if not exists pricing_changes_at_idx on public.pricing_changes (at desc);
+
+alter table public.pricing_changes enable row level security;
+revoke all on public.pricing_changes from anon;
+revoke all on public.pricing_changes from authenticated;
+-- 정책을 만들지 않는다 = 표로는 아무도 못 본다. 읽기는 아래 master_pricing_log 하나뿐
+-- (book_events 와 같은 방식 — 16번).
+
+/*
+ * 가격 바꾸기. p_patch 는 바꿀 칸만 담은 jsonb — 예: {"cost_illustrated_per_page": 3}
+ * 돌려주는 값: { changed: 실제로 바뀐 칸 수, pricing: 지금 가격 전체 }
+ */
+create or replace function public.master_set_pricing(p_patch jsonb, p_note text)
+returns json
+language plpgsql security definer
+set search_path = public as $$
+declare
+  cur   public.app_pricing%rowtype;
+  k     text;
+  v     integer;
+  n     integer := 0;
+  who   text;
+  note  text := left(btrim(coalesce(p_note, '')), 500);
+  nt    integer;
+  ni    integer;
+  allowed text[] := array['token_price_krw','signup_bonus_tokens','cost_text_per_page',
+                          'cost_illustrated_per_page','cost_parent_voice','max_books_per_user',
+                          'feedback_bonus_tokens','max_free_rewrites'];
+begin
+  if not public.is_pricing_admin() then
+    raise exception '가격은 yogico 계정에서만 바꿀 수 있어요.' using errcode = '42501';
+  end if;
+  if length(note) < 2 then
+    raise exception '왜 바꾸는지 두 글자 이상 적어 주세요.' using errcode = '22023';
+  end if;
+  if p_patch is null or jsonb_typeof(p_patch) <> 'object' then
+    raise exception '바꿀 항목이 없습니다.' using errcode = '22023';
+  end if;
+
+  -- 없는 줄이면 기본값으로 한 줄 만든다(표가 비어 있어도 첫 저장이 되게).
+  insert into public.app_pricing (id) values (1) on conflict (id) do nothing;
+  select * into cur from public.app_pricing where id = 1 for update;
+
+  -- ① 모양 검사 — 모르는 칸, 숫자가 아닌 값, 말도 안 되는 범위
+  for k in select jsonb_object_keys(p_patch) loop
+    if not (k = any(allowed)) then
+      raise exception '모르는 항목입니다: %', k using errcode = '22023';
+    end if;
+    if jsonb_typeof(p_patch -> k) <> 'number' then
+      raise exception '% 값은 숫자여야 합니다.', k using errcode = '22023';
+    end if;
+    v := (p_patch ->> k)::integer;
+    if v is null or v < 0 or v > 100000 then
+      raise exception '% 값이 올바르지 않습니다(0~100000).', k using errcode = '22023';
+    end if;
+  end loop;
+
+  nt := coalesce((p_patch ->> 'cost_text_per_page')::integer,        cur.cost_text_per_page);
+  ni := coalesce((p_patch ->> 'cost_illustrated_per_page')::integer, cur.cost_illustrated_per_page);
+
+  -- ② 뜻이 맞는지 검사 — 범위를 먼저 본다(60 처럼 터무니없는 값에 엉뚱한 안내가 나가지 않게)
+  if nt * 20 > 1000 then
+    raise exception '글 단가가 너무 높아요 — 20쪽짜리가 1000토큰을 넘으면 결제가 막혀요.' using errcode = '22023';
+  end if;
+  if ni * 20 > 1000 then
+    raise exception '그림 단가가 너무 높아요 — 20쪽짜리가 1000토큰을 넘으면 결제가 막혀요.' using errcode = '22023';
+  end if;
+  if ni < nt then
+    raise exception '그림 단가는 글 단가보다 낮을 수 없어요.' using errcode = '22023';
+  end if;
+  if coalesce((p_patch ->> 'cost_parent_voice')::integer, cur.cost_parent_voice) > 1000 then
+    raise exception '부모 목소리 값은 1000토큰을 넘을 수 없어요.' using errcode = '22023';
+  end if;
+  if coalesce((p_patch ->> 'max_books_per_user')::integer, cur.max_books_per_user) < 1 then
+    raise exception '권수 상한은 1권 이상이어야 해요.' using errcode = '22023';
+  end if;
+  if coalesce((p_patch ->> 'max_free_rewrites')::integer, cur.max_free_rewrites) > 20 then
+    raise exception '무료 다시쓰기는 20회를 넘을 수 없어요.' using errcode = '22023';
+  end if;
+  if coalesce((p_patch ->> 'token_price_krw')::integer, cur.token_price_krw) < 1 then
+    raise exception '1토큰 가격은 1원 이상이어야 해요.' using errcode = '22023';
+  end if;
+
+  select username into who from public.profiles where id = auth.uid();
+
+  -- ③ 바뀐 칸만 이력에 적는다. 동적 SQL 을 쓰지 않는다 — 이 파일 관례대로 칸마다 편다.
+  if p_patch ? 'token_price_krw' and (p_patch ->> 'token_price_krw')::integer <> cur.token_price_krw then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('token_price_krw', cur.token_price_krw, (p_patch ->> 'token_price_krw')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'signup_bonus_tokens' and (p_patch ->> 'signup_bonus_tokens')::integer <> cur.signup_bonus_tokens then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('signup_bonus_tokens', cur.signup_bonus_tokens, (p_patch ->> 'signup_bonus_tokens')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'cost_text_per_page' and (p_patch ->> 'cost_text_per_page')::integer <> cur.cost_text_per_page then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('cost_text_per_page', cur.cost_text_per_page, (p_patch ->> 'cost_text_per_page')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'cost_illustrated_per_page' and (p_patch ->> 'cost_illustrated_per_page')::integer <> cur.cost_illustrated_per_page then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('cost_illustrated_per_page', cur.cost_illustrated_per_page, (p_patch ->> 'cost_illustrated_per_page')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'cost_parent_voice' and (p_patch ->> 'cost_parent_voice')::integer <> cur.cost_parent_voice then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('cost_parent_voice', cur.cost_parent_voice, (p_patch ->> 'cost_parent_voice')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'max_books_per_user' and (p_patch ->> 'max_books_per_user')::integer <> cur.max_books_per_user then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('max_books_per_user', cur.max_books_per_user, (p_patch ->> 'max_books_per_user')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'feedback_bonus_tokens' and (p_patch ->> 'feedback_bonus_tokens')::integer <> cur.feedback_bonus_tokens then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('feedback_bonus_tokens', cur.feedback_bonus_tokens, (p_patch ->> 'feedback_bonus_tokens')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+  if p_patch ? 'max_free_rewrites' and (p_patch ->> 'max_free_rewrites')::integer <> cur.max_free_rewrites then
+    insert into public.pricing_changes (field, old_value, new_value, note, changed_by, changed_by_username)
+    values ('max_free_rewrites', cur.max_free_rewrites, (p_patch ->> 'max_free_rewrites')::integer, note, auth.uid(), who);
+    n := n + 1;
+  end if;
+
+  update public.app_pricing set
+    token_price_krw           = coalesce((p_patch ->> 'token_price_krw')::integer, cur.token_price_krw),
+    signup_bonus_tokens       = coalesce((p_patch ->> 'signup_bonus_tokens')::integer, cur.signup_bonus_tokens),
+    cost_text_per_page        = nt,
+    cost_illustrated_per_page = ni,
+    cost_parent_voice         = coalesce((p_patch ->> 'cost_parent_voice')::integer, cur.cost_parent_voice),
+    max_books_per_user        = coalesce((p_patch ->> 'max_books_per_user')::integer, cur.max_books_per_user),
+    feedback_bonus_tokens     = coalesce((p_patch ->> 'feedback_bonus_tokens')::integer, cur.feedback_bonus_tokens),
+    max_free_rewrites         = coalesce((p_patch ->> 'max_free_rewrites')::integer, cur.max_free_rewrites),
+    updated_at = now(), updated_by = auth.uid()
+  where id = 1;
+
+  return json_build_object('changed', n, 'pricing', to_jsonb(public.pricing_now()) - 'updated_by');
+end; $$;
+
+revoke all on function public.master_set_pricing(jsonb, text) from public, anon;
+grant execute on function public.master_set_pricing(jsonb, text) to authenticated;
+
+-- 가격 이력 읽기 — 마스터 둘 다 본다. 가격은 회사 공통 설정이라 개인 기록이 아니다.
+create or replace function public.master_pricing_log(p_limit integer default 100)
+returns table (id bigint, field text, old_value integer, new_value integer,
+               note text, changed_by_username text, at timestamptz)
+language plpgsql security definer stable
+set search_path = public as $$
+begin
+  if not public.is_master_user() then
+    raise exception '권한이 없습니다.' using errcode = '42501';
+  end if;
+  return query
+    select c.id, c.field, c.old_value, c.new_value, c.note,
+           coalesce(c.changed_by_username, '마스터'), c.at
+      from public.pricing_changes c
+     order by c.at desc
+     limit greatest(least(coalesce(p_limit, 100), 1000), 1);
+end; $$;
+
+revoke all on function public.master_pricing_log(integer) from public, anon;
+grant execute on function public.master_pricing_log(integer) to authenticated;
+
+
+-- ════════════════════════════════════════════════════════════════════════
+-- 23. 권수 상한을 DB 가 지킨다 (2026-09-16)
+-- ════════════════════════════════════════════════════════════════════════
+--  예전엔 앱 상수(MAX_BOOKS_PER_USER=30)로만 막아서, 콘솔로 직접 넣으면 끝이 없었다.
+--  이제 가격표의 max_books_per_user 를 DB 가 센다. 관리실에서 상한을 바꾸면 바로 적용된다.
+--
+--  막지 **않는** 경우 — 돈은 나갔는데 책을 못 넣는 사고를 만들지 않으려고:
+--   · 같은 책 id 를 다시 저장(덮어쓰기)
+--   · 마스터의 책
+--   · 부르는 사람이 주인이 아닐 때(마스터 되살리기 master_restore_book 이 고객 이름으로 넣는다)
+--   · 이 책 id 로 이미 값을 낸 만들기 기록이 있을 때(그림 값을 낸 첫 저장)
+create or replace function public.books_enforce_limit()
+returns trigger
+language plpgsql security definer
+set search_path = public as $$
+declare
+  lim integer;
+  cnt integer;
+begin
+  if auth.uid() is null or auth.uid() <> new.owner then
+    return new;                                   -- 마스터 되살리기·SQL 편집기
+  end if;
+  if exists (select 1 from public.books where id = new.id) then
+    return new;                                   -- 다시 저장(upsert)
+  end if;
+  if coalesce((select is_master from public.profiles where id = new.owner), false) then
+    return new;
+  end if;
+  if exists (select 1 from public.book_jobs j
+              where j.owner = new.owner and j.book_id = new.id
+                and (j.story_entry is not null or j.illustration_entry is not null)) then
+    return new;                                   -- 이미 값을 낸 책 — 막으면 돈만 나간다
+  end if;
+  lim := greatest(1, (public.pricing_now()).max_books_per_user);
+  select count(*) into cnt from public.books where owner = new.owner;
+  if cnt >= lim then
+    raise exception '동화는 계정당 %권까지 만들 수 있어요. 오래된 책을 지우고 다시 저장해 주세요.', lim
+      using errcode = '54000';
+  end if;
+  return new;
+end; $$;
+
+revoke all on function public.books_enforce_limit() from public, anon, authenticated;
+
+drop trigger if exists books_enforce_limit on public.books;
+create trigger books_enforce_limit
+  before insert on public.books
+  for each row execute function public.books_enforce_limit();
+
+
+-- ════════════════════════════════════════════════════════════════════════
+-- 24. 의견 게시판을 관리실에서 처리한다 (2026-09-16)
+-- ════════════════════════════════════════════════════════════════════════
+--  고객이 게시판에 남긴 불만·오류 신고가 관리실 목록에 쌓이고, 마스터가 답을 달면
+--  고객의 게시판 글 아래에 그 답이 그대로 보인다. 내부 메모(master_note)는 고객에게 안 보인다.
+--
+--  칸 권한 — RLS 는 줄만 가리고 칸은 못 가린다. 그래서 읽는 칸을 적어 준다.
+--  (token_ledger 의 환불 사유를 가리는 것과 같은 방식 — 18번)
+revoke select on public.feedback from anon;
+revoke select on public.feedback from authenticated;
+grant select (id, owner, category, content, created_at, reply, replied_at, handled_at)
+  on public.feedback to authenticated;
+-- 쓰기는 지금까지처럼 본인 글만(정책이 막는다). 답변·처리 칸은 함수로만 바뀐다.
+revoke insert, update on public.feedback from authenticated;
+grant insert (owner, category, content) on public.feedback to authenticated;
+grant update (category, content) on public.feedback to authenticated;
+
+/*
+ * 답변이 달린 글은 고객이 고치거나 지울 수 없다 — 답을 단 뒤에 내용이 바뀌면
+ * 관리실과 게시판이 서로 다른 이야기를 하게 된다. RLS 로 0줄을 만들면 앱이
+ * "권한이 없어요"라고만 말하므로, 여기서 한국어로 까닭을 말한다.
+ */
+create or replace function public.feedback_guard()
+returns trigger
+language plpgsql security definer
+set search_path = public as $$
+begin
+  if tg_op = 'DELETE' then
+    if old.reply is not null and auth.uid() = old.owner then
+      raise exception '관리자 답변이 달린 글은 지울 수 없어요.' using errcode = '42501';
+    end if;
+    return old;
+  end if;
+  -- 고객이 자기 글을 고치는 경우만 막는다(마스터 함수는 auth.uid() 가 글 주인이 아니다).
+  if auth.uid() = old.owner and old.reply is not null
+     and (new.content is distinct from old.content or new.category is distinct from old.category) then
+    raise exception '관리자 답변이 달린 글은 고칠 수 없어요.' using errcode = '42501';
+  end if;
+  -- 답변·처리 칸은 회원이 못 건드린다(칸 권한으로도 막지만 한 번 더).
+  if auth.uid() = old.owner then
+    new.reply       := old.reply;
+    new.replied_at  := old.replied_at;
+    new.replied_by  := old.replied_by;
+    new.handled_at  := old.handled_at;
+    new.handled_by  := old.handled_by;
+    new.master_note := old.master_note;
+  end if;
+  return new;
+end; $$;
+
+revoke all on function public.feedback_guard() from public, anon, authenticated;
+
+drop trigger if exists feedback_guard on public.feedback;
+create trigger feedback_guard
+  before update or delete on public.feedback
+  for each row execute function public.feedback_guard();
+
+-- 관리실 의견 목록. 다른 마스터가 쓴 글은 빼고 본다(6번 master_can_see).
+create or replace function public.master_feedback_list(
+  p_only_open boolean default false,
+  p_limit     integer default 100
+)
+returns table (id uuid, owner uuid, username text, category text, content text,
+               created_at timestamptz, reply text, replied_at timestamptz,
+               replied_by_username text, handled_at timestamptz, master_note text,
+               tokens integer, books integer, open_count integer)
+language plpgsql security definer stable
+set search_path = public as $$
+begin
+  if not public.is_master_user() then
+    raise exception '권한이 없습니다.' using errcode = '42501';
+  end if;
+  return query
+    select f.id, f.owner, p.username, f.category, f.content, f.created_at,
+           f.reply, f.replied_at, rp.username, f.handled_at, f.master_note,
+           p.tokens,
+           (select count(*)::integer from public.books b where b.owner = f.owner),
+           (select count(*)::integer from public.feedback f2
+             where f2.owner = f.owner and f2.handled_at is null)
+      from public.feedback f
+      left join public.profiles p  on p.id = f.owner
+      left join public.profiles rp on rp.id = f.replied_by
+     where public.master_can_see(f.owner)
+       and (not coalesce(p_only_open, false) or f.handled_at is null)
+     order by f.created_at desc
+     limit greatest(least(coalesce(p_limit, 100), 500), 1);
+end; $$;
+
+revoke all on function public.master_feedback_list(boolean, integer) from public, anon;
+grant execute on function public.master_feedback_list(boolean, integer) to authenticated;
+
+/*
+ * 의견에 답하고(선택) 처리 끝으로 표시한다.
+ *   p_reply   고객에게 보이는 답변. 비우면 답변은 그대로 두고 메모·처리만 바꾼다.
+ *   p_note    고객에게 안 보이는 내부 메모.
+ *   p_handled true 면 처리 끝, false 면 다시 열기, null 이면 그대로.
+ */
+create or replace function public.master_feedback_reply(
+  p_id      uuid,
+  p_reply   text default null,
+  p_note    text default null,
+  p_handled boolean default null
+)
+returns json
+language plpgsql security definer
+set search_path = public as $$
+declare
+  post    public.feedback%rowtype;
+  -- 변수 이름을 칸 이름(reply)과 다르게 둔다 — 같으면 아래 update 에서 '모호한 칸' 오류가 난다.
+  v_reply text := nullif(btrim(coalesce(p_reply, '')), '');
+begin
+  if not public.is_master_user() then
+    raise exception '권한이 없습니다.' using errcode = '42501';
+  end if;
+  select * into post from public.feedback where id = p_id for update;
+  if not found or not public.master_can_see(post.owner) then
+    raise exception '의견을 찾을 수 없습니다.' using errcode = '22023';
+  end if;
+  if v_reply is not null and length(v_reply) > 2000 then
+    raise exception '답변이 너무 깁니다(2000자까지).' using errcode = '22023';
+  end if;
+
+  update public.feedback
+     set reply       = coalesce(v_reply, post.reply),
+         replied_at  = case when v_reply is not null then now() else post.replied_at end,
+         replied_by  = case when v_reply is not null then auth.uid() else post.replied_by end,
+         master_note = coalesce(left(nullif(btrim(coalesce(p_note, '')), ''), 1000), post.master_note),
+         handled_at  = case when p_handled is null then post.handled_at
+                            when p_handled then coalesce(post.handled_at, now())
+                            else null end,
+         handled_by  = case when p_handled is null then post.handled_by
+                            when p_handled then coalesce(post.handled_by, auth.uid())
+                            else null end
+   where id = p_id;
+
+  return json_build_object('id', p_id, 'replied', v_reply is not null);
+end; $$;
+
+revoke all on function public.master_feedback_reply(uuid, text, text, boolean) from public, anon;
+grant execute on function public.master_feedback_reply(uuid, text, text, boolean) to authenticated;
+
+
+-- ════════════════════════════════════════════════════════════════════════
 --  확인하는 법 (마스터 계정으로 로그인한 뒤 브라우저 콘솔에서)
 --
 --    await supabase.rpc('master_book_incidents', {})
@@ -1884,13 +2454,20 @@ end $$;
 
 
 -- ════════════════════════════════════════════════════════════════════════
--- 끝. 아래를 함께 돌리면 표 열 개가 다 있는지 눈으로 확인할 수 있다.
--- (profiles · books · voice_clones · feedback · tts_usage · token_ledger · token_grants
---  · story_charges · book_jobs · book_events)
+-- 끝. 아래를 함께 돌리면 표 열두 개가 다 있는지 눈으로 확인할 수 있다.
+-- (profiles · books · voice_clones · feedback · tts_usage · app_pricing · token_ledger
+--  · token_grants · story_charges · book_jobs · book_events · pricing_changes)
 -- ════════════════════════════════════════════════════════════════════════
 select table_name as 표
 from information_schema.tables
 where table_schema = 'public'
-  and table_name in ('profiles','books','voice_clones','feedback','tts_usage',
-                     'token_ledger','token_grants','story_charges','book_jobs','book_events')
+  and table_name in ('profiles','books','voice_clones','feedback','tts_usage','app_pricing',
+                     'token_ledger','token_grants','story_charges','book_jobs','book_events',
+                     'pricing_changes')
 order by table_name;
+
+-- 지금 가격도 함께 확인한다 (처음 붙였다면 100·200·1·2·15·30 — 지금 앱과 같은 값).
+select token_price_krw as "1토큰 원", signup_bonus_tokens as "가입 지급",
+       cost_text_per_page as "대본 쪽당", cost_illustrated_per_page as "그림 쪽당",
+       cost_parent_voice as "부모 목소리", max_books_per_user as "권수 상한"
+from public.app_pricing where id = 1;
