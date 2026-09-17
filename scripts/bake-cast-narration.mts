@@ -190,6 +190,16 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "시골 쥐" }, { name: "도시 쥐" }],
   },
+  // 북풍과 태양 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 북풍 시우 · 태양 아린이 · 나그네 호선.
+  // 태양은 대사가 한 줄도 없다(원전대로 말없이 웃기만 한다) — 성우는 말풍선용으로만 둔다.
+  "북풍과 태양": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "northwind",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "북풍" }, { name: "태양" }, { name: "나그네" }],
+  },
   "개미와 베짱이": {
     data: "src/data/classic-books.json",
     root: "classic",

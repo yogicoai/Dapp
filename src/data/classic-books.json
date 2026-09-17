@@ -7352,5 +7352,165 @@
       "할머니": "witch",
       "아버지": "father"
     }
+  },
+  {
+    "id": "classic-northwind",
+    "lang": "ko",
+    "title": "북풍과 태양",
+    "summary": "외투 한 벌을 두고 겨룬 북풍과 태양 — 힘이 세다고 다 이기는 건 아니랍니다.",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/northwind/cover.webp?v=1",
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "wind": "tc-siwoo",
+      "sun": "tc-arin",
+      "traveller": "tc-hosun"
+    },
+    "roleOf": {
+      "북풍": "wind",
+      "태양": "sun",
+      "해님": "sun",
+      "나그네": "traveller"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "text": "높은 하늘 구름 위에서 북풍과 태양이 만났어요.\n북풍은 씽씽 바람을 불며 어깨를 으쓱했지요.\n\"이 세상에서 내가 제일 힘이 세지!\"\n태양은 빙그레 웃기만 했답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/northwind/p1.webp?v=1",
+        "lines": [
+          {
+            "text": "이 세상에서 내가 제일 힘이 세지!",
+            "who": "wind"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "wind",
+            "line": "이 세상에서 내가 제일 힘이 세지!",
+            "box": [
+              29,
+              42,
+              625,
+              448
+            ],
+            "audio": "/classic/northwind/say-p1-wind.mp3"
+          }
+        ]
+      },
+      {
+        "n": 2,
+        "text": "그때 저 아래 길로 나그네 한 사람이 걸어갔어요.\n장에 가는 길인지, 두툼한 외투를 꼭 여미고 있었지요.\n\"좋아, 내기하자! 저 사람 외투를 먼저 벗기는 쪽이 이기는 거야.\"\n북풍이 소매를 걷어붙였어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/northwind/p2.webp?v=1",
+        "lines": [
+          {
+            "text": "좋아, 내기하자! 저 사람 외투를 먼저 벗기는 쪽이 이기는 거야.",
+            "who": "wind"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "wind",
+            "line": "좋아, 내기하자! 저 사람 외투를 먼저 벗기는 쪽이 이기는 거야.",
+            "box": [
+              10,
+              130,
+              300,
+              405
+            ],
+            "audio": "/classic/northwind/say-p2-wind.mp3"
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "북풍이 크게 숨을 들이쉬었어요.\n그리고 온 힘을 다해 바람을 불었지요.\n후욱! 후우욱!\n나뭇잎이 우수수 날리고, 나그네의 옷자락이 펄럭였어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/northwind/p3.webp?v=1"
+      },
+      {
+        "n": 4,
+        "text": "바람이 세게 불수록 나그네는 외투를 더 꽉 여몄어요.\n\"어이쿠, 바람이 매섭구나.\"\n옷깃을 세우고 단추를 하나 더 잠갔지요.\n북풍은 볼이 홀쭉해지도록 불다가 그만 지치고 말았어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/northwind/p4.webp?v=1",
+        "lines": [
+          {
+            "text": "어이쿠, 바람이 매섭구나.",
+            "who": "traveller"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "traveller",
+            "line": "어이쿠, 바람이 매섭구나.",
+            "box": [
+              307,
+              557,
+              1000,
+              912
+            ],
+            "audio": "/classic/northwind/say-p4-traveller.mp3"
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "이번엔 태양의 차례였어요.\n태양은 구름을 살며시 걷고, 길 위로 따뜻한 볕을 내려보냈어요.\n꽁꽁 언 땅이 노글노글 녹고,\n가지 끝에서 새가 포르르 날아올랐답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/northwind/p5.webp?v=1"
+      },
+      {
+        "n": 6,
+        "text": "걷던 나그네의 이마에 땀이 송글송글 맺혔어요.\n\"아이고, 더워라.\"\n나그네는 단추를 하나씩 풀더니, 외투를 스르르 벗었지요.\n그러고는 나무 그늘에 앉아 시원한 바람을 기다렸답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/northwind/p6.webp?v=1",
+        "lines": [
+          {
+            "text": "아이고, 더워라.",
+            "who": "traveller"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "traveller",
+            "line": "아이고, 더워라.",
+            "box": [
+              25,
+              338,
+              960,
+              667
+            ],
+            "audio": "/classic/northwind/say-p6-traveller.mp3"
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "북풍은 눈이 동그래졌어요.\n\"내가 그렇게 세게 불었는데…\"\n태양은 아무 말 없이 빙그레 웃었어요.\n북풍은 고개를 끄덕끄덕했답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/northwind/p7.webp?v=1",
+        "lines": [
+          {
+            "text": "내가 그렇게 세게 불었는데…",
+            "who": "wind"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "wind",
+            "line": "내가 그렇게 세게 불었는데…",
+            "box": [
+              12,
+              140,
+              370,
+              405
+            ],
+            "audio": "/classic/northwind/say-p7-wind.mp3"
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "세게 밀어붙일 때는 꼼짝 않던 외투가,\n따뜻하게 비추자 스르르 열렸어요.\n그때 그늘에 앉은 나그네가 부채질을 했어요.\n북풍이 살랑— 시원한 바람을 보내 주었답니다.\n\n힘이 세다고 다 이기는 건 아니랍니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/northwind/p8.webp?v=1"
+      }
+    ]
   }
 ]
