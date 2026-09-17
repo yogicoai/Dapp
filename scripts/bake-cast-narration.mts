@@ -111,6 +111,14 @@ const BOOKS: Record<string, BookSpec> = {
     cast: [{ name: "하온" }, { name: "친구" }],
   },
 
+  // 호랑이와 곶감 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 호랑이 심호문 · 엄마 가희 · 소도둑 홍설록.
+  // 소 울음(음매—)과 아기 울음(으앙—)은 배역이 아니라 나레이션이 읽는다.
+  "호랑이와 곶감": {
+    dir: "gotgam",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "호랑이" }, { name: "엄마" }, { name: "소도둑" }],
+  },
   "의좋은 형제": {
     dir: "brothers",
     narrators: ["tc-minjung"],
