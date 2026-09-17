@@ -135,6 +135,14 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "용왕" }, { name: "메기" }, { name: "자라" }, { name: "토끼" }],
   },
+  // 청개구리 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 엄마 청개구리 나진 · 아기 청개구리 덕구.
+  // 10쪽 "엄마. 엄마…"는 울부짖으면 안 된다 — 대사집에 세기를 낮게 못 박아 뒀다.
+  "청개구리": {
+    dir: "greenfrog",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "엄마 청개구리" }, { name: "아기 청개구리" }],
+  },
   "의좋은 형제": {
     dir: "brothers",
     narrators: ["tc-minjung"],

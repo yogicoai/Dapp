@@ -10657,5 +10657,239 @@
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "뭐, 뭐라고? 거기 서!"
+  },
+  "folk/greenfrog/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 옛날, 맑은 냇가에\n엄마 청개구리와 아기 청개구리가\n살고 있었어요."
+  },
+  "folk/greenfrog/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그런데 이 아기 청개구리는\n무슨 말을 해도 꼭!\n거꾸로만 하는 말썽쟁이였어요."
+  },
+  "folk/greenfrog/seg-cast-p3-0.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"물속에 들어가 있어라\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p3-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하면\n풀숲으로 폴짝!"
+  },
+  "folk/greenfrog/seg-cast-p3-2.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"풀숲에 숨어 있어라\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p3-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하면\n물속으로 풍덩!"
+  },
+  "folk/greenfrog/seg-cast-p4-0.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"엄마 올 때까지 저녁 먹지 마\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p4-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하면\n엄마가 돌아서기 무섭게 냠냠 먹어 치우고,"
+  },
+  "folk/greenfrog/seg-cast-p4-2.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"어서 저녁 먹어라\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p4-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하면\n입을 꼭 다문 채 뒤돌아앉았지요."
+  },
+  "folk/greenfrog/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "비가 오면 냇물이 불어나\n돌 위까지 찰랑거렸어요."
+  },
+  "folk/greenfrog/seg-cast-p5-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"물가에 가지 마라\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p5-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하면\n아기는 더 가까이 폴짝!"
+  },
+  "folk/greenfrog/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마 청개구리는\n이런 아기가 늘 걱정스러웠어요."
+  },
+  "folk/greenfrog/seg-cast-p6-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'얘가 언제쯤 말을 잘 들을까…'"
+  },
+  "folk/greenfrog/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그래도 해가 지면\n둘은 같은 연잎 아래 앉아\n별을 세었어요.\n엄마는 아기를 꼭 안아 주었지요."
+  },
+  "folk/greenfrog/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "여름이 가고, 또 한 번 여름이 갔어요.\n엄마 청개구리는 이제 잘 뛰지 않았어요."
+  },
+  "folk/greenfrog/seg-cast-p8-1.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"엄마는 여기 있을 테니, 저리 가서 놀아라.\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p8-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거꾸로 하는 아기는 엄마 옆에 꼭 붙어 앉았어요."
+  },
+  "folk/greenfrog/seg-cast-p8-3.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"우리 아기, 엄마는 네가 참 좋아.\""
+  },
+  "folk/greenfrog/say-p8-mother.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "우리 아기, 엄마는 네가 참 좋아."
+  },
+  "folk/greenfrog/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 저녁, 엄마가 아기의 앞발을 꼭 쥐었어요."
+  },
+  "folk/greenfrog/seg-cast-p9-1.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"얘야, 엄마가 하늘나라에 가면\n숲속 말고, 꼭 냇가에다 묻어 다오.\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p9-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아기는 그게 무슨 말인지 몰랐어요.\n사실 엄마는 조용한 숲속이 좋았지만,\n거꾸로 하는 우리 아기를 잘 알아서 반대로 말했지요."
+  },
+  "folk/greenfrog/say-p9-mother.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "얘야, 엄마가 하늘나라에 가면\n숲속 말고, 꼭 냇가에다 묻어 다오."
+  },
+  "folk/greenfrog/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "다음 날 아침이었어요.\n엄마는 돌 위에서 움직이지 않았어요."
+  },
+  "folk/greenfrog/seg-cast-p10-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"엄마. 엄마…\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p10-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "두 번이나 불렀는데, 아무 소리도 나지 않았어요.\n엄마 청개구리는 하늘나라로 떠난 거예요."
+  },
+  "folk/greenfrog/say-p10-child.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마. 엄마…"
+  },
+  "folk/greenfrog/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하지만 이번엔 달랐어요.\n이제는 거꾸로 해도, 받아 줄 엄마가 없으니까요."
+  },
+  "folk/greenfrog/seg-cast-p11-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "sad",
+    "intensity": 0.5,
+    "text": "\"엄마, 보고 싶어.\""
+  },
+  "folk/greenfrog/seg-cast-p11-2.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "'엄마 말대로, 이번엔 꼭 할게.'"
+  },
+  "folk/greenfrog/seg-tc-minjung-p11-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아기는 울면서 엄마를 냇가에 조심조심 묻어 주었어요."
+  },
+  "folk/greenfrog/say-p11-child.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "sad",
+    "intensity": 0.5,
+    "text": "엄마, 보고 싶어."
+  },
+  "folk/greenfrog/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아기가 무덤 옆에 앉아 말했어요."
+  },
+  "folk/greenfrog/seg-cast-p12-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"엄마, 나 이번엔 진짜로 말한 대로 했어요.\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p12-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 하늘이 흐려지더니, 후두둑 빗방울이 떨어졌어요.\n아기는 얼른 연잎을 따다 돌무덤 위에 덮어 주었어요.\n냇물이 두런두런, 아기 곁에서 같이 흘러갔지요."
+  },
+  "folk/greenfrog/say-p12-child.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마, 나 이번엔 진짜로 말한 대로 했어요."
+  },
+  "folk/greenfrog/seg-tc-minjung-p13-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그날 이후로, 비가 오는 날이면\n아기 청개구리는 냇가에 나와\n엄마 무덤이 떠내려가지는 않을까 걱정하며\n개굴개굴 울었답니다.\n지금도 비가 오면, 개구리가 그렇게 운대요."
   }
 }
