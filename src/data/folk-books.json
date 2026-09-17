@@ -7385,6 +7385,23 @@
             ],
             "audio": "/folk/gotgam/say-p1-tiger.mp3"
           }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p1-0.mp3",
+            "text": "옛날 옛적, 깊은 산속에 배고픈 호랑이 한 마리가 살았어요.\n눈이 후두둑 내리는 추운 겨울밤이었지요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/gotgam/seg-cast-p1-1.mp3",
+            "text": "\"오늘은 마을에 내려가 볼까?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p1-2.mp3",
+            "text": "\n호랑이는 살금살금 산을 내려왔어요."
+          }
         ]
       },
       {
@@ -7408,6 +7425,23 @@
               460
             ],
             "audio": "/folk/gotgam/say-p2-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p2-0.mp3",
+            "text": "어슬렁어슬렁 걷던 호랑이 눈에 외양간 하나가 들어왔어요.\n안에서 소 우는 소리가 들렸지요.\n음매— 음매—\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/gotgam/seg-cast-p2-1.mp3",
+            "text": "\"옳지, 소부터 잡아먹자!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p2-2.mp3",
+            "text": "\n호랑이는 침을 꼴깍 삼켰답니다."
           }
         ]
       },
@@ -7433,6 +7467,23 @@
             ],
             "audio": "/folk/gotgam/say-p3-tiger.mp3"
           }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p3-0.mp3",
+            "text": "그런데 그때, 집 안에서 아기 우는 소리가 들렸어요.\n으앙— 으앙—\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/gotgam/seg-cast-p3-1.mp3",
+            "text": "\"어라, 아기잖아? 아기부터 볼까?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p3-2.mp3",
+            "text": "\n호랑이는 문 밖에서 귀를 쫑긋 세우고 기다렸어요."
+          }
         ]
       },
       {
@@ -7456,6 +7507,23 @@
               557
             ],
             "audio": "/folk/gotgam/say-p4-mother.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p4-0.mp3",
+            "text": "그러자 방 안에서 엄마 목소리가 들려왔어요.\n"
+          },
+          {
+            "who": "mother",
+            "src": "/folk/gotgam/seg-cast-p4-1.mp3",
+            "text": "\"뚝! 자꾸 울면 호랑이가 잡아간다!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p4-2.mp3",
+            "text": "\n하지만 아기는 울음을 그치지 않았어요.\n으앙— 으아앙—"
           }
         ]
       },
@@ -7481,6 +7549,18 @@
             ],
             "audio": "/folk/gotgam/say-p5-tiger.mp3"
           }
+        ],
+        "segments": [
+          {
+            "who": "tiger",
+            "src": "/folk/gotgam/seg-cast-p5-0.mp3",
+            "text": "\"이럴 수가… 내가 하나도 안 무섭다는 거야?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p5-1.mp3",
+            "text": "\n호랑이는 기분이 살짝 상했어요.\n수염을 만지작거리며 담 밑에 쭈그리고 앉았지요."
+          }
         ]
       },
       {
@@ -7504,6 +7584,23 @@
               574
             ],
             "audio": "/folk/gotgam/say-p6-mother.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p6-0.mp3",
+            "text": "그런데 다음 순간, 엄마가 말했어요.\n"
+          },
+          {
+            "who": "mother",
+            "src": "/folk/gotgam/seg-cast-p6-1.mp3",
+            "text": "\"옜다, 곶감이다!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p6-2.mp3",
+            "text": "\n그러자 아기가 울음을 뚝 그치는 거예요.\n방 안이 조용해졌답니다."
           }
         ]
       },
@@ -7529,12 +7626,31 @@
             ],
             "audio": "/folk/gotgam/say-p7-tiger.mp3"
           }
+        ],
+        "segments": [
+          {
+            "who": "tiger",
+            "src": "/folk/gotgam/seg-cast-p7-0.mp3",
+            "text": "\"고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 왔다는데도 안 그치던 아기가 뚝 그치지?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p7-1.mp3",
+            "text": "\n덜컥 겁이 난 호랑이는\n외양간 안으로 쏙 숨어 버렸어요."
+          }
         ]
       },
       {
         "n": 8,
         "text": "그때, 어둠 속에서 누군가 호랑이의 등을 더듬더듬 만졌어요.\n소를 훔치러 온 소도둑이었지요.\n소도둑은 호랑이를 소인 줄 알고\n냉큼 등에 올라탔어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gotgam/p8.webp?v=1"
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gotgam/p8.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p8-0.mp3",
+            "text": "그때, 어둠 속에서 누군가 호랑이의 등을 더듬더듬 만졌어요.\n소를 훔치러 온 소도둑이었지요.\n소도둑은 호랑이를 소인 줄 알고\n냉큼 등에 올라탔어요."
+          }
+        ]
       },
       {
         "n": 9,
@@ -7560,6 +7676,18 @@
             "audio": "/folk/gotgam/say-p9-tiger.mp3",
             "feel": "toneup"
           }
+        ],
+        "segments": [
+          {
+            "who": "tiger",
+            "src": "/folk/gotgam/seg-cast-p9-0.mp3",
+            "text": "\"으악! 곶감이다! 곶감이 나를 잡으러 왔다!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p9-1.mp3",
+            "text": "\n호랑이는 등에 올라탄 것이 곶감인 줄 알고\n허둥지둥 달리기 시작했어요."
+          }
         ]
       },
       {
@@ -7583,6 +7711,18 @@
               667
             ],
             "audio": "/folk/gotgam/say-p10-thief.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "thief",
+            "src": "/folk/gotgam/seg-cast-p10-0.mp3",
+            "text": "\"어어? 소가 왜 이렇게 빠르지?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p10-1.mp3",
+            "text": "\n소도둑은 떨어지지 않으려고\n호랑이 등을 꼭 껴안았어요.\n둘은 눈밭을 가로질러 쌩쌩 달렸답니다."
           }
         ]
       },
@@ -7610,6 +7750,23 @@
             "audio": "/folk/gotgam/say-p11-thief.mp3",
             "feel": "toneup"
           }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p11-0.mp3",
+            "text": "산속으로 들어서자 구름이 걷히고 달빛이 환하게 비쳤어요.\n소도둑은 그제야 자기가 올라탄 것이\n소가 아니라 호랑이라는 걸 알았지요.\n"
+          },
+          {
+            "who": "thief",
+            "src": "/folk/gotgam/seg-cast-p11-1.mp3",
+            "text": "\"으악, 이게 무슨 일이야!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p11-2.mp3",
+            "text": "\n소도둑은 폴짝 뛰어내려 커다란 나무 뒤에 숨었어요."
+          }
         ]
       },
       {
@@ -7633,6 +7790,23 @@
               621
             ],
             "audio": "/folk/gotgam/say-p12-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p12-0.mp3",
+            "text": "등이 가벼워진 호랑이는 그제야 한숨을 내쉬었어요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/gotgam/seg-cast-p12-1.mp3",
+            "text": "\"휴, 곶감이 드디어 사라졌구나.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/gotgam/seg-p12-2.mp3",
+            "text": "\n그날 밤 뒤로 호랑이도, 소도둑도\n다시는 마을에 얼씬하지 않았답니다."
           }
         ]
       }
