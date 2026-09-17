@@ -8292,7 +8292,7 @@
             "text": "그러던 어느 날,\n왕자가 기쁜 얼굴로 말했어요.\n목숨을 구해 준 이웃 나라 공주와\n결혼하게 되었다고요.\n"
           },
           {
-            "who": "prince",
+            "who": "mermaid",
             "src": "/classic/mermaid/seg-cast-p13-1.mp3",
             "text": "'왕자님을 구한 건 저예요!'"
           },
@@ -8300,6 +8300,12 @@
             "who": "narration",
             "src": "/classic/mermaid/seg-p13-2.mp3",
             "text": "\n인어 공주는 힘껏 외쳤지만\n아무 소리도 나지 않았어요."
+          }
+        ],
+        "lines": [
+          {
+            "text": "왕자님을 구한 건 저예요!",
+            "who": "mermaid"
           }
         ]
       },
@@ -8362,7 +8368,7 @@
             "text": "인어 공주는 왕자가 잠든 방 앞까지 갔어요.\n하지만 차마 문을 열 수 없었지요.\n"
           },
           {
-            "who": "prince",
+            "who": "mermaid",
             "src": "/classic/mermaid/seg-cast-p16-1.mp3",
             "text": "'사랑하는 왕자님, 부디 행복하세요.'"
           },
@@ -8370,6 +8376,12 @@
             "who": "narration",
             "src": "/classic/mermaid/seg-p16-2.mp3",
             "text": "\n인어 공주는 언니들이 준 것을\n바다에 멀리 던져 버렸답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "사랑하는 왕자님, 부디 행복하세요.",
+            "who": "mermaid"
           }
         ]
       },
