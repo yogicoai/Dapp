@@ -850,6 +850,14 @@ export function BookViewer({
     line: string;
     box: [number, number, number, number];
   } | null>(null);
+  /** 소리 없이 말풍선만 띄워 둘 때 쓰는 타이머 — 쪽을 넘기면 반드시 꺼야 한다. */
+  const sayHold = useRef<number | null>(null);
+  const clearSayHold = () => {
+    if (sayHold.current !== null) {
+      clearTimeout(sayHold.current);
+      sayHold.current = null;
+    }
+  };
   const playHotspot = (
     h: { label: string; box: [number, number, number, number]; audio: string; line: string },
     page: number,
@@ -870,6 +878,7 @@ export function BookViewer({
       narrPausedRef.current = true;
     }
     const done = () => {
+      clearSayHold();
       setSpeaking(null);
       if (!wasNarrating) return;
       narrPausedRef.current = false;
@@ -892,8 +901,18 @@ export function BookViewer({
       key: ++burstKey.current,
     });
     el.onended = done;
-    el.onerror = done;
-    el.play().catch(done);
+    /*
+     * 소리를 못 찾았을 때(아직 안 구운 책·네트워크 실패) 말풍선이 그대로 사라지면
+     * 누른 사람에겐 '눌렀는데 그냥 꺼졌다'로 보인다. 소리가 없어도 글은 읽을 수 있으니
+     * 글자 수만큼 말풍선을 띄워 두고 조용히 닫는다 — 오류를 화면에 내보이지 않는다.
+     */
+    const readable = () => {
+      clearSayHold();
+      sayHold.current = window.setTimeout(done, Math.min(6000, Math.max(1500, 700 + h.line.length * 95)));
+    };
+    el.onerror = readable;
+    clearSayHold();
+    el.play().catch(readable);
   };
 
   /** 소리만 멈춘다 — 읽기 모드는 유지. 넘겨서 이어 읽을 때 쓴다. */
@@ -944,6 +963,10 @@ export function BookViewer({
   // '대사 끝나면 낭독 재개' 콜백이 뒤늦게 안 튀게 한다.
   const stopSay = useCallback(() => {
     narrPausedRef.current = false;
+    if (sayHold.current !== null) {
+      clearTimeout(sayHold.current);
+      sayHold.current = null;
+    }
     const el = sayRef.current;
     if (el) {
       el.onended = null;
