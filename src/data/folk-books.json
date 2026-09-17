@@ -9388,7 +9388,7 @@
       "narration": "tc-minjung",
       "proud": "tc-goat",
       "polite": "tc-wangkwon",
-      "butcher": "tc-changsu"
+      "butcher": "tc-jongdae"
     },
     "roleOf": {
       "거만한 양반": "proud",
@@ -9626,21 +9626,23 @@
         "lines": [
           {
             "text": "양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요.",
-            "who": "butcher"
+            "who": "butcher",
+            "feel": "normal"
           }
         ],
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p9.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p9.webp?v=2",
         "hotspots": [
           {
             "label": "butcher",
             "line": "양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요.",
             "box": [
-              40,
-              338,
-              810,
-              836
+              319,
+              597,
+              880,
+              752
             ],
-            "audio": "/folk/sanggil/say-p9-butcher.mp3"
+            "audio": "/folk/sanggil/say-p9-butcher.mp3",
+            "feel": "normal"
           }
         ],
         "segments": [

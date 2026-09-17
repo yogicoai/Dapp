@@ -11781,15 +11781,15 @@
     "text": "박상길 어르신은 싱긋 웃으며 대답했어요."
   },
   "folk/sanggil/seg-cast-p9-1.mp3": {
-    "voice": "tc-changsu",
-    "emotion": "angry",
-    "intensity": 0.4,
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
     "text": "\"양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요.\""
   },
   "folk/sanggil/say-p9-butcher.mp3": {
-    "voice": "tc-changsu",
-    "emotion": "angry",
-    "intensity": 0.4,
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
     "text": "양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요."
   },
   "folk/sanggil/seg-tc-minjung-p10-0.mp3": {
