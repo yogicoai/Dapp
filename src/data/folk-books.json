@@ -9374,5 +9374,161 @@
         ]
       }
     ]
+  },
+  {
+    "id": "folk-sanggil",
+    "lang": "ko",
+    "title": "상길이놈과 박서방",
+    "summary": "같은 푸줏간, 같은 부탁 — 말 한마디가 고기의 크기를 바꾼 이야기.",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "proud": "tc-goat",
+      "polite": "tc-wangkwon",
+      "butcher": "tc-changsu"
+    },
+    "roleOf": {
+      "거만한 양반": "proud",
+      "정중한 양반": "polite",
+      "박상길": "butcher",
+      "박상길 어르신": "butcher",
+      "박서방": "butcher"
+    },
+    "style": "classic European storybook illustration: fine brown ink outlines with light cross-hatching, soft transparent watercolor washes, visible paper texture, warm muted earthy palette (ochre, moss green, terracotta, cream), gentle natural daylight. Flat hand-drawn 2D — NOT 3D render, NOT glossy, NOT plastic, NOT Pixar",
+    "setting": "Joseon-era Korean market town: tiled-roof hanok houses with stone walls, a busy market lane, a wooden butcher's stall with a thick worn chopping block and wrapped cuts of meat, persimmon trees and soft low mountains behind. Everyone wears hanbok — the two noblemen in silk durumagi coats and black horsehair gat hats. Nothing European, no Western clothes or buildings. SAFETY: the butcher's knife may only ever lie flat on the chopping block as a quiet work tool — never raised, never held blade-forward, never glinting, never near a person. No blood, no wounds, no whole animals. The meat is always neat wrapped parcels or plain dark-red slabs on the block",
+    "cast": {
+      "proud": "THE PROUD NOBLEMAN — a Joseon yangban in his forties, chin tilted up and eyes looking down his nose, thin arched eyebrows and a neat black moustache, black horsehair gat hat, glossy deep-indigo silk durumagi coat, always carrying a folding fan",
+      "polite": "THE POLITE NOBLEMAN — a Joseon yangban of the same age, round gentle face with soft smiling eyes and a short beard, black horsehair gat hat, plain warm-grey silk durumagi coat, hands usually clasped politely in front of him",
+      "butcher": "PARK SANG-GIL — the old village butcher, in his sixties, weathered kind face with a short white beard and deep laugh lines, white cloth headband tied round his head, white hemp jeogori with the sleeves rolled up, dark work apron"
+    },
+    "pageCast": {
+      "1": [
+        "proud",
+        "polite"
+      ],
+      "2": [
+        "butcher",
+        "proud",
+        "polite"
+      ],
+      "3": [
+        "proud",
+        "butcher"
+      ],
+      "4": [
+        "polite",
+        "butcher"
+      ],
+      "5": [
+        "butcher"
+      ],
+      "6": [
+        "proud",
+        "polite"
+      ],
+      "7": [],
+      "8": [
+        "proud"
+      ],
+      "9": [
+        "butcher"
+      ],
+      "10": [
+        "proud",
+        "polite"
+      ],
+      "11": [
+        "proud",
+        "polite"
+      ],
+      "12": [
+        "proud",
+        "butcher"
+      ]
+    },
+    "pages": [
+      {
+        "n": 1,
+        "text": "옛날 옛적, 어느 마을에\n양반 두 사람이 살고 있었어요.\n어릴 적부터 함께 어울려 자란\n아주 친한 친구 사이였지요."
+      },
+      {
+        "n": 2,
+        "text": "명절이 가까워지자 두 사람은\n고기를 사러 푸줏간으로 갔어요.\n푸줏간에서는 박상길 어르신이\n쓱쓱 고기를 썰고 있었지요."
+      },
+      {
+        "n": 3,
+        "text": "먼저 한 사람이 턱을 치켜들고\n거만하게 말했어요.\n\"엣헴! 이 상길이놈아!\n냉큼 고기 한 덩이 썰어 내 앞에 가져오너라!\"",
+        "lines": [
+          {
+            "text": "엣헴! 이 상길이놈아!\n냉큼 고기 한 덩이 썰어 내 앞에 가져오너라!",
+            "who": "proud"
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "그러자 다른 한 사람이\n허리를 숙이며 정중하게 말했어요.\n\"박서방, 명절이 코앞이라 그러는데\n좋은 고기 한 덩이만 부탁하오.\"",
+        "lines": [
+          {
+            "text": "박서방, 명절이 코앞이라 그러는데\n좋은 고기 한 덩이만 부탁하오.",
+            "who": "polite"
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "박상길 어르신은 빙그레 웃었어요.\n그러고는 아무 말 없이\n쓱쓱, 두 사람의 고기를 썰어 주었지요."
+      },
+      {
+        "n": 6,
+        "text": "그런데 어라?\n두 사람이 받아 든 고기를 보니\n크기가 영 달랐어요."
+      },
+      {
+        "n": 7,
+        "text": "거만한 양반의 고기는\n작고 빛깔도 시원찮은데,\n정중한 양반의 고기는\n크고 빛깔도 곱디고왔어요."
+      },
+      {
+        "n": 8,
+        "text": "거만한 양반은 얼굴을 찡그리며\n소리쳤어요.\n\"아니, 이게 뭐야!\n어째서 내 고기만 이렇게 작단 말이냐!\"",
+        "lines": [
+          {
+            "text": "아니, 이게 뭐야!\n어째서 내 고기만 이렇게 작단 말이냐!",
+            "who": "proud",
+            "feel": "toneup"
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "박상길 어르신은 싱긋 웃으며 대답했어요.\n\"양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요.\"",
+        "lines": [
+          {
+            "text": "양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요.",
+            "who": "butcher"
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "그 말에 거만한 양반의\n얼굴이 새빨개졌어요.\n아무 말도 못 하고\n고기를 든 채 돌아섰지요."
+      },
+      {
+        "n": 11,
+        "text": "돌아가는 길,\n양반은 손에 든 작은 고기를\n한참 내려다보았어요.\n그러고는 조용히 중얼거렸지요.\n\"…내가 말을 함부로 했구나.\"",
+        "lines": [
+          {
+            "text": "…내가 말을 함부로 했구나.",
+            "who": "proud"
+          }
+        ]
+      },
+      {
+        "n": 12,
+        "text": "그날 뒤로 그 사람은\n누구에게나 말을 곱게 하기로 마음먹었대요.\n말 한마디가\n고기의 크기까지 바꾸어 놓았으니까요."
+      }
+    ]
   }
 ]

@@ -232,6 +232,38 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "북풍" }, { name: "태양" }, { name: "나그네" }],
   },
+  // 걸리버 여행기 1 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 걸리버 티안 · 임금님 왕권.
+  // 1쪽과 14쪽 끝줄은 걸리버가 아이들에게 직접 말을 거는 액자다 — 같은 티안이 읽는다.
+  "걸리버 여행기 1": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "gulliver1",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "걸리버" }, { name: "임금님" }],
+  },
+  // 인어 공주 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 인어 공주 민정 · 언니 가희 ·
+  // 바다 마녀 유빈 · 왕자 티안. 13·16쪽의 작은따옴표 줄은 목소리를 잃은 뒤의 속마음이라
+  // 배역을 걸지 않는다 — 나레이션이 읽어야 소리가 안 나는 것이 살아난다.
+  "인어 공주": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "mermaid",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "인어 공주" }, { name: "언니" }, { name: "바다 마녀" }, { name: "왕자" }],
+  },
+  // 오즈의 마법사 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 도로시 수아 · 허수아비 창수 ·
+  // 양철 나무꾼 김고트 · 사자 덕구 · 서쪽 마녀 숙희 · 오즈 종대.
+  // 14·18쪽은 그림에 그 인물이 없어 말풍선 없이 낭독만 한다.
+  "오즈의 마법사": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "oz",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "도로시" }, { name: "허수아비" }, { name: "양철 나무꾼" }, { name: "사자" }, { name: "서쪽 마녀" }, { name: "오즈" }, { name: "아주머니" }],
+  },
   "개미와 베짱이": {
     data: "src/data/classic-books.json",
     root: "classic",
