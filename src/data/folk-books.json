@@ -7811,5 +7811,624 @@
         ]
       }
     ]
+  },
+  {
+    "id": "folk-rabbitjudge",
+    "lang": "ko",
+    "title": "토끼의 재판",
+    "summary": "은혜를 저버린 호랑이를, 작은 토끼가 꾀 하나로 제자리에 돌려놓은 이야기.",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/cover.webp?v=1",
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "traveller": "tc-hosun",
+      "tiger": "tc-homun",
+      "tree": "tc-jongdae",
+      "ox": "tc-dukgu",
+      "rabbit": "tc-hamchu"
+    },
+    "roleOf": {
+      "나그네": "traveller",
+      "호랑이": "tiger",
+      "나무": "tree",
+      "느티나무": "tree",
+      "소": "ox",
+      "토끼": "rabbit"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "text": "옛날 옛적, 한 나그네가\n깊은 산길을 조심조심 걷고 있었어요.\n그때 어디선가 으르렁— 소리가 들려왔어요.\n\"호랑이 소리잖아? 마주치면 큰일인데!\"\n나그네는 화들짝 놀라 걸음을 멈췄지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p1.webp?v=1",
+        "lines": [
+          {
+            "text": "호랑이 소리잖아? 마주치면 큰일인데!",
+            "who": "traveller",
+            "feel": "toneup"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "traveller",
+            "line": "호랑이 소리잖아? 마주치면 큰일인데!",
+            "box": [
+              226,
+              198,
+              891,
+              439
+            ],
+            "audio": "/folk/rabbitjudge/say-p1-traveller.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p1-0.mp3",
+            "text": "옛날 옛적, 한 나그네가\n깊은 산길을 조심조심 걷고 있었어요.\n그때 어디선가 으르렁— 소리가 들려왔어요.\n"
+          },
+          {
+            "who": "traveller",
+            "src": "/folk/rabbitjudge/seg-cast-p1-1.mp3",
+            "text": "\"호랑이 소리잖아? 마주치면 큰일인데!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p1-2.mp3",
+            "text": "\n나그네는 화들짝 놀라 걸음을 멈췄지요."
+          }
+        ]
+      },
+      {
+        "n": 2,
+        "text": "그런데 가만히 들어 보니\n화가 난 소리도, 무서운 소리도 아니었어요.\n애타게 부르는 소리 같았지요.\n나그네는 조심조심 소리를 따라갔어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p2.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p2-0.mp3",
+            "text": "그런데 가만히 들어 보니\n화가 난 소리도, 무서운 소리도 아니었어요.\n애타게 부르는 소리 같았지요.\n나그네는 조심조심 소리를 따라갔어요."
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "풀숲 너머 커다란 구덩이 속에\n호랑이 한 마리가 빠져 있었어요.\n\"이봐요, 거기 나그네! 나 좀 꺼내 줘요. 제발 부탁이에요!\"\n호랑이가 울상으로 앞발을 내밀었어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p3.webp?v=1",
+        "lines": [
+          {
+            "text": "이봐요, 거기 나그네! 나 좀 꺼내 줘요. 제발 부탁이에요!",
+            "who": "tiger"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "이봐요, 거기 나그네! 나 좀 꺼내 줘요. 제발 부탁이에요!",
+            "box": [
+              417,
+              456,
+              926,
+              760
+            ],
+            "audio": "/folk/rabbitjudge/say-p3-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p3-0.mp3",
+            "text": "풀숲 너머 커다란 구덩이 속에\n호랑이 한 마리가 빠져 있었어요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/rabbitjudge/seg-cast-p3-1.mp3",
+            "text": "\"이봐요, 거기 나그네! 나 좀 꺼내 줘요. 제발 부탁이에요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p3-2.mp3",
+            "text": "\n호랑이가 울상으로 앞발을 내밀었어요."
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "\"내가 꺼내 주면 나를 잡아먹을지도 모르잖아요.\n내가 왜 도와줘야 하지요?\"\n\"잡아먹다니요! 그런 일 절대 없어요.\n정말이에요. 날 좀 믿어 줘요.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p4.webp?v=1",
+        "lines": [
+          {
+            "text": "내가 꺼내 주면 나를 잡아먹을지도 모르잖아요.\n내가 왜 도와줘야 하지요?",
+            "who": "traveller"
+          },
+          {
+            "text": "잡아먹다니요! 그런 일 절대 없어요.\n정말이에요. 날 좀 믿어 줘요.",
+            "who": "tiger"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "traveller",
+            "line": "내가 꺼내 주면 나를 잡아먹을지도 모르잖아요.\n내가 왜 도와줘야 하지요?",
+            "box": [
+              12,
+              101,
+              463,
+              355
+            ],
+            "audio": "/folk/rabbitjudge/say-p4-traveller.mp3"
+          },
+          {
+            "label": "tiger",
+            "line": "잡아먹다니요! 그런 일 절대 없어요.\n정말이에요. 날 좀 믿어 줘요.",
+            "box": [
+              469,
+              532,
+              926,
+              853
+            ],
+            "audio": "/folk/rabbitjudge/say-p4-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "traveller",
+            "src": "/folk/rabbitjudge/seg-cast-p4-0.mp3",
+            "text": "\"내가 꺼내 주면 나를 잡아먹을지도 모르잖아요.\n내가 왜 도와줘야 하지요?\"\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/rabbitjudge/seg-cast-p4-1.mp3",
+            "text": "\"잡아먹다니요! 그런 일 절대 없어요.\n정말이에요. 날 좀 믿어 줘요.\""
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "마음이 약해진 나그네는\n튼튼한 통나무 하나를 끌고 와\n구덩이 안으로 쓰윽 내려 주었어요.\n호랑이는 통나무를 타고 무사히 올라왔지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p5.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p5-0.mp3",
+            "text": "마음이 약해진 나그네는\n튼튼한 통나무 하나를 끌고 와\n구덩이 안으로 쓰윽 내려 주었어요.\n호랑이는 통나무를 타고 무사히 올라왔지요."
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "text": "그런데 밖으로 나온 호랑이가\n나그네를 보더니 입맛을 쩝쩝 다셨어요.\n\"오랜만에 나왔더니 배가 너무 고프네.\n너를 잡아먹어야겠다!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p6.webp?v=1",
+        "lines": [
+          {
+            "text": "오랜만에 나왔더니 배가 너무 고프네.\n너를 잡아먹어야겠다!",
+            "who": "tiger"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "오랜만에 나왔더니 배가 너무 고프네.\n너를 잡아먹어야겠다!",
+            "box": [
+              208,
+              245,
+              764,
+              616
+            ],
+            "audio": "/folk/rabbitjudge/say-p6-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p6-0.mp3",
+            "text": "그런데 밖으로 나온 호랑이가\n나그네를 보더니 입맛을 쩝쩝 다셨어요.\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/rabbitjudge/seg-cast-p6-1.mp3",
+            "text": "\"오랜만에 나왔더니 배가 너무 고프네.\n너를 잡아먹어야겠다!\""
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "\"뭐라고요? 약속은 어쩌고요!\n나는 당신을 도와줬을 뿐이라고요!\"\n\"흥, 애초에 너희 사람들이 구덩이를 파서 이렇게 된 거야.\n네가 대신 벌을 받아야지.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p7.webp?v=1",
+        "lines": [
+          {
+            "text": "뭐라고요? 약속은 어쩌고요!\n나는 당신을 도와줬을 뿐이라고요!",
+            "who": "traveller"
+          },
+          {
+            "text": "흥, 애초에 너희 사람들이 구덩이를 파서 이렇게 된 거야.\n네가 대신 벌을 받아야지.",
+            "who": "tiger"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "traveller",
+            "line": "뭐라고요? 약속은 어쩌고요!\n나는 당신을 도와줬을 뿐이라고요!",
+            "box": [
+              127,
+              25,
+              833,
+              414
+            ],
+            "audio": "/folk/rabbitjudge/say-p7-traveller.mp3"
+          },
+          {
+            "label": "tiger",
+            "line": "흥, 애초에 너희 사람들이 구덩이를 파서 이렇게 된 거야.\n네가 대신 벌을 받아야지.",
+            "box": [
+              226,
+              523,
+              880,
+              937
+            ],
+            "audio": "/folk/rabbitjudge/say-p7-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "traveller",
+            "src": "/folk/rabbitjudge/seg-cast-p7-0.mp3",
+            "text": "\"뭐라고요? 약속은 어쩌고요!\n나는 당신을 도와줬을 뿐이라고요!\"\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/rabbitjudge/seg-cast-p7-1.mp3",
+            "text": "\"흥, 애초에 너희 사람들이 구덩이를 파서 이렇게 된 거야.\n네가 대신 벌을 받아야지.\""
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "나그네는 눈앞이 캄캄했지만 용기를 냈어요.\n\"그럼 누가 옳은지 다른 이에게 물어봅시다.\n저기 나무에게 가서 물어봐요!\"\n\"좋아. 나무라면 당연히 내 편이겠지.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p8.webp?v=1",
+        "lines": [
+          {
+            "text": "그럼 누가 옳은지 다른 이에게 물어봅시다.\n저기 나무에게 가서 물어봐요!",
+            "who": "traveller"
+          },
+          {
+            "text": "좋아. 나무라면 당연히 내 편이겠지.",
+            "who": "tiger"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "traveller",
+            "line": "그럼 누가 옳은지 다른 이에게 물어봅시다.\n저기 나무에게 가서 물어봐요!",
+            "box": [
+              295,
+              8,
+              880,
+              253
+            ],
+            "audio": "/folk/rabbitjudge/say-p8-traveller.mp3"
+          },
+          {
+            "label": "tiger",
+            "line": "좋아. 나무라면 당연히 내 편이겠지.",
+            "box": [
+              417,
+              422,
+              810,
+              700
+            ],
+            "audio": "/folk/rabbitjudge/say-p8-tiger.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p8-0.mp3",
+            "text": "나그네는 눈앞이 캄캄했지만 용기를 냈어요.\n"
+          },
+          {
+            "who": "traveller",
+            "src": "/folk/rabbitjudge/seg-cast-p8-1.mp3",
+            "text": "\"그럼 누가 옳은지 다른 이에게 물어봅시다.\n저기 나무에게 가서 물어봐요!\"\n"
+          },
+          {
+            "who": "tiger",
+            "src": "/folk/rabbitjudge/seg-cast-p8-2.mp3",
+            "text": "\"좋아. 나무라면 당연히 내 편이겠지.\""
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "\"나무야, 나무야. 이 나그네가 나를 구해 줬는데\n내가 지금 너무 배가 고파. 얘를 먹어도 될까?\"\n\"하고 싶은 대로 하세요, 호랑이님.\n사람들은 저만 보면 베고, 쪼개고, 팔아 버리니까요.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p9.webp?v=1",
+        "lines": [
+          {
+            "text": "나무야, 나무야. 이 나그네가 나를 구해 줬는데\n내가 지금 너무 배가 고파. 얘를 먹어도 될까?",
+            "who": "tiger"
+          },
+          {
+            "text": "하고 싶은 대로 하세요, 호랑이님.\n사람들은 저만 보면 베고, 쪼개고, 팔아 버리니까요.",
+            "who": "tree"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "나무야, 나무야. 이 나그네가 나를 구해 줬는데\n내가 지금 너무 배가 고파. 얘를 먹어도 될까?",
+            "box": [
+              411,
+              371,
+              914,
+              616
+            ],
+            "audio": "/folk/rabbitjudge/say-p9-tiger.mp3"
+          },
+          {
+            "label": "tree",
+            "line": "하고 싶은 대로 하세요, 호랑이님.\n사람들은 저만 보면 베고, 쪼개고, 팔아 버리니까요.",
+            "box": [
+              46,
+              25,
+              509,
+              380
+            ],
+            "audio": "/folk/rabbitjudge/say-p9-tree.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "tiger",
+            "src": "/folk/rabbitjudge/seg-cast-p9-0.mp3",
+            "text": "\"나무야, 나무야. 이 나그네가 나를 구해 줬는데\n내가 지금 너무 배가 고파. 얘를 먹어도 될까?\"\n"
+          },
+          {
+            "who": "tree",
+            "src": "/folk/rabbitjudge/seg-cast-p9-1.mp3",
+            "text": "\"하고 싶은 대로 하세요, 호랑이님.\n사람들은 저만 보면 베고, 쪼개고, 팔아 버리니까요.\""
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "호랑이는 흐뭇하게 웃으며 발톱을 쓱쓱 세웠어요.\n\"자, 잠깐만요! 저기 오는 소에게도 물어봐요!\"\n나그네가 다급하게 외쳤어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p10.webp?v=1",
+        "lines": [
+          {
+            "text": "자, 잠깐만요! 저기 오는 소에게도 물어봐요!",
+            "who": "traveller",
+            "feel": "toneup"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "traveller",
+            "line": "자, 잠깐만요! 저기 오는 소에게도 물어봐요!",
+            "box": [
+              179,
+              59,
+              706,
+              279
+            ],
+            "audio": "/folk/rabbitjudge/say-p10-traveller.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p10-0.mp3",
+            "text": "호랑이는 흐뭇하게 웃으며 발톱을 쓱쓱 세웠어요.\n"
+          },
+          {
+            "who": "traveller",
+            "src": "/folk/rabbitjudge/seg-cast-p10-1.mp3",
+            "text": "\"자, 잠깐만요! 저기 오는 소에게도 물어봐요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p10-2.mp3",
+            "text": "\n나그네가 다급하게 외쳤어요."
+          }
+        ]
+      },
+      {
+        "n": 11,
+        "text": "\"저도 사람이 별로예요, 호랑이님.\n새벽부터 밤까지 일만 시키거든요.\n원하시는 대로 하세요.\"\n소까지 그렇게 말하자, 나그네는 털썩 주저앉았어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p11.webp?v=1",
+        "lines": [
+          {
+            "text": "저도 사람이 별로예요, 호랑이님.\n새벽부터 밤까지 일만 시키거든요.\n원하시는 대로 하세요.",
+            "who": "ox"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "ox",
+            "line": "저도 사람이 별로예요, 호랑이님.\n새벽부터 밤까지 일만 시키거든요.\n원하시는 대로 하세요.",
+            "box": [
+              98,
+              540,
+              717,
+              895
+            ],
+            "audio": "/folk/rabbitjudge/say-p11-ox.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "ox",
+            "src": "/folk/rabbitjudge/seg-cast-p11-0.mp3",
+            "text": "\"저도 사람이 별로예요, 호랑이님.\n새벽부터 밤까지 일만 시키거든요.\n원하시는 대로 하세요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p11-1.mp3",
+            "text": "\n소까지 그렇게 말하자, 나그네는 털썩 주저앉았어요."
+          }
+        ]
+      },
+      {
+        "n": 12,
+        "text": "그때 깡충깡충, 귀가 쫑긋한 토끼 한 마리가 다가왔어요.\n\"제가 누구 말이 옳은지 가려 드릴게요.\n무슨 일인지 설명해 주시겠어요?\"\n호랑이는 의기양양하게 이야기를 늘어놓았지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p12.webp?v=1",
+        "lines": [
+          {
+            "text": "제가 누구 말이 옳은지 가려 드릴게요.\n무슨 일인지 설명해 주시겠어요?",
+            "who": "rabbit"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "line": "제가 누구 말이 옳은지 가려 드릴게요.\n무슨 일인지 설명해 주시겠어요?",
+            "box": [
+              370,
+              110,
+              717,
+              245
+            ],
+            "audio": "/folk/rabbitjudge/say-p12-rabbit.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p12-0.mp3",
+            "text": "그때 깡충깡충, 귀가 쫑긋한 토끼 한 마리가 다가왔어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/rabbitjudge/seg-cast-p12-1.mp3",
+            "text": "\"제가 누구 말이 옳은지 가려 드릴게요.\n무슨 일인지 설명해 주시겠어요?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p12-2.mp3",
+            "text": "\n호랑이는 의기양양하게 이야기를 늘어놓았지요."
+          }
+        ]
+      },
+      {
+        "n": 13,
+        "text": "토끼는 고개를 갸웃했어요.\n\"음… 그런데 그렇게 커다란 호랑이님이\n어떻게 저 구덩이에 빠지셨다는 거죠?\n한 번만 보여 주시겠어요?\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p13.webp?v=1",
+        "lines": [
+          {
+            "text": "음… 그런데 그렇게 커다란 호랑이님이\n어떻게 저 구덩이에 빠지셨다는 거죠?\n한 번만 보여 주시겠어요?",
+            "who": "rabbit"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "line": "음… 그런데 그렇게 커다란 호랑이님이\n어떻게 저 구덩이에 빠지셨다는 거죠?\n한 번만 보여 주시겠어요?",
+            "box": [
+              463,
+              473,
+              752,
+              600
+            ],
+            "audio": "/folk/rabbitjudge/say-p13-rabbit.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p13-0.mp3",
+            "text": "토끼는 고개를 갸웃했어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/rabbitjudge/seg-cast-p13-1.mp3",
+            "text": "\"음… 그런데 그렇게 커다란 호랑이님이\n어떻게 저 구덩이에 빠지셨다는 거죠?\n한 번만 보여 주시겠어요?\""
+          }
+        ]
+      },
+      {
+        "n": 14,
+        "text": "\"답답하기는! 이렇게, 이렇게 말이야!\"\n호랑이는 폴짝 구덩이 안으로 뛰어들었어요.\n그 순간, 토끼가 통나무를 재빨리 치워 버렸지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p14.webp?v=1",
+        "lines": [
+          {
+            "text": "답답하기는! 이렇게, 이렇게 말이야!",
+            "who": "tiger",
+            "feel": "toneup"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "tiger",
+            "line": "답답하기는! 이렇게, 이렇게 말이야!",
+            "box": [
+              12,
+              329,
+              717,
+              827
+            ],
+            "audio": "/folk/rabbitjudge/say-p14-tiger.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "tiger",
+            "src": "/folk/rabbitjudge/seg-cast-p14-0.mp3",
+            "text": "\"답답하기는! 이렇게, 이렇게 말이야!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p14-1.mp3",
+            "text": "\n호랑이는 폴짝 구덩이 안으로 뛰어들었어요.\n그 순간, 토끼가 통나무를 재빨리 치워 버렸지요."
+          }
+        ]
+      },
+      {
+        "n": 15,
+        "text": "\"자, 이제 다 알겠어요!\n나그네는 호랑이님을 구해 준 고마운 사람이고,\n호랑이님은 그 은혜를 갚지 않으려 했지요?\n그러니 나그네는 가던 길을 가고,\n호랑이님은 구덩이에 그대로 계시면 되겠네요!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p15.webp?v=1",
+        "lines": [
+          {
+            "text": "자, 이제 다 알겠어요!\n나그네는 호랑이님을 구해 준 고마운 사람이고,\n호랑이님은 그 은혜를 갚지 않으려 했지요?\n그러니 나그네는 가던 길을 가고,\n호랑이님은 구덩이에 그대로 계시면 되겠네요!",
+            "who": "rabbit"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "line": "그러니 나그네는 가던 길을 가고,\n호랑이님은 구덩이에 그대로 계시면 되겠네요!",
+            "box": [
+              231,
+              355,
+              446,
+              460
+            ],
+            "audio": "/folk/rabbitjudge/say-p15-rabbit.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "rabbit",
+            "src": "/folk/rabbitjudge/seg-cast-p15-0.mp3",
+            "text": "\"자, 이제 다 알겠어요!\n나그네는 호랑이님을 구해 준 고마운 사람이고,\n호랑이님은 그 은혜를 갚지 않으려 했지요?\n그러니 나그네는 가던 길을 가고,\n호랑이님은 구덩이에 그대로 계시면 되겠네요!\""
+          }
+        ]
+      },
+      {
+        "n": 16,
+        "text": "토끼는 껑충껑충 뛰어 사라지고,\n나그네는 부리나케 집으로 돌아갔어요.\n호랑이는 구덩이 속에 갇힌 채\n지금까지도 으르렁거리고 있대요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/p16.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/rabbitjudge/seg-p16-0.mp3",
+            "text": "토끼는 껑충껑충 뛰어 사라지고,\n나그네는 부리나케 집으로 돌아갔어요.\n호랑이는 구덩이 속에 갇힌 채\n지금까지도 으르렁거리고 있대요."
+          }
+        ]
+      }
+    ]
   }
 ]

@@ -10081,5 +10081,305 @@
     "emotion": "normal",
     "intensity": null,
     "text": "세게 밀어붙일 때는 꼼짝 않던 외투가,\n따뜻하게 비추자 스르르 열렸어요.\n그때 그늘에 앉은 나그네가 부채질을 했어요.\n북풍이 살랑— 시원한 바람을 보내 주었답니다.\n\n힘이 세다고 다 이기는 건 아니랍니다."
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 옛적, 한 나그네가\n깊은 산길을 조심조심 걷고 있었어요.\n그때 어디선가 으르렁— 소리가 들려왔어요."
+  },
+  "folk/rabbitjudge/seg-cast-p1-1.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"호랑이 소리잖아? 마주치면 큰일인데!\""
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p1-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "나그네는 화들짝 놀라 걸음을 멈췄지요."
+  },
+  "folk/rabbitjudge/say-p1-traveller.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "호랑이 소리잖아? 마주치면 큰일인데!"
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그런데 가만히 들어 보니\n화가 난 소리도, 무서운 소리도 아니었어요.\n애타게 부르는 소리 같았지요.\n나그네는 조심조심 소리를 따라갔어요."
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "풀숲 너머 커다란 구덩이 속에\n호랑이 한 마리가 빠져 있었어요."
+  },
+  "folk/rabbitjudge/seg-cast-p3-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"이봐요, 거기 나그네! 나 좀 꺼내 줘요. 제발 부탁이에요!\""
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p3-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이가 울상으로 앞발을 내밀었어요."
+  },
+  "folk/rabbitjudge/say-p3-tiger.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이봐요, 거기 나그네! 나 좀 꺼내 줘요. 제발 부탁이에요!"
+  },
+  "folk/rabbitjudge/seg-cast-p4-0.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"내가 꺼내 주면 나를 잡아먹을지도 모르잖아요.\n내가 왜 도와줘야 하지요?\""
+  },
+  "folk/rabbitjudge/seg-cast-p4-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"잡아먹다니요! 그런 일 절대 없어요.\n정말이에요. 날 좀 믿어 줘요.\""
+  },
+  "folk/rabbitjudge/say-p4-traveller.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "내가 꺼내 주면 나를 잡아먹을지도 모르잖아요.\n내가 왜 도와줘야 하지요?"
+  },
+  "folk/rabbitjudge/say-p4-tiger.mp3": {
+    "voice": "tc-homun",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "잡아먹다니요! 그런 일 절대 없어요.\n정말이에요. 날 좀 믿어 줘요."
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "마음이 약해진 나그네는\n튼튼한 통나무 하나를 끌고 와\n구덩이 안으로 쓰윽 내려 주었어요.\n호랑이는 통나무를 타고 무사히 올라왔지요."
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그런데 밖으로 나온 호랑이가\n나그네를 보더니 입맛을 쩝쩝 다셨어요."
+  },
+  "folk/rabbitjudge/seg-cast-p6-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"오랜만에 나왔더니 배가 너무 고프네.\n너를 잡아먹어야겠다!\""
+  },
+  "folk/rabbitjudge/say-p6-tiger.mp3": {
+    "voice": "tc-homun",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "오랜만에 나왔더니 배가 너무 고프네.\n너를 잡아먹어야겠다!"
+  },
+  "folk/rabbitjudge/seg-cast-p7-0.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"뭐라고요? 약속은 어쩌고요!\n나는 당신을 도와줬을 뿐이라고요!\""
+  },
+  "folk/rabbitjudge/seg-cast-p7-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"흥, 애초에 너희 사람들이 구덩이를 파서 이렇게 된 거야.\n네가 대신 벌을 받아야지.\""
+  },
+  "folk/rabbitjudge/say-p7-traveller.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "뭐라고요? 약속은 어쩌고요!\n나는 당신을 도와줬을 뿐이라고요!"
+  },
+  "folk/rabbitjudge/say-p7-tiger.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "흥, 애초에 너희 사람들이 구덩이를 파서 이렇게 된 거야.\n네가 대신 벌을 받아야지."
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "나그네는 눈앞이 캄캄했지만 용기를 냈어요."
+  },
+  "folk/rabbitjudge/seg-cast-p8-1.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그럼 누가 옳은지 다른 이에게 물어봅시다.\n저기 나무에게 가서 물어봐요!\""
+  },
+  "folk/rabbitjudge/seg-cast-p8-2.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"좋아. 나무라면 당연히 내 편이겠지.\""
+  },
+  "folk/rabbitjudge/say-p8-traveller.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그럼 누가 옳은지 다른 이에게 물어봅시다.\n저기 나무에게 가서 물어봐요!"
+  },
+  "folk/rabbitjudge/say-p8-tiger.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "좋아. 나무라면 당연히 내 편이겠지."
+  },
+  "folk/rabbitjudge/seg-cast-p9-0.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"나무야, 나무야. 이 나그네가 나를 구해 줬는데\n내가 지금 너무 배가 고파. 얘를 먹어도 될까?\""
+  },
+  "folk/rabbitjudge/seg-cast-p9-1.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"하고 싶은 대로 하세요, 호랑이님.\n사람들은 저만 보면 베고, 쪼개고, 팔아 버리니까요.\""
+  },
+  "folk/rabbitjudge/say-p9-tiger.mp3": {
+    "voice": "tc-homun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "나무야, 나무야. 이 나그네가 나를 구해 줬는데\n내가 지금 너무 배가 고파. 얘를 먹어도 될까?"
+  },
+  "folk/rabbitjudge/say-p9-tree.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하고 싶은 대로 하세요, 호랑이님.\n사람들은 저만 보면 베고, 쪼개고, 팔아 버리니까요."
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 흐뭇하게 웃으며 발톱을 쓱쓱 세웠어요."
+  },
+  "folk/rabbitjudge/seg-cast-p10-1.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"자, 잠깐만요! 저기 오는 소에게도 물어봐요!\""
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p10-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "나그네가 다급하게 외쳤어요."
+  },
+  "folk/rabbitjudge/say-p10-traveller.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "자, 잠깐만요! 저기 오는 소에게도 물어봐요!"
+  },
+  "folk/rabbitjudge/seg-cast-p11-0.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"저도 사람이 별로예요, 호랑이님.\n새벽부터 밤까지 일만 시키거든요.\n원하시는 대로 하세요.\""
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p11-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "소까지 그렇게 말하자, 나그네는 털썩 주저앉았어요."
+  },
+  "folk/rabbitjudge/say-p11-ox.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "저도 사람이 별로예요, 호랑이님.\n새벽부터 밤까지 일만 시키거든요.\n원하시는 대로 하세요."
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 깡충깡충, 귀가 쫑긋한 토끼 한 마리가 다가왔어요."
+  },
+  "folk/rabbitjudge/seg-cast-p12-1.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"제가 누구 말이 옳은지 가려 드릴게요.\n무슨 일인지 설명해 주시겠어요?\""
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p12-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 의기양양하게 이야기를 늘어놓았지요."
+  },
+  "folk/rabbitjudge/say-p12-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "제가 누구 말이 옳은지 가려 드릴게요.\n무슨 일인지 설명해 주시겠어요?"
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p13-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 고개를 갸웃했어요."
+  },
+  "folk/rabbitjudge/seg-cast-p13-1.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"음… 그런데 그렇게 커다란 호랑이님이\n어떻게 저 구덩이에 빠지셨다는 거죠?\n한 번만 보여 주시겠어요?\""
+  },
+  "folk/rabbitjudge/say-p13-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "음… 그런데 그렇게 커다란 호랑이님이\n어떻게 저 구덩이에 빠지셨다는 거죠?\n한 번만 보여 주시겠어요?"
+  },
+  "folk/rabbitjudge/seg-cast-p14-0.mp3": {
+    "voice": "tc-homun",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"답답하기는! 이렇게, 이렇게 말이야!\""
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p14-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "호랑이는 폴짝 구덩이 안으로 뛰어들었어요.\n그 순간, 토끼가 통나무를 재빨리 치워 버렸지요."
+  },
+  "folk/rabbitjudge/say-p14-tiger.mp3": {
+    "voice": "tc-homun",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "답답하기는! 이렇게, 이렇게 말이야!"
+  },
+  "folk/rabbitjudge/seg-cast-p15-0.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"자, 이제 다 알겠어요!\n나그네는 호랑이님을 구해 준 고마운 사람이고,\n호랑이님은 그 은혜를 갚지 않으려 했지요?\n그러니 나그네는 가던 길을 가고,\n호랑이님은 구덩이에 그대로 계시면 되겠네요!\""
+  },
+  "folk/rabbitjudge/say-p15-rabbit.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러니 나그네는 가던 길을 가고,\n호랑이님은 구덩이에 그대로 계시면 되겠네요!"
+  },
+  "folk/rabbitjudge/seg-tc-minjung-p16-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 껑충껑충 뛰어 사라지고,\n나그네는 부리나케 집으로 돌아갔어요.\n호랑이는 구덩이 속에 갇힌 채\n지금까지도 으르렁거리고 있대요."
   }
 }

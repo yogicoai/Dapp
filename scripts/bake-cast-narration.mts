@@ -119,6 +119,14 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "호랑이" }, { name: "엄마" }, { name: "소도둑" }],
   },
+  // 토끼의 재판 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 나그네 호선 · 호랑이 심호문 ·
+  // 나무 종대 · 소 덕구 · 토끼 햄쭈. 소리 흉내(으르렁—)는 나레이션이 읽는다.
+  "토끼의 재판": {
+    dir: "rabbitjudge",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "나그네" }, { name: "호랑이" }, { name: "나무" }, { name: "소" }, { name: "토끼" }],
+  },
   "의좋은 형제": {
     dir: "brothers",
     narrators: ["tc-minjung"],
