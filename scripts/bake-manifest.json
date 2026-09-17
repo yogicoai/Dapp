@@ -11689,5 +11689,137 @@
     "emotion": "normal",
     "intensity": null,
     "text": "오즈의 나라요!"
+  },
+  "folk/sanggil/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 옛적, 어느 마을에\n양반 두 사람이 살고 있었어요.\n어릴 적부터 함께 어울려 자란\n아주 친한 친구 사이였지요."
+  },
+  "folk/sanggil/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "명절이 가까워지자 두 사람은\n고기를 사러 푸줏간으로 갔어요.\n푸줏간에서는 박상길 어르신이\n쓱쓱 고기를 썰고 있었지요."
+  },
+  "folk/sanggil/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "먼저 한 사람이 턱을 치켜들고\n거만하게 말했어요."
+  },
+  "folk/sanggil/seg-cast-p3-1.mp3": {
+    "voice": "tc-goat",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"엣헴! 이 상길이놈아!\n냉큼 고기 한 덩이 썰어 내 앞에 가져오너라!\""
+  },
+  "folk/sanggil/say-p3-proud.mp3": {
+    "voice": "tc-goat",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "엣헴! 이 상길이놈아!\n냉큼 고기 한 덩이 썰어 내 앞에 가져오너라!"
+  },
+  "folk/sanggil/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러자 다른 한 사람이\n허리를 숙이며 정중하게 말했어요."
+  },
+  "folk/sanggil/seg-cast-p4-1.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"박서방, 명절이 코앞이라 그러는데\n좋은 고기 한 덩이만 부탁하오.\""
+  },
+  "folk/sanggil/say-p4-polite.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "박서방, 명절이 코앞이라 그러는데\n좋은 고기 한 덩이만 부탁하오."
+  },
+  "folk/sanggil/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "박상길 어르신은 빙그레 웃었어요.\n그러고는 아무 말 없이\n쓱쓱, 두 사람의 고기를 썰어 주었지요."
+  },
+  "folk/sanggil/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그런데 어라?\n두 사람이 받아 든 고기를 보니\n크기가 영 달랐어요."
+  },
+  "folk/sanggil/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거만한 양반의 고기는\n작고 빛깔도 시원찮은데,\n정중한 양반의 고기는\n크고 빛깔도 곱디고왔어요."
+  },
+  "folk/sanggil/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "거만한 양반은 얼굴을 찡그리며\n소리쳤어요."
+  },
+  "folk/sanggil/seg-cast-p8-1.mp3": {
+    "voice": "tc-goat",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"아니, 이게 뭐야!\n어째서 내 고기만 이렇게 작단 말이냐!\""
+  },
+  "folk/sanggil/say-p8-proud.mp3": {
+    "voice": "tc-goat",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "아니, 이게 뭐야!\n어째서 내 고기만 이렇게 작단 말이냐!"
+  },
+  "folk/sanggil/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "박상길 어르신은 싱긋 웃으며 대답했어요."
+  },
+  "folk/sanggil/seg-cast-p9-1.mp3": {
+    "voice": "tc-changsu",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요.\""
+  },
+  "folk/sanggil/say-p9-butcher.mp3": {
+    "voice": "tc-changsu",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요."
+  },
+  "folk/sanggil/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 말에 거만한 양반의\n얼굴이 새빨개졌어요.\n아무 말도 못 하고\n고기를 든 채 돌아섰지요."
+  },
+  "folk/sanggil/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "돌아가는 길,\n양반은 손에 든 작은 고기를\n한참 내려다보았어요.\n그러고는 조용히 중얼거렸지요."
+  },
+  "folk/sanggil/seg-cast-p11-1.mp3": {
+    "voice": "tc-goat",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"…내가 말을 함부로 했구나.\""
+  },
+  "folk/sanggil/say-p11-proud.mp3": {
+    "voice": "tc-goat",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "…내가 말을 함부로 했구나."
+  },
+  "folk/sanggil/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그날 뒤로 그 사람은\n누구에게나 말을 곱게 하기로 마음먹었대요.\n말 한마디가\n고기의 크기까지 바꾸어 놓았으니까요."
   }
 }

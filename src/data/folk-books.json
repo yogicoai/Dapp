@@ -9452,11 +9452,27 @@
     "pages": [
       {
         "n": 1,
-        "text": "옛날 옛적, 어느 마을에\n양반 두 사람이 살고 있었어요.\n어릴 적부터 함께 어울려 자란\n아주 친한 친구 사이였지요."
+        "text": "옛날 옛적, 어느 마을에\n양반 두 사람이 살고 있었어요.\n어릴 적부터 함께 어울려 자란\n아주 친한 친구 사이였지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p1.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p1-0.mp3",
+            "text": "옛날 옛적, 어느 마을에\n양반 두 사람이 살고 있었어요.\n어릴 적부터 함께 어울려 자란\n아주 친한 친구 사이였지요."
+          }
+        ]
       },
       {
         "n": 2,
-        "text": "명절이 가까워지자 두 사람은\n고기를 사러 푸줏간으로 갔어요.\n푸줏간에서는 박상길 어르신이\n쓱쓱 고기를 썰고 있었지요."
+        "text": "명절이 가까워지자 두 사람은\n고기를 사러 푸줏간으로 갔어요.\n푸줏간에서는 박상길 어르신이\n쓱쓱 고기를 썰고 있었지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p2.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p2-0.mp3",
+            "text": "명절이 가까워지자 두 사람은\n고기를 사러 푸줏간으로 갔어요.\n푸줏간에서는 박상길 어르신이\n쓱쓱 고기를 썰고 있었지요."
+          }
+        ]
       },
       {
         "n": 3,
@@ -9465,6 +9481,32 @@
           {
             "text": "엣헴! 이 상길이놈아!\n냉큼 고기 한 덩이 썰어 내 앞에 가져오너라!",
             "who": "proud"
+          }
+        ],
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p3.webp?v=1",
+        "hotspots": [
+          {
+            "label": "proud",
+            "line": "엣헴! 이 상길이놈아!\n냉큼 고기 한 덩이 썰어 내 앞에 가져오너라!",
+            "box": [
+              133,
+              156,
+              966,
+              397
+            ],
+            "audio": "/folk/sanggil/say-p3-proud.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p3-0.mp3",
+            "text": "먼저 한 사람이 턱을 치켜들고\n거만하게 말했어요.\n"
+          },
+          {
+            "who": "proud",
+            "src": "/folk/sanggil/seg-cast-p3-1.mp3",
+            "text": "\"엣헴! 이 상길이놈아!\n냉큼 고기 한 덩이 썰어 내 앞에 가져오너라!\""
           }
         ]
       },
@@ -9476,19 +9518,69 @@
             "text": "박서방, 명절이 코앞이라 그러는데\n좋은 고기 한 덩이만 부탁하오.",
             "who": "polite"
           }
+        ],
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p4.webp?v=1",
+        "hotspots": [
+          {
+            "label": "polite",
+            "line": "박서방, 명절이 코앞이라 그러는데\n좋은 고기 한 덩이만 부탁하오.",
+            "box": [
+              226,
+              224,
+              926,
+              439
+            ],
+            "audio": "/folk/sanggil/say-p4-polite.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p4-0.mp3",
+            "text": "그러자 다른 한 사람이\n허리를 숙이며 정중하게 말했어요.\n"
+          },
+          {
+            "who": "polite",
+            "src": "/folk/sanggil/seg-cast-p4-1.mp3",
+            "text": "\"박서방, 명절이 코앞이라 그러는데\n좋은 고기 한 덩이만 부탁하오.\""
+          }
         ]
       },
       {
         "n": 5,
-        "text": "박상길 어르신은 빙그레 웃었어요.\n그러고는 아무 말 없이\n쓱쓱, 두 사람의 고기를 썰어 주었지요."
+        "text": "박상길 어르신은 빙그레 웃었어요.\n그러고는 아무 말 없이\n쓱쓱, 두 사람의 고기를 썰어 주었지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p5.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p5-0.mp3",
+            "text": "박상길 어르신은 빙그레 웃었어요.\n그러고는 아무 말 없이\n쓱쓱, 두 사람의 고기를 썰어 주었지요."
+          }
+        ]
       },
       {
         "n": 6,
-        "text": "그런데 어라?\n두 사람이 받아 든 고기를 보니\n크기가 영 달랐어요."
+        "text": "그런데 어라?\n두 사람이 받아 든 고기를 보니\n크기가 영 달랐어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p6.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p6-0.mp3",
+            "text": "그런데 어라?\n두 사람이 받아 든 고기를 보니\n크기가 영 달랐어요."
+          }
+        ]
       },
       {
         "n": 7,
-        "text": "거만한 양반의 고기는\n작고 빛깔도 시원찮은데,\n정중한 양반의 고기는\n크고 빛깔도 곱디고왔어요."
+        "text": "거만한 양반의 고기는\n작고 빛깔도 시원찮은데,\n정중한 양반의 고기는\n크고 빛깔도 곱디고왔어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p7.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p7-0.mp3",
+            "text": "거만한 양반의 고기는\n작고 빛깔도 시원찮은데,\n정중한 양반의 고기는\n크고 빛깔도 곱디고왔어요."
+          }
+        ]
       },
       {
         "n": 8,
@@ -9498,6 +9590,33 @@
             "text": "아니, 이게 뭐야!\n어째서 내 고기만 이렇게 작단 말이냐!",
             "who": "proud",
             "feel": "toneup"
+          }
+        ],
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p8.webp?v=1",
+        "hotspots": [
+          {
+            "label": "proud",
+            "line": "아니, 이게 뭐야!\n어째서 내 고기만 이렇게 작단 말이냐!",
+            "box": [
+              139,
+              169,
+              966,
+              625
+            ],
+            "audio": "/folk/sanggil/say-p8-proud.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p8-0.mp3",
+            "text": "거만한 양반은 얼굴을 찡그리며\n소리쳤어요.\n"
+          },
+          {
+            "who": "proud",
+            "src": "/folk/sanggil/seg-cast-p8-1.mp3",
+            "text": "\"아니, 이게 뭐야!\n어째서 내 고기만 이렇게 작단 말이냐!\""
           }
         ]
       },
@@ -9509,11 +9628,45 @@
             "text": "양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요.",
             "who": "butcher"
           }
+        ],
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p9.webp?v=1",
+        "hotspots": [
+          {
+            "label": "butcher",
+            "line": "양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요.",
+            "box": [
+              40,
+              338,
+              810,
+              836
+            ],
+            "audio": "/folk/sanggil/say-p9-butcher.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p9-0.mp3",
+            "text": "박상길 어르신은 싱긋 웃으며 대답했어요.\n"
+          },
+          {
+            "who": "butcher",
+            "src": "/folk/sanggil/seg-cast-p9-1.mp3",
+            "text": "\"양반님 고기는 상길이놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박서방이 썰었으니 그렇지요.\""
+          }
         ]
       },
       {
         "n": 10,
-        "text": "그 말에 거만한 양반의\n얼굴이 새빨개졌어요.\n아무 말도 못 하고\n고기를 든 채 돌아섰지요."
+        "text": "그 말에 거만한 양반의\n얼굴이 새빨개졌어요.\n아무 말도 못 하고\n고기를 든 채 돌아섰지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p10.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p10-0.mp3",
+            "text": "그 말에 거만한 양반의\n얼굴이 새빨개졌어요.\n아무 말도 못 하고\n고기를 든 채 돌아섰지요."
+          }
+        ]
       },
       {
         "n": 11,
@@ -9523,12 +9676,47 @@
             "text": "…내가 말을 함부로 했구나.",
             "who": "proud"
           }
+        ],
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p11.webp?v=1",
+        "hotspots": [
+          {
+            "label": "proud",
+            "line": "…내가 말을 함부로 했구나.",
+            "box": [
+              174,
+              549,
+              903,
+              752
+            ],
+            "audio": "/folk/sanggil/say-p11-proud.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p11-0.mp3",
+            "text": "돌아가는 길,\n양반은 손에 든 작은 고기를\n한참 내려다보았어요.\n그러고는 조용히 중얼거렸지요.\n"
+          },
+          {
+            "who": "proud",
+            "src": "/folk/sanggil/seg-cast-p11-1.mp3",
+            "text": "\"…내가 말을 함부로 했구나.\""
+          }
         ]
       },
       {
         "n": 12,
-        "text": "그날 뒤로 그 사람은\n누구에게나 말을 곱게 하기로 마음먹었대요.\n말 한마디가\n고기의 크기까지 바꾸어 놓았으니까요."
+        "text": "그날 뒤로 그 사람은\n누구에게나 말을 곱게 하기로 마음먹었대요.\n말 한마디가\n고기의 크기까지 바꾸어 놓았으니까요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p12.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/sanggil/seg-p12-0.mp3",
+            "text": "그날 뒤로 그 사람은\n누구에게나 말을 곱게 하기로 마음먹었대요.\n말 한마디가\n고기의 크기까지 바꾸어 놓았으니까요."
+          }
+        ]
       }
-    ]
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/cover.webp?v=1"
   }
 ]

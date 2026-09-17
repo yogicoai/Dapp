@@ -143,6 +143,14 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "엄마 청개구리" }, { name: "아기 청개구리" }],
   },
+  // 상길이놈과 박서방 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 거만한 양반 김고트 ·
+  // 정중한 양반 왕권 · 박상길 창수. 그림은 구글(Gemini)로 이 저장소에서 직접 그렸다.
+  "상길이놈과 박서방": {
+    dir: "sanggil",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "거만한 양반" }, { name: "정중한 양반" }, { name: "박상길" }],
+  },
   "의좋은 형제": {
     dir: "brothers",
     narrators: ["tc-minjung"],
