@@ -10381,5 +10381,281 @@
     "emotion": "normal",
     "intensity": null,
     "text": "토끼는 껑충껑충 뛰어 사라지고,\n나그네는 부리나케 집으로 돌아갔어요.\n호랑이는 구덩이 속에 갇힌 채\n지금까지도 으르렁거리고 있대요."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 옛적, 아주 깊고 푸른 바닷속에\n화려하고 멋진 용궁이 있었어요.\n그곳엔 수많은 신하들과,\n그들을 다스리는 용왕님이 살고 있었지요."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "건강하던 용왕님이\n어느 날부터인가 기운이 없어졌어요.\n밥맛도 없고, 허리도 쑤시고,\n잠도 잘 오지 않았지요."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "신하들은 온갖 귀한 약을 구해 바쳤어요.\n산호 가루도, 진주 가루도 달여 올렸지요.\n하지만 용왕님의 병은\n좀처럼 낫지 않았어요."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러던 어느 날,\n긴 수염을 가진 늙은 메기가 아뢰었어요."
+  },
+  "folk/byeoljubu/seg-cast-p4-1.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"육지에 사는 토끼의 간을 먹으면\n오래된 병도 씻은 듯 낫는다고 합니다.\""
+  },
+  "folk/byeoljubu/say-p4-catfish.mp3": {
+    "voice": "tc-jongdae",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "육지에 사는 토끼의 간을 먹으면\n오래된 병도 씻은 듯 낫는다고 합니다."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "용왕님은 신하들을 불러 모았어요."
+  },
+  "folk/byeoljubu/seg-cast-p5-1.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그대들 중 누가 육지에 가서\n토끼를 내 앞에 데려오겠느냐?\""
+  },
+  "folk/byeoljubu/seg-tc-minjung-p5-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하지만 물 밖에 나가 본 신하는 아무도 없었어요.\n모두 고개를 숙이고 말았지요."
+  },
+  "folk/byeoljubu/say-p5-king.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그대들 중 누가 육지에 가서\n토끼를 내 앞에 데려오겠느냐?"
+  },
+  "folk/byeoljubu/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 한 신하가 조용히 앞으로 나섰어요.\n별주부라 불리는 충직한 자라였지요."
+  },
+  "folk/byeoljubu/seg-cast-p6-1.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"제가 다녀오겠습니다.\n저는 물 밖에서도 숨을 쉬고, 발이 있어 걸을 수 있습니다.\""
+  },
+  "folk/byeoljubu/say-p6-turtle.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "제가 다녀오겠습니다.\n저는 물 밖에서도 숨을 쉬고, 발이 있어 걸을 수 있습니다."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그렇게 자라는 길고 긴 길을 떠났어요.\n며칠을 쉬지 않고 헤엄치고 또 걸었지요.\n그러자 푸른 나무와 풀이 가득한\n육지가 보였어요."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "자라는 동물들에게 물어물어\n마침내 토끼를 찾았어요."
+  },
+  "folk/byeoljubu/seg-cast-p8-1.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"안녕하시오, 토끼 선생. 나는 용궁에서 온 자라라고 하오.\n우리 용왕님이 선생을 초대하고 싶어 하신다오.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.\""
+  },
+  "folk/byeoljubu/say-p8-turtle.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "바닷속에는 멋진 궁궐도 있고,\n맛있는 음식과 즐거운 노래도 가득하지요."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 눈을 반짝였어요."
+  },
+  "folk/byeoljubu/seg-cast-p9-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"용궁이라니, 정말 신기한 곳이구나.\n그럼 한번 가 보지, 뭐!\""
+  },
+  "folk/byeoljubu/say-p9-rabbit.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "용궁이라니, 정말 신기한 곳이구나.\n그럼 한번 가 보지, 뭐!"
+  },
+  "folk/byeoljubu/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 자라의 등에 올라타 바다로 향했어요.\n처음 보는 깊은 바닷속은\n무섭고 낯설었지만,\n토끼는 두 눈을 꼭 감고 용궁으로 갔지요."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "마침내 용궁에 닿자\n화려한 궁전과 반짝이는 물고기들이\n토끼를 맞이했어요.\n용왕님이 웃으며 말했어요."
+  },
+  "folk/byeoljubu/seg-cast-p11-1.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"어서 오너라, 귀한 손님아.\""
+  },
+  "folk/byeoljubu/say-p11-king.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어서 오너라, 귀한 손님아."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그런데 그다음 순간,\n자라가 용왕님 앞에 나아가 말했어요."
+  },
+  "folk/byeoljubu/seg-cast-p12-1.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"용왕님, 어서 토끼의 간을 드시고 병을 나으소서.\""
+  },
+  "folk/byeoljubu/seg-tc-minjung-p12-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 깜짝 놀라 두 눈을 크게 떴어요."
+  },
+  "folk/byeoljubu/seg-cast-p12-3.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"제… 제 간을요?\""
+  },
+  "folk/byeoljubu/say-p12-turtle.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "용왕님, 어서 토끼의 간을 드시고 병을 나으소서."
+  },
+  "folk/byeoljubu/say-p12-rabbit.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "제… 제 간을요?"
+  },
+  "folk/byeoljubu/seg-tc-minjung-p13-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "가슴이 덜컥 내려앉았지만,\n토끼는 침착하게 대답했어요."
+  },
+  "folk/byeoljubu/seg-cast-p13-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"아이고, 그런데 이를 어째요.\n제 간은 지금 몸에 없답니다.\n간이 몸에 좋다는 소문이 나는 바람에, 따로 숨겨 두고 다니거든요.\""
+  },
+  "folk/byeoljubu/say-p13-rabbit.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "제 간은 지금 몸에 없답니다.\n따로 숨겨 두고 다니거든요."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p14-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "용왕님과 자라는 그 말을\n곧이곧대로 믿었어요."
+  },
+  "folk/byeoljubu/seg-cast-p14-1.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그렇다면 얼른 다녀오너라.\""
+  },
+  "folk/byeoljubu/seg-tc-minjung-p14-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "자라는 지친 몸으로 토끼를 다시 등에 태웠어요."
+  },
+  "folk/byeoljubu/say-p14-king.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그렇다면 얼른 다녀오너라."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p15-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "파도가 거세게 몰아쳤지만,\n자라는 끝까지 육지로 헤엄쳤어요.\n육지에 닿자 토끼는 폴짝 뛰어내렸지요."
+  },
+  "folk/byeoljubu/seg-cast-p15-1.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"어서 간을 찾아오게. 여기서 기다리고 있을 테니.\""
+  },
+  "folk/byeoljubu/say-p15-turtle.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어서 간을 찾아오게. 여기서 기다리고 있을 테니."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p16-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러자 토끼가 깔깔 웃으며 외쳤어요."
+  },
+  "folk/byeoljubu/seg-cast-p16-1.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"자라야, 간을 넣었다 뺐다 하는 동물이 어디 있어?\n간은 몸속에 있는 거야!\""
+  },
+  "folk/byeoljubu/seg-tc-minjung-p16-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러고는 숲속으로 쏜살같이 달아나 버렸어요."
+  },
+  "folk/byeoljubu/seg-cast-p16-3.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"뭐, 뭐라고? 거기 서!\""
+  },
+  "folk/byeoljubu/seg-tc-minjung-p16-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "지친 자라는 멀어지는 토끼의 뒷모습을 보며\n발만 동동 굴렀답니다."
+  },
+  "folk/byeoljubu/say-p16-turtle.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "뭐, 뭐라고? 거기 서!"
   }
 }

@@ -127,6 +127,14 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "나그네" }, { name: "호랑이" }, { name: "나무" }, { name: "소" }, { name: "토끼" }],
   },
+  // 별주부전 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 용왕 왕권 · 메기 종대 ·
+  // 자라 몽군 · 토끼 덕구.
+  "별주부전": {
+    dir: "byeoljubu",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "용왕" }, { name: "메기" }, { name: "자라" }, { name: "토끼" }],
+  },
   "의좋은 형제": {
     dir: "brothers",
     narrators: ["tc-minjung"],

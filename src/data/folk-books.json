@@ -8430,5 +8430,547 @@
         ]
       }
     ]
+  },
+  {
+    "id": "folk-byeoljubu",
+    "lang": "ko",
+    "title": "별주부전",
+    "summary": "용궁까지 끌려간 토끼가 꾀 하나로 살아 돌아온 이야기.",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/cover.webp?v=1",
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "king": "tc-wangkwon",
+      "catfish": "tc-jongdae",
+      "turtle": "tc-monggun",
+      "rabbit": "tc-dukgu"
+    },
+    "roleOf": {
+      "용왕": "king",
+      "용왕님": "king",
+      "메기": "catfish",
+      "자라": "turtle",
+      "별주부": "turtle",
+      "토끼": "rabbit"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "text": "옛날 옛적, 아주 깊고 푸른 바닷속에\n화려하고 멋진 용궁이 있었어요.\n그곳엔 수많은 신하들과,\n그들을 다스리는 용왕님이 살고 있었지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p1.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p1-0.mp3",
+            "text": "옛날 옛적, 아주 깊고 푸른 바닷속에\n화려하고 멋진 용궁이 있었어요.\n그곳엔 수많은 신하들과,\n그들을 다스리는 용왕님이 살고 있었지요."
+          }
+        ]
+      },
+      {
+        "n": 2,
+        "text": "건강하던 용왕님이\n어느 날부터인가 기운이 없어졌어요.\n밥맛도 없고, 허리도 쑤시고,\n잠도 잘 오지 않았지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p2.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p2-0.mp3",
+            "text": "건강하던 용왕님이\n어느 날부터인가 기운이 없어졌어요.\n밥맛도 없고, 허리도 쑤시고,\n잠도 잘 오지 않았지요."
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "신하들은 온갖 귀한 약을 구해 바쳤어요.\n산호 가루도, 진주 가루도 달여 올렸지요.\n하지만 용왕님의 병은\n좀처럼 낫지 않았어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p3.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p3-0.mp3",
+            "text": "신하들은 온갖 귀한 약을 구해 바쳤어요.\n산호 가루도, 진주 가루도 달여 올렸지요.\n하지만 용왕님의 병은\n좀처럼 낫지 않았어요."
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "그러던 어느 날,\n긴 수염을 가진 늙은 메기가 아뢰었어요.\n\"육지에 사는 토끼의 간을 먹으면\n오래된 병도 씻은 듯 낫는다고 합니다.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p4.webp?v=1",
+        "lines": [
+          {
+            "text": "육지에 사는 토끼의 간을 먹으면\n오래된 병도 씻은 듯 낫는다고 합니다.",
+            "who": "catfish"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "catfish",
+            "line": "육지에 사는 토끼의 간을 먹으면\n오래된 병도 씻은 듯 낫는다고 합니다.",
+            "box": [
+              394,
+              524,
+              926,
+              870
+            ],
+            "audio": "/folk/byeoljubu/say-p4-catfish.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p4-0.mp3",
+            "text": "그러던 어느 날,\n긴 수염을 가진 늙은 메기가 아뢰었어요.\n"
+          },
+          {
+            "who": "catfish",
+            "src": "/folk/byeoljubu/seg-cast-p4-1.mp3",
+            "text": "\"육지에 사는 토끼의 간을 먹으면\n오래된 병도 씻은 듯 낫는다고 합니다.\""
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "용왕님은 신하들을 불러 모았어요.\n\"그대들 중 누가 육지에 가서\n토끼를 내 앞에 데려오겠느냐?\"\n하지만 물 밖에 나가 본 신하는 아무도 없었어요.\n모두 고개를 숙이고 말았지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p5.webp?v=1",
+        "lines": [
+          {
+            "text": "그대들 중 누가 육지에 가서\n토끼를 내 앞에 데려오겠느냐?",
+            "who": "king"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "king",
+            "line": "그대들 중 누가 육지에 가서\n토끼를 내 앞에 데려오겠느냐?",
+            "box": [
+              12,
+              63,
+              509,
+              338
+            ],
+            "audio": "/folk/byeoljubu/say-p5-king.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p5-0.mp3",
+            "text": "용왕님은 신하들을 불러 모았어요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/byeoljubu/seg-cast-p5-1.mp3",
+            "text": "\"그대들 중 누가 육지에 가서\n토끼를 내 앞에 데려오겠느냐?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p5-2.mp3",
+            "text": "\n하지만 물 밖에 나가 본 신하는 아무도 없었어요.\n모두 고개를 숙이고 말았지요."
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "text": "그때 한 신하가 조용히 앞으로 나섰어요.\n별주부라 불리는 충직한 자라였지요.\n\"제가 다녀오겠습니다.\n저는 물 밖에서도 숨을 쉬고, 발이 있어 걸을 수 있습니다.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p6.webp?v=1",
+        "lines": [
+          {
+            "text": "제가 다녀오겠습니다.\n저는 물 밖에서도 숨을 쉬고, 발이 있어 걸을 수 있습니다.",
+            "who": "turtle"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "turtle",
+            "line": "제가 다녀오겠습니다.\n저는 물 밖에서도 숨을 쉬고, 발이 있어 걸을 수 있습니다.",
+            "box": [
+              538,
+              583,
+              914,
+              760
+            ],
+            "audio": "/folk/byeoljubu/say-p6-turtle.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p6-0.mp3",
+            "text": "그때 한 신하가 조용히 앞으로 나섰어요.\n별주부라 불리는 충직한 자라였지요.\n"
+          },
+          {
+            "who": "turtle",
+            "src": "/folk/byeoljubu/seg-cast-p6-1.mp3",
+            "text": "\"제가 다녀오겠습니다.\n저는 물 밖에서도 숨을 쉬고, 발이 있어 걸을 수 있습니다.\""
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "그렇게 자라는 길고 긴 길을 떠났어요.\n며칠을 쉬지 않고 헤엄치고 또 걸었지요.\n그러자 푸른 나무와 풀이 가득한\n육지가 보였어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p7.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p7-0.mp3",
+            "text": "그렇게 자라는 길고 긴 길을 떠났어요.\n며칠을 쉬지 않고 헤엄치고 또 걸었지요.\n그러자 푸른 나무와 풀이 가득한\n육지가 보였어요."
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "자라는 동물들에게 물어물어\n마침내 토끼를 찾았어요.\n\"안녕하시오, 토끼 선생. 나는 용궁에서 온 자라라고 하오.\n우리 용왕님이 선생을 초대하고 싶어 하신다오.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p8.webp?v=1",
+        "lines": [
+          {
+            "text": "안녕하시오, 토끼 선생. 나는 용궁에서 온 자라라고 하오.\n우리 용왕님이 선생을 초대하고 싶어 하신다오.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.",
+            "who": "turtle"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "turtle",
+            "line": "바닷속에는 멋진 궁궐도 있고,\n맛있는 음식과 즐거운 노래도 가득하지요.",
+            "box": [
+              388,
+              198,
+              880,
+              481
+            ],
+            "audio": "/folk/byeoljubu/say-p8-turtle.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p8-0.mp3",
+            "text": "자라는 동물들에게 물어물어\n마침내 토끼를 찾았어요.\n"
+          },
+          {
+            "who": "turtle",
+            "src": "/folk/byeoljubu/seg-cast-p8-1.mp3",
+            "text": "\"안녕하시오, 토끼 선생. 나는 용궁에서 온 자라라고 하오.\n우리 용왕님이 선생을 초대하고 싶어 하신다오.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.\""
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "토끼는 눈을 반짝였어요.\n\"용궁이라니, 정말 신기한 곳이구나.\n그럼 한번 가 보지, 뭐!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p9.webp?v=1",
+        "lines": [
+          {
+            "text": "용궁이라니, 정말 신기한 곳이구나.\n그럼 한번 가 보지, 뭐!",
+            "who": "rabbit"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "line": "용궁이라니, 정말 신기한 곳이구나.\n그럼 한번 가 보지, 뭐!",
+            "box": [
+              191,
+              300,
+              914,
+              507
+            ],
+            "audio": "/folk/byeoljubu/say-p9-rabbit.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p9-0.mp3",
+            "text": "토끼는 눈을 반짝였어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/byeoljubu/seg-cast-p9-1.mp3",
+            "text": "\"용궁이라니, 정말 신기한 곳이구나.\n그럼 한번 가 보지, 뭐!\""
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "토끼는 자라의 등에 올라타 바다로 향했어요.\n처음 보는 깊은 바닷속은\n무섭고 낯설었지만,\n토끼는 두 눈을 꼭 감고 용궁으로 갔지요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p10.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p10-0.mp3",
+            "text": "토끼는 자라의 등에 올라타 바다로 향했어요.\n처음 보는 깊은 바닷속은\n무섭고 낯설었지만,\n토끼는 두 눈을 꼭 감고 용궁으로 갔지요."
+          }
+        ]
+      },
+      {
+        "n": 11,
+        "text": "마침내 용궁에 닿자\n화려한 궁전과 반짝이는 물고기들이\n토끼를 맞이했어요.\n용왕님이 웃으며 말했어요.\n\"어서 오너라, 귀한 손님아.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p11.webp?v=1",
+        "lines": [
+          {
+            "text": "어서 오너라, 귀한 손님아.",
+            "who": "king"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "king",
+            "line": "어서 오너라, 귀한 손님아.",
+            "box": [
+              41,
+              152,
+              544,
+              452
+            ],
+            "audio": "/folk/byeoljubu/say-p11-king.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p11-0.mp3",
+            "text": "마침내 용궁에 닿자\n화려한 궁전과 반짝이는 물고기들이\n토끼를 맞이했어요.\n용왕님이 웃으며 말했어요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/byeoljubu/seg-cast-p11-1.mp3",
+            "text": "\"어서 오너라, 귀한 손님아.\""
+          }
+        ]
+      },
+      {
+        "n": 12,
+        "text": "그런데 그다음 순간,\n자라가 용왕님 앞에 나아가 말했어요.\n\"용왕님, 어서 토끼의 간을 드시고 병을 나으소서.\"\n토끼는 깜짝 놀라 두 눈을 크게 떴어요.\n\"제… 제 간을요?\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p12.webp?v=1",
+        "lines": [
+          {
+            "text": "용왕님, 어서 토끼의 간을 드시고 병을 나으소서.",
+            "who": "turtle"
+          },
+          {
+            "text": "제… 제 간을요?",
+            "who": "rabbit",
+            "feel": "toneup"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "turtle",
+            "line": "용왕님, 어서 토끼의 간을 드시고 병을 나으소서.",
+            "box": [
+              498,
+              477,
+              914,
+              823
+            ],
+            "audio": "/folk/byeoljubu/say-p12-turtle.mp3"
+          },
+          {
+            "label": "rabbit",
+            "line": "제… 제 간을요?",
+            "box": [
+              405,
+              832,
+              810,
+              980
+            ],
+            "audio": "/folk/byeoljubu/say-p12-rabbit.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p12-0.mp3",
+            "text": "그런데 그다음 순간,\n자라가 용왕님 앞에 나아가 말했어요.\n"
+          },
+          {
+            "who": "turtle",
+            "src": "/folk/byeoljubu/seg-cast-p12-1.mp3",
+            "text": "\"용왕님, 어서 토끼의 간을 드시고 병을 나으소서.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p12-2.mp3",
+            "text": "\n토끼는 깜짝 놀라 두 눈을 크게 떴어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/byeoljubu/seg-cast-p12-3.mp3",
+            "text": "\"제… 제 간을요?\""
+          }
+        ]
+      },
+      {
+        "n": 13,
+        "text": "가슴이 덜컥 내려앉았지만,\n토끼는 침착하게 대답했어요.\n\"아이고, 그런데 이를 어째요.\n제 간은 지금 몸에 없답니다.\n간이 몸에 좋다는 소문이 나는 바람에, 따로 숨겨 두고 다니거든요.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p13.webp?v=1",
+        "lines": [
+          {
+            "text": "아이고, 그런데 이를 어째요.\n제 간은 지금 몸에 없답니다.\n간이 몸에 좋다는 소문이 나는 바람에, 따로 숨겨 두고 다니거든요.",
+            "who": "rabbit"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "rabbit",
+            "line": "제 간은 지금 몸에 없답니다.\n따로 숨겨 두고 다니거든요.",
+            "box": [
+              382,
+              701,
+              903,
+              887
+            ],
+            "audio": "/folk/byeoljubu/say-p13-rabbit.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p13-0.mp3",
+            "text": "가슴이 덜컥 내려앉았지만,\n토끼는 침착하게 대답했어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/byeoljubu/seg-cast-p13-1.mp3",
+            "text": "\"아이고, 그런데 이를 어째요.\n제 간은 지금 몸에 없답니다.\n간이 몸에 좋다는 소문이 나는 바람에, 따로 숨겨 두고 다니거든요.\""
+          }
+        ]
+      },
+      {
+        "n": 14,
+        "text": "용왕님과 자라는 그 말을\n곧이곧대로 믿었어요.\n\"그렇다면 얼른 다녀오너라.\"\n자라는 지친 몸으로 토끼를 다시 등에 태웠어요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p14.webp?v=1",
+        "lines": [
+          {
+            "text": "그렇다면 얼른 다녀오너라.",
+            "who": "king"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "king",
+            "line": "그렇다면 얼른 다녀오너라.",
+            "box": [
+              41,
+              8,
+              579,
+              355
+            ],
+            "audio": "/folk/byeoljubu/say-p14-king.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p14-0.mp3",
+            "text": "용왕님과 자라는 그 말을\n곧이곧대로 믿었어요.\n"
+          },
+          {
+            "who": "king",
+            "src": "/folk/byeoljubu/seg-cast-p14-1.mp3",
+            "text": "\"그렇다면 얼른 다녀오너라.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p14-2.mp3",
+            "text": "\n자라는 지친 몸으로 토끼를 다시 등에 태웠어요."
+          }
+        ]
+      },
+      {
+        "n": 15,
+        "text": "파도가 거세게 몰아쳤지만,\n자라는 끝까지 육지로 헤엄쳤어요.\n육지에 닿자 토끼는 폴짝 뛰어내렸지요.\n\"어서 간을 찾아오게. 여기서 기다리고 있을 테니.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p15.webp?v=1",
+        "lines": [
+          {
+            "text": "어서 간을 찾아오게. 여기서 기다리고 있을 테니.",
+            "who": "turtle"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "turtle",
+            "line": "어서 간을 찾아오게. 여기서 기다리고 있을 테니.",
+            "box": [
+              405,
+              182,
+              914,
+              507
+            ],
+            "audio": "/folk/byeoljubu/say-p15-turtle.mp3"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p15-0.mp3",
+            "text": "파도가 거세게 몰아쳤지만,\n자라는 끝까지 육지로 헤엄쳤어요.\n육지에 닿자 토끼는 폴짝 뛰어내렸지요.\n"
+          },
+          {
+            "who": "turtle",
+            "src": "/folk/byeoljubu/seg-cast-p15-1.mp3",
+            "text": "\"어서 간을 찾아오게. 여기서 기다리고 있을 테니.\""
+          }
+        ]
+      },
+      {
+        "n": 16,
+        "text": "그러자 토끼가 깔깔 웃으며 외쳤어요.\n\"자라야, 간을 넣었다 뺐다 하는 동물이 어디 있어?\n간은 몸속에 있는 거야!\"\n그러고는 숲속으로 쏜살같이 달아나 버렸어요.\n\"뭐, 뭐라고? 거기 서!\"\n지친 자라는 멀어지는 토끼의 뒷모습을 보며\n발만 동동 굴렀답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p16.webp?v=1",
+        "lines": [
+          {
+            "text": "자라야, 간을 넣었다 뺐다 하는 동물이 어디 있어?\n간은 몸속에 있는 거야!",
+            "who": "rabbit"
+          },
+          {
+            "text": "뭐, 뭐라고? 거기 서!",
+            "who": "turtle",
+            "feel": "toneup"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "turtle",
+            "line": "뭐, 뭐라고? 거기 서!",
+            "box": [
+              249,
+              313,
+              752,
+              625
+            ],
+            "audio": "/folk/byeoljubu/say-p16-turtle.mp3",
+            "feel": "toneup"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p16-0.mp3",
+            "text": "그러자 토끼가 깔깔 웃으며 외쳤어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/byeoljubu/seg-cast-p16-1.mp3",
+            "text": "\"자라야, 간을 넣었다 뺐다 하는 동물이 어디 있어?\n간은 몸속에 있는 거야!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p16-2.mp3",
+            "text": "\n그러고는 숲속으로 쏜살같이 달아나 버렸어요.\n"
+          },
+          {
+            "who": "turtle",
+            "src": "/folk/byeoljubu/seg-cast-p16-3.mp3",
+            "text": "\"뭐, 뭐라고? 거기 서!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p16-4.mp3",
+            "text": "\n지친 자라는 멀어지는 토끼의 뒷모습을 보며\n발만 동동 굴렀답니다."
+          }
+        ]
+      }
+    ]
   }
 ]
