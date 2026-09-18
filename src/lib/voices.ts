@@ -172,6 +172,8 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
    * 가희 — 팥쥐. 숙희(새어머니 쪽)보다 젊고 앙칼져야 자매로 갈린다.
    */
   { kind: "tc", id: "tc-tian", label: "티안", emoji: "🎎", voiceId: "tc_676cda634571635588f87804", model: "ssfm-v30", desc: "남자 · 젊고 반듯한 목소리", sample: "이 꽃신의 주인을 꼭 찾아내야겠다." },
+  // 걸리버 여행기 1·2의 걸리버 — 강일(2026-09-18, Typecast API 이름 Kangil).
+  { kind: "tc", id: "tc-kangil", label: "강일", emoji: "⛵", voiceId: "tc_68d4b115f0486108a7eefb37", model: "ssfm-v30", desc: "남자 · 걸리버의 모험을 들려주는 목소리", sample: "얘들아, 안녕? 내 이름은 걸리버란다." },
   /* 한결 — 사장님이 Typecast 목록에서 고른 성우(2026-09-04). 금도끼 나무꾼으로 잠깐 썼다가 희준으로 교체. */
   { kind: "tc", id: "tc-hangyeol", label: "한결", emoji: "🪓", voiceId: "tc_677f2aa4a854ddffa0ebda89", model: "ssfm-v30", desc: "남자 · 젊고 씩씩한 목소리", sample: "오늘도 부지런히 나무를 해야지!" },
   /* 희준 — 금도끼 은도끼의 나무꾼(2026-09-04 사장님 캐스팅, 한결 대신). */

@@ -10893,13 +10893,13 @@
     "text": "그날 이후로, 비가 오는 날이면\n아기 청개구리는 냇가에 나와\n엄마 무덤이 떠내려가지는 않을까 걱정하며\n개굴개굴 울었답니다.\n지금도 비가 오면, 개구리가 그렇게 운대요."
   },
   "classic/gulliver1/seg-cast-p1-0.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "\"얘들아, 안녕? 내 이름은 걸리버란다.\n젊은 시절 나는 커다란 배에서 의사로 일했지.\n내가 배를 타고 다니며 겪은\n신기한 이야기, 한번 들어 볼래?\""
   },
   "classic/gulliver1/say-p1-gulliver.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "얘들아, 안녕? 내 이름은 걸리버란다. 젊은 시절 나는 커다란 배에서 의사로 일했지. 내가 배를 타고 다니며 겪은 신기한 이야기, 한번 들어 볼래?"
@@ -10947,7 +10947,7 @@
     "text": "\"그대가 우리 왕국을 위해 일해 주겠는가?\""
   },
   "classic/gulliver1/seg-cast-p7-2.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "\"물론이죠, 임금님.\n어떤 걸 도와드리면 될까요?\""
@@ -10965,7 +10965,7 @@
     "text": "그대가 우리 왕국을 위해 일해 주겠는가?"
   },
   "classic/gulliver1/say-p7-gulliver.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "물론이죠, 임금님.\n어떤 걸 도와드리면 될까요?"
@@ -11013,7 +11013,7 @@
     "text": "걸리버는 잠시 생각하다 대답했지요."
   },
   "classic/gulliver1/seg-cast-p10-3.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "\"저는 집에 돌아가고 싶습니다.\n저에게 맞는 배 한 척만 만들어 주세요.\""
@@ -11031,7 +11031,7 @@
     "text": "무엇이든 상을 주겠노라. 소원을 말해 보아라."
   },
   "classic/gulliver1/say-p10-gulliver.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "저는 집에 돌아가고 싶습니다.\n저에게 맞는 배 한 척만 만들어 주세요."
@@ -11055,7 +11055,7 @@
     "text": "며칠이 지나자 배는 점점 모습을 갖추었어요.\n돛을 달고, 밧줄을 매고,\n먹을 것과 물통까지 가득 실었지요.\n드디어 걸리버의 몸에 꼭 맞는\n커다란 배가 다 지어졌답니다."
   },
   "classic/gulliver1/seg-cast-p14-0.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "\"잘 있어요! 정말 고마웠소.\""
@@ -11067,13 +11067,13 @@
     "text": "작은 사람들이 모자를 흔들며 배웅했어요.\n걸리버는 다시 넓은 바다로 나아갔지요."
   },
   "classic/gulliver1/seg-cast-p14-2.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "\"그런데 말이야, 그다음에 닿은 나라에서는\n내가 저 작은 사람들처럼 조그마해지고 말았단다.\n그 이야기는 다음에!\""
   },
   "classic/gulliver1/say-p14-gulliver.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "잘 있어요! 정말 고마웠소."
@@ -11823,13 +11823,13 @@
     "text": "그날 뒤로 그 사람은\n누구에게나 말을 곱게 하기로 마음먹었대요.\n말 한마디가\n고기의 크기까지 바꾸어 놓았으니까요."
   },
   "classic/gulliver2/seg-cast-p1-0.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "\"얘들아, 또 만났구나!\n지난번엔 내가 산처럼 커다란 사람이었지?\n이번 이야기에서는 말이야,\n내가 아주아주 작아진단다.\""
   },
   "classic/gulliver2/say-p1-gulliver.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "얘들아, 또 만났구나!\n지난번엔 내가 산처럼 커다란 사람이었지?\n이번 이야기에서는 말이야,\n내가 아주아주 작아진단다."
@@ -11847,13 +11847,13 @@
     "text": "섬 안쪽으로 들어간 걸리버는\n눈을 의심했어요.\n풀이 나무만 하고,\n밀 이삭이 지붕보다 높았거든요!"
   },
   "classic/gulliver2/seg-cast-p3-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "\"여기가… 대체 어디지?\""
   },
   "classic/gulliver2/say-p3-gulliver.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "여기가… 대체 어디지?"
@@ -12039,13 +12039,13 @@
     "text": "집으로 돌아온 걸리버는\n한동안 이상한 기분이 들었어요.\n사람들이 모두 인형처럼 작아 보였거든요."
   },
   "classic/gulliver2/seg-cast-p19-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "\"나는 어떤 나라에서는 산처럼 컸고,\n어떤 나라에서는 손바닥에 앉았단다.\n그래도 나는 늘 나였지.\n너희도 그렇단다. 안녕!\""
   },
   "classic/gulliver2/say-p19-gulliver.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "나는 어떤 나라에서는 산처럼 컸고,\n어떤 나라에서는 손바닥에 앉았단다.\n그래도 나는 늘 나였지.\n너희도 그렇단다. 안녕!"
