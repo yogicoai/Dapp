@@ -11821,5 +11821,233 @@
     "emotion": "normal",
     "intensity": null,
     "text": "그날 뒤로 그 사람은\n누구에게나 말을 곱게 하기로 마음먹었대요.\n말 한마디가\n고기의 크기까지 바꾸어 놓았으니까요."
+  },
+  "classic/gulliver2/seg-cast-p1-0.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"얘들아, 또 만났구나!\n지난번엔 내가 산처럼 커다란 사람이었지?\n이번 이야기에서는 말이야,\n내가 아주아주 작아진단다.\""
+  },
+  "classic/gulliver2/say-p1-gulliver.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "얘들아, 또 만났구나!\n지난번엔 내가 산처럼 커다란 사람이었지?\n이번 이야기에서는 말이야,\n내가 아주아주 작아진단다."
+  },
+  "classic/gulliver2/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "다시 배를 탄 걸리버는\n먼바다에서 물이 떨어져\n낯선 섬에 내렸어요.\n그런데 물을 찾아 헤매는 사이\n배가 그만 먼저 떠나 버렸지 뭐예요!"
+  },
+  "classic/gulliver2/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "섬 안쪽으로 들어간 걸리버는\n눈을 의심했어요.\n풀이 나무만 하고,\n밀 이삭이 지붕보다 높았거든요!"
+  },
+  "classic/gulliver2/seg-cast-p3-1.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"여기가… 대체 어디지?\""
+  },
+  "classic/gulliver2/say-p3-gulliver.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "여기가… 대체 어디지?"
+  },
+  "classic/gulliver2/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "쿵! 쿵! 쿵!\n땅이 울리기 시작했어요.\n밀을 베러 온 거인들이었지요.\n걸리버는 밀대 사이에 납작 엎드렸답니다."
+  },
+  "classic/gulliver2/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그때 거인 농부가 걸리버를 발견했어요.\n농부는 조심조심 손수건을 펴서\n걸리버를 살며시 집어 올렸지요."
+  },
+  "classic/gulliver2/seg-cast-p5-1.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"허허, 이렇게 조그만 사람이 다 있구나!\""
+  },
+  "classic/gulliver2/say-p5-farmer.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "허허, 이렇게 조그만 사람이 다 있구나!"
+  },
+  "classic/gulliver2/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "농부는 걸리버를 집으로 데려갔어요.\n식탁은 마당만 하고,\n빵 한 조각은 이불만 했지요.\n걸리버가 접시에 앉아 빵을 뜯고 있는데,\n어슬렁— 무언가 다가왔어요.\n사자만 한 고양이였지 뭐예요!"
+  },
+  "classic/gulliver2/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "농부의 어린 딸이 걸리버를 보고\n눈이 동그래졌어요."
+  },
+  "classic/gulliver2/seg-cast-p7-1.mp3": {
+    "voice": "tc-sua",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"우와, 작은 사람이다! 내가 돌봐 줄게!\""
+  },
+  "classic/gulliver2/seg-tc-minjung-p7-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "딸은 인형 상자에 헝겊을 깔아 침대를 만들고,\n바느질로 작은 옷까지 지어 입혀 주었어요.\n걸리버에게는 세상에서 제일 다정한 친구였답니다."
+  },
+  "classic/gulliver2/say-p7-girl.mp3": {
+    "voice": "tc-sua",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "우와, 작은 사람이다! 내가 돌봐 줄게!"
+  },
+  "classic/gulliver2/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "소문이 퍼지자 농부는\n걸리버를 장터에 데리고 다녔어요.\n사람들이 동전을 내고 구경했지요.\n날마다 인사하고 춤추느라\n걸리버는 몹시 지쳐 갔답니다."
+  },
+  "classic/gulliver2/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "소문이 궁궐까지 닿아, 공주님이 찾아왔어요.\n공주님은 농부에게 금덩이를 주고\n걸리버를 궁으로 데려가기로 했지요.\n농부는 싱글벙글,\n거인의 딸은 눈물을 뚝뚝 흘렸답니다."
+  },
+  "classic/gulliver2/seg-cast-p9-1.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"울지 마렴. 가끔 놀러 오면 되지.\""
+  },
+  "classic/gulliver2/say-p9-princess.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "울지 마렴. 가끔 놀러 오면 되지."
+  },
+  "classic/gulliver2/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주님은 걸리버에게\n나무로 만든 작은 집을 선물했어요.\n창문도 있고, 침대도 있고,\n손잡이까지 달린 집이었지요.\n공주님은 그 집을 들고 어디든 다녔답니다."
+  },
+  "classic/gulliver2/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 날 궁궐 정원에서\n말벌 떼가 붕붕 날아왔어요.\n말벌 한 마리가 참새만 했지요!\n걸리버는 모자를 휘둘러\n간신히 쫓아냈답니다."
+  },
+  "classic/gulliver2/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "더 놀라운 일도 있었어요.\n궁궐의 원숭이가 창문으로 들어와\n걸리버를 덥석 안고\n지붕 위로 올라가 버린 거예요!"
+  },
+  "classic/gulliver2/seg-tc-minjung-p13-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "사람들이 사다리를 놓고 올라와\n걸리버를 무사히 안아 내렸어요.\n원숭이는 그제야\n시무룩하게 담을 넘어갔지요."
+  },
+  "classic/gulliver2/seg-tc-minjung-p14-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 날 공주님이 걸리버를 손바닥에 올리고\n이것저것 물었어요.\n걸리버가 그동안 다녀온 나라들 이야기를\n신나게 들려주자,\n공주님은 한참을 생각하다 말했지요."
+  },
+  "classic/gulliver2/seg-tc-minjung-p15-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주님이 가만히 말했어요."
+  },
+  "classic/gulliver2/seg-cast-p15-1.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"참 이상하지?\n어떤 나라에서는 네가 산처럼 컸다면서.\n그런데 지금은 내 손바닥에 앉아 있잖아.\n그래도 너는 똑같은 너인데.\""
+  },
+  "classic/gulliver2/say-p15-princess.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "참 이상하지?\n어떤 나라에서는 네가 산처럼 컸다면서.\n그런데 지금은 내 손바닥에 앉아 있잖아.\n그래도 너는 똑같은 너인데."
+  },
+  "classic/gulliver2/seg-tc-minjung-p16-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주님은 뭐든지 다 해 주었지만,\n걸리버는 자꾸만\n제가 살던 세상이 그리웠어요."
+  },
+  "classic/gulliver2/seg-cast-p16-1.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"왜 기운이 없어? 바람 쐬러 갈까?\""
+  },
+  "classic/gulliver2/seg-tc-minjung-p16-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주님이 나무 집을 들고\n바닷가로 데려갔답니다."
+  },
+  "classic/gulliver2/say-p16-princess.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "왜 기운이 없어? 바람 쐬러 갈까?"
+  },
+  "classic/gulliver2/seg-cast-p17-0.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"내가 조개로 집을 예쁘게 꾸며 줄게!\""
+  },
+  "classic/gulliver2/seg-tc-minjung-p17-1.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "공주님이 나무 집을 바위에 올려놓고\n조개를 주우러 달려간 순간,\n커다란 독수리가 집을 휙 낚아챘어요!\n눈앞이 뱅글뱅글—"
+  },
+  "classic/gulliver2/say-p17-princess.mp3": {
+    "voice": "tc-arin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "내가 조개로 집을 예쁘게 꾸며 줄게!"
+  },
+  "classic/gulliver2/seg-tc-minjung-p18-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "한참을 날던 독수리가 지쳤는지\n나무 집을 바다에 첨벙 떨어뜨렸어요.\n집은 물 위에 둥실둥실 떠다녔지요.\n한참 만에 잠에서 깬 걸리버는\n창밖을 내다보고 깜짝 놀랐어요.\n저 멀리 낯익은 항구가 보였거든요."
+  },
+  "classic/gulliver2/seg-tc-minjung-p19-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "집으로 돌아온 걸리버는\n한동안 이상한 기분이 들었어요.\n사람들이 모두 인형처럼 작아 보였거든요."
+  },
+  "classic/gulliver2/seg-cast-p19-1.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"나는 어떤 나라에서는 산처럼 컸고,\n어떤 나라에서는 손바닥에 앉았단다.\n그래도 나는 늘 나였지.\n너희도 그렇단다. 안녕!\""
+  },
+  "classic/gulliver2/say-p19-gulliver.mp3": {
+    "voice": "tc-tian",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "나는 어떤 나라에서는 산처럼 컸고,\n어떤 나라에서는 손바닥에 앉았단다.\n그래도 나는 늘 나였지.\n너희도 그렇단다. 안녕!"
   }
 }

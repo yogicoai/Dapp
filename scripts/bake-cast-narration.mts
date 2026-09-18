@@ -272,6 +272,17 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "도로시" }, { name: "허수아비" }, { name: "양철 나무꾼" }, { name: "사자" }, { name: "서쪽 마녀" }, { name: "오즈" }, { name: "아주머니" }],
   },
+  // 걸리버 여행기 2 — 사장님 캐스팅(2026-09-18): 나레이션 민정 · 걸리버 티안 ·
+  // 거인의 딸 수아 · 공주님 아린이. 5쪽 거인 농부는 캐스팅표에 없던 배역이라,
+  // 이 원고에 대사가 한 줄도 없는 임금님 자리의 왕권을 돌려 썼다.
+  "걸리버 여행기 2": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "gulliver2",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "걸리버" }, { name: "거인의 딸" }, { name: "공주님" }, { name: "농부" }],
+  },
   "개미와 베짱이": {
     data: "src/data/classic-books.json",
     root: "classic",
