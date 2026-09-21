@@ -35,6 +35,8 @@ import {
   loadChildRemote,
   loadLang,
   loadMyBookBriefs,
+  loadAutoNext,
+  loadAutoNextRemote,
   loadBookLayout,
   loadShelfCols,
   saveShelfCols,
@@ -44,6 +46,7 @@ import {
   type ChildLooks,
   type ParentLooks,
   parentLooksToPrompt,
+  saveAutoNext,
   saveBookLayout,
   saveChild,
   saveLang,
@@ -201,6 +204,8 @@ export default function SettingsPage() {
    * 뒤늦게 도착한 옛 값이 방금 고른 걸 덮어 "저장이 안 된다"로 보였다.
    */
   const childTouched = useRef(false);
+  /** 이어서 틀기를 부모가 이미 눌렀나 — 같은 이유로, 뒤늦게 온 계정 값이 덮지 않게. */
+  const autoNextTouched = useRef(false);
   // 항목이 많아 화면이 길어진다 — 평소엔 접어 두고 눌러서 편다.
   const [looksOpen, setLooksOpen] = useState(false);
   // 엄마·아빠 생김새(아주 간단히) — 안 알려 주면 모델이 안경·수염을 지어낸다.
@@ -213,6 +218,8 @@ export default function SettingsPage() {
   const [voiceRate, setVoiceRate] = useState(DEFAULT_VOICE_RATE);
   // 책 보는 방식 — 가로에서 '꽉 찬 그림' / '펼침면(그림|글 반반)'.
   const [bookLayout, setBookLayout] = useState<BookLayout>("full");
+  // 동화가 끝나면 — 묻기(기본) / 다음 동화 이어서 틀기.
+  const [autoNext, setAutoNext] = useState(false);
   // 책장 한 줄 권수(넓은 화면 전용).
   const [shelfCols, setShelfCols] = useState<ShelfCols>(5);
   // 동화 본문 글꼴 — 고른 id만 들고 있는다(배율·줄 간격은 prefs의 목록이 안다).
@@ -280,6 +287,7 @@ export default function SettingsPage() {
     setVoiceId(loadSelectedVoiceId());
     setVoiceRate(loadVoiceRate());
     setBookLayout(loadBookLayout());
+    setAutoNext(loadAutoNext());
     setShelfCols(loadShelfCols());
     const savedFont = loadStoryFont();
     const savedWeight = loadStoryWeight();
@@ -335,6 +343,15 @@ export default function SettingsPage() {
           setGender(c.gender);
           setLooks(c.looks ?? {});
           setParents(c.parents ?? {});
+        })
+        .catch(() => {});
+
+      // 이어서 틀기도 계정 값으로 맞춘다 — 기기를 바꿔 들어와도 켜 둔 대로 보이게.
+      // 돌아오는 사이에 부모가 이미 눌렀다면 덮지 않는다(아이 정보와 같은 규칙).
+      void loadAutoNextRemote()
+        .then((on) => {
+          if (!alive || on === null || autoNextTouched.current) return;
+          setAutoNext(on);
         })
         .catch(() => {});
 
@@ -1611,6 +1628,42 @@ export default function SettingsPage() {
             </div>
             <p className="-mt-1 text-xs font-medium text-neutral-400">
               컴퓨터 화면에서 한 줄에 몇 권씩 놓을지예요. 휴대폰에서는 화면이 좁아 2권으로 보여요.
+            </p>
+
+            <h2 className="mt-1 text-sm font-extrabold text-neutral-400">동화가 끝나면</h2>
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  { value: false, label: "다음 동화 물어보기" },
+                  { value: true, label: "다음 동화 이어서 틀기" },
+                ] as const
+              ).map((o) => {
+                const active = autoNext === o.value;
+                return (
+                  <button
+                    key={o.label}
+                    type="button"
+                    onClick={() => {
+                      autoNextTouched.current = true;
+                      setAutoNext(o.value);
+                      saveAutoNext(o.value); // 안에서 계정(Supabase)에도 남긴다
+                      flashSaved();
+                    }}
+                    aria-pressed={active}
+                    style={active ? { background: accent } : undefined}
+                    className={`rounded-full px-4 py-2 text-sm font-extrabold transition ${
+                      active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                    }`}
+                  >
+                    {o.label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="-mt-1 break-keep text-xs font-medium leading-relaxed text-neutral-400">
+              <b>이어서 틀기</b>를 켜 두면 한 편을 다 읽어 준 뒤 &quot;다음 동화 보기&quot;를 묻지 않고,
+              같은 책장의 다음 동화를 바로 읽어 줘요. 잠자리에 틀어 두기 좋아요. 넘어가기 전에 잠깐 뜨는
+              알림에서 <b>여기서 멈추기</b>를 누르면 멈춰요.
             </p>
           </section>
 

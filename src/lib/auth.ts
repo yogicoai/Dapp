@@ -10,6 +10,7 @@
 import {
   backupChildBeforeLogout,
   clearChild,
+  loadAutoNextRemote,
   loadChildRemote,
   migrateDevicePrefs,
 } from "@/lib/prefs";
@@ -131,6 +132,8 @@ export async function logIn(idRaw: string, password: string): Promise<AuthResult
   // 이 계정에 저장된 아이 정보를 서버에서 되살려 로컬 캐시에 채운다 — 로그아웃 때
   // 지워졌던 아이 이름·나이·성별이 재로그인하면 복구된다.
   await loadChildRemote().catch(() => {});
+  // 이어서 틀기(연속 보기)도 같이 되살린다 — 기기를 바꿔도 따라가게.
+  await loadAutoNextRemote().catch(() => {});
   return { ok: true, profile };
 }
 
@@ -182,6 +185,8 @@ export async function finishOAuthLogin(): Promise<AuthResult | null> {
   const profile = await fetchProfile(uid);
   if (!profile) return { ok: false, error: "로그인은 됐는데 프로필을 못 읽었어요." };
   await loadChildRemote().catch(() => {});
+  // 이어서 틀기(연속 보기)도 같이 되살린다 — 기기를 바꿔도 따라가게.
+  await loadAutoNextRemote().catch(() => {});
   return { ok: true, profile };
 }
 

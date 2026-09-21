@@ -1,0 +1,82 @@
+[
+  {
+    "book": "신데렐라",
+    "role": "신데렐라",
+    "voice": "tc-sua",
+    "label": "수아",
+    "text": "저… 저도 신어 봐도 될까요?",
+    "src": "/casting/sample-cinderella-cinderella-tc-sua.mp3"
+  },
+  {
+    "book": "신데렐라",
+    "role": "언니",
+    "voice": "tc-gahee",
+    "label": "가희",
+    "text": "그동안… 우리가 너무 못되게 굴었어. 미안해.",
+    "src": "/casting/sample-cinderella-sister-tc-gahee.mp3"
+  },
+  {
+    "book": "신데렐라",
+    "role": "새어머니",
+    "voice": "tc-sookhee",
+    "label": "숙희",
+    "text": "흥, 넌 할 일이 산더미잖니!",
+    "src": "/casting/sample-cinderella-stepmom-tc-sookhee.mp3"
+  },
+  {
+    "book": "신데렐라",
+    "role": "요정 대모",
+    "voice": "tc-juha",
+    "label": "주하",
+    "text": "울지 마렴, 신데렐라야. 너도 무도회에 갈 수 있단다!",
+    "src": "/casting/sample-cinderella-fairy-tc-juha.mp3"
+  },
+  {
+    "book": "신데렐라",
+    "role": "왕자",
+    "voice": "tc-tian",
+    "label": "티안",
+    "text": "저와 춤을 추시겠어요?",
+    "src": "/casting/sample-cinderella-prince-tc-tian.mp3"
+  },
+  {
+    "book": "신데렐라",
+    "role": "신하",
+    "voice": "tc-goat",
+    "label": "김고트",
+    "text": "왕자님의 무도회에 온 나라 아가씨를 초대합니다!",
+    "src": "/casting/sample-cinderella-servant-tc-goat.mp3"
+  },
+  {
+    "book": "미녀와 야수",
+    "role": "벨",
+    "voice": "tc-chungah",
+    "label": "청아",
+    "text": "제가 가겠어요, 아버지.",
+    "src": "/casting/sample-beauty-belle-tc-chungah.mp3"
+  },
+  {
+    "book": "미녀와 야수",
+    "role": "야수",
+    "voice": "tc-hakchul",
+    "label": "학철",
+    "text": "그 장미는 내가 아끼던 것이다. 꺾어 갔으니 그냥 보낼 수는 없다. 누군가는 이 성에 남아야 한다.",
+    "src": "/casting/sample-beauty-beast-tc-hakchul.mp3"
+  },
+  {
+    "book": "미녀와 야수",
+    "role": "아버지",
+    "voice": "tc-hosun",
+    "label": "호선",
+    "text": "그러면 딸들에게 작별 인사만 하게 해 주세요.",
+    "src": "/casting/sample-beauty-father-tc-hosun.mp3"
+  },
+  {
+    "book": "미녀와 야수",
+    "role": "언니",
+    "voice": "tc-dabin",
+    "label": "다빈",
+    "text": "저는 비단 드레스요!",
+    "src": "/casting/sample-beauty-sister-tc-dabin.mp3"
+  }
+]

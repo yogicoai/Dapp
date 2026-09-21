@@ -4,6 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
+  loadAutoNext,
+  markAutoplayNext,
+  hasAutoplayNext,
+  takeAutoplayNext,
   loadBgmOn,
   loadBookProgress,
   loadSfxOn,
@@ -79,6 +83,13 @@ const FREE_REDRAWS_PER_BOOK = 1;
 
 /** Web Speech 폴백용 읽기 속도(초당 글자). 경계 이벤트가 안 오는 기기에서 쓴다. */
 const FALLBACK_CHARS_PER_SEC = 5.5;
+
+/**
+ * 동화 이어서 듣기 — 한 편이 끝나고 다음 동화로 넘어가기까지 쉬는 시간(ms).
+ * 마지막 쪽 뒤에는 이미 쪽 넘김 숨이 있어서 길게 둘 필요가 없다. 대신 0으로 두면
+ * "다음 동화로 넘어가요" 알림을 아이가 못 보고 갑자기 다른 이야기가 시작된다.
+ */
+const AUTO_NEXT_DELAY_MS = 1600;
 
 /**
  * 본문이 준비된 칸보다 길면 스크롤을 만들지 않고 글자만 단계적으로 줄인다.
@@ -206,6 +217,74 @@ const HOTSPOT_KO: Record<string, string> = {
   spirit: "산신령",
   woodcutter: "나무꾼",
   greedy: "욕심쟁이",
+
+  /* 2026-09-20 — 말풍선 이름표가 영어 코드 그대로 읽히던 배역들을 채웠다(화면 낭독기용).
+     여러 책이 함께 쓰는 코드(king·girl·witch 등)는 두루 통하는 이름으로 둔다. */
+  siblings: "형제들",
+  goose: "기러기",
+  children: "아이들",
+  girl: "여자아이",
+  granny: "할머니",
+  thief: "도둑",
+  country: "시골 쥐",
+  city: "도시 쥐",
+  boy: "소년",
+  villager: "마을 사람",
+  emperor: "임금님",
+  swindler: "재봉사",
+  minister: "신하",
+  minister2: "둘째 신하",
+  child: "아이",
+  dad: "아빠",
+  jack: "잭",
+  old_man: "노인",
+  giant_wife: "거인 아내",
+  giant: "거인",
+  princess: "공주님",
+  frog: "개구리",
+  king: "임금님",
+  wind: "북풍",
+  traveller: "나그네",
+  gulliver: "걸리버",
+  farmer: "농부",
+  tapper: "두드리미",
+  tailor: "재단사",
+  professor: "박사님",
+  munodi: "무노디 할아버지",
+  mermaid: "인어 공주",
+  prince: "왕자",
+  witch: "마녀",
+  dorothy: "도로시",
+  scarecrow: "허수아비",
+  tinman: "양철 나무꾼",
+  lion: "사자",
+  oz: "오즈",
+  aunt: "아주머니",
+  kids: "아이들",
+  heungbuwife: "흥부 아내",
+  nolbuwife: "놀부 부인",
+  stepmom: "새어머니",
+  patjwi: "팥쥐",
+  chestnut: "알밤",
+  turtle: "자라",
+  dung: "쇠똥",
+  mat: "멍석",
+  carrier: "지게",
+  oldman: "할아버지",
+  younger: "아우",
+  grandpa: "할아버지",
+  tree: "나무",
+  catfish: "메기",
+  proud: "거만한 양반",
+  polite: "정중한 양반",
+  butcher: "박상길",
+  snail: "우렁각시",
+  dragonking: "용왕",
+  bong: "봉 영감",
+  bride: "며느리",
+  son: "아들",
+  scholar: "선비",
+  wife: "아내",
 };
 
 /**
@@ -636,6 +715,9 @@ export function BookViewer({
    * 마지막 책이면 null이라 버튼을 띄우지 않는다.
    */
   const [nextBook, setNextBook] = useState<{ id: string; title: string } | null>(null);
+  // 다음 책을 찾아봤나 — 내가 만든 책은 계정에서 목록을 받아 오느라 한 박자 늦다.
+  // 이어서 틀기를 켜 두었을 때, 찾는 동안 "이야기가 끝났어요" 창이 잠깐 번쩍이지 않게 쓴다.
+  const [nextChecked, setNextChecked] = useState(false);
   useEffect(() => {
     if (!ended) return;
     let alive = true;
@@ -654,11 +736,39 @@ export function BookViewer({
         const mine = await loadMyBooksBrief().catch(() => []);
         if (alive) setNextBook(pickNext(mine));
       }
+      if (alive) setNextChecked(true);
     })();
     return () => {
       alive = false;
     };
   }, [ended, book.id]);
+
+  /*
+   * 동화 이어서 듣기(설정) — 켜 두면 끝났을 때 묻지 않고 다음 동화로 넘어가 바로 읽는다.
+   *
+   * 잠자리에 틀어 두면 한 편마다 "다음 동화 보기"를 눌러 줄 사람이 없다(사장님 요청,
+   * 2026-09-20). 끝 창 대신 작은 알림만 잠깐 띄우고 넘어간다. 그 알림의 '여기서 멈추기'를
+   * 누르면 이번 한 번은 평소처럼 끝 창을 띄운다. 서가의 마지막 책이면 넘어갈 곳이 없으니
+   * 평소대로 끝 창이 뜬다.
+   */
+  // 끝났을 때만 설정을 본다 — 끝남은 재생한 뒤에만 생기므로 서버 그림과 어긋날 일이 없다.
+  const autoNext = ended && loadAutoNext();
+  const [autoNextStopped, setAutoNextStopped] = useState(false);
+  // 띄운 창에서 onOpenBook 없이 onClose 만 받았으면 '다음 동화' 자체를 안 보여 준다 — 넘어가지도 않는다.
+  const canOpenNext = Boolean(nextBook) && (!onClose || Boolean(onOpenBook));
+  const autoNextOn = ended && autoNext && !autoNextStopped;
+  const goingNext = autoNextOn && nextChecked && canOpenNext;
+  // 아직 다음 책을 찾는 중 — 끝 창을 띄우지 않고 기다린다(보통 한 박자).
+  const findingNext = autoNextOn && !nextChecked;
+  useEffect(() => {
+    if (!goingNext || !nextBook) return;
+    const t = window.setTimeout(() => {
+      markAutoplayNext(nextBook.id);
+      if (onClose && onOpenBook) onOpenBook(nextBook.id);
+      else router.push(`/book/${nextBook.id}`);
+    }, AUTO_NEXT_DELAY_MS);
+    return () => window.clearTimeout(t);
+  }, [goingNext, nextBook, onClose, onOpenBook, router]);
 
   // 이어듣기 — 정지한 자리를 기억한다. readPage가 시작한 쪽(currentPageRef)과 그때의
   // 순번(run)을 함께 담아, 다시 누를 때 "같은 쪽·같은 재생"일 때만 이어서 튼다.
@@ -1392,6 +1502,23 @@ export function BookViewer({
     setReading(true);
     readPage(0);
   };
+
+  /*
+   * 동화 이어서 듣기로 열린 책 — 첫 쪽부터 바로 읽는다.
+   *
+   * 앞 책이 넘어가면서 남긴 쪽지(takeAutoplayNext)가 이 책을 가리킬 때만이다. 그래서
+   * 새로고침하거나 서재에서 직접 열면 평소처럼 ▶를 기다린다. 성우·그림이 자리 잡을
+   * 틈을 조금 주고 시작한다. 브라우저가 소리를 막으면 재생 쪽에서 멈추고 ▶가 남는다.
+   */
+  useEffect(() => {
+    if (!hasAutoplayNext(book.id)) return;
+    const t = window.setTimeout(() => {
+      if (takeAutoplayNext(book.id)) replayFromStart();
+    }, 700);
+    return () => window.clearTimeout(t);
+    // 책이 열릴 때 한 번만 — replayFromStart 는 렌더마다 새로 만들어지지만 여기서는 처음 것으로 충분하다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [book.id]);
 
   // 재생 속도 변경 — 재생 중이면 지금 오디오에 즉시 반영, 다음 쪽부턴 rateRef로.
   const applyRate = (r: number) => {
@@ -2543,8 +2670,39 @@ export function BookViewer({
         </button>
       </div>
 
+      {/* 동화 이어서 듣기 — 끝 창 대신 작은 알림만 잠깐 띄우고 다음 동화로 넘어간다. */}
+      {(goingNext || findingNext) && (
+        <div
+          className="pointer-events-none absolute inset-x-0 z-20 flex justify-center px-4"
+          style={{ bottom: "calc(7rem + env(safe-area-inset-bottom))" }}
+        >
+          <div
+            role="status"
+            className="pointer-events-auto flex max-w-full items-center gap-3 rounded-full bg-white/95 py-2 pl-5 pr-2 shadow-2xl"
+          >
+            <span className="line-clamp-1 break-keep text-sm font-extrabold text-neutral-700">
+              {nextBook ? (
+                <>
+                  다음 동화로 넘어가요 ·{" "}
+                  <span style={{ color: ui.colors.accentDark }}>{nextBook.title}</span>
+                </>
+              ) : (
+                "다음 동화를 찾고 있어요…"
+              )}
+            </span>
+            <button
+              type="button"
+              onClick={() => setAutoNextStopped(true)}
+              className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-extrabold text-neutral-500 transition hover:bg-neutral-200"
+            >
+              여기서 멈추기
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 이야기 끝 — 그 자리에서 처음부터 다시 듣기 (서재로 나갔다 올 필요 없음). */}
-      {ended && (
+      {ended && !goingNext && !findingNext && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/45 p-6 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-5 rounded-[28px] bg-white/95 px-8 py-9 text-center shadow-2xl">
             <p className="text-2xl font-extrabold text-neutral-800">이야기가 끝났어요! 🎉</p>

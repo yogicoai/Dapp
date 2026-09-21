@@ -458,6 +458,128 @@ export function saveBgmOn(on: boolean): void {
 }
 
 /**
+ * 동화 이어서 듣기 — 한 편을 끝까지 읽어 주면 "다음 동화 보기"를 묻지 않고
+ * 같은 서가의 다음 동화를 바로 틀어 준다(2026-09-20 사장님 요청).
+ * 잠자리에 틀어 두면 한 편마다 화면을 눌러 줄 사람이 없다.
+ * 기본은 끔 — 켜 두면 서가 끝까지 계속 이어지므로 부모가 골라서 켠다.
+ */
+const AUTO_NEXT_KEY = "voice-storybook:auto-next";
+
+export function loadAutoNext(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(acctKey(AUTO_NEXT_KEY)) === "on";
+}
+export function saveAutoNext(on: boolean): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(acctKey(AUTO_NEXT_KEY), on ? "on" : "off");
+  // 계정에도 남긴다 — 기기를 바꿔도 따라가게. 실패해도 위 한 줄로 이 기기에선 그대로 동작한다.
+  void saveAutoNextRemote(on).catch(() => {});
+}
+
+/** 계정별 로컬 백업 키 — 로그아웃해도 지우지 않는다(SQL 없이도 재로그인 복구). */
+const acctAutoNextKey = (uid: string) => `${AUTO_NEXT_KEY}:${uid}`;
+
+/**
+ * 이어서 틀기를 로그인 계정에 남긴다: ① 계정별 로컬 백업(SQL 없이도 동작)
+ * ② Supabase profiles.auto_next (컬럼 있으면).
+ *
+ * 아이 정보(child)와 같은 두 겹 구조다. 컬럼이 없는 DB 에서도 조용히 넘어가므로
+ * supabase-auto-next.sql 을 아직 안 돌렸어도 앱이 깨지지 않는다.
+ */
+export async function saveAutoNextRemote(on: boolean): Promise<void> {
+  const sb = getSupabase();
+  if (!sb) return;
+  const uid = await currentUid();
+  if (!uid) return;
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(acctAutoNextKey(uid), on ? "on" : "off"); // ① 계정 로컬 백업
+  }
+  try {
+    await sb.from("profiles").update({ auto_next: on }).eq("id", uid); // ② Supabase
+  } catch {
+    /* auto_next 컬럼 전(마이그레이션 안 함) 등 — 로컬 백업만으로 동작 */
+  }
+}
+
+/**
+ * 로그인 계정의 이어서 틀기 설정을 되살려 이 기기에 반영한다 (재로그인·기기변경 복구).
+ * 계정별 로컬 백업을 먼저 보고, Supabase 에 값이 있으면 그걸 우선한다.
+ *
+ * 서버 값이 우선인 까닭 — 이 설정은 참/거짓 하나뿐이라 합칠 것이 없고,
+ * 마지막으로 끈 기기의 뜻이 가장 최근 뜻이다.
+ */
+export async function loadAutoNextRemote(): Promise<boolean | null> {
+  const sb = getSupabase();
+  if (!sb) return null;
+  try {
+    const uid = await currentUid();
+    if (!uid) return null;
+    // ① 계정별 로컬 백업 (SQL 없이도 같은 기기 재로그인 복구)
+    const backup = window.localStorage.getItem(acctAutoNextKey(uid));
+    let on = backup === null ? null : backup === "on";
+    // ② Supabase 에 값이 있으면 우선 (다른 기기·재설치 복구)
+    const { data, error } = await sb
+      .from("profiles")
+      .select("auto_next")
+      .eq("id", uid)
+      .maybeSingle();
+    if (!error) {
+      const remote = (data as { auto_next?: unknown } | null)?.auto_next;
+      if (typeof remote === "boolean") on = remote;
+    }
+    if (on === null) return null;
+    if (typeof window !== "undefined") {
+      // 이 계정 키에만 쓴다 — loadAutoNext() 가 읽는 자리가 바로 여기다.
+      window.localStorage.setItem(acctKey(AUTO_NEXT_KEY), on ? "on" : "off");
+      window.localStorage.setItem(acctAutoNextKey(uid), on ? "on" : "off");
+    }
+    return on;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 다음 동화를 열면서 "열리자마자 읽어 줘"를 넘기는 쪽지(한 번 쓰고 지운다).
+ * 주소에 붙이지 않는 까닭 — 새로고침·뒤로 가기로 같은 주소를 다시 열 때마다
+ * 저절로 소리가 나면 안 된다. 탭 하나에서만 한 번 읽히는 sessionStorage 에 둔다.
+ */
+const AUTOPLAY_NEXT_KEY = "voice-storybook:autoplay-next";
+
+export function markAutoplayNext(bookId: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(AUTOPLAY_NEXT_KEY, bookId);
+  } catch {
+    // 저장이 막힌 환경 — 이어서 틀지 못할 뿐 넘어가는 건 된다.
+  }
+}
+/** 이 책이 '이어서 틀기'로 열렸나 — 들여다보기만 하고 지우지 않는다. */
+export function hasAutoplayNext(bookId: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.sessionStorage.getItem(AUTOPLAY_NEXT_KEY) === bookId;
+  } catch {
+    return false;
+  }
+}
+/**
+ * 쪽지를 가져가며 지운다 — 실제로 읽기 시작하는 순간에만 부른다.
+ * 열리자마자 지우면, 개발 모드에서 효과가 두 번 도는 사이 첫 번째가 지워 버려
+ * 두 번째(진짜)가 읽지 못한다.
+ */
+export function takeAutoplayNext(bookId: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    if (window.sessionStorage.getItem(AUTOPLAY_NEXT_KEY) !== bookId) return false;
+    window.sessionStorage.removeItem(AUTOPLAY_NEXT_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * 이어보기 — 책별로 마지막에 본 쪽을 저장한다. 서재로 나갔다 다시 들어오면
  * 읽던 쪽부터 보인다. 한 곳(맵)에 {책id: 쪽번호}로 모아 담는다.
  * 만들기 미리보기(id="new")는 일회성이라 저장하지 않는다.

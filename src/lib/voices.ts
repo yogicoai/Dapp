@@ -68,6 +68,15 @@ export type TypecastPreset = {
    * 보내면 합성이 거절당한다. 여기 적어 두면 굽는 쪽이 낼 수 있는 감정으로 바꿔 준다.
    */
   emotions?: string[];
+  /**
+   * 미리 굽는 동화(전래·세계명작)에서 이 성우에 거는 빠르기 보정(Typecast audio_tempo).
+   *
+   * 성우마다 타고난 말 빠르기가 달라서, 같은 글도 진서는 민정보다 25%쯤 빨리 읽는다
+   * (2026-09-19 전 권 점검: 민정 나레이션 초당 4.5~5.0음절, 진서 6.0음절).
+   * 아이가 듣기에는 민정 쪽이 기준이라 빠른 성우만 여기서 늦춘다. 같은 문장을
+   * 기준 성우와 나란히 합성해 맞춘 값이다. 대사집 tempo·책의 voiceTempo 가 있으면 그게 앞선다.
+   */
+  bakeTempo?: number;
 };
 
 export type Voice = PresetVoice | CustomVoice | TypecastPreset;
@@ -93,7 +102,7 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-miso", label: "미소", emoji: "🌸", voiceId: "tc_677f2ac4934cbfb52bee8a9c", model: "ssfm-v30", desc: "여자 · 미소 가득한 엄마", sample: "포근하게 읽어줄게, 우리 아가." },
   { kind: "tc", id: "tc-dabin", label: "다빈", emoji: "💜", voiceId: "tc_67ad583c7848a19031f798f7", model: "ssfm-v30", desc: "여자 청소년 · 상냥한 언니", sample: "언니가 재미있게 읽어줄게!" },
   { kind: "tc", id: "tc-daeun", label: "다은", emoji: "✨", voiceId: "tc_692799c46508f6b9468c54c7", model: "ssfm-v30", desc: "여자 · 또렷한 언니", sample: "오늘의 동화, 시작해 볼까?" },
-  { kind: "tc", id: "tc-ina", label: "이나", emoji: "🌼", voiceId: "tc_62686be9deec4c1bb7fd077c", model: "ssfm-v30", desc: "여자 · 다정한 목소리", sample: "이리 와, 이야기 들려줄게." },
+  { kind: "tc", id: "tc-ina", label: "이나", emoji: "🌼", voiceId: "tc_62686be9deec4c1bb7fd077c", model: "ssfm-v30", desc: "여자 · 다정한 목소리", sample: "이리 와, 이야기 들려줄게.", bakeTempo: 0.85 },
   { kind: "tc", id: "tc-jiyoon", label: "지윤", emoji: "☁️", voiceId: "tc_62296627a4ff5d1ee6bf4ecc", model: "ssfm-v30", desc: "여자 · 차분한 목소리", sample: "차분하게 읽어줄게." },
   { kind: "tc", id: "tc-jungsoon", label: "정순", emoji: "👵", voiceId: "tc_5ebea242728f5b00075e6211", model: "ssfm-v30", desc: "여자 · 정겨운 할머니", sample: "옛날 옛적에, 얘야." },
   { kind: "tc", id: "tc-jiyoung", label: "지영", emoji: "🌷", voiceId: "tc_5c789c34dabcfa0008b0a390", model: "ssfm-v30", desc: "여자 · 밝은 선생님", sample: "친구들, 이야기 들을 준비 됐나요?" },
@@ -121,7 +130,7 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-wangkwon", label: "왕권", emoji: "👑", voiceId: "tc_66a1ea9420b813b5c36197f1", model: "ssfm-v30", desc: "남자 · 위엄 있는 중년", sample: "오늘은 또 어떤 옷을 입어 볼까?" },
   { kind: "tc", id: "tc-jongdae", label: "종대", emoji: "🎩", voiceId: "tc_67e38d8c771b5511659c4534", model: "ssfm-v30", desc: "남자 · 점잖은 노년", sample: "오, 참으로 멋지구나!" },
   { kind: "tc", id: "tc-gunseok", label: "건석", emoji: "🧔", voiceId: "tc_6731b2e0855f351b98d30c48", model: "ssfm-v30", desc: "남자 · 듬직한 아빠", sample: "아빠가 재미있게 읽어줄게." },
-  { kind: "tc", id: "tc-changsu", label: "창수", emoji: "⚡", voiceId: "tc_6059dad0b83880769a50502f", model: "ssfm-v30", desc: "남자 · 활기찬 형아", sample: "형아랑 신나는 이야기 가자!" },
+  { kind: "tc", id: "tc-changsu", label: "창수", emoji: "⚡", voiceId: "tc_6059dad0b83880769a50502f", model: "ssfm-v30", desc: "남자 · 활기찬 형아", sample: "형아랑 신나는 이야기 가자!", bakeTempo: 0.83 },
   { kind: "tc", id: "tc-siwoo", label: "시우", emoji: "🧒", voiceId: "tc_6699eb3849dfac016c29444c", model: "ssfm-v30", desc: "남자 어린이 · 씩씩한 친구", sample: "나랑 같이 모험 떠나자!" },
   { kind: "tc", id: "tc-hajun", label: "하준", emoji: "🐯", voiceId: "tc_60db308484130840f23e6ca0", model: "ssfm-v30", desc: "남자 어린이 · 명랑한 친구", sample: "오늘 이야기 진짜 기대돼!" },
   { kind: "tc", id: "tc-yejoon", label: "예준", emoji: "🎮", voiceId: "tc_63edf3d68aab086d6b782a55", model: "ssfm-v30", desc: "남자 청소년 · 듬직한 형", sample: "형이 재미있게 읽어줄게!" },
@@ -174,10 +183,28 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-tian", label: "티안", emoji: "🎎", voiceId: "tc_676cda634571635588f87804", model: "ssfm-v30", desc: "남자 · 젊고 반듯한 목소리", sample: "이 꽃신의 주인을 꼭 찾아내야겠다." },
   // 걸리버 여행기 1·2의 걸리버 — 강일(2026-09-18, Typecast API 이름 Kangil).
   { kind: "tc", id: "tc-kangil", label: "강일", emoji: "⛵", voiceId: "tc_68d4b115f0486108a7eefb37", model: "ssfm-v30", desc: "남자 · 걸리버의 모험을 들려주는 목소리", sample: "얘들아, 안녕? 내 이름은 걸리버란다." },
+  // 우렁각시 캐스팅(2026-09-19 사장님 지정) — 나레이션 진서(Typecast 이름 Jinseo) · 우렁각시 고바야시 미우(Miu Kobayashi).
+  // 미우는 일본어 목록의 성우지만 합성은 늘 language "kor" 로 보내므로 한국어로 읽는다.
+  { kind: "tc", id: "tc-jinseo", label: "진서", emoji: "🐚", voiceId: "tc_65bb3a1976b69213594357fc", model: "ssfm-v30", desc: "여자 · 차분하게 들려주는 낭독 목소리", sample: "옛날 옛날, 어느 마을에 부지런한 농부가 있었어요.", bakeTempo: 0.8 },
+  { kind: "tc", id: "tc-miu", label: "고바야시 미우", emoji: "🌸", voiceId: "tc_68d49c1e02c83f1fd4cdeaae", model: "ssfm-v30", desc: "여자 · 맑고 고운 목소리", sample: "저는 누구의 것도 아닙니다." },
+  // 방귀 며느리 캐스팅(2026-09-19 사장님 지정) — 아들 서준(Seojoon) · 며느리 지우(Jiwoo). 봉 영감 종대 · 도둑 병훈 · 나레이션 진서.
+  { kind: "tc", id: "tc-seojoon", label: "서준", emoji: "🌰", voiceId: "tc_63aaec04428dd87af3757d72", model: "ssfm-v30", desc: "남자 · 서글서글한 젊은 목소리", sample: "에이, 그런 거야 참지 말고 시원하게 뀌면 되지!", bakeTempo: 0.83 },
+  { kind: "tc", id: "tc-jiwoo", label: "지우", emoji: "🍐", voiceId: "tc_5ebea14e433bd200073e0dce", model: "ssfm-v30", desc: "여자 · 싹싹하고 야무진 목소리", sample: "저한테 맡기세요." },
+  // 토끼의 재판 재캐스팅(2026-09-20 사장님 지정) — 나그네 대진(Daejin) · 나무 승재(Seungjae).
+  { kind: "tc", id: "tc-daejin", label: "대진", emoji: "🎒", voiceId: "tc_6a0e85a97f7750959b970d5d", model: "ssfm-v30", desc: "남자 · 푸근한 중년 목소리", sample: "호랑이님, 제가 구해 드렸잖아요!" },
+  { kind: "tc", id: "tc-seungjae", label: "승재", emoji: "🌳", voiceId: "tc_67919fb54fd00e0217d2cff0", model: "ssfm-v30", desc: "남자 · 또박또박 반듯한 목소리", sample: "사람들은 우리 그늘에서 쉬고도 가지를 꺾어 가지." },
+  // 호랑이와 곶감 소도둑(2026-09-20 사장님 지정, Typecast 이름 MC Kong).
+  { kind: "tc", id: "tc-mckong", label: "MC콩", emoji: "🫘", voiceId: "tc_623145ec8d2f689cc9bad6d5", model: "ssfm-v30", desc: "남자 · 능글맞은 중년 목소리", sample: "어어? 이게 무슨 소가 이렇게 빨라!" },
+  // 도깨비 감투 캐스팅(2026-09-19 사장님 지정) — 선비 태우 · 아내 애란 · 도깨비 진혁 · 마을 사람 민주 · 나레이션 혜민.
+  { kind: "tc", id: "tc-taewoo", label: "태우", emoji: "📜", voiceId: "tc_6800a387534948f191cc952b", model: "ssfm-v30", desc: "남자 · 반듯한 젊은 목소리", sample: "이 감투만 쓰면 아무도 나를 못 본단 말이지?" },
+  { kind: "tc", id: "tc-aeran", label: "애란", emoji: "🧺", voiceId: "tc_5d01a52c63338e00072b8c9f", model: "ssfm-v30", desc: "여자 · 차분한 어른 목소리", sample: "여보, 그 감투는 어디서 난 거예요?" },
+  { kind: "tc", id: "tc-jinhyuk", label: "진혁", emoji: "👹", voiceId: "tc_5c3c52ca5827e00008dd7f36", model: "ssfm-v30", desc: "남자 · 또렷한 젊은 목소리", sample: "내 감투 어디 갔지?" },
+  { kind: "tc", id: "tc-minju", label: "민주", emoji: "🏘️", voiceId: "tc_6731b36bd944a485bc4070fd", model: "ssfm-v30", desc: "여자 · 생기 있는 젊은 목소리", sample: "어머, 내 떡이 어디 갔지?" },
+  { kind: "tc", id: "tc-hyemin", label: "혜민", emoji: "🎐", voiceId: "tc_667ce80314cb3a612d6959e8", model: "ssfm-v30", desc: "여자 · 산뜻하게 들려주는 목소리", sample: "옛날 어느 마을에 가난한 선비가 살았어요.", bakeTempo: 0.85 },
   /* 한결 — 사장님이 Typecast 목록에서 고른 성우(2026-09-04). 금도끼 나무꾼으로 잠깐 썼다가 희준으로 교체. */
   { kind: "tc", id: "tc-hangyeol", label: "한결", emoji: "🪓", voiceId: "tc_677f2aa4a854ddffa0ebda89", model: "ssfm-v30", desc: "남자 · 젊고 씩씩한 목소리", sample: "오늘도 부지런히 나무를 해야지!" },
   /* 희준 — 금도끼 은도끼의 나무꾼(2026-09-04 사장님 캐스팅, 한결 대신). */
-  { kind: "tc", id: "tc-heejoon", label: "희준", emoji: "🌲", voiceId: "tc_6426f7d00e18c1c9fede42d0", model: "ssfm-v30", desc: "남자 · 맑고 젊은 목소리", sample: "어머니, 저는 도끼 한 자루면 넉넉해요." },
+  { kind: "tc", id: "tc-heejoon", label: "희준", emoji: "🌲", voiceId: "tc_6426f7d00e18c1c9fede42d0", model: "ssfm-v30", desc: "남자 · 맑고 젊은 목소리", sample: "어머니, 저는 도끼 한 자루면 넉넉해요.", bakeTempo: 0.88 },
   /*
    * 태지 — 토끼와 거북이의 거북이. 몽군(어른)에서 아이 목소리로 바꾼 자리다.
    * 느긋함을 나이로 내지 않고 또박또박한 아이 말투로 낸다.
@@ -185,10 +212,11 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   /* 호선 — 금도끼 은도끼 나레이션. 건석(듬직한 아빠)보다 담백해서 옛이야기 지문에 맞는다. */
   { kind: "tc", id: "tc-hosun", label: "호선", emoji: "🪓", voiceId: "tc_65a0e1eb23a607b9906c0154", model: "ssfm-v30", desc: "남자 · 담백하고 반듯한 목소리", sample: "옛날 어느 산골에 부지런한 나무꾼이 살았어요." },
   { kind: "tc", id: "tc-taeji", label: "태지", emoji: "🐢", voiceId: "tc_660645fb8db3e2c06ff7070b", model: "ssfm-v30", desc: "남자 어린이 · 또박또박 단단한 목소리", sample: "괜찮아. 나는 나의 걸음으로 가면 돼." },
-  { kind: "tc", id: "tc-gahee", label: "가희", emoji: "💅", voiceId: "tc_624ccc04adcd568510764d3f", model: "ssfm-v30", desc: "여자 · 새침하고 앙칼진 목소리", sample: "언니는 집이나 지켜. 잔치는 우리끼리 갈 거야!" },
+  { kind: "tc", id: "tc-gahee", label: "가희", emoji: "💅", voiceId: "tc_624ccc04adcd568510764d3f", model: "ssfm-v30", desc: "여자 · 새침하고 앙칼진 목소리", sample: "언니는 집이나 지켜. 잔치는 우리끼리 갈 거야!", bakeTempo: 0.88 },
   // 양치기 소년 · 소년 역 (2026-08-31 사장님이 voice id를 직접 주심).
-  // ssfm-v21 이라 감정이 넷뿐 — toneup·tonedown·whisper 가 없다.
-  { kind: "tc", id: "tc-toby", label: "토비", emoji: "🐑", voiceId: "tc_6080369d3211aa112ab131db", model: "ssfm-v21", desc: "남자 어린이 · 맑고 또렷한 목소리", sample: "늑대다! 늑대가 나타났어요!", emotions: ["normal", "happy", "sad", "angry"] },
+  // 2026-09-21: 소리가 깨진다는 제보로 Typecast 목록을 다시 보니 이 목소리에 ssfm-v30 이 나와 있었다.
+  // 옛 v21 로 굽고 있던 것이 원인으로 보인다 — 최신 모델로 올리고 감정 제한도 푼다(7개 전부 된다).
+  { kind: "tc", id: "tc-toby", label: "토비", emoji: "🐑", voiceId: "tc_6080369d3211aa112ab131db", model: "ssfm-v30", desc: "남자 어린이 · 맑고 또렷한 목소리", sample: "늑대다! 늑대가 나타났어요!" },
   // 흥부와 놀부 · 놀부 역 (2026-09-01 사장님이 캐스팅 보드에서 지정).
   { kind: "tc", id: "tc-byunghun", label: "병훈", emoji: "🌾", voiceId: "tc_694395d43f2c8d9d43e9a897", model: "ssfm-v30", desc: "남자 목소리", sample: "이 집도 논밭도 다 내 거야. 당장 나가!" },
   // 혹부리 영감 캐스팅 (2026-09-01 사장님 지정).

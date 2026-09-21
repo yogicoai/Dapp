@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>신데렐라 · 미녀와 야수 캐스팅</title>
+<style>
+  :root{
+    --bg:#faf7f2; --card:#fff; --ink:#2b2622; --dim:#8b8178;
+    --line:#e8e0d6; --accent:#c58b4a; --accent-soft:#f6ecdf; --ok:#4a8a5c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.65 "Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    padding:24px 16px 80px}
+  .wrap{max-width:760px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 6px;letter-spacing:-.02em}
+  .lede{color:var(--dim);font-size:14px;margin:0 0 24px}
+  .book{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:18px 18px 8px;margin-bottom:18px}
+  .book h2{font-size:17px;margin:0 0 2px;display:flex;align-items:center;gap:8px}
+  .meta{color:var(--dim);font-size:13px;margin:0 0 14px}
+  .role{display:grid;grid-template-columns:104px 1fr auto;gap:10px;align-items:start;
+    padding:12px 0;border-top:1px dashed var(--line)}
+  .role:first-of-type{border-top:0}
+  .rname{font-weight:700;font-size:14px;padding-top:6px}
+  .rname small{display:block;font-weight:500;color:var(--dim);font-size:12px}
+  .body{min-width:0}
+  .voice{display:inline-block;background:var(--accent-soft);color:#8a5a20;
+    border-radius:999px;padding:3px 11px;font-size:13px;font-weight:700}
+  .why{color:var(--dim);font-size:12.5px;margin:6px 0 0}
+  .line{margin:8px 0 0;font-size:14px;color:#4a423b;
+    border-left:3px solid var(--line);padding-left:10px;word-break:keep-all}
+  .play{appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);
+    width:46px;height:46px;border-radius:50%;font-size:15px;cursor:pointer;
+    display:grid;place-items:center;transition:.15s}
+  .play:hover{border-color:var(--accent);color:var(--accent)}
+  .play.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .foot{color:var(--dim);font-size:13px;text-align:center;margin-top:26px;line-height:1.9}
+  @media (max-width:520px){
+    .role{grid-template-columns:1fr auto}
+    .rname{grid-column:1/-1;padding-top:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>신데렐라 · 미녀와 야수 — 1차 추천 캐스팅</h1>
+  <p class="lede">배역마다 <b>그 인물이 실제로 하는 대사</b>로 구워 뒀어요. ▶를 눌러 들어 보시고 바꾸고 싶은 배역을 말씀해 주세요.</p>
+  <div id="list"></div>
+  <p class="foot">
+    바꾸고 싶은 배역이 있으면 <b>“신데렐라 왕자는 다른 목소리로”</b> 처럼 말씀해 주세요.<br>
+    후보를 두세 명 더 구워서 나란히 들으실 수 있게 해 드릴게요.
+  </p>
+</div>
+<script>
+var WHY = {
+  "신데렐라|신데렐라": "재를 쓰고도 노래하는 아이라 맑고 밝아야 해요",
+  "신데렐라|언니": "새침하고 앙칼진 결 — 콩쥐 팥쥐의 팥쥐로 이미 맞아떨어졌어요",
+  "신데렐라|새어머니": "소리치는 인물이 아니라 쌀쌀맞은 인물이에요",
+  "신데렐라|요정 대모": "“울지 마렴” 한마디가 이 책에서 제일 따뜻해야 해요",
+  "신데렐라|왕자": "젊고 반듯한 목소리. 수줍은 왕자에 맞아요",
+  "신데렐라|신하": "초대장을 외치는 역할이라 크고 또렷해야 해요",
+  "미녀와 야수|벨": "책을 좋아하는 차분한 아이라 맑고 청아한 쪽이 맞아요",
+  "미녀와 야수|야수": "무서운 게 아니라 크고 외로운 사람이어야 해요",
+  "미녀와 야수|아버지": "딸에게 미안한 아버지를 담담하게",
+  "미녀와 야수|언니": "이 책 언니들은 악역이 아니라 반가워서 못 놓는 사람들이에요"
+};
+var NARR = { "신데렐라": "민정", "미녀와 야수": "민정" };
+
+fetch("/casting/samples.json").then(function(r){ return r.json(); }).then(function(rows){
+  var books = {};
+  rows.forEach(function(r){ (books[r.book] = books[r.book] || []).push(r); });
+  var html = "";
+  Object.keys(books).forEach(function(title){
+    html += '<section class="book"><h2>' + title + '</h2>'
+      + '<p class="meta">나레이션(지문)은 <b>' + (NARR[title] || "민정") + '</b> — 서가 전체가 같은 목소리예요.</p>';
+    books[title].forEach(function(r){
+      html += '<div class="role">'
+        + '<div class="rname">' + r.role + '</div>'
+        + '<div class="body">'
+        +   '<span class="voice">' + r.label + '</span>'
+        +   '<p class="why">' + (WHY[title + "|" + r.role] || "") + '</p>'
+        +   '<p class="line">“' + r.text + '”</p>'
+        + '</div>'
+        + '<button class="play" data-src="' + r.src + '" aria-label="들어보기">&#9654;</button>'
+        + '</div>';
+    });
+    html += '</section>';
+  });
+  document.getElementById("list").innerHTML = html;
+}).catch(function(){
+  document.getElementById("list").innerHTML =
+    '<p class="lede">견본을 불러오지 못했어요. 개발 서버가 떠 있는지 확인해 주세요.</p>';
+});
+
+// 들어보기 — 한 번에 하나만 난다.
+var audio = null, cur = null;
+function stop(b){ if(b){ b.classList.remove("on"); b.innerHTML = "&#9654;"; } }
+document.addEventListener("click", function(ev){
+  var btn = ev.target.closest(".play");
+  if(!btn) return;
+  if(audio && !audio.paused){
+    audio.pause();
+    if(cur === btn){ stop(btn); cur = null; return; }
+  }
+  stop(cur);
+  audio = audio || new Audio();
+  audio.src = btn.dataset.src;
+  audio.currentTime = 0;
+  cur = btn; btn.classList.add("on"); btn.innerHTML = "&#9632;";
+  audio.onended = audio.onerror = function(){ stop(btn); cur = null; };
+  audio.play().catch(function(){ stop(btn); cur = null; });
+});
+</script>
+</body>
+</html>

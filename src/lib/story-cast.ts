@@ -264,3 +264,34 @@ export function unassignedDialogue(segments: PlannedSegment[]): PlannedSegment[]
 export function narratedThoughts(segments: PlannedSegment[]): PlannedSegment[] {
   return segments.filter((s) => s.dialogue && s.who === NARRATION && innerThought(s.text));
 }
+
+/** 이 글자로 줄이 끝나면 합성기가 이미 쉰다 — 문장부호·말줄임·줄표. */
+const PAUSES_ALREADY = /[.,!?…‥~—\-:;。！？、]$/u;
+/** 줄 끝에 붙은 닫는 따옴표·괄호는 걷어 내고 그 앞 글자를 본다. */
+const CLOSERS = /["'”’」』)\]]+$/u;
+
+/**
+ * 줄바꿈 자리에서 숨을 쉬게 한다 — **합성에 보낼 글에만** 쓴다.
+ *
+ * 왜 필요한가: 원고는 그림책처럼 호흡 단위에서 줄을 바꾼다("농부는 일하러 가는 척하고⏎
+ * 돌아와 담 뒤에 몰래 숨었어요."). 그런데 합성기는 줄바꿈을 그냥 띄어쓰기로 읽어서,
+ * 마침표·쉼표가 없는 줄바꿈에서는 한 번도 쉬지 않는다. 실제로 재 보니 마침표 자리는
+ * 0.4~0.6초 쉬는데 줄만 바꾼 자리는 0초였다 — "쉼 없이 계속 읽는다"(사장님 지적,
+ * 2026-09-20). 전 권에 이런 자리가 260곳 있었다.
+ *
+ * 줄 끝에 쉼표를 붙이면 합성기가 짧게 숨을 쉰다. 화면 글에는 손대지 않으므로
+ * 글자 색칠은 그대로 맞는다. 이미 문장부호로 끝나는 줄과 빈 줄은 건드리지 않는다.
+ */
+export function breathe(text: string): string {
+  const lines = text.split("\n");
+  return lines
+    .map((line, i) => {
+      if (i === lines.length - 1) return line; // 마지막 줄 뒤에는 줄바꿈이 없다
+      const trimmed = line.trimEnd();
+      if (!trimmed) return line;
+      const core = trimmed.replace(CLOSERS, "");
+      if (!core || PAUSES_ALREADY.test(core)) return line;
+      return `${trimmed},${line.slice(trimmed.length)}`;
+    })
+    .join("\n");
+}

@@ -40,12 +40,14 @@ create table if not exists public.profiles (
   is_master  boolean not null default false,
   child      jsonb,                          -- 아이 정보 {name, age, gender, looks, parents}
   feedback_reward_at timestamptz,            -- 의견 보상(100토큰)을 받은 시각. 계정당 한 번
+  auto_next  boolean not null default false, -- 동화 이어서 틀기(연속 보기). 기기를 바꿔도 따라가게 계정에 둔다
   created_at timestamptz not null default now()
 );
 
 -- 예전에 만든 DB 를 지금 모양으로 맞춘다 (없는 것만 더한다 — 있는 값은 안 건드린다).
 alter table public.profiles add column if not exists child jsonb;
 alter table public.profiles add column if not exists feedback_reward_at timestamptz;
+alter table public.profiles add column if not exists auto_next boolean not null default false;
 alter table public.profiles alter column tokens set default 200;
 
 

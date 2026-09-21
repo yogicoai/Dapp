@@ -54,3 +54,6 @@ next-env.d.ts
 .bake-jack.mjs
 .bake-jack-hotspots.mjs
 tmp-stories/
+
+.dev-server.log
+.dev-server.log.err

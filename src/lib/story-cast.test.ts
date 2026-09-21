@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   NARRATION,
+  breathe,
   planPageVoices,
   unassignedDialogue,
   unmatchedLines,
@@ -152,5 +153,26 @@ describe("속마음", () => {
   it("배역 없는 큰따옴표 대사는 여전히 신고한다", () => {
     const plan = planPageVoices({ text: "누군가 말했어요.\n\"거기 누구세요?\"" });
     assert.equal(unassignedDialogue(plan).length, 1);
+  });
+});
+
+describe("breathe", () => {
+  it("문장부호 없이 줄만 바꾼 자리에 쉼표를 붙인다", () => {
+    assert.equal(
+      breathe("농부는 일하러 가는 척하고\n돌아와 담 뒤에 몰래 숨었어요.\n그런데 그때, 부엌 항아리가\n번쩍— 하고 빛나는 거예요!"),
+      "농부는 일하러 가는 척하고,\n돌아와 담 뒤에 몰래 숨었어요.\n그런데 그때, 부엌 항아리가,\n번쩍— 하고 빛나는 거예요!",
+    );
+  });
+  it("이미 쉬는 줄(마침표·쉼표·말줄임·줄표·따옴표 속 부호)은 그대로 둔다", () => {
+    const text = '옛날 옛적,\n"안 돼!"\n그러자…\n쾅—\n"정말이야?"\n끝.';
+    assert.equal(breathe(text), text);
+  });
+  it("따옴표로 끝나는데 그 안에 부호가 없으면 따옴표 뒤에 쉼표를 붙인다", () => {
+    assert.equal(breathe('"형님"\n하고 불렀어요.'), '"형님",\n하고 불렀어요.');
+  });
+  it("마지막 줄과 빈 줄, 줄바꿈 없는 글은 건드리지 않는다", () => {
+    assert.equal(breathe("한 줄뿐인 글"), "한 줄뿐인 글");
+    assert.equal(breathe("첫 줄\n\n셋째 줄"), "첫 줄,\n\n셋째 줄");
+    assert.equal(breathe("앞줄\n"), "앞줄,\n");
   });
 });

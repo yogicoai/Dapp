@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>신데렐라 삽화 프롬프트</title>
+<style>
+:root{--ground:#f7f4ee;--surface:#fffefb;--sunken:#efeae0;--rule:#ded7c9;--ink:#2b2620;--muted:#7b7062;--accent:#8a5a2b}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--ground:#16140f;--surface:#201d16;--sunken:#1a1811;--rule:#39342a;--ink:#ebe5d9;--muted:#a19788;--accent:#d6a570}}
+:root[data-theme="dark"]{--ground:#16140f;--surface:#201d16;--sunken:#1a1811;--rule:#39342a;--ink:#ebe5d9;--muted:#a19788;--accent:#d6a570}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);line-height:1.6;
+ font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;word-break:keep-all}
+.wrap{max-width:56rem;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+h1{margin:0 0 .4rem;font-size:clamp(1.4rem,4vw,2rem);letter-spacing:-.02em}
+.sub{margin:0 0 1.25rem;color:var(--muted);font-size:.92rem}
+.bar{display:flex;flex-wrap:wrap;gap:.6rem;margin:0 0 1.5rem}
+button{padding:.55rem 1.1rem;border-radius:999px;border:1px solid var(--accent);background:var(--accent);
+ color:var(--surface);font:inherit;font-size:.9rem;font-weight:700;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button.mini{padding:.3rem .8rem;font-size:.78rem;flex:none}
+pre{white-space:pre-wrap;background:var(--sunken);border:1px solid var(--rule);border-radius:12px;
+ padding:1rem;font-size:.8rem;line-height:1.6;overflow-x:auto;margin:0 0 1.5rem}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:1rem 1.1rem;margin:0 0 .7rem}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.n{font-size:.75rem;font-weight:800;color:var(--accent);letter-spacing:.06em}
+.ko{font-size:.95rem;font-weight:700;margin:.15rem 0 0}
+.roles{font-size:.72rem;color:var(--muted);margin:.35rem 0 .5rem;letter-spacing:.02em}
+.en{margin:0;font-size:.85rem;color:var(--muted);line-height:1.65}
+</style></head><body><div class="wrap">
+<h1>신데렐라 삽화 프롬프트</h1>
+<p class="sub">22쪽 · 그림체·배경·인물 설정을 앞에 한 번만 두고 SECTION 1~22로 이어 붙였습니다.
+한 번에 맡기시거나, 쪽마다 <b>복사</b>를 눌러 한 장씩 뽑으셔도 됩니다.</p>
+<div class="bar">
+  <button id="all">전체 복사 (머리말 + 22장)</button>
+  <button class="ghost" id="head">머리말만 복사</button>
+  <button class="ghost" id="toggle">전문 펼치기</button>
+</div>
+<pre id="full" hidden>Draw 22 illustrations for a Korean children's picture book: CINDERELLA.
+Each SECTION below is one page. Keep the style and the character designs identical across all 22.
+Every image is landscape 4:3, 1184x864. Put NO words, letters, numbers or speech bubbles anywhere in any image.
+
+STYLE (apply identically to every section): THE TWO THINGS THAT MATTER MOST, before anything else. (1) FACES: every face is a children's-picture-book face — a big round head, full round cheeks that push the eyes into soft curves, a tiny simple nose, large dark dot eyes with one white highlight, and a small curved mouth. Heads are drawn LARGE relative to the body, about one quarter of the total height. Never a small realistic face, never flat blank features, never a doll face, never an adult face on a child. (2) INK LINE: every shape is closed with a CLEARLY VISIBLE brush-drawn outline in warm soot-brown — a confident line that swells and tapers, a little dry and broken at its ends. The line must read plainly at a glance. Never a faint pencil line, never an outline that melts into the colour, never a soft airbrushed edge. Then the rest: transparent watercolour on cream paper, matte, the paper tooth breathing through every wash. Colour is laid broad and flat, two or three tones to an object, always kept inside the ink line. Keep it simple — a few big shapes make the picture and the rest of the frame stays calm. Pigments: warm ochre, raw sienna and soot grey for the kitchen and hearth; cerulean and pale indigo for night; rose, buttercup yellow and plum for the sisters and stepmother; chalk white with a faint silver-blue for the ball gown; gold ochre for the coach and candlelight. Even the night pages stay luminous. Flat hand-drawn 2D — NOT 3D, not CGI, not a glossy render, not anime or manga, not a Disney film still, not a muted flat-vector or mid-century poster look, no sparkles and no digital glow.
+
+SETTING (the same world in every section): THE HOUSE is a comfortable old townhouse — panelled rooms, a staircase with a turned wooden banister, tall windows; THE KITCHEN at the back is plainer, with a big brick hearth, a low stool beside it, a scrubbed wooden table, hanging copper pans and a mouse hole in the skirting. THE PALACE is bright pale stone with blue-grey pointed roofs and a wide flight of steps; the BALLROOM has a chequered marble floor, tall arched windows and warm chandeliers — grand but simple. THE GARDEN has clipped hedges, a low stone balustrade and a fountain under a big moon. European storybook clothes of no particular century. Nothing modern anywhere
+
+CAST (keep these designs identical in every section):
+- CINDERELLA — a girl of about sixteen but drawn young and soft: round gentle face, warm ivory skin, pink cheeks, large dark dot eyes, honey-blonde hair. She has THREE looks that must never be mixed up. (a) CINDER LOOK (pages 1-9 and 19-21): faded brown work dress, grey apron, a cloth tied over her hair with strands escaping, bare feet or worn shoes, a light smudge of ash on one cheek. (b) BALL LOOK (pages 12-17): a flowing white gown with the faintest silver-blue sheen, hair swept up with a small white flower. The glass slippers are on her feet from page 13 onward — on page 12 they are still on the ground in front of her and her feet are bare. (c) WEDDING LOOK (page 22 only): a simple white wedding gown with a short veil. Her face and hair colour stay identical in all three
+- THE STEPMOTHER — a well-dressed woman of about forty-five with a narrow but ordinary face, dark hair in a tight roll, a deep plum dress with a high collar and a brooch. She is COLD, not wicked-looking: no hooked nose, no pointed chin, no black cloak, no glaring eyes. She simply never smiles at Cinderella
+- THE ELDER SISTER — tall and thin, red hair in tight ringlets, always in rose pink. Vain and fussy, drawn comically, never ugly and never cruel-faced
+- THE YOUNGER SISTER — short and round, brown hair in a high bun, always in buttercup yellow. Vain and fussy, drawn comically, never ugly and never cruel-faced
+- THE FAIRY GODMOTHER — a plump twinkling old woman with a round rosy face, white hair in a soft bun, round spectacles, a pale lilac cloak over a cream dress, holding a slim wand with a small star. Warm and grandmotherly; her magic shows as a soft warm glow and a few simple curved light lines, never glitter or beams
+- THE PRINCE — a young man of about twenty with a round friendly face, dark wavy hair, warm skin, a cornflower-blue coat with simple gold trim and white breeches. Kind and a little shy, never haughty
+- THE HERALD — a middle-aged man in a red coat with a scroll, later carrying a small velvet cushion
+- THE FOUR MICE — four small grey mice, each with one telling difference (a white patch on the back, a notched ear, a plumper one, a longer tail) so they stay the same four all book
+- THE GLASS SLIPPERS — a pair of clear, faintly blue-tinted slippers with a low curved heel and a small bow at the toe; identical every time they appear
+- THE TWO SMALL BIRDS — two little round songbirds, one soft blue with a cream breast and one warm brown with a pale throat, both with tiny black dot eyes and short beaks. They are the same two birds every time they appear
+
+SECTION 1
+Warm late-afternoon light fills a sitting room of THE HOUSE. CINDERELLA kneels at the centre in her CINDER LOOK, scrubbing the floorboards with a brush beside a wooden pail, looking up tired; a basket of washing and a coal scuttle wait beside the unswept hearth behind her. THE STEPMOTHER sits upright in a high-backed chair at the right, hands folded, her face turned away to the window. THE ELDER SISTER in rose pink lounges along a settee at the left, feet up, yawning over an embroidery hoop. THE YOUNGER SISTER in buttercup yellow sits at a small tea table in the mid-ground, holding an empty cup out toward CINDERELLA without looking at her. Each of the four appears exactly once, no other people and no animals.
+
+SECTION 2
+The kitchen seen straight on in landscape 4:3, the brick hearth left of the middle band. CINDERELLA, in her CINDER LOOK, sleeps on the hearthstone beside the empty stool, curled on her side in the ashes, cheek on her folded arm, face toward us, eyes closed in happy curves; grey ash marks her apron and sleeve. To the right THE ELDER SISTER leans forward, one hand on her hip, the other pointing at her, mouth open, calling. THE YOUNGER SISTER stands beside her, not behind, one hand cupped at her mouth calling too, the giggle in her eyes and shoulders. Both sisters are comic and playful, never cruel-faced. Low ember light warms all three faces, the only figures. Scrubbed table and copper pans behind;
+
+SECTION 3
+Daytime in THE KITCHEN, camera down at mouse height on the raised hearthstone at frame left, angled up in a low worm's-eye three-quarter view. THE FOUR MICE (exactly 4 mice, no more) are nearest the lens, seen from behind by their mouse hole: one white-patched, one notch-eared, one plumper, one long-tailed, heads tilted up. Past them, filling the middle band, CINDERELLA is in the CINDER LOOK, bare feet, sitting on the low stool by the brick hearth, a small broom across her knees, chin lifted, face turned up to the tall window at frame right, mouth a small closed curved smile, humming. Warm daylight slants down through that window, where two small birds perch on the sill, heads turned to her. Copper pans hang above.
+
+SECTION 4
+Close in on the kitchen floor. CINDERELLA, in her CINDER LOOK, kneels before the brick hearth, her skirt tucked under her, seen from slightly above. She holds out one open palm heaped with breadcrumbs, her free hand tucked under her chin, her face bent close and smiling, lips parted as she speaks to them; a folded cloth of saved crumbs lies open by her knee. THE FOUR MICE, exactly four and no fifth mouse anywhere, gather on and around that palm, none hidden behind another: the white-patched one up on her thumb, the notched-ear one and the plumper one nosing the crumbs, the long-tailed one waiting at her wrist. Warm light from the small high window, the hearth glowing low behind her, the bottom quarter of the frame simple.
+
+SECTION 5
+The panelled front hall, a turned banister at the right. In the open doorway at left THE HERALD holds his scroll unrolled and high, its face turned away from us, mouth wide open as he proclaims. THE STEPMOTHER hurries toward him in the middle band, one hand already reaching, unsmiling. THE ELDER SISTER and THE YOUNGER SISTER press in at her shoulders, hands flung up, mouths round with comic delight; a stool is knocked aside and a shawl lies on the floorboards. At the right CINDERELLA pauses on the bottom stair with a broom, hopeful; she is in her CINDER LOOK — faded brown work dress, grey apron, cloth tied over her hair, ash on one cheek. Warm daylight pours through the doorway. Five figures, each appearing exactly once.
+
+SECTION 6
+A panelled upstairs room, seen straight on, calm and wide, in mid-morning light from a tall window. Left, THE ELDER SISTER holds a second, frillier rose-pink dress against herself, comparing it with the one she wears, comically pleased, and lifts one shoulder for a ribbon. Right, THE YOUNGER SISTER sits on a low stool, a rejected dress on her lap, patting her high bun, pouting for another combing. Rose, coral and buttercup dresses lie over a chair and the bed, none plum, white or silver-blue. Centred, CINDERELLA turns mid-stride, both hands up, tying the elder sister's ribbon, a hairbrush in her apron, a smudge of ash on one cheek, flustered but kind. CINDERELLA is in her CINDER LOOK, never the ball gown. Three figures only, each once,
+
+SECTION 7
+Night in THE KITCHEN, medium-wide, action centred. CINDERELLA sits on the stool by the hearth in her CINDER LOOK — faded work dress, grey apron, ash on one cheek. Her mother's dress lies across her lap, worn pale blue, never a ball gown. She lifts her face from the hem, needle in hand, smiling towards the table. THE FOUR MICE work on the scrubbed table (exactly four mice and exactly two birds, 4 and 2, no more): one unrolls thread, one carries a thread end in its mouth, one sits up watching, one holds the hem steady. THE TWO SMALL BIRDS from the window perch on the table edge, one holding a round button in its beak. Firelight glows warm; the high window shows deep blue night.
+
+SECTION 8
+Evening outside THE HOUSE's front door, at a child's eye level, deep indigo sky, warm window light on the figures in the middle band. At the left CINDERELLA stands barefoot on the doorstep in her CINDER LOOK, one hand lifted, pleading, a broom and washing basket at her feet. Squared to her, three-quarters toward camera, THE STEPMOTHER lifts her chin and gives one small cold shake of her head, unsmiling. Beyond them THE ELDER SISTER climbs into the open door of a plain dark-lacquer carriage, no gold, while THE YOUNGER SISTER waits on its fold-down step, both preening comically; all three in ball finery, their own colours. The frame crops away the carriage body and driver's seat; harnessed horses' hindquarters show at the right edge, wheels turning.
+
+SECTION 9
+Night in the kitchen, a medium-close two-shot, landscape 4:3 at 1184x864, the hearth and the rest of the kitchen falling away into soft warm shadow at the edges. CINDERELLA fills the left half, face and shoulders large, knees drawn up, in her CINDER LOOK: faded brown work dress, grey apron, head cloth, strands escaping. One hand at her left cheek, ash and two round tears clear on her right, her face lifting toward the light. THE FAIRY GODMOTHER's smiling face, out-stretched hand and raised star-tipped wand fill the right half — spectacles, white bun, pale lilac cloak — her warm glow washing across CINDERELLA's cheek in three curved light lines. These two only, once each: no other people, no animals, no mice. Painted to every edge.
+
+SECTION 10
+Night in the cobbled yard behind the house, kitchen door open at left; wide establishing view. THE FAIRY GODMOTHER stands left of centre, sweeping her wand down in an arc, mouth open in a happy shout. Three curved light lines run from the wand tip to a golden coach mid-frame: a rounded, ribbed, pumpkin-shaped body on four spoked wheels, a curled green stem on the roof, a vine still trailing from one wheel, a small door, nothing harnessed. Two ordinary pumpkins sit behind her by a flattened patch of grass where the big one rolled away. CINDERELLA stands right in her CINDER LOOK, never the ball gown, staring at the coach, eyes wide, mouth open, one hand at her cheek. No other people, no animals. Plain wall and night sky.
+
+SECTION 11
+Night in the kitchen yard, action in the calm middle band. At left THE FAIRY GODMOTHER turns right, glowing wand raised, laughing. THE FOUR MICE (exactly 4 bodies, no more) form one row, each further along than the last: nearest us a grey half-mouse shape, swelling and rising; the next taller and paler; the third nearly a horse; the far one a stately white horse, only that far end harnessed to the golden coach, its seat empty. No fifth animal, no whole mouse anywhere. At right CINDERELLA's CINDER LOOK becomes her BALL LOOK, white spreading from her shoulders, brown still at the hem, apron gone, head cloth lifting, hair sweeping up, ash on one cheek. Hands clasped in wonder, feet bare, no slippers yet.
+
+SECTION 12
+Level three-quarter view of the night yard behind the house — plain back wall, a lit kitchen window, the golden coach at the edge — both figures in the middle band. CINDERELLA stands centre-right already in her BALL LOOK — the gown from the previous page, never the cinder look, no rags or ash anywhere on her. Only her shoes are missing: the hem is gathered clear of her bare feet. Hands together at her chest in thanks, she looks up into the godmother's eyes, mouth open in delight. On the flagstones before her rest THE GLASS SLIPPER(S), exactly one pair, two slippers (2), no more, side by side in a soft warm glow. THE FAIRY GODMOTHER stands centre-left, eyes on CINDERELLA, wand tipped at the slippers, one index finger raised in warning.
+
+SECTION 13
+A wide view from inside the ballroom towards tall arched doors standing open. CINDERELLA steps through, one hand on the door she has pushed open, the other lifting her skirt; her hem hides her shoes. She wears the BALL LOOK: the flowing white gown with the faintest silver-blue sheen, hair swept up with the small white flower, no veil. Her face tilts down, eyes wide, mouth a small shy curve. Beyond her the wide outdoor flight of pale stone steps drops into blue night, the golden coach and its four white horses small at the foot. Either side, a hushed crowd of anonymous guests stares, fans halted, musicians lowering their instruments mid-note; CINDERELLA is the only named character. Warm chandelier light pools on the chequered marble.
+
+SECTION 14
+A ballroom framed so both figures stand full length in the middle band, the chequered marble floor sweeping across the lower third. THE PRINCE stands on the right, bowing from the waist, his near hand reaching out palm open, his face tilted up in a shy warm smile. CINDERELLA faces him on the left in her BALL LOOK. Her hand is just settling onto his; her eyes are soft, her mouth a surprised curve. Between them an open lane of floor runs back toward tall arched windows, blue night outside, candlelit chandeliers glowing above. Along both edges a blurred ring of anonymous guests watches from the background, no faces in detail, nobody inside the middle band. Only THE PRINCE and CINDERELLA appear, once each.
+
+SECTION 15
+Close view of the palace ballroom at night, framed so THE PRINCE and CINDERELLA fill the middle band. They whirl together on the chequered marble floor, each appearing exactly once, with nobody else in the room — no other guests, dancers, musicians or servants anywhere in the frame. CINDERELLA is in her BALL LOOK, THE GLASS SLIPPERS showing as her skirt flares in a wide circle; she spins under his raised hand, their arms at full stretch, laughing openly with chin lifted and eyes curved. THE PRINCE turns with her, weight on one foot mid-step, coat tails swinging out, smiling shyly. Warm chandeliers hang overhead in the upper frame, steady candlelight spilling down. Tall arched windows behind hold plain deep blue night, no reflections. No clock, no lettering or numbers.
+
+SECTION 16
+A medium two-shot in the moonlit palace garden, both figures large in the middle band. THE PRINCE stands right of centre, leaning towards CINDERELLA, asking something, shy and hopeful, holding her hand in one of his. CINDERELLA stands left of centre, unmistakably in her BALL LOOK. Her mouth stays open on an unfinished answer, her head already turned to the clock, eyes wide. Behind them a pale stone palace tower with a blue-grey pointed roof rises, its plain dial large and whole in frame, ringed in dark ink, bare of numbers, two dark hands pointing straight up. A big moon glows behind the tower over the fountain. Only these two appear, one each, no other people or animals of any kind anywhere, and no lettering or numerals.
+
+SECTION 17
+Night on the palace steps, the flight crossing the middle band. CINDERELLA runs down near the bottom left in the BALL LOOK, the small white flower still in her hair, skirt flying, her face turned back over her shoulder, eyes wide in alarm, her look fixed on THE PRINCE alone. He runs down after her, mid-stride, one foot on a lower step, several empty steps above her, coat swinging, one hand open and grasping, his face worried. Of THE GLASS SLIPPERS, one lies alone on a step behind her, outside her sightline and unnoticed; her trailing rear foot is bare, her forward foot still wearing the matching slipper. Warm light spills from the palace windows under a moonlit sky. No other people anywhere, steps and windows empty, no lettering.
+
+SECTION 18
+Night on the wide palace steps. A medium shot from slightly below; a few pale steps run in a gentle diagonal across the middle band. THE PRINCE, still in the cornflower-blue ball coat he wore all evening, kneels on one knee just right of centre, THE GLASS SLIPPER resting in profile on his open upturned palms at chest height, fully visible: exactly one slipper, one only. He lifts his face towards the dark city beyond, eyes bright and jaw set, mouth a small determined line. He is the only figure in the frame, and the steps around him stay empty and still. Behind him the palace wall rises close, one tall arched window filled with flat even candle-gold light, and the big round moon sits low at the left.
+
+SECTION 19
+Panelled front room, child's eye level. Left of centre THE ELDER SISTER sits on a chair, forcing her long bony foot into THE GLASS SLIPPER (exactly 1 slipper, no more), heel jamming short of the back, toes curled and crushed, cheeks puffed with comic effort, one shoe kicked off beside her. THE HERALD kneels at her foot, steadying that same slipper, velvet cushion by his knee. THE YOUNGER SISTER waits her turn close behind in plain house shoes. THE STEPMOTHER stands behind them, hands folded, unsmiling and cold. At the right, by the hearth, CINDERELLA stands in her CINDER LOOK, turned to them, one hand lifted shyly. Warm hearth light from the right, cool window light from the left. No mice, no other people, no lettering.
+
+SECTION 20
+A close three-quarter shot on CINDERELLA, seated on a low chair in the panelled family room. She is unmistakably in her CINDER LOOK, never the ball gown. Her stretched foot fills the lower middle of the frame with one of THE GLASS SLIPPERS fitting it exactly; her raised hand holds the matching second slipper, out of her apron pocket; exactly two slippers (2), no others. Her face is large, lit and softly amazed. Just behind, THE HERALD's astonished face tips up over his empty velvet cushion, and THE PRINCE leans in, shy and glad. At the frame edges, cropped at chest height, THE STEPMOTHER stands stiff and pale while THE ELDER SISTER and THE YOUNGER SISTER press hands over their mouths. No animals. Warm afternoon light pools around them.
+
+SECTION 21
+A calm chest-height medium shot in the back kitchen. CINDERELLA stands left of centre in her CINDER LOOK, leaning forward, smiling warmly. THE ELDER SISTER, tall and thin in rose pink with red ringlets, and THE YOUNGER SISTER, short and round in buttercup yellow with a brown bun, face her in a shallow arc, each offering one hand; CINDERELLA holds one in each of her two hands. Their heads tilt down, flushed faces still toward us, eyes lifted to her, sincerely ashamed. THE STEPMOTHER stands back by the brick hearth, watching them, cool and unsmiling. Soft afternoon light brightens the middle band. The frame cuts above every foot, the bottom quarter plain cloth. Only these four characters appear, no mice, no animals, no other people,
+
+SECTION 22
+Warm daylight on the wide palace steps, camera at eye level, the group held in the middle band. At the centre CINDERELLA wears the WEDDING LOOK, smiling with quiet joy. THE PRINCE stands at her side holding her hand, shyly happy. One step below on the left THE FAIRY GODMOTHER grins, her wand lowered. On the right THE ELDER SISTER and THE YOUNGER SISTER clasp their own hands at their chests, delighted and a little sheepish. THE FOUR MICE (four mice and no more) sit in a row on the step at CINDERELLA's feet, inside the middle band. Only these five people and four mice appear: no crowd, no guests, no guards, no other animals, no horses, no birds. Pale stone and blue-grey roofs behind, open sky.
+</pre>
+<pre id="headonly" hidden>Draw 22 illustrations for a Korean children's picture book: CINDERELLA.
+Each SECTION below is one page. Keep the style and the character designs identical across all 22.
+Every image is landscape 4:3, 1184x864. Put NO words, letters, numbers or speech bubbles anywhere in any image.
+
+STYLE (apply identically to every section): THE TWO THINGS THAT MATTER MOST, before anything else. (1) FACES: every face is a children's-picture-book face — a big round head, full round cheeks that push the eyes into soft curves, a tiny simple nose, large dark dot eyes with one white highlight, and a small curved mouth. Heads are drawn LARGE relative to the body, about one quarter of the total height. Never a small realistic face, never flat blank features, never a doll face, never an adult face on a child. (2) INK LINE: every shape is closed with a CLEARLY VISIBLE brush-drawn outline in warm soot-brown — a confident line that swells and tapers, a little dry and broken at its ends. The line must read plainly at a glance. Never a faint pencil line, never an outline that melts into the colour, never a soft airbrushed edge. Then the rest: transparent watercolour on cream paper, matte, the paper tooth breathing through every wash. Colour is laid broad and flat, two or three tones to an object, always kept inside the ink line. Keep it simple — a few big shapes make the picture and the rest of the frame stays calm. Pigments: warm ochre, raw sienna and soot grey for the kitchen and hearth; cerulean and pale indigo for night; rose, buttercup yellow and plum for the sisters and stepmother; chalk white with a faint silver-blue for the ball gown; gold ochre for the coach and candlelight. Even the night pages stay luminous. Flat hand-drawn 2D — NOT 3D, not CGI, not a glossy render, not anime or manga, not a Disney film still, not a muted flat-vector or mid-century poster look, no sparkles and no digital glow.
+
+SETTING (the same world in every section): THE HOUSE is a comfortable old townhouse — panelled rooms, a staircase with a turned wooden banister, tall windows; THE KITCHEN at the back is plainer, with a big brick hearth, a low stool beside it, a scrubbed wooden table, hanging copper pans and a mouse hole in the skirting. THE PALACE is bright pale stone with blue-grey pointed roofs and a wide flight of steps; the BALLROOM has a chequered marble floor, tall arched windows and warm chandeliers — grand but simple. THE GARDEN has clipped hedges, a low stone balustrade and a fountain under a big moon. European storybook clothes of no particular century. Nothing modern anywhere
+
+CAST (keep these designs identical in every section):
+- CINDERELLA — a girl of about sixteen but drawn young and soft: round gentle face, warm ivory skin, pink cheeks, large dark dot eyes, honey-blonde hair. She has THREE looks that must never be mixed up. (a) CINDER LOOK (pages 1-9 and 19-21): faded brown work dress, grey apron, a cloth tied over her hair with strands escaping, bare feet or worn shoes, a light smudge of ash on one cheek. (b) BALL LOOK (pages 12-17): a flowing white gown with the faintest silver-blue sheen, hair swept up with a small white flower. The glass slippers are on her feet from page 13 onward — on page 12 they are still on the ground in front of her and her feet are bare. (c) WEDDING LOOK (page 22 only): a simple white wedding gown with a short veil. Her face and hair colour stay identical in all three
+- THE STEPMOTHER — a well-dressed woman of about forty-five with a narrow but ordinary face, dark hair in a tight roll, a deep plum dress with a high collar and a brooch. She is COLD, not wicked-looking: no hooked nose, no pointed chin, no black cloak, no glaring eyes. She simply never smiles at Cinderella
+- THE ELDER SISTER — tall and thin, red hair in tight ringlets, always in rose pink. Vain and fussy, drawn comically, never ugly and never cruel-faced
+- THE YOUNGER SISTER — short and round, brown hair in a high bun, always in buttercup yellow. Vain and fussy, drawn comically, never ugly and never cruel-faced
+- THE FAIRY GODMOTHER — a plump twinkling old woman with a round rosy face, white hair in a soft bun, round spectacles, a pale lilac cloak over a cream dress, holding a slim wand with a small star. Warm and grandmotherly; her magic shows as a soft warm glow and a few simple curved light lines, never glitter or beams
+- THE PRINCE — a young man of about twenty with a round friendly face, dark wavy hair, warm skin, a cornflower-blue coat with simple gold trim and white breeches. Kind and a little shy, never haughty
+- THE HERALD — a middle-aged man in a red coat with a scroll, later carrying a small velvet cushion
+- THE FOUR MICE — four small grey mice, each with one telling difference (a white patch on the back, a notched ear, a plumper one, a longer tail) so they stay the same four all book
+- THE GLASS SLIPPERS — a pair of clear, faintly blue-tinted slippers with a low curved heel and a small bow at the toe; identical every time they appear
+- THE TWO SMALL BIRDS — two little round songbirds, one soft blue with a cream breast and one warm brown with a pale throat, both with tiny black dot eyes and short beaks. They are the same two birds every time they appear
+</pre>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 1</div><div class="ko">옛날 어느 왕국에, 마음씨 고운 아이가 </div></div>
+  <button class="mini" data-p="1">복사</button></div>
+  <div class="roles">stepmom, sister_elder, sister_younger, cinderella</div>
+  <p class="en" id="p1">Warm late-afternoon light fills a sitting room of THE HOUSE. CINDERELLA kneels at the centre in her CINDER LOOK, scrubbing the floorboards with a brush beside a wooden pail, looking up tired; a basket of washing and a coal scuttle wait beside the unswept hearth behind her. THE STEPMOTHER sits upright in a high-backed chair at the right, hands folded, her face turned away to the window. THE ELDER SISTER in rose pink lounges along a settee at the left, feet up, yawning over an embroidery hoop. THE YOUNGER SISTER in buttercup yellow sits at a small tea table in the mid-ground, holding an empty cup out toward CINDERELLA without looking at her. Each of the four appears exactly once, no other people and no animals.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 2</div><div class="ko">아이는 날마다 부엌 아궁이 곁에서 잠이 </div></div>
+  <button class="mini" data-p="2">복사</button></div>
+  <div class="roles">cinderella, sister_elder, sister_younger</div>
+  <p class="en" id="p2">The kitchen seen straight on in landscape 4:3, the brick hearth left of the middle band. CINDERELLA, in her CINDER LOOK, sleeps on the hearthstone beside the empty stool, curled on her side in the ashes, cheek on her folded arm, face toward us, eyes closed in happy curves; grey ash marks her apron and sleeve. To the right THE ELDER SISTER leans forward, one hand on her hip, the other pointing at her, mouth open, calling. THE YOUNGER SISTER stands beside her, not behind, one hand cupped at her mouth calling too, the giggle in her eyes and shoulders. Both sisters are comic and playful, never cruel-faced. Low ember light warms all three faces, the only figures. Scrubbed table and copper pans behind;</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 3</div><div class="ko">그래도 신데렐라는 노래를 흥얼거렸어요.</div></div>
+  <button class="mini" data-p="3">복사</button></div>
+  <div class="roles">cinderella, mice, birds</div>
+  <p class="en" id="p3">Daytime in THE KITCHEN, camera down at mouse height on the raised hearthstone at frame left, angled up in a low worm's-eye three-quarter view. THE FOUR MICE (exactly 4 mice, no more) are nearest the lens, seen from behind by their mouse hole: one white-patched, one notch-eared, one plumper, one long-tailed, heads tilted up. Past them, filling the middle band, CINDERELLA is in the CINDER LOOK, bare feet, sitting on the low stool by the brick hearth, a small broom across her knees, chin lifted, face turned up to the tall window at frame right, mouth a small closed curved smile, humming. Warm daylight slants down through that window, where two small birds perch on the sill, heads turned to her. Copper pans hang above.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 4</div><div class="ko">신데렐라는 빵 부스러기를 모아 두었다가</div></div>
+  <button class="mini" data-p="4">복사</button></div>
+  <div class="roles">cinderella, mice</div>
+  <p class="en" id="p4">Close in on the kitchen floor. CINDERELLA, in her CINDER LOOK, kneels before the brick hearth, her skirt tucked under her, seen from slightly above. She holds out one open palm heaped with breadcrumbs, her free hand tucked under her chin, her face bent close and smiling, lips parted as she speaks to them; a folded cloth of saved crumbs lies open by her knee. THE FOUR MICE, exactly four and no fifth mouse anywhere, gather on and around that palm, none hidden behind another: the white-patched one up on her thumb, the notched-ear one and the plumper one nosing the crumbs, the long-tailed one waiting at her wrist. Warm light from the small high window, the hearth glowing low behind her, the bottom quarter of the frame simple.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 5</div><div class="ko">어느 날, 왕궁에서 초대장이 도착했어요.</div></div>
+  <button class="mini" data-p="5">복사</button></div>
+  <div class="roles">servant, stepmom, sister_elder, sister_younger, cinderella</div>
+  <p class="en" id="p5">The panelled front hall, a turned banister at the right. In the open doorway at left THE HERALD holds his scroll unrolled and high, its face turned away from us, mouth wide open as he proclaims. THE STEPMOTHER hurries toward him in the middle band, one hand already reaching, unsmiling. THE ELDER SISTER and THE YOUNGER SISTER press in at her shoulders, hands flung up, mouths round with comic delight; a stool is knocked aside and a shawl lies on the floorboards. At the right CINDERELLA pauses on the bottom stair with a broom, hopeful; she is in her CINDER LOOK — faded brown work dress, grey apron, cloth tied over her hair, ash on one cheek. Warm daylight pours through the doorway. Five figures, each appearing exactly once.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 6</div><div class="ko">언니들은 온종일 드레스를 고르고 또 골랐</div></div>
+  <button class="mini" data-p="6">복사</button></div>
+  <div class="roles">sister_elder, sister_younger, cinderella</div>
+  <p class="en" id="p6">A panelled upstairs room, seen straight on, calm and wide, in mid-morning light from a tall window. Left, THE ELDER SISTER holds a second, frillier rose-pink dress against herself, comparing it with the one she wears, comically pleased, and lifts one shoulder for a ribbon. Right, THE YOUNGER SISTER sits on a low stool, a rejected dress on her lap, patting her high bun, pouting for another combing. Rose, coral and buttercup dresses lie over a chair and the bed, none plum, white or silver-blue. Centred, CINDERELLA turns mid-stride, both hands up, tying the elder sister's ribbon, a hairbrush in her apron, a smudge of ash on one cheek, flustered but kind. CINDERELLA is in her CINDER LOOK, never the ball gown. Three figures only, each once,</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 7</div><div class="ko">밤이 되자 신데렐라는 어머니가 남긴 낡은</div></div>
+  <button class="mini" data-p="7">복사</button></div>
+  <div class="roles">cinderella, mice, birds</div>
+  <p class="en" id="p7">Night in THE KITCHEN, medium-wide, action centred. CINDERELLA sits on the stool by the hearth in her CINDER LOOK — faded work dress, grey apron, ash on one cheek. Her mother's dress lies across her lap, worn pale blue, never a ball gown. She lifts her face from the hem, needle in hand, smiling towards the table. THE FOUR MICE work on the scrubbed table (exactly four mice and exactly two birds, 4 and 2, no more): one unrolls thread, one carries a thread end in its mouth, one sits up watching, one holds the hem steady. THE TWO SMALL BIRDS from the window perch on the table edge, one holding a round button in its beak. Firelight glows warm; the high window shows deep blue night.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 8</div><div class="ko">저도 무도회에 가고 싶어요.</div></div>
+  <button class="mini" data-p="8">복사</button></div>
+  <div class="roles">stepmom, sister_elder, sister_younger, cinderella</div>
+  <p class="en" id="p8">Evening outside THE HOUSE's front door, at a child's eye level, deep indigo sky, warm window light on the figures in the middle band. At the left CINDERELLA stands barefoot on the doorstep in her CINDER LOOK, one hand lifted, pleading, a broom and washing basket at her feet. Squared to her, three-quarters toward camera, THE STEPMOTHER lifts her chin and gives one small cold shake of her head, unsmiling. Beyond them THE ELDER SISTER climbs into the open door of a plain dark-lacquer carriage, no gold, while THE YOUNGER SISTER waits on its fold-down step, both preening comically; all three in ball finery, their own colours. The frame crops away the carriage body and driver's seat; harnessed horses' hindquarters show at the right edge, wheels turning.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 9</div><div class="ko">텅 빈 집에 혼자 남은 신데렐라는</div></div>
+  <button class="mini" data-p="9">복사</button></div>
+  <div class="roles">cinderella, fairy</div>
+  <p class="en" id="p9">Night in the kitchen, a medium-close two-shot, landscape 4:3 at 1184x864, the hearth and the rest of the kitchen falling away into soft warm shadow at the edges. CINDERELLA fills the left half, face and shoulders large, knees drawn up, in her CINDER LOOK: faded brown work dress, grey apron, head cloth, strands escaping. One hand at her left cheek, ash and two round tears clear on her right, her face lifting toward the light. THE FAIRY GODMOTHER's smiling face, out-stretched hand and raised star-tipped wand fill the right half — spectacles, white bun, pale lilac cloak — her warm glow washing across CINDERELLA's cheek in three curved light lines. These two only, once each: no other people, no animals, no mice. Painted to every edge.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 10</div><div class="ko">요정 대모님이 요술봉을 휘두르자 — 얍!</div></div>
+  <button class="mini" data-p="10">복사</button></div>
+  <div class="roles">fairy, cinderella</div>
+  <p class="en" id="p10">Night in the cobbled yard behind the house, kitchen door open at left; wide establishing view. THE FAIRY GODMOTHER stands left of centre, sweeping her wand down in an arc, mouth open in a happy shout. Three curved light lines run from the wand tip to a golden coach mid-frame: a rounded, ribbed, pumpkin-shaped body on four spoked wheels, a curled green stem on the roof, a vine still trailing from one wheel, a small door, nothing harnessed. Two ordinary pumpkins sit behind her by a flattened patch of grass where the big one rolled away. CINDERELLA stands right in her CINDER LOOK, never the ball gown, staring at the coach, eyes wide, mouth open, one hand at her cheek. No other people, no animals. Plain wall and night sky.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 11</div><div class="ko">이번에는 생쥐 친구들 차례였어요.</div></div>
+  <button class="mini" data-p="11">복사</button></div>
+  <div class="roles">fairy, cinderella, mice</div>
+  <p class="en" id="p11">Night in the kitchen yard, action in the calm middle band. At left THE FAIRY GODMOTHER turns right, glowing wand raised, laughing. THE FOUR MICE (exactly 4 bodies, no more) form one row, each further along than the last: nearest us a grey half-mouse shape, swelling and rising; the next taller and paler; the third nearly a horse; the far one a stately white horse, only that far end harnessed to the golden coach, its seat empty. No fifth animal, no whole mouse anywhere. At right CINDERELLA's CINDER LOOK becomes her BALL LOOK, white spreading from her shoulders, brown still at the hem, apron gone, head cloth lifting, hair sweeping up, ash on one cheek. Hands clasped in wonder, feet bare, no slippers yet.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 12</div><div class="ko">마지막으로 신데렐라의 발 앞에</div></div>
+  <button class="mini" data-p="12">복사</button></div>
+  <div class="roles">cinderella, fairy, slipper</div>
+  <p class="en" id="p12">Level three-quarter view of the night yard behind the house — plain back wall, a lit kitchen window, the golden coach at the edge — both figures in the middle band. CINDERELLA stands centre-right already in her BALL LOOK — the gown from the previous page, never the cinder look, no rags or ash anywhere on her. Only her shoes are missing: the hem is gathered clear of her bare feet. Hands together at her chest in thanks, she looks up into the godmother's eyes, mouth open in delight. On the flagstones before her rest THE GLASS SLIPPER(S), exactly one pair, two slippers (2), no more, side by side in a soft warm glow. THE FAIRY GODMOTHER stands centre-left, eyes on CINDERELLA, wand tipped at the slippers, one index finger raised in warning.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 13</div><div class="ko">황금 마차가 왕궁 앞에 멈췄어요.</div></div>
+  <button class="mini" data-p="13">복사</button></div>
+  <div class="roles">cinderella</div>
+  <p class="en" id="p13">A wide view from inside the ballroom towards tall arched doors standing open. CINDERELLA steps through, one hand on the door she has pushed open, the other lifting her skirt; her hem hides her shoes. She wears the BALL LOOK: the flowing white gown with the faintest silver-blue sheen, hair swept up with the small white flower, no veil. Her face tilts down, eyes wide, mouth a small shy curve. Beyond her the wide outdoor flight of pale stone steps drops into blue night, the golden coach and its four white horses small at the foot. Either side, a hushed crowd of anonymous guests stares, fans halted, musicians lowering their instruments mid-note; CINDERELLA is the only named character. Warm chandelier light pools on the chequered marble.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 14</div><div class="ko">왕자님이 사람들 사이를 지나 다가왔어요.</div></div>
+  <button class="mini" data-p="14">복사</button></div>
+  <div class="roles">prince, cinderella</div>
+  <p class="en" id="p14">A ballroom framed so both figures stand full length in the middle band, the chequered marble floor sweeping across the lower third. THE PRINCE stands on the right, bowing from the waist, his near hand reaching out palm open, his face tilted up in a shy warm smile. CINDERELLA faces him on the left in her BALL LOOK. Her hand is just settling onto his; her eyes are soft, her mouth a surprised curve. Between them an open lane of floor runs back toward tall arched windows, blue night outside, candlelit chandeliers glowing above. Along both edges a blurred ring of anonymous guests watches from the background, no faces in detail, nobody inside the middle band. Only THE PRINCE and CINDERELLA appear, once each.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 15</div><div class="ko">둘은 밤이 깊도록 빙글빙글 춤을 추었어요</div></div>
+  <button class="mini" data-p="15">복사</button></div>
+  <div class="roles">prince, cinderella</div>
+  <p class="en" id="p15">Close view of the palace ballroom at night, framed so THE PRINCE and CINDERELLA fill the middle band. They whirl together on the chequered marble floor, each appearing exactly once, with nobody else in the room — no other guests, dancers, musicians or servants anywhere in the frame. CINDERELLA is in her BALL LOOK, THE GLASS SLIPPERS showing as her skirt flares in a wide circle; she spins under his raised hand, their arms at full stretch, laughing openly with chin lifted and eyes curved. THE PRINCE turns with her, weight on one foot mid-step, coat tails swinging out, smiling shyly. Warm chandeliers hang overhead in the upper frame, steady candlelight spilling down. Tall arched windows behind hold plain deep blue night, no reflections. No clock, no lettering or numbers.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 16</div><div class="ko">춤을 멈추고 둘은 달빛 드는 정원으로 나</div></div>
+  <button class="mini" data-p="16">복사</button></div>
+  <div class="roles">prince, cinderella</div>
+  <p class="en" id="p16">A medium two-shot in the moonlit palace garden, both figures large in the middle band. THE PRINCE stands right of centre, leaning towards CINDERELLA, asking something, shy and hopeful, holding her hand in one of his. CINDERELLA stands left of centre, unmistakably in her BALL LOOK. Her mouth stays open on an unfinished answer, her head already turned to the clock, eyes wide. Behind them a pale stone palace tower with a blue-grey pointed roof rises, its plain dial large and whole in frame, ringed in dark ink, bare of numbers, two dark hands pointing straight up. A big moon glows behind the tower over the fountain. Only these two appear, one each, no other people or animals of any kind anywhere, and no lettering or numerals.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 17</div><div class="ko">앗, 이제 가야 해요!</div></div>
+  <button class="mini" data-p="17">복사</button></div>
+  <div class="roles">cinderella, prince, slipper</div>
+  <p class="en" id="p17">Night on the palace steps, the flight crossing the middle band. CINDERELLA runs down near the bottom left in the BALL LOOK, the small white flower still in her hair, skirt flying, her face turned back over her shoulder, eyes wide in alarm, her look fixed on THE PRINCE alone. He runs down after her, mid-stride, one foot on a lower step, several empty steps above her, coat swinging, one hand open and grasping, his face worried. Of THE GLASS SLIPPERS, one lies alone on a step behind her, outside her sightline and unnoticed; her trailing rear foot is bare, her forward foot still wearing the matching slipper. Warm light spills from the palace windows under a moonlit sky. No other people anywhere, steps and windows empty, no lettering.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 18</div><div class="ko">계단에 홀로 남은 유리구두를</div></div>
+  <button class="mini" data-p="18">복사</button></div>
+  <div class="roles">prince, slipper</div>
+  <p class="en" id="p18">Night on the wide palace steps. A medium shot from slightly below; a few pale steps run in a gentle diagonal across the middle band. THE PRINCE, still in the cornflower-blue ball coat he wore all evening, kneels on one knee just right of centre, THE GLASS SLIPPER resting in profile on his open upturned palms at chest height, fully visible: exactly one slipper, one only. He lifts his face towards the dark city beyond, eyes bright and jaw set, mouth a small determined line. He is the only figure in the frame, and the steps around him stay empty and still. Behind him the palace wall rises close, one tall arched window filled with flat even candle-gold light, and the big round moon sits low at the left.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 19</div><div class="ko">드디어 신데렐라의 집에도 신하가 찾아왔어</div></div>
+  <button class="mini" data-p="19">복사</button></div>
+  <div class="roles">sister_elder, sister_younger, stepmom, servant, cinderella, slipper</div>
+  <p class="en" id="p19">Panelled front room, child's eye level. Left of centre THE ELDER SISTER sits on a chair, forcing her long bony foot into THE GLASS SLIPPER (exactly 1 slipper, no more), heel jamming short of the back, toes curled and crushed, cheeks puffed with comic effort, one shoe kicked off beside her. THE HERALD kneels at her foot, steadying that same slipper, velvet cushion by his knee. THE YOUNGER SISTER waits her turn close behind in plain house shoes. THE STEPMOTHER stands behind them, hands folded, unsmiling and cold. At the right, by the hearth, CINDERELLA stands in her CINDER LOOK, turned to them, one hand lifted shyly. Warm hearth light from the right, cool window light from the left. No mice, no other people, no lettering.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 20</div><div class="ko">신데렐라가 발을 내밀자</div></div>
+  <button class="mini" data-p="20">복사</button></div>
+  <div class="roles">cinderella, servant, prince, stepmom, sister_elder, sister_younger, slipper</div>
+  <p class="en" id="p20">A close three-quarter shot on CINDERELLA, seated on a low chair in the panelled family room. She is unmistakably in her CINDER LOOK, never the ball gown. Her stretched foot fills the lower middle of the frame with one of THE GLASS SLIPPERS fitting it exactly; her raised hand holds the matching second slipper, out of her apron pocket; exactly two slippers (2), no others. Her face is large, lit and softly amazed. Just behind, THE HERALD's astonished face tips up over his empty velvet cushion, and THE PRINCE leans in, shy and glad. At the frame edges, cropped at chest height, THE STEPMOTHER stands stiff and pale while THE ELDER SISTER and THE YOUNGER SISTER press hands over their mouths. No animals. Warm afternoon light pools around them.</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 21</div><div class="ko">언니들은 얼굴이 빨개져 고개를 푹 숙였어</div></div>
+  <button class="mini" data-p="21">복사</button></div>
+  <div class="roles">sister_elder, sister_younger, cinderella, stepmom</div>
+  <p class="en" id="p21">A calm chest-height medium shot in the back kitchen. CINDERELLA stands left of centre in her CINDER LOOK, leaning forward, smiling warmly. THE ELDER SISTER, tall and thin in rose pink with red ringlets, and THE YOUNGER SISTER, short and round in buttercup yellow with a brown bun, face her in a shallow arc, each offering one hand; CINDERELLA holds one in each of her two hands. Their heads tilt down, flushed faces still toward us, eyes lifted to her, sincerely ashamed. THE STEPMOTHER stands back by the brick hearth, watching them, cool and unsmiling. Soft afternoon light brightens the middle band. The frame cuts above every foot, the bottom quarter plain cloth. Only these four characters appear, no mice, no animals, no other people,</p>
+</article>
+<article class="card">
+  <div class="top"><div><div class="n">SECTION 22</div><div class="ko">신데렐라는 왕자님과 결혼해 왕궁으로 갔어</div></div>
+  <button class="mini" data-p="22">복사</button></div>
+  <div class="roles">cinderella, prince, sister_elder, sister_younger, fairy, mice</div>
+  <p class="en" id="p22">Warm daylight on the wide palace steps, camera at eye level, the group held in the middle band. At the centre CINDERELLA wears the WEDDING LOOK, smiling with quiet joy. THE PRINCE stands at her side holding her hand, shyly happy. One step below on the left THE FAIRY GODMOTHER grins, her wand lowered. On the right THE ELDER SISTER and THE YOUNGER SISTER clasp their own hands at their chests, delighted and a little sheepish. THE FOUR MICE (four mice and no more) sit in a row on the step at CINDERELLA's feet, inside the middle band. Only these five people and four mice appear: no crowd, no guests, no guards, no other animals, no horses, no birds. Pale stone and blue-grey roofs behind, open sky.</p>
+</article>
+</div>
+<script>
+function flash(b, t){ var o=b.textContent; b.textContent=t; setTimeout(function(){b.textContent=o;},1400); }
+function copy(text, b, t){ navigator.clipboard.writeText(text).then(function(){ flash(b,t); }); }
+var FULL=document.getElementById("full"), HEADONLY=document.getElementById("headonly");
+document.getElementById("all").onclick=function(){ copy(FULL.textContent,this,"복사했어요"); };
+document.getElementById("head").onclick=function(){ copy(HEADONLY.textContent,this,"복사했어요"); };
+document.getElementById("toggle").onclick=function(){
+  FULL.hidden=!FULL.hidden;
+  this.textContent=FULL.hidden?"전문 펼치기":"전문 접기";
+};
+// 쪽마다 — 머리말을 앞에 붙여 그 한 장만으로도 그림체가 유지되게 한다
+document.addEventListener("click", function(ev){
+  var b=ev.target.closest(".mini"); if(!b) return;
+  var body=document.getElementById("p"+b.dataset.p).textContent;
+  copy(HEADONLY.textContent + "\nSECTION " + b.dataset.p + "\n" + body, b, "복사됨");
+});
+</script></body></html>

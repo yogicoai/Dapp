@@ -14,7 +14,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { planPageVoices, unmatchedLines, unassignedDialogue, narratedThoughts, NARRATION } from "../src/lib/story-cast.ts";
+import { planPageVoices, unmatchedLines, unassignedDialogue, narratedThoughts, NARRATION, breathe } from "../src/lib/story-cast.ts";
 
 const DRY = process.argv.includes("--dry");
 /**
@@ -112,6 +112,7 @@ const BOOKS: Record<string, BookSpec> = {
   },
 
   // 호랑이와 곶감 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 호랑이 심호문 · 엄마 가희 · 소도둑 홍설록.
+  // 2026-09-20 검토대에서 엄마 → 민주, 소도둑 → MC콩으로 바꿨다.
   // 소 울음(음매—)과 아기 울음(으앙—)은 배역이 아니라 나레이션이 읽는다.
   "호랑이와 곶감": {
     dir: "gotgam",
@@ -121,6 +122,7 @@ const BOOKS: Record<string, BookSpec> = {
   },
   // 토끼의 재판 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 나그네 호선 · 호랑이 심호문 ·
   // 나무 종대 · 소 덕구 · 토끼 햄쭈. 소리 흉내(으르렁—)는 나레이션이 읽는다.
+  // 2026-09-20 재캐스팅: 나레이션 진서 · 나그네 대진 · 나무 승재 (호랑이 심호문 · 소 덕구 · 토끼 햄쭈 그대로).
   "토끼의 재판": {
     dir: "rabbitjudge",
     narrators: ["tc-minjung"],
@@ -137,6 +139,7 @@ const BOOKS: Record<string, BookSpec> = {
   },
   // 청개구리 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 엄마 청개구리 나진 · 아기 청개구리 덕구.
   // 10쪽 "엄마. 엄마…"는 울부짖으면 안 된다 — 대사집에 세기를 낮게 못 박아 뒀다.
+  // 2026-09-20 재캐스팅: 나레이션 진서 · 엄마 청개구리 민주 · 아기 청개구리 토비.
   "청개구리": {
     dir: "greenfrog",
     narrators: ["tc-minjung"],
@@ -145,11 +148,40 @@ const BOOKS: Record<string, BookSpec> = {
   },
   // 상길이놈과 박서방 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 거만한 양반 김고트 ·
   // 정중한 양반 왕권 · 박상길 종대(그림이 60대 어르신이라 창수에서 바꿨다). 그림은 구글(Gemini)로 이 저장소에서 직접 그렸다.
+  // 2026-09-20 재캐스팅: 나레이션 진서 · 거만한 양반 진혁 · 정중한 양반 강일 · 박상길 창배.
   "상길이놈과 박서방": {
     dir: "sanggil",
     narrators: ["tc-minjung"],
     defaultNarrator: "tc-minjung",
     cast: [{ name: "거만한 양반" }, { name: "정중한 양반" }, { name: "박상길" }],
+  },
+  // 우렁각시 — 사장님 캐스팅(2026-09-20 검토대에서 전체 교체): 나레이션 진서 · 농부 희준 ·
+  // 우렁각시 지우 · 사또 진혁 · 용왕 왕권. (처음엔 강일·고바야시 미우·샷건·종대였다.)
+  // 12쪽 마을 사람들 소문은 crowd 배역으로 나레이션 성우가 읽는다. '번쩍—·뚝—'도 나레이션.
+  // 2026-09-20 저녁 재설계(사장님이 "성우 구성을 다시 짜 달라"): 나레이션 민정 · 농부 서준 ·
+  // 우렁각시 청아 · 사또 MC콩 · 용왕 왕권(그대로) · 마을 사람들 미소.
+  "우렁각시": {
+    dir: "ureong",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "농부" }, { name: "우렁각시" }, { name: "각시" }, { name: "사또" }, { name: "용왕" }],
+  },
+  // 방귀 며느리 — 사장님 캐스팅(2026-09-19): 나레이션 진서 · 봉 영감 종대 · 며느리 지우 ·
+  // 아들 서준 · 도둑 병훈. '끄응—·빠앙!!·우르르 쾅!·뿡—' 같은 소리는 나레이션이 읽는다.
+  // 2026-09-20 검토대에서 재캐스팅: 나레이션 민정 · 봉 영감 창배 (며느리 지우 · 아들 서준 · 도둑 병훈 그대로).
+  "방귀 며느리": {
+    dir: "banggwi",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "봉 영감" }, { name: "며느리" }, { name: "아들" }, { name: "도둑" }],
+  },
+  // 도깨비 감투 — 사장님 캐스팅(2026-09-19): 나레이션 혜민 · 선비 태우 · 아내 애란 ·
+  // 도깨비 진혁 · 마을 사람 민주. 도깨비는 원고에 대사가 없어 배역만 잡아 뒀다.
+  "도깨비 감투": {
+    dir: "gamtu",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "선비" }, { name: "아내" }, { name: "도깨비" }, { name: "마을 사람" }],
   },
   "의좋은 형제": {
     dir: "brothers",
@@ -253,6 +285,7 @@ const BOOKS: Record<string, BookSpec> = {
   // 인어 공주 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 인어 공주 민정 · 언니 가희 ·
   // 바다 마녀 유빈 · 왕자 티안. 13·16쪽의 작은따옴표 줄은 목소리를 잃은 뒤의 속마음이라
   // 배역을 걸지 않는다 — 나레이션이 읽어야 소리가 안 나는 것이 살아난다.
+  // 2026-09-20 재캐스팅: 나레이션 진서 · 왕자 강일 · 언니 민주 (인어 공주 민정 · 바다 마녀 유빈 그대로). 이제 나레이터와 공주가 다른 목소리다.
   "인어 공주": {
     data: "src/data/classic-books.json",
     root: "classic",
@@ -263,6 +296,7 @@ const BOOKS: Record<string, BookSpec> = {
   },
   // 오즈의 마법사 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 도로시 수아 · 허수아비 창수 ·
   // 양철 나무꾼 김고트 · 사자 덕구 · 서쪽 마녀 숙희 · 오즈 종대.
+  // 2026-09-20 검토대에서 재캐스팅: 허수아비 강일 · 양철 나무꾼 진혁 · 서쪽 마녀 가희 · 오즈 창배 · 아주머니 민주.
   // 14·18쪽은 그림에 그 인물이 없어 말풍선 없이 낭독만 한다.
   "오즈의 마법사": {
     data: "src/data/classic-books.json",
@@ -282,6 +316,37 @@ const BOOKS: Record<string, BookSpec> = {
     narrators: ["tc-minjung"],
     defaultNarrator: "tc-minjung",
     cast: [{ name: "걸리버" }, { name: "거인의 딸" }, { name: "공주님" }, { name: "농부" }],
+  },
+  // 걸리버 여행기 3 — 사장님 캐스팅(2026-09-20): 나레이션 민정 · 걸리버 강일(1·2편과 같은 목소리) ·
+  // 두드리미 시우(사장님이 하준에서 바꿈) · 임금님 병훈 · 재단사 MC콩 · 박사님 승재 · 무노디 할아버지 종대.
+  // 해적과 선장은 대사가 없다. "조금만 더 하면 된다오!"는 13·14·15쪽에 똑같이 나오는 웃음 자리라
+  // 셋 다 느긋한 normal 로 같게 굽는다 — 하나만 달라지면 되풀이가 무너진다.
+  "걸리버 여행기 3": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "gulliver3",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [
+      { name: "걸리버" }, { name: "두드리미" }, { name: "임금님" },
+      { name: "재단사" }, { name: "박사님" }, { name: "무노디 할아버지" },
+    ],
+  },
+  // 걸리버 여행기 4 — 사장님 캐스팅(2026-09-20): 나레이션 민정(처음엔 민주였는데 1~3편과 맞추려고 되돌렸다) ·
+  // 걸리버 강일. 나머지 넷은 내가 골랐다 — 회색 말 건석(듬직한 아빠: 걸리버를 거둔 어른 말이자 망아지의 아빠),
+  // 망아지 하준(명랑한 남자 어린이), 선원 심호문(능청: 이 책 첫 거짓말이라 겉으로만 밝아야 한다),
+  // 막내딸 아린이(밝은 여자아이). 야후·밤색 말·선생님 말은 대사가 없다.
+  // 9쪽 회색 말 "그러면 뭐가 좋아요?"를 10쪽에서 망아지가 글자 그대로 따라 한다 — 성우가 달라 두 번 굽지만 연기는 같게 둔다.
+  "걸리버 여행기 4": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "gulliver4",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [
+      { name: "걸리버" }, { name: "선원" }, { name: "회색 말" },
+      { name: "망아지" }, { name: "막내딸" },
+    ],
   },
   "개미와 베짱이": {
     data: "src/data/classic-books.json",
@@ -306,8 +371,8 @@ const BOOKS: Record<string, BookSpec> = {
     data: "src/data/classic-books.json",
     root: "classic",
     dir: "redridinghood",
-    narrators: ["tc-jiyoung"],
-    defaultNarrator: "tc-jiyoung",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
     cast: [
       { name: "빨간 모자" }, { name: "엄마" }, { name: "할머니" },
       { name: "늑대" }, { name: "사냥꾼" },
@@ -442,14 +507,18 @@ if (!BAKED_NARRATORS.includes(DEFAULT_NARRATOR)) {
 const CAST_NAMES = SPEC.cast;
 
 /** voices.ts에서 성우 id → Typecast voiceId·모델을 읽어 온다(두 벌로 관리하지 않으려고). */
-function voiceTable(): Record<string, { voiceId: string; model: string; emotions?: string[] }> {
+function voiceTable(): Record<string, { voiceId: string; model: string; emotions?: string[]; bakeTempo?: number }> {
   const src = fs.readFileSync("src/lib/voices.ts", "utf8");
-  const table: Record<string, { voiceId: string; model: string; emotions?: string[] }> = {};
+  const table: Record<string, { voiceId: string; model: string; emotions?: string[]; bakeTempo?: number }> = {};
   const re = /id:\s*"(tc-[a-z0-9]+)"[\s\S]{0,240}?voiceId:\s*"(tc_[a-f0-9]+)"[\s\S]{0,80}?model:\s*"([^"]+)"/g;
   for (const m of src.matchAll(re)) table[m[1]] = { voiceId: m[2], model: m[3] };
   // 낼 수 있는 감정이 적힌 목소리는 그 목록도 읽는다(한 줄에 한 명씩 적혀 있다).
   for (const m of src.matchAll(/id:\s*"(tc-[a-z0-9]+)".*?emotions:\s*\[([^\]]*)\]/g)) {
     if (table[m[1]]) table[m[1]].emotions = [...m[2].matchAll(/"([^"]+)"/g)].map((x) => x[1]);
+  }
+  // 성우 고유의 빠르기 보정(voices.ts 의 bakeTempo) — 타고나게 빨리 읽는 성우만 적혀 있다.
+  for (const m of src.matchAll(/id:\s*"(tc-[a-z0-9]+)".*?bakeTempo:\s*([0-9.]+)/g)) {
+    if (table[m[1]]) table[m[1]].bakeTempo = Number(m[2]);
   }
   return table;
 }
@@ -593,6 +662,9 @@ async function bake(
   const table = voiceTable();
   const v = table[voice];
   if (!v) throw new Error(`성우 ${voice}를 voices.ts에서 못 찾았습니다`);
+  // 빠르기는 줄(대사집 tempo) → 배역(책의 voiceTempo) → 성우(bakeTempo) 순으로 정한다.
+  // 지문은 줄·배역 빠르기가 없으니 성우 보정만 받는다 — 진서처럼 빠른 나레이터를 민정에 맞춘다.
+  tempo = tempo ?? v.bakeTempo;
   const wanted = emotion;
   emotion = usableEmotion(v, emotion);
   if (emotion !== wanted) console.log(`  (감정 바꿈) ${voice}는 ${wanted}를 못 냅니다 → ${emotion}`);
@@ -745,7 +817,8 @@ for (const [i, page] of book.pages.entries()) {
        * 그대로 두면 소리가 깨진다. 그래서 **읽을 때만** 뺀다.
        * 조각의 text 는 그대로 두므로 글자 색칠은 화면 글과 계속 맞는다.
        */
-      const spoken = unspokenOut(text, page.unspoken);
+      // 줄만 바꾼 자리에 숨을 넣고(breathe), 소리로 안 읽을 말을 뺀다 — 둘 다 합성에 보낼 글에만.
+      const spoken = unspokenOut(breathe(text), page.unspoken);
       if (!spoken) {
         // 통째로 안 읽는 조각 — 소리를 만들지 않고 글만 앞 조각에 붙인다.
         const prev = segments[segments.length - 1];
@@ -766,7 +839,7 @@ for (const [i, page] of book.pages.entries()) {
       // 줄 단위 속도(대사집 tempo)가 있으면 그게 배역 속도(voiceTempo)보다 앞선다.
       await bake(
         file,
-        seg.say?.trim() || text,
+        breathe(seg.say?.trim() || text),
         cast[seg.who],
         seg.feel ?? emotionOf(text),
         !ONLY_CHANGED,
@@ -789,9 +862,10 @@ for (const [i, page] of book.pages.entries()) {
     const file = path.posix.basename(String(h.audio));
     const line = String(h.line);
     // 말풍선도 읽기용 표기를 따로 줄 수 있다(말풍선 글은 h.line 그대로 보인다).
-    const spoken = typeof h.say === "string" && h.say.trim() ? h.say.trim() : line;
+    const spoken = breathe(typeof h.say === "string" && h.say.trim() ? h.say.trim() : line);
     // 말풍선도 대사집처럼 연기를 못 박을 수 있다(h.feel) — 자동 판정이 틀리는 줄용.
-    await bake(file, spoken, voice, h.feel ?? emotionOf(line), !ONLY_CHANGED, book.voiceTempo?.[h.label], h.label, h.intensity);
+    // 말풍선도 줄 단위 빠르기(h.tempo)가 배역 빠르기보다 앞선다 — 대사 조각과 같은 규칙.
+    await bake(file, spoken, voice, h.feel ?? emotionOf(line), !ONLY_CHANGED, h.tempo ?? book.voiceTempo?.[h.label], h.label, h.intensity);
   }
 }
 
