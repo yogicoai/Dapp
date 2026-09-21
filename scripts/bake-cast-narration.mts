@@ -306,6 +306,18 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "도로시" }, { name: "허수아비" }, { name: "양철 나무꾼" }, { name: "사자" }, { name: "서쪽 마녀" }, { name: "오즈" }, { name: "아주머니" }],
   },
+  // 신데렐라 — 사장님 캐스팅(2026-09-21, 캐스팅 보드에서 확정): 나레이션 민정 ·
+  // 신데렐라 민주 · 새어머니 숙희 · 언니 가희 · 요정 대모 지우 · 왕자 태우 · 신하 대진.
+  // 언니는 둘이지만 한 목소리를 쓴다 — 그림으로 구별되고, 둘이 번갈아 말하는 쪽이 없다.
+  // "사람들"(13쪽 수군거림)은 배역이 아니라 나레이션이 읽는다.
+  "신데렐라": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "cinderella",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "신데렐라" }, { name: "새어머니" }, { name: "언니" }, { name: "요정 대모" }, { name: "왕자" }, { name: "신하" }],
+  },
   // 걸리버 여행기 2 — 사장님 캐스팅(2026-09-18): 나레이션 민정 · 걸리버 강일 ·
   // 거인의 딸 수아 · 공주님 아린이. 5쪽 거인 농부는 캐스팅표에 없던 배역이라,
   // 이 원고에 대사가 한 줄도 없는 임금님 자리의 왕권을 돌려 썼다.
