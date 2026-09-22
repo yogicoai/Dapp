@@ -1928,17 +1928,12 @@ export function BookViewer({
                         src={i === index ? page.video : undefined}
                         poster={page.image}
                         autoPlay={i === index}
+                        // 움직이는 삽화는 "영상"이 아니라 그림이 숨 쉬는 것 — 끊김 없이 계속 돈다.
+                        // 예전엔 두 번 틀고 멈췄는데(plays < 2), 멈추는 순간 그림이 얼어붙은 듯 보였다.
+                        // onEnded 에서 currentTime=0 으로 되감으면 브라우저마다 한 박자 끊겨서 loop 를 쓴다.
+                        loop
                         muted
                         playsInline
-                        onEnded={(e) => {
-                          const el = e.currentTarget;
-                          const plays = Number(el.dataset.plays || "0") + 1;
-                          el.dataset.plays = String(plays);
-                          if (plays < 2) {
-                            el.currentTime = 0;
-                            el.play().catch(() => {});
-                          }
-                        }}
                         className="h-full w-full object-contain"
                       />
                     ) : (

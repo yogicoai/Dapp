@@ -299,7 +299,8 @@
             "src": "/classic/cinderella/seg-cast-p12-2.mp3",
             "text": "\"네, 대모님! 고맙습니다!\""
           }
-        ]
+        ],
+        "video": "/classic/cinderella/p12.mp4"
       },
       {
         "n": 13,
@@ -362,7 +363,8 @@
             "src": "/classic/cinderella/seg-p15-0.mp3",
             "text": "둘은 밤이 깊도록 빙글빙글 춤을 추었어요.\n샹들리에 불빛이 별처럼 쏟아지고\n드레스 자락이 둥글게 퍼졌지요.\n신데렐라는 태어나서 처음으로 마음껏 웃었답니다."
           }
-        ]
+        ],
+        "video": "/classic/cinderella/p15.mp4"
       },
       {
         "n": 16,
@@ -1223,7 +1225,8 @@
             "intensity": 0.45,
             "tempo": 1.1
           }
-        ]
+        ],
+        "video": "/classic/threepigs/p10.mp4"
       },
       {
         "n": 11,
@@ -1470,7 +1473,8 @@
             "audio": "/classic/threepigs/say-p15-wolf.mp3",
             "feel": "toneup"
           }
-        ]
+        ],
+        "video": "/classic/threepigs/p15.mp4"
       },
       {
         "n": 16,
@@ -2103,7 +2107,8 @@
             "src": "/classic/uglyduckling/seg-p12-2.mp3",
             "text": "\n물속에는 눈처럼 하얗고 우아한\n백조 한 마리가 있었어요.\n아기 오리는 눈을 몇 번이나 깜박였답니다."
           }
-        ]
+        ],
+        "video": "/classic/uglyduckling/p12.mp4"
       },
       {
         "n": 13,
@@ -2590,7 +2595,8 @@
             "src": "/classic/redridinghood/seg-p7-1.mp3",
             "text": "\n늑대가 가느다란 목소리로 흉내 내자 문이 열렸지요.\n늑대는 할머니를 한입에 꿀꺽 삼키고는\n할머니 옷을 입고 침대에 쏙 누웠답니다."
           }
-        ]
+        ],
+        "video": "/classic/redridinghood/p7.mp4"
       },
       {
         "n": 8,
@@ -2829,7 +2835,8 @@
             "src": "/classic/redridinghood/seg-cast-p11-1.mp3",
             "text": "\"할머니 댁에서 웬 코골이 소리지?\""
           }
-        ]
+        ],
+        "video": "/classic/redridinghood/p11.mp4"
       },
       {
         "n": 12,
@@ -3407,7 +3414,8 @@
             "src": "/classic/bremen/seg-p8-0.mp3",
             "text": "하나, 둘, 셋!\n히호! 멍멍! 야옹! 꼬끼오!\n넷이 한꺼번에 목청껏 노래하며\n창문을 와장창 뚫고 뛰어들었어요!\n접시가 튀고 촛불이 흔들리고,\n오두막이 쩌렁쩌렁 울렸지요."
           }
-        ]
+        ],
+        "video": "/classic/bremen/p8.mp4"
       },
       {
         "n": 9,
@@ -4176,7 +4184,8 @@
             "src": "/classic/antgrasshopper/seg-p10-0.mp3",
             "text": "베짱이는 눈물을 닦고 바이올린을 들었어요.\n신나는 바이올린 소리가 울려 퍼졌지요.\n개미집에서 겨울 음악회가 열렸어요.\n개미들은 밤늦도록 덩실덩실 춤을 추었고,\n꼬마 개미가 제일 신나게 발을 쿵쿵 굴렀답니다."
           }
-        ]
+        ],
+        "video": "/classic/antgrasshopper/p10.mp4"
       },
       {
         "n": 11,
@@ -4711,7 +4720,8 @@
             "src": "/classic/twomice/seg-cast-p11-1.mp3",
             "text": "\"아아, 역시 우리 집이 최고야.\""
           }
-        ]
+        ],
+        "video": "/classic/twomice/p11.mp4"
       },
       {
         "n": 12,
@@ -5080,7 +5090,8 @@
             "src": "/classic/shepherdboy/seg-p3-1.mp3",
             "text": "\n마을 사람들이 몽둥이를 들고, 헐레벌떡 달려왔어요.\n맨 앞에는 이장 아저씨가 있었지요.\n하지만 풀밭에는, 양들만 한가로이 풀을 뜯고 있었답니다."
           }
-        ]
+        ],
+        "video": "/classic/shepherdboy/p3.mp4"
       },
       {
         "n": 4,
@@ -6228,7 +6239,8 @@
             "src": "/classic/emperor/seg-cast-p12-3.mp3",
             "text": "\"그럼! 우리 아이 말이 맞고말고.\""
           }
-        ]
+        ],
+        "video": "/classic/emperor/p12.mp4"
       }
     ]
   },
@@ -6623,7 +6635,8 @@
             "src": "/classic/puss/seg-p12-3.mp3",
             "text": "\n눈 깜짝할 사이, 괴물은 갈기를 세운 사자가 되었어요.\n고양이는 꼬리가 쭈뼛 섰지만 박수를 짝짝 쳤지요."
           }
-        ]
+        ],
+        "video": "/classic/puss/p12.mp4"
       },
       {
         "n": 13,
@@ -6670,7 +6683,8 @@
             "src": "/classic/puss/seg-cast-p13-3.mp3",
             "text": "\"냠! 생쥐가 고양이를 이길 수는 없지요.\""
           }
-        ]
+        ],
+        "video": "/classic/puss/p13.mp4"
       },
       {
         "n": 14,
@@ -7600,7 +7614,8 @@
             "feel": "tonedown",
             "intensity": 0.4
           }
-        ]
+        ],
+        "video": "/classic/jack/p15.mp4"
       },
       {
         "n": 16,
@@ -7688,7 +7703,8 @@
             "intensity": 0.45,
             "tempo": 1.1
           }
-        ]
+        ],
+        "video": "/classic/jack/p17.mp4"
       },
       {
         "n": 18,
@@ -8045,7 +8061,8 @@
             "src": "/classic/frogprince/seg-p9-0.mp3",
             "text": "밤이 되자, 개구리가 방문 앞에서 기다리고 있었어요.\n공주는 한숨을 쉬며, 개구리를 방 안 창가에 놓아 주었지요.\n달빛 아래 개구리는 아주 작고 외로워 보였어요.\n공주는 그제야 개구리를 가만히 들여다보았답니다."
           }
-        ]
+        ],
+        "video": "/classic/frogprince/p9.mp4"
       },
       {
         "n": 10,
@@ -8339,7 +8356,8 @@
             "src": "/classic/hansel/seg-cast-p7-1.mp3",
             "text": "\"오빠, 이 집… 먹을 수 있는 거야?\""
           }
-        ]
+        ],
+        "video": "/classic/hansel/p7.mp4"
       },
       {
         "text": "아이들이 과자를 한 조각 떼어 먹는 순간, 문이 삐걱 열렸어요.\n허리가 굽은 할머니가 지팡이를 짚고 나와, 다정하게 웃었지요.\n\"배가 고팠구나. 어서 들어오렴. 따뜻한 수프가 있단다.\"\n그 웃음 뒤에 무엇이 숨어 있는지, 아이들은 알지 못했답니다.",
@@ -8703,7 +8721,8 @@
             "src": "/classic/northwind/seg-p5-0.mp3",
             "text": "이번엔 태양의 차례였어요.\n태양은 구름을 살며시 걷고, 길 위로 따뜻한 볕을 내려보냈어요.\n꽁꽁 언 땅이 노글노글 녹고,\n가지 끝에서 새가 포르르 날아올랐답니다."
           }
-        ]
+        ],
+        "video": "/classic/northwind/p5.mp4"
       },
       {
         "n": 6,
@@ -9033,7 +9052,8 @@
             "src": "/classic/gulliver1/seg-p9-0.mp3",
             "text": "걸리버는 배마다 밧줄을 묶어\n두 손으로 꽉 움켜쥐었어요.\n화살이 따끔따끔 날아왔지만\n걸리버는 배들을 모두 끌고\n작은 나라로 돌아왔답니다."
           }
-        ]
+        ],
+        "video": "/classic/gulliver1/p9.mp4"
       },
       {
         "n": 10,
@@ -9310,7 +9330,8 @@
             "src": "/classic/gulliver2/seg-cast-p3-1.mp3",
             "text": "\"여기가… 대체 어디지?\""
           }
-        ]
+        ],
+        "video": "/classic/gulliver2/p3.mp4"
       },
       {
         "n": 4,
@@ -9831,7 +9852,8 @@
             "src": "/classic/gulliver3/seg-cast-p3-3.mp3",
             "text": "\"세상에! 섬이 하늘에 떠 있잖아!\""
           }
-        ]
+        ],
+        "video": "/classic/gulliver3/p3.mp4"
       },
       {
         "n": 4,
@@ -11186,7 +11208,8 @@
             "src": "/classic/gulliver4/seg-cast-p16-3.mp3",
             "text": "\"아저씨, 이번엔 당근이 아니라\n고맙다는 말이에요!\""
           }
-        ]
+        ],
+        "video": "/classic/gulliver4/p16.mp4"
       },
       {
         "n": 17,
@@ -11336,7 +11359,8 @@
             "src": "/classic/mermaid/seg-p3-0.mp3",
             "text": "드디어 막내가 열다섯 살이 되었어요!\n바다 위로 올라가자 커다란 배 한 척이 보였지요.\n가까이 다가가니 펑! 펑펑!\n배에서는 왕자의 생일잔치가 한창이었어요."
           }
-        ]
+        ],
+        "video": "/classic/mermaid/p3.mp4"
       },
       {
         "n": 4,
@@ -11708,7 +11732,8 @@
             "src": "/classic/mermaid/seg-p18-0.mp3",
             "text": "그 순간, 바다 위로 해가 떠올랐어요.\n빛나는 햇살이 물거품을 비추자\n인어 공주의 몸이 둥실둥실 떠올랐지요.\n착한 인어 공주는\n온 세상을 날아다니는 공기 요정이 되어\n장밋빛 구름을 향해 높이, 더 높이 날아올랐답니다."
           }
-        ]
+        ],
+        "video": "/classic/mermaid/p18.mp4"
       }
     ]
   },
@@ -11781,7 +11806,8 @@
             "src": "/classic/oz/seg-p3-0.mp3",
             "text": "그 순간, 집이 통째로\n하늘로 붕 떠올랐어요.\n빙글빙글, 구름 사이를 날아갔지요.\n도로시는 눈을 꼭 감았어요."
           }
-        ]
+        ],
+        "video": "/classic/oz/p3.mp4"
       },
       {
         "n": 4,
@@ -12121,7 +12147,8 @@
             "src": "/classic/oz/seg-p11-0.mp3",
             "text": "드디어 에메랄드 성에 닿았어요.\n벽도, 바닥도, 지붕도\n온통 초록빛으로 반짝였지요.\n네 친구는 입을 다물지 못했답니다."
           }
-        ]
+        ],
+        "video": "/classic/oz/p11.mp4"
       },
       {
         "n": 12,

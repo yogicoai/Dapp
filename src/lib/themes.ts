@@ -16,7 +16,10 @@ export type ThemeId =
   | "car"
   | "princess"
   | "space"
-  | "ocean";
+  | "ocean"
+  | "candy"
+  | "animal"
+  | "icecream";
 
 export type Theme = {
   id: ThemeId;
@@ -78,12 +81,12 @@ export const THEMES: Record<ThemeId, Theme> = {
       book: "/themes/storybook/icon-book.webp",
     },
     cover: {
-      frame: "/covers/frame-storybook.webp?v=2",
-      titleTop: "18.7%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
-      titleHeight: "10.9%",
-      titleWidth: "58%",
-      circleTop: "54.6%",
-      circleWidth: "45%",
+      frame: "/covers/frame-storybook.webp?v=3",
+      titleTop: "20.8%", // 명패 틀(2026-09-22)에서 잰 값 — 리본 대신 공주나라 같은 명패
+      titleHeight: "10.7%",
+      titleWidth: "52.9%",
+      circleTop: "53.8%",
+      circleWidth: "47.5%",
       ink: "#b45309", // 금테와 어울리는 앰버
     },
   },
@@ -104,12 +107,12 @@ export const THEMES: Record<ThemeId, Theme> = {
     icons: { voice: "/icons/func-mic.webp", book: "/themes/picturebook/icon-book.webp" },
     cover: {
       // 전용 수채화 틀 — 잠든 여우·책더미·나뭇잎이 그려진 크림빛 프레임.
-      frame: "/covers/frame-picturebook.webp?v=2",
-      titleTop: "16.8%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
-      titleHeight: "9.8%",
-      titleWidth: "59%",
-      circleTop: "50.0%",
-      circleWidth: "48%",
+      frame: "/covers/frame-picturebook.webp?v=3",
+      titleTop: "20.1%", // 명패 틀(2026-09-22)에서 잰 값 — 리본 대신 공주나라 같은 명패
+      titleHeight: "9.2%",
+      titleWidth: "51.6%",
+      circleTop: "49.8%",
+      circleWidth: "50.9%",
       ink: "#a15c3e", // 틀의 크림·테라코타와 어울리는 짙은 브라운
     },
   },
@@ -123,12 +126,12 @@ export const THEMES: Record<ThemeId, Theme> = {
     colors: { accent: "#16a34a", accentDark: "#15803d", accentSoft: "#f0fdf4" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/dino/icon-book.webp" },
     cover: {
-      frame: "/covers/frame-dino.webp?v=2",
-      titleTop: "17.4%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
-      titleHeight: "11.3%",
-      titleWidth: "58%",
-      circleTop: "53.4%",
-      circleWidth: "45.5%",
+      frame: "/covers/frame-dino.webp?v=3",
+      titleTop: "21.3%", // 명패 틀(2026-09-22)에서 잰 값 — 리본 대신 공주나라 같은 명패
+      titleHeight: "10.7%",
+      titleWidth: "57.5%",
+      circleTop: "52.1%",
+      circleWidth: "47.3%",
       ink: "#166534", // 정글 초록
     },
   },
@@ -142,12 +145,12 @@ export const THEMES: Record<ThemeId, Theme> = {
     colors: { accent: "#2563eb", accentDark: "#1d4ed8", accentSoft: "#eff6ff" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/car/icon-book.webp" },
     cover: {
-      frame: "/covers/frame-car.webp?v=2",
-      titleTop: "20.9%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
-      titleHeight: "9.4%",
-      titleWidth: "53%",
-      circleTop: "54.4%",
-      circleWidth: "42.5%",
+      frame: "/covers/frame-car.webp?v=3",
+      titleTop: "23.4%", // 명패 틀(2026-09-22)에서 잰 값 — 리본 대신 공주나라 같은 명패
+      titleHeight: "9.2%",
+      titleWidth: "49.3%",
+      circleTop: "53.5%",
+      circleWidth: "44.2%",
       ink: "#1d4ed8",
     },
   },
@@ -183,11 +186,11 @@ export const THEMES: Record<ThemeId, Theme> = {
     colors: { accent: "#7c3aed", accentDark: "#6d28d9", accentSoft: "#f5f3ff" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/space/icon-book.webp" },
     cover: {
-      frame: "/covers/frame-space.webp?v=2",
-      titleTop: "14.8%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
-      titleHeight: "9.6%",
-      titleWidth: "58%",
-      circleTop: "50.0%",
+      frame: "/covers/frame-space.webp?v=3",
+      titleTop: "20%", // 명패 틀(2026-09-22)에서 잰 값 — 리본 대신 공주나라 같은 명패
+      titleHeight: "9%",
+      titleWidth: "53.5%",
+      circleTop: "50.5%",
       circleWidth: "43.5%",
       ink: "#4338ca",
     },
@@ -201,13 +204,71 @@ export const THEMES: Record<ThemeId, Theme> = {
     colors: { accent: "#0891b2", accentDark: "#0e7490", accentSoft: "#ecfeff" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/ocean/icon-book.webp" },
     cover: {
-      frame: "/covers/frame-ocean.webp?v=2",
-      titleTop: "16.8%", // 새 틀(2026-09-02)에서 잰 값 — 명패가 두 배로 커졌다
-      titleHeight: "9.7%",
-      titleWidth: "57%",
-      circleTop: "50.0%",
-      circleWidth: "47.5%",
+      frame: "/covers/frame-ocean.webp?v=3",
+      titleTop: "20.2%", // 명패 틀(2026-09-22)에서 잰 값 — 리본 대신 공주나라 같은 명패
+      titleHeight: "9.6%",
+      titleWidth: "54.6%",
+      circleTop: "50.1%",
+      circleWidth: "48%",
       ink: "#0f766e",
+    },
+  },
+
+  // 새 나라 셋(2026-09-22, 힉스필드로 그림). 지금 있는 나라가 분홍·장미·호박·초록·
+  // 파랑·보라·청록을 이미 써서, 겹치지 않는 색으로 골랐다. 배경 영상은 아직 없어
+  // page.tsx 의 THEMES_WITH_BG_VIDEO 에 넣지 않았다 — 정지 배경으로 뜬다.
+  candy: {
+    id: "candy",
+    label: "과자나라",
+    background: "/themes/candy/background.webp",
+    mascot: "/themes/candy/mascot.webp",
+    mascotName: "쿠키",
+    colors: { accent: "#c026d3", accentDark: "#a21caf", accentSoft: "#fdf4ff" }, // 포도사탕 자주
+    icons: { voice: "/icons/func-mic.webp", book: "/themes/candy/icon-book.webp" },
+    cover: {
+      frame: "/covers/frame-candy.webp?v=1",
+      titleTop: "23.2%", // 설탕쿠키 명패 — 틀 그림에서 잰 값
+      titleHeight: "10.8%",
+      titleWidth: "52.5%",
+      circleTop: "53.3%",
+      circleWidth: "43.3%",
+      ink: "#a21caf",
+    },
+  },
+  animal: {
+    id: "animal",
+    label: "동물나라",
+    background: "/themes/animal/background.webp",
+    mascot: "/themes/animal/mascot.webp",
+    mascotName: "깡총이",
+    colors: { accent: "#ea580c", accentDark: "#c2410c", accentSoft: "#fff7ed" }, // 여우 주황
+    icons: { voice: "/icons/func-mic.webp", book: "/themes/animal/icon-book.webp" },
+    cover: {
+      frame: "/covers/frame-animal.webp?v=1",
+      titleTop: "22%", // 통나무 명패 — 틀 그림에서 잰 값
+      titleHeight: "9.6%",
+      titleWidth: "53.7%",
+      circleTop: "52.3%",
+      circleWidth: "43.5%",
+      ink: "#9a3412",
+    },
+  },
+  icecream: {
+    id: "icecream",
+    label: "아이스크림나라",
+    background: "/themes/icecream/background.webp",
+    mascot: "/themes/icecream/mascot.webp",
+    mascotName: "소프티",
+    colors: { accent: "#10b981", accentDark: "#047857", accentSoft: "#ecfdf5" }, // 민트
+    icons: { voice: "/icons/func-mic.webp", book: "/themes/icecream/icon-book.webp" },
+    cover: {
+      frame: "/covers/frame-icecream.webp?v=1",
+      titleTop: "23.6%", // 와플콘 명패 — 틀 그림에서 잰 값
+      titleHeight: "9.2%",
+      titleWidth: "53.1%",
+      circleTop: "53.4%",
+      circleWidth: "44.9%",
+      ink: "#047857",
     },
   },
 };
@@ -221,6 +282,9 @@ export const READY_THEME_IDS: ThemeId[] = [
   "car",
   "princess",
   "ocean",
+  "candy",
+  "animal",
+  "icecream",
 ];
 
 export const THEME_LIST = READY_THEME_IDS.map((id) => THEMES[id]);
