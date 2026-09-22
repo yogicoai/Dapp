@@ -18,6 +18,9 @@ export type ShelfItem = {
   pages?: { image?: string | null }[];
 };
 
+/** 표지 그림이 없는 책의 원 안 대체 그림 — 책 순서대로 돌려 쓴다. */
+export const FALLBACK_EMOJI = ["🌈", "🍀", "⭐", "🎈"];
+
 export const coverArt = (book: ShelfItem) => book.coverImage ?? book.pages?.find((p) => p.image)?.image ?? null;
 export const pageCountOf = (book: ShelfItem) => book.pageCount ?? book.pages?.length ?? null;
 

@@ -38,13 +38,12 @@ export type ShelfArt = {
  */
 export const SHELF_ART: Partial<Record<ThemeId, ShelfArt>> = {
   princess: {
-    shelf: "/themes/princess/bookshelf.webp",
-    aspect: 1493 / 929,
+    // 낮고 넓은 2칸 책장(사장님 선택, 2026-09-22) — 칸이 넓어 한 칸에 10권쯤 들어간다.
+    shelf: "/themes/princess/bookshelf.webp?v=2",
+    aspect: 911 / 1468,
     rows: [
-      { top: 14.8, bottom: 29.5, left: 10, right: 90 },
-      { top: 34.3, bottom: 48.1, left: 10.1, right: 90 },
-      { top: 52.6, bottom: 66, left: 10, right: 90 },
-      { top: 70.5, bottom: 87.8, left: 10, right: 89.8 },
+      { top: 22.1, bottom: 48.7, left: 8.3, right: 91.8 },
+      { top: 54.8, bottom: 80.7, left: 8.3, right: 91.8 },
     ],
     spine: {
       src: "/themes/princess/spine.webp",
@@ -122,11 +121,12 @@ export function spineTitle(title: string, spine: ShelfArt["spine"]): { columns: 
   return { columns: one, font: fit(one) };
 }
 
-/** 책장 위 한 권의 자리(cqw). */
-export type PlacedSpine = { index: number; left: number; top: number; width: number; height: number };
+/** 책장 위 한 권의 자리(cqw). hit = 누르는 자리를 양옆으로 넓힐 몫(옆 책과의 틈). */
+export type PlacedSpine = { index: number; left: number; top: number; width: number; height: number; hit: number };
 
 const INSET = 0.8; // 칸 벽에서 띄우는 거리 (cqw)
-const GAP = 0.35; // 책 사이 (cqw)
+const GAP = 0.4; // 책 사이 최소 (cqw)
+const MAX_GAP = 1.4; // 칸이 넉넉하면 이만큼까지 벌린다 — 폰에서 옆 책을 잘못 누르지 않게
 const FILL = 0.98; // 책 높이 — 가장 낮은 칸(잰 뒤판 높이) 대비. 뒤판 위 그늘 자리가 남아 머리가 닿지 않는다
 
 /** n 개를 k 묶음으로 순서대로, 앞 묶음부터 하나씩 더 많게 나눈다. */
@@ -163,14 +163,18 @@ export function planBookcases(count: number, art: ShelfArt): PlacedSpine[][] {
   return cases.map((group) =>
     splitEven(group, art.rows.length).flatMap((rowBooks, r) => {
       const row = art.rows[r];
-      const span = rowBooks.length * width + Math.max(0, rowBooks.length - 1) * GAP;
+      const n = rowBooks.length;
+      const free = row.right - row.left - 2 * INSET - n * width;
+      const gap = n > 1 ? Math.max(GAP, Math.min(MAX_GAP, free / (n - 1))) : 0;
+      const span = n * width + Math.max(0, n - 1) * gap;
       const start = r % 2 === 0 ? row.left + INSET : row.right - INSET - span;
       return rowBooks.map((index, k) => ({
         index,
-        left: start + k * (width + GAP),
+        left: start + k * (width + gap),
         top: row.bottom * art.aspect - height,
         width,
         height,
+        hit: gap,
       }));
     }),
   );

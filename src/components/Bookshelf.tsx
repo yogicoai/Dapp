@@ -1,13 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { BookCover, type ShelfItem } from "./BookCover";
+import { BookCover, FALLBACK_EMOJI, type ShelfItem } from "./BookCover";
 
 /** 살짝 삐뚤빼뚤 — 장난감처럼 놓인 느낌. 잡으면(hover) 똑바로 선다. */
 const TILTS = ["-rotate-2", "rotate-1", "rotate-2", "-rotate-1", "rotate-1", "-rotate-2"];
-
-/** 표지 그림이 없는 책의 원 안 대체 그림. */
-const FALLBACK_EMOJI = ["🌈", "🍀", "⭐", "🎈"];
 
 /**
  * 유아 전집 스타일 표지 — 장식 틀은 힉스필드로 그린 진짜 아트를 쓰고, 그 위에
