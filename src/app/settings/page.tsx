@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { FLAGS } from "@/components/FlagFilter";
 import { ThemePicker } from "@/components/ThemePicker";
 import { useTheme } from "@/components/ThemeProvider";
+import { VoiceGlyph } from "@/components/VoiceGlyph";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import {
   grantTokens,
@@ -45,7 +46,6 @@ import {
   looksToPrompt,
   type ChildLooks,
   type ParentLooks,
-  parentLooksToPrompt,
   saveAutoNext,
   saveBookLayout,
   saveChild,
@@ -171,6 +171,146 @@ const LOOK_ROWS: readonly LookRow[] = [
     multi: true,
   },
 ];
+
+/** 특징 칩 앞에 붙는 스티커 — 여기 없는 항목은 글자만 보인다. */
+const LOOK_ICONS: Readonly<Record<string, string>> = {
+  "곧은 생머리": "/icons/looks/hair-straight.webp",
+  "살짝 웨이브": "/icons/looks/hair-wavy.webp",
+  곱슬머리: "/icons/looks/hair-curly.webp",
+  파마머리: "/icons/looks/hair-perm.webp",
+  곰인형: "/icons/looks/item-teddy.webp",
+  모자: "/icons/looks/item-hat.webp",
+  머리핀: "/icons/looks/item-hairpin.webp",
+  가방: "/icons/looks/item-bag.webp",
+  "장난감 자동차": "/icons/looks/item-car.webp",
+  담요: "/icons/looks/item-blanket.webp",
+  주근깨: "/icons/looks/mark-freckles.webp",
+  보조개: "/icons/looks/mark-dimples.webp",
+  "앞니 빠짐": "/icons/looks/mark-tooth.webp",
+  "볼이 통통해요": "/icons/looks/mark-cheeks.webp",
+};
+
+type FoldChip = { text: string; icon?: string };
+
+/** 값만 보면 뜻이 흐린 항목("있어요", "까만색")에 이름을 붙인다. */
+const LOOK_CHIP_TEXT: Partial<Record<LookSingleKey, (v: string) => string>> = {
+  bangs: (v) => `앞머리 ${v}`,
+  hairColor: (v) => `${v} 머리`,
+  eyes: (v) => `눈 ${v}`,
+  skin: (v) => `피부 ${v}`,
+  build: (v) => `몸집 ${v}`,
+  color: (v) => `${v} 옷`,
+};
+
+/** 접힌 머리글에 보일 '고른 것' — 그림용 문장(looksToPrompt)은 부모가 읽기엔 딱딱해서 따로 만든다. */
+function lookChips(looks: ChildLooks): FoldChip[] {
+  const out: FoldChip[] = [];
+  for (const row of LOOK_ROWS) {
+    if (row.multi) {
+      for (const v of looks[row.key] ?? []) out.push({ text: v, icon: LOOK_ICONS[v] });
+    } else {
+      const v = looks[row.key];
+      if (v) out.push({ text: LOOK_CHIP_TEXT[row.key]?.(v) ?? v, icon: LOOK_ICONS[v] });
+    }
+  }
+  if (looks.glasses) out.push({ text: "안경", icon: "/icons/feature-glasses.webp" });
+  if (looks.note) out.push({ text: "메모" });
+  return out;
+}
+
+function parentChips(parents: { mom?: ParentLooks; dad?: ParentLooks }): FoldChip[] {
+  return (["mom", "dad"] as const).flatMap((role) => {
+    const p = parents[role];
+    const text = [p?.hair, p?.glasses && "안경", p?.color && `${p.color} 옷`, p?.note && "메모"]
+      .filter(Boolean)
+      .join(" · ");
+    return text ? [{ text, icon: `/icons/voices/parent-${role}.webp` }] : [];
+  });
+}
+
+/**
+ * 접었다 펴는 특징 칸의 머리글. 고른 것은 칩으로 보여 준다 — 한 줄에 다 안 들어가면
+ * 넘치는 칩은 통째로 숨기고(반쪽 칩 없음) 옆에 전체 개수를 적는다.
+ */
+function FoldHeader({
+  open,
+  onToggle,
+  colors,
+  title,
+  empty,
+  chips,
+  art,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  colors: { accent: string; accentDark: string; accentSoft: string };
+  title: string;
+  empty: string;
+  chips: FoldChip[];
+  art: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={open}
+      className="flex items-center gap-3 rounded-3xl border-2 bg-white px-3 py-3 text-left shadow-sm transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300"
+      style={{ borderColor: open ? colors.accent : "transparent" }}
+    >
+      <span
+        aria-hidden
+        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
+        style={{ background: colors.accentSoft }}
+      >
+        {art}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="flex items-center gap-1.5">
+          <span className="text-[15px] font-extrabold text-neutral-800">{title}</span>
+          {chips.length > 0 ? (
+            <span
+              className="rounded-full px-2 py-0.5 text-[10px] font-extrabold text-white"
+              style={{ background: colors.accent }}
+            >
+              {chips.length}개 골랐어요
+            </span>
+          ) : (
+            <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-bold text-neutral-400">
+              선택
+            </span>
+          )}
+        </span>
+        {chips.length === 0 ? (
+          <span className="mt-1 block truncate text-xs font-medium text-neutral-400">{empty}</span>
+        ) : (
+          <span className="mt-1.5 flex h-6 flex-wrap gap-1 overflow-hidden">
+            {chips.map((c, i) => (
+              <span
+                key={`${i}-${c.text}`}
+                className="flex h-6 shrink-0 items-center gap-0.5 whitespace-nowrap rounded-full px-2 text-[11px] font-bold"
+                style={{ background: colors.accentSoft, color: colors.accentDark }}
+              >
+                {c.icon && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={c.icon} alt="" className="h-4 w-4 object-contain" />
+                )}
+                {c.text}
+              </span>
+            ))}
+          </span>
+        )}
+      </span>
+      <span
+        aria-hidden
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+      >
+        <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 8l5 5 5-5" />
+        </svg>
+      </span>
+    </button>
+  );
+}
 
 const GENDERS: { value: Gender; label: string; icon: string }[] = [
   { value: "girl", label: "여자", icon: "/icons/gender-girl.webp" },
@@ -929,28 +1069,22 @@ export default function SettingsPage() {
               항목이 많아 화면이 길어지므로 평소엔 접어 두고 눌러서 편다.
               사진을 받지 않는 이유를 부모에게도 그대로 말해 준다(안심시키는 게 목적). */}
           <section className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => setLooksOpen((v) => !v)}
-              aria-expanded={looksOpen}
-              className="flex items-center gap-2 rounded-2xl bg-neutral-100 px-4 py-3 text-left transition hover:bg-neutral-200"
-            >
-              <span className="text-lg leading-none" aria-hidden>🧒</span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-sm font-extrabold text-neutral-700">
-                  아이 특징 <span className="font-bold text-neutral-400">(선택)</span>
-                </span>
-                <span className="block truncate text-[11px] font-bold text-neutral-400">
-                  {looksToPrompt(looks) || "고르면 주인공이 우리 아이를 닮게 그려져요"}
-                </span>
-              </span>
-              <span
-                aria-hidden
-                className={`text-neutral-400 transition-transform ${looksOpen ? "rotate-180" : ""}`}
-              >
-                ▼
-              </span>
-            </button>
+            <FoldHeader
+              open={looksOpen}
+              onToggle={() => setLooksOpen((v) => !v)}
+              colors={theme.colors}
+              title="아이 특징"
+              empty="고르면 주인공이 우리 아이를 닮게 그려져요"
+              chips={lookChips(looks)}
+              art={
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={gender === "boy" ? "/icons/gender-boy.webp" : "/icons/gender-girl.webp"}
+                  alt=""
+                  className="h-10 w-10 object-contain"
+                />
+              }
+            />
 
             {/* 펼침 — 높이 애니메이션으로 스르르 내려온다. */}
             <div
@@ -993,6 +1127,10 @@ export default function SettingsPage() {
                                   : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                               }`}
                             >
+                              {LOOK_ICONS[o] && (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={LOOK_ICONS[o]} alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.25em]" />
+                              )}
                               {o}
                             </button>
                           );
@@ -1068,27 +1206,20 @@ export default function SettingsPage() {
               6쪽 내내 안경잡이로 그려졌다. 자세히 받으면 만들기가 길어지므로
               머리·안경·옷 색만 받고 나머지는 자유 한 줄로 둔다. */}
           <section className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => setParentsOpen((v) => !v)}
-              aria-expanded={parentsOpen}
-              className="flex items-center gap-2 rounded-2xl bg-neutral-100 px-4 py-3 text-left transition hover:bg-neutral-200"
-            >
-              <span className="text-lg leading-none" aria-hidden>👨‍👩‍👦</span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-sm font-extrabold text-neutral-700">
-                  엄마·아빠 특징 <span className="font-bold text-neutral-400">(선택)</span>
+            <FoldHeader
+              open={parentsOpen}
+              onToggle={() => setParentsOpen((v) => !v)}
+              colors={theme.colors}
+              title="엄마·아빠 특징"
+              empty="동화에 엄마·아빠가 나올 때 그대로 그려져요"
+              chips={parentChips(parents)}
+              art={
+                <span className="flex items-end">
+                  <VoiceGlyph voice={{ role: "mom" }} className="-mr-2.5 h-9 w-9" />
+                  <VoiceGlyph voice={{ role: "dad" }} className="h-9 w-9" />
                 </span>
-                <span className="block truncate text-[11px] font-bold text-neutral-400">
-                  {[parentLooksToPrompt(parents.mom) && "엄마 " + parentLooksToPrompt(parents.mom),
-                    parentLooksToPrompt(parents.dad) && "아빠 " + parentLooksToPrompt(parents.dad)]
-                    .filter(Boolean).join(" · ") || "동화에 엄마·아빠가 나올 때 그대로 그려져요"}
-                </span>
-              </span>
-              <span aria-hidden className={`text-neutral-400 transition-transform ${parentsOpen ? "rotate-180" : ""}`}>
-                ▼
-              </span>
-            </button>
+              }
+            />
 
             <div className={`grid transition-[grid-template-rows,opacity] duration-300 ${parentsOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
               <div className="overflow-hidden">
@@ -1106,8 +1237,9 @@ export default function SettingsPage() {
                     const cur = parents[row.role] ?? {};
                     return (
                       <div key={row.role} className="flex flex-col gap-2">
-                        <p className="text-xs font-extrabold text-neutral-600">
-                          <span className="mr-1" aria-hidden>{row.emoji}</span>{row.label}
+                        <p className="flex items-center gap-1 text-xs font-extrabold text-neutral-600">
+                          <VoiceGlyph voice={row} className="h-6 w-6" />
+                          {row.label}
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {row.hairs.map((h) => {
@@ -1129,7 +1261,9 @@ export default function SettingsPage() {
                             style={cur.glasses ? { background: accent } : undefined}
                             className={`rounded-full px-3 py-1.5 text-[12px] font-bold transition ${cur.glasses ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}
                           >
-                            👓 안경
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/icons/feature-glasses.webp" alt="" aria-hidden className="mr-1 inline-block h-4 w-4 object-contain align-[-0.2em]" />
+                            안경
                           </button>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
@@ -1191,12 +1325,12 @@ export default function SettingsPage() {
                     aria-pressed={active}
                     title={v.desc}
                     style={active ? { background: accent } : undefined}
-                    className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                    className={`flex items-center gap-1.5 rounded-full py-1.5 pl-1.5 pr-3.5 text-sm font-bold transition ${
                       active ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                     }`}
                   >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-base leading-none">
-                      {previewingId === v.id ? "⏳" : v.emoji}
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-base leading-none">
+                      {previewingId === v.id ? "⏳" : <VoiceGlyph voice={v} className="h-full w-full" />}
                     </span>
                     {v.label}
                   </button>
@@ -1208,7 +1342,10 @@ export default function SettingsPage() {
 
             {pendingParentVoices.map((voice) => (
               <div key={`review-${voice.role}`} className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                <p className="text-sm font-black text-amber-900">{voice.emoji} {voice.label} 목소리를 확인해 주세요</p>
+                <p className="flex items-center gap-1.5 text-sm font-black text-amber-900">
+                  <VoiceGlyph voice={voice} className="h-7 w-7" />
+                  {voice.label} 목소리를 확인해 주세요
+                </p>
                 <p className="mt-1 text-xs font-medium leading-relaxed text-amber-800">
                   녹음 원본이 아니라 실제로 합성된 목소리입니다. 들어 본 뒤 승인해야 동화에서 선택할 수 있어요.
                 </p>
@@ -1240,7 +1377,9 @@ export default function SettingsPage() {
                       aria-label={`${v.label} 목소리 들어보기`}
                       className="flex items-center gap-1.5"
                     >
-                      <span className="text-lg leading-none">{v.emoji}</span>
+                      <span className="flex text-lg leading-none">
+                        <VoiceGlyph voice={v} className="-my-1 h-7 w-7" />
+                      </span>
                       {v.label} 🔊
                     </button>
                     {isPending(v) ? (
@@ -1304,7 +1443,9 @@ export default function SettingsPage() {
                       key={p.role}
                       className="flex flex-wrap items-center gap-1.5 rounded-full bg-amber-100 px-3.5 py-2 text-sm font-bold text-amber-800"
                     >
-                      <span className="text-lg leading-none">{p.emoji}</span>
+                      <span className="flex text-lg leading-none">
+                        <VoiceGlyph voice={p} className="-my-1 h-7 w-7" />
+                      </span>
                       {p.label} 목소리
                       <span className="rounded-full bg-emerald-100 px-2 text-[10px] font-bold text-emerald-700">
                         ✅ 완성
@@ -1361,9 +1502,11 @@ export default function SettingsPage() {
                       key={o.role}
                       type="button"
                       onClick={() => setRecording({ label: o.label, emoji: o.emoji })}
-                      className="rounded-full border-2 border-dashed border-neutral-300 px-4 py-2 text-sm font-bold text-neutral-500 hover:border-neutral-400"
+                      className="flex items-center gap-1 rounded-full border-2 border-dashed border-neutral-300 px-4 py-2 text-sm font-bold text-neutral-500 hover:border-neutral-400"
                     >
-                      + {o.emoji} {o.label} 목소리 추가
+                      +
+                      <VoiceGlyph voice={o} className="-my-1 h-7 w-7" />
+                      {o.label} 목소리 추가
                     </button>
                   );
                 })}

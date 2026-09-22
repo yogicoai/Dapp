@@ -39,11 +39,16 @@ export type Theme = {
   };
   /**
    * 아이콘. "/"로 시작하면 스티커 이미지, 아니면 이모지 fallback.
-   *
-   * 주의: "책 만들기" 아이콘은 여기 없다. 아이는 버튼을 모양으로 기억하는데,
-   * 테마마다 모양이 바뀌면 매번 다시 배워야 한다. 핵심 행동 아이콘은 앱 전체에서
-   * 고정하고 색만 테마를 따른다.
    */
+  /**
+   * 나라별 그림(힉스필드, 2026-09-22).
+   * create: '동화 만들기' 버튼 배지 — 버튼 자리·크기·모양은 그대로, 그림만 나라를 따른다(사장님 결정).
+   * loading: 동화를 그리는 동안 보여 줄 그림(가로 1168x880).
+   */
+  art: {
+    create: string;
+    loading: string;
+  };
   icons: {
     voice: string; // 말로 이야기하기
     book: string; // 동화책 (장식용)
@@ -71,6 +76,10 @@ export const THEMES: Record<ThemeId, Theme> = {
     background: "/scenes-bright/home.webp",
     mascot: "/themes/storybook/mascot.webp",
     mascotName: "모모",
+    art: {
+      create: "/themes/storybook/icon-create.webp",
+      loading: "/themes/storybook/loading.webp",
+    },
     colors: {
       accent: "#f43f5e", // rose-500
       accentDark: "#be123c", // rose-700
@@ -99,6 +108,10 @@ export const THEMES: Record<ThemeId, Theme> = {
     background: "/themes/picturebook/background.webp",
     mascot: "/themes/picturebook/mascot.webp",
     mascotName: "토리",
+    art: {
+      create: "/themes/picturebook/icon-create.webp",
+      loading: "/themes/picturebook/loading.webp",
+    },
     colors: {
       accent: "#d97706", // amber-600 — 히어로의 따뜻한 크림·테라코타 톤
       accentDark: "#b45309", // amber-700
@@ -123,6 +136,10 @@ export const THEMES: Record<ThemeId, Theme> = {
     background: "/themes/dino/background.webp",
     mascot: "/themes/dino/mascot.webp",
     mascotName: "티노",
+    art: {
+      create: "/themes/dino/icon-create.webp",
+      loading: "/themes/dino/loading.webp",
+    },
     colors: { accent: "#16a34a", accentDark: "#15803d", accentSoft: "#f0fdf4" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/dino/icon-book.webp" },
     cover: {
@@ -142,6 +159,10 @@ export const THEMES: Record<ThemeId, Theme> = {
     background: "/themes/car/background.webp",
     mascot: "/themes/car/mascot.webp",
     mascotName: "붕붕이",
+    art: {
+      create: "/themes/car/icon-create.webp",
+      loading: "/themes/car/loading.webp",
+    },
     colors: { accent: "#2563eb", accentDark: "#1d4ed8", accentSoft: "#eff6ff" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/car/icon-book.webp" },
     cover: {
@@ -160,6 +181,10 @@ export const THEMES: Record<ThemeId, Theme> = {
     background: "/themes/princess/background.webp",
     mascot: "/themes/princess/mascot.webp?v=2",
     mascotName: "루비",
+    art: {
+      create: "/themes/princess/icon-create.webp",
+      loading: "/themes/princess/loading.webp",
+    },
     colors: { accent: "#db2777", accentDark: "#be185d", accentSoft: "#fdf2f8" },
     icons: {
       voice: "/icons/func-mic.webp",
@@ -183,6 +208,10 @@ export const THEMES: Record<ThemeId, Theme> = {
     background: "/themes/space/background.webp",
     mascot: "/themes/space/mascot.webp",
     mascotName: "별이",
+    art: {
+      create: "/themes/space/icon-create.webp",
+      loading: "/themes/space/loading.webp",
+    },
     colors: { accent: "#7c3aed", accentDark: "#6d28d9", accentSoft: "#f5f3ff" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/space/icon-book.webp" },
     cover: {
@@ -201,6 +230,10 @@ export const THEMES: Record<ThemeId, Theme> = {
     background: "/themes/ocean/background.webp",
     mascot: "/themes/ocean/mascot.webp",
     mascotName: "포포",
+    art: {
+      create: "/themes/ocean/icon-create.webp",
+      loading: "/themes/ocean/loading.webp",
+    },
     colors: { accent: "#0891b2", accentDark: "#0e7490", accentSoft: "#ecfeff" },
     icons: { voice: "/icons/func-mic.webp", book: "/themes/ocean/icon-book.webp" },
     cover: {
@@ -223,6 +256,10 @@ export const THEMES: Record<ThemeId, Theme> = {
     background: "/themes/candy/background.webp",
     mascot: "/themes/candy/mascot.webp",
     mascotName: "쿠키",
+    art: {
+      create: "/themes/candy/icon-create.webp",
+      loading: "/themes/candy/loading.webp",
+    },
     colors: { accent: "#c026d3", accentDark: "#a21caf", accentSoft: "#fdf4ff" }, // 포도사탕 자주
     icons: { voice: "/icons/func-mic.webp", book: "/themes/candy/icon-book.webp" },
     cover: {
@@ -241,6 +278,10 @@ export const THEMES: Record<ThemeId, Theme> = {
     background: "/themes/animal/background.webp",
     mascot: "/themes/animal/mascot.webp",
     mascotName: "깡총이",
+    art: {
+      create: "/themes/animal/icon-create.webp",
+      loading: "/themes/animal/loading.webp",
+    },
     colors: { accent: "#ea580c", accentDark: "#c2410c", accentSoft: "#fff7ed" }, // 여우 주황
     icons: { voice: "/icons/func-mic.webp", book: "/themes/animal/icon-book.webp" },
     cover: {
@@ -259,6 +300,10 @@ export const THEMES: Record<ThemeId, Theme> = {
     background: "/themes/icecream/background.webp",
     mascot: "/themes/icecream/mascot.webp",
     mascotName: "소프티",
+    art: {
+      create: "/themes/icecream/icon-create.webp",
+      loading: "/themes/icecream/loading.webp",
+    },
     colors: { accent: "#10b981", accentDark: "#047857", accentSoft: "#ecfdf5" }, // 민트
     icons: { voice: "/icons/func-mic.webp", book: "/themes/icecream/icon-book.webp" },
     cover: {

@@ -66,6 +66,7 @@ import {
 import { loadParentVoices, type ParentVoice } from "@/lib/parent-voice";
 import { OrientationHint } from "./OrientationHint";
 import { useTheme } from "./ThemeProvider";
+import { VoiceGlyph } from "./VoiceGlyph";
 import { currentReadingChunk, splitStorySentences } from "@/lib/reading-chunks";
 import { restAfter } from "@/lib/reading-rest";
 
@@ -834,6 +835,7 @@ export function BookViewer({
     (isCreated ? imgRatios[0] : undefined) ?? imgRatios[i] ?? 4 / 3;
   const parentChoices = parentVoices.map((p) => ({
     id: `parent:${p.role}`,
+    role: p.role, // 엄마·아빠 스티커를 고르는 열쇠
     label: `${p.label} 목소리`,
     emoji: p.emoji,
   }));
@@ -844,13 +846,15 @@ export function BookViewer({
   // 부모 목소리(엄마·아빠)는 이 규칙과 별개로 늘 함께 보여 준다 — 무료이고 이 앱의 핵심이다.
   const bookNarr = book.narrator ? TYPECAST_VOICES.find((v) => v.id === book.narrator) : null;
   const booqoo = TYPECAST_VOICES.find((v) => v.id === "tc-booqoo");
-  const voiceChoices: readonly { id: string; label: string; emoji: string }[] = isCreated
+  const voiceChoices: readonly { id: string; label: string; emoji: string; role?: string }[] = isCreated
     ? [...parentChoices, ...(bookNarr ? [bookNarr] : booqoo ? [booqoo] : [])]
     : book.narrators
       ? (book.narrators
           .map((id) => TYPECAST_VOICES.find((v) => v.id === id))
           .filter(Boolean) as typeof TYPECAST_VOICES)
       : NARRATOR_PRESETS; // 추천 목록이 없는 옛 책도 나레이션용 16명만
+  const currentVoice =
+    voiceChoices.find((v) => v.id === voiceId) ?? TYPECAST_VOICES.find((v) => v.id === voiceId);
   useEffect(() => {
     // 추천 성우가 있으면 그 첫 번째, 아니면 만든 동화의 성우(book.narrator), 아니면 설정값.
     // 단, 저장된 설정값이 부모 목소리(parent:)면 '내가 만든 동화'에서만 잇는다 —
@@ -2122,10 +2126,8 @@ export function BookViewer({
             voiceMenu ? "text-white" : "bg-white/85 text-neutral-600 hover:bg-white"
           }`}
         >
-          <span className="text-base leading-none" aria-hidden>
-            {voiceChoices.find((v) => v.id === voiceId)?.emoji ??
-              TYPECAST_VOICES.find((v) => v.id === voiceId)?.emoji ??
-              "🎙️"}
+          <span className="flex items-center text-base leading-none" aria-hidden>
+            <VoiceGlyph voice={currentVoice ?? { id: voiceId, emoji: "🎙️" }} className="h-6 w-6 sm:h-7 sm:w-7" />
           </span>
           <span className="hidden text-xs font-extrabold sm:inline">성우</span>
         </button>
@@ -2152,7 +2154,9 @@ export function BookViewer({
                   active ? "text-white" : "text-neutral-700 hover:bg-neutral-100"
                 }`}
               >
-                <span className="text-base leading-none" aria-hidden>{v.emoji}</span>
+                <span className="-my-1 flex w-7 shrink-0 items-center justify-center text-base leading-none" aria-hidden>
+                  <VoiceGlyph voice={v} className="h-7 w-7" />
+                </span>
                 <span className="flex-1">{v.label}</span>
                 {active && <span aria-hidden>✓</span>}
               </button>

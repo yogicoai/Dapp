@@ -8,6 +8,7 @@ import { WaitShowcase } from "@/components/WaitShowcase";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import { useTheme } from "@/components/ThemeProvider";
+import { VoiceGlyph } from "@/components/VoiceGlyph";
 import { VoiceInput } from "@/components/VoiceInput";
 import { ART_STYLES } from "@/lib/art-styles";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
@@ -3237,9 +3238,11 @@ export default function CreatePage() {
               <div className="my-auto flex w-full flex-col items-center gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={ui.mascot}
+                  src={ui.art.loading}
                   alt=""
-                  className="h-24 w-24 shrink-0 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white motion-reduce:animate-none"
+                  width={1168}
+                  height={880}
+                  className="h-auto w-full max-w-[14rem] shrink-0 rounded-3xl border-4 border-white shadow-lg motion-safe:animate-[float_3s_ease-in-out_infinite]"
                 />
                 <p className="break-keep text-center text-lg font-extrabold text-white drop-shadow">{wait.headline}</p>
                 {wait.line && (
@@ -4034,7 +4037,7 @@ export default function CreatePage() {
                         style={active ? { background: accent } : undefined}
                         className={`flex items-center gap-1.5 rounded-full py-1.5 pl-2.5 pr-3.5 text-sm font-bold transition ${active ? "text-white" : "bg-amber-100 text-amber-800 hover:bg-amber-200"}`}
                       >
-                        <span>{voice.emoji}</span>
+                        <VoiceGlyph voice={voice} className="-my-0.5 h-6 w-6" />
                         {voice.label} 목소리
                       </button>
                     );
@@ -4055,7 +4058,7 @@ export default function CreatePage() {
                             : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                         }`}
                       >
-                        <span>{v.emoji}</span>
+                        <VoiceGlyph voice={v} className="-my-0.5 h-6 w-6" />
                         {v.label}
                       </button>
                     );
@@ -4139,11 +4142,14 @@ export default function CreatePage() {
           {/* ── 5. 그림 그리는 중 ── */}
           {step === "illustrate" && story && !saveFailure && (
             <section className="flex flex-col items-center gap-5 py-4">
+              {/* 나라 마스코트가 마법책에 그리는 그림 — 마스코트가 이미 들어 있어 따로 띄우지 않는다. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={ui.mascot}
+                src={ui.art.loading}
                 alt=""
-                className="h-24 w-24 animate-[float_1.5s_ease-in-out_infinite] rounded-full border-4 border-white shadow-lg motion-reduce:animate-none"
+                width={1168}
+                height={880}
+                className="h-auto w-full max-w-xs rounded-3xl border-4 border-white shadow-lg motion-safe:animate-[float_3s_ease-in-out_infinite]"
               />
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 {uploading || busy ? "동화를 책장에 넣고 있어요…" : "동화를 그리고 있어요…"}

@@ -854,3 +854,16 @@ export function prewarmBookAudio(
     }
   }
 }
+
+/**
+ * 목소리 스티커 아이콘(힉스필드, 2026-09-22) — 나레이션 성우 16명과 엄마·아빠만 있다.
+ * 없으면 null 이고, 그때는 부르는 쪽이 emoji 를 그대로 쓴다(배역 성우 등).
+ * 부모 목소리는 id 가 계정마다 달라 role('mom'|'dad') 이나 label('엄마'|'아빠')로 찾는다.
+ */
+export function voiceIconSrc(v: { id?: string | null; role?: string | null; label?: string | null }): string | null {
+  if (v.id && (NARRATOR_VOICE_IDS as readonly string[]).includes(v.id)) return `/icons/voices/${v.id}.webp`;
+  const who = v.role ?? v.label?.replace(/\s*목소리$/, "") ?? "";
+  if (who === "mom" || who === "엄마") return "/icons/voices/parent-mom.webp";
+  if (who === "dad" || who === "아빠") return "/icons/voices/parent-dad.webp";
+  return null;
+}

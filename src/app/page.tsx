@@ -290,8 +290,8 @@ export default function Home() {
             흐름 안의 큰 버튼으로 둔다.
           · 태블릿·PC(sm 이상): 화면 아래 고정 — 태블릿을 두 손으로 잡았을 때
             엄지가 닿는 자리. 화면이 낮으면(가로 폰 등) 한 단계 줄인다.
-          · 아이콘은 테마와 무관하게 항상 같은 모양(책+연필): 아이는 버튼을 모양으로
-            기억하므로 테마마다 바뀌면 매번 다시 배워야 한다. 색만 테마를 따른다.
+          · 아이콘은 나라별 배지(theme.art.create, 사장님 결정 2026-09-22). 대신 버튼
+            자리·크기·모양은 나라가 바뀌어도 그대로 둔다 — 아이는 자리로 기억한다.
         */}
         <Link
           href={guest ? "/login" : "/create"}
@@ -303,7 +303,7 @@ export default function Home() {
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/icons/create.webp" alt="" className="h-9 w-9 object-contain" />
+          <img src={theme.art.create} alt="" className="h-9 w-9 object-contain" />
           <span className="text-xl font-extrabold tracking-tight">
             {guest ? "로그인하고 만들기" : "동화 만들기"}
           </span>
@@ -415,10 +415,10 @@ export default function Home() {
             boxShadow: `0 8px 0 ${theme.colors.accentDark}, 0 14px 24px rgba(0,0,0,0.25)`,
           }}
         >
-          {/* 아이콘도 힉스필드 아트(웃는 마법책+연필, 배경 따냄) — 이모지 졸업 */}
+          {/* 아이콘은 나라별 배지(theme.art.create) — 자리·크기·모양은 그대로라 버튼 위치로 기억한다 */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/icons/create.webp"
+            src={theme.art.create}
             alt=""
             className="h-10 w-10 object-contain lg:h-12 lg:w-12 [@media(max-height:600px)]:h-7 [@media(max-height:600px)]:w-7"
           />
