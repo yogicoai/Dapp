@@ -3376,7 +3376,7 @@
     "text": "막내는 언덕 아래에서 벽돌을 골랐어요.\n한 장, 두 장, 진흙을 발라 차곡차곡."
   },
   "classic/threepigs/seg-cast-p4-1.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"난 튼튼한 집을 짓고 싶어.\""
@@ -3412,7 +3412,7 @@
     "text": "막내는 들고 있던 벽돌을 슬며시 내려놓았어요.\n손바닥이 벌겋게 부어 있었지요."
   },
   "classic/threepigs/seg-cast-p6-0.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "'…나도 그냥 놀까?'"
@@ -3424,7 +3424,7 @@
     "text": "막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n아주 반듯했어요."
   },
   "classic/threepigs/seg-cast-p6-2.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"그래도 난, 튼튼한 집을 짓고 싶어.\""
@@ -3436,7 +3436,7 @@
     "text": "멀리서 형들 웃는 소리가 들려왔어요.\n막내는 마지막 벽돌을 얹고, 벽난로에 불을 피웠지요.\n해가 지자 굴뚝에서 연기가 폴폴 올랐어요."
   },
   "classic/threepigs/seg-cast-p7-1.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.3,
     "text": "\"…다 지었다.\""
@@ -3562,7 +3562,7 @@
     "text": "첫째가 문을 쾅쾅 두드렸어요.\n막내는 벌떡 일어나 문을 열었어요."
   },
   "classic/threepigs/seg-cast-p12-2.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"빨리 들어와!\""
@@ -3722,7 +3722,7 @@
     "text": "이 정도면 됐지 뭐. 형아, 나도 다 했어!"
   },
   "classic/threepigs/say-p4-pig3.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "난 튼튼한 집을 짓고 싶어."
@@ -3740,13 +3740,13 @@
     "text": "우리처럼 뚝딱 짓고 놀자!"
   },
   "classic/threepigs/say-p6-pig3.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "그래도 난, 튼튼한 집을 짓고 싶어."
   },
   "classic/threepigs/say-p7-pig3.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.3,
     "text": "…다 지었다."
@@ -3793,7 +3793,7 @@
     "tempo": 1.1
   },
   "classic/threepigs/say-p12-pig3.mp3": {
-    "voice": "tc-taeji",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "빨리 들어와!"
