@@ -753,7 +753,7 @@
       {
         "n": 2,
         "text": "첫째는 언덕에 눕더니 크게 하품을 했어요.\n\"집은 후딱 짓고 놀아야지!\"\n지푸라기를 슥슥 모아 쌓으니, 금세 집 한 채가 되었어요.\n바람이 불자 벽이 살랑 흔들렸지만\n첫째는 벌써 뛰어나가 버렸답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p2.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p2.webp?v=4",
         "lines": [
           {
             "text": "집은 후딱 짓고 놀아야지!",
@@ -784,10 +784,10 @@
             "label": "pig1",
             "line": "집은 후딱 짓고 놀아야지!",
             "box": [
-              318,
-              97,
-              769,
-              398
+              250,
+              590,
+              850,
+              950
             ],
             "audio": "/classic/threepigs/say-p2-pig1.mp3",
             "feel": "happy",
