@@ -1091,7 +1091,7 @@
       {
         "n": 9,
         "text": "똑, 똑, 똑. 지푸라기 집 문을 누가 두드렸어요.\n\"누구세요?\"\n늑대는 목소리를 가늘게 꾸몄지요.\n\"…엄마야.\"\n\"어? 우리 엄마 아닌데?\"\n늑대는 머리를 긁적였어요.\n\"들켰구나.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p9.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p9.webp?v=4",
         "lines": [
           {
             "text": "누구세요?",
@@ -1157,10 +1157,10 @@
             "label": "wolf",
             "line": "…엄마야.",
             "box": [
-              40,
-              59,
-              937,
-              527
+              60,
+              55,
+              900,
+              570
             ],
             "audio": "/classic/threepigs/say-p9-wolf.mp3",
             "feel": "whisper"
@@ -1169,10 +1169,10 @@
             "label": "pig1",
             "line": "어? 우리 엄마 아닌데?",
             "box": [
-              121,
-              625,
-              830,
-              977
+              260,
+              700,
+              900,
+              990
             ],
             "audio": "/classic/threepigs/say-p9-pig1.mp3",
             "feel": "toneup",
