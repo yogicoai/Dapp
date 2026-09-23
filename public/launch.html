@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>동화앱 출시 세 갈래</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 64px; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+
+  :root {
+    --paper: #f3f5f7;
+    --surface: #ffffff;
+    --surface-2: #eef1f4;
+    --ink: #17202c;
+    --muted: #5d6877;
+    --faint: #8d97a5;
+    --line: #dde2e8;
+    --web: #0f7b6c;
+    --toss: #2f6fe4;
+    --droid: #5a7a2c;
+    --alert: #a23a2c;
+    --warn: #8a6100;
+    --shadow: 0 1px 2px rgba(23, 32, 44, .05), 0 8px 24px -16px rgba(23, 32, 44, .25);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #12161c;
+      --surface: #1a1f27;
+      --surface-2: #222833;
+      --ink: #e7ecf2;
+      --muted: #a3aebc;
+      --faint: #7b8694;
+      --line: #2b323d;
+      --web: #4fc0ad;
+      --toss: #7aa8f5;
+      --droid: #a3c46a;
+      --alert: #ef8c7c;
+      --warn: #d9a441;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -18px rgba(0, 0, 0, .8);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #12161c;
+    --surface: #1a1f27;
+    --surface-2: #222833;
+    --ink: #e7ecf2;
+    --muted: #a3aebc;
+    --faint: #7b8694;
+    --line: #2b323d;
+    --web: #4fc0ad;
+    --toss: #7aa8f5;
+    --droid: #a3c46a;
+    --alert: #ef8c7c;
+    --warn: #d9a441;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -18px rgba(0, 0, 0, .8);
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans KR", system-ui, -apple-system, "Malgun Gothic", sans-serif;
+    line-height: 1.75;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 62rem; margin: 0 auto; padding-inline: 20px; padding-block: 0 72px; }
+  h1, h2, h3, .serif { font-family: "Gowun Batang", "Gowun Dodum", serif; text-wrap: balance; }
+
+  header.masthead { border-bottom: 2px solid var(--ink); padding-block: 40px 20px; margin-bottom: 8px; }
+  .eyebrow { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); font-weight: 600; }
+  h1 { font-size: clamp(30px, 6vw, 46px); line-height: 1.25; margin: 10px 0 12px; font-weight: 700; }
+  .lede { font-size: 17px; color: var(--muted); max-width: 48ch; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 18px; font-size: 13px; color: var(--faint); }
+  .meta b { color: var(--muted); font-weight: 600; }
+
+  nav.jump { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin-inline: -20px; padding: 10px 20px; display: flex; gap: 14px; overflow-x: auto; font-size: 13px; }
+  nav.jump a { color: var(--muted); text-decoration: none; white-space: nowrap; padding-bottom: 2px; border-bottom: 2px solid transparent; }
+  nav.jump a:hover, nav.jump a:focus-visible { color: var(--ink); border-bottom-color: var(--ink); }
+
+  section { padding-block: 40px 8px; }
+  h2 { font-size: clamp(22px, 4vw, 28px); margin: 0 0 6px; font-weight: 700; }
+  h2 .num { font-family: "IBM Plex Sans KR", sans-serif; font-size: 13px; font-weight: 600; color: var(--faint); display: block; letter-spacing: .1em; margin-bottom: 4px; }
+  h3 { font-size: 18px; margin: 28px 0 8px; font-weight: 700; }
+  p { margin: 0 0 14px; max-width: 68ch; }
+  .sub { color: var(--muted); }
+  strong { font-weight: 600; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .scroller { overflow-x: auto; margin-block: 18px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--surface-2); font-weight: 600; font-size: 12.5px; color: var(--muted); letter-spacing: .03em; white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.num, th.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.total td { background: var(--surface-2); font-weight: 600; }
+  td .note { display: block; color: var(--faint); font-size: 12.5px; }
+
+  ol.steps { list-style: none; counter-reset: s; padding: 0; margin: 18px 0 0; }
+  ol.steps > li { counter-increment: s; position: relative; padding: 0 0 18px 44px; border-left: 1px solid var(--line); margin-left: 13px; }
+  ol.steps > li:last-child { border-left-color: transparent; padding-bottom: 4px; }
+  ol.steps > li::before { content: counter(s); position: absolute; left: -13px; top: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); color: var(--muted); font-size: 12px; font-weight: 600; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+  ol.steps > li.block::before { background: var(--alert); border-color: var(--alert); color: #fff; }
+  .step-h { font-weight: 600; margin-bottom: 2px; }
+  .dur { float: right; font-size: 12.5px; color: var(--faint); font-weight: 400; font-variant-numeric: tabular-nums; }
+  .who { display: inline-block; font-size: 11.5px; font-weight: 600; letter-spacing: .04em; padding: 1px 7px; border-radius: 3px; border: 1px solid var(--line); color: var(--muted); background: var(--surface-2); margin-right: 6px; vertical-align: 1px; }
+  .who.owner { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, var(--line)); }
+  .who.dev { color: var(--web); border-color: color-mix(in srgb, var(--web) 40%, var(--line)); }
+  ol.steps p { margin: 0; font-size: 14px; color: var(--muted); }
+
+  .callout { border: 1px solid var(--line); border-left: 3px solid var(--k, var(--alert)); background: var(--surface); border-radius: 3px; padding: 14px 16px; margin-block: 18px; }
+  .callout h4 { margin: 0 0 6px; font-size: 15px; font-weight: 700; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .bars { display: grid; gap: 14px; margin-block: 22px; }
+  .bar-row { display: grid; grid-template-columns: minmax(96px, 150px) 1fr; gap: 14px; align-items: center; }
+  .bar-label { font-size: 13.5px; color: var(--muted); }
+  .bar-label b { display: block; color: var(--ink); font-weight: 600; }
+  .bar-track { position: relative; height: 34px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+  .bar-fill { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--c) 22%, var(--surface)); border-right: 3px solid var(--c); }
+  .bar-val { position: relative; display: flex; align-items: center; height: 100%; padding-left: 12px; font-size: 13.5px; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .bar-val span { color: var(--muted); font-weight: 400; margin-left: 8px; }
+
+  ul.plain { margin: 10px 0 14px; padding-left: 20px; }
+  ul.plain li { margin-bottom: 7px; }
+  ul.plain li::marker { color: var(--faint); }
+
+  .done-list { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+  .done-list li { display: grid; grid-template-columns: 1.6rem 1fr; gap: 10px; align-items: start; font-size: 14.5px; }
+  .done-list .mark { font-weight: 700; font-size: 13px; letter-spacing: .02em; }
+  .done-list .ok .mark { color: var(--web); }
+  .done-list .no .mark { color: var(--alert); }
+  .done-list li .what { color: var(--muted); }
+  .done-list li .what b { color: var(--ink); font-weight: 600; }
+
+  .footnote { margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--faint); }
+  .footnote h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); }
+  .footnote ul { padding-left: 18px; margin: 0; }
+  .footnote li { margin-bottom: 5px; }
+
+  @media print {
+    :root { --paper: #fff; --surface: #fff; --surface-2: #f4f4f4; --ink: #000; --muted: #333; --faint: #666; --line: #bbb; --shadow: none; color-scheme: light; }
+    nav.jump { display: none; }
+    body { font-size: 11pt; line-height: 1.55; }
+    section { padding-block: 18px 4px; break-inside: avoid; }
+    .callout, .scroller, .bars, ol.steps > li { break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="eyebrow">우리 가족 보이스 동화 · 출시 계획</div>
+    <h1>웹으로 열까, 토스에 붙일까, 구글 플레이에 올릴까</h1>
+    <p class="lede">사업자등록과 결제사 계약이 이미 되어 있는 상태를 기준으로, 세 갈래 각각 무엇이 남았고 얼마가 들고 얼마나 걸리는지 정리했습니다.</p>
+    <div class="meta">
+      <span><b>작성</b> 2026년 9월 23일</span>
+      <span><b>전제</b> 회사 사업자로 판매 · 토스페이먼츠 가맹점 계약 보유</span>
+      <span><b>읽는 분</b> 클라이언트</span>
+    </div>
+  </header>
+
+  <nav class="jump" aria-label="문서 안내">
+    <a href="#now">지금 상태</a>
+    <a href="#web">웹</a>
+    <a href="#android">안드로이드</a>
+    <a href="#toss">토스 입점</a>
+    <a href="#fees">수수료</a>
+    <a href="#cost">비용</a>
+    <a href="#when">일정</a>
+  </nav>
+
+  <section id="now">
+    <h2><span class="num">01</span>지금 남은 것</h2>
+    <p>앱은 이미 돌아갑니다. 동화를 만들고, 그림을 그리고, 성우가 읽고, 회원과 토큰 장부까지 서버에서 작동합니다. <strong>사업자등록과 결제사 계약도 끝나 있습니다.</strong> 그래서 남은 일은 크게 두 덩어리뿐입니다.</p>
+
+    <ul class="done-list">
+      <li class="ok"><span class="mark">있음</span><span class="what"><b>앱 기능</b> — 동화 생성·삽화·낭독·회원·토큰 장부·관리실</span></li>
+      <li class="ok"><span class="mark">있음</span><span class="what"><b>팔 값</b> — 낱권 1,500원 / 주 2,900원 / 월 9,900원 / 연 99,000원 (1토큰 = 100원)</span></li>
+      <li class="ok"><span class="mark">있음</span><span class="what"><b>사업자등록 · 토스페이먼츠 계약</b> — 신규 계약과 카드사 심사 2주가 통째로 빠집니다</span></li>
+      <li class="no"><span class="mark">없음</span><span class="what"><b>돈 받는 코드</b> — 결제창을 띄우고 승인받아 토큰을 넣는 부분이 한 줄도 없습니다</span></li>
+      <li class="no"><span class="mark">없음</span><span class="what"><b>법이 요구하는 화면</b> — 이용약관 · 환불 규정 · 개인정보처리방침 · 화면 아래 사업자 정보 · 가입 동의</span></li>
+    </ul>
+
+    <div class="callout" style="--k: var(--warn)">
+      <h4>결제사에 먼저 확인할 것 (하루면 답이 옵니다)</h4>
+      <p class="sub">기존 계약에 <strong>동화앱 주소와 판매 품목(디지털 콘텐츠)을 추가</strong>하면 되는지, 아니면 상점을 따로 내야 하는지 물어보셔야 합니다. 보통은 상점 정보 추가로 며칠이면 끝납니다. 같이 물어볼 것 — <strong>정기결제(자동결제) 계약이 이미 되어 있는지</strong>, 그리고 <strong>통신판매업 신고에 이 도메인이 들어가 있는지</strong>입니다.</p>
+    </div>
+  </section>
+
+  <section id="web">
+    <h2><span class="num">02</span>갈래 1 · 웹으로 열기</h2>
+    <p>가장 빠르고 수수료가 가장 낮습니다. 심사하는 기관이 없어서 준비가 끝나는 날 바로 엽니다. 아래가 실제로 남은 작업 전부입니다.</p>
+
+    <ol class="steps">
+      <li class="block"><div class="step-h"><span class="dur">5~8일</span><span class="who dev">개발</span>결제 붙이기</div><p>결제창을 띄우고, 결제가 끝나면 <strong>서버가 결제사에 직접 확인한 뒤에만</strong> 토큰을 넣습니다. 브라우저 말을 믿으면 누구나 공짜로 토큰을 받습니다. 1차는 <strong>충전(1회 결제)만</strong> 열고 구독은 2차로 미루는 쪽을 권합니다 — 자동결제는 결제사 별도 승인이 필요합니다.</p></li>
+      <li class="block"><div class="step-h"><span class="dur">2일</span><span class="who dev">개발</span>판매 화면</div><p>가격을 부가세 포함으로 처음부터 다 보여 주고, 결제 직전에 최종 확인과 환불 기준을 보여 줍니다. 법으로 정해진 순서입니다.</p></li>
+      <li class="block"><div class="step-h"><span class="dur">3~4일</span><span class="who dev">개발</span>이용약관 · 환불 규정 · 개인정보처리방침</div><p>초안은 제가 씁니다. 클라이언트는 <strong>토큰 유효기간과 환불 기준</strong>만 정해 주시면 됩니다. 만든 동화를 상업적으로 써도 되는지도 여기서 정해 둬야 나중에 분쟁이 없습니다.</p></li>
+      <li class="block"><div class="step-h"><span class="dur">1일</span><span class="who dev">개발</span>화면 아래 사업자 정보 · 문의 창구</div><p>회사 상호·대표자·주소·연락처·사업자번호·통신판매업 신고번호를 넣습니다. 클라이언트는 이 정보와 <strong>고객 문의용 이메일·전화번호</strong>만 주시면 됩니다.</p></li>
+      <li class="block"><div class="step-h"><span class="dur">1~2일</span><span class="who dev">개발</span>가입 동의 + 그림 요청 구멍 막기</div><p>가입할 때 약관·개인정보 동의를 받습니다(아이 정보를 부모가 넣는 구조라 보호자 동의를 함께 받습니다). 그리고 지금은 로그인만 하면 그림 생성을 무제한으로 부를 수 있습니다 — 한 장에 55~100원이 나가므로 문 열기 전에 막아야 합니다.</p></li>
+      <li><div class="step-h"><span class="dur">1일</span><span class="who dev">개발</span>서버 요금제 · 도메인</div><p>지금 쓰는 무료 서버 요금제는 약관상 상업적 사용이 금지입니다. 돈을 받는 순간 유료로 올려야 하고, 안 올리면 서비스가 멈출 수 있습니다.</p></li>
+      <li><div class="step-h"><span class="dur">2~3일</span><span class="who owner">클라이언트</span><span class="who dev">개발</span>열기 전 점검</div><p>새 계정 가입 → 실제 카드로 최소 금액 결제 → 토큰 입금 확인 → 환불까지 손으로 한 번 돌려 봅니다. 통과하면 그날 엽니다.</p></li>
+    </ol>
+
+    <div class="callout" style="--k: var(--web)">
+      <h4>웹은 2~3주</h4>
+      <p class="sub">합치면 개발 <strong>13~19일</strong>입니다. 결제사 상점 추가(며칠)는 이 작업과 동시에 진행되므로 일정에 더해지지 않습니다. 구독(자동결제)까지 넣으면 +2~3주입니다.</p>
+    </div>
+  </section>
+
+  <section id="android">
+    <h2><span class="num">03</span>갈래 2 · 안드로이드</h2>
+    <p>앱을 새로 만들지 않습니다. 지금 웹앱을 주소창 없는 껍데기로 감싸 플레이스토어에 올리는 방식이고, 구글이 공식으로 권하는 길입니다. <strong>웹을 고치면 앱도 같이 바뀌어 스토어 재심사가 없습니다.</strong> 웹에서 만든 약관·처리방침·동의 화면을 그대로 재활용합니다.</p>
+
+    <ol class="steps">
+      <li class="block"><div class="step-h"><span class="dur">최대 30일 대기</span><span class="who owner">클라이언트</span>개발자 계정 만들기 — 지금 바로 신청</div><p>회사 사업자로 내면 “테스터 12명을 14일 동안 붙잡아 두는” 숙제가 <strong>면제</strong>됩니다. 대신 기업 식별번호(D-U-N-S, 무료) 발급에 최대 30일이 걸리므로 <strong>오늘 신청해 두면 그 기간이 개발과 겹쳐 사라집니다.</strong> 등록비는 US$25 한 번뿐입니다.</p></li>
+      <li class="block"><div class="step-h"><span class="dur">즉시</span><span class="who owner">클라이언트</span>업무용 전화번호 준비</div><p>한국 법 때문에 구글이 따로 요구합니다. <strong>전화번호가 없으면 게시가 막힙니다.</strong> 스토어 설명 아래에 공개되니 개인 번호 말고 회사 번호를 쓰셔야 합니다.</p></li>
+      <li class="block"><div class="step-h"><span class="dur">1일</span><span class="who dev">개발</span>마이크 녹음이 되는지 먼저 확인</div><p>부모 목소리 녹음이 이 껍데기 안에서 동작하는지는 공식 문서로 확인되지 않았습니다. 되는 것이 정상이지만, 안 되면 다른 방식으로 갈아타야 하고 그건 +2주입니다. 그래서 다른 작업보다 먼저 시험 빌드로 확인합니다.</p></li>
+      <li class="block"><div class="step-h"><span class="dur">4~6일</span><span class="who dev">개발</span>앱 아이콘 · 오프라인 화면 · 신고 버튼 · 회원 탈퇴</div><p>런처 아이콘이 하나도 없고, 인터넷이 끊기면 흰 화면이 뜹니다. 이 상태로 내면 “웹사이트를 그대로 감싼 앱”으로 반려됩니다. AI가 만든 내용을 앱 안에서 신고하는 버튼과 계정 삭제 기능도 구글이 요구합니다.</p></li>
+      <li class="block"><div class="step-h"><span class="dur">2~3일</span><span class="who dev">개발</span>앱으로 포장하고 스토어 서류 채우기</div><p>데이터 안전 양식(아이 이름·특징이 외부 AI로 나가는 것을 정직하게 신고), 콘텐츠 등급 설문, 아이 대상 선언, 심사관용 테스트 계정을 넣습니다. 게임이 아니라서 게임물관리위원회 등급은 받지 않습니다.</p></li>
+      <li><div class="step-h"><span class="dur">1~7일</span><span class="who owner">클라이언트</span><span class="who dev">개발</span>제출 · 심사</div><p>첫 심사는 보통 1~3일, 길면 일주일입니다. 한 번쯤 반려되는 것을 기본으로 잡는 편이 안전합니다.</p></li>
+    </ol>
+
+    <div class="callout" style="--k: var(--droid)">
+      <h4>1차 출시에는 앱 안에서 팔지 마시길 권합니다</h4>
+      <p class="sub">앱 안에서 토큰을 파는 순간 구글 인앱결제 의무가 걸립니다. 현재 한국은 15%, <strong>2026년 12월 31일부터 새 체계</strong>(신규 설치 20% · 구독 10% 등)로 바뀝니다. 앱은 “읽는 앱”으로 올리고 판매는 웹에서 받으면 수수료도 일정도 유리합니다.</p>
+    </div>
+  </section>
+
+  <section id="toss">
+    <h2><span class="num">04</span>갈래 3 · 토스 앱 입점 (선택)</h2>
+    <p>이미 토스페이먼츠 계약이 있으니 <strong>“토스로 결제받기”는 갈래 1에 이미 포함</strong>되어 있습니다. 여기서 말하는 것은 그것과 다른, <strong>토스 앱 안에 우리 동화앱을 미니앱으로 입점</strong>시키는 일입니다. 토스에는 따로 앱스토어가 없고 이 방식이 그 역할을 합니다.</p>
+    <ul class="plain">
+      <li><strong>수수료 20%</strong>(앱마켓 15% + 토스 5%). 디지털 상품은 토스 인앱결제만 쓸 수 있어 피할 방법이 없습니다. 월 9,900원이면 1,980원 — 웹 직접 결제의 약 6배입니다.</li>
+      <li><strong>앱을 다시 빌드해야 합니다.</strong> 토스는 서버가 화면을 그려 주는 방식을 금지하고, 지금 주소를 그대로 띄우는 것도 금지합니다.</li>
+      <li><strong>그림·소리를 전부 바깥으로 옮겨야 합니다.</strong> 앱에 담기는 용량이 100MB까지인데 지금 들어 있는 그림·낭독이 799MB입니다.</li>
+      <li><strong>노출 연령</strong>이 현재 만 19세 이상(+만 14세 이상 틴즈)입니다. 미취학 아동용 앱을 받아 줄지는 공개되지 않은 내부 기준이라, 검토하신다면 먼저 문의가 필요합니다.</li>
+      <li><strong>추가 기간 8~13주.</strong></li>
+    </ul>
+    <div class="callout" style="--k: var(--toss)">
+      <h4>권하는 판단</h4>
+      <p class="sub">웹과 안드로이드로 매출이 확인된 뒤에 결정하셔도 늦지 않습니다. 토스 앱 노출이 데려오는 손님이 수수료 6배와 앱 재빌드 비용을 넘는지를 <strong>숫자로 보고</strong> 판단하는 것이 맞습니다.</p>
+    </div>
+  </section>
+
+  <section id="fees">
+    <h2><span class="num">05</span>같은 9,900원을 팔아도 남는 돈이 다릅니다</h2>
+    <p>월 구독 9,900원 한 건 기준, 수수료를 뺀 금액입니다. (부가세 별도)</p>
+
+    <div class="bars">
+      <div class="bar-row" style="--c: var(--web)">
+        <div class="bar-label"><b>웹 직접 결제</b>수수료 3.4%</div>
+        <div class="bar-track"><div class="bar-fill" style="width: 96.6%"></div><div class="bar-val">9,563원 <span>−337원</span></div></div>
+      </div>
+      <div class="bar-row" style="--c: var(--droid)">
+        <div class="bar-label"><b>구글 인앱결제</b>수수료 15%</div>
+        <div class="bar-track"><div class="bar-fill" style="width: 85%"></div><div class="bar-val">8,415원 <span>−1,485원</span></div></div>
+      </div>
+      <div class="bar-row" style="--c: var(--toss)">
+        <div class="bar-label"><b>토스 앱 입점</b>수수료 20%</div>
+        <div class="bar-track"><div class="bar-fill" style="width: 80%"></div><div class="bar-val">7,920원 <span>−1,980원</span></div></div>
+      </div>
+    </div>
+    <p class="sub">동화 한 권을 만드는 AI 원가가 480~865원입니다. 수수료가 20%면 <strong>구독 한 건에서 동화 두 권 값이 그대로 사라지는</strong> 셈이라, 판매 경로에 따라 가격표를 다시 봐야 합니다.</p>
+  </section>
+
+  <section id="cost">
+    <h2><span class="num">06</span>비용</h2>
+    <p>사업자등록과 결제사 계약이 끝나 있어서 <strong>목돈이 드는 항목은 사실상 없습니다.</strong> 남은 것은 매달 나가는 서버비와 팔릴 때마다 나가는 수수료·원가입니다.</p>
+
+    <div class="scroller">
+      <table>
+        <thead><tr><th>항목</th><th class="num">금액</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td>결제사 신규 가입비</td><td class="num">0원</td><td>이미 계약되어 있어 가입비 22만원·연 관리비 11만원이 빠집니다<span class="note">상점 추가에 비용이 붙는지는 결제사에 확인 필요</span></td></tr>
+          <tr><td>사업자등록 · 통신판매업</td><td class="num">0원</td><td>완료 상태<span class="note">도메인이 신고 내용에 없으면 변경 신고만</span></td></tr>
+          <tr><td>도메인</td><td class="num">연 15,000~25,000원</td><td>쓰던 주소를 그대로 쓰면 0원</td></tr>
+          <tr><td>구글 플레이 등록비</td><td class="num">US$25 (약 35,000원)</td><td>평생 1회 · 안드로이드로 갈 때만</td></tr>
+          <tr class="total"><td>초기 한 번</td><td class="num">0 ~ 60,000원</td><td>안드로이드까지 포함한 금액</td></tr>
+          <tr><td>서버 · 데이터베이스 · 이미지 호스팅</td><td class="num">월 약 100,000원</td><td>유료 전환 기준<span class="note">손님이 늘면 전송량이 여기에 더 붙습니다</span></td></tr>
+          <tr><td>결제 수수료</td><td class="num">3.4%</td><td>회사 기존 계약 요율이 있으면 그 요율<span class="note">부가세 별도</span></td></tr>
+          <tr><td>동화 1권 AI 원가</td><td class="num">480~865원</td><td>팔린 만큼 비례해서 나갑니다</td></tr>
+          <tr class="total"><td>매달 고정</td><td class="num">약 100,000원</td><td>+ 판매량에 비례하는 수수료와 AI 원가</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="when">
+    <h2><span class="num">07</span>일정</h2>
+    <div class="scroller">
+      <table>
+        <thead><tr><th>단계</th><th class="num">기간</th><th>무엇이 끝나는가</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1단계 · 웹 오픈</strong></td><td class="num">2~3주</td><td>결제·약관·처리방침·사업자 정보·동의까지 끝나 실제로 돈을 받기 시작합니다</td></tr>
+          <tr><td><strong>2단계 · 안드로이드</strong></td><td class="num">웹과 병행 · 계정 준비 포함 4~7주</td><td>플레이스토어에 “읽는 앱”으로 올라갑니다. 개발자 계정을 오늘 신청하면 대기가 개발과 겹칩니다</td></tr>
+          <tr><td>3단계 · 구독(자동결제)</td><td class="num">+2~3주</td><td>충전만으로 열어 둔 뒤, 결제사 승인을 받아 나중에 붙입니다</td></tr>
+          <tr><td>4단계 · 토스 앱 입점</td><td class="num">+8~13주 (선택)</td><td>매출 확인 후 판단</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sub">클라이언트가 지금 바로 해 주실 일은 셋뿐입니다 — <strong>결제사에 상점 추가 문의</strong>, <strong>구글 개발자 계정 신청</strong>, <strong>고객 문의용 이메일·전화번호 준비</strong>. 나머지는 개발에서 진행합니다.</p>
+  </section>
+
+  <div class="footnote">
+    <h3>확인이 필요한 것</h3>
+    <ul>
+      <li>기존 결제 계약에 동화앱 주소와 판매 품목을 추가하면 되는지, 추가 심사나 비용이 붙는지.</li>
+      <li>정기결제(자동결제) 계약이 이미 되어 있는지 — 구독을 팔 때 필요합니다.</li>
+      <li>통신판매업 신고 내용에 이 서비스의 도메인이 들어가 있는지.</li>
+      <li>앱 껍데기 안에서 마이크 녹음이 실제로 동작하는지 — 시험 빌드로만 확인됩니다.</li>
+      <li>이야기·그림·목소리에 쓰는 외부 AI 서비스 약관이 유료 서비스에서의 사용과 목소리 복제를 어떤 조건으로 허용하는지.</li>
+    </ul>
+    <p style="margin-top:14px">플랫폼 수수료와 정책은 자주 바뀝니다. 이 문서의 숫자는 2026년 9월 23일에 각 플랫폼 공식 문서에서 확인한 값입니다.</p>
+  </div>
+</div>
+
+</body>
+</html>
