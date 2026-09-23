@@ -1556,7 +1556,7 @@
       {
         "n": 18,
         "text": "며칠 뒤, 엄마 돼지가 언덕에 올라왔어요.\n벽돌집 세 채가 나란히 서 있었지요.\n\"어머, 셋이 같이 지었구나?\"\n\"응! 막내가 가르쳐 줬어.\"\n엄마는 셋을 폭 안아 주었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p18.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p18.webp?v=4",
         "lines": [
           {
             "text": "어머, 셋이 같이 지었구나?",
@@ -1598,10 +1598,10 @@
             "label": "mompig",
             "line": "어머, 셋이 같이 지었구나?",
             "box": [
-              139,
-              398,
-              466,
-              670
+              240,
+              360,
+              590,
+              580
             ],
             "audio": "/classic/threepigs/say-p18-mompig.mp3",
             "feel": "happy",
@@ -1611,10 +1611,10 @@
             "label": "pig1",
             "line": "응! 막내가 가르쳐 줬어.",
             "box": [
-              474,
-              205,
-              808,
-              386
+              420,
+              640,
+              900,
+              770
             ],
             "audio": "/classic/threepigs/say-p18-pig1.mp3",
             "feel": "happy",
