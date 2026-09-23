@@ -798,7 +798,7 @@
       {
         "n": 3,
         "text": "둘째는 형이 노는 걸 보고 슬쩍 따라 하고 싶었어요.\n그래도 지푸라기보다는 낫겠다 싶어\n나뭇가지를 뚝딱뚝딱 엮었지요.\n\"이 정도면 됐지 뭐. 형아, 나도 다 했어!\"\n둘째도 곧장 놀러 나갔답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p3.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p3.webp?v=4",
         "lines": [
           {
             "text": "이 정도면 됐지 뭐. 형아, 나도 다 했어!",
@@ -829,10 +829,10 @@
             "label": "pig2",
             "line": "이 정도면 됐지 뭐. 형아, 나도 다 했어!",
             "box": [
-              256,
-              500,
-              684,
-              733
+              140,
+              390,
+              850,
+              700
             ],
             "audio": "/classic/threepigs/say-p3-pig2.mp3",
             "feel": "happy",
@@ -843,7 +843,7 @@
       {
         "n": 4,
         "text": "막내는 언덕 아래에서 벽돌을 골랐어요.\n한 장, 두 장, 진흙을 발라 차곡차곡.\n\"난 튼튼한 집을 짓고 싶어.\"\n형들은 벌써 놀러 갔지만\n막내는 해가 기울도록 벽돌을 날랐답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p4.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p4.webp?v=4",
         "lines": [
           {
             "text": "난 튼튼한 집을 짓고 싶어.",
@@ -872,10 +872,10 @@
             "label": "pig3",
             "line": "난 튼튼한 집을 짓고 싶어.",
             "box": [
-              217,
-              341,
-              785,
-              625
+              200,
+              200,
+              850,
+              580
             ],
             "audio": "/classic/threepigs/say-p4-pig3.mp3"
           }
@@ -884,7 +884,7 @@
       {
         "n": 5,
         "text": "형들이 지나가다 킥킥 웃었어요.\n\"야, 뭐 하러 그렇게 힘들게 짓냐?\"\n\"우리처럼 뚝딱 짓고 놀자!\"\n막내는 들고 있던 벽돌을 슬며시 내려놓았어요.\n손바닥이 벌겋게 부어 있었지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p5.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p5.webp?v=4",
         "lines": [
           {
             "text": "야, 뭐 하러 그렇게 힘들게 짓냐?",
@@ -926,10 +926,10 @@
             "label": "pig1",
             "line": "야, 뭐 하러 그렇게 힘들게 짓냐?",
             "box": [
-              53,
-              34,
-              878,
-              341
+              130,
+              90,
+              850,
+              390
             ],
             "audio": "/classic/threepigs/say-p5-pig1.mp3",
             "feel": "happy",
@@ -939,10 +939,10 @@
             "label": "pig2",
             "line": "우리처럼 뚝딱 짓고 놀자!",
             "box": [
-              201,
-              352,
-              762,
-              568
+              170,
+              395,
+              820,
+              640
             ],
             "audio": "/classic/threepigs/say-p5-pig2.mp3",
             "feel": "happy",
@@ -1000,7 +1000,7 @@
       {
         "n": 7,
         "text": "멀리서 형들 웃는 소리가 들려왔어요.\n막내는 마지막 벽돌을 얹고, 벽난로에 불을 피웠지요.\n해가 지자 굴뚝에서 연기가 폴폴 올랐어요.\n\"…다 지었다.\"\n막내는 제 집을 올려다보며 뿌듯하게 웃었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p7.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p7.webp?v=4",
         "lines": [
           {
             "text": "…다 지었다.",
@@ -1031,10 +1031,10 @@
             "label": "pig3",
             "line": "…다 지었다.",
             "box": [
-              450,
-              80,
-              956,
-              307
+              280,
+              340,
+              880,
+              680
             ],
             "audio": "/classic/threepigs/say-p7-pig3.mp3",
             "feel": "happy",
@@ -1231,7 +1231,7 @@
       {
         "n": 11,
         "text": "늑대는 나무 집 앞에 우뚝 서서, 숨을 크게 들이마셨어요.\n\"거기 있는 거 다 안다!\"\n후욱! 후우욱! 우지끈 와르르!\n나뭇가지가 사방으로 튀고, 집이 폭삭 무너졌지요.\n형제는 서로 손을 잡고 달렸답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p11.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p11.webp?v=4",
         "lines": [
           {
             "text": "거기 있는 거 다 안다!",
@@ -1263,10 +1263,10 @@
             "label": "wolf",
             "line": "거기 있는 거 다 안다!",
             "box": [
-              121,
-              107,
-              910,
-              352
+              60,
+              55,
+              620,
+              500
             ],
             "audio": "/classic/threepigs/say-p11-wolf.mp3",
             "feel": "toneup",
@@ -1348,7 +1348,7 @@
       {
         "n": 13,
         "text": "늑대는 벽돌집 앞에서 숨을 크게 들이마셨어요.\n후욱! 후우욱! 후우욱!\n창문이 조금 떨렸을 뿐, 벽돌집은 꿈쩍도 하지 않았지요.\n늑대는 어지러워 비틀거렸어요.\n\"어? 왜 안 넘어가는 거지?\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p13.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p13.webp?v=4",
         "lines": [
           {
             "text": "어? 왜 안 넘어가는 거지?",
@@ -1375,10 +1375,10 @@
             "label": "wolf",
             "line": "어? 왜 안 넘어가는 거지?",
             "box": [
-              170,
-              80,
-              878,
-              432
+              150,
+              130,
+              850,
+              700
             ],
             "audio": "/classic/threepigs/say-p13-wolf.mp3",
             "feel": "toneup",
@@ -1479,7 +1479,7 @@
       {
         "n": 16,
         "text": "늑대는 마당으로 툭 떨어졌어요.\n그러고는 걸음아 날 살려라, 산 너머로 달아나 버렸지요.\n셋은 창문에 붙어 그 모습을 지켜보았어요.\n늑대가 보이지 않자 그제야 안심했답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p16.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p16.webp?v=4",
         "segments": [
           {
             "who": "narration",
