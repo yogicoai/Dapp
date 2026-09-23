@@ -5,12 +5,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AddToHomeHint } from "@/components/AddToHomeHint";
 import { BgVideo } from "@/components/BgVideo";
-import { Bookcase } from "@/components/Bookcase";
 import { Bookshelf } from "@/components/Bookshelf";
 import { useTheme } from "@/components/ThemeProvider";
 import { UpdateNotice } from "@/components/UpdateNotice";
 import { DEMO_SHELF_OWNER, loadSession } from "@/lib/auth";
-import { BOOKCASE_AFTER, SHELF_ART } from "@/lib/bookshelves";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
@@ -135,8 +133,6 @@ export default function Home() {
   const folk = asBooks(folkBooksJson).filter((b) => !b.hidden);
   const classics = asBooks(classicBooksJson).filter((b) => !b.hidden);
   const shown = shelf === "mine" ? mine : shelf === "folk" ? folk : classics;
-  // 책이 많으면 나라 책장에 책등으로 꽂는다 — 책장·책등 그림이 있는 나라만.
-  const shelfArt = shown.length > BOOKCASE_AFTER ? SHELF_ART[theme.id] : undefined;
 
   // 준비 화면 — 로그인 확인과 책장 데이터가 '둘 다' 끝날 때까지 붙잡아 둔다.
   // 중간에 화면을 열면 빈 책장이 잠깐 보였다가 책이 채워져 어수선하다(사장님 지적).
@@ -405,8 +401,6 @@ export default function Home() {
               </>
             )}
           </div>
-        ) : shelfArt ? (
-          <Bookcase books={shown} art={shelfArt} />
         ) : (
           <Bookshelf books={shown} cols={shelfCols} />
         )}
