@@ -1263,10 +1263,10 @@
             "label": "wolf",
             "line": "거기 있는 거 다 안다!",
             "box": [
-              60,
-              55,
-              620,
-              500
+              200,
+              800,
+              460,
+              990
             ],
             "audio": "/classic/threepigs/say-p11-wolf.mp3",
             "feel": "toneup",
