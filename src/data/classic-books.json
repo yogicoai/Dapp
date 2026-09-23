@@ -7763,7 +7763,7 @@
     "narrators": [
       "tc-minjung"
     ],
-    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p1.webp?v=1",
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p1.webp?v=3",
     "voiceCast": {
       "narration": "tc-minjung",
       "princess": "tc-arin",
@@ -7781,7 +7781,7 @@
       {
         "n": 1,
         "text": "옛날 어느 나라에 예쁜 공주가 살았어요.\n공주에게는 세상에서 제일 아끼는 황금 공이 하나 있었지요.\n햇빛을 받으면 반짝반짝 빛나는 공이었어요.\n공주는 날마다 궁궐 뜰 우물가에서, 그 공을 높이 던지며 놀았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p1.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p1.webp?v=3",
         "segments": [
           {
             "who": "narration",
@@ -7793,7 +7793,7 @@
       {
         "n": 2,
         "text": "그런데 어느 날, 공을 너무 높이 던지고 말았어요.\n황금 공은 손끝을 스치더니, 우물 속으로 풍덩 빠져 버렸지요.\n우물은 바닥이 보이지 않을 만큼 깊었어요.\n공주는 우물가에 주저앉아 엉엉 울었답니다.\n\"내 황금 공… 이제 어떡해.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p2.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p2.webp?v=3",
         "lines": [
           {
             "text": "내 황금 공… 이제 어떡해.",
@@ -7818,10 +7818,10 @@
             "label": "princess",
             "line": "내 황금 공… 이제 어떡해.",
             "box": [
-              127,
-              160,
-              961,
-              473
+              40,
+              60,
+              860,
+              400
             ],
             "audio": "/classic/frogprince/say-p2-princess.mp3"
           }
@@ -7830,7 +7830,7 @@
       {
         "n": 3,
         "text": "그때 우물 속에서 첨벙, 하는 소리가 났어요.\n초록빛 개구리 한 마리가 물 위로 얼굴을 쏙 내밀었지요.\n\"공주님, 왜 그리 슬피 우세요?\"\n말을 하는 개구리라니! 공주는 눈물도 잊고 개구리를 바라보았어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p3.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p3.webp?v=3",
         "lines": [
           {
             "text": "공주님, 왜 그리 슬피 우세요?",
@@ -7861,10 +7861,10 @@
             "label": "frog",
             "line": "공주님, 왜 그리 슬피 우세요?",
             "box": [
-              486,
-              591,
-              625,
-              718
+              420,
+              170,
+              690,
+              410
             ],
             "audio": "/classic/frogprince/say-p3-frog.mp3",
             "feel": "tonedown",
@@ -7875,7 +7875,7 @@
       {
         "n": 4,
         "text": "공주는 황금 공을 빠뜨렸다고 이야기했어요.\n개구리는 잠시 생각하더니 조용히 말했지요.\n\"제가 꺼내 드릴게요. 그 대신 저와 친구가 되어 주세요.\n같은 밥상에서 밥을 먹고, 같은 방에서 지내게 해 주세요.\"\n공주는 공만 찾으면 된다는 생각에, 얼른 고개를 끄덕였답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p4.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p4.webp?v=3",
         "lines": [
           {
             "text": "제가 꺼내 드릴게요. 그 대신 저와 친구가 되어 주세요.\n같은 밥상에서 밥을 먹고, 같은 방에서 지내게 해 주세요.",
@@ -7906,10 +7906,10 @@
             "label": "frog",
             "line": "제가 꺼내 드릴게요. 그 대신 저와 친구가 되어 주세요.\n같은 밥상에서 밥을 먹고, 같은 방에서 지내게 해 주세요.",
             "box": [
-              382,
-              211,
-              567,
-              397
+              260,
+              255,
+              550,
+              500
             ],
             "audio": "/classic/frogprince/say-p4-frog.mp3",
             "feel": "tonedown",
@@ -7920,7 +7920,7 @@
       {
         "n": 5,
         "text": "개구리는 우물 속으로 쏙 들어갔어요.\n한참 뒤, 개구리가 황금 공을 물고 올라왔지요.\n공주는 공을 받아 들자마자, 뒤도 돌아보지 않고 궁궐로 달려갔어요.\n개구리가 뒤에서 부르는 소리는 들리지도 않았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p5.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p5.webp?v=3",
         "segments": [
           {
             "who": "narration",
@@ -7932,7 +7932,7 @@
       {
         "n": 6,
         "text": "그날 저녁, 궁궐 문에서 똑똑 소리가 났어요.\n문틈으로 초록빛 개구리가 폴짝 뛰어 들어왔지요.\n공주는 깜짝 놀라 접시를 떨어뜨릴 뻔했어요.\n\"공주님, 약속하셨잖아요.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p6.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p6.webp?v=3",
         "lines": [
           {
             "text": "공주님, 약속하셨잖아요.",
@@ -7958,10 +7958,10 @@
             "label": "frog",
             "line": "공주님, 약속하셨잖아요.",
             "box": [
-              752,
-              8,
-              903,
-              93
+              570,
+              160,
+              830,
+              330
             ],
             "audio": "/classic/frogprince/say-p6-frog.mp3",
             "feel": "sad",
@@ -7972,7 +7972,7 @@
       {
         "n": 7,
         "text": "공주는 아무 말도 못 하고 고개를 푹 숙였어요.\n그 모습을 지켜보던 임금님이 무슨 일이냐고 조용히 물으셨지요.\n공주는 우물가에서 있었던 일을, 하나도 빠짐없이 이야기했어요.\n\"한 번 한 약속은 지키는 것이란다. 작은 개구리와 한 약속이라도 말이다.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p7.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p7.webp?v=3",
         "lines": [
           {
             "text": "한 번 한 약속은 지키는 것이란다. 작은 개구리와 한 약속이라도 말이다.",
@@ -7999,10 +7999,10 @@
             "label": "king",
             "line": "한 번 한 약속은 지키는 것이란다. 작은 개구리와 한 약속이라도 말이다.",
             "box": [
-              93,
-              84,
-              648,
-              355
+              60,
+              175,
+              720,
+              500
             ],
             "audio": "/classic/frogprince/say-p7-king.mp3",
             "feel": "tonedown",
@@ -8014,7 +8014,7 @@
       {
         "n": 8,
         "text": "공주는 마지못해 개구리를 밥상 위에 올려 주었어요.\n개구리는 공주의 접시에서 밥알을 조금씩 집어 먹었지요.\n공주는 입맛이 뚝 떨어져 숟가락만 만지작거렸어요.\n\"저는 공주님과 같이 먹는 이 밥이 참 맛있어요.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p8.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p8.webp?v=3",
         "lines": [
           {
             "text": "저는 공주님과 같이 먹는 이 밥이 참 맛있어요.",
@@ -8040,10 +8040,10 @@
             "label": "frog",
             "line": "저는 공주님과 같이 먹는 이 밥이 참 맛있어요.",
             "box": [
-              544,
-              177,
-              764,
-              329
+              490,
+              620,
+              860,
+              860
             ],
             "audio": "/classic/frogprince/say-p8-frog.mp3",
             "feel": "happy",
@@ -8054,20 +8054,19 @@
       {
         "n": 9,
         "text": "밤이 되자, 개구리가 방문 앞에서 기다리고 있었어요.\n공주는 한숨을 쉬며, 개구리를 방 안 창가에 놓아 주었지요.\n달빛 아래 개구리는 아주 작고 외로워 보였어요.\n공주는 그제야 개구리를 가만히 들여다보았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p9.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p9.webp?v=3",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/frogprince/seg-p9-0.mp3",
             "text": "밤이 되자, 개구리가 방문 앞에서 기다리고 있었어요.\n공주는 한숨을 쉬며, 개구리를 방 안 창가에 놓아 주었지요.\n달빛 아래 개구리는 아주 작고 외로워 보였어요.\n공주는 그제야 개구리를 가만히 들여다보았답니다."
           }
-        ],
-        "video": "/classic/frogprince/p9.mp4"
+        ]
       },
       {
         "n": 10,
         "text": "개구리는 조그만 목소리로 이야기를 꺼냈어요.\n\"저는 사실 마법에 걸린 왕자랍니다.\n마음을 알아주는 사람을 만나야 마법이 풀린대요.\"\n공주는, 그동안 개구리를 밀어내기만 했던 자신이 부끄러워졌어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p10.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p10.webp?v=3",
         "lines": [
           {
             "text": "저는 사실 마법에 걸린 왕자랍니다.\n마음을 알아주는 사람을 만나야 마법이 풀린대요.",
@@ -8099,10 +8098,10 @@
             "label": "frog",
             "line": "저는 사실 마법에 걸린 왕자랍니다.\n마음을 알아주는 사람을 만나야 마법이 풀린대요.",
             "box": [
-              579,
-              127,
-              799,
-              287
+              320,
+              80,
+              680,
+              400
             ],
             "audio": "/classic/frogprince/say-p10-frog.mp3",
             "feel": "tonedown",
@@ -8114,7 +8113,7 @@
       {
         "n": 11,
         "text": "공주는 두 손으로 개구리를 조심스럽게 감싸 안았어요.\n그러고는 진심을 담아 말했지요.\n\"미안해. 약속을 지키지 않아서, 그리고 네 마음을 몰라줘서.\"\n그 순간 눈부신 빛이 방 안에 가득 찼어요.\n개구리가 있던 자리에는, 다정한 얼굴의 왕자가 서 있었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p11.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p11.webp?v=3",
         "lines": [
           {
             "text": "미안해. 약속을 지키지 않아서, 그리고 네 마음을 몰라줘서.",
@@ -8144,10 +8143,10 @@
             "label": "princess",
             "line": "미안해. 약속을 지키지 않아서, 그리고 네 마음을 몰라줘서.",
             "box": [
-              174,
-              279,
-              961,
-              507
+              240,
+              260,
+              890,
+              460
             ],
             "audio": "/classic/frogprince/say-p11-princess.mp3"
           }
@@ -8156,7 +8155,7 @@
       {
         "n": 12,
         "text": "다음 날 아침, 왕자는 공주에게 고개를 깊이 숙여 고맙다고 인사했어요.\n임금님도 두 사람을 보며 껄껄 웃으셨지요.\n그날부터 공주는 황금 공보다 소중한 것을 알게 되었답니다.\n작은 약속을 지키는 마음, 그리고 남의 마음을 알아주는 마음이었어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p12.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/frogprince/p12.webp?v=3",
         "segments": [
           {
             "who": "narration",
