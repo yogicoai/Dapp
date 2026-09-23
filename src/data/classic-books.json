@@ -1491,7 +1491,7 @@
       {
         "n": 17,
         "text": "한참 뒤, 방 안이 조용해졌어요.\n첫째가 먼저 입을 열었지요.\n\"막내야… 아까 놀려서 미안해.\"\n\"우리가 게을렀어. 정말 고마워.\"\n막내는 대답 대신 형들을 벽난로 앞에 앉혔어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p17.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p17.webp?v=4",
         "lines": [
           {
             "text": "막내야… 아까 놀려서 미안해.",
@@ -1531,10 +1531,10 @@
             "label": "pig1",
             "line": "막내야… 아까 놀려서 미안해.",
             "box": [
-              240,
-              159,
-              878,
-              398
+              200,
+              145,
+              800,
+              410
             ],
             "audio": "/classic/threepigs/say-p17-pig1.mp3"
           },
@@ -1542,10 +1542,10 @@
             "label": "pig2",
             "line": "우리가 게을렀어. 정말 고마워.",
             "box": [
-              279,
-              403,
-              839,
-              585
+              220,
+              400,
+              800,
+              650
             ],
             "audio": "/classic/threepigs/say-p17-pig2.mp3",
             "feel": "tonedown",
