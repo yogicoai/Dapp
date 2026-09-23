@@ -550,16 +550,17 @@
       "왕자님": "prince",
       "신하": "servant",
       "신하들": "servant",
-      "사람들": "crowd"
+      "사람들": "crowd",
+      "요정님": "fairy"
     },
     "voiceCast": {
       "narration": "tc-minjung",
-      "cinderella": "tc-minju",
+      "cinderella": "tc-najin",
       "sister": "tc-gahee",
       "stepmom": "tc-sookhee",
       "fairy": "tc-jiwoo",
       "prince": "tc-taewoo",
-      "servant": "tc-daejin",
+      "servant": "tc-sullock",
       "crowd": "tc-minjung"
     },
     "style": "THE TWO THINGS THAT MATTER MOST, before anything else. (1) FACES: every face is a children's-picture-book face — a big round head, full round cheeks that push the eyes into soft curves, a tiny simple nose, large dark dot eyes with one white highlight, and a small curved mouth. Heads are drawn LARGE relative to the body, about one quarter of the total height. Never a small realistic face, never flat blank features, never a doll face, never an adult face on a child. (2) INK LINE: every shape is closed with a CLEARLY VISIBLE brush-drawn outline in warm soot-brown — a confident line that swells and tapers, a little dry and broken at its ends. The line must read plainly at a glance. Never a faint pencil line, never an outline that melts into the colour, never a soft airbrushed edge. Then the rest: transparent watercolour on cream paper, matte, the paper tooth breathing through every wash. Colour is laid broad and flat, two or three tones to an object, always kept inside the ink line. Keep it simple — a few big shapes make the picture and the rest of the frame stays calm. Pigments: warm ochre, raw sienna and soot grey for the kitchen and hearth; cerulean and pale indigo for night; rose, buttercup yellow and plum for the sisters and stepmother; chalk white with a faint silver-blue for the ball gown; gold ochre for the coach and candlelight. Even the night pages stay luminous. Flat hand-drawn 2D — NOT 3D, not CGI, not a glossy render, not anime or manga, not a Disney film still, not a muted flat-vector or mid-century poster look, no sparkles and no digital glow.",
