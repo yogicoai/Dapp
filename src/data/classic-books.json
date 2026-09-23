@@ -953,7 +953,7 @@
       {
         "n": 6,
         "text": "'…나도 그냥 놀까?'\n막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n아주 반듯했어요.\n\"그래도 난, 튼튼한 집을 짓고 싶어.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p6.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p6.webp?v=4",
         "lines": [
           {
             "text": "그래도 난, 튼튼한 집을 짓고 싶어.",
@@ -971,10 +971,10 @@
             "label": "pig3",
             "line": "그래도 난, 튼튼한 집을 짓고 싶어.",
             "box": [
-              217,
-              472,
-              730,
-              733
+              250,
+              450,
+              820,
+              880
             ],
             "audio": "/classic/threepigs/say-p6-pig3.mp3"
           }
