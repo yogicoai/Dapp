@@ -1277,7 +1277,7 @@
       {
         "n": 12,
         "text": "\"막내야! 늑대가 나타났어, 문 열어 줘!\"\n첫째가 문을 쾅쾅 두드렸어요.\n막내는 벌떡 일어나 문을 열었어요.\n\"빨리 들어와!\"\n형들이 뛰어 들어오자 문이 쿵 닫혔답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p12.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p12.webp?v=4",
         "lines": [
           {
             "text": "막내야! 늑대가 나타났어, 문 열어 줘!",
@@ -1320,10 +1320,10 @@
             "label": "pig1",
             "line": "막내야! 늑대가 나타났어, 문 열어 줘!",
             "box": [
-              310,
-              170,
-              878,
-              432
+              330,
+              330,
+              820,
+              660
             ],
             "audio": "/classic/threepigs/say-p12-pig1.mp3",
             "feel": "toneup",
@@ -1334,10 +1334,10 @@
             "label": "pig3",
             "line": "빨리 들어와!",
             "box": [
-              349,
-              636,
-              824,
-              886
+              280,
+              675,
+              870,
+              890
             ],
             "audio": "/classic/threepigs/say-p12-pig3.mp3",
             "feel": "toneup",
@@ -1389,7 +1389,7 @@
       {
         "n": 14,
         "text": "그때 늑대 눈에 굴뚝이 보였어요.\n\"굴뚝으로 들어가면 되겠다!\"\n늑대가 지붕으로 기어오르는 소리를 듣고\n막내는 벽난로에 장작을 한 아름 넣었지요.\n불꽃이 활활 타올랐답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p14.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p14.webp?v=4",
         "lines": [
           {
             "text": "굴뚝으로 들어가면 되겠다!",
@@ -1421,10 +1421,10 @@
             "label": "wolf",
             "line": "굴뚝으로 들어가면 되겠다!",
             "box": [
-              23,
-              275,
-              342,
-              650
+              50,
+              180,
+              480,
+              660
             ],
             "audio": "/classic/threepigs/say-p14-wolf.mp3",
             "feel": "happy",
