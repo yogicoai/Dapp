@@ -16,6 +16,7 @@ import { VoiceGlyph } from "@/components/VoiceGlyph";
 import { ROLE_STICKER, type Colors } from "@/components/family/family-ui";
 import { FaceAvatar } from "@/components/family/Figures";
 import { HangerIcon, LockIcon } from "@/components/family/icons";
+import { LooksPreview } from "@/components/family/ui";
 import type { FamilyMember } from "@/lib/family";
 import {
   adultLookRows,
@@ -172,7 +173,8 @@ function ChipButton({
       onClick={onClick}
       aria-pressed={on}
       style={on ? { background: colors.accent } : undefined}
-      className={`flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-bold transition ${
+      // min-h-11 — 누름 영역 44px(가족 화면 Chip 과 같다). 칩이 많고 붙어 있어 옆 칩이 눌리기 쉽다.
+      className={`flex min-h-11 shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-bold transition ${
         on ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
       }`}
     >
@@ -419,24 +421,26 @@ export function AdultLooksEditor({
             onChange={(e) => onPatch(role, { note: e.target.value.slice(0, PARENT_NOTE_MAX) || undefined })}
             maxLength={PARENT_NOTE_MAX}
             placeholder={role === "mom" ? "예: 머리를 늘 한쪽으로 넘겨요" : "예: 웃으면 눈이 안 보여요"}
-            className="w-full rounded-xl border-2 border-neutral-100 bg-neutral-50 px-3 py-2 text-[13px] font-medium text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-200"
+            className="min-h-11 w-full rounded-xl border-2 border-neutral-100 bg-neutral-50 px-3 py-2 text-[13px] font-medium text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-200"
           />
         </div>
 
-        {/* 지금 고른 것을 한 줄로 — 이 문장이 그대로 이야기·그림에 전해진다. */}
+        {/* 지금 고른 것을 한 줄로 — 이 문장이 그대로 이야기·그림에 전해진다. 길어서 두 줄만 보이고 편다. */}
         {picked > 0 ? (
-          <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-emerald-50 px-4 py-2.5">
-            <p className="min-w-0 flex-1 break-keep text-[12px] font-bold leading-relaxed text-emerald-700">
-              이렇게 그려요 — {parentLooksToPrompt(p, role)}
-            </p>
-            <button
-              type="button"
-              onClick={() => onClear(role)}
-              className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[11px] font-extrabold text-neutral-500 shadow-sm"
-            >
-              {label} 모두 지우기
-            </button>
-          </div>
+          <LooksPreview
+            key={role}
+            text={`이렇게 그려요 — ${parentLooksToPrompt(p, role)}`}
+            textClass="text-[12px]"
+            action={
+              <button
+                type="button"
+                onClick={() => onClear(role)}
+                className="min-h-11 shrink-0 rounded-full bg-white px-3.5 text-[11px] font-extrabold text-neutral-500 shadow-sm"
+              >
+                {label} 모두 지우기
+              </button>
+            }
+          />
         ) : (
           <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-[12px] font-bold text-neutral-400">
             아무것도 안 고르시면 {label} 모습은 앱이 알아서 그려요.

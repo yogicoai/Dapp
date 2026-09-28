@@ -34,7 +34,7 @@ import type { ChildLooks, ChildPrefs, ParentLooks } from "@/lib/prefs";
 import { displayName, genderOf, looksLine, topicOf, type Colors } from "./family-ui";
 import { FaceAvatar } from "./Figures";
 import { HangerIcon, LockIcon } from "./icons";
-import { BigButton, BottomBar, Chip, StepDots, TopBar } from "./ui";
+import { BigButton, BottomBar, Chip, LooksPreview, StepDots, TopBar } from "./ui";
 
 /** 칩 한 줄 — 하나만 고르기 / 여러 개 고르기(max 개까지) */
 type Row =
@@ -264,10 +264,9 @@ export function LooksView({
           />
         </div>
 
-        <div className="mt-5 rounded-2xl bg-emerald-50 px-4 py-3" aria-live="polite">
-          <p className="break-keep text-[13px] font-bold leading-relaxed text-emerald-700">
-            {preview ? `이렇게 그려요 — ${preview}` : "아무것도 안 고르시면 알아서 그려요."}
-          </p>
+        {/* 그림에 보내는 문장 그대로라 길다 — 두 줄만 보이고 '전체 보기'로 편다(LooksPreview). */}
+        <div className="mt-5">
+          <LooksPreview key={m.id} text={preview ? `이렇게 그려요 — ${preview}` : "아무것도 안 고르시면 알아서 그려요."} />
         </div>
 
         {mode === "fix" && (

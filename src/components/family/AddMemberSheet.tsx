@@ -252,7 +252,8 @@ export function AddMemberSheet({
       )}
 
       {role === "friend" && (
-        <Field label="남자 친구예요, 여자 친구예요?">
+        // '남자 친구·여자 친구'는 흔히 연인으로 읽힌다 — 아이의 단짝을 묻는 말로 둔다.
+        <Field label="남자아이예요, 여자아이예요?">
           <div className="flex gap-2">
             {(
               [

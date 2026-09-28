@@ -9,6 +9,7 @@ import { CookieIcon, NextIcon } from "@/components/family/icons";
 import { useTheme } from "@/components/ThemeProvider";
 import {
   FAMILY_FIRST_COST,
+  familyMembersOnly,
   familyTitle,
   fixedMembers,
   groupOrder,
@@ -24,10 +25,11 @@ import type { ChildPrefs, Gender } from "@/lib/prefs";
  *
  * 사장님이 이 자리(제목 아래, 예전 마스코트 큰 원·부제 알약 자리)를 특히 좋아했다.
  * 세 가지 모습:
- *  - 고정한 사람이 없으면 '입구' 폴라로이드: 예시 가족 그림 + '우리 가족 그리기'.
+ *  - 홈에 설 사람도, 고정한 가족도 없으면 '입구' 폴라로이드: 예시 가족 그림 + '우리 가족 그리기'
+ *    (단짝 친구만 고정했어도 — 단짝 친구는 가족이 아니고 처음 값이 '홈 사진 끔'이다).
  *  - '홈 가족 사진에 보이기'를 켠 고정된 사람이 있으면 단체 사진(그 사람들만 — homeMembers)
  *    + 명패('○○이네 가족 ›' → /family).
- *  - 고정한 사람은 있는데 모두 홈 보이기를 껐으면 큰 사진 대신 명패 한 줄 알약만(작은 얼굴 없이).
+ *  - 고정한 가족은 있는데 모두 홈 보이기를 껐으면 큰 사진 대신 명패 한 줄 알약만(작은 얼굴 없이).
  *    끈 사람도 고정 얼굴은 그대로라 동화엔 나온다(사장님 2026-09-28).
  * 명패는 아이 이름에 '우리 아이예요'를 켠 형제 이름까지 — '하온·하린이네 가족'. 단짝 친구는 안 들어간다.
  * 앞의 둘은 '접기·펼치기'가 된다(사장님 2026-09-28 — '나중에' 대신). 접으면 한 줄 알약.
@@ -125,7 +127,9 @@ export function FamilyFrame({ childName, childAge, parents, childGender, family,
 
   // 명패 — 아이 + '우리 아이예요'를 켠 형제(하온·하린이네 가족). 단짝 친구는 빠진다.
   const title = familyTitle(ourChildrenNames(childName, family));
-  const fixed = fixedMembers(family);
+  // 얼굴을 고정한 **가족**(단짝 친구 뺌) — 단짝 친구는 처음 값이 '홈 사진 끔'이라, 친구만 고정한 사람을
+  // '모두 껐다'로 보면 아무것도 안 껐는데 입구 액자가 사라진다.
+  const fixedKin = familyMembersOnly(fixedMembers(family));
   // 단체 사진에 설 사람 — 고정된 사람 중 '홈 가족 사진에 보이기'를 켠 사람(처음 값: 가족 켬, 단짝 친구 끔).
   const onHome = homeMembers(family);
   // 그렸지만 아직 '마음에 들어요'를 안 누른 사람 — 쿠키를 냈으니 잊지 않게 알려 준다.
@@ -167,11 +171,12 @@ export function FamilyFrame({ childName, childAge, parents, childGender, family,
   ) : null;
 
   /*
-   * 모두 홈 보이기를 껐다 — 큰 사진 대신 명패 한 줄 알약('○○이네 가족 ›' → /family, 작은 얼굴 없이).
+   * 모두 홈 보이기를 껐다(고정한 가족이 있는데 홈에 설 사람이 없다) — 큰 사진 대신 명패 한 줄 알약
+   * ('○○이네 가족 ›' → /family, 작은 얼굴 없이). 단짝 친구만 고정했으면 여기가 아니라 입구 액자다.
    * 이미 한 줄이라 접기·펼치기는 두지 않는다(접힘 값은 그대로 남겨 두어 다시 켜면 예전처럼).
    * 모양은 액자 아래 명패와 같다. 확인 안 한 그림이 있으면 그 알약을 옆에 둔다. 누름 영역은 before 로 44px 까지.
    */
-  if (fixed.length > 0 && onHome.length === 0) {
+  if (fixedKin.length > 0 && onHome.length === 0) {
     return (
       <section
         aria-label={title}
@@ -322,7 +327,7 @@ export function FamilyFrame({ childName, childAge, parents, childGender, family,
 
   /*
    * ── 접은 알약 ── 단체 사진이 있으면 그 사람들의 작은 얼굴 + 명패, 없으면 작은 예시 그림 + '우리 가족 그리기'.
-   * (여기까지 오면 onHome 이 비었을 때는 고정한 사람도 없다 — 모두 끈 경우는 위에서 명패 한 줄로 끝났다.)
+   * (여기까지 오면 onHome 이 비었을 때는 고정한 가족도 없다 — 모두 끈 경우는 위에서 명패 한 줄로 끝났다.)
    */
   const pill = (
     <button

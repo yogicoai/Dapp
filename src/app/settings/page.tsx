@@ -84,6 +84,7 @@ import {
 } from "@/lib/prefs";
 import { migrateBookArt, type MigrateProgress } from "@/lib/migrate-art";
 import { usePricing } from "@/lib/use-pricing";
+import { loadDevMode } from "@/lib/dev-mode-client";
 import { useEscClose } from "@/lib/use-esc-close";
 import {
   PRESET_VOICES,
@@ -373,6 +374,18 @@ export default function SettingsPage() {
   // 화면을 떠나면 옮기기를 멈춘다 — 안 보는 화면에서 계속 돌 이유가 없다.
   const migrateStop = useRef(false);
   useEffect(() => () => void (migrateStop.current = true), []);
+
+  // 개발자 모드(fe) — 우리 가족 캐릭터 줄과 부모 목소리 녹음 칸은 지금 fe 에게만 보인다(2026-09-28).
+  const [devMode, setDevMode] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    loadDevMode().then((d) => {
+      if (alive) setDevMode(d);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   // 부모 목소리(복제됨) 목록을 계정에서 불러온다(로그인 안 됐으면 빈 목록).
   useEffect(() => {
@@ -930,7 +943,7 @@ export default function SettingsPage() {
    */
   const lookSource = { looks, parents };
   const lockedOf = (role: "child" | ParentRole): FamilyMember | undefined =>
-    guest ? undefined : family.find((m) => m.role === role && m.portrait);
+    guest || !devMode ? undefined : family.find((m) => m.role === role && m.portrait);
   const changedOf = (m: FamilyMember | undefined) => Boolean(m && showsLooksChanged(m, lookSource));
   const changesOf = (m: FamilyMember | undefined): string[] =>
     m ? lockChanges(m.role, lockKeyLooks(m.portrait?.lockKey), currentLooksOf(m, lookSource)) : [];
@@ -1119,12 +1132,14 @@ export default function SettingsPage() {
 
           {/* ── 우리 가족 캐릭터 › ── 가족 화면으로 가는 길. 고정한 얼굴을 겹쳐 보여 준다.
               아래 아이·엄마·아빠 특징과 가족 화면의 생김새는 같은 저장값이다. 회원 전용(이 묶음 안). */}
-          <FamilyCharacterRow
-            family={family}
-            child={lookSource}
-            childGender={gender}
-            colors={theme.colors}
-          />
+          {devMode && (
+            <FamilyCharacterRow
+              family={family}
+              child={lookSource}
+              childGender={gender}
+              colors={theme.colors}
+            />
+          )}
 
           {/* ── 아이 특징 ── 동화 주인공을 "우리 애 같게" 만드는 재료.
               항목이 많아 화면이 길어지므로 평소엔 접어 두고 눌러서 편다.
@@ -1208,7 +1223,7 @@ export default function SettingsPage() {
                               }}
                               aria-pressed={active}
                               style={active ? { background: accent } : undefined}
-                              className={`rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                              className={`min-h-11 rounded-full px-3.5 py-2 text-sm font-bold transition ${
                                 active
                                   ? "text-white shadow"
                                   : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
@@ -1229,7 +1244,7 @@ export default function SettingsPage() {
                             onClick={() => setLook({ glasses: looks.glasses ? undefined : true })}
                             aria-pressed={!!looks.glasses}
                             style={looks.glasses ? { background: accent } : undefined}
-                            className={`rounded-full px-3.5 py-2 text-sm font-bold transition ${
+                            className={`min-h-11 rounded-full px-3.5 py-2 text-sm font-bold transition ${
                               looks.glasses
                                 ? "text-white shadow"
                                 : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
@@ -1272,7 +1287,7 @@ export default function SettingsPage() {
                       <button
                         type="button"
                         onClick={clearChildLooks}
-                        className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[11px] font-extrabold text-neutral-500 shadow-sm"
+                        className="min-h-11 shrink-0 rounded-full bg-white px-3.5 text-[11px] font-extrabold text-neutral-500 shadow-sm"
                       >
                         모두 지우기
                       </button>
@@ -1338,7 +1353,7 @@ export default function SettingsPage() {
                   changed={parentChanged}
                   changes={parentChanges}
                   reveal={looksReveal}
-                  linked={!guest}
+                  linked={!guest && devMode}
                   onPatch={setParent}
                   onClear={clearParent}
                 />
@@ -1391,6 +1406,8 @@ export default function SettingsPage() {
             {ttsError && <p className="text-[11px] font-bold text-rose-500">{ttsError}</p>}
             {cloneErr && <p className="text-[11px] font-bold text-rose-500">{cloneErr}</p>}
 
+            {/* 부모 목소리(확인·녹음·만들기)는 개발자 모드(fe)에서만 — 서버(api/voice/clone·tts)도 막는다. */}
+            {devMode && (<>
             {pendingParentVoices.map((voice) => (
               <div key={`review-${voice.role}`} className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
                 <p className="flex items-center gap-1.5 text-sm font-black text-amber-900">
@@ -1513,6 +1530,7 @@ export default function SettingsPage() {
                   ))}
               </div>
             )}
+            </>)}
 
             {/* 읽기 속도 — 느리다고 느끼는 집을 위해. 누르면 그 속도로 바로 들린다. */}
             <div className="flex flex-wrap items-center gap-2">
@@ -1538,6 +1556,7 @@ export default function SettingsPage() {
               })}
             </div>
 
+            {devMode && (<>
             {/* 엄마·아빠 추가 — 역할마다 하나씩 보관하며 삭제 후 다시 만들 수 있다. */}
             {!recording && (
               <div className="flex flex-wrap gap-2">
@@ -1586,6 +1605,7 @@ export default function SettingsPage() {
               수정하려면 기존 목소리를 지우고 다시 만들면 되며, 만들 때마다 {pricing.cost_parent_voice}
               토큰이에요. (✕로 지우면 서버에서도 완전히 삭제돼요.)
             </p>
+            </>)}
           </section>
 
           {/* ── 책 화면 ── */}

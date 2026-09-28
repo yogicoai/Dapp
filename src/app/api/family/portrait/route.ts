@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { callerOf, type Caller } from "@/lib/api-auth";
+import { DEV_ONLY_MESSAGE, isDevUser } from "@/lib/dev-mode";
 import { ART_STYLES } from "@/lib/art-styles";
 import { uploadToCafe24 } from "@/lib/cafe24";
 import { heroIdentity } from "@/lib/child-looks";
@@ -224,8 +225,13 @@ type Identity = {
 
 const KID_HAIR =
   "Korean child: hair is black or dark brown ONLY — never blonde, golden, yellow, red, ginger, silver or light-coloured hair, even if a hint suggests it (read such a hint as a dark shade).";
-const ADULT_HAIR =
-  "Korean adult: natural black or dark brown hair unless the appearance above gives another colour.";
+/**
+ * 머리 색 한국어 풀이 — 생김새 줄(lib/family familyLooksToPrompt)은 머리 색을 꾸밈말로 적는다(까만 단발머리 ·
+ * 희끗희끗한 짧은 머리 · 하얀 쪽진 머리). 의태어 '희끗희끗'을 색으로 읽을지 모델에 맡기지 않게 어른 모두에게 붙인다.
+ */
+const HAIR_COLOUR_WORDS =
+  "Hair colour words in the appearance line: 까만/까만색 = black, 짙은 갈색 = dark brown, 밝은 갈색 = light brown, 붉은 갈색 = auburn, 희끗희끗(한) = black with grey streaks, 회색 = grey, 하얀/흰머리 = white/silver.";
+const ADULT_HAIR = `Korean adult: natural black or dark brown hair unless the appearance above gives another colour. ${HAIR_COLOUR_WORDS}`;
 const KID_BODY =
   "natural young-child proportions — the head is about 1/5 of the full body height. NOT a giant head, NOT chibi, NOT super-deformed.";
 const TEEN_BODY =
@@ -271,8 +277,7 @@ function identityOf(input: Input): Identity {
         who,
         ageRule: "An older adult of that age — a kind, gentle older face with soft natural age lines. Never a young adult.",
         sexRule: "",
-        hairRule:
-          "Hair colour exactly as written above (까만색 = black, 희끗희끗 = black with grey streaks, 흰머리 = white/silver). If no colour is written, dark hair with a little grey.",
+        hairRule: `Hair colour exactly as written above. ${HAIR_COLOUR_WORDS} If no colour is written, dark hair with a little grey.`,
         proportion: ADULT_BODY,
       };
     }
@@ -439,6 +444,8 @@ export async function POST(request: Request) {
   // ① 로그인
   const caller = await callerOf(request);
   if (!caller) return fail(401, "로그인이 필요합니다.", "login");
+  // 가족 캐릭터는 지금 개발자 모드(fe)에서만 — 화면에서 가려도 주소를 직접 부를 수 있으니 여기서 막는다.
+  if (!isDevUser(caller.username)) return fail(403, DEV_ONLY_MESSAGE, "dev");
 
   // ② 입력
   let body: unknown;
@@ -635,6 +642,7 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   const caller = await callerOf(request);
   if (!caller) return fail(401, "로그인이 필요합니다.", "login");
+  if (!isDevUser(caller.username)) return fail(403, DEV_ONLY_MESSAGE, "dev");
 
   const memberId = new URL(request.url).searchParams.get("memberId") ?? "";
   if (!MEMBER_ID.test(memberId)) return fail(400, "가족 id 가 올바르지 않아요.", "input");

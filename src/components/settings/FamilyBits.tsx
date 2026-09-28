@@ -16,7 +16,14 @@ import Link from "next/link";
 import { FaceAvatar } from "@/components/family/Figures";
 import { familyExampleSrc, type Colors } from "@/components/family/family-ui";
 import { LockIcon, NextIcon } from "@/components/family/icons";
-import { byRoleOrder, fixedMembers, showsLooksChanged, type FamilyMember } from "@/lib/family";
+import {
+  BEST_FRIEND_LABEL,
+  byRoleOrder,
+  familyMembersOnly,
+  fixedMembers,
+  showsLooksChanged,
+  type FamilyMember,
+} from "@/lib/family";
 import type { ChildPrefs, Gender } from "@/lib/prefs";
 
 /** 겹쳐 보일 얼굴 수 */
@@ -93,11 +100,21 @@ export function FamilyCharacterRow({
   childGender: Gender;
   colors: Colors;
 }) {
+  // 얼굴 동그라미는 단짝 친구까지(순서상 맨 끝), 숫자는 가족만 센다 — 단짝 친구는 가족이 아니다
+  // (모아 보기 '우리 가족 · N명(얼굴 고정 M명)'과 같은 숫자).
   const fixed = byRoleOrder(fixedMembers(family));
+  const kinFixed = familyMembersOnly(fixed).length;
+  const friendFixed = fixed.some((m) => m.role === "friend");
   const pending = family.some((m) => m.draft && !m.portrait);
   const changed = fixed.some((m) => showsLooksChanged(m, child));
   const alert = changed ? "모습이 바뀐 사람이 있어요" : pending ? "확인 안 한 그림이 있어요" : "";
-  const sub = alert || (fixed.length > 0 ? `${fixed.length}명 얼굴 고정 · 동화마다 같은 얼굴로 나와요` : "가족 얼굴을 고정해 보세요");
+  const fixedText =
+    kinFixed > 0
+      ? `가족 ${kinFixed}명${friendFixed ? `과 ${BEST_FRIEND_LABEL}` : ""}`
+      : friendFixed
+        ? BEST_FRIEND_LABEL
+        : "";
+  const sub = alert || (fixedText ? `${fixedText} 얼굴 고정 · 동화마다 같은 얼굴로 나와요` : "가족 얼굴을 고정해 보세요");
 
   return (
     <Link

@@ -71,10 +71,19 @@ export function AlbumView({
   onAddFriend: () => void;
   onCreate: () => void;
 }) {
-  const fixed = fixedMembers(family);
+  // 얼굴을 고정한 가족(단짝 친구 뺌) — '홈 사진에 보일 사람이 없어요'는 가족을 고정하고 모두 껐을 때만.
+  // 단짝 친구는 처음 값이 '홈 사진 끔'이라, 친구만 고정한 때를 '모두 껐다'로 보면 안 된다(홈 FamilyFrame 과 같은 규칙).
+  const fixedKin = familyMembersOnly(fixedMembers(family));
   const onHomeNow = homeMembers(family);
   const kin = byRoleOrder(familyMembersOnly(family));
   const friends = family.filter((m) => m.role === "friend");
+  // 단짝 친구 칸 머리 — 홈 보이기를 켰으면 '가족 사진엔 안 나와요'가 사실과 반대가 된다.
+  const friendOnHome = friends.some((f) => showsOnHome(f));
+  const friendNote = friendOnHome
+    ? friends.some((f) => f.portrait && showsOnHome(f))
+      ? "홈 사진에도 나와요"
+      : "얼굴을 고정하면 홈 사진에도 나와요"
+    : "가족 사진엔 안 나와요";
   const title = familyTitle(ourChildrenNames(child.name, family));
   const isChanged = (m: FamilyMember) => showsLooksChanged(m, child);
   const changedList = byRoleOrder(family.filter(isChanged));
@@ -133,13 +142,13 @@ export function AlbumView({
             height={186}
             background={background}
             className="rounded-[20px]"
-            empty={fixed.length > 0 ? <HiddenFrame /> : <EmptyFrame childGender={child.gender} />}
+            empty={fixedKin.length > 0 ? <HiddenFrame /> : <EmptyFrame childGender={child.gender} />}
           />
         </div>
         <p className="mt-2.5 text-center text-xs font-semibold text-neutral-500">
           {onHomeNow.length > 0
             ? "홈 첫 화면에도 이 사진이 보여요"
-            : fixed.length > 0
+            : fixedKin.length > 0
               ? "홈에는 명패 한 줄만 보여요"
               : "나라를 바꾸면 가족도 그 나라로 놀러 가요"}
         </p>
@@ -156,7 +165,7 @@ export function AlbumView({
             <span className="min-w-0 flex-1 break-keep text-[13px] font-extrabold" style={{ color: colors.accentDark }}>
               {changedList.length === 1
                 ? `${stemOf(changedList[0])} 모습이 바뀌었어요 · 다시 그릴지 골라 주세요`
-                : `모습이 바뀐 가족이 ${changedList.length}명 있어요 · 다시 그릴지 골라 주세요`}
+                : `모습이 바뀐 사람이 ${changedList.length}명 있어요 · 다시 그릴지 골라 주세요`}
             </span>
             <span style={{ color: colors.accentDark }}>
               <NextIcon size={16} />
@@ -193,7 +202,7 @@ export function AlbumView({
         {(friends.length > 0 || canAddRole(family, "friend")) && (
           <>
             <p className="mt-6 text-sm font-extrabold text-neutral-500">
-              {BEST_FRIEND_LABEL} <span className="font-bold">· 가족 사진엔 안 나와요</span>
+              {BEST_FRIEND_LABEL} <span className="font-bold">· {friendNote}</span>
             </p>
             <div className="mt-2.5 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
               {friends.map(card)}

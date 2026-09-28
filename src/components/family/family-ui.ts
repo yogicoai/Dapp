@@ -21,7 +21,7 @@ import {
   type FamilyRole,
 } from "@/lib/family";
 import { GLASSES_LEGACY, GLASSES_NONE, glassesChoice, hasBeard } from "@/lib/look-options";
-import { looksToPrompt, parentLooksToPrompt, type ChildPrefs, type Gender } from "@/lib/prefs";
+import { parentLooksToPrompt, type ChildPrefs, type Gender } from "@/lib/prefs";
 
 export type Colors = { accent: string; accentDark: string; accentSoft: string };
 
@@ -205,8 +205,33 @@ function glassesWord(l: FamilyLooks): string {
   return g.endsWith("안경") ? g : `${g} 안경`;
 }
 
+/** 앞머리 칩 → 요약 글자('없어요(가르마)'는 괄호까지 보이지 않게 '가르마') */
+function bangsWord(v: string): string {
+  if (!v) return "";
+  if (v === "없어요(가르마)") return "가르마";
+  if (v === "없어요") return "앞머리 없음";
+  if (v === "있어요") return "앞머리 있음";
+  return `앞머리 ${v}`;
+}
+
 /**
- * '늘 그대로'·'평소 옷' 두 줄 — 확인 화면에 보인다. 칩 글자를 그대로 가운뎃점으로 잇는다.
+ * 눈매 칩 → 요약 글자. 칩만으로 눈 얘기인 게 보이면('순한 눈매'·'가늘고 긴 눈'·'쌍꺼풀'·'웃으면 반달')
+ * 앞말을 붙이지 않는다.
+ */
+function eyesWord(v: string): string {
+  if (!v) return "";
+  return /눈|쌍꺼풀|반달/.test(v) ? v : `눈매 ${v}`;
+}
+
+/** 수염 칩 → 요약 글자. '콧수염'·'구레나룻'·'면도 자국'은 그대로, '없어요'만 '수염 없음'. */
+function beardWord(v: string): string {
+  if (!v) return "";
+  return v === "없어요" ? "수염 없음" : v;
+}
+
+/**
+ * '늘 그대로'·'평소 옷' 두 줄 — 확인 화면에 보인다. 칩 글자를 가운뎃점으로 잇되, 줄 이름과 칩 글자가 겹치면
+ * ('눈매 순한 눈매' · '수염 콧수염') 앞말을 뺀다.
  * 생김새 원본은 역할마다 다르다(아이 설정 looks · 엄마·아빠 parents · 그 밖 member.looks).
  */
 export function looksSummary(m: FamilyMember, child: ChildPrefs | null): { lock: string; outfit: string } {
@@ -215,15 +240,15 @@ export function looksSummary(m: FamilyMember, child: ChildPrefs | null): { lock:
   const lock = [
     [s(l.hairColor), s(l.hair)].filter(Boolean).join(" "),
     s(l.hairTexture),
-    s(l.bangs) && `앞머리 ${s(l.bangs)}`,
+    bangsWord(s(l.bangs)),
     s(l.face) && `얼굴 ${s(l.face)}`,
-    s(l.eyes) && `눈매 ${s(l.eyes)}`,
+    eyesWord(s(l.eyes)),
     s(l.brows),
     s(l.skin) && `피부 ${s(l.skin)}`,
     s(l.build) && `${kid ? "몸집" : "체형"} ${s(l.build)}`,
     s(l.height) && `키 ${s(l.height)}`,
     glassesWord(l),
-    hasBeard(m.role) && s(l.beard) ? `수염 ${s(l.beard)}` : "",
+    hasBeard(m.role) ? beardWord(s(l.beard)) : "",
     ...list(l.marks),
   ].filter(Boolean);
   const color = s(l.color);
@@ -242,7 +267,9 @@ export function looksSummary(m: FamilyMember, child: ChildPrefs | null): { lock:
  * 역할을 넘겨 수염은 아빠·할아버지만, 예전 글자는 새 글자로 적힌다(lib/family familyLooksToPrompt).
  */
 export function looksLine(m: FamilyMember, child: ChildPrefs | null): string {
-  if (m.role === "child") return looksToPrompt(child?.looks);
+  // 아이도 형제와 같은 문장 규칙으로(을/를·칩 글자 풀기·이런 점도 문장) — 한 가족 그림 안에서 말투가 갈리지 않게.
+  // (이야기로 가는 줄 describeChild 는 만들기 화면의 looksToPrompt 를 그대로 쓴다.)
+  if (m.role === "child") return familyLooksToPrompt(child?.looks, "child");
   if (m.role === "mom" || m.role === "dad") return parentLooksToPrompt(child?.parents?.[m.role], m.role);
   return familyLooksToPrompt(m.looks, m.role);
 }

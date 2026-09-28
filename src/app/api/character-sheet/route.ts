@@ -180,6 +180,12 @@ export async function POST(request: Request) {
      * 아빠"로 못 알아본다(실제로 6쪽 내내 안경잡이 아빠가 그려졌다). 구별은 머리
      * 길이와 옷 색으로 충분하다. 글로 적혀 있을 때만 그린다.
      */
+    // 머리 색 한국어 풀이 — 어른 줄은 머리 색을 꾸밈말로 적는다(희끗희끗한 짧은 머리 …). 가족 그림(api/family/portrait)과 같은 풀이.
+    ...(adultLooks.length > 0
+      ? [
+          "Hair colour words in the adult descriptions below: 까만/까만색 = black, 짙은 갈색 = dark brown, 밝은 갈색 = light brown, 붉은 갈색 = auburn, 희끗희끗(한) = black with grey streaks, 회색 = grey, 하얀/흰머리 = white/silver.",
+        ]
+      : []),
     ...adultLooks.map(
       (a) =>
         `The adult "${a.name}" looks EXACTLY like this, chosen by the child's parent (Korean): ${a.line}. Follow it literally — if it says they do not wear glasses, draw no glasses.`,

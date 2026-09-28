@@ -22,13 +22,16 @@ import {
   lockKeyLooks,
   lookRowsFor,
   mergeFamily,
+  mergeRemovals,
   nextDrawCost,
   normalizeFamily,
   normalizeLooksFor,
+  normalizeRemovals,
   ourChildrenNames,
   portraitLooksChanged,
   ROLE_ORDER,
   showsLooksChanged,
+  withoutRemoved,
   type FamilyMember,
 } from "./family.ts";
 import {
@@ -176,8 +179,17 @@ describe("mergeRemoteChild — 가족", () => {
   it("서버에 가족 칸이 없으면 이 기기 것을 지킨다", () => {
     assert.deepEqual(mergeRemoteChild({ ...BASE }, { ...BASE, family: fam }).family, fam);
   });
-  it("서버가 빈 배열(모두 지움)이면 서버가 이긴다", () => {
-    assert.deepEqual(mergeRemoteChild({ ...BASE, family: [] }, { ...BASE, family: fam }).family, []);
+  it("서버에 뺀 기록이 있으면 이 기기 목록에서도 빠진다", () => {
+    const grandma: FamilyMember = { id: "m-g", role: "grandma", callName: "할머니", addedAt: "2026-09-28T09:00:00Z" };
+    const out = mergeRemoteChild(
+      { ...BASE, family: fam, familyRemoved: [{ id: "m-g", at: "2026-09-28T09:10:00Z" }] },
+      { ...BASE, family: [...fam, grandma] },
+    );
+    assert.deepEqual(out.family?.map((m) => m.id), ["child"]);
+    assert.deepEqual(out.familyRemoved, [{ id: "m-g", at: "2026-09-28T09:10:00Z" }]);
+  });
+  it("서버 목록이 비어 있어도 뺀 기록이 없으면 이 기기 사람을 지킨다(합집합)", () => {
+    assert.deepEqual(mergeRemoteChild({ ...BASE, family: [] }, { ...BASE, family: fam }).family, fam);
   });
   it("홈 액자 접힘 값 — 서버 값(false 도)이 이기고, 서버에 없으면 이 기기 값을 지킨다", () => {
     assert.equal(mergeRemoteChild({ ...BASE, homeFamilyFolded: false }, { ...BASE, homeFamilyFolded: true }).homeFamilyFolded, false);
@@ -199,15 +211,53 @@ describe("mergeFamily — 기기·서버 가족 합치기", () => {
     assert.equal(out.family?.find((m) => m.id === "dad")?.draws, 1);
     assert.equal(out.familyAt, local.familyAt);
   });
-  it("나중에 뺀 사람은 되살리지 않는다", () => {
-    const server = { family: [mom()], familyAt: "2026-09-28T09:10:00Z" };
+  it("나중에 뺀 사람은 되살리지 않는다 — 뺀 기록이 그림보다 나중", () => {
+    const server = {
+      family: [mom()],
+      familyAt: "2026-09-28T09:10:00Z",
+      familyRemoved: [{ id: "dad", at: "2026-09-28T09:10:00Z" }],
+    };
     const local = { family: [mom(), dad({ portrait: P2, picAt: "2026-09-28T09:00:00Z" })], familyAt: "2026-09-28T09:00:00Z" };
     assert.deepEqual(mergeFamily(server, local).family?.map((m) => m.id), ["mom"]);
+    // 뺀 기록이 진 쪽(옛 목록이 이긴 쪽)에만 있어도 뺀다 — 목록 전체가 이기고 지지 않는다.
+    const staleLocal = { family: [mom(), dad({ portrait: P2, picAt: "2026-09-28T09:00:00Z" })], familyAt: "2026-09-28T09:30:00Z" };
+    assert.deepEqual(mergeFamily(server, staleLocal).family?.map((m) => m.id), ["mom"]);
   });
   it("빼기 뒤에 다른 기기에서 쿠키를 내고 그린 사람은 되살린다", () => {
-    const server = { family: [mom()], familyAt: "2026-09-28T09:10:00Z" };
+    const server = { family: [mom()], familyAt: "2026-09-28T09:10:00Z", familyRemoved: [{ id: "dad", at: "2026-09-28T09:10:00Z" }] };
     const local = { family: [mom(), dad({ draft: P2, picAt: "2026-09-28T09:20:00Z" })], familyAt: "2026-09-28T09:00:00Z" };
     assert.deepEqual(mergeFamily(server, local).family?.map((m) => m.id), ["mom", "dad"]);
+  });
+  it("오래 열어 둔 화면이 아무거나 저장해도 다른 기기에서 넣고 고정한 사람은 남는다(검토 재현)", () => {
+    // 서버: 폰에서 할머니를 넣고 2쿠키로 고정(10:00). 태블릿(오래 열어 둔 화면): 할머니를 본 적 없이 엄마 홈 보이기를 끔(10:05).
+    const grandma: FamilyMember = { id: "m-grandma1", role: "grandma", callName: "할머니", portrait: P2, picAt: "2026-09-28T10:00:00Z" };
+    const child: FamilyMember = { id: "child", role: "child", callName: "하온" };
+    const server = { family: [child, mom({ portrait: P2 }), grandma], familyAt: "2026-09-28T10:00:00Z" };
+    const tablet = { family: [child, mom({ portrait: P2, showOnHome: false })], familyAt: "2026-09-28T10:05:00Z" };
+    const out = mergeFamily(server, tablet);
+    assert.deepEqual(out.family?.map((m) => m.id), ["child", "mom", "m-grandma1"]);
+    // 칸(홈 보이기)은 나중에 바꾼 쪽을 따른다.
+    assert.equal(out.family?.find((m) => m.id === "mom")?.showOnHome, false);
+    assert.deepEqual(out.family?.find((m) => m.id === "m-grandma1")?.portrait, P2);
+  });
+  it("뺐다가 다시 넣은 엄마(같은 id)는 예전 뺀 기록에 걸리지 않는다", () => {
+    const removed = [{ id: "mom", at: "2026-09-28T09:10:00Z" }];
+    const again = { family: [mom({ addedAt: "2026-09-28T09:20:00Z" })], familyAt: "2026-09-28T09:20:00Z" };
+    assert.deepEqual(mergeFamily({ family: [], familyAt: "2026-09-28T09:10:00Z", familyRemoved: removed }, again).family?.map((m) => m.id), ["mom"]);
+    // 다시 넣기 전의 옛 엄마(넣은 때 없음)는 빠진다.
+    assert.deepEqual(mergeFamily({ family: [], familyRemoved: removed }, { family: [mom()] }).family, []);
+  });
+  it("뺀 기록 — 같은 사람은 더 나중 시각, 잘못된 값은 버린다, 아이는 빼지 않는다", () => {
+    assert.deepEqual(
+      mergeRemovals([{ id: "m-a", at: "2026-09-28T09:00:00Z" }], [{ id: "m-a", at: "2026-09-28T09:05:00Z" }]),
+      [{ id: "m-a", at: "2026-09-28T09:05:00Z" }],
+    );
+    assert.equal(mergeRemovals(undefined, []), undefined);
+    assert.deepEqual(normalizeRemovals([{ id: "BAD ID", at: "x" }, { id: "m-b" }, { id: "m-c", at: "2026-09-28" }, "x"]), [
+      { id: "m-c", at: "2026-09-28" },
+    ]);
+    const kid: FamilyMember = { id: "child", role: "child", callName: "하온" };
+    assert.deepEqual(withoutRemoved([kid], [{ id: "child", at: "2099-01-01" }]), [kid]);
   });
   it("서버 저장이 실패해 이 기기에만 있는 그림 — 불러오기가 서버 옛 값으로 덮지 않는다", () => {
     const server = { family: [mom()], familyAt: "2026-09-28T09:00:00Z" };
@@ -233,7 +283,7 @@ describe("키·순서·생김새", () => {
   it("생김새 한 줄 — 안경이 없으면 '쓰지 않는다'를 적는다", () => {
     assert.equal(
       familyLooksToPrompt({ hair: "올림머리", hairColor: "흰머리", outfit: "카디건", color: "보라" }),
-      "흰머리 올림머리, 안경을 쓰지 않는다, 평소에 보라 카디건을 즐겨 입는다",
+      "하얀 올림머리, 안경을 쓰지 않는다, 평소에 보라 카디건을 즐겨 입는다",
     );
   });
   it("옷만 바뀌면 다시 그릴지 묻지 않는다", () => {
@@ -341,8 +391,8 @@ describe("생김새 한 줄 — 새 칸", () => {
         },
         "grandpa",
       ),
-      "흰머리 살짝 벗어진 머리, 얼굴이 각진 편이다, 눈썹이 진하다, 키가 큰 편이다, 뿔테 안경을 썼다, 수염이 없다, " +
-        "웃을 때 생기는 눈주름·얼굴의 점이 있다, 평소에 네이비 셔츠에 슬랙스를 즐겨 입는다, 늘 시계를 착용한다, 늘 웃는다",
+      "하얀 살짝 벗어진 머리, 얼굴이 각진 편이다, 눈썹이 진하다, 키가 큰 편이다, 뿔테 안경을 썼다, 수염이 없다, " +
+        "웃을 때 생기는 눈주름·얼굴의 점이 있다, 평소에 네이비 셔츠에 슬랙스를 즐겨 입고 시계를 즐겨 한다, 늘 웃는다",
     );
   });
   it("할머니에게 수염 값이 잘못 들어 있어도 적지 않는다", () => {
@@ -354,8 +404,34 @@ describe("생김새 한 줄 — 새 칸", () => {
         { hair: "단발", hairTexture: "곧은 생머리", bangs: "있어요", build: "마른 편이에요", marks: ["앞니 빠짐", "보조개"], items: ["곰인형"] },
         "sibling",
       ),
-      "단발, 머리결은 곧은 생머리로 웨이브·곱슬·파마가 없다, 앞머리가 있다, 마른 편이다, 안경을 쓰지 않는다, 보조개가 있다, 앞니가 하나 빠졌다, 늘 곰인형을 지니고 다닌다",
+      "단발머리, 머리결은 곧은 생머리로 웨이브·곱슬·파마가 없다, 앞머리가 있다, 마른 편이다, 안경을 쓰지 않는다, 보조개가 있다, 앞니가 하나 빠졌다, 늘 곰인형을 지니고 다닌다",
     );
+  });
+  it("머리 모양이 명사가 아니면 문장으로, 머리 색은 꾸밈말로 — 무엇이 짧은지 분명하게", () => {
+    assert.equal(familyLooksToPrompt({ hair: "아주 짧아요" }, "sibling"), "머리가 아주 짧다, 안경을 쓰지 않는다");
+    assert.equal(familyLooksToPrompt({ hair: "아주 짧아요", hairColor: "까만색" }, "friend"), "까만 머리가 아주 짧다, 안경을 쓰지 않는다");
+    assert.equal(familyLooksToPrompt({ hair: "하나로 묶기", hairColor: "희끗희끗" }, "mom"), "희끗희끗한 머리를 하나로 묶었다, 안경을 쓰지 않는다");
+    assert.equal(familyLooksToPrompt({ hair: "짧은 머리", hairColor: "흰머리" }, "grandpa"), "하얀 짧은 머리, 안경을 쓰지 않는다");
+    // 색만 고르면 '머리는 흰머리' 같은 겹말 대신
+    assert.equal(familyLooksToPrompt({ hairColor: "흰머리" }, "grandma"), "머리가 하얗다, 안경을 쓰지 않는다");
+    assert.equal(familyLooksToPrompt({ hairColor: "까만색" }, "child"), "머리 색은 까맣다, 안경을 쓰지 않는다");
+  });
+  it("머리 모양이 머리결·앞머리까지 정하면 그 칸은 적지 않는다 — 한 줄에 정반대 말이 없게", () => {
+    const perm = familyLooksToPrompt({ hair: "곱슬 파마", hairTexture: "곧은 생머리" }, "mom");
+    assert.equal(perm, "곱슬 파마머리, 안경을 쓰지 않는다");
+    const bangs = familyLooksToPrompt({ hair: "앞머리 내린 머리", bangs: "없어요(가르마)" }, "dad");
+    assert.equal(bangs, "앞머리 내린 머리, 안경을 쓰지 않는다");
+    // 머리결을 정하지 않는 머리 모양이면 그대로 적는다.
+    assert.ok(familyLooksToPrompt({ hair: "단발", hairTexture: "굵은 웨이브" }, "mom").includes("굵고 큰 웨이브"));
+  });
+  it("늘 하는 것은 평소 옷과 같은 말투('평소에 … 즐겨 한다') — 모든 쪽에 붙지 않게", () => {
+    assert.equal(familyLooksToPrompt({ accessories: ["앞치마", "모자"] }, "mom"), "안경을 쓰지 않는다, 평소에 앞치마·모자를 즐겨 한다");
+    assert.ok(!familyLooksToPrompt({ accessories: ["시계"] }, "dad").includes("착용"));
+  });
+  it("아이도 같은 문장 규칙 — '을(를)'·칩 글자 그대로·이런 점도 늘어놓기가 없다", () => {
+    const line = familyLooksToPrompt({ bangs: "없어요", items: ["곰인형"], marks: ["주근깨", "볼이 통통해요"] }, "child");
+    assert.equal(line, "앞머리가 없다, 안경을 쓰지 않는다, 주근깨가 있다, 볼이 통통하다, 늘 곰인형을 지니고 다닌다");
+    assert.ok(!line.includes("을(를)"));
   });
   it("옷 색만·아래옷만", () => {
     assert.ok(familyLooksToPrompt({ color: "카키" }).endsWith("평소에 카키 옷을 즐겨 입는다"));

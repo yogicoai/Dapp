@@ -596,12 +596,13 @@ export function familyLooksToPrompt(l: FamilyLooks | undefined, who?: LookWho): 
   const bottom = typeof l.bottom === "string" ? l.bottom.trim() : "";
   const top = outfit ? [color, outfit].filter(Boolean).join(" ") : color ? `${color} 옷` : "";
   const clothes = [top, bottom].filter(Boolean).join("에 ");
-  if (clothes) push(`평소에 ${eulReul(clothes)} 즐겨 입는다`);
-
-  // 늘 하는 것은 '평소 옷' 묶음이다(동화마다 바뀔 수 있다) — 옷과 같은 말투로. '늘 착용한다'로 적으면
-  // 이야기 인물 줄(@@CHARACTER@@ · 인물 시트 'Follow it literally')이 앞치마·모자를 모든 쪽에 붙인다.
-  const acc = words(l.accessories);
-  if (acc.length) push(`평소에 ${eulReul(acc.join("·"))} 즐겨 한다`);
+  // 늘 하는 것은 '평소 옷' 묶음이다(동화마다 바뀔 수 있다) — 옷과 같은 말투로('평소에 … 즐겨 한다').
+  // '늘 착용한다'로 적으면 이야기 인물 줄(@@CHARACTER@@ · 인물 시트 'Follow it literally')이 앞치마·모자를
+  // 모든 쪽에 붙인다.
+  const acc = words(l.accessories).join("·");
+  if (clothes && acc) push(`평소에 ${eulReul(clothes)} 즐겨 입고 ${eulReul(acc)} 즐겨 한다`);
+  else if (clothes) push(`평소에 ${eulReul(clothes)} 즐겨 입는다`);
+  else if (acc) push(`평소에 ${eulReul(acc)} 즐겨 한다`);
   const items = words(l.items);
   if (items.length) push(`늘 ${eulReul(items.join("·"))} 지니고 다닌다`);
   if (typeof l.note === "string" && l.note.trim()) push(l.note.trim());

@@ -228,7 +228,8 @@ export async function POST(request: Request) {
       const o = c as { name?: unknown; description?: unknown };
       return {
         name: typeof o?.name === "string" ? o.name.trim() : "",
-        description: typeof o?.description === "string" ? o.description.trim().slice(0, 300) : "",
+        // 500자 — 부모 줄(최대 약 320자, _input 400자)에 클로드가 앞말(하온이 아빠, 30대 후반 남자 …)을 붙여도 끝이 안 잘리게.
+        description: typeof o?.description === "string" ? o.description.trim().slice(0, 500) : "",
       };
     })
     .filter((c) => c.name)

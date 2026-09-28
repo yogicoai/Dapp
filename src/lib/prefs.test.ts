@@ -38,6 +38,36 @@ describe("mergeRemoteChild — 서버 값과 이 기기 값 합치기", () => {
     assert.deepEqual(out.looks, { hair: "곱슬" });
     assert.equal(out.parents, undefined);
   });
+
+  it("옛 화면이 덮어쓴 서버 값(schema 없음) — 옛 화면이 모르는 새 칸은 이 기기 값에서 되살린다", () => {
+    // 새 화면(이 기기)에서 고른 값. 옛 화면은 머리·안경 여부·옷 색·메모만 남기고 덮어썼다(머리를 단발로 고침, 안경 끔).
+    const local = {
+      ...BASE,
+      schema: 2,
+      parents: { mom: { hair: "숏컷", face: "갸름해요", height: "큰 편", glassesType: "동그란 안경", glasses: true, marks: ["보조개"] } },
+    };
+    const remote = { ...BASE, parents: { mom: { hair: "단발" } } };
+    const out = mergeRemoteChild(remote, local);
+    assert.deepEqual(out.parents, { mom: { hair: "단발", face: "갸름해요", height: "큰 편", marks: ["보조개"] } });
+    assert.equal(out.schema, 2);
+  });
+
+  it("옛 화면 값이 안경 '씀'이면 이 기기 안경 종류를 지킨다", () => {
+    const local = { ...BASE, schema: 2, parents: { dad: { glassesType: "뿔테", glasses: true, beard: "콧수염" } } };
+    const out = mergeRemoteChild({ ...BASE, parents: { dad: { glasses: true } } }, local);
+    assert.deepEqual(out.parents?.dad, { glassesType: "뿔테", glasses: true, beard: "콧수염" });
+  });
+
+  it("새 화면이 쓴 서버 값(schema 있음)은 예전처럼 서버가 이긴다", () => {
+    const local = { ...BASE, schema: 2, parents: { mom: { hair: "숏컷", face: "갸름해요" } } };
+    const out = mergeRemoteChild({ ...BASE, schema: 2, parents: { mom: { hair: "단발" } } }, local);
+    assert.deepEqual(out.parents, { mom: { hair: "단발" } });
+  });
+
+  it("서버에 엄마·아빠 칸이 아예 없으면(뒤처진 서버) 이 기기 값을 그대로 지킨다", () => {
+    const parents = { mom: { hair: "숏컷", face: "갸름해요" } };
+    assert.deepEqual(mergeRemoteChild({ ...BASE }, { ...BASE, schema: 2, parents }).parents, parents);
+  });
 });
 
 describe("parentLooksToPrompt — 엄마·아빠 한 줄", () => {
@@ -81,9 +111,9 @@ describe("parentLooksToPrompt — 엄마·아빠 한 줄", () => {
         },
         "mom",
       ),
-      "짙은 갈색 중단발, 머리 끝에만 부드러운 웨이브가 살짝 있다, 시스루 앞머리가 있다, 계란형 얼굴이다, " +
+      "짙은 갈색 중단발 머리, 머리 끝에만 부드러운 웨이브가 살짝 있다, 시스루 앞머리가 있다, 계란형 얼굴이다, " +
         "웃으면 눈이 반달이 된다, 피부는 밝은 편이다, 마른 편이다, 키가 큰 편이다, 동그란 안경을 썼다, 보조개가 있다, " +
-        "평소에 베이지 블라우스에 치마를 즐겨 입는다, 늘 귀걸이·목걸이를 착용한다, 늘 웃고 있어요",
+        "평소에 베이지 블라우스에 치마를 즐겨 입고 귀걸이·목걸이를 즐겨 한다, 늘 웃고 있어요",
     );
   });
 
@@ -205,5 +235,19 @@ describe("saveChild — 안 넘긴 항목은 그대로 둔다", () => {
     saveChild({ name: "하온", age: 5, gender: "girl", looks: { hair: "단발" } });
     saveChild({ name: "하온", age: 5, gender: "girl", looks: {} });
     assert.equal(loadChild()?.looks, undefined);
+  });
+
+  it("뺀 기록은 더하기만 하고, 읽을 때 뺀 사람은 목록에서 빠진다 — 저장 모양 판(schema)도 적는다", async () => {
+    stubWindow();
+    const { saveChild, loadChild, CHILD_SCHEMA } = await import("./prefs.ts");
+    const g = { id: "m-g", role: "grandma" as const, callName: "할머니" };
+    const s = { id: "m-s", role: "sibling" as const, callName: "누나" };
+    saveChild({ name: "하온", family: [g, s], familyRemoved: [{ id: "m-x", at: "2026-09-28T09:00:00Z" }] });
+    // 오래 열어 둔 화면이 옛 목록(할머니 있음)으로 저장하면서 할머니 뺀 기록을 더한다.
+    saveChild({ name: "하온", family: [g, s], familyRemoved: [{ id: "m-g", at: "2026-09-28T09:10:00Z" }] });
+    const out = loadChild();
+    assert.deepEqual(out?.familyRemoved?.map((r) => r.id).sort(), ["m-g", "m-x"]);
+    assert.deepEqual(out?.family?.map((m) => m.id), ["m-s"]);
+    assert.equal(out?.schema, CHILD_SCHEMA);
   });
 });

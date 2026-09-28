@@ -17,6 +17,9 @@
  *  - 바꾸면 이 기기에는 늘 바로 쓴다(saveChild). 그림이 걸린 변경(그리기 결과·고정·빼기)은 saveFamilyNow 로
  *    바로 올리고 결과를 본다. 그 밖(사람 넣기·생김새)은 saveChild(800ms 뒤 서버). 서버에는 늘 서버 값과
  *    사람별로 합쳐 올라간다(prefs pushChild · family mergeFamily) — 다른 기기에서 그린 그림을 안 지운다.
+ *  - 합칠 때 사람은 합집합이다. 빼기는 뺀 기록(familyRemoved)으로만 전한다 — 오래 열어 둔 이 화면의 옛 목록이
+ *    다른 기기에서 넣고 고정한 사람을 지우지 않게. 화면으로 돌아오면(탭 전환) 계정 값을 다시 받는다.
+ *  - 서버 값이 뒤늦게 와도 이 화면에서 고친 생김새 칸(looksEdits)만 지키고 나머지는 서버 값을 따른다.
  *  - 쿠키 셈과 차감은 서버가 한다. 화면의 값은 안내일 뿐이고(nextDrawCost), 요청에 실어 보내
  *    서버 값이 더 크면 깎지 않고 409(price)로 돌아온다 — 그때 확인 창을 다시 띄운다.
  *  - 그리기 응답을 잃으면(끊김·75초 초과·함수 잘림) 다시 그리기 전에 서버에 결과를 묻는다(recover).
@@ -44,6 +47,7 @@ import { MemberSheet } from "@/components/family/MemberSheet";
 import { ReviewView } from "@/components/family/ReviewView";
 import { BigButton } from "@/components/family/ui";
 import { fetchProfile, loadSession } from "@/lib/auth";
+import { loadDevMode } from "@/lib/dev-mode-client";
 import {
   byRoleOrder,
   CALL_NAMES,
@@ -65,6 +69,7 @@ import {
   type FamilyLooks,
   type FamilyMember,
   type FamilyPortrait,
+  type FamilyRemoval,
   type FamilyRole,
 } from "@/lib/family";
 import {
@@ -181,7 +186,29 @@ function looksKey(o: object | undefined): string {
   );
 }
 
+/**
+ * 지금은 개발자 모드(fe)에서만 연다(2026-09-28) — 다른 계정은 홈으로 돌려보낸다.
+ * 모두에게 열 때는 이 문지기만 걷어내면 된다(그림 서버 api/family/portrait 의 막음도 같이).
+ */
 export default function FamilyPage() {
+  const router = useRouter();
+  const [dev, setDev] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    loadDevMode().then((d) => {
+      if (!alive) return;
+      if (d) setDev(true);
+      else router.replace("/");
+    });
+    return () => {
+      alive = false;
+    };
+  }, [router]);
+  if (!dev) return null;
+  return <FamilyScreen />;
+}
+
+function FamilyScreen() {
   const router = useRouter();
   const { theme } = useTheme();
   const colors = theme.colors;
@@ -514,16 +541,18 @@ export default function FamilyPage() {
 
   function addPreset(role: "mom" | "dad" | "grandma" | "grandpa") {
     const fam = familyRef.current;
+    // 넣은 때 — 엄마·아빠는 id 가 늘 같아서, 예전에 뺀 기록이 다시 넣은 사람을 지우지 않게 적어 둔다.
+    const addedAt = new Date().toISOString();
     if (role === "mom" || role === "dad") {
       if (fam.some((m) => m.id === role)) return;
       if (!roomLeft()) return;
-      commit([...fam, { id: role, role, callName: ROLE_LABEL[role] }], "soon");
+      commit([...fam, { id: role, role, callName: ROLE_LABEL[role], addedAt }], "soon");
       return;
     }
     if (!roomLeft()) return;
     const names = CALL_NAMES[role] ?? [ROLE_LABEL[role]];
     const callName = names.find((c) => !fam.some((m) => m.role === role && m.callName === c)) ?? names[0];
-    commit([...fam, { id: newMemberId(), role, callName }], "soon");
+    commit([...fam, { id: newMemberId(), role, callName, addedAt }], "soon");
   }
 
   function addMember(nm: NewMember, mode: From) {
@@ -536,12 +565,15 @@ export default function FamilyPage() {
     }
     // 엄마·아빠는 고정 id(서버 결제 기록 열쇠) — 새로 만들지 않는다.
     const id = FIXED_ID_ROLES.includes(nm.role) ? nm.role : newMemberId();
-    const m: FamilyMember = { ...nm, id };
+    const m: FamilyMember = { ...nm, id, addedAt: new Date().toISOString() };
     commit([...fam, m], "soon");
     setOverlay(null);
     showToast(
       nm.role === "friend"
-        ? `${objectOf(m)} 단짝 친구로 넣었어요`
+        ? // 이름은 선택이다 — 없으면 '단짝 친구를 단짝 친구로'가 되지 않게 나눈다.
+          m.name
+          ? `${objectOf(m)} 단짝 친구로 넣었어요`
+          : "단짝 친구를 넣었어요"
         : mode === "album"
           ? `${objectOf(m)} 우리 가족에 넣었어요`
           : `${objectOf(m)} 넣었어요`,
@@ -551,10 +583,12 @@ export default function FamilyPage() {
   function removeMember(id: string) {
     const m = findMember(id);
     if (!m || m.role === "child") return;
+    // 뺀 기록을 남긴다 — 다른 기기·서버 목록과 합칠 때 이 사람만 빠진다(목록 전체가 이기고 지지 않게).
     // 그림이 걸렸을 수 있어 바로 저장한다(다른 기기에서 되살아나지 않게).
     commit(
       familyRef.current.filter((x) => x.id !== id),
       m.portrait || m.draft ? "now" : "soon",
+      [{ id, at: new Date().toISOString() }],
     );
     setOverlay(null);
     if (step === "album") showToast(m.role === "friend" ? `${objectOf(m)} 뺐어요` : `${objectOf(m)} 우리 가족에서 뺐어요`);

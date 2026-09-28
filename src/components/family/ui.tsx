@@ -5,7 +5,7 @@
  * 색은 나라(테마) 색을 style 로 받는다(Tailwind 로는 나라 색을 못 만든다).
  */
 
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from "react";
 import type { Colors } from "./family-ui";
 import { BackIcon, CookieIcon } from "./icons";
 
@@ -219,6 +219,61 @@ export function CookiePill({ text, colors, className = "" }: { text: string; col
       <CookieIcon size={15} />
       {text}
     </span>
+  );
+}
+
+/**
+ * '이렇게 그려요 — …' 미리보기(가족 생김새 고르기·설정 엄마·아빠 특징). 그림에 보내는 문장 그대로라 칸을 다
+ * 채우면 300자 가까이 된다 — 두 줄까지만 보이고 '전체 보기'로 편다. 칩을 누를 때마다 칸이 몇 줄씩
+ * 늘었다 줄었다 하지 않게. 두 줄 안에 들면 버튼은 안 보인다(글자 높이를 재서 정한다).
+ * action 은 오른쪽 자리(설정의 '모두 지우기' 등).
+ */
+export function LooksPreview({
+  text,
+  textClass = "text-[13px]",
+  action,
+}: {
+  text: string;
+  textClass?: string;
+  action?: ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const [clipped, setClipped] = useState(false);
+  const ref = useRef<HTMLParagraphElement>(null);
+  // 접혀 있을 때만 잰다 — 글이 바뀌거나 폭이 바뀌면 다시(ResizeObserver 는 붙일 때 한 번 부른다).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || open) return;
+    const check = () => setClipped(el.scrollHeight > el.clientHeight + 1);
+    if (typeof ResizeObserver === "undefined") {
+      const id = requestAnimationFrame(check);
+      return () => cancelAnimationFrame(id);
+    }
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [text, open]);
+
+  return (
+    <div className="flex flex-wrap items-start gap-2 rounded-2xl bg-emerald-50 px-4 py-2.5" aria-live="polite">
+      <div className="min-w-0 flex-1">
+        <p ref={ref} className={`break-keep font-bold leading-relaxed text-emerald-700 ${textClass} ${open ? "" : "line-clamp-2"}`}>
+          {text}
+        </p>
+        {(open || clipped) && (
+          <button
+            type="button"
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+            // 보이는 높이는 한 줄, 누름 영역은 before 로 44px 까지.
+            className="relative mt-0.5 text-xs font-extrabold text-emerald-800 underline underline-offset-2 before:absolute before:-inset-x-2 before:-inset-y-3"
+          >
+            {open ? "접기" : "전체 보기"}
+          </button>
+        )}
+      </div>
+      {action}
+    </div>
   );
 }
 

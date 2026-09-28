@@ -51,7 +51,8 @@ export function readHero(raw: unknown, cast: { name: string; description: string
   const description = cast.find((c) => c.name === name)?.description ?? "";
   const gender =
     o.gender === "boy" || o.gender === "girl" ? o.gender : genderFromDescription(description);
-  const looks = typeof o.looks === "string" && o.looks.trim() ? o.looks.trim().slice(0, 300) : description;
+  // 500자 — 등장인물 설명(illustrate-page cast)과 같은 기준. 어른 칸이 늘어 300자면 끝이 잘렸다.
+  const looks = typeof o.looks === "string" && o.looks.trim() ? o.looks.trim().slice(0, 500) : description;
   return { name, gender, looks: looks || undefined };
 }
 
