@@ -255,24 +255,10 @@ const TODAY_ENDINGS = [
   { t: "아직 속상해요", e: "😢" },
 ];
 
-/**
- * 「상상 동화」·「감정 동화」의 마무리 결.
- *
- * 오늘 이야기의 결말 칩은 **실제로 있었던 사실**이지만(혼났다·칭찬받았다), 상상과 감정에는
- * 지켜야 할 사실이 없다. 그래서 여기 칩은 "어디로 데려다 놓을까"를 고르는 것이다.
- *
- * 왜 넣었나 — 마지막 쪽이 이 앱에서 가장 자주 무너지는 자리다. 재료를 안 주면 모델이
- * "그래서 즐거운 하루였어요" 같은 아무 책에나 붙는 문장으로 닫아 버린다. 어디로 끝낼지
- * 한 줄만 정해 줘도 마지막 쪽이 또렷해진다.
+/*
+ * 「상상 동화」·「감정 동화」의 바라는 마무리 칩(WISH_ENDINGS)은 2026-09-28 질문과 함께 뺐다 —
+ * 답이 서버로 가지 않고 있었다. 자세한 사정과 되살리는 법은 storyQuestions 의 상상 이야기 주석.
  */
-const WISH_ENDINGS = [
-  { t: "스스로 해내고 뿌듯해져요", e: "💪" },
-  { t: "친구가 하나 생겨요", e: "🤝" },
-  { t: "집으로 돌아와 포근해져요", e: "🏡" },
-  { t: "마음이 스르르 풀려요", e: "🌈" },
-  { t: "다음에 또 만나기로 해요", e: "🌙" },
-  { t: "함께라서 해냈어요", e: "✨" },
-];
 
 /**
  * 「감정 동화」 — 그런 마음이 든 흔한 상황 칩. 자유입력의 백지 공포를 없애고,
@@ -435,7 +421,7 @@ function GenderChips({
             onClick={() => onChange(on ? "" : g)}
             aria-pressed={on}
             style={on ? { background: accent } : undefined}
-            className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold transition ${
+            className={`min-h-11 shrink-0 rounded-full px-3.5 text-sm font-bold transition ${
               on ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
             }`}
           >
@@ -604,6 +590,28 @@ function newBookId(): string {
   return `my-${Date.now().toString(36)}-${tail}`;
 }
 
+/**
+ * 재료 한 줄(seed) — 미리보기 겸 재료 화면 '다음' 버튼 조건. 갈래마다 다른 재료를 이어 붙인다.
+ * 화면 값과 임시저장 값(이어 만들기에서 어느 장부터 열지)에 같은 식을 쓰려고 밖으로 뺐다.
+ */
+function materialSeed(
+  v: Pick<
+    CreateDraft,
+    | "storyMode" | "place" | "who" | "todayEvent" | "feeling" | "emotion" | "situation" | "theme" | "happening"
+    | "extra" | "directMode" | "directOpening" | "directDevelopment" | "directCrisis" | "directEnding" | "directText"
+  >,
+): string {
+  return v.storyMode === "today"
+    ? [v.place, v.who, v.todayEvent.trim(), v.feeling].filter(Boolean).join(", ")
+    : v.storyMode === "emotion"
+      ? [v.emotion, v.situation.trim(), v.who].filter(Boolean).join(", ")
+      : v.storyMode === "direct"
+        ? v.directMode === "guided"
+          ? [v.directOpening, v.directDevelopment, v.directCrisis, v.directEnding].filter(Boolean).join(" ")
+          : v.directText.trim()
+        : [v.theme, v.who, v.happening, v.extra.trim()].filter(Boolean).join(", ");
+}
+
 function createDraftKey(owner: string): string {
   return `${CREATE_DRAFT_KEY}:${owner}`;
 }
@@ -662,55 +670,80 @@ function FriendsInput({
   friends,
   onChange,
   accent,
+  bare = false,
 }: {
   friends: FriendEntry[];
   onChange: (v: FriendEntry[]) => void;
   accent: string;
+  /** 참이면 제목·안내 줄을 뺀다 — 한 장에 질문 하나 화면에서는 질문 줄이 제목이고 '건너뛰기'가 (선택)을 대신한다. */
+  bare?: boolean;
 }) {
   const patch = (i: number, p: Partial<FriendEntry>) =>
     onChange(friends.map((f, idx) => (idx === i ? { ...f, ...p } : f)));
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-xs font-bold text-neutral-400">
-        친구들 <span className="font-medium">(선택 · 최대 {MAX_FRIENDS}명)</span>
-      </p>
+      {!bare && (
+        <p className="text-xs font-bold text-neutral-400">
+          친구들 <span className="font-medium">(선택 · 최대 {MAX_FRIENDS}명)</span>
+        </p>
+      )}
       {friends.map((f, i) => (
-        <div key={i} className="flex flex-wrap items-center gap-1.5">
+        // 폰에서는 이름 칸을 한 줄 다 쓰고 성별·빼기는 아랫줄에 — 한 줄에 몰면 이름 칸이 글자 몇 개 폭으로 줄었다.
+        <div key={i} className="flex flex-col gap-1.5 sm:flex-row sm:items-center">
           <input
             value={f.name}
             onChange={(e) => patch(i, { name: e.target.value.slice(0, 20) })}
             maxLength={20}
             placeholder={`친구 ${i + 1} 이름`}
-            className="min-w-0 flex-1 rounded-2xl border-2 border-dashed border-neutral-200 bg-white text-neutral-900 px-3.5 py-2 text-sm font-bold outline-none focus:border-neutral-400"
+            aria-label={`친구 ${i + 1} 이름`}
+            className="min-h-11 min-w-0 flex-1 rounded-2xl border-2 border-dashed border-neutral-200 bg-white text-neutral-900 px-3.5 py-2 text-sm font-bold outline-none focus:border-neutral-400"
           />
-          <GenderChips value={f.gender} onChange={(g) => patch(i, { gender: g })} accent={accent} />
-          <button
-            type="button"
-            onClick={() => onChange(friends.filter((_, idx) => idx !== i))}
-            aria-label={`친구 ${i + 1} 빼기`}
-            className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-bold text-neutral-500 hover:bg-neutral-200"
-          >
-            ✕
-          </button>
+          <div className="flex items-center gap-1.5">
+            <GenderChips value={f.gender} onChange={(g) => patch(i, { gender: g })} accent={accent} />
+            <button
+              type="button"
+              onClick={() => onChange(friends.filter((_, idx) => idx !== i))}
+              aria-label={`친구 ${i + 1} 빼기`}
+              className="ml-auto min-h-11 min-w-11 shrink-0 rounded-full bg-neutral-100 text-sm font-bold text-neutral-500 hover:bg-neutral-200 sm:ml-0"
+            >
+              ✕
+            </button>
+          </div>
         </div>
       ))}
       {friends.length < MAX_FRIENDS && (
         <button
           type="button"
           onClick={() => onChange([...friends, { name: "", gender: "" }])}
-          className="self-start rounded-full bg-neutral-100 px-3.5 py-1.5 text-xs font-extrabold text-neutral-600 hover:bg-neutral-200"
+          className="min-h-11 self-start rounded-full bg-neutral-100 px-4 text-sm font-extrabold text-neutral-600 hover:bg-neutral-200"
         >
           + 친구 더하기
         </button>
       )}
-      <p className="text-[11px] font-medium text-neutral-400">
-        이름을 적으면 그 이름이 그대로 동화에 나와요. 안 적으면 &lsquo;친구&rsquo;라고만 나와요.
-      </p>
+      {!bare && (
+        <p className="text-[11px] font-medium text-neutral-400">
+          이름을 적으면 그 이름이 그대로 동화에 나와요. 안 적으면 &lsquo;친구&rsquo;라고만 나와요.
+        </p>
+      )}
     </div>
   );
 }
 
+/** 끝 글자에 받침이 있나 — 조사(은/는, 이라고/라고)를 맞춘다. "선생님는"·"선생님라고"가 나오던 것. */
+function hasBatchim(word: string): boolean {
+  const c = word.charCodeAt(word.length - 1);
+  return c >= 0xac00 && c <= 0xd7a3 && (c - 0xac00) % 28 !== 0;
+}
+
+/**
+ * 누구랑 다음 장 — 함께 나오는 사람의 이름(선택)과, 호칭으로 알 수 없으면 성별.
+ * "친구들이랑"이면 친구 한 명씩 받는 입력으로 간다.
+ *
+ * 이 칸은 '아이 이름' 칸으로 오해받은 적이 있다(베타 제보) — 라벨이 "아빠 이름"뿐이고 예시가 '토토, 민지'라
+ * 아이 이름처럼 보였다. 이제 장 제목이 "함께 나오는 ○○ 이름은요?"로 누구 이름인지 밝히고,
+ * 안 적어도 된다는 것은 칸 안 안내글과 '건너뛰기' 버튼이 말한다.
+ */
 function WhoNameInput({
   who,
   value,
@@ -731,36 +764,27 @@ function WhoNameInput({
   accent: string;
 }) {
   if (!who || who === "혼자서") return null;
-  // "친구들이랑"은 한 명씩 받는 전용 입력으로 간다.
   if (who === "친구들이랑") {
-    return <FriendsInput friends={friends} onChange={onFriendsChange} accent={accent} />;
+    return <FriendsInput friends={friends} onChange={onFriendsChange} accent={accent} bare />;
   }
   const term = companionTerm(who);
   const askGender = !GENDER_KNOWN.has(term);
   return (
-    <div className="flex flex-col gap-1">
-      {/*
-        여기가 '아이 이름' 칸으로 오해받았다(베타 제보).
-        아이 이름은 앞 화면에서 이미 받았고, 이 칸은 **함께 나오는 사람**의 이름이다.
-        라벨이 "아빠 이름"이라고만 떠 있고 예시가 '토토, 민지'라 아이 이름처럼 보였다.
-        그래서 ① 누구 이름인지 문장으로 밝히고 ② 안 적어도 된다는 것을 아래에 적는다.
-      */}
-      <p className="text-xs font-bold text-neutral-400">
-        함께 나오는 {term} 이름 <span className="font-medium">(선택)</span>
-      </p>
+    <div className="flex flex-col gap-3">
       <input
         value={value}
         onChange={(e) => onChange(e.target.value.slice(0, 20))}
         maxLength={20}
-        placeholder={`${term}를 부르는 이름이 따로 있다면 적어요`}
-        className="w-full rounded-2xl border-2 border-dashed border-neutral-200 bg-white text-neutral-900 px-4 py-2.5 text-sm font-bold outline-none focus:border-neutral-400"
+        aria-label={`함께 나오는 ${term} 이름`}
+        placeholder={`안 적으면 그냥 '${term}'${hasBatchim(term) ? "이라고" : "라고"} 나와요`}
+        className="w-full rounded-2xl border-2 border-dashed border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
       />
-      <p className="text-[11px] font-medium text-neutral-400">
-        아이 이름이 아니라 {term} 이름이에요. 안 적으면 동화에 그냥 &lsquo;{term}&rsquo;라고 나와요.
-      </p>
       {askGender && (
-        <div className="mt-1 flex items-center gap-1.5">
-          <span className="text-xs font-bold text-neutral-400">{term}는</span>
+        <div className="flex items-center justify-center gap-1.5">
+          <span className="text-sm font-bold text-neutral-500">
+            {term}
+            {hasBatchim(term) ? "은" : "는"}
+          </span>
           <GenderChips value={gender} onChange={onGenderChange} accent={accent} />
         </div>
       )}
@@ -976,17 +1000,11 @@ export default function CreatePage() {
     setPageCount(FIXED_PAGE_COUNT);
   }, []);
 
-  // 재료 미리보기 겸 "다음" 버튼 활성 조건. 갈래마다 다른 재료를 이어 붙인다.
-  const seed =
-    storyMode === "today"
-      ? [place, who, todayEvent.trim(), feeling].filter(Boolean).join(", ")
-      : storyMode === "emotion"
-        ? [emotion, situation.trim(), who].filter(Boolean).join(", ")
-        : storyMode === "direct"
-          ? directMode === "guided"
-            ? [directOpening, directDevelopment, directCrisis, directEnding].filter(Boolean).join(" ")
-            : directText.trim()
-        : [theme, who, happening, extra.trim()].filter(Boolean).join(", ");
+  // 재료 미리보기 겸 "다음" 버튼 활성 조건. 갈래마다 다른 재료를 이어 붙인다(식은 materialSeed).
+  const seed = materialSeed({
+    storyMode, place, who, todayEvent, feeling, emotion, situation, theme, happening, extra,
+    directMode, directOpening, directDevelopment, directCrisis, directEnding, directText,
+  });
   const directReady = directText.trim().length >= 20;
   const directFeedback = storyMode === "direct"
     ? [directText.trim().length < 20 ? "이야기를 한두 문장 이상 적어 주세요." : ""].filter(Boolean)
@@ -1657,8 +1675,18 @@ export default function CreatePage() {
     setOutline(draft.outline);
     setStory(draft.story);
     setStep(draft.step);
-    // 재료 질문 화면 — 재료 단계에서 멈췄으면 아직 답이 없는 첫 질문부터, 그 뒤 단계였으면 요약 장부터.
-    setFlowAt(draft.step === "child" || draft.step === "theme" ? null : "summary");
+    // 재료 질문 화면 — 재료가 하나라도 있으면 요약 장부터(일부러 건너뛴 질문을 다시 들이밀지 않는다),
+    // 아무것도 없으면 첫 질문부터. 재료 단계 뒤(그림·성우…)에서 멈췄으면 돌아올 때 요약 장.
+    const flowMode = draft.storyMode === "today" || draft.storyMode === "emotion" || draft.storyMode === "imagine";
+    setFlowAt(
+      draft.step === "child"
+        ? null
+        : draft.step === "theme"
+          ? flowMode && materialSeed(draft)
+            ? "summary"
+            : null
+          : "summary",
+    );
     draftBaselineRef.current = null;
     setPendingDraft(null);
     setDraftReady(true);
@@ -1727,7 +1755,9 @@ export default function CreatePage() {
   function pickThemeGroup(label: string) {
     const next = themeGroup === label ? null : label;
     setThemeGroup(next);
-    // 다른 갈래로 바꾸면 앞 갈래의 세부 이야기는 비운다 — 세부 장이 새 갈래 칩만 보여 줘서, 남겨 두면 안 보이는 채로 재료에 섞인다.
+    // **다른** 갈래로 바꿀 때만 앞 갈래의 세부 이야기를 비운다 — 세부 장이 새 갈래 칩만 보여 줘서, 남겨 두면
+    // 안 보이는 채로 재료에 섞인다. 같은 카드를 다시 눌러 해제할 때는 예전처럼 그대로 둔다(다시 켜면 살아 있다).
+    if (next === null) return;
     const items = THEME_GROUPS.find((g) => g.label === next)?.items ?? [];
     if (!items.some((it) => it.t === theme)) setTheme("");
   }
@@ -1735,56 +1765,45 @@ export default function CreatePage() {
   function storyQuestions(): FlowQuestion[] {
     const textClass =
       "w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400";
-    const friendNames = friends.map((f) => f.name.trim()).filter(Boolean).join(", ");
-    const whoExtraName = who === "친구들이랑" ? friendNames : whoName.trim();
-    const whoQuestion = (title: string, options: FlowOption[]): FlowQuestion => ({
-      id: "who",
-      title,
-      answer: who ? (whoExtraName ? `${who} · ${whoExtraName}` : who) : "",
-      options,
-      value: who,
-      onPick: chooseWho,
-      // 이름·성별·친구 칸이 뜨는 동행(혼자서 빼고 전부)은 자동으로 넘기지 않고 '다음'을 기다린다.
-      holdOn: (t) => t !== "혼자서",
-      children: (
-        <WhoNameInput
-          who={who}
-          value={whoName}
-          onChange={setWhoName}
-          gender={whoGender}
-          onGenderChange={setWhoGender}
-          friends={friends}
-          onFriendsChange={setFriends}
-          accent={accent}
-        />
-      ),
-    });
+    /** 칩과 글 칸이 같은 값을 쓰는 장 — 칸에 직접 적은 글이 있으면 칩을 눌러도 넘기지 않는다(덮인 것을 보고 고치게). */
+    const typedOwn = (value: string, options: FlowOption[]) =>
+      value.trim() !== "" && !options.some((o) => o.t === value);
     /*
-     * 마무리 — 칩으로 고르거나 직접 적는다.
-     * 칩만 두면 네댓 가지 결말만 돌고 돌아 "또 같은 마무리"가 된다. 직접 적는 칸이 있어야
-     * 그 집만의 마무리가 나온다. 칩을 누르면 그 글이 칸에 채워지므로 돌아와 이어서 고쳐 쓸 수 있다.
+     * 누구랑 — 두 장으로 나눈다. 동행 칩은 누르면 바로 넘어가고, 이름·성별·친구 칸은 바로 뒤 장에 따로 둔다.
+     * (한 장에 두면 13개 칩 아래 이름 칸이 폰 화면 밖에 떠서, 눌러도 아무 일 없는 것처럼 보였다.)
+     * 값(who·whoName·whoGender·friends)과 재료는 예전 그대로다.
      */
-    const endingQuestion = (title: string, hint: string, chips: FlowOption[], placeholder: string): FlowQuestion => ({
-      id: "ending",
-      title,
-      answer: ending.trim(),
-      options: chips,
-      value: ending,
-      onPick: (t) => setEnding(ending === t ? "" : t),
-      layout: "wide",
-      children: (
-        <>
-          <input
-            value={ending}
-            onChange={(e) => setEnding(e.target.value.slice(0, 120))}
-            placeholder={placeholder}
-            aria-label={`${title} 직접 적기`}
-            className={textClass}
-          />
-          <p className="break-keep text-center text-xs font-medium text-neutral-400">{hint}</p>
-        </>
-      ),
-    });
+    const whoQuestions = (title: string, options: FlowOption[]): FlowQuestion[] => {
+      const term = companionTerm(who);
+      const nameAnswer =
+        who === "친구들이랑"
+          ? friends
+              .filter((f) => f.name.trim() || f.gender)
+              .map((f) => f.name.trim() || f.gender)
+              .join(", ")
+          : [whoName.trim(), whoGender].filter(Boolean).join(" · ");
+      return [
+        { id: "who", title, answer: who, options, value: who, onPick: chooseWho },
+        {
+          id: "whoName",
+          title: `함께 나오는 ${term} 이름은요?`,
+          hidden: !who || who === "혼자서",
+          answer: nameAnswer,
+          children: (
+            <WhoNameInput
+              who={who}
+              value={whoName}
+              onChange={setWhoName}
+              gender={whoGender}
+              onGenderChange={setWhoGender}
+              friends={friends}
+              onFriendsChange={setFriends}
+              accent={accent}
+            />
+          ),
+        },
+      ];
+    };
 
     if (storyMode === "today") {
       return [
@@ -1796,7 +1815,7 @@ export default function CreatePage() {
           value: place,
           onPick: (t) => setPlace(place === t ? "" : t),
         },
-        whoQuestion("누구랑 있었어요?", todayWho),
+        ...whoQuestions("누구랑 있었어요?", todayWho),
         {
           // 무슨 일 — 여기만 자유롭게. 말로도 글로도 받는다 (실경험의 핵심).
           id: "event",
@@ -1804,9 +1823,8 @@ export default function CreatePage() {
           answer: todayEvent.trim(),
           children: (
             <>
-              <div className="flex justify-center py-1">
-                <VoiceInput onResult={(t) => setTodayEvent(t)} />
-              </div>
+              {/* 마이크는 지금 모든 기기에서 숨김(VoiceInput 의 VOICE_INPUT_ENABLED) — 켜면 여기 뜬다. */}
+              <VoiceInput onResult={(t) => setTodayEvent(t)} />
               <textarea
                 value={todayEvent}
                 onChange={(e) => setTodayEvent(e.target.value.slice(0, 200))}
@@ -1826,13 +1844,28 @@ export default function CreatePage() {
           value: feeling,
           onPick: (t) => setFeeling(feeling === t ? "" : t),
         },
-        // 어떻게 끝났나 — 이게 있어야 실제와 다른 결말(혼난 일을 칭찬으로 등)이 안 나온다.
-        endingQuestion(
-          "일이 어떻게 끝났어요?",
-          "있었던 그대로 적어 주세요. 속상하게 끝난 일도 미화하지 않고 담은 뒤 마음이 풀리게 마무리해요.",
-          TODAY_ENDINGS,
-          "예: 결국 사과하고 다시 같이 놀았어요",
-        ),
+        /*
+         * 어떻게 끝났나 — 이게 있어야 실제와 다른 결말(혼난 일을 칭찬으로 등)이 안 나온다.
+         * 칩으로 고르거나 직접 적는다. 칩만 두면 네 가지 결말만 돌고 돌아 "또 같은 마무리"가 된다.
+         */
+        {
+          id: "ending",
+          title: "일이 어떻게 끝났어요?",
+          answer: ending.trim(),
+          options: TODAY_ENDINGS,
+          value: ending,
+          onPick: (t) => setEnding(ending === t ? "" : t),
+          holdOn: () => typedOwn(ending, TODAY_ENDINGS),
+          children: (
+            <input
+              value={ending}
+              onChange={(e) => setEnding(e.target.value.slice(0, 120))}
+              placeholder="있었던 그대로 적어도 돼요 · 예: 결국 사과하고 다시 같이 놀았어요"
+              aria-label="일이 어떻게 끝났어요? 직접 적기"
+              className={textClass}
+            />
+          ),
+        },
       ];
     }
 
@@ -1854,34 +1887,35 @@ export default function CreatePage() {
           options: EMOTION_TIMES,
           value: situation,
           onPick: (t) => setSituation(situation === t ? "" : t),
+          holdOn: () => typedOwn(situation, EMOTION_TIMES),
           layout: "wide",
           children: (
             <>
-              <div className="flex justify-center py-1">
-                <VoiceInput onResult={(t) => setSituation(t)} />
-              </div>
+              <VoiceInput onResult={(t) => setSituation(t)} />
               <textarea
                 value={situation}
                 onChange={(e) => setSituation(e.target.value.slice(0, 200))}
                 rows={2}
-                aria-label="언제 그런 마음이 들었어요?"
-                placeholder="예: 동생이 내 장난감을 가져갔을 때"
+                aria-label="언제 그런 마음이 들었어요? 직접 적기"
+                placeholder="직접 적어도 돼요 · 예: 동생이 내 장난감을 가져갔을 때"
                 className={textClass}
               />
             </>
           ),
         },
-        whoQuestion("누구랑 있었어요?", todayWho),
-        endingQuestion(
-          "어떻게 끝나면 좋을까요?",
-          "마지막 쪽이 제일 밋밋해지기 쉬워요. 어디로 데려다 놓을지 한 줄만 정해 주면 훨씬 또렷하게 끝나요.",
-          WISH_ENDINGS,
-          "예: 무서워하던 그 방에서 혼자 잠들어요",
-        ),
+        ...whoQuestions("누구랑 있었어요?", todayWho),
       ];
     }
 
-    // 상상 이야기 — 갈래 카드 → 세부 칩 → 누구랑 → 무슨 일 → 더 넣을 것 → 마무리
+    /*
+     * 상상 이야기 — 갈래 카드 → 세부 칩 → 누구랑 → 무슨 일 → 더 넣을 것.
+     *
+     * 상상·감정의 '어떻게 끝나면 좋을까요?'(바라는 마무리 칩 6개 + 직접 적기) 장은 2026-09-28 뺐다.
+     * 예전 한 화면에도 있었지만 그 답은 서버로 가지 않았다 — makeOutline 의 material 에 ending 이 없고,
+     * buildStoryMaterial 은 ""를 보낸다. 효과 없는 장이 한 번 더 누르게만 해서 '최대한 심플'에 어긋났다.
+     * 되살리려면 칩 목록(WISH_ENDINGS, 커밋 d813142)과 함께 두 material 에 ending 을 실어야 한다
+     * (서버 anthropic.ts 는 상상·감정의 ending 을 이미 받을 줄 안다).
+     */
     const group = THEME_GROUPS.find((g) => g.label === themeGroup);
     return [
       {
@@ -1902,7 +1936,7 @@ export default function CreatePage() {
         value: theme,
         onPick: (t) => setTheme(theme === t ? "" : t),
       },
-      whoQuestion("누구랑 함께할까요?", imagineWho),
+      ...whoQuestions("누구랑 함께할까요?", imagineWho),
       {
         id: "happening",
         title: "무슨 일이 생길까요?",
@@ -1918,9 +1952,7 @@ export default function CreatePage() {
         answer: extra.trim(),
         children: (
           <>
-            <div className="flex justify-center py-1">
-              <VoiceInput onResult={(t) => setExtra(t.slice(0, 200))} />
-            </div>
+            <VoiceInput onResult={(t) => setExtra(t.slice(0, 200))} />
             <input
               value={extra}
               onChange={(e) => setExtra(e.target.value)}
@@ -1935,12 +1967,6 @@ export default function CreatePage() {
           </>
         ),
       },
-      endingQuestion(
-        "어떻게 끝나면 좋을까요?",
-        "마지막 쪽이 제일 밋밋해지기 쉬워요. 어디로 데려다 놓을지 한 줄만 정해 주면 훨씬 또렷하게 끝나요.",
-        WISH_ENDINGS,
-        "예: 무서워하던 그 방에서 혼자 잠들어요",
-      ),
     ];
   }
 
@@ -1956,6 +1982,14 @@ export default function CreatePage() {
     }
     return <>🌱 {hero}의 <span className="text-neutral-800">{seed}</span> 이야기</>;
   }
+
+  /** 재료가 하나도 없을 때 요약 장의 한 줄 — seed 에 들어가는 질문만 말한다(갈래·마무리만으로는 못 만든다). */
+  const storyEmptyHint =
+    storyMode === "today"
+      ? "어디서·누구랑·무슨 일·기분 중 하나는 있어야 만들 수 있어요."
+      : storyMode === "emotion"
+        ? "마음·언제·누구랑 중 하나는 있어야 만들 수 있어요."
+        : "세부 이야기·누구랑·무슨 일·더 넣을 이야기 중 하나는 있어야 만들 수 있어요.";
 
   function buildStoryMaterial() {
     const common = {
@@ -3646,6 +3680,7 @@ export default function CreatePage() {
                   }}
                   onFinish={() => setStep("style")}
                   summary={storySummary()}
+                  emptyHint={storyEmptyHint}
                   canFinish={Boolean(seed)}
                   accent={accent}
                   accentDark={accentDark}

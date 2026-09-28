@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
 /**
  * 동화 재료를 '한 장에 질문 하나'로 묻는 화면 — 오늘의 이야기·상상 이야기·감정 동화가 함께 쓴다.
@@ -9,9 +9,10 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
  * 그래서 화면 배치만 바꿨다 — 질문·보기·재료(서버로 보내는 값)는 만들기 화면(create/page.tsx)이
  * 그대로 들고 있고, 여기서는 그 질문들을 한 장씩 넘겨 보여 주기만 한다.
  *
- * 한 장 = 진행 점 + (앞에서 고른 답 칩 줄) + 질문 한 줄 + 보기 칩 또는 글 칸 + 이전/다음.
+ * 한 장 = 진행 점 + (앞에서 고른 답 칩 한 줄) + 질문 한 줄 + 보기 칩 또는 글 칸 + 이전/다음.
  * - 하나만 고르는 칩: 누르면 0.25초 뒤 다음 장. 이미 고른 칩을 다시 누르면 해제하고 그 장에 머문다.
- *   holdOn 이 참인 보기(이름·친구 입력이 뜨는 동행)는 넘기지 않고 '다음' 버튼을 기다린다.
+ *   넘어가기 전 0.25초 안에 같은 칩을 또 누르면(톡톡 두 번) 해제하지 않고 무시한다.
+ *   holdOn 이 참이면 넘기지 않고 '다음' 버튼을 기다린다(직접 적은 글이 있는 장).
  * - 답이 없으면 '건너뛰기', 있으면 '다음 →'. (재료는 하나만 있어도 만들 수 있어서 모든 질문이 선택이다.)
  * - 마지막 장은 '이렇게 만들어요' 요약 + '다음 →'.
  */
@@ -24,16 +25,16 @@ export type FlowQuestion = {
   title: string;
   /** 지금 고른·적은 답(빈 문자열 = 아직 안 함). 위 답 칩 줄과 '다음/건너뛰기'를 가른다. */
   answer: string;
-  /** 참이면 이 장은 건너뛴다(예: 갈래를 안 고르면 세부 이야기 장이 없다). */
+  /** 참이면 이 장은 건너뛴다(예: 갈래를 안 고르면 세부 이야기 장이 없다). 진행 점은 그대로 센다. */
   hidden?: boolean;
   options?: FlowOption[];
   /** 지금 골라진 보기(t). */
   value?: string;
   /** 보기를 눌렀을 때 — 같은 보기를 다시 누르면 해제하는 것은 부르는 쪽이 한다. */
   onPick?: (t: string) => void;
-  /** 이 보기를 고르면 자동으로 넘기지 않는다(이름·성별·친구 입력이 뜨는 경우). */
+  /** 참이면 이 보기를 골라도 자동으로 넘기지 않는다. 누르기 **전** 값으로 판단한다. */
   holdOn?: (t: string) => boolean;
-  /** chips = 짧은 보기(폰 2열·넓으면 3열), wide = 문장 보기(늘 2열), cards = 그림 카드 3열. */
+  /** chips = 짧은 보기(3열, 그림 위·글 아래), wide = 문장 보기(1열 한 줄씩), cards = 그림 카드 3열. */
   layout?: "chips" | "wide" | "cards";
   /** 보기 아래 붙는 입력(글 칸·말로 입력·이름 칸 등). */
   children?: ReactNode;
@@ -67,16 +68,19 @@ function resolvePos(qs: FlowQuestion[], p: FlowPos): FlowPos {
   return qs[p].hidden ? nextAfter(qs, p) : p;
 }
 
-function OptionIcon({ o, big }: { o: FlowOption; big?: boolean }) {
+function OptionIcon({ o, size }: { o: FlowOption; size: "card" | "chip" | "line" }) {
   if (o.icon) {
-    return big ? (
-      <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={o.icon} alt="" className="h-14 w-14 object-contain" />
-      </span>
-    ) : (
+    if (size === "card") {
+      return (
+        <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={o.icon} alt="" className="h-14 w-14 object-contain" />
+        </span>
+      );
+    }
+    return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={o.icon} alt="" aria-hidden className="h-7 w-7 shrink-0 object-contain" />
+      <img src={o.icon} alt="" aria-hidden className={`shrink-0 object-contain ${size === "chip" ? "h-6 w-6" : "h-7 w-7"}`} />
     );
   }
   if (!o.e) return null;
@@ -94,6 +98,7 @@ export function QuestionFlow({
   onExit,
   onFinish,
   summary,
+  emptyHint,
   canFinish,
   accent,
   accentDark,
@@ -110,6 +115,8 @@ export function QuestionFlow({
   onFinish: () => void;
   /** '이렇게 만들어요' 한 줄. 재료가 하나도 없으면 null. */
   summary: ReactNode;
+  /** 재료가 없을 때 요약 장에 띄울 한 줄 — 무엇이 있어야 만들 수 있는지(갈래마다 다르다). */
+  emptyHint: string;
   canFinish: boolean;
   accent: string;
   accentDark: string;
@@ -117,8 +124,9 @@ export function QuestionFlow({
 }) {
   const [pos, setPos] = useState<FlowPos>(() => resolvePos(questions, initial ?? firstOpen(questions)));
   const cur = resolvePos(questions, pos);
+  const titleId = useId();
 
-  // 자동 넘김 타이머가 0.25초 뒤에 읽을 '지금 값' — 그 사이 갈래를 고르면 세부 장이 새로 생긴다.
+  // 자동 넘김 타이머가 0.25초 뒤에 읽을 '지금 값' — 그 사이 갈래·동행을 고르면 뒤 장이 생기거나 숨는다.
   const latestRef = useRef(questions);
   const curRef = useRef(cur);
   useEffect(() => {
@@ -127,6 +135,8 @@ export function QuestionFlow({
   });
 
   const timerRef = useRef<number | null>(null);
+  // 넘어가기를 기다리는 동안 마지막으로 누른 보기 — 톡톡 두 번 누름을 '해제'로 읽지 않게.
+  const pendingRef = useRef<{ i: number; t: string } | null>(null);
   useEffect(() => {
     const timer = timerRef;
     return () => {
@@ -148,6 +158,7 @@ export function QuestionFlow({
       window.clearTimeout(timerRef.current);
       timerRef.current = null;
     }
+    pendingRef.current = null;
   }
 
   function go(p: FlowPos) {
@@ -167,22 +178,32 @@ export function QuestionFlow({
   }
 
   function pick(i: number, t: string) {
+    // 넘어가기를 기다리는 사이 같은 보기를 또 눌렀다 — 해제가 아니라 두 번 누름이다.
+    const pending = pendingRef.current;
+    if (timerRef.current !== null && pending?.i === i && pending.t === t) return;
     const q = questions[i];
     const deselect = q.value === t;
+    const hold = q.holdOn?.(t) ?? false;
     q.onPick?.(t);
     clearTimer();
-    if (deselect || q.holdOn?.(t)) return;
+    if (deselect || hold) return;
+    pendingRef.current = { i, t };
     timerRef.current = window.setTimeout(() => {
       timerRef.current = null;
+      pendingRef.current = null;
       if (curRef.current !== i) return;
       go(nextAfter(latestRef.current, i));
     }, AUTO_NEXT_MS);
   }
 
-  const visible = questions.map((q, i) => ({ q, i })).filter(({ q }) => !q.hidden);
-  const dot = cur === "summary" ? visible.length : visible.findIndex((v) => v.i === cur);
-  const answered = visible.filter(({ q, i }) => q.answer && i !== cur);
+  // 진행 점은 숨은 장까지 늘 같은 수로 센다 — 도중에 점이 늘면 '더 남았다'로 보인다. 숨은 장은 지나간 점처럼 칠해진다.
+  const total = questions.length + 1;
+  const dot = cur === "summary" ? questions.length : cur;
+  const answered = questions
+    .map((q, i) => ({ q, i }))
+    .filter(({ q, i }) => !q.hidden && q.answer && i !== cur);
   const q = cur === "summary" ? null : questions[cur];
+  const qi = cur === "summary" ? -1 : cur;
 
   const primaryStyle = { background: accent, color: "#fff", boxShadow: `0 6px 0 ${accentDark}` };
   const primaryClass =
@@ -190,40 +211,38 @@ export function QuestionFlow({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* 진행 점 — 얼마나 남았는지. 요약 장까지 센다. */}
-      <div className="flex items-center justify-center gap-1.5">
-        {Array.from({ length: visible.length + 1 }, (_, k) => (
+      {/* 진행 점 — 얼마나 남았는지. 요약 장까지 센다. (화면 읽기용 'N장 중 M장'은 질문 줄 앞에 붙는다) */}
+      <div aria-hidden className="flex items-center justify-center gap-1.5">
+        {Array.from({ length: total }, (_, k) => (
           <span
             key={k}
-            aria-hidden
             className={`h-2 rounded-full transition-all motion-reduce:transition-none ${k === dot ? "w-5" : "w-2"} ${k > dot ? "bg-neutral-300" : ""}`}
             style={k <= dot ? { background: accent, opacity: k === dot ? 1 : 0.45 } : undefined}
           />
         ))}
-        <span className="sr-only">
-          {visible.length + 1}장 중 {dot + 1}장
-        </span>
       </div>
 
-      {/* 앞에서 고른 답 — 누르면 그 질문으로 돌아가 고친다. */}
+      {/* 앞에서 고른 답 — 한 줄로 두고 넘치면 옆으로 민다. 누르면 그 질문으로 돌아가 고친다. */}
       {answered.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-x-1.5">
-          {answered.map(({ q: a, i }) => (
-            <button
-              key={a.id}
-              type="button"
-              onClick={() => go(i)}
-              aria-label={`${a.title} ${a.answer} — 고치기`}
-              className="flex min-h-11 items-center"
-            >
-              <span
-                className="max-w-[11rem] truncate rounded-full px-3 py-1 text-xs font-bold text-neutral-700"
-                style={{ background: accentSoft }}
+        <div className="-my-1 overflow-x-auto [scrollbar-width:none]">
+          <div className="mx-auto flex w-max gap-1.5">
+            {answered.map(({ q: a, i }) => (
+              <button
+                key={a.id}
+                type="button"
+                onClick={() => go(i)}
+                aria-label={`${a.title} ${a.answer} — 고치기`}
+                className="flex min-h-11 min-w-11 items-center justify-center"
               >
-                {a.answer}
-              </span>
-            </button>
-          ))}
+                <span
+                  className="max-w-[10rem] truncate rounded-full px-3 py-1 text-sm font-bold text-neutral-700"
+                  style={{ background: accentSoft }}
+                >
+                  {a.answer}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -233,49 +252,46 @@ export function QuestionFlow({
           tabIndex={-1}
           className="break-keep text-center text-2xl font-extrabold text-neutral-800 outline-none"
         >
-          {q ? q.title : "이렇게 만들어요"}
+          <span className="sr-only">
+            {total}장 중 {dot + 1}장.{" "}
+          </span>
+          <span id={titleId}>{q ? q.title : "이렇게 만들어요"}</span>
         </h1>
 
         {q && q.options && q.options.length > 0 && (
           <div
+            role="group"
+            aria-labelledby={titleId}
             className={`grid ${
-              q.layout === "cards"
-                ? "grid-cols-3 gap-2.5"
-                : q.layout === "wide"
-                  ? "grid-cols-2 gap-2"
-                  : "grid-cols-2 gap-2 sm:grid-cols-3"
+              q.layout === "wide" ? "grid-cols-1 gap-1.5" : q.layout === "cards" ? "grid-cols-3 gap-2.5" : "grid-cols-3 gap-2"
             }`}
           >
             {q.options.map((o) => {
               const on = q.value === o.t;
-              const i = cur as number;
-              return q.layout === "cards" ? (
+              const tone = on ? "text-white shadow" : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200";
+              const shape =
+                q.layout === "cards"
+                  ? "flex-col gap-1.5 py-3"
+                  : q.layout === "wide"
+                    ? "min-h-11 gap-2.5 px-4 py-2 text-left text-[15px] leading-snug"
+                    : "min-h-[52px] flex-col justify-center gap-0.5 px-1 py-1.5 text-sm leading-tight";
+              return (
                 <button
                   key={o.t}
                   type="button"
-                  onClick={() => pick(i, o.t)}
+                  onClick={() => pick(qi, o.t)}
                   aria-pressed={on}
                   style={on ? { background: accent } : undefined}
-                  className={`flex flex-col items-center gap-1.5 rounded-2xl py-3 font-bold transition ${
-                    on ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                  }`}
+                  className={`flex items-center rounded-2xl font-bold transition ${shape} ${tone}`}
                 >
-                  <OptionIcon o={o} big />
-                  <span className="break-keep text-center text-[13px] leading-tight">{o.t}</span>
-                </button>
-              ) : (
-                <button
-                  key={o.t}
-                  type="button"
-                  onClick={() => pick(i, o.t)}
-                  aria-pressed={on}
-                  style={on ? { background: accent } : undefined}
-                  className={`flex min-h-[52px] items-center gap-2 rounded-2xl px-3 py-2.5 text-left text-[15px] font-bold leading-snug transition ${
-                    on ? "text-white shadow" : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-                  }`}
-                >
-                  <OptionIcon o={o} />
-                  <span className="min-w-0 break-keep">{o.t}</span>
+                  <OptionIcon o={o} size={q.layout === "cards" ? "card" : q.layout === "wide" ? "line" : "chip"} />
+                  <span
+                    className={`min-w-0 break-keep ${q.layout === "wide" ? "" : "text-center"} ${
+                      q.layout === "cards" ? "text-[13px] leading-tight" : ""
+                    }`}
+                  >
+                    {o.t}
+                  </span>
                 </button>
               );
             })}
@@ -284,16 +300,17 @@ export function QuestionFlow({
 
         {q?.children}
 
-        {!q &&
-          (summary ? (
-            <p className="break-keep rounded-2xl bg-neutral-50 px-4 py-3 text-center text-base font-bold leading-relaxed text-neutral-500">
-              {summary}
-            </p>
-          ) : (
-            <p className="break-keep text-center text-sm font-bold text-neutral-400">
-              아직 고른 게 없어요. 질문 하나만 골라도 만들 수 있어요.
-            </p>
-          ))}
+        {!q && (
+          <p
+            className={`break-keep text-center ${
+              summary
+                ? "rounded-2xl bg-neutral-50 px-4 py-3 text-base font-bold leading-relaxed text-neutral-500"
+                : "text-sm font-bold text-neutral-400"
+            }`}
+          >
+            {summary || emptyHint}
+          </p>
+        )}
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-3">
@@ -306,13 +323,13 @@ export function QuestionFlow({
         </button>
         {q ? (
           q.answer ? (
-            <button type="button" onClick={() => go(nextAfter(questions, cur as number))} style={primaryStyle} className={primaryClass}>
+            <button type="button" onClick={() => go(nextAfter(questions, qi))} style={primaryStyle} className={primaryClass}>
               다음 →
             </button>
           ) : (
             <button
               type="button"
-              onClick={() => go(nextAfter(questions, cur as number))}
+              onClick={() => go(nextAfter(questions, qi))}
               className="min-h-11 rounded-full px-4 text-sm font-bold text-neutral-500 hover:text-neutral-700"
             >
               건너뛰기
