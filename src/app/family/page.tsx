@@ -4,9 +4,10 @@
  * 우리 가족 캐릭터 — 가족을 사람마다 수채화 전신 1장으로 그려 '고정'하는 화면.
  *
  * 단계는 주소가 아니라 state 로 바꾼다(useSearchParams 는 배포 빌드에서 Suspense 오류가 난다).
- *   album    가족 모아 보기 — 누구 한 명이라도 그림(고정·확인 전)이 있으면 첫 화면
- *   members  누가 우리 가족인가요? — 가족이 아이뿐이면 첫 화면 (1/3)
- *   looks    생김새 고르기 (2/3) · 고치기(모아 보기에서)
+ *   album    가족 모아 보기 — 누구 한 명이라도 그림(고정·확인 전)이 있거나 '특징만 저장'했으면 첫 화면
+ *   members  누가 우리 가족인가요? — 그 밖(가족이 아이뿐 등)이면 첫 화면 (1/3)
+ *   looks    생김새 고르기 (2/3) · 고치기(모아 보기에서). 회원의 아이·엄마·아빠 특징은 여기서만 고른다
+ *            (설정의 특징 칸은 회원에게서 걷었다 — 사장님 2026-09-28).
  *   drawing  그리는 중 (3/3) — 서버 호출은 동시에 2명까지
  *   review   한 사람씩 확인 — 마음에 들어요 / 다시 그리기(두 장 비교)
  *   done     완성 — 단체 사진과 약속
@@ -22,6 +23,8 @@
  *  - 서버 값이 뒤늦게 와도 이 화면에서 고친 생김새 칸(looksEdits)만 지키고 나머지는 서버 값을 따른다.
  *  - 쿠키 셈과 차감은 서버가 한다. 화면의 값은 안내일 뿐이고(nextDrawCost), 요청에 실어 보내
  *    서버 값이 더 크면 깎지 않고 409(price)로 돌아온다 — 그때 확인 창을 다시 띄운다.
+ *  - 쿠키 확인 창의 '그림 없이 특징만 저장할게요'(saveLooksOnly)는 쿠키 0개 — 그리기 서버를 부르지 않는다.
+ *    생김새는 고를 때마다 이미 저장됐고, 그 사람들에게 looksOnly 표시만 달아(생김새와 같은 saveChild) 모아 보기로 간다.
  *  - 그리기 응답을 잃으면(끊김·75초 초과·함수 잘림) 다시 그리기 전에 서버에 결과를 묻는다(recover).
  *    서버는 건넨 그림 주소를 남겨 두므로, 이미 그려졌으면 값을 또 내지 않고 그 그림을 받는다.
  *  - 그림을 받을 때 그때의 '늘 그대로'를 currentLockKey 로 적어 둔다(FamilyPortrait.lockKey). 모아 보기는
@@ -39,7 +42,15 @@ import { AlbumView } from "@/components/family/AlbumView";
 import { ConfirmSheet } from "@/components/family/ConfirmSheet";
 import { DoneView } from "@/components/family/DoneView";
 import { DrawingView } from "@/components/family/DrawingView";
-import { displayName, jobError, objectOf, portraitRequest, seasonLabel, type Job } from "@/components/family/family-ui";
+import {
+  displayName,
+  hasPickedLooks,
+  jobError,
+  objectOf,
+  portraitRequest,
+  seasonLabel,
+  type Job,
+} from "@/components/family/family-ui";
 import { LooksChangedSheet } from "@/components/family/LooksChangedSheet";
 import { LooksView } from "@/components/family/LooksView";
 import { MembersView } from "@/components/family/MembersView";
@@ -171,9 +182,14 @@ function withChild(fam: FamilyMember[], name: string): FamilyMember[] {
   return [{ id: "child", role: "child", callName: nm }, ...fam];
 }
 
+/** 모아 보기가 첫 화면인가 — 그림(고정·확인 전)이 있거나 '특징만 저장'한 사람이 있으면 */
+function hasAlbum(fam: FamilyMember[]): boolean {
+  return fam.some((m) => m.portrait || m.draft || m.looksOnly);
+}
+
 function firstStep(fam: FamilyMember[], c: ChildPrefs | null): Step {
   if (!c || !c.name.trim()) return "noChild";
-  return fam.some((m) => m.portrait || m.draft) ? "album" : "members";
+  return hasAlbum(fam) ? "album" : "members";
 }
 
 /** 빈 값을 빼고 순서를 맞춘 글자 — '뭐라도 바뀌었나' 견주기용 */
@@ -505,6 +521,24 @@ export default function FamilyPage() {
     if (!m) return;
     const diff = lockChanges(m.role, lockKeyLooks(m.portrait?.lockKey), currentLooksOf(m, childRef.current));
     setOverlay({ kind: "changed", id, diff: diff.length > 0 ? diff : ["생김새가 바뀌었어요"], fromAlbum: true });
+  }
+
+  /**
+   * '그림 없이 특징만 저장할게요'(쿠키 확인 창의 둘째 선택) — 쿠키 0개. 그리기 서버(api/family/portrait)는
+   * 부르지 않는다(queueDraw·startRound·recover 를 거치지 않는다).
+   * 생김새는 고를 때마다 이미 저장됐다(아이·엄마·아빠 saveChild, 그 밖 member.looks patchMember). 여기서는 그림도
+   * 확인 전 그림도 없는 사람에게 '특징만 저장됨'(looksOnly)을 달고 모아 보기로 간다 — 그림이 걸린 변경이 아니라서
+   * 생김새와 같이 'soon'(saveChild — 이 기기에 바로, 서버에는 800ms 뒤 서버 값과 합쳐서). 얼굴 고정은 나중에
+   * 모아 보기의 '얼굴 고정하기'(쿠키)로 한다. 동화에서는 그림이 없는 사람이라 이 특징으로 새로 그린다.
+   */
+  function saveLooksOnly(ids: string[]) {
+    const pick = new Set(ids);
+    const fam = familyRef.current;
+    const mark = (m: FamilyMember) => pick.has(m.id) && !m.portrait && !m.draft && !m.looksOnly;
+    if (fam.some(mark)) commit(fam.map((m) => (mark(m) ? { ...m, looksOnly: true } : m)), "soon");
+    setOverlay(null);
+    go("album");
+    showToast("특징만 저장했어요 · 쿠키는 쓰지 않았어요");
   }
 
   /* ───────────────────────── 가족 넣기·빼기 ───────────────────────── */
@@ -1003,7 +1037,7 @@ export default function FamilyPage() {
         child={child}
         family={family}
         master={master}
-        onBack={() => (family.some((m) => m.portrait || m.draft) ? go("album") : router.push("/"))}
+        onBack={() => (hasAlbum(family) ? go("album") : router.push("/"))}
         onToggle={addPreset}
         onRemove={removeMember}
         onFixedTap={(m) => showToast(`${displayName(m)} 얼굴은 고정돼 있어요. 모아 보기에서 고칠 수 있어요`)}
@@ -1161,6 +1195,12 @@ export default function FamilyPage() {
             }
           }}
           onCharge={() => router.push("/settings")}
+          // 생김새 고르기에서 온 처음 고정만 — 그리는 중 값이 바뀌어 다시 묻는 창(inline)에는 없다.
+          onLooksOnly={
+            overlay.variant === "fix" && !overlay.inline
+              ? () => saveLooksOnly(confirmMembers.map((m) => m.id))
+              : undefined
+          }
         />
       )}
 
@@ -1171,6 +1211,7 @@ export default function FamilyPage() {
           childName={child?.name ?? ""}
           family={family}
           master={master}
+          looksPicked={hasPickedLooks(sheetMember, child)}
           onClose={() => setOverlay(null)}
           onReview={() => openReview(sheetMember.id)}
           onRedraw={() => redraw(sheetMember.id, false)}

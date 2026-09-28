@@ -1,0 +1,493 @@
+[
+ {
+  "name": "dinosaur",
+  "subject": "a cute baby green dinosaur, smiling",
+  "chips": [
+   "공룡"
+  ]
+ },
+ {
+  "name": "rocket",
+  "subject": "a colorful toy rocket flying up with a little flame",
+  "chips": [
+   "우주"
+  ]
+ },
+ {
+  "name": "whale",
+  "subject": "a happy blue baby whale with a small water spout",
+  "chips": [
+   "바다"
+  ]
+ },
+ {
+  "name": "bunny",
+  "subject": "a fluffy white bunny holding a carrot",
+  "chips": [
+   "동물 친구"
+  ]
+ },
+ {
+  "name": "magic",
+  "subject": "a magic wand with a star tip and swirling sparkles",
+  "chips": [
+   "마법"
+  ]
+ },
+ {
+  "name": "forest",
+  "subject": "a small round pine tree with a tiny explorer backpack leaning on it",
+  "chips": [
+   "숲속 모험"
+  ]
+ },
+ {
+  "name": "princess",
+  "subject": "a golden princess tiara crown with pink gems",
+  "chips": [
+   "공주님 이야기"
+  ]
+ },
+ {
+  "name": "prince",
+  "subject": "a little prince boy wearing a small golden crown and a red cape, upper body",
+  "chips": [
+   "왕자님 이야기"
+  ]
+ },
+ {
+  "name": "fox",
+  "subject": "a clever little orange fox sitting with a friendly smile",
+  "chips": [
+   "이솝우화처럼"
+  ]
+ },
+ {
+  "name": "meal",
+  "subject": "a bowl of white rice with a spoon, gentle steam rising",
+  "chips": [
+   "밥 잘 먹기"
+  ]
+ },
+ {
+  "name": "sleep",
+  "subject": "a sleepy crescent moon wearing a nightcap resting on a soft pillow",
+  "chips": [
+   "잠자기",
+   "깜깜한 밤이 무서워서"
+  ]
+ },
+ {
+  "name": "toothbrush",
+  "subject": "a toothbrush with a blob of toothpaste and bubbles",
+  "chips": [
+   "양치질"
+  ]
+ },
+ {
+  "name": "potty",
+  "subject": "a small potty seat for toddlers, cute and clean",
+  "chips": [
+   "배변 훈련"
+  ]
+ },
+ {
+  "name": "sharing",
+  "subject": "two small hands sharing a toy block",
+  "chips": [
+   "친구와 나누기"
+  ]
+ },
+ {
+  "name": "errand",
+  "subject": "a little child running happily holding a shopping bag",
+  "chips": [
+   "심부름"
+  ]
+ },
+ {
+  "name": "map",
+  "subject": "a rolled treasure map with a red X mark",
+  "chips": [
+   "신나는 모험을 떠나요"
+  ]
+ },
+ {
+  "name": "search",
+  "subject": "a magnifying glass looking at a tiny star",
+  "chips": [
+   "무언가를 찾으러 가요"
+  ]
+ },
+ {
+  "name": "new-friend",
+  "subject": "two little kids waving hello to each other",
+  "chips": [
+   "새 친구를 만나요"
+  ]
+ },
+ {
+  "name": "strong",
+  "subject": "a small cute arm flexing a bicep with a tiny star",
+  "chips": [
+   "어려움을 이겨내요"
+  ]
+ },
+ {
+  "name": "sprout",
+  "subject": "a tiny green sprout growing in a small pot",
+  "chips": [
+   "실수하고 뉘우쳐요"
+  ]
+ },
+ {
+  "name": "gift",
+  "subject": "a wrapped gift box with a ribbon, glowing softly",
+  "chips": [
+   "소중한 걸 배워요"
+  ]
+ },
+ {
+  "name": "kindergarten",
+  "subject": "a small kindergarten building with a red roof and a little flag",
+  "chips": [
+   "유치원",
+   "유치원에 처음 가는 날"
+  ]
+ },
+ {
+  "name": "daycare",
+  "subject": "a soft brown teddy bear sitting",
+  "chips": [
+   "어린이집",
+   "동생이 장난감을 뺏었을 때"
+  ]
+ },
+ {
+  "name": "playground",
+  "subject": "a small colorful merry-go-round carousel",
+  "chips": [
+   "놀이터"
+  ]
+ },
+ {
+  "name": "home",
+  "subject": "a cozy small house with a red roof and a warm lit window",
+  "chips": [
+   "집",
+   "일상 이야기"
+  ]
+ },
+ {
+  "name": "grandma-house",
+  "subject": "a small cute traditional Korean hanok house",
+  "chips": [
+   "할머니 댁"
+  ]
+ },
+ {
+  "name": "mart",
+  "subject": "a small shopping cart with fruit and bread",
+  "chips": [
+   "마트"
+  ]
+ },
+ {
+  "name": "hospital",
+  "subject": "a small hospital building with a red cross",
+  "chips": [
+   "병원"
+  ]
+ },
+ {
+  "name": "zoo",
+  "subject": "a friendly cartoon lion face",
+  "chips": [
+   "동물원"
+  ]
+ },
+ {
+  "name": "outing",
+  "subject": "a round green park tree on a little grass hill with a flower",
+  "chips": [
+   "바깥 나들이"
+  ]
+ },
+ {
+  "name": "alone",
+  "subject": "one little child standing alone, gender-neutral, yellow shirt, calm smile, full body",
+  "chips": [
+   "혼자서"
+  ]
+ },
+ {
+  "name": "friend",
+  "subject": "a boy and a girl holding hands, smiling, full body",
+  "chips": [
+   "친구랑"
+  ]
+ },
+ {
+  "name": "teacher",
+  "subject": "a kind young female teacher with glasses holding a book, upper body",
+  "chips": [
+   "선생님이랑"
+  ]
+ },
+ {
+  "name": "mom",
+  "subject": "a young Korean mom with shoulder-length dark hair, smiling, upper body",
+  "chips": [
+   "엄마랑"
+  ]
+ },
+ {
+  "name": "dad",
+  "subject": "a young Korean dad with short dark hair, smiling, upper body",
+  "chips": [
+   "아빠랑"
+  ]
+ },
+ {
+  "name": "mom-dad",
+  "subject": "a mom and a dad with a small child between them, hugging, upper body",
+  "chips": [
+   "엄마 아빠랑"
+  ]
+ },
+ {
+  "name": "grandma",
+  "subject": "a Korean grandma with gray hair in a bun and round glasses, smiling, upper body",
+  "chips": [
+   "할머니랑"
+  ]
+ },
+ {
+  "name": "grandpa",
+  "subject": "a Korean grandpa with short gray hair and a gentle smile, upper body",
+  "chips": [
+   "할아버지랑"
+  ]
+ },
+ {
+  "name": "puppy",
+  "subject": "a cute white puppy with floppy ears",
+  "chips": [
+   "동물 친구랑",
+   "귀여운 동물 친구를 만났을 때"
+  ]
+ },
+ {
+  "name": "older-brother",
+  "subject": "an older brother, a boy about 9 years old, smiling, upper body",
+  "chips": [
+   "형이랑",
+   "오빠랑"
+  ]
+ },
+ {
+  "name": "older-sister",
+  "subject": "an older sister, a girl about 9 years old with a ponytail, smiling, upper body",
+  "chips": [
+   "누나랑",
+   "언니랑"
+  ]
+ },
+ {
+  "name": "baby-brother",
+  "subject": "a baby boy with a light blue pacifier",
+  "chips": [
+   "남동생이랑",
+   "동생만 예뻐하는 것 같아서"
+  ]
+ },
+ {
+  "name": "baby-sister",
+  "subject": "a baby girl with a pink hair bow and a pacifier",
+  "chips": [
+   "여동생이랑"
+  ]
+ },
+ {
+  "name": "star",
+  "subject": "a shining golden star with a happy face",
+  "chips": [
+   "칭찬받았어요"
+  ]
+ },
+ {
+  "name": "heart",
+  "subject": "a glossy red heart",
+  "chips": [
+   "좋아해요"
+  ]
+ },
+ {
+  "name": "angry",
+  "subject": "a round soft yellow face emoji character, angry, red cheeks, frowning brows, puffed cheeks",
+  "chips": [
+   "화가 나요",
+   "화났어요"
+  ]
+ },
+ {
+  "name": "scared",
+  "subject": "a round soft yellow face emoji character, scared, wide eyes, trembling",
+  "chips": [
+   "무서워요",
+   "무서웠어요"
+  ]
+ },
+ {
+  "name": "sad",
+  "subject": "a round soft yellow face emoji character, sad, crying with a tear drop",
+  "chips": [
+   "슬퍼요",
+   "속상했어요",
+   "아직 속상해요",
+   "엄마 아빠한테 혼나서"
+  ]
+ },
+ {
+  "name": "jealous",
+  "subject": "a round soft yellow face emoji character, jealous, pouting and looking sideways",
+  "chips": [
+   "샘이 나요"
+  ]
+ },
+ {
+  "name": "shy",
+  "subject": "a round soft yellow face emoji character, shy, pink blushing cheeks, looking down",
+  "chips": [
+   "부끄러워요"
+  ]
+ },
+ {
+  "name": "upset",
+  "subject": "a round soft yellow face emoji character, upset, downcast eyes, small frown",
+  "chips": [
+   "속상해요"
+  ]
+ },
+ {
+  "name": "lonely",
+  "subject": "a round soft yellow face emoji character, lonely, teary puppy eyes",
+  "chips": [
+   "외로워요"
+  ]
+ },
+ {
+  "name": "worried",
+  "subject": "a round soft yellow face emoji character, worried, eyebrows raised, biting lip",
+  "chips": [
+   "걱정돼요"
+  ]
+ },
+ {
+  "name": "frustrated",
+  "subject": "a round soft yellow face emoji character, frustrated, little steam puffs above the head",
+  "chips": [
+   "답답해요"
+  ]
+ },
+ {
+  "name": "hurt",
+  "subject": "a round soft yellow face emoji character, hurt feelings, trembling lip, eyes looking away",
+  "chips": [
+   "서운해요",
+   "서운했어요"
+  ]
+ },
+ {
+  "name": "sorry",
+  "subject": "a round soft yellow face emoji character, sorry, apologetic eyes, small hands together",
+  "chips": [
+   "미안해요"
+  ]
+ },
+ {
+  "name": "proud",
+  "subject": "a round soft yellow face emoji character, proud, confident smile, chin up, small sparkle",
+  "chips": [
+   "뿌듯해요",
+   "뿌듯했어요"
+  ]
+ },
+ {
+  "name": "excited",
+  "subject": "a round soft yellow face emoji character, excited and fluttering, hugging a small pink heart",
+  "chips": [
+   "설레요"
+  ]
+ },
+ {
+  "name": "bored",
+  "subject": "a round soft yellow face emoji character, bored, flat mouth, half-closed eyes",
+  "chips": [
+   "심심해요"
+  ]
+ },
+ {
+  "name": "joyful",
+  "subject": "a round soft yellow face emoji character, very happy, big open-mouth laugh",
+  "chips": [
+   "신났어요"
+  ]
+ },
+ {
+  "name": "nervous",
+  "subject": "a round soft yellow face emoji character, nervous, gritted teeth smile, a small sweat drop",
+  "chips": [
+   "긴장했어요"
+  ]
+ },
+ {
+  "name": "scolded",
+  "subject": "a round soft yellow face emoji character, awkward smile after being scolded, a sweat drop",
+  "chips": [
+   "혼났어요"
+  ]
+ },
+ {
+  "name": "relieved",
+  "subject": "a round soft yellow face emoji character, relieved gentle smile, eyes closed",
+  "chips": [
+   "잘 해결됐어요"
+  ]
+ },
+ {
+  "name": "family-hug",
+  "subject": "a mom and dad hugging a small child tightly, little hearts around",
+  "chips": [
+   "엄마 아빠가 꼭 안아줬을 때"
+  ]
+ },
+ {
+  "name": "play-together",
+  "subject": "two kids playing together with a ball, happy",
+  "chips": [
+   "좋아하는 친구와 함께 놀 때"
+  ]
+ },
+ {
+  "name": "sitting-alone",
+  "subject": "a little child sitting alone hugging knees",
+  "chips": [
+   "친구가 같이 안 놀아줘서"
+  ]
+ },
+ {
+  "name": "trying-hard",
+  "subject": "a little child trying hard with sweat drops and a determined face",
+  "chips": [
+   "잘하고 싶은데 잘 안 돼서"
+  ]
+ },
+ {
+  "name": "write",
+  "subject": "a yellow pencil drawing a squiggle line",
+  "chips": [
+   "직접 입력"
+  ]
+ }
+]

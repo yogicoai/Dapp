@@ -11,7 +11,14 @@ import { useTheme } from "@/components/ThemeProvider";
 import { VoiceGlyph } from "@/components/VoiceGlyph";
 import { VoiceInput } from "@/components/VoiceInput";
 import { QuestionFlow, type FlowOption, type FlowPos, type FlowQuestion } from "@/components/create/QuestionFlow";
+import {
+  BestFriendChip,
+  bestFriendEntry,
+  hasBestFriendInfo,
+  isBestFriendIn,
+} from "@/components/create/BestFriendChip";
 import { ART_STYLES } from "@/lib/art-styles";
+import { bestFriend, type FamilyMember } from "@/lib/family";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
 import {
@@ -213,6 +220,14 @@ const TODAY_WHO = [
 ];
 
 /**
+ * '직접 입력' 칩 — 어디서·누구랑 장 맨 끝에 붙는다(2026-09-28 사장님: 보기에 없는 곳·사람도 적게).
+ * 누르면 그 장에 짧은 글 칸이 열리고, 적은 글이 칩을 고른 것과 똑같이 place·who 값이 된다.
+ * 누르고 바로 넘기지 않는다(holdOn) — 적고 나서 '다음'을 누른다.
+ * 값으로 쓰이지 않는 보기라 place·who 에 "직접 입력"이 들어가는 일은 없다.
+ */
+const OWN_INPUT: FlowOption = { t: "직접 입력", e: "✏️" };
+
+/**
  * 형제 호칭은 '말하는 아이'의 성별로 정해진다 — 여자아이는 오빠·언니,
  * 남자아이는 형·누나. 아이 성별을 이미 받아 두었으니 묻지 않고 맞는 말만 보여준다.
  * ("형/오빠" 같은 병기는 어른의 사정이고, 아이는 자기 말이 그대로 나와야 자기 이야기가 된다.)
@@ -380,6 +395,23 @@ function companionTerm(who: string): string {
 }
 
 /**
+ * '누구랑'에 직접 적은 말 → who 값. 칩 값("친구랑"·"선생님이랑")과 같은 꼴로 조사를 붙여 둔다 —
+ * 요약 줄·답 칩에 "사촌 형이랑"으로 나오고, companionTerm(이 화면)·whoLine(서버, 같은 식)이 떼면 적은 말이 그대로 남는다.
+ *
+ * - 이미 조사를 붙여 적었으면("이모랑"·"사촌 형이랑"·"삼촌하고") 그대로 둔다 — 또 붙이면 "이모랑이랑"이 된다.
+ * - 받침이 있으면 '이랑', 없으면 '랑'. 단 끝 글자가 '이'면(고양이) '하고' — "고양이랑"은 companionTerm 이
+ *   '이랑'을 떼어 "고양"만 남긴다(서버도 같은 식이라 그쪽을 고칠 수 없다).
+ * 조사로 끝나는 이름("하랑")은 조사로 읽혀 "하"가 된다 — 이름은 '친구랑' 칩 + 이름 칸으로 받는 게 맞다.
+ */
+function ownWho(typed: string): string {
+  const t = typed.trim();
+  if (!t) return "";
+  if (companionTerm(t) !== t && companionTerm(t).trim()) return t;
+  if (hasBatchim(t)) return `${t}이랑`;
+  return t.endsWith("이") ? `${t}하고` : `${t}랑`;
+}
+
+/**
  * 호칭만으로 성별을 알 수 있는 동행 — 이 사람들에겐 성별을 묻지 않는다.
  * 엄마·아빠·할머니·형·언니·남동생 …은 이미 답이 나와 있고,
  * 동물 친구에게 "여자아이/남자아이"를 묻는 건 말이 안 된다.
@@ -475,6 +507,12 @@ type CreateDraft = {
   happening: string;
   extra: string;
   place: string;
+  /**
+   * 어디서·누구랑 '직접 입력' 칸의 글(null·없음 = 칸 닫힘). 값 자체는 place·who 에 있고, 이건 이어서 만들 때
+   * '직접 입력'이 골라진 채·적던 글 그대로 열리게 한다. 없던 칸이라 옛 임시저장엔 없다(선택 칸 — 형식 숫자는 그대로).
+   */
+  placeOwn?: string | null;
+  whoOwn?: string | null;
   todayEvent: string;
   feeling: string;
   ending: string;
@@ -671,15 +709,36 @@ function FriendsInput({
   onChange,
   accent,
   bare = false,
+  bestFriend,
 }: {
   friends: FriendEntry[];
   onChange: (v: FriendEntry[]) => void;
   accent: string;
   /** 참이면 제목·안내 줄을 뺀다 — 한 장에 질문 하나 화면에서는 질문 줄이 제목이고 '건너뛰기'가 (선택)을 대신한다. */
   bare?: boolean;
+  /** 가족 캐릭터에 넣어 둔 단짝 친구 — 있으면 '단짝 친구 불러오기' 칩을 띄운다(이름·성별만 채운다, BestFriendChip). */
+  bestFriend?: FamilyMember | null;
 }) {
   const patch = (i: number, p: Partial<FriendEntry>) =>
     onChange(friends.map((f, idx) => (idx === i ? { ...f, ...p } : f)));
+
+  /*
+   * 단짝 친구 불러오기 — 이름·성별이 다 빈 첫 칸에 채우고, 빈 칸이 없으면 한 칸 더한다(3명까지).
+   * 이미 들어 있거나 채울 자리가 없으면 칩을 숨긴다.
+   */
+  const buddy = bestFriend ? bestFriendEntry(bestFriend) : null;
+  const emptyAt = friends.findIndex((f) => !f.name.trim() && !f.gender);
+  const showBuddy =
+    bestFriend &&
+    buddy &&
+    hasBestFriendInfo(buddy) &&
+    !friends.some((f) => isBestFriendIn(buddy, f.name, f.gender)) &&
+    (emptyAt >= 0 || friends.length < MAX_FRIENDS);
+  const callBuddy = () => {
+    if (!buddy) return;
+    if (emptyAt >= 0) patch(emptyAt, buddy);
+    else onChange([...friends, buddy]);
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -688,6 +747,7 @@ function FriendsInput({
           친구들 <span className="font-medium">(선택 · 최대 {MAX_FRIENDS}명)</span>
         </p>
       )}
+      {showBuddy && <BestFriendChip friend={bestFriend} onPick={callBuddy} className="self-start" />}
       {friends.map((f, i) => (
         // 폰에서는 이름 칸을 한 줄 다 쓰고 성별·빼기는 아랫줄에 — 한 줄에 몰면 이름 칸이 글자 몇 개 폭으로 줄었다.
         <div key={i} className="flex flex-col gap-1.5 sm:flex-row sm:items-center">
@@ -753,6 +813,7 @@ function WhoNameInput({
   friends,
   onFriendsChange,
   accent,
+  bestFriend,
 }: {
   who: string;
   value: string;
@@ -762,15 +823,30 @@ function WhoNameInput({
   friends: FriendEntry[];
   onFriendsChange: (v: FriendEntry[]) => void;
   accent: string;
+  /** 가족 캐릭터의 단짝 친구 — '친구랑'·'친구들이랑'일 때만 '단짝 친구 불러오기' 칩으로 쓴다. */
+  bestFriend?: FamilyMember | null;
 }) {
   if (!who || who === "혼자서") return null;
   if (who === "친구들이랑") {
-    return <FriendsInput friends={friends} onChange={onFriendsChange} accent={accent} bare />;
+    return <FriendsInput friends={friends} onChange={onFriendsChange} accent={accent} bare bestFriend={bestFriend} />;
   }
   const term = companionTerm(who);
   const askGender = !GENDER_KNOWN.has(term);
+  // 친구 한 명('친구랑') — 단짝 친구를 불러오면 이름 칸·성별을 그 친구로 바꾼다(이름이 없으면 이름 칸은 비운다).
+  const buddy = who === "친구랑" && bestFriend ? bestFriendEntry(bestFriend) : null;
+  const showBuddy = bestFriend && buddy && hasBestFriendInfo(buddy) && !isBestFriendIn(buddy, value, gender);
   return (
     <div className="flex flex-col gap-3">
+      {showBuddy && (
+        <BestFriendChip
+          friend={bestFriend}
+          onPick={() => {
+            onChange(buddy.name);
+            onGenderChange(buddy.gender);
+          }}
+          className="self-center"
+        />
+      )}
       <input
         value={value}
         onChange={(e) => onChange(e.target.value.slice(0, 20))}
@@ -868,6 +944,8 @@ export default function CreatePage() {
         setName(remoteChild.name);
         setAge(remoteChild.age);
         setGender(remoteChild.gender);
+        // 다른 기기에서 넣은 단짝 친구도 불러오기 칩에 뜨게 — 서버 값과 합친 가족에서 다시 찾는다.
+        setMyBestFriend(bestFriend(remoteChild.family) ?? null);
         if (remoteChild.name && remoteChild.age !== null) setStep("theme");
         setPageCount(FIXED_PAGE_COUNT);
       }
@@ -971,6 +1049,19 @@ export default function CreatePage() {
   const [friends, setFriends] = useState<FriendEntry[]>([{ name: "", gender: "" }]);
   const [happening, setHappening] = useState("");
   const [extra, setExtra] = useState("");
+  /*
+   * 어디서·누구랑의 '직접 입력' 칸에 적은 글 그대로(null = 칸이 닫혀 있다).
+   * 값은 place·who 가 들고 있고(칩과 같은 자리 — 재료·요약·답 칩이 그대로 읽는다), 이 둘은 칸에 보일 글과
+   * '직접 입력'이 골라져 있는지만 맡는다. who 는 조사를 붙인 꼴("사촌 형이랑")이라 칸 글을 따로 들어야
+   * 적는 도중 글자가 바뀌지 않는다. 임시저장에도 담는다.
+   */
+  const [placeOwn, setPlaceOwn] = useState<string | null>(null);
+  const [whoOwn, setWhoOwn] = useState<string | null>(null);
+  /*
+   * 가족 캐릭터에 넣어 둔 단짝 친구(없으면 null) — 친구 칸의 '단짝 친구 불러오기' 칩.
+   * 이 기기 값(loadChild)으로 먼저 채우고, 계정 값(loadChildRemote)이 오면 다시 채운다.
+   */
+  const [myBestFriend, setMyBestFriend] = useState<FamilyMember | null>(null);
   // 「오늘의 이야기」 전용 — 어디서·무슨 일(자유)·기분. 누구랑(who)은 공유한다.
   const [place, setPlace] = useState("");
   const [todayEvent, setTodayEvent] = useState("");
@@ -996,6 +1087,7 @@ export default function CreatePage() {
     setName(saved.name);
     setAge(saved.age);
     setGender(saved.gender);
+    setMyBestFriend(bestFriend(saved.family) ?? null);
     if (saved.name && saved.age !== null) setStep("theme");
     setPageCount(FIXED_PAGE_COUNT);
   }, []);
@@ -1573,7 +1665,7 @@ export default function CreatePage() {
     savedAt: 0,
     step: (["child", "theme", "style", "outline", "story"] as Step[]).includes(step) ? step : "theme",
     name, age, gender, theme, themeGroup, storyMode, who, whoName, whoGender, friends,
-    happening, extra, place, todayEvent, feeling, ending, emotion, situation,
+    happening, extra, place, placeOwn, whoOwn, todayEvent, feeling, ending, emotion, situation,
     artStyle, screenShape, narratorVoice, narrationStyle, longerStory, pageCount, outline, story,
     directMode, directOpening, directDevelopment, directCrisis, directEnding, directText,
     outlineRetries, scriptCharged, storyRewrites, locationDetail, jobId,
@@ -1640,6 +1732,9 @@ export default function CreatePage() {
     setHappening(draft.happening);
     setExtra(draft.extra);
     setPlace(draft.place);
+    // '직접 입력' 칸 — 골라져 있었으면 적던 글 그대로 다시 연다(값은 위 place·who 에 이미 있다).
+    setPlaceOwn(typeof draft.placeOwn === "string" ? draft.placeOwn.slice(0, 20) : null);
+    setWhoOwn(typeof draft.whoOwn === "string" ? draft.whoOwn.slice(0, 20) : null);
     setTodayEvent(draft.todayEvent);
     setFeeling(draft.feeling);
     setEnding(draft.ending);
@@ -1724,7 +1819,7 @@ export default function CreatePage() {
   };
 
   // '누구랑' 칩 — 아이 성별에 맞는 형제 호칭을 끼워 만든다.
-  // 오늘의 이야기는 '혼자서'를 맨 끝에 두는 순서를 지킨다.
+  // 오늘의 이야기는 '혼자서'를 사람 칩 맨 끝에 두는 순서를 지킨다('직접 입력'은 그 뒤, whoQuestions 가 붙인다).
   const todayWho = [...TODAY_WHO.slice(0, -1), ...siblingOptions(gender), TODAY_WHO[TODAY_WHO.length - 1]];
   const imagineWho = [...WHO_OPTIONS, ...siblingOptions(gender)];
 
@@ -1733,6 +1828,8 @@ export default function CreatePage() {
   /** 성별 바꾸기 — 이미 고른 손위 형제 호칭(형/오빠·누나/언니)도 함께 맞춰 준다. */
   function chooseGender(g: Gender) {
     setGender(g);
+    // 직접 적은 동행("형"이라고 적음)은 적은 말 그대로 둔다 — 바꾸면 칸의 글과 값이 어긋난다.
+    if (whoOwn !== null) return;
     setWho((prev) => {
       const swap = SIBLING_SWAP[prev];
       return swap ? (g === "boy" ? swap.boy : swap.girl) : prev;
@@ -1744,6 +1841,38 @@ export default function CreatePage() {
     setWhoName("");
     setWhoGender(""); // 이름과 같은 이유 — 다른 동행으로 바꿨는데 앞의 성별이 남으면 안 된다
     setFriends([{ name: "", gender: "" }]);
+  }
+
+  /**
+   * '누구랑' 장의 보기 누르기 — 칩은 예전 그대로 chooseWho, '직접 입력'은 글 칸을 열고 닫는다.
+   *
+   * 적어 둔 동행에서 칩으로 바꿀 때는 그 칩을 바로 고른다. chooseWho 는 같은 값이면 해제하는데,
+   * "엄마"라고 적어 둔 뒤(who = "엄마랑") '엄마랑' 칩을 누르면 해제로 읽혀 빈 값으로 넘어가 버린다.
+   * 어느 쪽이든 동행이 바뀌니 이름·성별·친구 칸은 비운다(chooseWho 와 같은 이유).
+   */
+  function pickWho(t: string) {
+    const own = t === OWN_INPUT.t;
+    if (!own && whoOwn === null) {
+      chooseWho(t);
+      return;
+    }
+    // 처음 누르면 빈 칸을 연다(앞서 고른 칩은 풀린다). 다시 누르면 닫고 비운다 — 다른 칩의 '다시 누르면 해제'와 같다.
+    setWhoOwn(own && whoOwn === null ? "" : null);
+    setWho(own ? "" : t);
+    setWhoName("");
+    setWhoGender("");
+    setFriends([{ name: "", gender: "" }]);
+  }
+
+  /** '어디서' 장의 보기 누르기 — pickWho 와 같은 틀. 칩을 고르면 직접 적은 곳은 지운다. */
+  function pickPlace(t: string) {
+    if (t === OWN_INPUT.t) {
+      setPlaceOwn(placeOwn === null ? "" : null);
+      setPlace("");
+      return;
+    }
+    setPlace(placeOwn === null && place === t ? "" : t);
+    setPlaceOwn(null);
   }
 
   /*
@@ -1772,6 +1901,13 @@ export default function CreatePage() {
      * 누구랑 — 두 장으로 나눈다. 동행 칩은 누르면 바로 넘어가고, 이름·성별·친구 칸은 바로 뒤 장에 따로 둔다.
      * (한 장에 두면 13개 칩 아래 이름 칸이 폰 화면 밖에 떠서, 눌러도 아무 일 없는 것처럼 보였다.)
      * 값(who·whoName·whoGender·friends)과 재료는 예전 그대로다.
+     *
+     * '직접 입력'(맨 끝 칩)은 이 장에 글 칸을 연다 — 적은 말에 조사를 붙인 것(ownWho: "사촌 형"→"사촌 형이랑")이
+     * 칩 값과 똑같이 who 가 된다. 직접 적은 동행은 이름 장을 건너뛴다('혼자서'와 같은 hidden):
+     *  · 적은 말이 곧 그 사람을 가리킨다("사촌 형", "태권도 사범님", "사촌 형 민준") — 이름을 또 물을 까닭이 없다.
+     *  · 이름 장은 호칭으로 성별을 모르면 성별을 묻는데, "사촌 형"·"이모"에 여자/남자를 묻는 건 어색하다.
+     *  · 서버(whoLine)는 어른인지를 정해 둔 호칭 목록(ADULT_COMPANIONS)으로만 안다. "태권도 사범님"에 성별을 실어
+     *    보내면 '남자아이다 — 그림에서도 남자아이로'가 붙어 사범님이 어린이로 그려진다. 안 보내면 모델이 말에서 읽는다.
      */
     const whoQuestions = (title: string, options: FlowOption[]): FlowQuestion[] => {
       const term = companionTerm(who);
@@ -1783,11 +1919,34 @@ export default function CreatePage() {
               .join(", ")
           : [whoName.trim(), whoGender].filter(Boolean).join(" · ");
       return [
-        { id: "who", title, answer: who, options, value: who, onPick: chooseWho },
+        {
+          id: "who",
+          title,
+          answer: who,
+          options: [...options, OWN_INPUT],
+          value: whoOwn !== null ? OWN_INPUT.t : who,
+          onPick: pickWho,
+          holdOn: (t) => t === OWN_INPUT.t,
+          children: whoOwn !== null && (
+            <input
+              value={whoOwn}
+              onChange={(e) => {
+                const typed = e.target.value.slice(0, 20);
+                setWhoOwn(typed);
+                setWho(ownWho(typed));
+              }}
+              maxLength={20}
+              autoFocus
+              aria-label={`${title} 직접 적기`}
+              placeholder="예: 사촌 형, 태권도 사범님"
+              className={textClass}
+            />
+          ),
+        },
         {
           id: "whoName",
           title: `함께 나오는 ${term} 이름은요?`,
-          hidden: !who || who === "혼자서",
+          hidden: !who || who === "혼자서" || whoOwn !== null,
           answer: nameAnswer,
           children: (
             <WhoNameInput
@@ -1799,6 +1958,7 @@ export default function CreatePage() {
               friends={friends}
               onFriendsChange={setFriends}
               accent={accent}
+              bestFriend={myBestFriend}
             />
           ),
         },
@@ -1808,12 +1968,29 @@ export default function CreatePage() {
     if (storyMode === "today") {
       return [
         {
+          // 어디서 — 칩 또는 '직접 입력' 칸(적은 곳이 칩과 똑같이 place 가 된다).
           id: "place",
           title: "어디에서 있었던 일이에요?",
           answer: place,
-          options: TODAY_PLACES,
-          value: place,
-          onPick: (t) => setPlace(place === t ? "" : t),
+          options: [...TODAY_PLACES, OWN_INPUT],
+          value: placeOwn !== null ? OWN_INPUT.t : place,
+          onPick: pickPlace,
+          holdOn: (t) => t === OWN_INPUT.t,
+          children: placeOwn !== null && (
+            <input
+              value={placeOwn}
+              onChange={(e) => {
+                const typed = e.target.value.slice(0, 20);
+                setPlaceOwn(typed);
+                setPlace(typed.trim());
+              }}
+              maxLength={20}
+              autoFocus
+              aria-label="어디에서 있었던 일이에요? 직접 적기"
+              placeholder="예: 태권도장, 사촌 집"
+              className={textClass}
+            />
+          ),
         },
         ...whoQuestions("누구랑 있었어요?", todayWho),
         {
@@ -3642,7 +3819,7 @@ export default function CreatePage() {
                     <p className="mb-1.5 break-keep text-xs font-bold text-neutral-500">
                       이야기에 친구가 나오나요? 이름과 성별을 알려 주시면 그림에서 헷갈리지 않아요.
                     </p>
-                    <FriendsInput friends={friends} onChange={setFriends} accent={accent} />
+                    <FriendsInput friends={friends} onChange={setFriends} accent={accent} bestFriend={myBestFriend} />
                   </div>
 
                   <div className={`rounded-2xl px-4 py-3 text-sm font-bold leading-relaxed ${directFeedback.length > 0 ? "bg-amber-50 text-amber-800" : "bg-emerald-50 text-emerald-700"}`}>

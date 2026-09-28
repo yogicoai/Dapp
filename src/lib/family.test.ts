@@ -171,6 +171,22 @@ describe("normalizeFamily", () => {
   it("호칭이 없으면 역할 이름으로 채운다", () => {
     assert.equal(normalizeFamily([{ id: "m-a", role: "grandma" }])?.[0].callName, "할머니");
   });
+  it("'특징만 저장됨'(looksOnly)은 true 만 지키고, 합칠 때 나중에 바꾼 목록 쪽을 따른다", () => {
+    const out = normalizeFamily([
+      { id: "mom", role: "mom", callName: "엄마", looksOnly: true },
+      { id: "dad", role: "dad", callName: "아빠", looksOnly: "yes" },
+      { id: "m-g", role: "grandma", callName: "할머니", looksOnly: false },
+    ]);
+    assert.equal(out?.[0].looksOnly, true);
+    assert.equal("looksOnly" in (out?.[1] ?? {}), false);
+    assert.equal("looksOnly" in (out?.[2] ?? {}), false);
+    const server = { family: [{ id: "mom", role: "mom" as const, callName: "엄마" }], familyAt: "2026-09-28T09:00:00Z" };
+    const local = {
+      family: [{ id: "mom", role: "mom" as const, callName: "엄마", looksOnly: true }],
+      familyAt: "2026-09-28T10:00:00Z",
+    };
+    assert.equal(mergeFamily(server, local).family?.[0].looksOnly, true);
+  });
 });
 
 describe("mergeRemoteChild — 가족", () => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { chipIcon } from "@/lib/chip-icons";
 
 /**
  * 동화 재료를 '한 장에 질문 하나'로 묻는 화면 — 오늘의 이야기·상상 이야기·감정 동화가 함께 쓴다.
@@ -12,7 +13,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
  * 한 장 = 진행 점 + (앞에서 고른 답 칩 한 줄) + 질문 한 줄 + 보기 칩 또는 글 칸 + 이전/다음.
  * - 하나만 고르는 칩: 누르면 0.25초 뒤 다음 장. 이미 고른 칩을 다시 누르면 해제하고 그 장에 머문다.
  *   넘어가기 전 0.25초 안에 같은 칩을 또 누르면(톡톡 두 번) 해제하지 않고 무시한다.
- *   holdOn 이 참이면 넘기지 않고 '다음' 버튼을 기다린다(직접 적은 글이 있는 장).
+ *   holdOn 이 참이면 넘기지 않고 '다음' 버튼을 기다린다(직접 적은 글이 있는 장, 글 칸을 여는 '직접 입력' 칩).
  * - 답이 없으면 '건너뛰기', 있으면 '다음 →'. (재료는 하나만 있어도 만들 수 있어서 모든 질문이 선택이다.)
  * - 마지막 장은 '이렇게 만들어요' 요약 + '다음 →'.
  */
@@ -69,18 +70,20 @@ function resolvePos(qs: FlowQuestion[], p: FlowPos): FlowPos {
 }
 
 function OptionIcon({ o, size }: { o: FlowOption; size: "card" | "chip" | "line" }) {
-  if (o.icon) {
+  // 칩 표에 그림이 없으면 글자로 스티커를 찾는다(lib/chip-icons) — 없으면 아래 이모지로.
+  const icon = o.icon ?? chipIcon(o.t);
+  if (icon) {
     if (size === "card") {
       return (
         <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={o.icon} alt="" className="h-14 w-14 object-contain" />
+          <img src={icon} alt="" className="h-14 w-14 object-contain" />
         </span>
       );
     }
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={o.icon} alt="" aria-hidden className={`shrink-0 object-contain ${size === "chip" ? "h-6 w-6" : "h-7 w-7"}`} />
+      <img src={icon} alt="" aria-hidden className="h-8 w-8 shrink-0 object-contain" />
     );
   }
   if (!o.e) return null;

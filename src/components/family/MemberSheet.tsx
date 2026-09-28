@@ -3,6 +3,8 @@
 /**
  * 모아 보기에서 사람 카드를 눌렀을 때 — 다시 그리기 · 생김새 고치기 · 켜기 두 개 · 빼기.
  * 고정 안 된 사람은 '얼굴 고정하기'가 맨 위. 아이(주인공)는 뺄 수 없다.
+ * '그림 없이 특징만 저장'한 사람(looksOnly)은 '특징만 저장됨 · 동화마다 이 특징으로 그려요'로 알리고,
+ * 같은 '얼굴 고정하기'(쿠키)로 나중에 그릴 수 있다.
  *
  * 켜기(사장님 2026-09-28):
  *  - '홈 가족 사진에 보이기' — 모든 사람. 처음 값은 가족 켬·단짝 친구 끔(showsOnHome). 꺼도 고정한 얼굴은
@@ -24,6 +26,7 @@ export function MemberSheet({
   childName,
   family,
   master,
+  looksPicked,
   onClose,
   onReview,
   onRedraw,
@@ -37,6 +40,8 @@ export function MemberSheet({
   member: FamilyMember;
   /** 아이 이름 — '우리 아이예요' 설명의 명패 예 */
   childName: string;
+  /** 생김새를 하나라도 골랐다 — '특징만 저장됨' 설명 글자를 고른다 */
+  looksPicked: boolean;
   /** 지금 가족 — 명패 예에 이미 '우리 아이'인 형제까지 넣는다 */
   family: FamilyMember[];
   master: boolean;
@@ -102,7 +107,9 @@ export function MemberSheet({
               ? "새 그림을 아직 확인하지 않았어요"
               : m.portrait
                 ? "얼굴이 고정됐어요 — 동화마다 이 모습으로 나와요"
-                : "동화마다 새로 그려요"}
+                : m.looksOnly
+                  ? `특징만 저장됨 · ${looksPicked ? "동화마다 이 특징으로 그려요" : "동화마다 알아서 그려요"}`
+                  : "동화마다 새로 그려요"}
           </p>
         </div>
       </div>

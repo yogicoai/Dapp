@@ -195,7 +195,7 @@ export function AddMemberSheet({
 
       {(role === "mom" || role === "dad") && (
         <p className="mt-4 w-full break-keep rounded-2xl bg-neutral-50 px-4 py-3 text-center text-[13px] font-semibold text-neutral-600">
-          생김새는 설정의 {ROLE_LABEL[role]} 특징과 같아요. 넣은 뒤에 골라도 돼요.
+          생김새는 넣은 뒤에 골라요. 전에 골라 둔 {ROLE_LABEL[role]} 특징이 있으면 그대로 이어져요.
         </p>
       )}
 

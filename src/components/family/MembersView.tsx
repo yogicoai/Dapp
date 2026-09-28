@@ -80,7 +80,8 @@ export function MembersView({
     const list = of(r);
     if (list.length === 0) tiles.push({ kind: "placeholder", role: r, label: ROLE_LABEL[r] });
     for (const m of list) {
-      const sub = (r === "mom" || r === "dad") && hasParentLooks(r) ? "설정에서 불러왔어요" : undefined;
+      // 전에 골라 둔 특징이 있다(엄마·아빠 특징은 ChildPrefs.parents — 예전 설정 칸에서 고른 값도 여기 있다).
+      const sub = (r === "mom" || r === "dad") && hasParentLooks(r) ? "특징 골라 뒀어요" : undefined;
       tiles.push({ kind: "member", member: m, sub });
     }
   }

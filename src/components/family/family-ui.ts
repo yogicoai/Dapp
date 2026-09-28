@@ -262,6 +262,19 @@ export function looksSummary(m: FamilyMember, child: ChildPrefs | null): { lock:
   return { lock: lock.join(" · "), outfit: outfitWords.join(" · ") };
 }
 
+/** 생김새를 하나라도 골랐나(메모 포함) — 빈 글자·빈 목록·꺼진 값은 안 고른 것 */
+export function looksPicked(l: FamilyLooks | undefined): boolean {
+  return Object.values(l ?? {}).some((v) => (Array.isArray(v) ? v.length > 0 : v !== undefined && v !== "" && v !== false));
+}
+
+/**
+ * 이 사람 생김새를 하나라도 골랐나 — '특징만 저장됨' 카드가 '이 특징으로 그려요'와 '알아서 그려요'를 고른다.
+ * 원본은 역할마다 다르다(아이 looks · 엄마·아빠 parents · 그 밖 member.looks — currentLooksOf).
+ */
+export function hasPickedLooks(m: FamilyMember, child: ChildPrefs | null): boolean {
+  return looksPicked(currentLooksOf(m, child));
+}
+
 /**
  * 미리보기 '이렇게 그려요 — …' 와 서버에 보내는 생김새 한 줄(한국어).
  * 역할을 넘겨 수염은 아빠·할아버지만, 예전 글자는 새 글자로 적힌다(lib/family familyLooksToPrompt).

@@ -10,6 +10,8 @@
  *    바꿔도 여기서 알아본다(showsLooksChanged — 설정과 같은 규칙). 주황 점 + 배지 + '다시 그릴지 골라 주세요'.
  *    누르면 LooksChangedSheet('지금 다시 그리기 · 값' / '나중에') — '나중에'를 눌러도 표시가 남는다.
  *  - 확인 전(draft): '확인해 주세요'
+ *  - 특징만 저장됨(looksOnly — '그림 없이 특징만 저장할게요'): 점선 사람 + '특징만 저장됨'
+ *    + '동화마다 이 특징으로 그려요'(아무것도 안 골랐으면 '알아서 그려요') + '얼굴 고정하기 · 쿠키 2개'
  *  - 고정 안 됨: 점선 사람 + '동화마다 새로 그려요' + '얼굴 고정하기 · 쿠키 2개'
  *  - 마지막: '가족 더하기'(넣기만 하면 0개)
  * 가족 아래 '단짝 친구' 칸이 따로 있다 — 가족이 아니라 'N명' 숫자에 안 든다.
@@ -36,7 +38,7 @@ import {
   type FamilyMember,
 } from "@/lib/family";
 import type { ChildPrefs, Gender } from "@/lib/prefs";
-import { ageText, displayName, familyExampleSrc, ROLE_STICKER, stemOf, type Colors } from "./family-ui";
+import { ageText, displayName, familyExampleSrc, hasPickedLooks, ROLE_STICKER, stemOf, type Colors } from "./family-ui";
 import { FamilyGroupPhoto } from "./FamilyGroupPhoto";
 import { PortraitImg } from "./Figures";
 import { BackIcon, CookieIcon, LockIcon, NextIcon, PlusIcon, Silhouette } from "./icons";
@@ -96,6 +98,7 @@ export function AlbumView({
         member={m}
         colors={colors}
         changed={changed}
+        looksPicked={hasPickedLooks(m, child)}
         onClick={() => (changed ? onChanged(m.id) : onCard(m.id))}
       />
     );
@@ -241,12 +244,15 @@ function MemberCard({
   member: m,
   colors,
   changed,
+  looksPicked,
   onClick,
 }: {
   member: FamilyMember;
   colors: Colors;
   /** 그린 뒤로 '늘 그대로'가 바뀌었다 */
   changed: boolean;
+  /** 생김새를 하나라도 골랐다 — '특징만 저장됨' 카드의 설명 글자를 고른다 */
+  looksPicked: boolean;
   onClick: () => void;
 }) {
   const kid = isKidRole(m.role);
@@ -344,23 +350,43 @@ function MemberCard({
   }
 
   const cost = nextDrawCost(m.draws);
+  // 특징만 저장됨 — 설명 한 줄이 더 들어가서 그림 칸을 조금 줄인다(카드 높이는 다른 카드와 같게).
+  const looksOnly = Boolean(m.looksOnly);
   return (
     <button
       type="button"
       onClick={onClick}
       className="relative flex h-44 flex-col overflow-hidden rounded-3xl bg-neutral-100 text-left shadow-[0_2px_8px_rgba(60,40,25,.06)]"
     >
-      <span className="relative flex h-[120px] w-full items-end justify-center">
-        <Silhouette width={kid ? 46 : 50} height={kid ? 90 : 98} className="mb-2" />
+      <span className={`relative flex w-full items-end justify-center ${looksOnly ? "h-[106px]" : "h-[120px]"}`}>
+        {looksOnly ? (
+          <Silhouette width={kid ? 40 : 44} height={kid ? 78 : 86} className="mb-1.5" />
+        ) : (
+          <Silhouette width={kid ? 46 : 50} height={kid ? 90 : 98} className="mb-2" />
+        )}
       </span>
-      <span className="absolute left-2 top-2 rounded-full bg-white px-2.5 py-[3px] text-[11px] font-extrabold text-neutral-600">
-        동화마다 새로 그려요
-      </span>
+      {looksOnly ? (
+        <span
+          className="absolute left-2 top-2 rounded-full bg-white px-2.5 py-[3px] text-[11px] font-extrabold"
+          style={{ color: colors.accentDark, boxShadow: `inset 0 0 0 1px ${colors.accent}66` }}
+        >
+          특징만 저장됨
+        </span>
+      ) : (
+        <span className="absolute left-2 top-2 rounded-full bg-white px-2.5 py-[3px] text-[11px] font-extrabold text-neutral-600">
+          동화마다 새로 그려요
+        </span>
+      )}
       <span className="flex flex-1 flex-col justify-center gap-0.5 bg-white px-3">
         <span className="truncate text-[15px] font-extrabold text-neutral-800">
           {name}
           {age && <span className="text-xs font-bold text-neutral-500"> · {age}</span>}
         </span>
+        {looksOnly && (
+          <span className="truncate text-[11px] font-bold text-neutral-500">
+            {looksPicked ? "동화마다 이 특징으로 그려요" : "동화마다 알아서 그려요"}
+          </span>
+        )}
         <span className="flex items-center gap-1 text-xs font-extrabold" style={{ color: colors.accentDark }}>
           <CookieIcon size={14} />
           얼굴 고정하기 · {cost}개

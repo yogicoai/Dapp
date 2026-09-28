@@ -4,6 +4,8 @@
  * 쿠키 확인 — 누구를 몇 개로 그리는지, 합계, 그린 뒤 남는 쿠키 (시안 Confirm.dc.html).
  * 잔액이 모자라면 그리기 버튼을 막고 충전(설정)으로 가는 글자 버튼을 보인다.
  * 관리자는 합계 옆에 '관리자 0개'.
+ * 처음 고정(fix)이고 부르는 쪽이 onLooksOnly 를 주면 둘째 선택 '그림 없이 특징만 저장할게요'(쿠키 0개)를
+ * 보인다(사장님 2026-09-28). 쿠키가 모자라도 누를 수 있다 — 그리기 서버는 부르지 않는다.
  */
 
 import { byRoleOrder, nextDrawCost, type FamilyMember } from "@/lib/family";
@@ -24,6 +26,7 @@ export function ConfirmSheet({
   onClose,
   onConfirm,
   onCharge,
+  onLooksOnly,
 }: {
   colors: Colors;
   members: FamilyMember[];
@@ -35,6 +38,8 @@ export function ConfirmSheet({
   onClose: () => void;
   onConfirm: () => void;
   onCharge: () => void;
+  /** 그림 없이 특징만 저장(쿠키 0개) — 생김새 고르기에서 온 처음 고정(fix)일 때만 준다 */
+  onLooksOnly?: () => void;
 }) {
   // 순서: 아이 → 엄마 → 아빠 → 형제자매 → 할머니 → 할아버지 → 단짝 친구(ROLE_ORDER)
   const rows = byRoleOrder(members).map((m) => ({ m, cost: nextDrawCost(m.draws) }));
@@ -135,6 +140,22 @@ export function ConfirmSheet({
           {master || total === 0 ? "그리기 시작" : `쿠키 ${total}개로 그리기`}
         </BigButton>
       </div>
+      {/* 둘째 선택 — 그리지 않고 고른 특징만 남긴다. 값이 안 들어 쿠키가 모자라도 누를 수 있다. */}
+      {variant === "fix" && onLooksOnly && (
+        <div className="mt-4 flex w-full flex-col items-center">
+          <button
+            type="button"
+            onClick={onLooksOnly}
+            disabled={n === 0}
+            className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-white px-4 text-base font-extrabold text-neutral-700 shadow-[0_0_0_1px_#ececec,0_6px_0_rgba(0,0,0,.12)] transition active:translate-y-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            그림 없이 특징만 저장할게요
+          </button>
+          <p className="mt-2.5 break-keep text-center text-xs font-semibold leading-snug text-neutral-500">
+            쿠키 0개 · 동화마다 이 특징으로 새로 그려요. 얼굴 고정은 나중에 해도 돼요.
+          </p>
+        </div>
+      )}
       <button type="button" onClick={onClose} className="mt-3 min-h-11 px-3.5 text-sm font-extrabold text-neutral-600">
         다시 볼게요
       </button>

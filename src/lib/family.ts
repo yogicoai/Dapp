@@ -16,9 +16,11 @@
  * 이 파일은 순수 함수만 둔다(브라우저·Supabase 없음) — node --test 로 시험할 수 있게.
  * (2026-09-28 검토 반영으로 더한 것: FamilyPortrait.lockKey · FamilyMember.picAt · FAMILY_MAX_MEMBERS 60
  *  · mergeFamily. 2차: showOnHome · isOurChild · 어른 생김새 칸 확장 · 키 옵션 · lockKey 견주기.
- *  3차: 뺀 기록 FamilyRemoval · FamilyMember.addedAt — 합칠 때 사람은 합집합, 빼기는 뺀 기록으로만.)
- * 아이·엄마·아빠의 생김새는 여기 복사하지 않는다. 설정의 ChildPrefs.looks / parents.mom·dad 가
- * 원본이고(설정 화면과 같은 데이터), family 에는 역할과 그림만 둔다. 할머니·형제·친구처럼
+ *  3차: 뺀 기록 FamilyRemoval · FamilyMember.addedAt — 합칠 때 사람은 합집합, 빼기는 뺀 기록으로만.
+ *  4차: FamilyMember.looksOnly — '그림 없이 특징만 저장'(쿠키 0개). 이름·홈 보이기처럼 목록 쪽 칸으로 합친다.)
+ * 아이·엄마·아빠의 생김새는 여기 복사하지 않는다. ChildPrefs.looks / parents.mom·dad 가
+ * 원본이고(가족 화면 생김새 고르기에서 고르고 만들기 화면도 같이 쓴다 — 회원 설정의 특징 칸은 2026-09-28 에
+ * 걷었다), family 에는 역할과 그림만 둔다. 할머니·형제·친구처럼
  * 새로 생기는 사람만 member.looks 를 쓴다.
  */
 
@@ -100,6 +102,13 @@ export type FamilyMember = {
   showOnHome?: boolean;
   /** 형제자매만 — '우리 아이예요'. 켜면 명패에 이름이 함께 선다(하온·하린이네 가족). */
   isOurChild?: boolean;
+  /**
+   * '그림 없이 특징만 저장할게요'를 누른 사람(사장님 2026-09-28) — 쿠키 0개, 그리기 서버는 부르지 않는다.
+   * 그림이 없으니 동화마다 이 특징으로 새로 그린다. 모아 보기가 '특징만 저장됨'으로 보이고, 가족 화면을
+   * 다시 열면 모아 보기부터 보인다. 나중에 쿠키를 내고 고정할 수 있다(그림이 생기면 그림이 먼저 보인다).
+   * true 만 저장한다.
+   */
+  looksOnly?: boolean;
   /**
    * 넣은 때(이 기기 시계, ISO). 뺀 기록(FamilyRemoval)과 견준다 — 엄마·아빠는 id 가 늘 같아서, 뺐다가
    * 다시 넣은 엄마가 예전 뺀 기록에 걸려 사라지지 않게. 없으면(옛 값) 그림 시각만 본다.
@@ -919,6 +928,7 @@ export function normalizeFamily(raw: unknown): FamilyMember[] | undefined {
       // 켬·끔 둘 다 뜻이 있다(처음 값이 역할마다 달라서) — true/false 모두 지킨다.
       ...(typeof m.showOnHome === "boolean" ? { showOnHome: m.showOnHome } : {}),
       ...(role === "sibling" && m.isOurChild === true ? { isOurChild: true } : {}),
+      ...(m.looksOnly === true ? { looksOnly: true } : {}),
     });
     if (out.length >= MAX_MEMBERS) break;
   }

@@ -3,6 +3,10 @@
 /**
  * 설정 — 엄마·아빠 특징 칸 안쪽(사장님 목록 2026-09-28).
  *
+ * 지금은 **비회원(게스트)만** 본다. 회원은 '우리 가족 캐릭터'(/family) 생김새 고르기에서 엄마·아빠 특징을
+ * 고른다(사장님 2026-09-28 — 설정의 특징 칸을 걷었다). 게스트는 가족 화면을 못 열어(로그인으로 보낸다)
+ * 예전 칸을 그대로 둔다. 그래서 얼굴 고정·'모습이 바뀌었어요' 표시는 여기 없다(게스트는 가족을 못 그린다).
+ *
  * 칩 글자·순서는 lib/look-options adultLookRows 가 원본이다(가족 화면과 같은 목록·같은 저장값).
  *  - 엄마·아빠를 탭으로 나눈다 — 한 사람 줄이 열일곱 개라 둘을 쌓으면 화면이 너무 길다.
  *  - '늘 그대로'(얼굴·머리·체형)와 '평소 옷' 두 묶음. 칩이 많은 줄은 한 줄 가로 스크롤.
@@ -14,10 +18,8 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { VoiceGlyph } from "@/components/VoiceGlyph";
 import { ROLE_STICKER, type Colors } from "@/components/family/family-ui";
-import { FaceAvatar } from "@/components/family/Figures";
 import { HangerIcon, LockIcon } from "@/components/family/icons";
 import { LooksPreview } from "@/components/family/ui";
-import type { FamilyMember } from "@/lib/family";
 import {
   adultLookRows,
   glassesChoice,
@@ -30,7 +32,6 @@ import {
   type AdultLookRow,
 } from "@/lib/look-options";
 import { parentLooksToPrompt, type ParentLooks } from "@/lib/prefs";
-import { LooksChangedNote } from "./FamilyBits";
 
 export type ParentRole = "mom" | "dad";
 export type Parents = { mom?: ParentLooks; dad?: ParentLooks };
@@ -280,44 +281,15 @@ function AdultRowChips({
   );
 }
 
-/** 탭·머리글에 쓰는 얼굴 — 얼굴을 고정했으면 그 얼굴, 아니면 엄마·아빠 스티커 */
-export function ParentFace({
-  role,
-  locked,
-  size,
-  className = "",
-}: {
-  role: ParentRole;
-  locked?: FamilyMember;
-  size: number;
-  className?: string;
-}) {
-  if (locked) return <FaceAvatar member={locked} size={size} className={className} ring="0 0 0 2px #fff" />;
-  // 스티커는 크기를 글자 폭(className 의 h-·w-)으로 받는다 — FaceAvatar 는 size 가 이긴다.
-  return <VoiceGlyph voice={{ role }} className={className} />;
-}
-
 export function AdultLooksEditor({
   colors,
   parents,
-  locked,
-  changed,
-  changes,
   reveal,
-  linked,
   onPatch,
   onClear,
 }: {
   colors: Colors;
   parents: Parents;
-  /** 가족 캐릭터를 쓸 수 있는 사람(회원)인가 — '같은 값이에요' 안내를 이때만 보인다(게스트는 가족 화면이 없다). */
-  linked?: boolean;
-  /** 가족 화면에서 얼굴을 고정한 사람(그림 있음) */
-  locked: Partial<Record<ParentRole, FamilyMember>>;
-  /** 얼굴을 고정한 뒤 '늘 그대로'가 바뀌었나 */
-  changed: Partial<Record<ParentRole, boolean>>;
-  /** 바뀐 칸 — '머리 모양: 단발 → 숏컷' */
-  changes: Partial<Record<ParentRole, string[]>>;
   reveal: number;
   onPatch: (role: ParentRole, patch: Partial<ParentLooks>) => void;
   onClear: (role: ParentRole) => void;
@@ -341,13 +313,8 @@ export function AdultLooksEditor({
     <div className="flex flex-col gap-4 rounded-2xl bg-white/70 p-4">
       <p className="break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
         안 고르시면 앱이 알아서 정해요. 안경처럼 있고 없음이 분명한 건 여기서 알려 주셔야 그림이 실제 모습과
-        맞아요.{linked && " 우리 가족 캐릭터 화면과 같은 값이에요."}
+        맞아요.
       </p>
-
-      {/* 얼굴을 고정한 뒤 '늘 그대로'가 바뀐 사람 — 탭을 옮겨도 보이게 위에 모아 둔다. */}
-      {PARENT_ROLES.filter((x) => changed[x.role]).map((x) => (
-        <LooksChangedNote key={x.role} who={x.label} colors={colors} changes={changes[x.role]} />
-      ))}
 
       <div className="flex gap-2" role="tablist" aria-label="누구 특징">
         {PARENT_ROLES.map((x) => {
@@ -365,23 +332,13 @@ export function AdultLooksEditor({
               style={on ? { background: colors.accent } : undefined}
             >
               <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-white">
-                {locked[x.role] ? (
-                  <ParentFace role={x.role} locked={locked[x.role]} size={32} />
-                ) : (
-                  <VoiceGlyph voice={{ role: x.role }} className="h-7 w-7" />
-                )}
+                <VoiceGlyph voice={{ role: x.role }} className="h-7 w-7" />
               </span>
               {x.label}
               {countAdultPicks(parents[x.role]) > 0 && (
                 <span className={`text-[11px] font-bold ${on ? "text-white/80" : "text-neutral-400"}`}>
                   {countAdultPicks(parents[x.role])}
                 </span>
-              )}
-              {changed[x.role] && (
-                <>
-                  <span aria-hidden className="absolute right-2 top-1.5 h-2 w-2 rounded-full bg-orange-500" />
-                  <span className="sr-only">, 모습이 바뀌었어요</span>
-                </>
               )}
             </button>
           );
@@ -394,9 +351,7 @@ export function AdultLooksEditor({
             <LockIcon size={15} />늘 그대로
           </p>
           <p className="break-keep text-[11px] font-medium text-neutral-400">
-            {locked[role]
-              ? `${label} 얼굴을 고정했어요. 여기를 바꾸면 가족 화면에서 다시 그릴지 물어봐요.`
-              : "얼굴·머리·체형은 동화마다 같은 모습으로 그려요."}
+            얼굴·머리·체형은 동화마다 같은 모습으로 그려요.
           </p>
         </div>
         {lockRows.map(renderRow)}
