@@ -47,7 +47,6 @@ import { MemberSheet } from "@/components/family/MemberSheet";
 import { ReviewView } from "@/components/family/ReviewView";
 import { BigButton } from "@/components/family/ui";
 import { fetchProfile, loadSession } from "@/lib/auth";
-import { loadDevMode } from "@/lib/dev-mode-client";
 import {
   byRoleOrder,
   CALL_NAMES,
@@ -186,29 +185,7 @@ function looksKey(o: object | undefined): string {
   );
 }
 
-/**
- * 지금은 개발자 모드(fe)에서만 연다(2026-09-28) — 다른 계정은 홈으로 돌려보낸다.
- * 모두에게 열 때는 이 문지기만 걷어내면 된다(그림 서버 api/family/portrait 의 막음도 같이).
- */
 export default function FamilyPage() {
-  const router = useRouter();
-  const [dev, setDev] = useState(false);
-  useEffect(() => {
-    let alive = true;
-    loadDevMode().then((d) => {
-      if (!alive) return;
-      if (d) setDev(true);
-      else router.replace("/");
-    });
-    return () => {
-      alive = false;
-    };
-  }, [router]);
-  if (!dev) return null;
-  return <FamilyScreen />;
-}
-
-function FamilyScreen() {
   const router = useRouter();
   const { theme } = useTheme();
   const colors = theme.colors;

@@ -7,7 +7,6 @@ import { AddToHomeHint } from "@/components/AddToHomeHint";
 import { BgVideo } from "@/components/BgVideo";
 import { Bookshelf } from "@/components/Bookshelf";
 import { FamilyFrame } from "@/components/FamilyFrame";
-import { loadDevMode } from "@/lib/dev-mode-client";
 import { useTheme } from "@/components/ThemeProvider";
 import { UpdateNotice } from "@/components/UpdateNotice";
 import { DEMO_SHELF_OWNER, loadSession } from "@/lib/auth";
@@ -83,17 +82,6 @@ export default function Home() {
     setLocalFold(readLocalFold());
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
-  // 가족 액자는 지금 개발자 모드(fe)에서만 보인다(2026-09-28) — 모두에게 열 때 이 값만 걷어내면 된다.
-  const [devMode, setDevMode] = useState(false);
-  useEffect(() => {
-    let alive = true;
-    loadDevMode().then((d) => {
-      if (alive) setDevMode(d);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -361,31 +349,29 @@ export default function Home() {
 
         {/* '○○이네 가족' 액자 — 회원에게만(게스트면 컴포넌트가 알아서 그리지 않는다).
             단체 사진엔 '홈 가족 사진에 보이기'를 켠 사람만, 키는 설정의 엄마·아빠 키 칩(parents)까지 본다. */}
-        {devMode && (
-          <FamilyFrame
-            childName={child?.name ?? ""}
-            childAge={child?.age ?? null}
-            parents={child?.parents}
-            childGender={child?.gender}
-            family={child?.family}
-            guest={guest}
-            folded={child?.homeFamilyFolded ?? localFold}
-            onFoldedChange={(f) => {
-              // 아이디(계정)마다 이 기기에 바로 남긴다(아이 정보가 아직 없어도).
-              writeLocalFold(f);
-              setLocalFold(f);
-              if (!child) {
-                // 아이 정보가 아직 없다(막 가입 · 새 기기에서 계정 값이 오기 전). 여기서 아이 정보를 새로 만들면
-                // 서버의 아이 이름을 빈 값으로 덮을 수 있어 만들지 않는다 — 계정 값이 오면 그때 올린다.
-                pendingFold.current = f;
-                return;
-              }
-              // 계정(서버)에도 — 다른 기기에서도 같은 아이디면 그대로 접혀/펼쳐 있다.
-              saveChild({ name: child.name, homeFamilyFolded: f });
-              setChild({ ...child, homeFamilyFolded: f });
-            }}
-          />
-        )}
+        <FamilyFrame
+          childName={child?.name ?? ""}
+          childAge={child?.age ?? null}
+          parents={child?.parents}
+          childGender={child?.gender}
+          family={child?.family}
+          guest={guest}
+          folded={child?.homeFamilyFolded ?? localFold}
+          onFoldedChange={(f) => {
+            // 아이디(계정)마다 이 기기에 바로 남긴다(아이 정보가 아직 없어도).
+            writeLocalFold(f);
+            setLocalFold(f);
+            if (!child) {
+              // 아이 정보가 아직 없다(막 가입 · 새 기기에서 계정 값이 오기 전). 여기서 아이 정보를 새로 만들면
+              // 서버의 아이 이름을 빈 값으로 덮을 수 있어 만들지 않는다 — 계정 값이 오면 그때 올린다.
+              pendingFold.current = f;
+              return;
+            }
+            // 계정(서버)에도 — 다른 기기에서도 같은 아이디면 그대로 접혀/펼쳐 있다.
+            saveChild({ name: child.name, homeFamilyFolded: f });
+            setChild({ ...child, homeFamilyFolded: f });
+          }}
+        />
 
         {/* 새 소식 — 회원에게만. 한 번 닫으면 작은 알약으로 접혀 아이 화면을 가리지 않는다. */}
         {!guest && <UpdateNotice />}

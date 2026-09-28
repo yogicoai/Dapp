@@ -375,7 +375,7 @@ export default function SettingsPage() {
   const migrateStop = useRef(false);
   useEffect(() => () => void (migrateStop.current = true), []);
 
-  // 개발자 모드(fe) — 우리 가족 캐릭터 줄과 부모 목소리 녹음 칸은 지금 fe 에게만 보인다(2026-09-28).
+  // 개발자 모드(fe) — 부모 목소리 녹음·만들기 칸은 지금 fe 에게만 보인다(2026-09-28).
   const [devMode, setDevMode] = useState(false);
   useEffect(() => {
     let alive = true;
@@ -943,7 +943,7 @@ export default function SettingsPage() {
    */
   const lookSource = { looks, parents };
   const lockedOf = (role: "child" | ParentRole): FamilyMember | undefined =>
-    guest || !devMode ? undefined : family.find((m) => m.role === role && m.portrait);
+    guest ? undefined : family.find((m) => m.role === role && m.portrait);
   const changedOf = (m: FamilyMember | undefined) => Boolean(m && showsLooksChanged(m, lookSource));
   const changesOf = (m: FamilyMember | undefined): string[] =>
     m ? lockChanges(m.role, lockKeyLooks(m.portrait?.lockKey), currentLooksOf(m, lookSource)) : [];
@@ -1132,14 +1132,12 @@ export default function SettingsPage() {
 
           {/* ── 우리 가족 캐릭터 › ── 가족 화면으로 가는 길. 고정한 얼굴을 겹쳐 보여 준다.
               아래 아이·엄마·아빠 특징과 가족 화면의 생김새는 같은 저장값이다. 회원 전용(이 묶음 안). */}
-          {devMode && (
-            <FamilyCharacterRow
-              family={family}
-              child={lookSource}
-              childGender={gender}
-              colors={theme.colors}
-            />
-          )}
+          <FamilyCharacterRow
+            family={family}
+            child={lookSource}
+            childGender={gender}
+            colors={theme.colors}
+          />
 
           {/* ── 아이 특징 ── 동화 주인공을 "우리 애 같게" 만드는 재료.
               항목이 많아 화면이 길어지므로 평소엔 접어 두고 눌러서 편다.
@@ -1353,7 +1351,7 @@ export default function SettingsPage() {
                   changed={parentChanged}
                   changes={parentChanges}
                   reveal={looksReveal}
-                  linked={!guest && devMode}
+                  linked={!guest}
                   onPatch={setParent}
                   onClear={clearParent}
                 />

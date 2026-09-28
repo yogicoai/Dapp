@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { callerOf, type Caller } from "@/lib/api-auth";
-import { DEV_ONLY_MESSAGE, isDevUser } from "@/lib/dev-mode";
 import { ART_STYLES } from "@/lib/art-styles";
 import { uploadToCafe24 } from "@/lib/cafe24";
 import { heroIdentity } from "@/lib/child-looks";
@@ -444,8 +443,6 @@ export async function POST(request: Request) {
   // ① 로그인
   const caller = await callerOf(request);
   if (!caller) return fail(401, "로그인이 필요합니다.", "login");
-  // 가족 캐릭터는 지금 개발자 모드(fe)에서만 — 화면에서 가려도 주소를 직접 부를 수 있으니 여기서 막는다.
-  if (!isDevUser(caller.username)) return fail(403, DEV_ONLY_MESSAGE, "dev");
 
   // ② 입력
   let body: unknown;
@@ -642,7 +639,6 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   const caller = await callerOf(request);
   if (!caller) return fail(401, "로그인이 필요합니다.", "login");
-  if (!isDevUser(caller.username)) return fail(403, DEV_ONLY_MESSAGE, "dev");
 
   const memberId = new URL(request.url).searchParams.get("memberId") ?? "";
   if (!MEMBER_ID.test(memberId)) return fail(400, "가족 id 가 올바르지 않아요.", "input");
