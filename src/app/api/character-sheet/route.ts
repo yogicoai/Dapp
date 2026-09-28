@@ -61,7 +61,8 @@ export async function POST(request: Request) {
     if (!v || typeof v !== "object") return [];
     return Object.entries(v)
       .filter(([, line]) => typeof line === "string" && line.trim())
-      .map(([name, line]) => ({ name, line: String(line).trim().slice(0, 120) }));
+      // 400자 — 엄마·아빠 생김새 칸이 늘어(2026-09-28) 120자면 옷·안경 뒤쪽이 잘렸다.
+      .map(([name, line]) => ({ name, line: String(line).trim().slice(0, 400) }));
   })();
 
   /**

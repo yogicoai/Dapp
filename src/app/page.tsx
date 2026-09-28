@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AddToHomeHint } from "@/components/AddToHomeHint";
 import { BgVideo } from "@/components/BgVideo";
 import { Bookshelf } from "@/components/Bookshelf";
+import { FamilyFrame } from "@/components/FamilyFrame";
 import { useTheme } from "@/components/ThemeProvider";
 import { UpdateNotice } from "@/components/UpdateNotice";
 import { DEMO_SHELF_OWNER, loadSession } from "@/lib/auth";
@@ -13,18 +14,45 @@ import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
 import {
+  loadChild,
+  loadChildRemote,
   loadLang,
   loadMyBooksBrief,
   loadShelfCols,
   loadShelfCache,
   migrateLegacyBooks,
+  saveChild,
   saveShelfCache,
   toShelfBook,
+  type ChildPrefs,
   type ShelfBook,
 } from "@/lib/prefs";
-import { currentUid } from "@/lib/supabase";
+import { acctKey, currentUid } from "@/lib/supabase";
 import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
+
+/**
+ * 홈 가족 액자 접힘 — 계정마다 이 기기에도 남긴다. 아이 정보(profiles.child)가 아직 없는 회원(막 가입,
+ * 새 기기에서 계정 값이 오기 전)도 접은 값이 남게. 아이 정보가 오면 계정(서버)에도 올린다.
+ */
+const FOLD_KEY = "voice-storybook:homeFamilyFolded";
+
+function readLocalFold(): boolean | undefined {
+  try {
+    const v = window.localStorage.getItem(acctKey(FOLD_KEY));
+    return v === "1" ? true : v === "0" ? false : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function writeLocalFold(f: boolean): void {
+  try {
+    window.localStorage.setItem(acctKey(FOLD_KEY), f ? "1" : "0");
+  } catch {
+    /* 저장 못 해도 화면은 바뀐다 */
+  }
+}
 
 export default function Home() {
   const { theme } = useTheme();
@@ -41,6 +69,19 @@ export default function Home() {
   // 내 책을 다 불러왔는지 — 이게 true가 되기 전엔 홈을 아예 열지 않는다.
   // 책장이 빈 채로 먼저 뜨고 나중에 채워지면 어수선해서, 준비가 끝난 뒤 한 번에 보여준다.
   const [booksLoaded, setBooksLoaded] = useState(false);
+  // 아이 정보(이름·나이·우리 가족) — 가족 액자에 쓴다. 아래 언어(lang)와 같은 이유로
+  // 서버 렌더 뒤에 읽는다. 로그인 계정 값은 세션 확인 뒤 loadChildRemote 로 덮는다.
+  const [child, setChild] = useState<ChildPrefs | null>(null);
+  // 가족 액자 접힘 — 아이 정보가 없을 때도 계정마다 이 기기에 남긴 값(아래 FOLD_KEY)
+  const [localFold, setLocalFold] = useState<boolean | undefined>(undefined);
+  /** 아이 정보가 오기 전에 접거나 편 값 — 계정 값이 오면 그때 계정에 올린다 */
+  const pendingFold = useRef<boolean | null>(null);
+  /* eslint-disable react-hooks/set-state-in-effect -- 하이드레이션 안전: 저장된 아이 정보·접힘 값을 마운트 후 반영 */
+  useEffect(() => {
+    setChild(loadChild());
+    setLocalFold(readLocalFold());
+  }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -72,6 +113,22 @@ export default function Home() {
       setMaster(s.isMaster);
       setDemoShelf(s.isMaster && s.profile?.username === DEMO_SHELF_OWNER);
       setTokens(s.profile?.tokens ?? 0);
+      // 가족 액자용 아이 정보 — 다른 기기에서 그린 가족도 보이게 계정 값을 받아 온다.
+      // 기다리지 않는다: 책장을 늦추면 안 되고, 그동안은 기기에 있던 값(위 loadChild)으로 그린다.
+      if (s.uid) {
+        loadChildRemote().then((c) => {
+          if (!alive || !c) return;
+          // 아이 정보가 없을 때 접었거나 폈으면(또는 계정에 아직 접힘 값이 없으면) 이제 계정에도 올린다.
+          const f = pendingFold.current ?? (c.homeFamilyFolded === undefined ? readLocalFold() : undefined);
+          pendingFold.current = null;
+          if (f !== undefined && f !== c.homeFamilyFolded) {
+            saveChild({ name: c.name, homeFamilyFolded: f });
+            setChild({ ...c, homeFamilyFolded: f });
+            return;
+          }
+          setChild(c);
+        });
+      }
       try {
         if (s.uid) {
           const fresh = await loadMyBooksBrief();
@@ -251,20 +308,29 @@ export default function Home() {
           <img src="/icons/func-gear.webp" alt="" className="h-9 w-9 object-contain" />
         </Link>
 
-        <header className="mb-6 flex flex-col items-center text-center">
+        {/* 회원은 제목만 두고 그 아래에 가족 액자를 건다 — 마스코트 큰 원·부제 알약 자리를
+            액자가 이어받는다(마스코트는 액자 모서리로). 제목이 맨 위라 왼쪽 위 토큰·의견 알약,
+            오른쪽 위 설정 버튼(고정, 높이 ~44px)과 겹치지 않게 위 여백(pt-10)을 준다.
+            게스트는 그릴 수 없어 액자가 없으니 예전 모습 그대로. */}
+        {/* 회원은 mb-1 — 가족 액자 안쪽 위 여백(pt-8, 마스코트 둥실 자리)이 제목과의 간격을 대신한다. */}
+        <header
+          className={`flex flex-col items-center text-center ${guest ? "mb-6" : "mb-1 pt-10"}`}
+        >
           {/* 테마 마스코트 — 동그란 뱃지, 둥둥 떠서 아이를 반긴다 */}
-          <div className="animate-[float_3s_ease-in-out_infinite] drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={theme.mascot}
-              alt={theme.mascotName}
-              className="h-28 w-28 rounded-full border-4 border-white object-cover sm:h-32 sm:w-32"
-            />
-          </div>
+          {guest && (
+            <div className="animate-[float_3s_ease-in-out_infinite] drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={theme.mascot}
+                alt={theme.mascotName}
+                className="h-28 w-28 rounded-full border-4 border-white object-cover sm:h-32 sm:w-32"
+              />
+            </div>
+          )}
           {/* 흰 제목이 밝은 배경(그림책나라 크림 등)에 묻히지 않게, 어두운
               외곽선(text-stroke)+다층 그림자로 어느 테마에서든 윤곽이 뜨게 한다. */}
           <h1
-            className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl"
+            className={`${guest ? "mt-2" : ""} text-3xl font-extrabold tracking-tight text-white sm:text-4xl`}
             style={{
               textShadow:
                 "0 2px 8px rgba(0,0,0,0.5), 0 0 6px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.45)",
@@ -274,11 +340,38 @@ export default function Home() {
             우리 가족 보이스 동화
           </h1>
           {/* 밝은 하늘 배경 위라 흰 글자는 묻힌다 — 불투명 흰 알약 + 짙은 글자로 */}
-          <p className="mt-1.5 max-w-full break-keep rounded-2xl bg-white/95 px-4 py-1.5 text-center text-sm font-extrabold text-neutral-700 shadow-md sm:rounded-full">
-            내가 주인공인 동화, 엄마·아빠 목소리로 들어요
-          </p>
-
+          {guest && (
+            <p className="mt-1.5 max-w-full break-keep rounded-2xl bg-white/95 px-4 py-1.5 text-center text-sm font-extrabold text-neutral-700 shadow-md sm:rounded-full">
+              내가 주인공인 동화, 엄마·아빠 목소리로 들어요
+            </p>
+          )}
         </header>
+
+        {/* '○○이네 가족' 액자 — 회원에게만(게스트면 컴포넌트가 알아서 그리지 않는다).
+            단체 사진엔 '홈 가족 사진에 보이기'를 켠 사람만, 키는 설정의 엄마·아빠 키 칩(parents)까지 본다. */}
+        <FamilyFrame
+          childName={child?.name ?? ""}
+          childAge={child?.age ?? null}
+          parents={child?.parents}
+          childGender={child?.gender}
+          family={child?.family}
+          guest={guest}
+          folded={child?.homeFamilyFolded ?? localFold}
+          onFoldedChange={(f) => {
+            // 아이디(계정)마다 이 기기에 바로 남긴다(아이 정보가 아직 없어도).
+            writeLocalFold(f);
+            setLocalFold(f);
+            if (!child) {
+              // 아이 정보가 아직 없다(막 가입 · 새 기기에서 계정 값이 오기 전). 여기서 아이 정보를 새로 만들면
+              // 서버의 아이 이름을 빈 값으로 덮을 수 있어 만들지 않는다 — 계정 값이 오면 그때 올린다.
+              pendingFold.current = f;
+              return;
+            }
+            // 계정(서버)에도 — 다른 기기에서도 같은 아이디면 그대로 접혀/펼쳐 있다.
+            saveChild({ name: child.name, homeFamilyFolded: f });
+            setChild({ ...child, homeFamilyFolded: f });
+          }}
+        />
 
         {/* 새 소식 — 회원에게만. 한 번 닫으면 작은 알약으로 접혀 아이 화면을 가리지 않는다. */}
         {!guest && <UpdateNotice />}

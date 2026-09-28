@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { mergeRemoteChild, parentLooksToPrompt } from "./prefs.ts";
+import { mergeRemoteChild, normalizeParents, parentLooksToPrompt } from "./prefs.ts";
 
 const BASE = { name: "하온", age: 5, gender: "girl" as const };
 
@@ -56,6 +56,102 @@ describe("parentLooksToPrompt — 엄마·아빠 한 줄", () => {
     assert.equal(parentLooksToPrompt({}), "안경을 쓰지 않는다");
     assert.ok(parentLooksToPrompt({ hair: "짧은 머리" }).includes("안경을 쓰지 않는다"));
   });
+
+  it("새 칸까지 자연스러운 한 줄로 — 엄마", () => {
+    assert.equal(
+      parentLooksToPrompt(
+        {
+          hair: "중단발",
+          hairColor: "짙은 갈색",
+          hairTexture: "살짝 웨이브",
+          bangs: "시스루",
+          face: "계란형",
+          eyes: "웃으면 반달",
+          skin: "밝은 편",
+          build: "마른 편",
+          height: "큰 편",
+          glassesType: "동그란 안경",
+          glasses: true,
+          marks: ["보조개"],
+          outfit: "블라우스",
+          bottom: "치마",
+          color: "베이지",
+          accessories: ["귀걸이", "목걸이"],
+          note: "늘 웃고 있어요",
+        },
+        "mom",
+      ),
+      "짙은 갈색 중단발, 머리 끝에만 부드러운 웨이브가 살짝 있다, 시스루 앞머리가 있다, 계란형 얼굴이다, " +
+        "웃으면 눈이 반달이 된다, 피부는 밝은 편이다, 마른 편이다, 키가 큰 편이다, 동그란 안경을 썼다, 보조개가 있다, " +
+        "평소에 베이지 블라우스에 치마를 즐겨 입는다, 늘 귀걸이·목걸이를 착용한다, 늘 웃고 있어요",
+    );
+  });
+
+  it("아빠 수염 '없어요'는 '수염이 없다'로 적고, 엄마에게는 수염을 적지 않는다", () => {
+    assert.ok(parentLooksToPrompt({ beard: "없어요" }, "dad").includes("수염이 없다"));
+    assert.ok(parentLooksToPrompt({ beard: "턱수염" }, "dad").includes("턱수염이 있다"));
+    assert.equal(parentLooksToPrompt({ beard: "턱수염" }, "mom"), "안경을 쓰지 않는다");
+  });
+
+  it("안경 종류 — '안 써요'는 쓰지 않는다, 종류 없는 예전 값은 '안경을 썼다', 쓰면 늘 '안경을 썼다'로 끝난다", () => {
+    assert.equal(parentLooksToPrompt({ glassesType: "안 써요" }), "안경을 쓰지 않는다");
+    assert.equal(parentLooksToPrompt({ glasses: true }), "안경을 썼다");
+    assert.equal(parentLooksToPrompt({ glassesType: "뿔테", glasses: true }), "뿔테 안경을 썼다");
+    assert.equal(parentLooksToPrompt({ glassesType: "반무테", glasses: true }), "반무테 안경을 썼다");
+  });
+});
+
+describe("normalizeParents — 엄마·아빠 새 칸과 옛 값", () => {
+  it("옛 머리 글자를 새 칩 글자로 옮긴다", () => {
+    assert.equal(normalizeParents({ mom: { hair: "짧은 머리" } })?.mom?.hair, "숏컷");
+    assert.equal(normalizeParents({ mom: { hair: "묶은 머리" } })?.mom?.hair, "하나로 묶기");
+    assert.equal(normalizeParents({ mom: { hair: "파마머리" } })?.mom?.hair, "굵은 웨이브 파마");
+    assert.equal(normalizeParents({ dad: { hair: "아주 짧은 머리" } })?.dad?.hair, "반삭");
+    // 아빠의 '짧은 머리'·'파마머리'는 지금도 있는 칩이라 그대로다.
+    assert.equal(normalizeParents({ dad: { hair: "짧은 머리" } })?.dad?.hair, "짧은 머리");
+    assert.equal(normalizeParents({ dad: { hair: "파마머리" } })?.dad?.hair, "파마머리");
+  });
+
+  it("예전 값(머리·안경·옷 색 10개·메모)은 그대로 살아남는다", () => {
+    assert.deepEqual(normalizeParents({ mom: { hair: "단발", glasses: true, color: "베이지", note: "앞치마" }, dad: { color: "검정" } }), {
+      mom: { hair: "단발", glasses: true, color: "베이지", note: "앞치마" },
+      dad: { color: "검정" },
+    });
+  });
+
+  it("새 칸을 모두 지키고, 수염은 아빠만, 모르는 칸·빈 칸은 버린다", () => {
+    const full = {
+      hair: "투블럭",
+      bangs: "옆으로 넘겨요",
+      hairTexture: "곧은 생머리",
+      hairColor: "까만색",
+      face: "각진 편",
+      eyes: "또렷해요",
+      brows: "진한 눈썹",
+      skin: "햇볕에 그을림",
+      build: "듬직한 편",
+      height: "아주 큰 편",
+      glassesType: "네모 안경",
+      beard: "면도 자국",
+      marks: ["점", "덧니"],
+      outfit: "정장",
+      bottom: "슬랙스",
+      color: "네이비",
+      accessories: ["시계", "반지"],
+      note: "넥타이를 매요",
+    };
+    const out = normalizeParents({ dad: { ...full, glasses: false, junk: "x", eyesColor: "" }, mom: { ...full } });
+    assert.deepEqual(out?.dad, { ...full, glasses: true });
+    const { beard: _beard, ...momExpected } = full;
+    void _beard;
+    assert.deepEqual(out?.mom, { ...momExpected, glasses: true });
+    assert.equal(normalizeParents({ mom: {}, dad: { note: "  " } }), undefined);
+    assert.equal(normalizeParents("x"), undefined);
+  });
+
+  it("메모는 40자까지(설정 입력 칸과 같다)", () => {
+    assert.equal(normalizeParents({ mom: { note: "가".repeat(60) } })?.mom?.note?.length, 40);
+  });
 });
 
 describe("saveChild — 안 넘긴 항목은 그대로 둔다", () => {
@@ -84,6 +180,23 @@ describe("saveChild — 안 넘긴 항목은 그대로 둔다", () => {
     assert.equal(out?.looks?.hair, "단발");
     assert.equal(out?.parents?.mom?.hair, "긴 머리");
     assert.ok(store.size > 0);
+  });
+
+  it("저장했다 불러와도 엄마·아빠 새 칸이 남고, 옛 글자는 새 글자로 바뀐다", async () => {
+    stubWindow();
+    const { saveChild, loadChild } = await import("./prefs.ts");
+    saveChild({
+      name: "하온",
+      age: 5,
+      gender: "girl",
+      parents: {
+        mom: { hair: "묶은 머리", face: "갸름해요", height: "작은 편", accessories: ["앞치마"] },
+        dad: { hair: "아주 짧은 머리", beard: "콧수염", glassesType: "뿔테", glasses: true },
+      },
+    });
+    const out = loadChild();
+    assert.deepEqual(out?.parents?.mom, { hair: "하나로 묶기", face: "갸름해요", height: "작은 편", accessories: ["앞치마"] });
+    assert.deepEqual(out?.parents?.dad, { hair: "반삭", beard: "콧수염", glassesType: "뿔테", glasses: true });
   });
 
   it("빈 값을 대놓고 넘기면 지워진다 — 설정에서 '특징 비우기'가 그대로 동작하게", async () => {

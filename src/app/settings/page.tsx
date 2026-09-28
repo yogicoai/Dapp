@@ -8,6 +8,33 @@ import { ThemePicker } from "@/components/ThemePicker";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceGlyph } from "@/components/VoiceGlyph";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
+import { FaceAvatar } from "@/components/family/Figures";
+import { LockIcon } from "@/components/family/icons";
+import {
+  adultFoldChips,
+  AdultLooksEditor,
+  PARENT_ROLES,
+  ParentFace,
+  type ParentRole,
+  type Parents,
+} from "@/components/settings/AdultLooksEditor";
+import { FaceLockBadge, FamilyCharacterRow, LooksChangedNote } from "@/components/settings/FamilyBits";
+import {
+  currentLooksOf,
+  lockChanges,
+  lockKeyLooks,
+  showsLooksChanged,
+  type FamilyMember,
+} from "@/lib/family";
+import {
+  CHILD_LOOK_ROWS_ALL,
+  CHILD_MULTI_MAX,
+  GLASSES_ICON,
+  lookIcon,
+  lookNoteMax,
+  type ChildLookRowAll,
+  type ChildLookSingleKey,
+} from "@/lib/look-options";
 import {
   grantTokens,
   loadAllUsers,
@@ -100,100 +127,18 @@ import {
  * 물건은 부모가 아이를 떠올릴 때 가장 먼저 말하는 것들이라 반드시 넣었고,
  * 반대로 그림에서 티가 안 나는 항목(키 몇 cm 같은)은 뺐다.
  * multi=true면 여러 개 고를 수 있다.
+ *
+ * 칩 글자·순서의 원본은 lib/look-options.ts CHILD_LOOK_ROWS_ALL 이다 — 가족 캐릭터 화면과
+ * 같은 목록·같은 저장값(ChildPrefs.looks)이라 한쪽에서 고르면 다른 쪽에도 그대로 켜져 보인다.
+ * (예전에 여기 따로 들고 있던 표와 글자·순서까지 같다. lock 은 '늘 그대로' 표시에만 쓴다.)
+ * 칩 앞 스티커는 lookIcon(글자, 아이 성별) — 준비된 성별판(-boy·-girl)이 있으면 그걸 쓴다.
  */
-/** 하나만 고르는 항목 / 여러 개 고르는 항목을 타입으로 갈라 둔다(코드가 헷갈리지 않게). */
-type LookSingleKey = "hair" | "hairTexture" | "bangs" | "hairColor" | "eyes" | "skin" | "build" | "color";
-type LookMultiKey = "items" | "marks";
-type LookRow =
-  | { key: LookSingleKey; label: string; opts: readonly string[]; multi?: false }
-  | { key: LookMultiKey; label: string; opts: readonly string[]; multi: true };
-
-const LOOK_ROWS: readonly LookRow[] = [
-  {
-    // 짧은 것부터 긴 것 순서로 둔다. 남자아이가 많이 하는 중간 길이(바가지·귀 덮는)가
-    // 통째로 빠져 있어서 넣었다 — '짧은 머리 아니면 단발'만 있으면 고를 게 없다.
-    // 곱슬은 길이가 아니라 결이라 아래 '이런 점도'로 옮겼다(단발+곱슬을 같이 고를 수 있게).
-    key: "hair" as const,
-    label: "머리 모양",
-    opts: [
-      "아주 짧아요",
-      "짧은 머리",
-      "바가지 머리",
-      "귀 덮는 머리",
-      "단발",
-      "긴 머리",
-      "양갈래",
-      "하나로 묶기",
-      "똥머리",
-    ],
-  },
-  {
-    key: "hairTexture" as const,
-    label: "머리결",
-    opts: ["곧은 생머리", "살짝 웨이브", "곱슬머리", "파마머리"],
-  },
-  { key: "bangs" as const, label: "앞머리", opts: ["있어요", "없어요", "옆으로 넘겨요"] },
-  { key: "hairColor" as const, label: "머리 색", opts: ["까만색", "짙은 갈색", "밝은 갈색"] },
-  {
-    key: "eyes" as const,
-    label: "눈매",
-    opts: ["크고 동그래요", "웃으면 반달이 돼요", "또렷해요", "쌍꺼풀이 있어요"],
-  },
-  {
-    // 피부는 표현을 특히 조심한다 — 값을 매기는 말("가무잡잡" 등)은 쓰지 않는다.
-    // 밝기를 그대로 말하거나, 아이답고 긍정적인 사실("햇볕에 그을렸어요")로만 적는다.
-    key: "skin" as const,
-    label: "피부",
-    opts: ["밝은 편", "보통이에요", "조금 진한 편", "햇볕에 그을렸어요"],
-  },
-  {
-    // 키는 뺐다 — 그림 한 장에 아이 혼자 있으면 큰지 작은지 알 수가 없어서
-    // 골라도 결과가 안 달라진다. 몸집만 남긴다.
-    key: "build" as const,
-    label: "몸집",
-    opts: ["통통해요", "보통이에요", "마른 편이에요"],
-  },
-  {
-    key: "color" as const,
-    label: "좋아하는 옷 색",
-    opts: ["빨강", "노랑", "파랑", "초록", "분홍", "보라", "하양"],
-  },
-  {
-    key: "items" as const,
-    label: "늘 지니는 것",
-    opts: ["곰인형", "모자", "머리핀", "가방", "장난감 자동차", "담요"],
-    multi: true,
-  },
-  {
-    key: "marks" as const,
-    label: "이런 점도 있어요",
-    opts: ["주근깨", "보조개", "앞니 빠짐", "볼이 통통해요"],
-    multi: true,
-  },
-];
-
-/** 특징 칩 앞에 붙는 스티커 — 여기 없는 항목은 글자만 보인다. */
-const LOOK_ICONS: Readonly<Record<string, string>> = {
-  "곧은 생머리": "/icons/looks/hair-straight.webp",
-  "살짝 웨이브": "/icons/looks/hair-wavy.webp",
-  곱슬머리: "/icons/looks/hair-curly.webp",
-  파마머리: "/icons/looks/hair-perm.webp",
-  곰인형: "/icons/looks/item-teddy.webp",
-  모자: "/icons/looks/item-hat.webp",
-  머리핀: "/icons/looks/item-hairpin.webp",
-  가방: "/icons/looks/item-bag.webp",
-  "장난감 자동차": "/icons/looks/item-car.webp",
-  담요: "/icons/looks/item-blanket.webp",
-  주근깨: "/icons/looks/mark-freckles.webp",
-  보조개: "/icons/looks/mark-dimples.webp",
-  "앞니 빠짐": "/icons/looks/mark-tooth.webp",
-  "볼이 통통해요": "/icons/looks/mark-cheeks.webp",
-};
+const LOOK_ROWS: readonly ChildLookRowAll[] = CHILD_LOOK_ROWS_ALL;
 
 type FoldChip = { text: string; icon?: string };
 
 /** 값만 보면 뜻이 흐린 항목("있어요", "까만색")에 이름을 붙인다. */
-const LOOK_CHIP_TEXT: Partial<Record<LookSingleKey, (v: string) => string>> = {
+const LOOK_CHIP_TEXT: Partial<Record<ChildLookSingleKey, (v: string) => string>> = {
   bangs: (v) => `앞머리 ${v}`,
   hairColor: (v) => `${v} 머리`,
   eyes: (v) => `눈 ${v}`,
@@ -203,34 +148,25 @@ const LOOK_CHIP_TEXT: Partial<Record<LookSingleKey, (v: string) => string>> = {
 };
 
 /** 접힌 머리글에 보일 '고른 것' — 그림용 문장(looksToPrompt)은 부모가 읽기엔 딱딱해서 따로 만든다. */
-function lookChips(looks: ChildLooks): FoldChip[] {
+function lookChips(looks: ChildLooks, gender: Gender): FoldChip[] {
   const out: FoldChip[] = [];
   for (const row of LOOK_ROWS) {
     if (row.multi) {
-      for (const v of looks[row.key] ?? []) out.push({ text: v, icon: LOOK_ICONS[v] });
+      for (const v of looks[row.key] ?? []) out.push({ text: v, icon: lookIcon(v, gender) });
     } else {
       const v = looks[row.key];
-      if (v) out.push({ text: LOOK_CHIP_TEXT[row.key]?.(v) ?? v, icon: LOOK_ICONS[v] });
+      if (v) out.push({ text: LOOK_CHIP_TEXT[row.key]?.(v) ?? v, icon: lookIcon(v, gender) });
     }
   }
-  if (looks.glasses) out.push({ text: "안경", icon: "/icons/feature-glasses.webp" });
+  if (looks.glasses) out.push({ text: "안경", icon: GLASSES_ICON });
   if (looks.note) out.push({ text: "메모" });
   return out;
-}
-
-function parentChips(parents: { mom?: ParentLooks; dad?: ParentLooks }): FoldChip[] {
-  return (["mom", "dad"] as const).flatMap((role) => {
-    const p = parents[role];
-    const text = [p?.hair, p?.glasses && "안경", p?.color && `${p.color} 옷`, p?.note && "메모"]
-      .filter(Boolean)
-      .join(" · ");
-    return text ? [{ text, icon: `/icons/voices/parent-${role}.webp` }] : [];
-  });
 }
 
 /**
  * 접었다 펴는 특징 칸의 머리글. 고른 것은 칩으로 보여 준다 — 한 줄에 다 안 들어가면
  * 넘치는 칩은 통째로 숨기고(반쪽 칩 없음) 옆에 전체 개수를 적는다.
+ * 가족 화면에서 얼굴을 고정한 사람이면 그림 자리에 그 얼굴이 오고, 아래에 badge('얼굴 고정됨')가 붙는다.
  */
 function FoldHeader({
   open,
@@ -239,7 +175,10 @@ function FoldHeader({
   title,
   empty,
   chips,
+  count,
   art,
+  badge,
+  srNote,
 }: {
   open: boolean;
   onToggle: () => void;
@@ -247,8 +186,15 @@ function FoldHeader({
   title: string;
   empty: string;
   chips: FoldChip[];
+  /** 'N개 골랐어요'의 N — 없으면 칩 수 */
+  count?: number;
   art: ReactNode;
+  /** 그림 아래 작은 표시(얼굴 고정됨) */
+  badge?: ReactNode;
+  /** 그림·표시는 장식이라 화면 읽기에는 이 말로 대신 알린다 */
+  srNote?: string;
 }) {
+  const n = count ?? chips.length;
   return (
     <button
       type="button"
@@ -259,20 +205,22 @@ function FoldHeader({
     >
       <span
         aria-hidden
-        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
+        className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
         style={{ background: colors.accentSoft }}
       >
         {art}
+        {badge && <span className="absolute -bottom-2 left-1/2 -translate-x-1/2">{badge}</span>}
       </span>
       <span className="min-w-0 flex-1">
+        {srNote && <span className="sr-only">{srNote}</span>}
         <span className="flex items-center gap-1.5">
           <span className="text-[15px] font-extrabold text-neutral-800">{title}</span>
-          {chips.length > 0 ? (
+          {n > 0 ? (
             <span
               className="rounded-full px-2 py-0.5 text-[10px] font-extrabold text-white"
               style={{ background: colors.accent }}
             >
-              {chips.length}개 골랐어요
+              {n}개 골랐어요
             </span>
           ) : (
             <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-bold text-neutral-400">
@@ -348,9 +296,31 @@ export default function SettingsPage() {
   const autoNextTouched = useRef(false);
   // 항목이 많아 화면이 길어진다 — 평소엔 접어 두고 눌러서 편다.
   const [looksOpen, setLooksOpen] = useState(false);
-  // 엄마·아빠 생김새(아주 간단히) — 안 알려 주면 모델이 안경·수염을 지어낸다.
-  const [parents, setParents] = useState<{ mom?: ParentLooks; dad?: ParentLooks }>({});
+  // 엄마·아빠 생김새 — 안 알려 주면 모델이 안경·수염을 지어낸다(칩 목록은 look-options adultLookRows).
+  const [parents, setParents] = useState<Parents>({});
   const [parentsOpen, setParentsOpen] = useState(false);
+  /**
+   * 저장에 쓰는 '가장 최근' 생김새. 화면 값(state)은 다음 렌더에야 바뀌어서, 칩을 빠르게 두 번 누르거나
+   * 엄마 칸을 고친 직후 아빠 칸을 고치면 옛 값으로 저장해 방금 고른 것을 지울 수 있다.
+   * 그래서 저장은 늘 이 ref 에서 읽고, 바꿀 때는 applyLooks/applyParents 로 둘 다 바꾼다.
+   */
+  const looksRef = useRef<ChildLooks>({});
+  const parentsRef = useRef<Parents>({});
+  const applyLooks = (next: ChildLooks) => {
+    looksRef.current = next;
+    setLooks(next);
+  };
+  const applyParents = (next: Parents) => {
+    parentsRef.current = next;
+    setParents(next);
+  };
+  /**
+   * 우리 가족 캐릭터(읽기만) — 얼굴 고정 여부·'모습이 바뀌었어요'를 보여 주는 데만 쓴다.
+   * 설정은 가족 목록을 저장하지 않는다(persistChild 가 family 를 넘기지 않아 saveChild 가 그대로 둔다).
+   */
+  const [family, setFamily] = useState<FamilyMember[]>([]);
+  /** 저장값을 불러올 때마다 +1 — 가로로 미는 칩 줄이 켜진 칩을 보이게 다시 밀어 둔다. */
+  const [looksReveal, setLooksReveal] = useState(0);
   const [lang, setLang] = useState("ko");
 
   // 목소리 — 프리셋 선택 + 엄마·아빠 녹음 관리
@@ -420,8 +390,13 @@ export default function SettingsPage() {
       setName(stored.name);
       setAge(stored.age);
       setGender(stored.gender);
-      setLooks(stored.looks ?? {});
-      setParents(stored.parents ?? {});
+      // (applyLooks/applyParents 와 같은 일 — effect 의존성에 함수를 걸지 않으려고 풀어 적었다)
+      looksRef.current = stored.looks ?? {};
+      setLooks(looksRef.current);
+      parentsRef.current = stored.parents ?? {};
+      setParents(parentsRef.current);
+      setFamily(stored.family ?? []);
+      setLooksReveal((n) => n + 1);
     }
     setLang(loadLang());
     setVoiceId(loadSelectedVoiceId());
@@ -477,12 +452,18 @@ export default function SettingsPage() {
       // 고른 특징이 서버의 옛 값으로 되돌아가 "저장이 안 된다"가 된다.
       void loadChildRemote()
         .then((c) => {
-          if (!alive || !c || childTouched.current) return;
+          if (!alive || !c) return;
+          // 가족(얼굴 고정)은 설정이 고치지 않는 값이라 늘 들인다 — 다른 기기에서 고정한 얼굴도 보이게.
+          setFamily(c.family ?? []);
+          if (childTouched.current) return;
           setName(c.name);
           setAge(c.age);
           setGender(c.gender);
-          setLooks(c.looks ?? {});
-          setParents(c.parents ?? {});
+          looksRef.current = c.looks ?? {};
+          setLooks(looksRef.current);
+          parentsRef.current = c.parents ?? {};
+          setParents(parentsRef.current);
+          setLooksReveal((n) => n + 1);
         })
         .catch(() => {});
 
@@ -857,12 +838,19 @@ export default function SettingsPage() {
     flashSaved();
   };
 
+  /**
+   * 아이 정보 저장 — 이름·나이·성별·아이 특징·엄마·아빠 특징을 **늘 다 넘긴다**(넘기지 않은 칸은 지금 값).
+   * 가족 목록(family)·홈 액자 접힘(homeFamilyFolded)은 넘기지 않는다 — saveChild 가 저장된 값을 그대로
+   * 두므로 설정에서 무엇을 바꿔도 가족 그림·접힘이 지워지지 않는다.
+   * 생김새는 ref(가장 최근 값)에서 읽는다 — 화면 값은 다음 렌더에야 바뀌어서, 이어서 누르면 옛 값으로
+   * 저장해 방금 고른 칸(또는 다른 쪽 부모 칸)을 되돌릴 수 있다.
+   */
   const persistChild = (next: {
     name?: string;
     age?: number | null;
     gender?: Gender;
     looks?: ChildLooks;
-    parents?: { mom?: ParentLooks; dad?: ParentLooks };
+    parents?: Parents;
   }) => {
     // 부모가 손을 댄 순간부터는 뒤늦게 도착하는 서버 값이 이걸 덮지 못하게 한다.
     childTouched.current = true;
@@ -870,8 +858,8 @@ export default function SettingsPage() {
       name: next.name ?? name,
       age: next.age !== undefined ? next.age : age,
       gender: next.gender ?? gender,
-      looks: next.looks ?? looks,
-      parents: next.parents ?? parents,
+      looks: next.looks ?? looksRef.current,
+      parents: next.parents ?? parentsRef.current,
     };
     saveChild(merged);
     flashSaved();
@@ -879,24 +867,88 @@ export default function SettingsPage() {
 
   /** 아이 특징 한 항목 바꾸기 — 같은 걸 다시 누르면 해제(선택 안 함)된다. */
   const setLook = (patch: Partial<ChildLooks>) => {
-    const merged: ChildLooks = { ...looks, ...patch };
-    setLooks(merged);
+    const merged: ChildLooks = { ...looksRef.current, ...patch };
+    applyLooks(merged);
     persistChild({ looks: merged });
   };
-  /** 엄마·아빠 특징 한 항목 바꾸기 — 같은 걸 다시 누르면 해제된다. */
-  const setParent = (role: "mom" | "dad", patch: Partial<ParentLooks>) => {
-    const cur = parents[role] ?? {};
-    const merged = { ...parents, [role]: { ...cur, ...patch } };
-    setParents(merged);
+
+  /**
+   * 엄마·아빠 특징 한 항목 바꾸기 — 같은 걸 다시 누르면 해제된다. 다른 쪽 부모와 이 사람의 다른 칸은
+   * 그대로 둔다. 빈 칸(undefined·빈 목록)은 지워서 저장값을 깔끔하게 둔다(불러올 때도 빈 칸은 버린다).
+   */
+  const setParent = (role: ParentRole, patch: Partial<ParentLooks>) => {
+    const cur = parentsRef.current;
+    const person: ParentLooks = { ...(cur[role] ?? {}), ...patch };
+    for (const k of Object.keys(person) as (keyof ParentLooks)[]) {
+      const v = person[k];
+      if (v === undefined || v === "" || (Array.isArray(v) && v.length === 0)) delete person[k];
+    }
+    const merged: Parents = { ...cur };
+    if (Object.keys(person).length > 0) merged[role] = person;
+    else delete merged[role];
+    applyParents(merged);
     persistChild({ parents: merged });
   };
 
-  /** 여러 개 고르는 항목(늘 지니는 것·이런 점도)에서 하나를 켜고 끈다. */
+  /** 엄마(또는 아빠) 특징 모두 지우기 — 그 사람 칸만. 다른 쪽 부모·아이 특징은 그대로. */
+  const clearParent = (role: ParentRole) => {
+    const label = role === "mom" ? "엄마" : "아빠";
+    if (!window.confirm(`${label} 특징을 모두 지울까요?`)) return;
+    const merged: Parents = { ...parentsRef.current };
+    delete merged[role];
+    applyParents(merged);
+    persistChild({ parents: merged });
+  };
+
+  /**
+   * 아이 특징 모두 지우기 — 아이 칸만 지운다.
+   * 예전엔 화면에서 엄마·아빠 칸도 비웠지만 저장은 persistChild({ looks: {} }) 가 옛 parents 를 그대로
+   * 넣어서, 다시 열면 엄마·아빠 특징이 되살아났다(화면과 저장이 어긋남). 이 단추는 아이 칸 안에 있고
+   * '이렇게 그려요'도 아이 문장이라 아이 칸만 지우는 게 맞다 — 부모 값은 지금 값을 **명시해서** 넘긴다.
+   * (엄마·아빠는 자기 칸의 '모두 지우기'로 따로 지운다.)
+   */
+  const clearChildLooks = () => {
+    applyLooks({});
+    persistChild({ looks: {}, parents: parentsRef.current });
+  };
+
+  /**
+   * 여러 개 고르는 항목(늘 지니는 것·이런 점도)에서 하나를 켜고 끈다. CHILD_MULTI_MAX 개(저장이 남기는 수)를
+   * 넘기면 가장 먼저 고른 것을 밀어낸다 — 가족 화면 아이 탭과 같은 규칙(예전엔 새로 누른 칩이 말없이 안 켜졌다).
+   */
   const toggleIn = (key: "items" | "marks", v: string) => {
-    const cur = looks[key] ?? [];
-    const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v].slice(0, 5);
+    const cur = looksRef.current[key] ?? [];
+    const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v].slice(-CHILD_MULTI_MAX);
     setLook({ [key]: next });
   };
+
+  /*
+   * 가족 캐릭터와 잇기(사장님 2026-09-28 6번) — 가족 화면에서 얼굴을 고정한 아이·엄마·아빠.
+   * 게스트는 가족을 못 만든다(가족 화면이 로그인으로 보낸다) — 그래서 게스트에겐 늘 비어 있다.
+   * '모습이 바뀌었어요'는 고정할 때 적어 둔 '늘 그대로'(portrait.lockKey)와 지금 설정 값을 견준다
+   * (lib/family showsLooksChanged — 옷·메모만 바꾸면 안 뜨고, 확인 전 새 그림이 있으면 모아 보기처럼 묻지 않는다).
+   */
+  const lookSource = { looks, parents };
+  const lockedOf = (role: "child" | ParentRole): FamilyMember | undefined =>
+    guest ? undefined : family.find((m) => m.role === role && m.portrait);
+  const changedOf = (m: FamilyMember | undefined) => Boolean(m && showsLooksChanged(m, lookSource));
+  const changesOf = (m: FamilyMember | undefined): string[] =>
+    m ? lockChanges(m.role, lockKeyLooks(m.portrait?.lockKey), currentLooksOf(m, lookSource)) : [];
+  const childLocked = lockedOf("child");
+  const childChanged = changedOf(childLocked);
+  const parentLocked: Partial<Record<ParentRole, FamilyMember>> = {
+    mom: lockedOf("mom"),
+    dad: lockedOf("dad"),
+  };
+  const parentChanged: Partial<Record<ParentRole, boolean>> = {
+    mom: changedOf(parentLocked.mom),
+    dad: changedOf(parentLocked.dad),
+  };
+  const parentChanges: Partial<Record<ParentRole, string[]>> = {
+    mom: parentChanged.mom ? changesOf(parentLocked.mom) : undefined,
+    dad: parentChanged.dad ? changesOf(parentLocked.dad) : undefined,
+  };
+  const parentFold = adultFoldChips(parents);
 
   return (
     <div className="relative min-h-dvh w-full overflow-hidden">
@@ -1065,6 +1117,15 @@ export default function SettingsPage() {
             </div>
           </section>
 
+          {/* ── 우리 가족 캐릭터 › ── 가족 화면으로 가는 길. 고정한 얼굴을 겹쳐 보여 준다.
+              아래 아이·엄마·아빠 특징과 가족 화면의 생김새는 같은 저장값이다. 회원 전용(이 묶음 안). */}
+          <FamilyCharacterRow
+            family={family}
+            child={lookSource}
+            childGender={gender}
+            colors={theme.colors}
+          />
+
           {/* ── 아이 특징 ── 동화 주인공을 "우리 애 같게" 만드는 재료.
               항목이 많아 화면이 길어지므로 평소엔 접어 두고 눌러서 편다.
               사진을 받지 않는 이유를 부모에게도 그대로 말해 준다(안심시키는 게 목적). */}
@@ -1075,20 +1136,33 @@ export default function SettingsPage() {
               colors={theme.colors}
               title="아이 특징"
               empty="고르면 주인공이 우리 아이를 닮게 그려져요"
-              chips={lookChips(looks)}
+              chips={lookChips(looks, gender)}
               art={
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={gender === "boy" ? "/icons/gender-boy.webp" : "/icons/gender-girl.webp"}
-                  alt=""
-                  className="h-10 w-10 object-contain"
-                />
+                childLocked ? (
+                  <FaceAvatar member={childLocked} size={46} childGender={gender} ring="0 0 0 2px #fff" />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={gender === "boy" ? "/icons/gender-boy.webp" : "/icons/gender-girl.webp"}
+                    alt=""
+                    className="h-10 w-10 object-contain"
+                  />
+                )
+              }
+              badge={childLocked ? <FaceLockBadge colors={theme.colors} changed={childChanged} /> : undefined}
+              srNote={
+                childLocked
+                  ? childChanged
+                    ? "얼굴 고정됨, 모습이 바뀌었어요."
+                    : "얼굴 고정됨."
+                  : undefined
               }
             />
 
-            {/* 펼침 — 높이 애니메이션으로 스르르 내려온다. */}
+            {/* 펼침 — 높이 애니메이션으로 스르르 내려온다. 접혀 있을 땐 칩에 손(탭 이동)이 안 가게 inert. */}
             <div
-              className={`grid transition-[grid-template-rows,opacity] duration-300 ${
+              inert={!looksOpen}
+              className={`grid grid-cols-1 transition-[grid-template-rows,opacity] duration-300 ${
                 looksOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
               }`}
             >
@@ -1099,9 +1173,22 @@ export default function SettingsPage() {
                     안전해요. 안 골라도 동화는 만들어져요.
                   </p>
 
+                  {/* 얼굴을 고정한 뒤 '늘 그대로'를 바꿨으면 — 다시 그리기(쿠키)는 가족 화면에서 고른다. */}
+                  {childChanged && (
+                    <LooksChangedNote colors={theme.colors} changes={changesOf(childLocked)} />
+                  )}
+                  {childLocked && !childChanged && (
+                    <p className="flex items-center gap-1.5 break-keep text-[11px] font-bold" style={{ color: theme.colors.accentDark }}>
+                      <LockIcon size={12} />
+                      얼굴을 고정했어요. 자물쇠 줄을 바꾸면 가족 화면에서 다시 그릴지 물어봐요.
+                    </p>
+                  )}
+
                   {LOOK_ROWS.map((row) => (
                     <div key={row.key} className="flex flex-col gap-1.5">
-                      <p className="text-xs font-bold text-neutral-400">
+                      <p className="flex items-center gap-1 text-xs font-bold text-neutral-400">
+                        {/* 얼굴을 고정했으면 '늘 그대로' 줄에 자물쇠 — 바꾸면 다시 그릴지 묻는 줄이다. */}
+                        {childLocked && row.lock && <LockIcon size={11} />}
                         {row.label}
                         {row.multi && <span className="font-medium text-neutral-300"> (여러 개)</span>}
                       </p>
@@ -1127,9 +1214,9 @@ export default function SettingsPage() {
                                   : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                               }`}
                             >
-                              {LOOK_ICONS[o] && (
+                              {lookIcon(o, gender) && (
                                 // eslint-disable-next-line @next/next/no-img-element
-                                <img src={LOOK_ICONS[o]} alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.25em]" />
+                                <img src={lookIcon(o, gender)} alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.25em]" />
                               )}
                               {o}
                             </button>
@@ -1149,7 +1236,7 @@ export default function SettingsPage() {
                             }`}
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src="/icons/feature-glasses.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.25em]" />
+                            <img src={GLASSES_ICON} alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.25em]" />
                             안경
                           </button>
                         )}
@@ -1166,8 +1253,8 @@ export default function SettingsPage() {
                     </p>
                     <input
                       value={looks.note ?? ""}
-                      onChange={(e) => setLook({ note: e.target.value.slice(0, 100) || undefined })}
-                      maxLength={100}
+                      onChange={(e) => setLook({ note: e.target.value.slice(0, lookNoteMax("child")) || undefined })}
+                      maxLength={lookNoteMax("child")}
                       placeholder="예) 늘 공룡 티셔츠를 입어요 / 머리를 옆으로 묶어요"
                       className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-2.5 text-sm font-bold outline-none placeholder:font-medium placeholder:text-neutral-300 focus:border-neutral-400"
                     />
@@ -1184,11 +1271,7 @@ export default function SettingsPage() {
                       </p>
                       <button
                         type="button"
-                        onClick={() => {
-                          setLooks({});
-                          setParents({});
-                          persistChild({ looks: {} });
-                        }}
+                        onClick={clearChildLooks}
                         className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[11px] font-extrabold text-neutral-500 shadow-sm"
                       >
                         모두 지우기
@@ -1201,10 +1284,12 @@ export default function SettingsPage() {
           </section>
           </>)}
 
-          {/* ── 엄마·아빠 특징 ── 아주 간단하게 셋만.
+          {/* ── 엄마·아빠 특징 ──
               안 알려 주면 이야기 모델이 지어낸다 — 실제로 안경을 안 쓰는 아빠가
-              6쪽 내내 안경잡이로 그려졌다. 자세히 받으면 만들기가 길어지므로
-              머리·안경·옷 색만 받고 나머지는 자유 한 줄로 둔다. */}
+              6쪽 내내 안경잡이로 그려졌다. 처음엔 머리·안경·옷 색만 받았는데, 가족 캐릭터(얼굴 고정)가
+              생기며 사장님 목록(2026-09-28)으로 넓혔다 — '늘 그대로'·'평소 옷' 두 묶음, 칩 원본은
+              look-options adultLookRows. 가족 화면과 같은 저장값(ChildPrefs.parents)이다.
+              (게스트에게도 보이는 칸 — 예전 그대로 둔다.) */}
           <section className="flex flex-col gap-2">
             <FoldHeader
               open={parentsOpen}
@@ -1212,85 +1297,51 @@ export default function SettingsPage() {
               colors={theme.colors}
               title="엄마·아빠 특징"
               empty="동화에 엄마·아빠가 나올 때 그대로 그려져요"
-              chips={parentChips(parents)}
+              chips={parentFold.chips}
+              count={parentFold.count}
               art={
                 <span className="flex items-end">
-                  <VoiceGlyph voice={{ role: "mom" }} className="-mr-2.5 h-9 w-9" />
-                  <VoiceGlyph voice={{ role: "dad" }} className="h-9 w-9" />
+                  {PARENT_ROLES.map((x, i) => (
+                    <ParentFace
+                      key={x.role}
+                      role={x.role}
+                      locked={parentLocked[x.role]}
+                      size={32}
+                      className={`h-9 w-9 ${i === 0 ? "-mr-2.5" : ""}`}
+                    />
+                  ))}
                 </span>
+              }
+              badge={
+                parentLocked.mom || parentLocked.dad ? (
+                  <FaceLockBadge colors={theme.colors} changed={parentChanged.mom || parentChanged.dad} />
+                ) : undefined
+              }
+              srNote={
+                parentLocked.mom || parentLocked.dad
+                  ? `${PARENT_ROLES.filter((x) => parentLocked[x.role]).map((x) => x.label).join("·")} 얼굴 고정됨${
+                      parentChanged.mom || parentChanged.dad ? ", 모습이 바뀌었어요" : ""
+                    }.`
+                  : undefined
               }
             />
 
-            <div className={`grid transition-[grid-template-rows,opacity] duration-300 ${parentsOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+            <div
+              inert={!parentsOpen}
+              className={`grid grid-cols-1 transition-[grid-template-rows,opacity] duration-300 ${parentsOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+            >
               <div className="overflow-hidden">
-                <div className="flex flex-col gap-4 rounded-2xl bg-white/70 p-4">
-                  <p className="break-keep text-[11px] font-medium leading-relaxed text-neutral-400">
-                    안 고르시면 앱이 알아서 정해요. 안경처럼 있고 없음이 분명한 건 여기서 알려 주셔야
-                    그림이 실제 모습과 맞아요.
-                  </p>
-                  {([
-                    { role: "mom" as const, label: "엄마", emoji: "👩",
-                      hairs: ["짧은 머리", "단발", "긴 머리", "묶은 머리", "파마머리"] },
-                    { role: "dad" as const, label: "아빠", emoji: "👨",
-                      hairs: ["짧은 머리", "아주 짧은 머리", "조금 긴 머리", "곱슬머리"] },
-                  ]).map((row) => {
-                    const cur = parents[row.role] ?? {};
-                    return (
-                      <div key={row.role} className="flex flex-col gap-2">
-                        <p className="flex items-center gap-1 text-xs font-extrabold text-neutral-600">
-                          <VoiceGlyph voice={row} className="h-6 w-6" />
-                          {row.label}
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {row.hairs.map((h) => {
-                            const on = cur.hair === h;
-                            return (
-                              <button key={h} type="button"
-                                onClick={() => setParent(row.role, { hair: on ? undefined : h })}
-                                aria-pressed={on}
-                                style={on ? { background: accent } : undefined}
-                                className={`rounded-full px-3 py-1.5 text-[12px] font-bold transition ${on ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}
-                              >
-                                {h}
-                              </button>
-                            );
-                          })}
-                          <button type="button"
-                            onClick={() => setParent(row.role, { glasses: cur.glasses ? undefined : true })}
-                            aria-pressed={Boolean(cur.glasses)}
-                            style={cur.glasses ? { background: accent } : undefined}
-                            className={`rounded-full px-3 py-1.5 text-[12px] font-bold transition ${cur.glasses ? "text-white shadow" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}
-                          >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src="/icons/feature-glasses.webp" alt="" aria-hidden className="mr-1 inline-block h-4 w-4 object-contain align-[-0.2em]" />
-                            안경
-                          </button>
-                        </div>
-                        <div className="flex flex-wrap gap-1.5">
-                          {["빨강", "노랑", "파랑", "초록", "분홍", "보라", "하양", "검정", "회색", "베이지"].map((c) => {
-                            const on = cur.color === c;
-                            return (
-                              <button key={c} type="button"
-                                onClick={() => setParent(row.role, { color: on ? undefined : c })}
-                                aria-pressed={on}
-                                style={on ? { background: accent } : undefined}
-                                className={`rounded-full px-2.5 py-1 text-[11px] font-bold transition ${on ? "text-white shadow" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`}
-                              >
-                                {c} 옷
-                              </button>
-                            );
-                          })}
-                        </div>
-                        <input
-                          value={cur.note ?? ""}
-                          onChange={(e) => setParent(row.role, { note: e.target.value.slice(0, 40) || undefined })}
-                          placeholder={row.role === "mom" ? "예: 늘 앞치마를 둘러요" : "예: 수염이 조금 있어요"}
-                          className="w-full rounded-xl border-2 border-neutral-100 bg-neutral-50 px-3 py-2 text-[13px] font-medium text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-200"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
+                <AdultLooksEditor
+                  colors={theme.colors}
+                  parents={parents}
+                  locked={parentLocked}
+                  changed={parentChanged}
+                  changes={parentChanges}
+                  reveal={looksReveal}
+                  linked={!guest}
+                  onPatch={setParent}
+                  onClear={clearParent}
+                />
               </div>
             </div>
           </section>

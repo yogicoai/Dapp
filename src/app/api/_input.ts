@@ -35,9 +35,10 @@ export function parseChild(value: unknown): ChildProfile {
   /*
    * 엄마·아빠 생김새 — 안 주면 모델이 안경·수염을 지어낸다.
    * 아이 것과 같은 이유로 길이를 자른다(프롬프트에 그대로 들어간다).
+   * 400자 — 생김새 칩이 늘어(얼굴형·눈매·키·수염·옷·늘 하는 것 …, 2026-09-28) 150자면 뒤가 잘렸다.
    */
   const pl = c?.parentLooks as { mom?: unknown; dad?: unknown } | undefined;
-  const one = (x: unknown) => (typeof x === "string" ? x.trim().slice(0, 150) : "");
+  const one = (x: unknown) => (typeof x === "string" ? x.trim().slice(0, 400) : "");
   const parentLooks = { mom: one(pl?.mom), dad: one(pl?.dad) };
 
   return {
@@ -99,8 +100,9 @@ export function parseMaterial(value: unknown): StoryMaterial {
     directText: pickLong(v?.directText),
   };
   if (material.kind === "direct") {
-    if (material.directMode === "full" && material.directText.length < 80) {
-      throw new Error("완성 원고를 80자 이상 적어주세요.");
+    // 2026-09-28: 기승전결 칸을 없애고 글 한 칸으로 — 짧은 한두 문장도 받는다(20자부터).
+    if (material.directMode === "full" && material.directText.length < 20) {
+      throw new Error("이야기를 한두 문장 이상 적어주세요.");
     }
     if (
       material.directMode !== "full" &&

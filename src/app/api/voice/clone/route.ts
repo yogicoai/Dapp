@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { TypecastError, cloneVoiceTypecast, deleteVoiceTypecast } from "@/lib/typecast";
 import { callerOf, ownsVoice } from "@/lib/api-auth";
+import { DEV_ONLY_MESSAGE, isDevUser } from "@/lib/dev-mode";
 
 /**
  * 녹음한 부모 목소리(오디오) → Typecast 퀵 클론 → 커스텀 음성 id(uc_...).
@@ -14,6 +15,10 @@ export async function POST(request: Request) {
   const caller = await callerOf(request);
   if (!caller) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  }
+  // 부모 목소리는 개발자 모드(fe)에서만 — 화면에서 가려도 주소를 직접 부를 수 있으니 여기서 막는다.
+  if (!isDevUser(caller.username)) {
+    return NextResponse.json({ error: DEV_ONLY_MESSAGE }, { status: 403 });
   }
   let form: FormData;
   try {

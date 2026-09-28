@@ -10,6 +10,7 @@ import folkBooksJson from "@/data/folk-books.json";
 import { useTheme } from "@/components/ThemeProvider";
 import { VoiceGlyph } from "@/components/VoiceGlyph";
 import { VoiceInput } from "@/components/VoiceInput";
+import { QuestionFlow, type FlowOption, type FlowPos, type FlowQuestion } from "@/components/create/QuestionFlow";
 import { ART_STYLES } from "@/lib/art-styles";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
@@ -264,61 +265,6 @@ const TODAY_ENDINGS = [
  * "그래서 즐거운 하루였어요" 같은 아무 책에나 붙는 문장으로 닫아 버린다. 어디로 끝낼지
  * 한 줄만 정해 줘도 마지막 쪽이 또렷해진다.
  */
-/**
- * 마무리 고르기 — 칩으로 고르거나 직접 적는다.
- *
- * 칩만 두면 네댓 가지 결말만 돌고 돌아 "또 같은 마무리"가 된다. 직접 적는 칸이 있어야
- * 그 집만의 마무리가 나온다. 칩을 누르면 그 글이 칸에 채워지므로 이어서 고쳐 쓸 수 있다.
- */
-function EndingPicker({
-  label,
-  hint,
-  chips,
-  value,
-  onChange,
-  placeholder,
-  accent,
-}: {
-  label: string;
-  hint: string;
-  chips: { t: string; e: string }[];
-  value: string;
-  onChange: (v: string) => void;
-  placeholder: string;
-  accent: string;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <p className="break-keep text-xs font-bold text-neutral-400">
-        {label} <span className="font-medium">(선택)</span>
-      </p>
-      <div className="flex flex-wrap justify-center gap-2">
-        {chips.map((it) => (
-          <button
-            key={it.t}
-            type="button"
-            onClick={() => onChange(value === it.t ? "" : it.t)}
-            style={value === it.t ? { background: accent } : undefined}
-            className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
-              value === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-            }`}
-          >
-            <ChipIcon emoji={it.e} />
-            {it.t}
-          </button>
-        ))}
-      </div>
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value.slice(0, 120))}
-        placeholder={placeholder}
-        className="w-full rounded-2xl border-2 border-neutral-200 bg-white px-4 py-3 text-base font-bold text-neutral-900 outline-none focus:border-neutral-400"
-      />
-      <p className="break-keep text-center text-xs font-medium text-neutral-400">{hint}</p>
-    </div>
-  );
-}
-
 const WISH_ENDINGS = [
   { t: "스스로 해내고 뿌듯해져요", e: "💪" },
   { t: "친구가 하나 생겨요", e: "🤝" },
@@ -435,8 +381,12 @@ type LocationSheet = { key: string; name: string; description: string; image: st
  * 끝내 실패했을 때 책에서 비는 비율도 준다. 값도 한 권 12토큰에서 10토큰으로 내려간다.
  *
  * 길이 조절은 '넉넉하게' 스위치로 한다 — 쪽수가 아니라 쪽마다의 글 양이 는다.
+ *
+ * 2026-09-28 다시 6으로(사장님: "6장면으로 만들어요 · 대본 6개"). 그림을 우리 배경을 참조로 물려
+ * 장면째 그리는 방식으로 바꾸면서 쪽 수를 늘리기로 했다. 한 권 값은 12토큰(대본 6 + 그림 6).
+ * 요청이 권당 7번 이상이라 429(몰림)는 첫 몇 권에서 다시 지켜볼 것.
  */
-const FIXED_PAGE_COUNT = 5;
+const FIXED_PAGE_COUNT = 6;
 
 /** 조사를 떼어 지칭어를 만든다 — "친구랑"→"친구", "동생이랑"→"동생". */
 function companionTerm(who: string): string {
@@ -818,18 +768,6 @@ function WhoNameInput({
   );
 }
 
-/**
- * 칩 앞의 그림 — 전용 아이콘이 있으면 그림, 없으면 이모지.
- * 칩 목록이 여러 벌이고 목록마다 항목 모양이 조금씩 달라, 한 자리에서 처리한다.
- */
-function ChipIcon({ emoji, icon }: { emoji: string; icon?: string }) {
-  if (icon) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={icon} alt="" aria-hidden className="h-6 w-6 shrink-0 object-contain" />;
-  }
-  return <span className="text-base leading-none">{emoji}</span>;
-}
-
 /** 밝은 톤 공통 버튼. 강조색은 활성 테마에서 온다. */
 function BigButton({
   children,
@@ -931,6 +869,8 @@ export default function CreatePage() {
   const chooseStoryMode = (m: typeof storyMode) => {
     setEnding("");
     setStoryMode(m);
+    // 새 갈래는 아직 답이 없는 첫 질문부터 연다(QuestionFlow 의 initial=null).
+    setFlowAt(null);
   };
 
   // 설정(⚙️)에 아이 정보가 있으면 미리 채우고 아이정보 단계는 건너뛴다.
@@ -992,6 +932,11 @@ export default function CreatePage() {
   const [themeGroup, setThemeGroup] = useState<string | null>(null);
   // 이야기 갈래 — 오늘의 이야기(실경험) / 상상 이야기(칩) / 감정 동화(마음). null=미선택.
   const [storyMode, setStoryMode] = useState<StoryMode | null>(null);
+  /*
+   * 재료 질문 화면(한 장에 질문 하나)이 지금 몇 번째 장인지 — 그림·성우 단계에 갔다가 돌아와도
+   * 같은 장(대개 '이렇게 만들어요' 요약)에서 다시 열리게 여기 둔다. null 이면 아직 답이 없는 첫 질문부터.
+   */
+  const [flowAt, setFlowAt] = useState<FlowPos | null>(null);
   // 이야기 재료 — 누구랑·무슨 일. 세부주제(theme)와 함께 씨앗을 이룬다.
   const [who, setWho] = useState("");
   // 동행의 실제 이름(선택). "친구랑" 고르고 이름을 넣으면 그 이름을 그대로 쓴다.
@@ -1011,8 +956,9 @@ export default function CreatePage() {
   // 「감정 동화」 전용 — 어떤 마음·그런 마음이 든 상황. 누구랑(who)은 공유한다.
   const [emotion, setEmotion] = useState("");
   const [situation, setSituation] = useState("");
-  // 「직접 이야기 구성」 — 기승전결 안내 작성 또는 완성 원고 붙여넣기.
-  const [directMode, setDirectMode] = useState<"guided" | "full">("guided");
+  // 「직접 이야기 쓰기」 — 글 한 칸(2026-09-28: 기승전결 네 칸은 오히려 헷갈려서 없앰, 사장님).
+  // directMode 는 늘 "full" — 서버가 글 길이를 보고 짧으면 풀어 쓰고, 길면 원고를 지키며 나눈다.
+  const [directMode, setDirectMode] = useState<"guided" | "full">("full");
   const [directOpening, setDirectOpening] = useState("");
   const [directDevelopment, setDirectDevelopment] = useState("");
   const [directCrisis, setDirectCrisis] = useState("");
@@ -1041,24 +987,9 @@ export default function CreatePage() {
             ? [directOpening, directDevelopment, directCrisis, directEnding].filter(Boolean).join(" ")
             : directText.trim()
         : [theme, who, happening, extra.trim()].filter(Boolean).join(", ");
-  const directReady = directMode === "guided"
-    ? [directOpening, directDevelopment, directCrisis, directEnding].every((part) => part.trim().length >= 8)
-    : directText.trim().length >= 80;
+  const directReady = directText.trim().length >= 20;
   const directFeedback = storyMode === "direct"
-    ? directMode === "guided"
-      ? [
-          !directOpening.trim() ? "시작에 주인공과 장소를 적어 주세요." : "",
-          !directDevelopment.trim() ? "전개에 어떤 일이 생겼는지 적어 주세요." : "",
-          !directCrisis.trim() ? "위기에 해결해야 할 어려움을 적어 주세요." : "",
-          !directEnding.trim() ? "결말에 해결 방법과 남은 마음을 적어 주세요." : "",
-          [directOpening, directDevelopment, directCrisis, directEnding].some((part) => part.trim() && part.trim().length < 8)
-            ? "각 부분을 한 문장 이상 적으면 장면 구성이 더 정확해져요."
-            : "",
-        ].filter(Boolean)
-      : [
-          directText.trim().length < 80 ? "완성 원고를 80자 이상 적어 주세요." : "",
-          directText.trim() && !/[.!?。！？]$/.test(directText.trim()) ? "마지막 문장을 마무리하면 결말을 더 정확히 나눌 수 있어요." : "",
-        ].filter(Boolean)
+    ? [directText.trim().length < 20 ? "이야기를 한두 문장 이상 적어 주세요." : ""].filter(Boolean)
     : [];
   // 그림체 — 지금은 저장만 한다. Gemini 삽화가 붙으면 이 스타일의 prompt가 쓰인다.
   const [artStyle, setArtStyle] = useState(ART_STYLES[0].id);
@@ -1072,9 +1003,11 @@ export default function CreatePage() {
    * 시트 한 장이 모든 쪽 삽화의 기준이라, 여기만 넣으면 8쪽 내내 그 캐릭터가 나온다.
    * 사진이 아니라 '그림'을 받는다: 얼굴 데이터를 다루지 않아 안전하고,
    * "내가 그린 애가 주인공"이라는 몰입이 훨씬 크다(피드백 7번).
+   *
+   * 2026-09-28: 올리는 칸은 없앴다(사장님 — 모든 동화를 수채화 한 가지로). 값은 늘 null 이지만,
+   * 인물 시트·이어 그리기 코드가 이 값을 그대로 읽으므로 자리는 남겨 둔다.
    */
-  const [drawing, setDrawing] = useState<string | null>(null);
-  const [drawingBusy, setDrawingBusy] = useState(false);
+  const [drawing] = useState<string | null>(null);
 
   /**
    * data URL 이미지를 줄여 다시 data URL로 만든다.
@@ -1226,32 +1159,6 @@ export default function CreatePage() {
     }
     setUploading(null);
     return result(failures);
-  }
-
-  /** 올린 그림을 캔버스로 줄여 data URL로 만든다 — 원본 사진은 몇 MB라 그대로 보내면 느리다. */
-  async function pickDrawing(file: File) {
-    setDrawingBusy(true);
-    try {
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error("그림을 읽지 못했어요."));
-        img.src = url;
-      });
-      const MAX = 768;
-      const scale = Math.min(1, MAX / Math.max(img.width, img.height));
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
-      canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
-      URL.revokeObjectURL(url);
-      setDrawing(canvas.toDataURL("image/jpeg", 0.85));
-    } catch (e) {
-      setError((e as Error).message || "그림을 읽지 못했어요.");
-    } finally {
-      setDrawingBusy(false);
-    }
   }
 
   /*
@@ -1720,12 +1627,17 @@ export default function CreatePage() {
     setEnding(draft.ending);
     setEmotion(draft.emotion);
     setSituation(draft.situation);
-    setDirectMode(draft.directMode);
-    setDirectOpening(draft.directOpening);
-    setDirectDevelopment(draft.directDevelopment);
-    setDirectCrisis(draft.directCrisis);
-    setDirectEnding(draft.directEnding);
-    setDirectText(draft.directText);
+    // 기승전결 칸은 없앴다 — 예전 임시저장이 기승전결이면 네 칸을 이어 글 한 칸으로 옮긴다.
+    const oldGuided = [draft.directOpening, draft.directDevelopment, draft.directCrisis, draft.directEnding]
+      .map((part) => (part ?? "").trim())
+      .filter(Boolean)
+      .join("\n");
+    setDirectMode("full");
+    setDirectOpening("");
+    setDirectDevelopment("");
+    setDirectCrisis("");
+    setDirectEnding("");
+    setDirectText(draft.directMode === "guided" && !draft.directText?.trim() ? oldGuided : draft.directText);
     setOutlineRetries(draft.outlineRetries ?? 0);
     setScriptCharged(draft.scriptCharged ?? false);
     setStoryRewrites(draft.storyRewrites ?? 0);
@@ -1734,7 +1646,8 @@ export default function CreatePage() {
     setJobId(isJobId(draft.jobId) ? draft.jobId : null);
     // 적어 둔 것이 있으면 손댄 것으로 본다 — 이어서 만들 때 덮어쓰지 않게.
     locationTouchedRef.current = Boolean(draft.locationDetail);
-    setArtStyle(ART_STYLES.some((style) => style.id === draft.artStyle) ? draft.artStyle : ART_STYLES[0].id);
+    // 그림체는 이제 수채화 하나뿐 — 예전 임시저장에 다른 그림체가 남아 있어도 수채화로 이어 간다.
+    setArtStyle(ART_STYLES[0].id);
     // 비율은 4:3 고정 — 초안의 값은 쓰지 않는다.
     setNarratorVoice(draft.narratorVoice);
     // 낭독 느낌은 늘 '자연스럽게' — 초안 값은 쓰지 않는다.
@@ -1744,6 +1657,8 @@ export default function CreatePage() {
     setOutline(draft.outline);
     setStory(draft.story);
     setStep(draft.step);
+    // 재료 질문 화면 — 재료 단계에서 멈췄으면 아직 답이 없는 첫 질문부터, 그 뒤 단계였으면 요약 장부터.
+    setFlowAt(draft.step === "child" || draft.step === "theme" ? null : "summary");
     draftBaselineRef.current = null;
     setPendingDraft(null);
     setDraftReady(true);
@@ -1774,8 +1689,9 @@ export default function CreatePage() {
     looks: looksToPrompt(loadChild()?.looks) || undefined,
     // 엄마·아빠 생김새(선택) — 안 주면 모델이 안경·수염을 지어낸다.
     parentLooks: {
-      mom: parentLooksToPrompt(loadChild()?.parents?.mom) || undefined,
-      dad: parentLooksToPrompt(loadChild()?.parents?.dad) || undefined,
+      // 역할을 넘긴다 — 수염은 아빠만(가족 그림·설정 미리보기와 같은 문장).
+      mom: parentLooksToPrompt(loadChild()?.parents?.mom, "mom") || undefined,
+      dad: parentLooksToPrompt(loadChild()?.parents?.dad, "dad") || undefined,
     },
   };
 
@@ -1800,6 +1716,245 @@ export default function CreatePage() {
     setWhoName("");
     setWhoGender(""); // 이름과 같은 이유 — 다른 동행으로 바꿨는데 앞의 성별이 남으면 안 된다
     setFriends([{ name: "", gender: "" }]);
+  }
+
+  /*
+   * 재료 질문 — 한 장에 하나씩(QuestionFlow). 2026-09-28 사장님: 한 화면에 쭉 나열하면 복잡하다.
+   *
+   * 질문·보기·값은 예전 한 화면 그대로다 — 순서만 한 장씩으로 나눴다. '다음'은 예전처럼 seed(재료 하나 이상)가
+   * 있을 때만 켜지므로, 질문 하나하나는 모두 건너뛸 수 있다.
+   */
+  function pickThemeGroup(label: string) {
+    const next = themeGroup === label ? null : label;
+    setThemeGroup(next);
+    // 다른 갈래로 바꾸면 앞 갈래의 세부 이야기는 비운다 — 세부 장이 새 갈래 칩만 보여 줘서, 남겨 두면 안 보이는 채로 재료에 섞인다.
+    const items = THEME_GROUPS.find((g) => g.label === next)?.items ?? [];
+    if (!items.some((it) => it.t === theme)) setTheme("");
+  }
+
+  function storyQuestions(): FlowQuestion[] {
+    const textClass =
+      "w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400";
+    const friendNames = friends.map((f) => f.name.trim()).filter(Boolean).join(", ");
+    const whoExtraName = who === "친구들이랑" ? friendNames : whoName.trim();
+    const whoQuestion = (title: string, options: FlowOption[]): FlowQuestion => ({
+      id: "who",
+      title,
+      answer: who ? (whoExtraName ? `${who} · ${whoExtraName}` : who) : "",
+      options,
+      value: who,
+      onPick: chooseWho,
+      // 이름·성별·친구 칸이 뜨는 동행(혼자서 빼고 전부)은 자동으로 넘기지 않고 '다음'을 기다린다.
+      holdOn: (t) => t !== "혼자서",
+      children: (
+        <WhoNameInput
+          who={who}
+          value={whoName}
+          onChange={setWhoName}
+          gender={whoGender}
+          onGenderChange={setWhoGender}
+          friends={friends}
+          onFriendsChange={setFriends}
+          accent={accent}
+        />
+      ),
+    });
+    /*
+     * 마무리 — 칩으로 고르거나 직접 적는다.
+     * 칩만 두면 네댓 가지 결말만 돌고 돌아 "또 같은 마무리"가 된다. 직접 적는 칸이 있어야
+     * 그 집만의 마무리가 나온다. 칩을 누르면 그 글이 칸에 채워지므로 돌아와 이어서 고쳐 쓸 수 있다.
+     */
+    const endingQuestion = (title: string, hint: string, chips: FlowOption[], placeholder: string): FlowQuestion => ({
+      id: "ending",
+      title,
+      answer: ending.trim(),
+      options: chips,
+      value: ending,
+      onPick: (t) => setEnding(ending === t ? "" : t),
+      layout: "wide",
+      children: (
+        <>
+          <input
+            value={ending}
+            onChange={(e) => setEnding(e.target.value.slice(0, 120))}
+            placeholder={placeholder}
+            aria-label={`${title} 직접 적기`}
+            className={textClass}
+          />
+          <p className="break-keep text-center text-xs font-medium text-neutral-400">{hint}</p>
+        </>
+      ),
+    });
+
+    if (storyMode === "today") {
+      return [
+        {
+          id: "place",
+          title: "어디에서 있었던 일이에요?",
+          answer: place,
+          options: TODAY_PLACES,
+          value: place,
+          onPick: (t) => setPlace(place === t ? "" : t),
+        },
+        whoQuestion("누구랑 있었어요?", todayWho),
+        {
+          // 무슨 일 — 여기만 자유롭게. 말로도 글로도 받는다 (실경험의 핵심).
+          id: "event",
+          title: "어떤 일이 있었어요?",
+          answer: todayEvent.trim(),
+          children: (
+            <>
+              <div className="flex justify-center py-1">
+                <VoiceInput onResult={(t) => setTodayEvent(t)} />
+              </div>
+              <textarea
+                value={todayEvent}
+                onChange={(e) => setTodayEvent(e.target.value.slice(0, 200))}
+                rows={3}
+                aria-label="어떤 일이 있었어요?"
+                placeholder="예: 그네를 타다가 넘어졌는데 친구가 일으켜 줬어요"
+                className={textClass}
+              />
+            </>
+          ),
+        },
+        {
+          id: "feeling",
+          title: "그때 기분이 어땠어요?",
+          answer: feeling,
+          options: FEELINGS,
+          value: feeling,
+          onPick: (t) => setFeeling(feeling === t ? "" : t),
+        },
+        // 어떻게 끝났나 — 이게 있어야 실제와 다른 결말(혼난 일을 칭찬으로 등)이 안 나온다.
+        endingQuestion(
+          "일이 어떻게 끝났어요?",
+          "있었던 그대로 적어 주세요. 속상하게 끝난 일도 미화하지 않고 담은 뒤 마음이 풀리게 마무리해요.",
+          TODAY_ENDINGS,
+          "예: 결국 사과하고 다시 같이 놀았어요",
+        ),
+      ];
+    }
+
+    if (storyMode === "emotion") {
+      return [
+        {
+          id: "emotion",
+          title: "어떤 마음이 들었어요?",
+          answer: emotion,
+          options: EMOTIONS,
+          value: emotion,
+          onPick: (t) => setEmotion(emotion === t ? "" : t),
+        },
+        {
+          // 언제 그런 마음이 들었나 — 흔한 상황 칩(백지 공포 제거)을 누르거나 말·글로 적는다.
+          id: "situation",
+          title: "언제 그런 마음이 들었어요?",
+          answer: situation.trim(),
+          options: EMOTION_TIMES,
+          value: situation,
+          onPick: (t) => setSituation(situation === t ? "" : t),
+          layout: "wide",
+          children: (
+            <>
+              <div className="flex justify-center py-1">
+                <VoiceInput onResult={(t) => setSituation(t)} />
+              </div>
+              <textarea
+                value={situation}
+                onChange={(e) => setSituation(e.target.value.slice(0, 200))}
+                rows={2}
+                aria-label="언제 그런 마음이 들었어요?"
+                placeholder="예: 동생이 내 장난감을 가져갔을 때"
+                className={textClass}
+              />
+            </>
+          ),
+        },
+        whoQuestion("누구랑 있었어요?", todayWho),
+        endingQuestion(
+          "어떻게 끝나면 좋을까요?",
+          "마지막 쪽이 제일 밋밋해지기 쉬워요. 어디로 데려다 놓을지 한 줄만 정해 주면 훨씬 또렷하게 끝나요.",
+          WISH_ENDINGS,
+          "예: 무서워하던 그 방에서 혼자 잠들어요",
+        ),
+      ];
+    }
+
+    // 상상 이야기 — 갈래 카드 → 세부 칩 → 누구랑 → 무슨 일 → 더 넣을 것 → 마무리
+    const group = THEME_GROUPS.find((g) => g.label === themeGroup);
+    return [
+      {
+        id: "group",
+        title: `${name}의 동화, 무슨 이야기로 할까요?`,
+        answer: themeGroup ?? "",
+        options: THEME_GROUPS.map((g) => ({ t: g.label, icon: g.icon })),
+        value: themeGroup ?? "",
+        onPick: pickThemeGroup,
+        layout: "cards",
+      },
+      {
+        id: "theme",
+        title: "그중에서 무엇으로 할까요?",
+        hidden: !group,
+        answer: theme,
+        options: group?.items ?? [],
+        value: theme,
+        onPick: (t) => setTheme(theme === t ? "" : t),
+      },
+      whoQuestion("누구랑 함께할까요?", imagineWho),
+      {
+        id: "happening",
+        title: "무슨 일이 생길까요?",
+        answer: happening,
+        options: HAPPENING_OPTIONS,
+        value: happening,
+        onPick: (t) => setHappening(happening === t ? "" : t),
+        layout: "wide",
+      },
+      {
+        id: "extra",
+        title: "더 넣고 싶은 이야기가 있나요?",
+        answer: extra.trim(),
+        children: (
+          <>
+            <div className="flex justify-center py-1">
+              <VoiceInput onResult={(t) => setExtra(t.slice(0, 200))} />
+            </div>
+            <input
+              value={extra}
+              onChange={(e) => setExtra(e.target.value)}
+              maxLength={200}
+              aria-label="더 넣고 싶은 이야기"
+              placeholder={(group?.example ?? "예: 마법 숲에서 반짝이는 보물을 찾아요").replace(
+                "OO",
+                name.trim() || "우리 아이",
+              )}
+              className={textClass}
+            />
+          </>
+        ),
+      },
+      endingQuestion(
+        "어떻게 끝나면 좋을까요?",
+        "마지막 쪽이 제일 밋밋해지기 쉬워요. 어디로 데려다 놓을지 한 줄만 정해 주면 훨씬 또렷하게 끝나요.",
+        WISH_ENDINGS,
+        "예: 무서워하던 그 방에서 혼자 잠들어요",
+      ),
+    ];
+  }
+
+  /** '이렇게 만들어요' 한 줄 — 예전 한 화면 끝의 🌱 미리보기와 같은 문장. */
+  function storySummary(): React.ReactNode {
+    if (!seed) return null;
+    const hero = name.trim() || "우리 아이";
+    if (storyMode === "today") {
+      return <>🌱 {hero}의 오늘 이야기 — <span className="text-neutral-800">{seed}</span></>;
+    }
+    if (storyMode === "emotion") {
+      return <>🌱 {hero}의 마음 이야기 — <span className="text-neutral-800">{seed}</span></>;
+    }
+    return <>🌱 {hero}의 <span className="text-neutral-800">{seed}</span> 이야기</>;
   }
 
   function buildStoryMaterial() {
@@ -2256,8 +2411,8 @@ export default function CreatePage() {
             heroGender: gender !== "unspecified" ? gender : child?.gender,
             // 엄마·아빠도 부모가 고른 대로 — 안경은 여기 적혔을 때만 그린다.
             adultLooks: {
-              엄마: parentLooksToPrompt(child?.parents?.mom) || undefined,
-              아빠: parentLooksToPrompt(child?.parents?.dad) || undefined,
+              엄마: parentLooksToPrompt(child?.parents?.mom, "mom") || undefined,
+              아빠: parentLooksToPrompt(child?.parents?.dad, "dad") || undefined,
             },
           }),
           signal: ac.signal,
@@ -3355,15 +3510,12 @@ export default function CreatePage() {
           {/* ── 2. 주제 ── */}
           {step === "theme" && (
             <section className="flex flex-col gap-5">
-              <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
-                {storyMode === "today"
-                  ? `${name}에게 오늘 무슨 일이 있었어요?`
-                  : storyMode === "imagine"
-                    ? `${name}의 동화, 무슨 이야기로 할까요?`
-                    : storyMode === "direct"
-                      ? "직접 만든 이야기를 들려주세요"
-                    : `${name}의 동화, 어떤 이야기를 만들까요?`}
-              </h1>
+              {/* 오늘·상상·감정은 질문 한 줄이 곧 제목이라(QuestionFlow) 여기 제목은 갈래 고르기·직접 쓰기에만 둔다. */}
+              {(storyMode === null || storyMode === "direct") && (
+                <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
+                  {storyMode === "direct" ? "이야기를 직접 적어 주세요" : `${name}의 동화, 어떤 이야기를 만들까요?`}
+                </h1>
+              )}
 
               {/* 갈래 고르기 — 오늘 겪은 일(실경험)이냐 상상 이야기냐. 둘은 입력 방식이 다르다. */}
               {storyMode === null && (
@@ -3412,9 +3564,9 @@ export default function CreatePage() {
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src="/icons/topic-direct.webp" alt="" className="h-16 w-16 object-contain" />
-                      <b className="text-lg text-neutral-800">직접 이야기 구성</b>
+                      <b className="text-lg text-neutral-800">직접 이야기 쓰기</b>
                       <span className="text-sm font-bold text-neutral-500">
-                        기승전결을 쓰거나 완성 원고 붙여넣기
+                        우리 이야기를 직접 적어요
                       </span>
                     </button>
                   </div>
@@ -3426,64 +3578,24 @@ export default function CreatePage() {
                 </>
               )}
 
-              {/* ── 직접 이야기 구성 — 기승전결 안내 작성 또는 완성 원고 ── */}
+              {/* ── 직접 이야기 쓰기 — 글 한 칸(기승전결 칸은 2026-09-28 없앰, 사장님: 더 헷갈린다) ── */}
               {storyMode === "direct" && (
                 <>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setDirectMode("guided")}
-                      style={directMode === "guided" ? { background: accent } : undefined}
-                      className={`rounded-2xl px-3 py-3 text-sm font-extrabold ${directMode === "guided" ? "text-white shadow" : "bg-neutral-100 text-neutral-600"}`}
-                    >
-                      🧩 기승전결 안내 작성
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDirectMode("full")}
-                      style={directMode === "full" ? { background: accent } : undefined}
-                      className={`rounded-2xl px-3 py-3 text-sm font-extrabold ${directMode === "full" ? "text-white shadow" : "bg-neutral-100 text-neutral-600"}`}
-                    >
-                      📄 완성 원고 붙여넣기
-                    </button>
+                  <div className="flex flex-col gap-2">
+                    <p className="break-keep text-xs font-bold leading-relaxed text-neutral-500">
+                      누가, 어디서, 무슨 일이 있었고 어떻게 끝났는지 편하게 적어 주세요. 짧게 적으면 그 내용을 살려
+                      동화로 풀어 드리고, 길게 쓴 이야기는 내용을 바꾸지 않고 다듬어 장면으로 나눠 드려요.
+                    </p>
+                    <div className="flex justify-center"><VoiceInput onResult={setDirectText} /></div>
+                    <textarea
+                      value={directText}
+                      onChange={(event) => setDirectText(event.target.value.slice(0, 5000))}
+                      rows={8}
+                      placeholder={`예: 오늘 ${name || "우리 아이"}가 놀이터에서 넘어졌는데, 친구 서준이가 일으켜 줬어요. 둘이 손을 잡고 미끄럼틀을 타며 깔깔 웃었어요.`}
+                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-sm font-bold leading-relaxed outline-none focus:border-neutral-400"
+                    />
+                    <p className="text-right text-[11px] font-bold text-neutral-400">{directText.length} / 5000자</p>
                   </div>
-
-                  {directMode === "guided" ? (
-                    <div className="flex flex-col gap-3">
-                      {[
-                        { key: "기 · 시작", hint: "누가 어디에서 무엇을 하고 있었나요?", value: directOpening, set: setDirectOpening },
-                        { key: "승 · 전개", hint: "어떤 사건이나 만남이 생겼나요?", value: directDevelopment, set: setDirectDevelopment },
-                        { key: "전 · 위기", hint: "주인공이 해결해야 할 어려움은 무엇인가요?", value: directCrisis, set: setDirectCrisis },
-                        { key: "결 · 결말", hint: "어떻게 해결되고 어떤 마음이 남았나요?", value: directEnding, set: setDirectEnding },
-                      ].map((part) => (
-                        <label key={part.key} className="block">
-                          <span className="mb-1 block text-sm font-extrabold text-neutral-700">{part.key}</span>
-                          <textarea
-                            value={part.value}
-                            onChange={(event) => part.set(event.target.value.slice(0, 800))}
-                            rows={2}
-                            placeholder={part.hint}
-                            className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-sm font-bold leading-relaxed outline-none focus:border-neutral-400"
-                          />
-                        </label>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-2">
-                      <p className="text-xs font-bold text-neutral-500">
-                        작성한 사건·인물·결말은 바꾸지 않고 맞춤법, 문장 길이와 페이지 구분만 다듬어요.
-                      </p>
-                      <div className="flex justify-center"><VoiceInput onResult={setDirectText} /></div>
-                      <textarea
-                        value={directText}
-                        onChange={(event) => setDirectText(event.target.value.slice(0, 5000))}
-                        rows={10}
-                        placeholder="완성한 이야기를 여기에 적거나 붙여넣어 주세요."
-                        className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-sm font-bold leading-relaxed outline-none focus:border-neutral-400"
-                      />
-                      <p className="text-right text-[11px] font-bold text-neutral-400">{directText.length} / 5000자</p>
-                    </div>
-                  )}
 
                   {/*
                     * 직접 쓴 이야기에도 등장인물의 성별을 받는다.
@@ -3518,394 +3630,27 @@ export default function CreatePage() {
                 </>
               )}
 
-              {/* ── 오늘의 이야기 — 유도 질문(어디·누구·무슨일·기분) ── */}
-              {storyMode === "today" && (
-                <>
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-neutral-400">어디에서 있었던 일이에요?</p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {TODAY_PLACES.map((it) => (
-                        <button
-                          key={it.t}
-                          type="button"
-                          onClick={() => setPlace(place === it.t ? "" : it.t)}
-                          style={place === it.t ? { background: accent } : undefined}
-                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                            place === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                          }`}
-                        >
-                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
-                          {it.t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-neutral-400">누구랑 있었어요?</p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {todayWho.map((it) => (
-                        <button
-                          key={it.t}
-                          type="button"
-                          onClick={() => chooseWho(it.t)}
-                          style={who === it.t ? { background: accent } : undefined}
-                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                            who === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                          }`}
-                        >
-                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
-                          {it.t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 무슨 일 — 여기만 자유롭게. 말로도 글로도 받는다 (실경험의 핵심). */}
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-neutral-400">
-                      어떤 일이 있었어요? <span className="font-medium">(말로 해도 돼요)</span>
-                    </p>
-                    <div className="flex justify-center py-1">
-                      <VoiceInput onResult={(t) => setTodayEvent(t)} />
-                    </div>
-                    <textarea
-                      value={todayEvent}
-                      onChange={(e) => setTodayEvent(e.target.value.slice(0, 200))}
-                      rows={2}
-                      placeholder="예: 그네를 타다가 넘어졌는데 친구가 일으켜 줬어요"
-                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
-                    />
-                  </div>
-
-                  <WhoNameInput
-                    who={who}
-                    value={whoName}
-                    onChange={setWhoName}
-                    gender={whoGender}
-                    onGenderChange={setWhoGender}
-                    friends={friends}
-                    onFriendsChange={setFriends}
-                    accent={accent}
-                  />
-
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-neutral-400">그때 기분이 어땠어요?</p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {FEELINGS.map((it) => (
-                        <button
-                          key={it.t}
-                          type="button"
-                          onClick={() => setFeeling(feeling === it.t ? "" : it.t)}
-                          style={feeling === it.t ? { background: accent } : undefined}
-                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                            feeling === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                          }`}
-                        >
-                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
-                          {it.t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 어떻게 끝났나 — 이게 있어야 실제와 다른 결말(혼난 일을 칭찬으로 등)이 안 나온다. */}
-                  <EndingPicker
-                    label="일이 어떻게 끝났어요?"
-                    hint="있었던 그대로 적어 주세요. 속상하게 끝난 일도 미화하지 않고 담은 뒤 마음이 풀리게 마무리해요."
-                    chips={TODAY_ENDINGS}
-                    value={ending}
-                    onChange={setEnding}
-                    placeholder="예: 결국 사과하고 다시 같이 놀았어요"
-                    accent={accent}
-                  />
-
-                  {seed && (
-                    <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-center text-sm font-bold text-neutral-500">
-                      🌱 {name.trim() || "우리 아이"}의 오늘 이야기 — <span className="text-neutral-800">{seed}</span>
-                    </p>
-                  )}
-
-                  <div className="mt-2 flex flex-wrap justify-center gap-3">
-                    <BigButton tone="white" onClick={() => setStoryMode(null)}>
-                      ← 뒤로
-                    </BigButton>
-                    <BigButton accent={accent} accentDark={accentDark} onClick={() => setStep("style")} disabled={!seed}>
-                      다음 →
-                    </BigButton>
-                  </div>
-                </>
-              )}
-
-              {/* ── 감정 동화 — 어떤 마음·언제 그랬나(선택)·누구랑(선택) ── */}
-              {storyMode === "emotion" && (
-                <>
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-neutral-400">어떤 마음이 들었어요?</p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {EMOTIONS.map((it) => (
-                        <button
-                          key={it.t}
-                          type="button"
-                          onClick={() => setEmotion(emotion === it.t ? "" : it.t)}
-                          style={emotion === it.t ? { background: accent } : undefined}
-                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                            emotion === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                          }`}
-                        >
-                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
-                          {it.t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 언제 그런 마음이 들었나 — 상황을 자유롭게. 감정에 맥락을 준다. */}
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-neutral-400">
-                      언제 그런 마음이 들었어요? <span className="font-medium">(선택, 말로도 돼요)</span>
-                    </p>
-                    {/* 흔한 상황 칩 — 누르면 아래 칸에 채워지고, 그대로 쓰거나 고쳐도 된다(백지 공포 제거). */}
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {EMOTION_TIMES.map((it) => (
-                        <button
-                          key={it.t}
-                          type="button"
-                          onClick={() => setSituation(situation === it.t ? "" : it.t)}
-                          style={situation === it.t ? { background: accent } : undefined}
-                          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                            situation === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                          }`}
-                        >
-                          <span className="text-sm leading-none">{it.e}</span>
-                          {it.t}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="flex justify-center py-1">
-                      <VoiceInput onResult={(t) => setSituation(t)} />
-                    </div>
-                    <textarea
-                      value={situation}
-                      onChange={(e) => setSituation(e.target.value.slice(0, 200))}
-                      rows={2}
-                      placeholder="예: 동생이 내 장난감을 가져갔을 때"
-                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-neutral-400">
-                      누구랑 있었어요? <span className="font-medium">(선택)</span>
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {todayWho.map((it) => (
-                        <button
-                          key={it.t}
-                          type="button"
-                          onClick={() => chooseWho(it.t)}
-                          style={who === it.t ? { background: accent } : undefined}
-                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                            who === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                          }`}
-                        >
-                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
-                          {it.t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <WhoNameInput
-                    who={who}
-                    value={whoName}
-                    onChange={setWhoName}
-                    gender={whoGender}
-                    onGenderChange={setWhoGender}
-                    friends={friends}
-                    onFriendsChange={setFriends}
-                    accent={accent}
-                  />
-
-                  <EndingPicker
-                    label="어떻게 끝나면 좋을까요?"
-                    hint="마지막 쪽이 제일 밋밋해지기 쉬워요. 어디로 데려다 놓을지 한 줄만 정해 주면 훨씬 또렷하게 끝나요."
-                    chips={WISH_ENDINGS}
-                    value={ending}
-                    onChange={setEnding}
-                    placeholder="예: 무서워하던 그 방에서 혼자 잠들어요"
-                    accent={accent}
-                  />
-
-                  {seed && (
-                    <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-center text-sm font-bold text-neutral-500">
-                      🌱 {name.trim() || "우리 아이"}의 마음 이야기 — <span className="text-neutral-800">{seed}</span>
-                    </p>
-                  )}
-
-                  <div className="mt-2 flex flex-wrap justify-center gap-3">
-                    <BigButton tone="white" onClick={() => setStoryMode(null)}>
-                      ← 뒤로
-                    </BigButton>
-                    <BigButton accent={accent} accentDark={accentDark} onClick={() => setStep("style")} disabled={!seed}>
-                      다음 →
-                    </BigButton>
-                  </div>
-                </>
-              )}
-
-              {/* ── 상상 이야기 — 갈래 카드 + 세부 칩 + 누구랑·무슨일 ── */}
-              {storyMode === "imagine" && (
-                <>
-                  <div className="grid grid-cols-3 gap-2.5">
-                    {THEME_GROUPS.map((group) => {
-                      const active = themeGroup === group.label;
-                      return (
-                        <button
-                          key={group.label}
-                          type="button"
-                          onClick={() => setThemeGroup(active ? null : group.label)}
-                          aria-pressed={active}
-                          style={active ? { background: accent } : undefined}
-                          className={`flex flex-col items-center gap-1.5 rounded-2xl py-3 font-bold transition ${
-                            active
-                              ? "text-white shadow"
-                              : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                          }`}
-                        >
-                          <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={group.icon} alt="" className="h-14 w-14 object-contain" />
-                          </span>
-                          <span className="break-keep text-center text-[13px] leading-tight">{group.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {(() => {
-                    const group = THEME_GROUPS.find((g) => g.label === themeGroup);
-                    if (!group) {
-                      return (
-                        <p className="text-center text-sm font-bold text-neutral-400">
-                          👆 카드를 눌러 골라보세요
-                        </p>
-                      );
-                    }
-                    return (
-                      <div className="flex flex-wrap justify-center gap-2">
-                        {group.items.map((it) => (
-                          <button
-                            key={it.t}
-                            type="button"
-                            onClick={() => setTheme(it.t)}
-                            style={theme === it.t ? { background: accent } : undefined}
-                            className={`flex items-center gap-1.5 rounded-full px-4 py-2.5 text-[15px] font-bold transition ${
-                              theme === it.t
-                                ? "text-white"
-                                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                            }`}
-                          >
-                            <span className="text-lg leading-none">{it.e}</span>
-                            {it.t}
-                          </button>
-                        ))}
-                      </div>
-                    );
-                  })()}
-
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-neutral-400">누구랑 함께할까요?</p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {imagineWho.map((it) => (
-                        <button
-                          key={it.t}
-                          type="button"
-                          onClick={() => chooseWho(it.t)}
-                          style={who === it.t ? { background: accent } : undefined}
-                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                            who === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                          }`}
-                        >
-                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
-                          {it.t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <WhoNameInput
-                    who={who}
-                    value={whoName}
-                    onChange={setWhoName}
-                    gender={whoGender}
-                    onGenderChange={setWhoGender}
-                    friends={friends}
-                    onFriendsChange={setFriends}
-                    accent={accent}
-                  />
-
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold text-neutral-400">무슨 일이 생길까요?</p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {HAPPENING_OPTIONS.map((it) => (
-                        <button
-                          key={it.t}
-                          type="button"
-                          onClick={() => setHappening(happening === it.t ? "" : it.t)}
-                          style={happening === it.t ? { background: accent } : undefined}
-                          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition ${
-                            happening === it.t ? "text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                          }`}
-                        >
-                          <ChipIcon emoji={it.e} icon={(it as { icon?: string }).icon} />
-                          {it.t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <p className="mb-1.5 text-xs font-bold text-neutral-400">
-                      더 넣고 싶은 이야기가 있나요? <span className="font-medium">(선택)</span>
-                    </p>
-                    <input
-                      value={extra}
-                      onChange={(e) => setExtra(e.target.value)}
-                      maxLength={200}
-                      placeholder={(
-                        THEME_GROUPS.find((g) => g.label === themeGroup)?.example ??
-                        "예: 마법 숲에서 반짝이는 보물을 찾아요"
-                      ).replace("OO", name.trim() || "우리 아이")}
-                      className="w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
-                    />
-                  </div>
-
-                  <EndingPicker
-                    label="어떻게 끝나면 좋을까요?"
-                    hint="마지막 쪽이 제일 밋밋해지기 쉬워요. 어디로 데려다 놓을지 한 줄만 정해 주면 훨씬 또렷하게 끝나요."
-                    chips={WISH_ENDINGS}
-                    value={ending}
-                    onChange={setEnding}
-                    placeholder="예: 무서워하던 그 방에서 혼자 잠들어요"
-                    accent={accent}
-                  />
-
-                  {seed && (
-                    <p className="rounded-2xl bg-neutral-50 px-4 py-2.5 text-center text-sm font-bold text-neutral-500">
-                      🌱 {name.trim() || "우리 아이"}의 <span className="text-neutral-800">{seed}</span> 이야기
-                    </p>
-                  )}
-
-                  <div className="mt-2 flex flex-wrap justify-center gap-3">
-                    <BigButton tone="white" onClick={() => setStoryMode(null)}>
-                      ← 뒤로
-                    </BigButton>
-                    <BigButton accent={accent} accentDark={accentDark} onClick={() => setStep("style")} disabled={!seed}>
-                      다음 →
-                    </BigButton>
-                  </div>
-                </>
+              {/*
+                ── 오늘의 이야기·감정 동화·상상 이야기 — 한 장에 질문 하나(2026-09-28 사장님: 한 화면에 쭉 나열하면 복잡하다) ──
+                질문 목록은 storyQuestions(), 요약 한 줄은 storySummary(). 갈래마다 새로 연다(key).
+              */}
+              {(storyMode === "today" || storyMode === "emotion" || storyMode === "imagine") && (
+                <QuestionFlow
+                  key={storyMode}
+                  questions={storyQuestions()}
+                  initial={flowAt}
+                  onMove={setFlowAt}
+                  onExit={() => {
+                    setFlowAt(null);
+                    setStoryMode(null);
+                  }}
+                  onFinish={() => setStep("style")}
+                  summary={storySummary()}
+                  canFinish={Boolean(seed)}
+                  accent={accent}
+                  accentDark={accentDark}
+                  accentSoft={accentSoft}
+                />
               )}
             </section>
           )}
@@ -3914,88 +3659,14 @@ export default function CreatePage() {
           {step === "style" && (
             <section className="flex flex-col gap-5">
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
-                어떤 그림으로 그릴까요?
+                누가 읽어 줄까요?
               </h1>
-
-              {/* 4종이라 한 줄에 다 보이게 — 폰 폭(360px)에서도 네 칸이 들어가도록 여백·글씨를 줄였다. */}
-              <div className="grid grid-cols-3 gap-2">
-                {ART_STYLES.map((s) => {
-                  const active = artStyle === s.id;
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => setArtStyle(s.id)}
-                      aria-pressed={active}
-                      style={active ? { borderColor: accent, background: accentSoft } : undefined}
-                      className={`flex min-w-0 flex-col items-center gap-1 rounded-2xl border-[3px] p-1.5 transition sm:p-2.5 ${
-                        active
-                          ? "shadow"
-                          : "border-transparent bg-neutral-100 hover:bg-neutral-200"
-                      }`}
-                    >
-                      {s.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={s.image}
-                          alt=""
-                          className="aspect-square w-full rounded-xl object-cover"
-                        />
-                      ) : (
-                        <span className="flex aspect-square w-full items-center justify-center rounded-xl bg-white text-4xl">
-                          {s.emoji}
-                        </span>
-                      )}
-                      <span className="break-keep text-center text-[10px] font-bold leading-tight text-neutral-700 sm:text-[11px]">
-                        {s.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* 아이가 그린 그림으로 주인공 만들기 — 이 그림이 캐릭터 시트의 원본이 되고,
-                  시트가 모든 쪽 삽화의 기준이라 8쪽 내내 그 캐릭터가 나온다. */}
-              <div className="flex flex-col items-center gap-2 rounded-3xl bg-neutral-100 px-5 py-4">
-                <p className="break-keep text-center text-sm font-extrabold text-neutral-700">
-                  🖍️ 아이가 그린 그림으로 주인공을 만들까요? <span className="font-bold text-neutral-400">(선택)</span>
-                </p>
-                {drawing ? (
-                  <div className="flex flex-col items-center gap-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={drawing}
-                      alt="아이가 그린 주인공"
-                      className="h-28 w-28 rounded-2xl border-4 border-white object-cover shadow"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setDrawing(null)}
-                      className="rounded-full bg-white px-4 py-1.5 text-xs font-extrabold text-neutral-500 shadow-sm transition hover:bg-neutral-50"
-                    >
-                      ✕ 이 그림 빼기
-                    </button>
-                  </div>
-                ) : (
-                  <label className="cursor-pointer rounded-full bg-white px-5 py-2.5 text-sm font-extrabold text-neutral-700 shadow-sm transition hover:bg-neutral-50">
-                    {drawingBusy ? "읽는 중…" : "📷 그림 사진 올리기"}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (f) void pickDrawing(f);
-                        e.target.value = ""; // 같은 파일을 다시 골라도 반응하게
-                      }}
-                    />
-                  </label>
-                )}
-                <p className="break-keep text-center text-[11px] font-medium leading-relaxed text-neutral-400">
-                  아이가 그린 주인공을 사진으로 찍어 올리면, 그 그림을 살려 동화 주인공으로
-                  그려줘요. 올린 그림은 캐릭터를 만드는 데만 쓰고 저장하지 않아요.
-                </p>
-              </div>
+              {/*
+               * 그림체 고르기와 '아이가 그린 그림으로 주인공 만들기'는 없앴다 — 사장님 결정(2026-09-28):
+               * 이제 모든 동화는 따뜻한 수채화 한 가지(artStyle 은 늘 ART_STYLES[0] = watercolor).
+               * 가족 캐릭터 그림도 수채화라, 그림체를 섞으면 고정한 얼굴과 책 그림이 따로 논다.
+               */}
+              <p className="-mt-3 text-center text-xs font-bold text-neutral-400">그림은 모두 따뜻한 수채화로 그려요</p>
 
               {/* 화면 비율 선택은 없앴다 — 항상 4:3 가로(screenShape 참고). */}
 

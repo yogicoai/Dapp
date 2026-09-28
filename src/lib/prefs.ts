@@ -8,6 +8,19 @@
 import { acctKey, currentUid, getSupabase } from "./supabase.ts";
 import type { Book } from "./types.ts";
 import { interpretBookSave, type SaveBookResult } from "./book-jobs.ts";
+import {
+  familyLooksToPrompt,
+  mergeFamily,
+  mergeRemovals,
+  normalizeFamily,
+  normalizeLooksFor,
+  normalizeRemovals,
+  withoutRemoved,
+  type FamilyMember,
+  type FamilyRemoval,
+  type FamilySide,
+} from "./family.ts";
+import { CHILD_MULTI_MAX, GLASSES_NONE, lookNoteMax, wearsGlassesType } from "./look-options.ts";
 
 export type Gender = "girl" | "boy" | "unspecified";
 
@@ -60,17 +73,56 @@ export function ageLabel(age: number | null): string {
 }
 
 /**
- * 엄마·아빠 생김새 — 아주 간단하게.
+ * 엄마·아빠 생김새(할머니·할아버지도 같은 칸 — lib/family.ts FamilyLooks).
  *
  * 아이 특징은 부모가 고르는데 엄마·아빠는 알려 줄 방법이 없어서, 이야기 모델이
  * 매번 지어냈다. 실제로 안경을 안 쓰는 아빠가 6쪽 내내 안경잡이로 그려졌다.
- * 그렇다고 아이만큼 자세히 받으면 만들기가 길어지므로 셋만 받는다:
- * 머리 / 안경 / 옷 색. 나머지는 자유 한 줄.
+ * 처음엔 머리·안경·옷 색만 받았는데, 가족 캐릭터(얼굴 고정)가 생기며 사장님 목록(2026-09-28)으로
+ * 넓혔다 — 칩 글자는 lib/look-options.ts adultLookRows 가 원본이다. 모두 선택.
+ *  - '늘 그대로'(얼굴 고정 뒤 바꾸면 '모습이 바뀌었어요'): hair ~ marks
+ *  - '평소 옷'(이야기마다 바뀔 수 있다): outfit ~ note
  */
 export type ParentLooks = {
+  /** 머리 모양 — 역할마다 목록이 다르다(look-options ADULT_HAIR) */
   hair?: string;
+  /** 앞머리 — 일자로 있어요·옆으로 넘겨요·시스루·없어요(가르마) */
+  bangs?: string;
+  /** 머리결 — 곧은 생머리·살짝 웨이브·굵은 웨이브·곱슬·파마 */
+  hairTexture?: string;
+  /** 머리 색 */
+  hairColor?: string;
+  /** 얼굴형 */
+  face?: string;
+  /** 눈매 */
+  eyes?: string;
+  /** 눈썹 */
+  brows?: string;
+  /** 피부 */
+  skin?: string;
+  /** 체형 */
+  build?: string;
+  /** 키 — 작은 편·보통·큰 편·아주 큰 편(단체 사진 키 비율, family.ts ADULT_HEIGHT_CM) */
+  height?: string;
+  /**
+   * 안경을 쓰나(예전 호환). 종류(glassesType)를 고르면 그것에 맞춰 켜고 끈다(look-options glassesPatch).
+   * 종류 없이 true 만 있는 예전 값은 '안경 씀'으로 살린다.
+   */
   glasses?: boolean;
+  /** 안경 종류 — 안 써요·동그란 안경·네모 안경·뿔테·반무테 */
+  glassesType?: string;
+  /** 수염(아빠·할아버지만) — 없어요·콧수염·턱수염·면도 자국·구레나룻 */
+  beard?: string;
+  /** 이런 점도(여러 개) — 보조개·주근깨·점·웃을 때 눈주름·덧니 */
+  marks?: string[];
+  /** 평소 옷 종류 */
+  outfit?: string;
+  /** 아래옷 */
+  bottom?: string;
+  /** 옷 색 */
   color?: string;
+  /** 늘 하는 것(여러 개) — 시계·귀걸이·목걸이 … */
+  accessories?: string[];
+  /** 메모 한 줄 */
   note?: string;
 };
 
@@ -81,7 +133,40 @@ export type ChildPrefs = {
   looks?: ChildLooks;
   /** 엄마·아빠 생김새(선택). 동화에 엄마·아빠가 나올 때만 쓰인다. */
   parents?: { mom?: ParentLooks; dad?: ParentLooks };
+  /**
+   * 우리 가족 캐릭터(선택) — 역할과 그림만 든다(lib/family.ts). 아이·엄마·아빠 생김새는
+   * 위 looks·parents 가 원본이다. 그림은 cafe24 주소만 — base64 를 여기 넣으면 로그인마다 통째로 오간다.
+   */
+  family?: FamilyMember[];
+  /**
+   * 가족 목록(넣기·빼기·생김새)을 마지막으로 바꾼 때(ISO). 기기·서버 값을 합칠 때 '누가 우리 가족인가'는
+   * 더 나중에 바꾼 쪽을 따른다(lib/family.ts mergeFamily). 그림은 사람마다 더 새 그림을 남긴다.
+   */
+  familyAt?: string;
+  /**
+   * 가족에서 뺀 사람 기록(id·뺀 때). 합칠 때 사람은 두 목록의 합집합이고, 빼기는 이 기록으로만 전한다
+   * (lib/family.ts mergeFamily) — 오래 열어 둔 화면의 옛 목록이 다른 기기에서 넣은 사람을 지우지 않게.
+   * 늘 더하기만 한다(saveChild 가 이전 기록과 합친다).
+   */
+  familyRemoved?: FamilyRemoval[];
+  /**
+   * 홈 가족 액자를 접어 두었나(계정마다 저장 — 다른 기기에서도 그대로). 사장님 2026-09-28:
+   * "아이디별로 열고 접은 값이 저장되게". false 도 그대로 둔다 — 다른 기기에서 펼친 것이 이겨야 한다.
+   */
+  homeFamilyFolded?: boolean;
+  /**
+   * 이 값을 쓴 화면의 저장 모양 판(CHILD_SCHEMA). 옛 화면(가족 캐릭터 전 판)은 이 칸을 몰라 버린다 —
+   * 서버 값에 이 칸이 없으면 옛 화면이 profiles.child 를 통째로 덮어쓴 것이다. 그때는 이 기기에 있던
+   * 새 칸(엄마·아빠 얼굴형·키·안경 종류 …)을 되살려 다시 올린다(mergeRemoteChild).
+   */
+  schema?: number;
 };
+
+/**
+ * 저장 모양 판 — 2: 가족 캐릭터(family·familyRemoved·homeFamilyFolded)·어른 생김새 칸 확장(2026-09-28).
+ * 저장할 때마다 적는다. 옛 화면이 덮어쓰면 이 칸이 사라져 알아볼 수 있다.
+ */
+export const CHILD_SCHEMA = 2;
 
 /** 저장된 값에서 생김새만 안전하게 골라낸다(모르는 값·형식은 버린다). */
 function normalizeLooks(raw: unknown): ChildLooks | undefined {
@@ -89,7 +174,7 @@ function normalizeLooks(raw: unknown): ChildLooks | undefined {
   if (!v || typeof v !== "object") return undefined;
   const str = (x: unknown) => (typeof x === "string" && x.trim() ? x.trim().slice(0, 30) : undefined);
   const list = (x: unknown) =>
-    Array.isArray(x) ? x.map(str).filter((s): s is string => Boolean(s)).slice(0, 5) : undefined;
+    Array.isArray(x) ? x.map(str).filter((s): s is string => Boolean(s)).slice(0, CHILD_MULTI_MAX) : undefined;
   const rawMarks = list(v.marks);
   const legacyCurly = rawMarks?.includes("곱슬머리");
   const looks: ChildLooks = {
@@ -105,8 +190,8 @@ function normalizeLooks(raw: unknown): ChildLooks | undefined {
     items: list(v.items),
     glasses: v.glasses === true ? true : undefined,
     marks: rawMarks?.filter((mark) => mark !== "곱슬머리"),
-    // 자유 입력은 그림 프롬프트로 그대로 들어가므로 길이를 제한한다.
-    note: typeof v.note === "string" && v.note.trim() ? v.note.trim().slice(0, 100) : undefined,
+    // 자유 입력은 그림 프롬프트로 그대로 들어가므로 길이를 제한한다(입력 칸과 같은 lookNoteMax — 100자).
+    note: typeof v.note === "string" && v.note.trim() ? v.note.trim().slice(0, lookNoteMax("child")) : undefined,
   };
   // 하나도 안 골랐으면 아예 없는 것으로 둔다 — 빈 껍데기를 들고 다니지 않는다.
   const any = Object.values(looks).some((x) => (Array.isArray(x) ? x.length > 0 : Boolean(x)));
@@ -130,12 +215,26 @@ function normalizeChild(raw: unknown): ChildPrefs | null {
   }
   const c = v as Partial<ChildPrefs> | null;
   if (!c || typeof c.name !== "string") return null;
+  const familyRemoved = normalizeRemovals((c as { familyRemoved?: unknown }).familyRemoved);
   return {
     name: c.name,
     age: typeof c.age === "number" ? c.age : null,
     gender: c.gender === "girl" || c.gender === "boy" ? c.gender : "unspecified",
     looks: normalizeLooks((c as { looks?: unknown }).looks),
     parents: normalizeParents((c as { parents?: unknown }).parents),
+    // 가족 — 여기서 빠뜨리면 loadChild·로그아웃 백업을 지날 때마다 가족이 말없이 사라진다.
+    // 뺀 기록에 걸린 사람(옛 화면이 옛 목록으로 저장한 것)은 읽을 때 뺀다 — 합치기(mergeFamily)와 같은 규칙.
+    family: withoutRemoved(normalizeFamily((c as { family?: unknown }).family), familyRemoved),
+    familyAt:
+      typeof (c as { familyAt?: unknown }).familyAt === "string"
+        ? (c as { familyAt: string }).familyAt.slice(0, 40)
+        : undefined,
+    familyRemoved,
+    homeFamilyFolded:
+      typeof (c as { homeFamilyFolded?: unknown }).homeFamilyFolded === "boolean"
+        ? (c as { homeFamilyFolded: boolean }).homeFamilyFolded
+        : undefined,
+    schema: typeof (c as { schema?: unknown }).schema === "number" ? (c as { schema: number }).schema : undefined,
   };
 }
 
@@ -143,40 +242,29 @@ function normalizeChild(raw: unknown): ChildPrefs | null {
  * 생김새를 그림 프롬프트에 넣을 한 줄로 만든다(한국어). 안 고른 항목은 빠진다.
  * 캐릭터 시트가 이 문장을 받아 주인공을 그리고, 그 시트가 모든 쪽의 기준이 된다.
  */
-/** 저장된 값에서 엄마·아빠 생김새만 안전하게 골라낸다. */
-function normalizeParents(raw: unknown): ChildPrefs["parents"] {
+/**
+ * 저장된 값에서 엄마·아빠 생김새만 안전하게 골라낸다(모르는 칸은 버리고, 빈 칸은 두지 않는다).
+ * 예전 글자는 새 글자로 옮긴다 — 엄마 머리 '짧은 머리'→'숏컷', '묶은 머리'→'하나로 묶기',
+ * '파마머리'→'굵은 웨이브 파마', 아빠 '아주 짧은 머리'→'반삭'. 종류 없는 glasses:true 는 그대로('안경 씀').
+ * 수염은 아빠만 남긴다. 메모는 입력 칸과 같이 40자(lookNoteMax). (규칙 원본: lib/family.ts normalizeLooksFor)
+ */
+export function normalizeParents(raw: unknown): ChildPrefs["parents"] {
   const v = raw as { mom?: unknown; dad?: unknown } | null | undefined;
   if (!v || typeof v !== "object") return undefined;
-  const one = (x: unknown): ParentLooks | undefined => {
-    const p = x as Partial<ParentLooks> | null | undefined;
-    if (!p || typeof p !== "object") return undefined;
-    const str = (y: unknown, max = 30) =>
-      typeof y === "string" && y.trim() ? y.trim().slice(0, max) : undefined;
-    const out: ParentLooks = {
-      hair: str(p.hair),
-      glasses: p.glasses === true ? true : undefined,
-      color: str(p.color),
-      note: str(p.note, 40),
-    };
-    return Object.values(out).some(Boolean) ? out : undefined;
-  };
-  const mom = one(v.mom);
-  const dad = one(v.dad);
+  const mom: ParentLooks | undefined = normalizeLooksFor(v.mom, "mom");
+  const dad: ParentLooks | undefined = normalizeLooksFor(v.dad, "dad");
   return mom || dad ? { ...(mom ? { mom } : {}), ...(dad ? { dad } : {}) } : undefined;
 }
 
 /**
- * 엄마·아빠 생김새를 한 줄로. 안 고른 항목은 빠지고, 아무것도 없으면 빈 문자열.
- * 이 줄이 이야기(@@CHARACTER@@)와 캐릭터 시트 양쪽에 그대로 간다.
+ * 엄마·아빠 생김새를 한 줄로(자연스러운 한국어). 안 고른 항목은 빠지고, 아무것도 없으면 빈 문자열.
+ * 안경은 늘 적는다(안 쓰면 '안경을 쓰지 않는다'). role 을 주면 수염은 아빠만 적는다('없어요'면 '수염이 없다').
+ * 이 줄이 이야기(@@CHARACTER@@)와 캐릭터 시트·가족 그림 양쪽에 그대로 간다
+ * (문장 규칙 원본: lib/family.ts familyLooksToPrompt — 할머니·할아버지와 같은 말투).
  */
-export function parentLooksToPrompt(p: ParentLooks | undefined): string {
+export function parentLooksToPrompt(p: ParentLooks | undefined, role?: "mom" | "dad"): string {
   if (!p) return "";
-  const parts: string[] = [];
-  if (p.hair) parts.push(p.hair);
-  parts.push(p.glasses ? "안경을 썼다" : "안경을 쓰지 않는다");
-  if (p.color) parts.push(`${p.color} 옷을 즐겨 입는다`);
-  if (p.note) parts.push(p.note);
-  return parts.join(", ");
+  return familyLooksToPrompt(p, role);
 }
 
 export function looksToPrompt(looks: ChildLooks | undefined): string {
@@ -237,6 +325,13 @@ export function saveChild(child: Partial<ChildPrefs> & { name: string }): void {
     gender: child.gender ?? prev?.gender ?? "unspecified",
     looks: "looks" in child ? child.looks : prev?.looks,
     parents: "parents" in child ? child.parents : prev?.parents,
+    family: "family" in child ? child.family : prev?.family,
+    // 가족을 넘겼으면 '지금 바꿈'으로 적는다 — 서버·다른 기기 값과 합칠 때 이 목록의 칸(이름·순서 …)이 이긴다.
+    familyAt: "family" in child ? (child.familyAt ?? new Date().toISOString()) : prev?.familyAt,
+    // 뺀 기록은 늘 더하기만 — 넘긴 기록(방금 뺀 사람)을 저장된 기록에 합친다.
+    familyRemoved: mergeRemovals(prev?.familyRemoved, child.familyRemoved),
+    homeFamilyFolded: "homeFamilyFolded" in child ? child.homeFamilyFolded : prev?.homeFamilyFolded,
+    schema: CHILD_SCHEMA,
   };
   window.localStorage.setItem(acctKey(CHILD_KEY), JSON.stringify(merged));
   // 계정별 로컬 백업 + Supabase 저장 — 로그아웃/재로그인/기기 변경에도 유지된다.
@@ -257,12 +352,87 @@ export async function saveChildRemote(child: ChildPrefs): Promise<void> {
   const uid = await currentUid();
   if (!uid) return;
   if (typeof window !== "undefined") {
-    window.localStorage.setItem(acctChildKey(uid), JSON.stringify(child)); // ① 계정 로컬 백업
+    // ① 계정 로컬 백업 — 가족은 지금 이 기기 값과 합쳐서 쓴다(예약이 도는 사이 받은 그림을 옛 값으로 덮지 않게).
+    absorbLocal(uid, child, "self");
   }
   try {
-    await sb.from("profiles").update({ child }).eq("id", uid); // ② Supabase (컬럼 없으면 무시)
+    // ② Supabase — 가족은 서버 값과 합쳐서 올린다(pushChild). 컬럼이 없으면 조용히 넘어간다.
+    const pushed = await pushChild(sb, uid, child);
+    if (pushed && typeof window !== "undefined") absorbLocal(uid, pushed, "family");
   } catch {
     /* child 컬럼 전(마이그레이션 안 함) 등 — 로컬 백업만으로 동작 */
+  }
+}
+
+type Sb = NonNullable<ReturnType<typeof getSupabase>>;
+
+/**
+ * 아이 정보를 서버에 올린다 — **가족 목록은 서버 것과 사람별로 합쳐서**(mergeFamily).
+ *
+ * 가족은 profiles.child 한 덩어리에 같이 실려 있다. 그래서 설정 저장·만들기의 이름 저장·홈 접기·
+ * 로그아웃 백업처럼 가족과 상관없는 저장도, 이 기기의 옛 가족 목록으로 서버를 통째로 덮어 다른 기기에서
+ * 쿠키를 내고 그린 그림을 지우고 있었다(2026-09-28 검토 지적). 올리기 직전에 서버 값을 읽어 합친다:
+ * 누가 가족인가는 나중에 바꾼 쪽, 그림은 사람마다 더 새것. 서버에 실제로 들어간 값(합친 것)을 돌려준다.
+ * 서버를 읽지 못하면 올리지 않는다(null) — 모르는 채로 덮는 것보다 낫다.
+ */
+async function pushChild(sb: Sb, uid: string, child: ChildPrefs): Promise<ChildPrefs | null> {
+  const { data, error: readError } = await sb.from("profiles").select("child").eq("id", uid).maybeSingle();
+  if (readError) return null;
+  const server = normalizeChild((data as { child?: unknown } | null)?.child);
+  const fam = mergeFamily(familySide(server), familySide(child));
+  const merged: ChildPrefs = { ...child, ...fam, schema: CHILD_SCHEMA };
+  const { data: rows, error } = await sb.from("profiles").update({ child: merged }).eq("id", uid).select("id");
+  if (error || !Array.isArray(rows) || rows.length === 0) return null;
+  return merged;
+}
+
+/**
+ * 계정 로컬 값에 다른 값을 합쳐 쓴다 — 가족은 늘 사람별로 합친다(그 사이 이 기기에 들어온 그림을 지키게).
+ *  "self"   : 이름·생김새 같은 나머지 칸은 넘긴 값(c)으로 — 이 기기에서 방금 저장한 값이다.
+ *  "family" : 나머지 칸은 로컬 그대로 두고 가족만 합친다 — 서버에서 받아 온 가족을 흡수할 때.
+ */
+function absorbLocal(uid: string, c: ChildPrefs, how: "self" | "family"): void {
+  const key = acctChildKey(uid);
+  const local = normalizeChild(window.localStorage.getItem(key));
+  const fam = mergeFamily(familySide(c), familySide(local));
+  const base = how === "self" || !local ? c : local;
+  window.localStorage.setItem(key, JSON.stringify({ ...base, ...fam }));
+}
+
+/** 합치기(mergeFamily)에 넘길 가족 세 칸 — 목록·바꾼 때·뺀 기록 */
+function familySide(c: ChildPrefs | null | undefined): FamilySide {
+  return { family: c?.family, familyAt: c?.familyAt, familyRemoved: c?.familyRemoved };
+}
+
+/**
+ * 가족 목록을 **바로** 저장하고 서버에 실제로 들어갔는지 확인한다.
+ *
+ * saveChild 는 800ms 뒤에 올리고 실패해도 말이 없다. 가족 그림은 쿠키를 내고 받은 것이라
+ * '고정'했는데 서버 저장이 조용히 실패하면 다른 기기에서 그림이 사라진다. 그래서 고정·그리기
+ * 결과만은 이 함수로 바로 올리고, 결과(true=서버 저장됨)를 화면이 알 수 있게 한다.
+ * 로컬(이 기기)에는 늘 먼저 쓴다 — 서버가 실패해도 이 기기에서는 남고, familyAt 이 서버보다 새것이라
+ * 다음 불러오기(loadChildRemote) 때 서버 값에 덮이지 않고 합쳐진 뒤 서버에 다시 올라간다.
+ * 서버에는 서버 값과 사람별로 합쳐 올린다(pushChild) — 다른 기기에서 그린 그림을 지우지 않게.
+ * 합친 결과는 이 기기 값에도 들어간다(화면은 loadChild 로 다시 읽으면 된다).
+ */
+export async function saveFamilyNow(family: FamilyMember[]): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+  const prev = loadChild();
+  if (!prev) return false;
+  const merged: ChildPrefs = { ...prev, family, familyAt: new Date().toISOString(), schema: CHILD_SCHEMA };
+  window.localStorage.setItem(acctKey(CHILD_KEY), JSON.stringify(merged));
+  const sb = getSupabase();
+  if (!sb) return false;
+  try {
+    const uid = await currentUid();
+    if (!uid) return false;
+    absorbLocal(uid, merged, "self");
+    const pushed = await pushChild(sb, uid, merged);
+    if (!pushed) return false;
+    absorbLocal(uid, pushed, "family");
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -276,16 +446,62 @@ export async function saveChildRemote(child: ChildPrefs): Promise<void> {
  *
  * (다른 기기에서 특징을 **지운** 경우 이 기기 것이 되살아날 수 있지만, 애써 고른 걸
  *  말없이 잃는 쪽보다 낫다.)
+ *
+ * 옛 화면이 덮어쓴 서버 값(schema 칸이 없음 — 배포가 넘어가는 동안 새로 고치지 않은 탭·PWA)이면, 옛 화면이
+ * 모르는 엄마·아빠 새 칸(얼굴형·키·안경 종류·이런 점도 …)은 이 기기 값에서 되살린다(healParents).
+ * 가족 목록은 옛 화면이 버려도 mergeFamily 가 이 기기 목록을 지킨다. 되살린 값은 loadChildRemote 가 다시 올린다.
  */
 export function mergeRemoteChild(
   remote: ChildPrefs,
   local: ChildPrefs | null,
 ): ChildPrefs {
+  // 가족은 통째로 고르지 않고 사람별로 합친다(mergeFamily) — 서버 저장이 실패해 이 기기에만 있는
+  // 그림이 서버의 옛 목록에 덮여 사라지지 않게. 사람은 합집합, 빼기는 뺀 기록(familyRemoved)으로만 전한다.
+  const fam = mergeFamily(familySide(remote), familySide(local));
+  const oldWriter = remote.schema === undefined && local?.schema !== undefined;
   return {
     ...remote,
     looks: remote.looks ?? local?.looks,
-    parents: remote.parents ?? local?.parents,
+    parents: oldWriter ? healParents(remote.parents, local?.parents) : (remote.parents ?? local?.parents),
+    ...fam,
+    homeFamilyFolded: remote.homeFamilyFolded ?? local?.homeFamilyFolded,
+    schema: remote.schema ?? local?.schema,
   };
+}
+
+/** 옛 화면(가족 캐릭터 전 판)도 아는 엄마·아빠 칸 — 이 칸들은 서버(옛 화면이 쓴) 값을 따른다 */
+const OLD_PARENT_KEYS = ["hair", "color", "note"] as const;
+
+/**
+ * 옛 화면이 덮어쓴 엄마·아빠 값에 이 기기의 새 칸을 되살린다. 옛 화면이 아는 칸(머리 모양·옷 색·메모·안경
+ * 쓰나)은 서버 값이 이긴다 — 옛 화면에서 방금 고친 것일 수 있다. 안경은 옛 화면이 '쓰나/안 쓰나'만 알아서,
+ * 서버가 '안 씀'이면 종류도 지우고, '씀'인데 이 기기 종류가 '안 써요'·없음이면 종류 없는 '안경 씀'으로 둔다.
+ */
+function healParents(remote: ChildPrefs["parents"], local: ChildPrefs["parents"]): ChildPrefs["parents"] {
+  if (!local) return remote;
+  // 서버에 엄마·아빠 칸이 아예 없으면 예전처럼 이 기기 값을 그대로 지킨다(서버가 뒤처진 경우 포함).
+  if (!remote) return local;
+  const out: NonNullable<ChildPrefs["parents"]> = {};
+  for (const role of ["mom", "dad"] as const) {
+    const r = remote?.[role];
+    const l = local[role];
+    if (!l) {
+      if (r) out[role] = r;
+      continue;
+    }
+    const merged: ParentLooks = { ...l };
+    for (const k of OLD_PARENT_KEYS) merged[k] = r?.[k];
+    if (r?.glasses === true) {
+      merged.glasses = true;
+      if (!wearsGlassesType(l.glassesType)) merged.glassesType = undefined;
+    } else {
+      merged.glasses = undefined;
+      if (l.glassesType !== GLASSES_NONE) merged.glassesType = undefined;
+    }
+    const n = normalizeLooksFor(merged, role);
+    if (n) out[role] = n;
+  }
+  return out.mom || out.dad ? out : undefined;
 }
 
 /**
@@ -298,22 +514,36 @@ export async function loadChildRemote(): Promise<ChildPrefs | null> {
   try {
     const uid = await currentUid();
     if (!uid) return null;
-    // ① 계정별 로컬 백업 (SQL 없이도 같은 기기 재로그인 복구)
-    let child = normalizeChild(window.localStorage.getItem(acctChildKey(uid)));
     // ② Supabase에 값이 있으면 우선 (다른 기기·재설치 복구)
     const { data, error } = await sb
       .from("profiles")
       .select("child")
       .eq("id", uid)
       .maybeSingle();
+    // ① 계정별 로컬 백업 (SQL 없이도 같은 기기 재로그인 복구) — 서버 답을 받은 **뒤에** 읽는다.
+    // 기다리는 사이 가족 화면이 저장한 것(방금 받은 그림)을 옛 값으로 덮지 않게.
+    let child = normalizeChild(window.localStorage.getItem(acctChildKey(uid)));
+    let remote: ChildPrefs | null = null;
     if (!error) {
-      const remote = normalizeChild((data as { child?: unknown } | null)?.child);
+      remote = normalizeChild((data as { child?: unknown } | null)?.child);
       if (remote) child = mergeRemoteChild(remote, child);
     }
     if (child && typeof window !== "undefined") {
       // 계정별 키에만 쓴다 — loadChild()가 읽는 자리가 바로 여기다(acctKey(CHILD_KEY)와 같은 키).
       // 기기 공용 키에는 쓰지 않는다: 나중에 다른 계정·비회원이 이 값을 물려받으면 안 된다.
       window.localStorage.setItem(acctChildKey(uid), JSON.stringify(child));
+    }
+    // 이 기기에만 있던 가족(서버 저장이 실패했던 그림·고정·뺀 기록 등)이 합쳐졌거나, 옛 화면이 덮어쓴 값에서
+    // 새 칸을 되살렸으면(서버에 schema 없음) 서버에도 올린다.
+    const same = (a: unknown, b: unknown) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+    if (
+      remote &&
+      child &&
+      (!same(child.family, remote.family) ||
+        !same(child.familyRemoved, remote.familyRemoved) ||
+        (remote.schema === undefined && child.schema !== undefined))
+    ) {
+      void pushChild(sb, uid, child).catch(() => {});
     }
     return child;
   } catch {
@@ -336,7 +566,9 @@ export async function backupChildBeforeLogout(): Promise<void> {
     const uid = await currentUid();
     if (!uid) return;
     window.localStorage.setItem(acctChildKey(uid), raw);
-    await sb.from("profiles").update({ child: normalizeChild(raw) }).eq("id", uid);
+    // 가족은 서버 값과 합쳐서 올린다 — 오래 열어 둔 화면에서 로그아웃해도 다른 기기에서 그린 그림을 안 지운다.
+    const c = normalizeChild(raw);
+    if (c) await pushChild(sb, uid, c);
   } catch {
     /* 컬럼 전(마이그레이션 안 함) 등 — 로컬 백업만으로도 복구된다 */
   }

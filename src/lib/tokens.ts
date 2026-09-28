@@ -11,12 +11,12 @@ export const TOKEN_PRICE_KRW = 100;
 /**
  * 신규 가입 시 무료로 주는 토큰.
  *
- * 지금은 한 권이 5장 고정이라 그림동화 한 권이 10토큰이다(대본 5 + 그림 5).
- * 그래서 200이면 20권치다. (장수는 create 화면의 FIXED_PAGE_COUNT 가 정한다.
- * 2026-09-08 에 6장 → 5장으로 내렸다. 그전에는 한 권 12토큰이라 16권치였다.)
+ * 지금은 한 권이 6장 고정이라 그림동화 한 권이 12토큰이다(대본 6 + 그림 6).
+ * 그래서 200이면 16권치다. (장수는 create 화면의 FIXED_PAGE_COUNT 가 정한다.
+ * 2026-09-08 에 6장 → 5장으로 내렸다가(10토큰·20권치), 2026-09-28 다시 6장으로 올렸다.)
  *
  * 주의 — 권수 상한(MAX_BOOKS_PER_USER)은 30이라 여전히 토큰이 먼저 떨어진다.
- * 새로 가입한 사람은 20권에서 멈춘다. 30권을 다 만들게 하려면 300이 필요하다(10 × 30).
+ * 새로 가입한 사람은 16권에서 멈춘다. 30권을 다 만들게 하려면 360이 필요하다(12 × 30).
  * 기존 회원은 이미 받은 잔액이 달라 각자 다르다.
  * 올릴지는 결제 정책과 함께 정할 일이라 여기서 임의로 바꾸지 않는다.
  *
@@ -31,7 +31,7 @@ export const SIGNUP_BONUS_TOKENS = 200;
 export const COST_TEXT_PER_PAGE = 1; // 글 동화: 1토큰/장
 export const COST_ILLUSTRATED_PER_PAGE = 2; // 그림동화: 2토큰/장
 
-/** 동화 1권 토큰 비용 = 장면 수 × 쪽당 단가. (지금은 5장 고정 — 그림 10토큰, 글 5토큰) */
+/** 동화 1권 토큰 비용 = 장면 수 × 쪽당 단가. (지금은 6장 고정 — 그림 12토큰, 글 6토큰. 2026-09-28 5→6) */
 export function bookTokenCost(pages: number, illustrated: boolean): number {
   const per = illustrated ? COST_ILLUSTRATED_PER_PAGE : COST_TEXT_PER_PAGE;
   return Math.max(1, Math.round(pages)) * per;
@@ -63,9 +63,8 @@ export function illustrationTokenCost(pages: number): number {
  *
  * 권수와 토큰 두 개가 모두 넉넉해야 실제로 그만큼 만들 수 있다 — 예전에 토큰만
  * 올렸다가 권수에 막힌 적이 있고, 지금은 반대다. 가입 토큰이 200 이고 한 권이
- * 10토큰(5장 고정)이라 **새 회원은 20권에서 토큰이 먼저 떨어진다**. 30권을 다
- * 만들게 하려면 300이 필요하다(10 × 30). 장수를 5로 내리면서 12권 → 20권으로
- * 늘어 격차는 줄었다. 결제 정책과 함께 정한다 — SIGNUP_BONUS_TOKENS 주석 참고.
+ * 12토큰(6장 고정, 2026-09-28)이라 **새 회원은 16권에서 토큰이 먼저 떨어진다**. 30권을 다
+ * 만들게 하려면 360이 필요하다(12 × 30). 결제 정책과 함께 정한다 — SIGNUP_BONUS_TOKENS 주석 참고.
  */
 export const MAX_BOOKS_PER_USER = 30;
 

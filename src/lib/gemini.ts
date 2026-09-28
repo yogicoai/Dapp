@@ -343,8 +343,14 @@ export async function generateImage(input: {
   references?: GeneratedImage[];
   /** 4:3=태블릿(가로), 3:4=핸드폰(세로), 1:1=캐릭터 시트. Gemini가 네이티브로 지원하는 비율. */
   aspectRatio: "4:3" | "3:4" | "1:1";
+  /**
+   * 엔진을 이 호출만 못박는다. 'gemini' 를 적으면 IMAGE_PROVIDER 와 상관없이 Gemini 로만 그리고,
+   * 한도에 막혀도 GPT 로 넘어가지 않는다(던진다). 안 적으면 지금처럼 IMAGE_PROVIDER + 폴백.
+   * 가족 캐릭터가 이렇게 쓴다 — 사장님 결정(2026-09-28): 캐릭터는 제미나이로.
+   */
+  provider?: "gemini";
 }): Promise<GeneratedImage> {
-  const provider = imageProvider();
+  const provider = input.provider ?? imageProvider();
   const key = process.env.GEMINI_API_KEY;
   if (provider === "gemini" && !key) {
     throw new GeminiError(
@@ -483,6 +489,8 @@ export async function generateImage(input: {
   };
 
   if (provider === "openai") return withRetries(attemptOpenAI);
+  // 엔진을 못박은 호출은 GPT 로 물러서지 않는다 — 막히면 그대로 실패시켜 부른 쪽이 값을 돌려준다.
+  if (input.provider === "gemini") return withRetries(attemptGemini);
 
   const fallbackEnv = { openaiKey: process.env.OPENAI_API_KEY, fallback: process.env.IMAGE_FALLBACK };
   // 방금 막힌 게 확인됐으면 Gemini 를 다시 두드리지 않고 곧장 GPT 로.

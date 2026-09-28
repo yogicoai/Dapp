@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { TypecastError, synthesize } from "@/lib/typecast";
 import { callerOf, isClonedVoice, ownsVoice } from "@/lib/api-auth";
+import { DEV_ONLY_MESSAGE, isDevUser } from "@/lib/dev-mode";
 
 /**
  * 문장 → 성우 음성(Typecast). 글자 수만큼 무료 크레딧(월 3만 자)이 나가므로
@@ -55,6 +56,10 @@ export async function POST(request: Request) {
     }
     if (!(await ownsVoice(caller, voiceId))) {
       return NextResponse.json({ error: "내 목소리가 아닙니다." }, { status: 403 });
+    }
+    // 부모 목소리는 개발자 모드(fe)에서만 — 사장님 결정(2026-09-28).
+    if (!isDevUser(caller.username)) {
+      return NextResponse.json({ error: DEV_ONLY_MESSAGE }, { status: 403 });
     }
   }
 

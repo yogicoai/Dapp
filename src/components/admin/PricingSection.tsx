@@ -43,8 +43,8 @@ function draftOf(p: Pricing): Draft {
   return Object.fromEntries(ALL_FIELDS.map((f) => [f.key, p[f.key]])) as Draft;
 }
 
-/** 5쪽 한 권이 얼마인지 — 가격을 바꿀 때 가장 먼저 보고 싶은 값. */
-const SAMPLE_PAGES = 5;
+/** 한 권(지금 6쪽 고정 — create 의 FIXED_PAGE_COUNT)이 얼마인지 — 가격을 바꿀 때 가장 먼저 보고 싶은 값. */
+const SAMPLE_PAGES = 6;
 
 /** '6.6권치'처럼 — 딱 떨어지면 소수점은 안 보여 준다. */
 function oneDp(n: number): string {

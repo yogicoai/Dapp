@@ -11,10 +11,11 @@
 --    그건 supabase-tools.sql 에 따로 있다. 돌릴 때마다 결과가 달라지는 것들이라
 --    이 파일에 섞으면 실수로 토큰이 두 배가 되는 사고가 난다.
 --
--- 담긴 표 열둘: profiles(회원) · books(만든 동화) · voice_clones(부모 목소리)
+-- 담긴 표 열셋: profiles(회원) · books(만든 동화) · voice_clones(부모 목소리)
 --              feedback(의견) · tts_usage(음성 사용량) · app_pricing(가격표)
 --              token_ledger(토큰 장부) · token_grants(토큰 충전 기록) · story_charges(대본 값 기록)
 --              book_jobs(만들기 기록) · book_events(책 저장·삭제 흔적) · pricing_changes(가격 바꾼 이력)
+--              family_portraits(가족 그림 셈)
 --
 -- 뒤쪽 8~13번이 토큰을 지키는 부분이다. 이걸 안 돌리면 로그인한 사람이
 -- 브라우저 콘솔 한 줄로 자기 토큰을 999999 로 만들 수 있다.
@@ -23,6 +24,8 @@
 --
 -- 22~24번은 관리실 운영(2026-09-16): 값·구독료·단권 값을 관리실에서 정하기(yogico 만) · 권수 상한을 DB 가 지키기
 --          · 의견 게시판을 관리실에서 답하고 처리하기.
+--
+-- 25번은 우리 가족 캐릭터(2026-09-28): 가족 그림 값을 DB 가 받고 센다(supabase/family-portraits.sql 과 같은 내용).
 -- 그리고 마스터끼리는 서로의 기록이 안 보인다 — 6번 master_can_see (fe 는 사장님 개인 개발 계정).
 -- ════════════════════════════════════════════════════════════════════════
 
@@ -646,6 +649,10 @@ begin
    for update;
   if not found then
     raise exception '되돌릴 기록이 없습니다.' using errcode = '42501';
+  end if;
+  -- 가족 그림 값은 refund_family_portrait 로만 되돌린다(받은 그림인지 거기서 본다 — 25번). 2026-09-28
+  if entry.reason = 'family-portrait' then
+    raise exception '가족 그림 값은 여기서 되돌릴 수 없어요.' using errcode = '42501';
   end if;
   if entry.refunded_at is not null then
     raise exception '이미 되돌린 기록입니다.' using errcode = '22023';
@@ -1540,6 +1547,7 @@ declare
   note        text := btrim(coalesce(p_note, ''));
   do_reset    boolean := false;
   n_reset     integer := 0;
+  n_family    integer := 0;
 begin
   if not public.is_master_user() then
     raise exception '권한이 없습니다.' using errcode = '42501';
@@ -1587,9 +1595,23 @@ begin
     end if;
   end if;
 
+  /*
+   * 가족 그림 값(25번, 2026-09-28): **건네지 못한** 마지막 그리기의 값이면 그린 횟수도 하나 무른다.
+   * 안 무르면 다음 그리기가 '포함된 다시 그리기(0개)'로 세어져 환불 + 공짜 그림이 된다.
+   * 열쇠(lease)도 지워 늦게 끝난 요청이 '받았음'을 못 적게 한다.
+   * 이미 건넨 그림의 값(컴플레인 보상)은 셈을 그대로 둔다 — 그림은 이미 받았다.
+   */
+  if entry.reason = 'family-portrait' then
+    update public.family_portraits
+       set draws = draws - 1, lease = null, updated_at = now()
+     where owner = entry.owner and last_entry = entry.id and delivered < draws;
+    get diagnostics n_family = row_count;
+  end if;
+
   return json_build_object('entry', entry.id, 'owner', entry.owner,
                            'amount', entry.amount, 'tokens', left_tokens,
-                           'rewrites_reset', n_reset > 0);
+                           'rewrites_reset', n_reset > 0,
+                           'family_reset', n_family > 0);
 end; $$;
 
 revoke all on function public.master_refund_entry(uuid, text, boolean) from public, anon;
@@ -2611,16 +2633,344 @@ grant execute on function public.master_feedback_reply(uuid, text, text, boolean
 
 
 -- ════════════════════════════════════════════════════════════════════════
--- 끝. 아래를 함께 돌리면 표 열두 개가 다 있는지 눈으로 확인할 수 있다.
+--  25. 우리 가족 캐릭터 — 가족 그림 값을 DB 가 받고 센다 (2026-09-28)
+-- ════════════════════════════════════════════════════════════════════════
+--
+--  가족을 사람마다 수채화 전신 한 장으로 그려 '고정'하면 동화마다 그 얼굴로 나온다.
+--  값(사장님 결정): 한 사람 처음 그리기 2쿠키(다시 그리기 1번 포함), 그 뒤 다시 그리기 1쿠키.
+--  '쿠키'는 화면 이름이고 DB 에서는 그대로 토큰(profiles.tokens)이다. 1쿠키 = 100원.
+--
+--  /api/family/portrait 가 그리기 전에 charge(열쇠 받기) → 올린 뒤 finish(열쇠·그림 주소) → 실패하면 refund(열쇠).
+--  응답을 잃은 화면은 GET 으로 family_portrait_status 를 불러 건넨 그림을 되찾는다(90초 넘은 미완성은 되돌린다).
+--  이 절이 없으면 그 경로는 503 으로 멈춘다(브라우저 차감으로 물러서지 않는다 — 물러서면 공짜로 그릴 수 있다).
+--  11번 refund_tokens 에 가드 한 줄을 넣었다 — 가족 그림 값은 그 함수로 못 되돌린다
+--  (없으면 그림을 받은 뒤 콘솔에서 값만 돌려받아 공짜가 된다).
+--  supabase/family-portraits.sql 에 같은 내용이 따로 있다(그 파일은 refund_tokens 를 가드째 다시 적는다).
+-- ────────────────────────────────────────────────────────────────────────
+
+--  member_id  앱의 가족 id(child · mom · dad · m-<임의>). 이름이 바뀌어도 그대로라 셈이 이어진다.
+--  draws      지금까지 그린 횟수(되돌린 것은 빠진다). 다음 값: 0 → 2, 1 → 0(포함된 다시 그리기), 2 이상 → 1
+--  delivered  그림을 건넨 마지막 그리기 번호. draws 와 같으면 마지막 그림은 이미 건넸다 → 되돌릴 수 없다.
+--  last_entry 마지막 그리기의 장부 id(무료 다시 그리기면 비어 있다).
+--  lease      진행 중인 그리기의 열쇠 — 값을 받을 때 새로 만들어 부른 쪽(서버 경로)에만 돌려준다.
+--             '받았음'·'되돌리기'는 이 열쇠가 맞을 때만 된다. 회원은 이 칸을 못 읽으므로, 서버가 그리는
+--             동안 콘솔에서 값을 되돌려 공짜로 그리게 하는 길이 막힌다(2026-09-28 검토 지적).
+--  last_pic   마지막으로 건넨 그림 {url, ref, at, transparent}. 응답을 잃어도(앱 전환·망 끊김) 되찾게 둔다.
+--  쓰기는 아래 함수로만 한다 — insert/update/delete 정책을 주지 않는다.
+create table if not exists public.family_portraits (
+  owner      uuid not null references auth.users(id) on delete cascade,
+  member_id  text not null,
+  draws      integer not null default 0,
+  delivered  integer not null default 0,
+  last_entry uuid references public.token_ledger(id) on delete set null,
+  lease      uuid,
+  last_pic   jsonb,
+  updated_at timestamptz not null default now(),
+  primary key (owner, member_id)
+);
+-- 먼저 만든 표에는 새 칸만 붙인다(몇 번을 돌려도 안전).
+alter table public.family_portraits add column if not exists lease uuid;
+alter table public.family_portraits add column if not exists last_pic jsonb;
+
+alter table public.family_portraits enable row level security;
+
+drop policy if exists "family_portraits 본인 열람" on public.family_portraits;
+create policy "family_portraits 본인 열람" on public.family_portraits for select
+  using (auth.uid() = owner);
+
+drop policy if exists "family_portraits 마스터 열람" on public.family_portraits;
+create policy "family_portraits 마스터 열람" on public.family_portraits for select
+  using (public.master_can_see(owner));
+
+-- 표 권한 — 읽기만, 그것도 칸 단위로. lease(진행 중 그리기 열쇠)·last_entry 는 회원에게 안 보인다.
+-- (정책이 없어도 쓰기는 막히지만, 권한까지 걷어 두 겹으로 막는다 — token_grants 와 같다.)
+revoke all on public.family_portraits from anon;
+revoke all on public.family_portraits from authenticated;
+grant select (owner, member_id, draws, delivered, last_pic, updated_at) on public.family_portraits to authenticated;
+
+-- 옛 모양 함수를 먼저 지운다 — 인자가 바뀌면 새 함수와 따로 남는다. 특히 옛 refund_family_portrait(text, integer)는
+-- 열쇠 없이 되돌리므로, 남아 있으면 막은 길이 그대로 열려 있다.
+drop function if exists public.charge_family_portrait(text);
+drop function if exists public.finish_family_portrait(text, integer);
+drop function if exists public.refund_family_portrait(text, integer);
+
+
+-- 안에서만 쓰는 되돌리기 — 아직 건네지 않은 마지막 그리기(delivered < draws)를 무른다.
+--   횟수 -1(무료분도 — 그래야 다음에 다시 무료) · 열쇠 지움(그 그리기는 이제 '받았음'을 못 적는다)
+--   · 값을 냈으면 그 장부 줄을 한 번만 되돌린다. 무르면 true.
+-- 회원은 직접 못 부른다 — 아래 함수들이 열쇠·시간 조건을 본 뒤에 부른다.
+create or replace function public.family_portrait_undo(p_owner uuid, p_member text)
+returns boolean
+language plpgsql security definer
+set search_path = public as $$
+declare
+  fp  public.family_portraits%rowtype;
+  led public.token_ledger%rowtype;
+begin
+  select * into fp from public.family_portraits
+   where owner = p_owner and member_id = p_member
+   for update;
+  if not found or fp.draws <= fp.delivered then
+    return false;
+  end if;
+
+  update public.family_portraits
+     set draws = draws - 1, lease = null, updated_at = now()
+   where owner = p_owner and member_id = p_member;
+
+  if fp.last_entry is not null then
+    select * into led from public.token_ledger
+     where id = fp.last_entry and owner = p_owner
+     for update;
+    if found and led.refunded_at is null then
+      update public.token_ledger set refunded_at = now() where id = led.id;
+      update public.profiles set tokens = tokens + led.amount where id = led.owner;
+    end if;
+  end if;
+  return true;
+end; $$;
+
+revoke all on function public.family_portrait_undo(uuid, text) from public, anon, authenticated;
+
+
+-- 값 받기 — 그리기 **전에** 부른다.
+--   p_expected 화면이 부모에게 보여 준 값. 실제 값이 그보다 크면 깎지 않고 'price' 로 돌려준다
+--              (다른 기기에서 그렸거나 응답을 잃어 화면 셈이 어긋났을 때 — 동의 없이 더 깎지 않게). null 이면 안 본다.
+-- 돌려주는 값(json) — status 로 갈린다:
+--   ok     charged(이번에 깎은 토큰, 포함된 다시 그리기면 0) · entry(장부 id, 무료면 null)
+--          · draw(이번 그리기 번호 = 새 draws) · lease(이번 그리기 열쇠) · tokens(남은 잔액).
+--          draw·lease 는 finish/refund 에 그대로 넘긴다. 마스터는 draw 0 · lease null(세지도 않는다).
+--   busy   이 사람을 90초 안에 이미 그리기 시작했다(다른 탭·기기, 또는 응답을 잃은 앞 요청).
+--          겹쳐 받으면 앞 그리기의 '받았음'이 어긋나 값이 영영 안 돌아오므로 받지 않는다. draws · retry_after(초).
+--   price  실제 값(cost)이 p_expected 보다 크다. cost · draws · tokens.
+-- 90초가 지나도 건네지 않은 앞 그리기는 서버가 이미 끝난 것이다(경로 제한 60초) — 먼저 되돌리고 새로 받는다.
+-- 잔액이 모자라면 spend_tokens 가 22003('토큰이 부족합니다.')으로 던진다 — 그러면 줄도 셈도 그대로다.
+create or replace function public.charge_family_portrait(p_member text, p_expected integer default null)
+returns json
+language plpgsql security definer
+set search_path = public as $$
+declare
+  me       public.profiles%rowtype;
+  fp       public.family_portraits%rowtype;
+  v_amount integer;
+  v_entry  uuid;
+  v_lease  uuid;
+  v_left   integer;
+begin
+  if auth.uid() is null then
+    raise exception '로그인이 필요합니다.' using errcode = '42501';
+  end if;
+  if p_member is null or p_member !~ '^[a-z0-9-]{1,40}$' then
+    raise exception '가족 id 가 올바르지 않습니다.' using errcode = '22023';
+  end if;
+
+  select * into me from public.profiles where id = auth.uid();
+  if not found then
+    raise exception '회원 정보를 찾을 수 없습니다.' using errcode = '42501';
+  end if;
+
+  -- 마스터는 면제. 세지도 않는다 — 점검하느라 여러 번 그리는 계정이다.
+  if me.is_master then
+    return json_build_object('status', 'ok', 'charged', 0, 'entry', null, 'draw', 0, 'lease', null, 'tokens', me.tokens);
+  end if;
+
+  insert into public.family_portraits (owner, member_id) values (me.id, p_member)
+    on conflict (owner, member_id) do nothing;
+  -- 잠근다 — 같은 사람을 두 번 동시에 누르면 둘 다 '처음(2)'이나 둘 다 '무료'로 세어지지 않게.
+  select * into fp from public.family_portraits
+   where owner = me.id and member_id = p_member
+   for update;
+
+  -- 앞 그리기가 아직 안 끝났다
+  if fp.draws > fp.delivered then
+    if fp.updated_at > now() - interval '90 seconds' then
+      return json_build_object(
+        'status', 'busy',
+        'draws', fp.draws,
+        'retry_after', greatest(1, ceil(extract(epoch from (fp.updated_at + interval '90 seconds' - now()))))::integer,
+        'tokens', me.tokens);
+    end if;
+    perform public.family_portrait_undo(me.id, p_member);
+    select * into fp from public.family_portraits
+     where owner = me.id and member_id = p_member;
+  end if;
+
+  if fp.draws <= 0 then
+    v_amount := 2;          -- 처음 그리기(다시 그리기 1번 포함)
+  elsif fp.draws = 1 then
+    v_amount := 0;          -- 포함된 다시 그리기
+  else
+    v_amount := 1;          -- 그 뒤 다시 그리기
+  end if;
+
+  if p_expected is not null and v_amount > p_expected then
+    select tokens into v_left from public.profiles where id = me.id;
+    return json_build_object('status', 'price', 'cost', v_amount, 'draws', fp.draws, 'tokens', v_left);
+  end if;
+
+  if v_amount > 0 then
+    v_entry := public.spend_tokens(v_amount, 'family-portrait');   -- 모자라면 22003 으로 던진다
+  else
+    v_entry := null;        -- spend_tokens 는 0 을 거절한다 — 무료분은 장부 없이
+  end if;
+
+  v_lease := gen_random_uuid();
+  update public.family_portraits
+     set draws = draws + 1, last_entry = v_entry, lease = v_lease, updated_at = now()
+   where owner = me.id and member_id = p_member
+   returning draws into fp.draws;
+
+  select tokens into v_left from public.profiles where id = me.id;
+  return json_build_object('status', 'ok', 'charged', v_amount, 'entry', v_entry,
+                           'draw', fp.draws, 'lease', v_lease, 'tokens', v_left);
+end; $$;
+
+revoke all on function public.charge_family_portrait(text, integer) from public, anon;
+grant execute on function public.charge_family_portrait(text, integer) to authenticated;
+
+
+-- '받았음' 적기 — 그림을 다 올린 뒤, 건네기 **직전에** 부른다. 건넨 그림(p_pic)도 같이 적어 둔다.
+-- true 면 건넨다. false 면 건네지 않는다:
+--   · 열쇠가 다르다(이 그리기가 이미 되돌려졌다 — 90초 넘게 걸린 그리기·마스터 환불 등)
+--   · 그 사이 다음 그리기가 끼어들었다(draws ≠ p_draw)
+--   · 이 그리기의 값이 이미 되돌려졌다.
+create or replace function public.finish_family_portrait(p_member text, p_draw integer, p_lease uuid, p_pic jsonb)
+returns boolean
+language plpgsql security definer
+set search_path = public as $$
+declare
+  fp public.family_portraits%rowtype;
+begin
+  if auth.uid() is null then
+    raise exception '로그인이 필요합니다.' using errcode = '42501';
+  end if;
+  if p_pic is not null and (jsonb_typeof(p_pic) <> 'object' or length(p_pic::text) > 2000) then
+    raise exception '그림 정보가 올바르지 않습니다.' using errcode = '22023';
+  end if;
+
+  select * into fp from public.family_portraits
+   where owner = auth.uid() and member_id = p_member
+   for update;
+  if not found or p_draw is null or p_lease is null
+     or fp.draws <> p_draw or fp.lease is distinct from p_lease then
+    return false;
+  end if;
+  if fp.last_entry is not null and exists (
+       select 1 from public.token_ledger
+        where id = fp.last_entry and refunded_at is not null) then
+    return false;
+  end if;
+
+  update public.family_portraits
+     set delivered = p_draw, last_pic = coalesce(p_pic, fp.last_pic), updated_at = now()
+   where owner = fp.owner and member_id = fp.member_id;
+  return true;
+end; $$;
+
+revoke all on function public.finish_family_portrait(text, integer, uuid, jsonb) from public, anon;
+grant execute on function public.finish_family_portrait(text, integer, uuid, jsonb) to authenticated;
+
+
+-- 되돌리기 — 그리다 실패했을 때 경로가 부른다. 열쇠(p_lease)가 맞는 이번 그리기만 된다.
+-- 돌려주는 값(json):
+--   refunded  횟수(와 값을 냈으면 그 값)를 되돌렸다 — 이때만 화면이 '돌려드렸어요'라고 한다
+--   delivered 이미 '받았음'이 적힌 그리기다(되돌릴 수 없다 — 그림을 건네면 된다)
+--   tokens    잔액
+create or replace function public.refund_family_portrait(p_member text, p_draw integer, p_lease uuid)
+returns json
+language plpgsql security definer
+set search_path = public as $$
+declare
+  fp      public.family_portraits%rowtype;
+  v_done  boolean := false;
+  v_given boolean := false;
+  v_left  integer;
+begin
+  if auth.uid() is null then
+    raise exception '로그인이 필요합니다.' using errcode = '42501';
+  end if;
+
+  select * into fp from public.family_portraits
+   where owner = auth.uid() and member_id = p_member
+   for update;
+
+  if found and p_draw is not null and p_lease is not null
+     and fp.lease = p_lease and fp.draws = p_draw then
+    if fp.delivered >= p_draw then
+      v_given := true;
+    else
+      v_done := public.family_portrait_undo(fp.owner, fp.member_id);
+    end if;
+  end if;
+
+  select tokens into v_left from public.profiles where id = auth.uid();
+  return json_build_object('refunded', v_done, 'delivered', v_given, 'tokens', v_left);
+end; $$;
+
+revoke all on function public.refund_family_portrait(text, integer, uuid) from public, anon;
+grant execute on function public.refund_family_portrait(text, integer, uuid) to authenticated;
+
+
+-- 지금 형편 — 그리기 응답을 잃었을 때 화면이 묻는다(GET /api/family/portrait).
+-- 돌려주는 값(json): draws · delivered · pending(90초 안에 시작한 그리기가 아직 안 끝남)
+--   · refunded(90초가 지나도 안 건넨 그리기를 방금 되돌림) · pic(마지막으로 건넨 그림) · tokens
+-- 90초가 지난 미완성 그리기는 서버가 이미 끝난 것이다(경로 제한 60초) — 여기서 되돌려 쿠키를 돌려준다.
+-- 열쇠도 같이 지워지므로 늦게 깨어난 요청이 있어도 '받았음'을 못 적는다.
+create or replace function public.family_portrait_status(p_member text)
+returns json
+language plpgsql security definer
+set search_path = public as $$
+declare
+  fp         public.family_portraits%rowtype;
+  v_pending  boolean := false;
+  v_refunded boolean := false;
+  v_left     integer;
+begin
+  if auth.uid() is null then
+    raise exception '로그인이 필요합니다.' using errcode = '42501';
+  end if;
+  if p_member is null or p_member !~ '^[a-z0-9-]{1,40}$' then
+    raise exception '가족 id 가 올바르지 않습니다.' using errcode = '22023';
+  end if;
+
+  select * into fp from public.family_portraits
+   where owner = auth.uid() and member_id = p_member
+   for update;
+  if found and fp.draws > fp.delivered then
+    if fp.updated_at > now() - interval '90 seconds' then
+      v_pending := true;
+    else
+      v_refunded := public.family_portrait_undo(fp.owner, fp.member_id);
+      select * into fp from public.family_portraits
+       where owner = auth.uid() and member_id = p_member;
+    end if;
+  end if;
+
+  select tokens into v_left from public.profiles where id = auth.uid();
+  return json_build_object(
+    'draws', coalesce(fp.draws, 0),
+    'delivered', coalesce(fp.delivered, 0),
+    'pending', v_pending,
+    'refunded', v_refunded,
+    'pic', fp.last_pic,
+    'tokens', v_left);
+end; $$;
+
+revoke all on function public.family_portrait_status(text) from public, anon;
+grant execute on function public.family_portrait_status(text) to authenticated;
+
+
+-- ════════════════════════════════════════════════════════════════════════
+-- 끝. 아래를 함께 돌리면 표 열세 개가 다 있는지 눈으로 확인할 수 있다.
 -- (profiles · books · voice_clones · feedback · tts_usage · app_pricing · token_ledger
---  · token_grants · story_charges · book_jobs · book_events · pricing_changes)
+--  · token_grants · story_charges · book_jobs · book_events · pricing_changes · family_portraits)
 -- ════════════════════════════════════════════════════════════════════════
 select table_name as 표
 from information_schema.tables
 where table_schema = 'public'
   and table_name in ('profiles','books','voice_clones','feedback','tts_usage','app_pricing',
                      'token_ledger','token_grants','story_charges','book_jobs','book_events',
-                     'pricing_changes')
+                     'pricing_changes','family_portraits')
 order by table_name;
 
 -- 지금 가격도 함께 확인한다 (처음 붙였다면 100·200·1·2·15·30 — 지금 앱과 같은 값).

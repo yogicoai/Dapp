@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { callerOf } from "@/lib/api-auth";
+import { DEV_ONLY_MESSAGE, isDevUser } from "@/lib/dev-mode";
 import { ElevenError, synthesizeEleven } from "@/lib/eleven";
 
 /**
@@ -22,6 +23,10 @@ export async function POST(request: Request) {
   const caller = await callerOf(request);
   if (!caller) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  }
+  // 부모 목소리는 개발자 모드(fe)에서만 — 사장님 결정(2026-09-28). 지금 화면은 이 경로를 안 쓴다.
+  if (!isDevUser(caller.username)) {
+    return NextResponse.json({ error: DEV_ONLY_MESSAGE }, { status: 403 });
   }
   let body: unknown;
   try {

@@ -34,6 +34,7 @@ import {
 } from "@/lib/prefs";
 import { loadSession } from "@/lib/auth";
 import { authedFetch } from "@/lib/supabase";
+import { loadPrivatePageVideos } from "@/lib/private-media";
 import { fitScale } from "@/lib/fit-text";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
@@ -533,6 +534,29 @@ export function BookViewer({
   }, [mine]);
   /** 고치기 도구(글 고치기 · 그림 다시 그리기)를 띄울지 — 마스터만. */
   const editable = mine && master;
+
+  /**
+   * 이 사람에게만 있는 쪽 영상(lib/private-media) — { 쪽 번호(0부터): 재생 주소 }.
+   * 예: 돼지 삼형제 13쪽은 fe 계정 폴더에만 영상이 있어 fe 에게만 영상으로 보인다.
+   * 책이 바뀌면 이전 책 값이 남지 않게 책 id 와 함께 들고 있는다.
+   */
+  const [privateVideos, setPrivateVideos] = useState<{ bookId: string; urls: Record<number, string> }>({
+    bookId: "",
+    urls: {},
+  });
+  useEffect(() => {
+    let alive = true;
+    loadPrivatePageVideos(book.id)
+      .then((urls) => {
+        if (alive) setPrivateVideos({ bookId: book.id, urls });
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [book.id]);
+  const privateVideoOf = (i: number): string | undefined =>
+    privateVideos.bookId === book.id ? privateVideos.urls[i] : undefined;
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
@@ -1926,11 +1950,11 @@ export function BookViewer({
                     }`}
                     style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
                   >
-                    {page.video ? (
+                    {privateVideoOf(i) ?? page.video ? (
                       <video
                         key={i === index ? `on-${i}` : `off-${i}`}
-                        src={i === index ? page.video : undefined}
-                        poster={page.image}
+                        src={i === index ? (privateVideoOf(i) ?? page.video ?? undefined) : undefined}
+                        poster={page.image ?? undefined}
                         autoPlay={i === index}
                         // 움직이는 삽화는 "영상"이 아니라 그림이 숨 쉬는 것 — 끊김 없이 계속 돈다.
                         // 예전엔 두 번 틀고 멈췄는데(plays < 2), 멈추는 순간 그림이 얼어붙은 듯 보였다.
@@ -1938,7 +1962,8 @@ export function BookViewer({
                         loop
                         muted
                         playsInline
-                        className="h-full w-full object-contain"
+                        // 한 사람 전용 영상은 비율이 책 그림(4:3)과 달라(예: 16:9) 가득 채우고 양옆을 조금 자른다.
+                        className={`h-full w-full ${privateVideoOf(i) ? "object-cover" : "object-contain"}`}
                       />
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element

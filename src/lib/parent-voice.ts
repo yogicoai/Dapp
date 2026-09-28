@@ -19,6 +19,7 @@ import {
   trimSilence,
 } from "@/lib/voice-dsp";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
+import { loadDevMode } from "@/lib/dev-mode-client";
 import { capPieceLengths } from "@/lib/voice-trim";
 
 export type ParentVoice = {
@@ -405,6 +406,9 @@ export async function loadAllParentVoiceRoles(): Promise<Record<string, string[]
 export async function loadParentVoices(): Promise<ParentVoice[]> {
   const uid = await currentUserId();
   if (!uid) return []; // 회원 전용 — 게스트/로그아웃 상태에선 아무것도 안 보인다
+  // 부모 목소리는 개발자 모드(fe)에서만 — 사장님 결정(2026-09-28). 다른 아이디에는 나레이션 고르기에도
+  // 안 보인다(빈 목록). 서버(/api/tts·/api/voice/clone)도 fe 가 아니면 거절한다.
+  if (!(await loadDevMode())) return [];
   const local = loadLocal(uid);
   const byRole: Record<string, string> = { ...local };
   try {
