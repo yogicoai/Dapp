@@ -303,3 +303,64 @@ describe("maxPortraitRefs — 모델마다 붙일 얼굴 수", () => {
     assert.equal(maxPortraitRefs({ IMAGE_PROVIDER: "openai", GEMINI_IMAGE_MODEL: "gemini-2.5-flash-image" }), 4);
   });
 });
+
+describe("characterSheetPrompt — 원본 픽셀 시트의 '나머지 사람들만' 그리기(lib/sheet-compose)", () => {
+  const MIXED = {
+    ...THREE,
+    characters: [{ name: "서연", description: "5세 여자아이, 양갈래 머리, 초록 원피스" }],
+    looks: "straight black bob",
+    adultLooks: [{ name: "아빠", line: "짧은 머리" }],
+    alreadyDrawn: [
+      { name: "하온", description: "5세 남자아이, 노란 티셔츠" },
+      { name: "엄마", description: "" },
+    ],
+  };
+
+  it("주인공이 고정 가족이면 '첫 사람이 주인공' 줄과 아이 생김새 줄이 없다", () => {
+    const p = characterSheetPrompt({ ...MIXED, heroOnSheet: false });
+    assert.doesNotMatch(p, /The FIRST character is the child hero/);
+    assert.doesNotMatch(p, /straight black bob/);
+    assert.match(p, /Draw EXACTLY 1 character, one per person listed above/);
+    assert.match(p, /^- 서연: 5세 여자아이/m);
+  });
+
+  it("따로 서는 고정 가족은 그리지 말라고, 'EXACTLY N명' 줄 뒤에 — 그들과 다르게", () => {
+    const p = characterSheetPrompt({ ...MIXED, heroOnSheet: false });
+    const exactly = p.indexOf("Draw EXACTLY 1 character");
+    const block = p.indexOf("OTHER PEOPLE IN THIS BOOK — ALREADY PAINTED separately");
+    assert.ok(exactly >= 0 && block > exactly);
+    assert.match(p, /^- 하온: 5세 남자아이, 노란 티셔츠$/m);
+    assert.match(p, /^- 엄마$/m);
+    assert.match(p, /never draw them, not even in the background/);
+    assert.match(p, /clearly different from them in hairstyle and clothing colour/);
+    // 얼굴을 붙이지 않은 그림 — 고정 얼굴 줄은 없다
+    assert.doesNotMatch(p, /FIXED FACES/);
+  });
+
+  it("가족 그림에서 잰 옷 색이 있으면 설명 글의 옷보다 그것을 — 없으면 줄은 그대로", () => {
+    const p = characterSheetPrompt({
+      ...MIXED,
+      heroOnSheet: false,
+      alreadyDrawn: [
+        { name: "하온", description: "5세 남자아이, 노란 티셔츠", outfit: "pale blue (#c7dadc)" },
+        { name: "엄마", description: "", outfit: null },
+      ],
+    });
+    assert.match(
+      p,
+      /^- 하온: 5세 남자아이, 노란 티셔츠 — in their finished picture they wear mostly pale blue \(#c7dadc\); this overrides any clothing named here$/m,
+    );
+    assert.match(p, /^- 엄마$/m);
+  });
+
+  it("주인공이 나머지 쪽이면(고정 안 함) 주인공 줄은 그대로", () => {
+    const p = characterSheetPrompt({ ...MIXED, heroOnSheet: true });
+    assert.match(p, /The FIRST character is the child hero/);
+    assert.match(p, /The hero's appearance MUST match these traits exactly: straight black bob/);
+  });
+
+  it("새 칸을 안 주거나 기본값이면 예전 글자 그대로", () => {
+    assert.equal(characterSheetPrompt({ ...THREE, heroOnSheet: true, alreadyDrawn: [] }), GOLDEN_THREE);
+    assert.equal(characterSheetPrompt({ ...ONE, heroOnSheet: true }), GOLDEN_ONE);
+  });
+});

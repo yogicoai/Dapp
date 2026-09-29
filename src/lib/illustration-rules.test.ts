@@ -8,6 +8,7 @@ import {
   pageVehicle,
   readHero,
   safetyRuleLines,
+  vehicleInteriorLines,
 } from "./illustration-rules.ts";
 
 /*
@@ -124,6 +125,25 @@ describe("safetyRuleLines — 어떤 줄이 붙고 안 붙나", () => {
     assert.match(out, /Indoors at home Koreans do not wear shoes/);
   });
 
+  it("버스·차 안은 실내로 잡혀도 '집 안에서는 신발을 벗는다' 줄이 붙지 않는다", () => {
+    const bus = pageVehicle({ locationName: "어린이집 버스 안", locationDescription: "노란 좌석 줄과 넓은 창", sceneBody: "하온이는 창가 자리에 앉는다.", storyText: "하온이는 버스에 올라탔어요." });
+    assert.equal(bus.vehicle, "transit");
+    assert.doesNotMatch(joined(safetyRuleLines(bus, true)), /Indoors at home Koreans do not wear shoes/);
+    const car = joined(safetyRuleLines(carPage, true));
+    assert.doesNotMatch(car, /Indoors at home Koreans do not wear shoes/);
+    assert.match(car, SHOES_IN_CAR);
+  });
+
+  it("탈것 안 배경 줄 — 건물·교실이 아니라 탈것 실내, 창밖 풍경은 크게 보여도 된다", () => {
+    const bus = joined(vehicleInteriorLines("transit", "어린이집 버스 안"));
+    assert.match(bus, /"어린이집 버스 안" is the inside of a bus, train or subway/);
+    assert.match(bus, /NOT a building and NOT a room/);
+    assert.match(bus, /No classroom/);
+    assert.match(bus, /may show clearly through the windows/);
+    assert.doesNotMatch(bus, /INSIDE a building|small view through a window/);
+    assert.match(joined(vehicleInteriorLines("car", "아빠 차")), /inside of a car/);
+  });
+
   it("어느 장면이든: 가구 위에 서지 않기, 서 있는 사람은 벨트 없음", () => {
     for (const page of [busPage, carPage, yardPage, gotOffPage]) {
       const out = joined(safetyRuleLines(page, null));
@@ -190,6 +210,15 @@ describe("checkRuleLines — 검수에 붙는 FAIL 규칙은 좁게", () => {
     assert.match(out, /hair clip, flower, ribbon/);
     assert.match(out, /STANDING wears a seat belt/);
     assert.match(out, /bus, train or subway: FAIL if anyone wears a seat belt/);
+    // 지붕 없는 위층은 바깥이다 — '교실로 그리면 FAIL'은 닫힌 탈것 안에만 붙인다.
+    assert.doesNotMatch(out, /instead of inside the vehicle/);
+  });
+
+  it("버스 안 쪽: 교실·방으로 그리면 FAIL, 창밖 풍경은 FAIL 아님", () => {
+    const page = pageVehicle({ locationName: "어린이집 버스 안", locationDescription: "노란 좌석 줄과 넓은 창", sceneBody: "하온이는 창가 자리에 앉는다.", storyText: "하온이는 버스에 올라탔어요. 창밖으로 나무들이 휙휙 지나갔어요." });
+    const out = joined(checkRuleLines({ page }));
+    assert.match(out, /drawn in a classroom, a house room or another building instead of inside the vehicle/);
+    assert.match(out, /Scenery through the vehicle windows is correct/);
   });
 
   it("내린 장면: 탈것 실내면 FAIL", () => {

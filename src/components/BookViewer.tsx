@@ -41,7 +41,8 @@ import folkBooksJson from "@/data/folk-books.json";
 import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
-import { locationKeyOf } from "@/lib/story-quality";
+import { locationKeyOf, sheetMatchesKey } from "@/lib/story-quality";
+import { schoolBusPlaceKeys } from "@/lib/illustration-rules";
 import { detailMixesOtherPlaces } from "@/lib/scene-edit";
 import {
   applyPlaybackRate,
@@ -649,7 +650,8 @@ export function BookViewer({
       const sibling =
         (here ? others.find((p) => placeOf(p.imagePrompt) === here) : undefined) ?? others[0];
       // 만들 때 그린 장소 시트가 있으면 그것이 장소의 기준이다.
-      const sheetEntry = here ? book.locationSheets?.find((s) => s.key === here) : undefined;
+      // 옛 책은 열쇠 규칙이 바뀌기 전에 저장했다 — 이름으로도 맞춰 본다(sheetMatchesKey).
+      const sheetEntry = here ? book.locationSheets?.find((s) => sheetMatchesKey(s, here)) : undefined;
       /*
        * 단, '한 장에 한 곳' 규칙 전에 그린 시트이고 장소 칸에 다른 탈것·이름난 곳 설명이 섞여 있으면 붙이지 않는다.
        * 그 시트는 궁궐 문과 버스 좌석이 한 장에 섞였을 수 있다(my-mu0issap). 붙이면 다시 그려도 섞인 그림을 따라가고,
@@ -659,27 +661,39 @@ export function BookViewer({
         sheetEntry && !sheetEntry.onePlace && detailMixesOtherPlaces(book.locationDetail ?? "", sheetEntry.name),
       );
       const locationSheet = sheetEntry && !sheetMayBeMixed ? (sheetEntry.image ?? "") : "";
-      const res = await authedFetch("/api/illustrate-page", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          scene,
-          storyText: page.text,
-          artStyleId: book.artStyleId,
-          // 얼굴의 기준 — 이게 빠지면 다시 그린 쪽만 옷과 얼굴이 달라진다.
-          characterSheet: book.characterSheet ?? "",
-          styleReference: sibling?.image ?? "",
-          styleReferenceScene: sibling?.imagePrompt ?? "",
-          shape: book.shape,
-          cast: book.cast ?? [],
-          // 주인공 성별·생김새 — 옛 책엔 없어서 서버가 cast 첫 사람과 그 설명으로 물러선다.
-          hero: book.hero,
-          // 만들 때 부모가 적어 둔 장소 — 이게 있어야 다시 그린 쪽도 같은 곳이 된다.
-          locationDetail: book.locationDetail ?? "",
-          locationSheet,
-        }),
-      });
-      const data = (await res.json().catch(() => ({}))) as { image?: string; error?: string };
+      const send = async (withFaces: boolean) => {
+        const r = await authedFetch("/api/illustrate-page", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            scene,
+            storyText: page.text,
+            artStyleId: book.artStyleId,
+            // 얼굴의 기준 — 이게 빠지면 다시 그린 쪽만 옷과 얼굴이 달라진다.
+            characterSheet: book.characterSheet ?? "",
+            styleReference: sibling?.image ?? "",
+            styleReferenceScene: sibling?.imagePrompt ?? "",
+            shape: book.shape,
+            cast: book.cast ?? [],
+            // 주인공 성별·생김새 — 옛 책엔 없어서 서버가 cast 첫 사람과 그 설명으로 물러선다.
+            hero: book.hero,
+            // 만들 때 부모가 적어 둔 장소 — 이게 있어야 다시 그린 쪽도 같은 곳이 된다.
+            locationDetail: book.locationDetail ?? "",
+            locationSheet,
+            // 같은 장소 줄의 다른 쪽이 어린이 통학 버스면 이 쪽도 같은 버스로(벨트) — 옆 쪽 그림을 기준으로 받으니 어긋나면 검수에서 떨어진다.
+            schoolBusPlace: Boolean(here) && schoolBusPlaceKeys(book.pages).has(here),
+            // 고정 가족 원본 그림·시트에 선 순서(2026-09-29~) — 만들 때처럼 원본 얼굴을 붙인다. 옛 책엔 없다.
+            // 서버가 부른 사람의 가족 폴더인지 다시 본다 — 마스터가 남의 책을 다시 그리면 붙지 않고 시트만 쓴다.
+            ...(withFaces && book.portraits?.length ? { portraits: book.portraits } : {}),
+            ...(book.sheetOrder?.length ? { sheetOrder: book.sheetOrder } : {}),
+          }),
+        });
+        const d = (await r.json().catch(() => ({}))) as { image?: string; error?: string; code?: string };
+        return { res: r, data: d };
+      };
+      let { res, data } = await send(true);
+      // 원본 얼굴을 붙인 쪽을 그림 모델이 거절했다(422 portrait) — 얼굴 없이(시트만) 한 번 더.
+      if (res.status === 422 && data.code === "portrait") ({ res, data } = await send(false));
       if (!res.ok || !data.image) {
         window.alert(data.error ?? "그림을 그리지 못했어요. 잠시 뒤 다시 눌러 주세요.");
         return;

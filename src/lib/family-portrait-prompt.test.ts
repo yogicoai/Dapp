@@ -4,12 +4,14 @@ import {
   PHOTO_FALLBACK_MIN_MS,
   buildPrompt,
   cardFor,
+  headRedrawPrompt,
+  headRedrawRecipe,
   photoFallbackPlan,
   photoRefused,
   portraitReferences,
   type PortraitInput,
 } from "./family-portrait-prompt.ts";
-import { headChartRatio } from "./family-head.ts";
+import { headChartRatio, type HeadFix } from "./family-head.ts";
 import { GeminiError } from "./gemini.ts";
 
 const CARD = [
@@ -123,7 +125,10 @@ describe("얼굴 클로즈업(closeUp) — 사진 바로 뒤, 사진이 있을 �
     assert.match(p, /Hair length and the overall hairstyle come from the FIRST image \(the crop cuts the hair off\)\./);
     // 얼굴도 수채화로 — 사진 같은 피부 결·빛·그늘을 가져오지 않는다
     assert.match(p, /Paint that face in the same watercolor style as the rest of the figure — take only its features, never its photographic skin texture, lighting or shadows\./);
-    assert.match(p, /It is the same single person, not a second person, and its tight crop is not the composition — still paint one full-body figure\./);
+    assert.match(
+      p,
+      /It is the same single person, not a second person, and its tight crop is neither the composition nor the head size — still paint one full-body figure at the PROPORTIONS head-to-height ratio\./,
+    );
     assert.match(p, /LIKENESS from the photo, its face close-up and the LIKENESS SPEC — /);
     assert.match(p, /Keep the face proportions faithful to the photo and its face close-up/);
     assert.match(p, /From the photo and the close-up NEVER copy:/);
@@ -339,6 +344,148 @@ describe("비율 견본(guide) — 늘 맨 끝 참고 그림, 머리:키 비율�
       const p = buildPrompt(who, PHOTO);
       assert.match(p, /never the face proportions, and never exaggerate/);
       assert.match(p, /The head-to-height ratio of the whole figure follows the PROPORTIONS line, not the photo\./);
+    }
+  });
+});
+
+describe("사진의 구도가 머리 크기를 정하지 않는다 — 얼굴이 꽉 찬 사진(셀카)도 전신을 PROPORTIONS 비율로", () => {
+  const withCloseUp = portraitReferences({ photo: "P", closeUp: "C", sample: "S", sibling: null, guide: "G" }).attached;
+
+  it("사진 규칙 줄·PROPORTIONS 줄 — 얼굴이 꽉 찬 사진이 큰 머리라는 뜻이 아니다(어른·아이, 클로즈업·카드 있음/없음)", () => {
+    for (const who of [person("mom", { callName: "엄마" }), person("child", { callName: "하온", age: 5 })]) {
+      for (const refs of [PHOTO, withCloseUp]) {
+        for (const card of [null, CARD]) {
+          const p = buildPrompt(who, refs, card);
+          assert.match(
+            p,
+            /Even if the photo shows only the face or upper body — a selfie or tight shot where the face fills most of the picture — paint the whole figure at the PROPORTIONS head-to-height ratio: a face-filling photo does NOT mean a big head, and the photo's crop or camera distance never sets the head size\./,
+          );
+          assert.match(p, /\nPROPORTIONS: [^\n]* However the photo is cropped, this ratio stays the same\.\n/);
+          // 몸 부위 말은 사진 갈래에 더하지 않는다(실제 사람 사진 옆 — 안전 검사)
+          assert.ok(!/torso|\blegs?\b/i.test(p), `${who.role}`);
+        }
+      }
+    }
+  });
+
+  it("칩·대신 그리기(사진 없음)에는 사진 구도 말이 없다", () => {
+    for (const card of [null, CARD]) {
+      const p = buildPrompt(person("mom", { callName: "엄마" }), NO_PHOTO, card);
+      assert.ok(!p.includes("However the photo is cropped"));
+      assert.ok(!p.includes("face-filling photo"));
+    }
+  });
+});
+
+describe("headRedrawRecipe — 머리 비율 다시 그리기는 사진 없이 처음 그림에서", () => {
+  /** 사장님 시험의 엄마(표 1:7, 처음 1:4.15) */
+  const MOM: HeadFix = { target: 7, verdict: "big", measured: 4.15 };
+
+  it("사진 갈래 — 참고 그림은 처음 그림(첫째) + 비율 견본(둘째)뿐, 사진·클로즈업·그림체 견본은 없다", () => {
+    const firstDraw = portraitReferences({ photo: "P", closeUp: "C", sample: "S", sibling: "B", guide: "G" });
+    assert.deepEqual(firstDraw.images, ["P", "C", "S", "G"], "처음 그리기는 예전 그대로");
+    const r = headRedrawRecipe({ first: "F", guide: "G", fix: MOM });
+    assert.deepEqual(r.references, ["F", "G"]);
+    assert.match(r.prompt, /\nFIRST image = our own earlier painting of this person — repaint THIS SAME character from the FIRST image\./);
+    assert.match(r.prompt, /\nSECOND image = PROPORTION GUIDE only — a plain grey mannequin whose head is exactly 1\/7 of its full height/);
+    assert.ok(!/THIRD|FOURTH/.test(r.prompt));
+    const hit = /\bphoto|close-up|LIKENESS|painting-style sample|another member of the same family|APPEARANCE/i.exec(r.prompt);
+    assert.equal(hit, null, `사진·카드·견본·칩 말이 없다: '${hit?.[0]}'`);
+  });
+
+  it("칩 갈래도 같은 요청 — 같은 가족 그림·그림체 견본 없이 처음 그림 + 비율 견본(아이 표 1:5)", () => {
+    const firstDraw = portraitReferences({ photo: null, sample: "S", sibling: "B", guide: "G" });
+    assert.deepEqual(firstDraw.images, ["S", "B", "G"], "처음 그리기는 예전 그대로");
+    const r = headRedrawRecipe({ first: "F", guide: "G", fix: { target: 5, verdict: "big", measured: 3.5 } });
+    assert.deepEqual(r.references, ["F", "G"]);
+    assert.match(r.prompt, /must be 1\/5 of the full height/);
+    assert.match(r.prompt, /mannequin whose head is exactly 1\/5 of its full height/);
+  });
+
+  it("비율 견본을 못 만들었으면 처음 그림 하나만 — SECOND 줄도 없다", () => {
+    const r = headRedrawRecipe({ first: "F", guide: null, fix: MOM });
+    assert.deepEqual(r.references, ["F"]);
+    assert.ok(!r.prompt.includes("SECOND"));
+    assert.ok(!r.prompt.includes("PROPORTION GUIDE"));
+  });
+
+  it("바로잡는 글 — 표 비율과 잰 비율, 같은 캐릭터 그대로(얼굴·머리·안경·피부·몸집·옷·색·붓질), 목·몸통·다리를 고르게 늘려", () => {
+    const p = headRedrawPrompt(MOM, { guide: true });
+    assert.match(p, /the FIRST image drew the head too big \(about 1\/4\.2 of the full height\)/);
+    assert.match(
+      p,
+      /The head, from the top of the hair to the chin, must be 1\/7 of the full height, from the top of the hair to the soles of the shoes — the figure is 7 heads tall, one head-height per band between the SECOND image's lines \(picture-book adult proportions\): paint a clearly smaller head in relation to the whole figure, and make the neck, torso and legs longer to match — evenly, so the figure stays naturally proportioned with a natural-length neck \(never a long, stretched neck\) — never only the legs or only the torso changed\. NOT a big head, NOT chibi, NOT super-deformed\./,
+    );
+    assert.match(
+      p,
+      /Keep exactly as in the FIRST image: the face \(face shape, eyes, eyebrows, nose, mouth\), the hairstyle, hair length, fringe and hair colour, glasses, beard or moustache only if the FIRST image has them \(never add any\), the skin tone, the age the face shows, the body build, the clothes, shoes and all their colours, and the watercolor rendering/,
+    );
+    assert.match(p, /Copy everything from it EXCEPT its head-to-height ratio — only the head size and the length of the neck, torso and legs change\./);
+    assert.ok(!p.includes("body proportions"), "'몸 비율은 베끼지 말라'처럼 몸을 새로 그려도 된다고 읽히는 말이 없다");
+    // 얼마나 — 틀·여백이 같으니 머리 높이는 처음 그림의 4.15 ÷ 7 ≈ 59%
+    assert.match(
+      p,
+      /The whole figure, from the top of the hair to the soles of the shoes, still spans the same height of the same 3:4 frame with the same margins, so the head comes out smaller in the picture than in the FIRST image — about 59% of its height there: the same face, just smaller\./,
+    );
+    assert.match(p, /never two figures side by side and never a before-and-after comparison/);
+    // 처음 그리기와 같은 자세·틀·흰 바탕·오려 내기·글자 금지
+    for (const line of [/\nPOSE: front view/, /\nFRAMING: 3:4 portrait\./, /\nBACKGROUND: one flat pure white/, /\nThe figure is cut out of the white background/, /\nNO text anywhere/]) {
+      assert.match(p, line);
+    }
+    const small = headRedrawPrompt({ target: 5, verdict: "small", measured: 6.3 }, { guide: true });
+    assert.match(small, /drew the head too small \(about 1\/6\.3 of the full height\)/);
+    assert.match(
+      small,
+      /must be 1\/5 of the full height, from the top of the hair to the soles of the shoes — the figure is 5 heads tall, one head-height per band between the SECOND image's lines: /,
+    );
+    assert.match(
+      small,
+      /paint a clearly bigger head in relation to the whole figure, and make the neck, torso and legs shorter to match — evenly, so the figure stays naturally proportioned — never only the legs or only the torso changed\.\n/,
+    );
+    assert.match(small, /the head comes out bigger in the picture than in the FIRST image — about 126% of its height there: the same face, just bigger\./);
+    assert.ok(!/NOT a big head|stretched neck/.test(small));
+  });
+
+  it("몇 등신·어른·청소년 이름 — 표 비율마다, 비율 견본이 없으면 가로줄 말도 없다", () => {
+    const teen = headRedrawPrompt({ target: 6.5, verdict: "big", measured: 4.5 }, { guide: true });
+    assert.match(teen, /the figure is 6\.5 heads tall, one head-height per band between the SECOND image's lines \(picture-book teenage proportions\): /);
+    assert.match(teen, /about 69% of its height there/);
+    for (const [target, text] of [
+      [5, "5"],
+      [5.5, "5\\.5"],
+      [6, "6"],
+    ] as const) {
+      const kid = headRedrawPrompt({ target, verdict: "big", measured: 3.5 }, { guide: true });
+      assert.match(kid, new RegExp(`the figure is ${text} heads tall, one head-height per band between the SECOND image's lines: `));
+      assert.ok(!/picture-book (adult|teenage) proportions/.test(kid), `${target}`);
+    }
+    const noGuide = headRedrawPrompt(MOM, { guide: false });
+    assert.match(noGuide, /the figure is 7 heads tall \(picture-book adult proportions\): /);
+    assert.ok(!noGuide.includes("SECOND"));
+  });
+
+  it("아이 쪽 말·가족 말이 없다 — 역할과 상관없이 같은 글(나이는 '처음 그림의 얼굴이 보여 주는 나이 그대로')", () => {
+    for (const fix of [
+      MOM,
+      { target: 5, verdict: "big", measured: 3.5 } as HeadFix,
+      { target: 6.5, verdict: "big", measured: 4.5 } as HeadFix,
+      { target: 7, verdict: "small", measured: 9 } as HeadFix,
+    ]) {
+      const p = headRedrawPrompt(fix, { guide: true });
+      const hit = CHILD_FRAMING.exec(p);
+      assert.equal(hit, null, `'${hit?.[0]}'`);
+      assert.match(p, /the age the face shows/);
+      assert.ok(!/apparent age/.test(p));
+    }
+  });
+
+  it("처음 그리기와 같은 틀 글 — 자세·틀·바탕·오려 내기·글자 금지 줄이 buildPrompt 와 글자까지 같다", () => {
+    const first = buildPrompt(person("mom", { callName: "엄마" }), PHOTO).split("\n");
+    const again = headRedrawPrompt(MOM, { guide: true }).split("\n");
+    for (const head of ["POSE:", "FRAMING:", "BACKGROUND:", "The figure is cut out", "NO text"]) {
+      const a = first.find((l) => l.startsWith(head));
+      assert.ok(a, head);
+      assert.equal(again.find((l) => l.startsWith(head)), a, head);
     }
   });
 });

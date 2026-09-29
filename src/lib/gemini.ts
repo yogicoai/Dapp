@@ -536,16 +536,24 @@ export async function generateImage(input: {
   }
 }
 
-/**
- * 완성 삽화의 인원·정체성·행동 구도를 저렴한 멀티모달 모델로 검사한다.
- * 그림체 취향은 평가하지 않고, 책의 내용과 어긋나는 명백한 오류만 실패시킨다.
- */
-export async function validateIllustration(input: {
+/** 검수에 넘기는 것 — validateIllustration 과 illustrationCheckParts 가 같이 쓴다. */
+export type IllustrationCheckInput = {
   image: GeneratedImage;
   reference?: GeneratedImage | null;
   styleReference?: GeneratedImage | null;
   /** 장소 기준 그림(인물 없는 장소판). 있으면 장소가 이것과 같은지까지 본다. */
   locationReference?: GeneratedImage | null;
+  /**
+   * 고정 가족의 **원본** 그림(우리 가족 캐릭터 portrait 참고용 JPEG) — 이 쪽에 보이는 사람만, 쪽 그림에 붙인 것 그대로.
+   * 있으면 얼굴·머리를 시트가 아니라 이 원본과 견줘, 얼굴형·눈·머리 모양·길이·앞머리·안경·나이가 확실히 다르면 떨어뜨린다
+   * (2026-09-29 사장님 "얼굴이 달라 특히"). 없으면 검수 글은 예전과 한 글자도 다르지 않다.
+   */
+  portraits?: readonly { name: string; image: GeneratedImage }[];
+  /**
+   * 인물 시트에 선 순서(왼쪽부터) — 원본 픽셀로 짠 시트만(lib/sheet-compose). 섞인 시트는 고정 가족이 먼저 서고
+   * AI 덩어리가 끝에 서서 이야기 순서와 다를 수 있다 — 검수가 칸을 이름에 잘못 짝짓지 않게. 없으면 글은 예전 그대로.
+   */
+  sheetOrder?: readonly string[] | null;
   /** 실내 장소인가(true) — 실내가 바깥에 그려지거나 바깥과 합쳐지면 떨어뜨린다. */
   indoor?: boolean | null;
   scene: string;
@@ -559,41 +567,49 @@ export async function validateIllustration(input: {
    * 궁궐 마당 그림이 그대로 통과했다(my-mu0issap 5쪽).
    */
   extraRules?: string[];
-}): Promise<IllustrationCheck> {
-  const key = process.env.GEMINI_API_KEY;
-  /*
-   * Gemini 가 한도·결제로 막힌 동안엔 검수를 건너뛴다(검사 못 함).
-   * 검수도 같은 Gemini 프로젝트라 어차피 막혀 있고, 쪽마다 몇 번씩 다시 시도하며 기다리면
-   * GPT 로 넘어가 그린 그림까지 늦어진다.
-   */
-  if (!key || geminiBlocked()) return { ok: true, checked: false, issues: "" };
+};
 
-  /*
-   * 검수 모델. gemini-2.5-flash 는 2026-08 기준 신규 사용이 막혀 404를 돌려준다 —
-   * 그동안 검사가 통째로 죽어 있었는데 옛 코드가 장애를 "통과"로 바꿔 아무도 몰랐다.
-   * 별칭(gemini-flash-latest)을 쓰면 모델이 바뀌어도 따라간다.
-   */
-  const model = process.env.GEMINI_VISION_MODEL ?? "gemini-flash-latest";
+/** 검수 붙임 그림 '몇 번째' — 쪽 1 + 시트 1 + 얼굴 최대 4 + 승인 쪽 1 + 장소 1 = 8, 넉넉히 열까지. */
+const CHECK_ORDINALS = ["FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH", "SIXTH", "SEVENTH", "EIGHTH", "NINTH", "TENTH"];
+
+/**
+ * 검수 요청의 parts(붙임 그림 + 글) — 부르지 않고 만들기만 한다(시험용으로 떼어 냄, gemini.test.ts).
+ * 붙이는 순서: 검사할 쪽 → 인물 시트 → 고정 가족 원본(있으면) → 승인 쪽 → 장소 시트.
+ */
+export function illustrationCheckParts(input: IllustrationCheckInput): unknown[] {
   const expected = input.cast.length;
   const cast = input.cast.map((c, i) => `${i + 1}. ${c.name}: ${c.description}`).join("\n");
+  const portraits = input.portraits ?? [];
   // 붙이는 그림의 순서와 역할을 함께 적는다 — 어느 것이 몇 번째인지 틀리면 검사가 엉뚱해진다.
-  const ordinal = ["FIRST", "SECOND", "THIRD", "FOURTH"];
+  const ordinal = CHECK_ORDINALS;
   const attached: { image: GeneratedImage; role: string }[] = [
     { image: input.image, role: "the generated page to check" },
   ];
   if (input.reference) attached.push({ image: input.reference, role: "the whole-book character reference sheet" });
+  for (const p of portraits) {
+    attached.push({
+      image: p.image,
+      role: `the ORIGINAL approved portrait of "${p.name}" — the identity reference for ${p.name}'s face and hair (ignore its white background, standing pose and clothing)`,
+    });
+  }
   if (input.styleReference) {
     attached.push({ image: input.styleReference, role: "a previously approved page from this same book — the authoritative rendering-style reference" });
   }
   if (input.locationReference) {
     attached.push({ image: input.locationReference, role: "the LOCATION reference sheet for this page's place (the place itself, with no people) — its architecture, ground, landmark and colours are mandatory" });
   }
-  const parts: unknown[] = [
+  return [
     ...attached.map((a) => ({ inlineData: { mimeType: a.image.mimeType, data: a.image.data } })),
     {
       text: [
         "You are checking a generated children's-book page for factual illustration errors.",
         attached.map((a, i) => `The ${ordinal[i]} attached image is ${a.role}.`).join(" "),
+        // 빈 칸("")을 넣지 않는다 — 이 목록은 거르지 않고 이어 붙여, 빈 칸 하나가 예전 요청에 빈 줄을 더한다.
+        ...(input.reference && input.sheetOrder?.length
+          ? [
+              `The character reference sheet shows, left to right: ${input.sheetOrder.map((n, i) => `${i + 1}. ${n}`).join(", ")} (each column: full figure on top, close-up below). Match each person on the page to their own column by this order.`,
+            ]
+          : []),
         `Scene instruction: ${input.scene}`,
         input.expectedLocation
           ? `MANDATORY EXPECTED LOCATION: ${input.expectedLocation}. The generated page must visibly depict this exact kind of place.`
@@ -613,6 +629,15 @@ export async function validateIllustration(input: {
           ? "A LOCATION reference sheet is attached: the page must clearly be the same place as that sheet — same kind of ground, same big landmark, same wall/floor colours and layout. A different camera angle is fine; a different place, a different landmark or different colours is a FAIL."
           : "",
         "FAIL for wrong number of people, an extra/background person, a duplicated person, a missing expected person, identities/outfits swapped, or any visible change from the character reference in face construction, hair shape/colour, clothing design/colour, shoes or accessories.",
+        /*
+         * 고정 가족 얼굴 — 원본 그림과 견준다(2026-09-29). '확실히' 다를 때만: 자세·표정·각도·옷·붓 질감으로는 떨어뜨리지 않는다
+         * (떨어지면 권당 다시 그리기 예산을 쓴다 — 헛떨어짐이 예산을 먹으면 정작 틀린 쪽을 못 고친다).
+         */
+        ...(portraits.length
+          ? [
+              `FIXED FAMILY FACES — an approved ORIGINAL portrait is attached for: ${portraits.map((p) => p.name).join(", ")}. FAIL if any of them is visible with a face or hair that clearly differs from their portrait: a different face shape or eye shape, a different hairstyle, hair length, fringe or parting, a different hair colour or straight/curly texture, glasses or a beard added or removed, or a clearly different apparent age (looks older or younger). Do NOT fail for pose, expression, head angle or a mirrored/turned view (a parting or fringe that falls on the other side because the head is turned), lighting, size, brush texture, the portrait's white background or standing pose, clothing (clothing is judged against the reference sheet), or hair that is covered, tucked, tied up or wet because the scene gives them a hat, hood, helmet, scarf, swim cap, bath or bed — judge only the hair that is visible. If a face is too small, hidden or turned away to judge, do not fail on it. When you fail on this, name the person and the exact feature to fix.`,
+            ]
+          : []),
         "FAIL for any rendering-style drift from the references: 3D/clay to flat 2D, 2D to 3D, watercolor to vector/anime, different line quality, texture, shading, saturation or finish. Treat the approved-page style as mandatory, not optional.",
         "FAIL if a named character performs or occupies the clearly wrong action or place.",
         ...(input.extraRules ?? []),
@@ -622,10 +647,32 @@ export async function validateIllustration(input: {
         "FAIL if the characters are split across a barrier: one indoors and another outdoors, one behind glass looking in, or separated by a window frame, doorway, fence or railing — unless the scene explicitly says they are apart. They must share one space.",
         "Also FAIL if the artwork is presented as a page, print, card, panel, framed picture or smaller image inside the canvas; if any white/unpainted margin, border, gutter, strip, rounded-corner frame or letterbox is visible at ANY outer edge; or if the illustration does not fill the canvas edge to edge.",
         "Do not fail for harmless camera-angle or minor pose differences, but location identity, character identity, readable text and rendering medium are never harmless.",
-        "Before replying, check in this order: (1) no writing, (2) exact people, (3) exact named location, (4) character match, (5) rendering-style match, (6) everyone in one shared space, (7) the main-child and seat-belt rules above. Reply PASS only if all seven pass. Otherwise reply FAIL: followed by a short concrete correction instruction in English.",
+        `Before replying, check in this order: (1) no writing, (2) exact people, (3) exact named location, (4) character match${portraits.length ? " (fixed family faces against their attached portraits)" : ""}, (5) rendering-style match, (6) everyone in one shared space, (7) the main-child and seat-belt rules above. Reply PASS only if all seven pass. Otherwise reply FAIL: followed by a short concrete correction instruction in English.`,
       ].join("\n"),
     },
   ];
+}
+
+/**
+ * 완성 삽화의 인원·정체성·행동 구도를 저렴한 멀티모달 모델로 검사한다.
+ * 그림체 취향은 평가하지 않고, 책의 내용과 어긋나는 명백한 오류만 실패시킨다.
+ */
+export async function validateIllustration(input: IllustrationCheckInput): Promise<IllustrationCheck> {
+  const key = process.env.GEMINI_API_KEY;
+  /*
+   * Gemini 가 한도·결제로 막힌 동안엔 검수를 건너뛴다(검사 못 함).
+   * 검수도 같은 Gemini 프로젝트라 어차피 막혀 있고, 쪽마다 몇 번씩 다시 시도하며 기다리면
+   * GPT 로 넘어가 그린 그림까지 늦어진다.
+   */
+  if (!key || geminiBlocked()) return { ok: true, checked: false, issues: "" };
+
+  /*
+   * 검수 모델. gemini-2.5-flash 는 2026-08 기준 신규 사용이 막혀 404를 돌려준다 —
+   * 그동안 검사가 통째로 죽어 있었는데 옛 코드가 장애를 "통과"로 바꿔 아무도 몰랐다.
+   * 별칭(gemini-flash-latest)을 쓰면 모델이 바뀌어도 따라간다.
+   */
+  const model = process.env.GEMINI_VISION_MODEL ?? "gemini-flash-latest";
+  const parts = illustrationCheckParts(input);
 
   /*
    * 검사도 다시 걸어 본다. 그림 그리기(generateImage)에는 5회 재시도가 있는데 검사는

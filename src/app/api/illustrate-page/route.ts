@@ -2,8 +2,15 @@ import { NextResponse } from "next/server";
 import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
 import { pickLocationDetail } from "@/lib/scene-edit";
-import { checkRuleLines, heroLockLines, pageVehicle, readHero, safetyRuleLines } from "@/lib/illustration-rules";
-import { isIndoorPlace, locationKeyOf } from "@/lib/story-quality";
+import {
+  checkRuleLines,
+  heroLockLines,
+  pageVehicle,
+  readHero,
+  safetyRuleLines,
+  vehicleInteriorLines,
+} from "@/lib/illustration-rules";
+import { isIndoorPlace, locationKeyOf, placeVehicleKind } from "@/lib/story-quality";
 import {
   GeminiError,
   detectBlankCanvasBorder,
@@ -13,6 +20,18 @@ import {
   toDataUrl,
   validateIllustration,
 } from "@/lib/gemini";
+import { familyFolderOf, familyUrlPrefix, fetchFamilyRefCached } from "@/lib/family-ref";
+import {
+  arrangePageReferences,
+  fixedCheckDescription,
+  fixedFamilyFaceLines,
+  maxPagePortraits,
+  pickPagePortraits,
+  portraitBindingLines,
+  readSheetOrder,
+  refOrdinal,
+  sheetOrderLine,
+} from "@/lib/page-refs";
 
 /*
  * 그리는 데 20~30초가 걸린다(검사에 걸려 다시 그리면 그 두 배).
@@ -67,6 +86,15 @@ export async function POST(request: Request) {
     locationSheet?: unknown;
     /** 주인공 이름·성별·생김새 — 쪽마다 "주인공은 남자아이"를 못 박는다. 옛 책은 없다. */
     hero?: unknown;
+    /**
+     * 고정 가족 원본 그림 [{ name, ref, memberId }] — 이 쪽에 보이는 고정 인물의 원본을 참고로 함께 붙인다(2026-09-29~).
+     * 시트와 같은 주소 규칙(이 회원 폴더의 참고용 JPEG 만, lib/page-refs pickPagePortraits). 옛 책·가족 없는 책은 없다.
+     */
+    portraits?: unknown;
+    /** 인물 시트에 선 순서(왼쪽부터 이름) — 원본 픽셀로 짠 시트는 이야기 순서와 다를 수 있다. 옛 책은 없다. */
+    sheetOrder?: unknown;
+    /** 같은 장소 줄의 다른 쪽이 어린이 통학 버스다 — 부르는 쪽이 책 전체로 정한다(lib/illustration-rules schoolBusPlaceKeys). */
+    schoolBusPlace?: unknown;
   };
 
   // 어느 화면에서 볼 동화인가 — 핸드폰은 세로(3:4), 태블릿은 가로(4:3)로 그린다.
@@ -156,6 +184,8 @@ export async function POST(request: Request) {
     sceneBody,
     storyText,
     bookContext: locationDetail,
+    // 한 번 탄 통학 버스는 내릴 때까지 같은 버스 — 어린이집 말이 앞 쪽에만 있어도 이 쪽 벨트를 같게 그린다.
+    schoolBusPlace: input.schoolBusPlace === true,
   });
   /*
    * 본문은 "버스에서 내려"인데 장소 줄이 버스 실내면, 그 장소 줄은 옛 판정이 잘못 박아 둔 것이다.
@@ -198,19 +228,18 @@ export async function POST(request: Request) {
          */
         pickLocationDetail(locationDetail, "")
       : locationDetail;
-  /** 실내(true)·실외(false)·모름(null) — 배경 지시와 품질검사가 이걸 본다. */
-  const indoor = currentLocation ? isIndoorPlace(currentLocation.name, currentLocation.description) : null;
   /*
-   * 붙이는 그림의 순서 — 인물 시트 → 장소 시트 → 승인 쪽. 프롬프트의 각 문장이
-   * "몇 번째 그림"을 말하는지 여기서 정한다. 셋이 다 있으면 '첨부된 그림'이라는 말만으로는
-   * 어느 것인지 모델이 헷갈린다.
+   * 장소 줄 자체가 탈것 안(버스 안·아빠 차)이고 이 쪽이 정말 그 안이면 '건물 안' 줄을 주지 않는다 — vehicleInteriorLines.
+   * 지붕 없는 2층 버스 위층은 바깥이라 뺀다.
    */
-  const attachedOrder = [
-    sheet ? "sheet" : "",
-    locationSheet ? "location" : "",
-    usedStyleReference ? "style" : "",
-  ].filter(Boolean);
-  const nth = (kind: string) => ["FIRST", "SECOND", "THIRD"][attachedOrder.indexOf(kind)] ?? "attached";
+  const vehicleRoom =
+    currentLocation && vehicleInfo.vehicle && !vehicleInfo.openDeck && placeVehicleKind(currentLocation.name)
+      ? vehicleInfo.vehicle
+      : null;
+  /** 실내(true)·실외(false)·모름(null) — 배경 지시와 품질검사가 이걸 본다. 탈것 안은 건물 실내가 아니라 null. */
+  const indoor =
+    currentLocation && !vehicleRoom ? isIndoorPlace(currentLocation.name, currentLocation.description) : null;
+  // 붙이는 그림의 순서(nth)는 아래 고정 얼굴을 고른 뒤에 정한다(refs — lib/page-refs arrangePageReferences).
 
   const mood = typeof input.mood === "string" ? input.mood.trim().slice(0, 80) : "";
   const qualityCorrection =
@@ -272,6 +301,47 @@ export async function POST(request: Request) {
    * 설정 칩을 바꾸고 '나중에'를 눌렀거나 사진으로 그린 그림이면 글과 그림이 다르고, 앞쪽에 크게 적힌 글이 시트를 이긴다.
    */
   const heroFixed = Boolean(hero && sheet && cast.some((c) => c.name === hero.name && c.fixed));
+
+  /*
+   * 고정 가족 원본 그림(2026-09-29 사장님 "얼굴이 달라 특히") — 시트만 보고 그리면 얼굴이 한 번 더 흐른다.
+   * 이 쪽에 **보이는** 고정 인물의 원본(가족 그림 참고용 JPEG)을 함께 붙인다. 주소는 이 회원 폴더의 것만, 수채화 책만,
+   * 모델에 따라 몇 장까지(lib/page-refs pickPagePortraits · maxPagePortraits). 받은 그림은 잠깐 기억해 쪽마다 다시 받지
+   * 않는다(lib/family-ref fetchFamilyRefCached). 못 받은 사람은 예전처럼 시트만 — 쪽 그림은 그대로 그린다.
+   * 로그에는 수만 남긴다(주소에 회원 uid 가 들어 있다).
+   */
+  const pickedPortraits = sheet
+    ? pickPagePortraits(input.portraits, cast, fixedOnPage, familyUrlPrefix(process.env, familyFolderOf(caller.uid)), {
+        max: maxPagePortraits(process.env),
+        watercolor: knownStyle && style.id === "watercolor",
+      })
+    : { portraits: [], rejected: 0, offPage: 0 };
+  const portraitImages = await Promise.all(pickedPortraits.portraits.map((p) => fetchFamilyRefCached(p.url)));
+  const portraits = pickedPortraits.portraits.flatMap((p, i) => {
+    const image = portraitImages[i];
+    return image ? [{ name: p.name, image }] : [];
+  });
+  if (pickedPortraits.rejected > 0 || portraits.length < pickedPortraits.portraits.length) {
+    console.info("[illustrate-page] 고정 얼굴", {
+      used: portraits.length,
+      rejected: pickedPortraits.rejected,
+      unreachable: pickedPortraits.portraits.length - portraits.length,
+    });
+  }
+  /** 이 쪽에서 원본 그림이 붙은 사람 — 없으면(옛 책·가족 없는 책) 아래 글은 예전과 한 글자도 다르지 않다. */
+  const portraitNames = new Set(portraits.map((p) => p.name));
+  /** 인물 시트에 선 순서(왼쪽부터) — 원본 픽셀로 짠 시트만 보낸다. 옛 책은 없다. */
+  const sheetOrder = sheet ? readSheetOrder(input.sheetOrder, cast) : null;
+  /** 원본 픽셀로 짠 시트인가 — 순서가 온 시트만 그렇다. 그 시트의 고정 가족 옷은 가족 그림의 옷이다. */
+  const composedSheet = Boolean(sheetOrder);
+  /** 짠 시트에서 AI 가 따로 그려 붙인 사람(고정 안 함) — 키가 시트에서 제 비율이 아니다(lib/page-refs sheetOrderLine). */
+  const notToScale = sheetOrder ? sheetOrder.filter((n) => !cast.some((c) => c.name === n && c.fixed)) : [];
+  /*
+   * 붙이는 그림의 순서 — 인물 시트 → 고정 얼굴 → 장소 시트 → 승인 쪽(lib/page-refs). 프롬프트의 각 문장이
+   * "몇 번째 그림"을 말하는지 여기서 정한다. 넷이 다 있으면 '첨부된 그림'이라는 말만으로는 어느 것인지 모델이 헷갈린다.
+   * 얼굴을 앞에 둔다(모델은 앞 그림을 더 세게 따른다). 고정 얼굴이 없으면 예전 순서 그대로.
+   */
+  const refs = arrangePageReferences({ sheet, portraits, location: locationSheet, style: usedStyleReference });
+  const nth = (kind: string) => refOrdinal(refs.order, kind);
 
   const prompt = [
     knownStyle
@@ -354,7 +424,9 @@ export async function POST(request: Request) {
      * 그대로 들어가면 마트 진열대가 보도 위에 나오고 뒤에 아파트가 섰다(실제로 났다).
      * 실내면 안쪽만 그리라고 하고 바깥 목록은 뺀다.
      */
-    indoor === true
+    vehicleRoom
+      ? vehicleInteriorLines(vehicleRoom, currentLocation?.name ?? "", vehicleInfo.schoolBus).join("\n")
+      : indoor === true
       ? [
           `INDOOR SCENE — "${currentLocation?.name ?? "this place"}" is INSIDE a building. Draw only the interior: its floor, walls, ceiling or ceiling lights, shelves, furniture and fixtures.`,
           "No street, no sidewalk, no shop front, no apartment buildings, no sky, no trees and no outdoor ground may appear — except, at most, as a small view through a window. Never place indoor furniture or shelves outdoors, and never combine the inside and the outside of a building in one picture.",
@@ -369,8 +441,8 @@ export async function POST(request: Request) {
      * 또 "소파에서 벌떡 일어났어요"를 소파 **위에 올라선** 모습으로 그렸다.
      * 네 살 아이가 보고 그대로 따라 하는 그림이라, 이건 품질이 아니라 안전 문제다.
      *
-     * 벨트·카시트·차 안 좌석 문장은 승용차·택시 안일 때만 붙는다 — 어느 줄이 언제 붙는지는
-     * safetyRuleLines 와 그 시험에 있다.
+     * 벨트·카시트·차 안 좌석 문장은 승용차·택시 안일 때만 붙는다(어린이 통학 버스는 아이용 벨트만) — 어느 줄이
+     * 언제 붙는지는 safetyRuleLines 와 그 시험에 있다.
      */
     safetyRuleLines(vehicleInfo, indoor).join("\n"),
     "Do NOT add traditional Korean architecture that the scene did not ask for — no tiled-roof pavilion, no hanok, no thatched roof, no wooden gate, no paper-screen door, no stone jar terrace. If the location line does not name such a building, none appears in the picture.",
@@ -429,6 +501,9 @@ export async function POST(request: Request) {
     sheet
       ? [
           `The ${nth("sheet")} attached image is the CHARACTER REFERENCE SHEET. Use it ONLY to know what each character looks like — face, hair, clothing, colors.`,
+          // 누가 몇째 칸인지 — 원본 픽셀로 짠 시트만 보낸다(이야기 순서와 다를 수 있다). 옛 책은 줄이 없다.
+          // 섞인 시트면 AI 가 따로 그린 사람은 키가 제 비율이 아니라고 덧붙인다(친구가 엄마만큼 크게 서 있다).
+          ...(sheetOrder ? [sheetOrderLine(sheetOrder, notToScale)] : []),
           "Do NOT copy the sheet's layout. The sheet lines characters up side by side on a blank background; this page is a real scene with its own composition.",
           "Each character exists exactly ONCE in this world. NEVER draw the same character twice in one picture — no twins, no repeated faces, no duplicated family members, no mirrored copies.",
           // 시트의 '정면 차렷 자세'까지 베껴 와서, 장면 한가운데 인물만 오려 붙인 것처럼
@@ -440,6 +515,8 @@ export async function POST(request: Request) {
           "Characters must physically belong to the scene: touching, holding, standing on, or reacting to what is around them, with an expression that matches the moment.",
         ].join("\n")
       : "",
+    // 고정 가족 원본 그림 — 몇 번째 그림이 누구 얼굴인지(lib/page-refs). 시트 바로 뒤에 붙였으니 글도 시트 바로 뒤에.
+    portraits.length ? portraitBindingLines(refs.order, [...portraitNames]).join("\n") : "",
     usedStyleReference
       ? [
           `The ${nth("style")} attached image is a previously APPROVED page from this same book.`,
@@ -470,14 +547,14 @@ export async function POST(request: Request) {
            * 그 그림과 어긋날 수 있다(할머니·형제·친구 생김새는 이야기에 안 간다). 얼굴·머리는 시트를 따른다.
            * 옷은 다른 사람과 같이 시트대로 — 아래 '옷을 바꾸지 말라'(CHARACTER CONSISTENCY)와 부딪치지 않게.
            */
-          sheet && fixedOnPage.length
-            ? `FIXED FAMILY FACES: ${fixedOnPage.join(", ")} — face, hairstyle, hair length, hair colour and texture, glasses and body come ONLY from the reference sheet; if their description above words it differently, follow the sheet. Their outfit stays exactly as on the sheet, like everyone else's — change it only where this page's scene text itself dresses them differently.`
-            : "",
+          // 원본 그림이 실제로 붙은 사람만 '붙은 원본'을 말하고, 짠 시트면 설명 글의 옷을 버리라고 한다(lib/page-refs).
+          // 원본도 짠 시트도 없으면(옛 책) 예전 한 줄 그대로.
+          sheet && fixedOnPage.length ? fixedFamilyFaceLines(fixedOnPage, portraitNames, composedSheet).join("\n") : "",
           sceneCast.length > 1
             ? [
                 "These are DIFFERENT people. They have different hair and different clothing colours — keep those differences obvious and never give one character another character's hair or outfit.",
                 "Do not make the friend, sibling or classmate look like a copy of the main child. If the descriptions read alike, differentiate them clearly in the drawing.",
-                "The reference sheet is the ONLY source of each face. Copy each named character's face, hair shape and hair length from the sheet exactly as drawn there — same eyes, same nose, same mouth, same face shape, same fringe. Never invent a new face for someone who is on the sheet, and never redesign a face because this page shows a different angle or mood.",
+                `${portraits.length ? "The reference sheet (and, for a fixed family member, their attached original portrait) is" : "The reference sheet is"} the ONLY source of each face. Copy each named character's face, hair shape and hair length from the sheet exactly as drawn there — same eyes, same nose, same mouth, same face shape, same fringe. Never invent a new face for someone who is on the sheet, and never redesign a face because this page shows a different angle or mood.`,
                 "These are Korean children. Every child has black or dark brown hair. Never draw blonde, golden, yellow, red, ginger or silver hair, whatever the wording of a description suggests.",
                 "Keep each character's sex as the sheet shows it. Do not give a boy long hair or a bob, and do not turn a girl into a boy, from one page to the next.",
               ].join("\n")
@@ -566,11 +643,14 @@ export async function POST(request: Request) {
 
   try {
     // 비용 상한: 페이지당 이미지 생성은 정확히 한 번만 호출한다.
-    // 참조 순서 = 프롬프트가 말하는 순서: 인물 시트 → 장소 시트 → (같은 장소의) 승인 쪽.
+    // 참조 순서 = 프롬프트가 말하는 순서: 인물 시트 → 고정 얼굴 → 장소 시트 → (같은 장소의) 승인 쪽(refs).
     let image = await generateImage({
       prompt,
-      references: [sheet, locationSheet, usedStyleReference].filter(Boolean) as NonNullable<typeof sheet>[],
+      references: refs.images,
       aspectRatio,
+      // 원본 얼굴을 붙였으면 그림 없는 답(안전 검사 멈춤)은 두 번까지만 — 60초를 다 쓰기 전에 알리면
+      // 부르는 쪽이 얼굴 없이 한 번 더 그린다(아래 422 portrait). 인물 시트(api/character-sheet)와 같은 방식.
+      ...(portraits.length ? { noImageAttempts: 2 } : {}),
     });
 
     // 흰 테두리는 재생성하지 않고 로컬 이미지 처리로 잘라내므로 AI 토큰이 들지 않는다.
@@ -587,6 +667,10 @@ export async function POST(request: Request) {
     const aiCheck = await validateIllustration({
       image,
       reference: sheet,
+      // 고정 가족 원본 — 쪽 그림에 붙인 것 그대로(다시 받지 않는다). 얼굴·머리를 이것과 견준다(lib/gemini).
+      portraits,
+      // 짠 시트의 칸 순서 — 섞인 시트는 이야기 순서와 달라, 검수가 칸을 이름에 잘못 짝짓지 않게. 옛 책은 없다.
+      sheetOrder,
       styleReference: usedStyleReference,
       locationReference: locationSheet,
       indoor,
@@ -595,12 +679,11 @@ export async function POST(request: Request) {
         ? `${currentLocation.name}: ${currentLocation.description}`
         : "",
       // 고정 얼굴은 설명 글이 아니라 시트와 견주게 한다 — 글과 다르다고 맞게 그린 쪽을 떨어뜨리지 않게.
+      // 원본 그림이 붙은 사람은 얼굴·머리는 원본, 옷은 시트와 — 설명 글의 옷 낱말로 맞게 그린 쪽을 떨어뜨리지 않게.
+      // 짠 시트면 원본이 안 붙은 고정 가족도 옷은 시트와(시트의 옷 = 가족 그림의 옷). lib/page-refs fixedCheckDescription.
       cast: sceneCast.map((c) =>
         c.fixed && sheet
-          ? {
-              name: c.name,
-              description: `${c.description} (fixed family face — judge face and hair against the reference sheet, not this text)`.trim(),
-            }
+          ? { name: c.name, description: fixedCheckDescription(c.description, portraitNames.has(c.name), composedSheet) }
           : { name: c.name, description: c.description },
       ),
       stylePrompt: style.prompt,
@@ -637,6 +720,18 @@ export async function POST(request: Request) {
       ...(check.ok ? {} : { qualityWarning: check.issues, qualityIssue: textIssue ? "text" : borderLeft ? "border" : "other" }),
     });
   } catch (e) {
+    /*
+     * 원본 얼굴을 붙인 쪽을 그림 모델이 거절했다 — 안전 검사(422)·그림 없는 답(noImage)·그림을 못 읽음(400).
+     * 422(portrait)로 알리면 부르는 쪽(만들기 화면·한 쪽 다시 그리기)이 얼굴 없이 한 번 더 부른다. 여기서 바로 다시
+     * 그리지 않는다: 한 요청에서 두 번 그리고 검수까지 하면 60초 제한을 넘길 수 있다.
+     */
+    if (portraits.length > 0 && e instanceof GeminiError && (e.status === 422 || e.status === 400 || e.noImage)) {
+      console.warn("[illustrate-page] 원본 얼굴 쪽 거절:", e.status ?? "-", e.noImage ?? "");
+      return NextResponse.json(
+        { error: "가족 얼굴 그림으로 이 쪽을 그리지 못했어요.", code: "portrait" },
+        { status: 422 },
+      );
+    }
     if (e instanceof GeminiError) {
       // 로그에 남겨야 "왜 그림이 안 나오지?"를 나중에 추적할 수 있다.
       // 특히 429(몰림·할당량)는 화면만 봐서는 다른 실패와 구분되지 않는다.

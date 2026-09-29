@@ -11,6 +11,7 @@ import {
   pickShowcaseBooks,
   uploadLine,
   usualDrawSec,
+  usualWaitSec,
   USUAL_WAIT,
   waitLine,
 } from "./waiting.ts";
@@ -81,12 +82,18 @@ test("drawProgressLine — 첫 쪽 전엔 준비 중이라고 말한다", () => 
 
 test("noticeFor — 기다리던 일이 끝났을 때만 알린다", async (t) => {
   const s = (step: string, busy = false, saveFailed = false) => ({ step, busy, saveFailed });
-  await t.test("대본이 나옴", () => {
-    assert.equal(noticeFor(s("outline", true), s("story")), "script");
+  await t.test("대본이 나옴 — 성우 화면의 '대본 만들기'에서 기다리다 대본 화면으로", () => {
+    assert.equal(noticeFor(s("style", true), s("story")), "script");
+  });
+  await t.test("대본을 못 받고 성우 화면에 남으면 알리지 않는다", () => {
+    assert.equal(noticeFor(s("style", true), s("style")), null);
+  });
+  await t.test("대본 화면에서 다시 쓰기·새로 짓기가 끝난 것은 '대본이 나왔어요'가 아니다(화면 그대로)", () => {
+    assert.equal(noticeFor(s("story", true), s("story")), null);
   });
   await t.test("임시저장을 되살려 대본 화면으로 온 것은 알리지 않는다", () => {
     assert.equal(noticeFor(s("theme"), s("story")), null);
-    assert.equal(noticeFor(s("outline", false), s("story")), null);
+    assert.equal(noticeFor(s("style", false), s("story")), null);
   });
   await t.test("그림을 다 그리고 책장에 넣음", () => {
     assert.equal(noticeFor(s("illustrate"), s("done")), "done");
@@ -98,9 +105,6 @@ test("noticeFor — 기다리던 일이 끝났을 때만 알린다", async (t) =
   });
   await t.test("그리다 인물 시트에서 멈춰 대본으로 돌아온 것은 대본 알림이 아니다", () => {
     assert.equal(noticeFor(s("illustrate"), s("story")), null);
-  });
-  await t.test("줄거리가 나온 것(짧은 기다림)은 알리지 않는다", () => {
-    assert.equal(noticeFor(s("style", true), s("outline")), null);
   });
 });
 
@@ -159,9 +163,32 @@ test("drawProgressLine — 되살린 쪽은 방금 그린 쪽으로 세지 않�
 });
 
 test("busyWaitText — 무엇을 기다리는지로 문구를 고른다", () => {
-  // 줄거리 다시 짓기(줄거리 화면에서 눌러도)는 대본이라고 하지 않는다.
-  assert.deepEqual(busyWaitText("outline"), { headline: "이야기를 짓고 있어요…", line: "outline", showcase: false });
-  assert.deepEqual(busyWaitText("story"), { headline: "대본을 쓰고 있어요…", line: "story", showcase: true });
+  assert.deepEqual(busyWaitText("story"), {
+    headline: "대본을 다시 쓰고 있어요…",
+    line: "story",
+    showcase: true,
+  });
   assert.equal(busyWaitText("save").line, null);
   assert.equal(busyWaitText("save").showcase, false);
+});
+
+test("busyWaitText — 대본 만들기는 한 번 기다림 안에서 큰 문구만 줄거리 → 대본으로 바꾼다", () => {
+  assert.deepEqual(busyWaitText("script", "outline"), {
+    headline: "줄거리를 짓고 있어요…",
+    line: "script",
+    showcase: true,
+  });
+  assert.deepEqual(busyWaitText("script", "story"), {
+    headline: "대본을 쓰고 있어요…",
+    line: "script",
+    showcase: true,
+  });
+  // 걸음을 안 주면 첫 걸음(줄거리)부터
+  assert.equal(busyWaitText("script").headline, "줄거리를 짓고 있어요…");
+});
+
+test("waitLine — 대본 만들기(줄거리+대본)는 보통 2분 30초", () => {
+  assert.equal(usualWaitSec("script"), USUAL_WAIT.outlineSec + USUAL_WAIT.storySec);
+  assert.equal(waitLine("script", 40_000), "40초 지났어요 · 보통 2분 30초쯤 걸려요");
+  assert.equal(waitLine("script", 151_000), "2분 31초 지났어요 · 조금 더 걸리고 있어요");
 });

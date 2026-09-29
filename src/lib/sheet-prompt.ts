@@ -121,8 +121,23 @@ export function characterSheetPrompt(input: {
   portraits?: readonly string[];
   /** 고정 얼굴이 붙은 부모 생김새 줄 이름('엄마'·'아빠') — fixedAdultNotes(붙은 얼굴의 사람 id) */
   fixedAdults?: readonly string[];
+  /**
+   * 원본 픽셀로 짜는 시트(lib/sheet-compose)의 '나머지 사람들만' 그리기 — 고정 가족은 원본 그림이 따로 서니 그리지 않는다.
+   * characters 는 그 나머지 사람들만. 주인공이 고정 가족이면 heroOnSheet=false — '첫 사람이 주인공' 줄과 아이 생김새 줄을 뺀다.
+   * alreadyDrawn = 따로 서는 고정 가족(이름·설명) — 그리지 말고, 그들과 머리·옷 색이 확실히 다르게.
+   *   outfit = 그 사람 가족 그림에서 잰 윗옷 색(lib/sheet-compose outfitColour) — 설명 글의 옷은 클로드가 정한 것이라
+   *   그림의 옷과 다를 수 있다. 있으면 설명 글의 옷보다 이것을 믿으라고 적는다(친구가 가족과 같은 색을 입지 않게).
+   * 둘 다 안 주면 프롬프트는 예전과 한 글자도 다르지 않다(시험이 못 박는다).
+   */
+  heroOnSheet?: boolean;
+  alreadyDrawn?: readonly (SheetCharacter & { outfit?: string | null })[];
 }): string {
-  const { stylePrompt, characters, hero, looks, adultLooks, styleSample, drawing } = input;
+  const { stylePrompt, characters, hero, styleSample, drawing } = input;
+  const heroOnSheet = input.heroOnSheet ?? true;
+  // 주인공이 이 그림에 없으면 아이 생김새 줄도 없다 — 다른 아이에게 주인공 머리가 옮겨 가지 않게.
+  const looks = heroOnSheet ? input.looks : "";
+  const adultLooks = input.adultLooks;
+  const alreadyDrawn = input.alreadyDrawn ?? [];
   const portraits = input.portraits ?? [];
   const fixed = new Set(portraits);
   const heroFixed = characters.length > 0 && fixed.has(characters[0].name);
@@ -174,7 +189,9 @@ export function characterSheetPrompt(input: {
         ].join("\n")
       : "",
     // 주인공(첫 번째 인물)은 나이·성별을 못박고, 생김새는 부모가 고른 특징을 그대로 따른다.
-    `The FIRST character is the child hero: ${hero}. Draw a child of exactly that age — a small child's proportions and face, never older.`,
+    heroOnSheet
+      ? `The FIRST character is the child hero: ${hero}. Draw a child of exactly that age — a small child's proportions and face, never older.`
+      : "",
     looks
       ? heroFixed
         ? `The hero's traits chosen by the parent: ${looks}. The hero's attached portrait already shows who the hero is — draw the hero exactly like the portrait, and where a trait here disagrees with the portrait, follow the portrait. Hair texture is a hard identity trait: keep it exactly as the portrait shows — straight hair stays completely straight with no curls or perm volume; wave, natural curls and permed curls stay as they are.`
@@ -202,6 +219,20 @@ export function characterSheetPrompt(input: {
      */
     `Draw EXACTLY ${characters.length} character${characters.length > 1 ? "s" : ""}, one per person listed above, arranged left to right in that order, evenly spaced and clearly separated.`,
     "Each listed character appears exactly ONCE. Never repeat a character, never draw twins, never add anyone who is not on the list.",
+    /*
+     * 원본 픽셀로 짜는 시트의 나머지 그림 — 고정 가족은 원본 그림이 이 그림 옆에 따로 선다(lib/sheet-compose).
+     * 'EXACTLY N명' 줄 **뒤에** 둔다 — 앞에 두면 "listed above"가 이 사람들까지 세는 것으로 읽힌다.
+     */
+    alreadyDrawn.length
+      ? [
+          "OTHER PEOPLE IN THIS BOOK — ALREADY PAINTED separately; their finished pictures will be placed beside yours. They are NOT part of this picture: never draw them, not even in the background.",
+          ...alreadyDrawn.map(
+            (c) =>
+              `- ${c.name}${c.description ? `: ${c.description}` : ""}${c.outfit ? ` — in their finished picture they wear mostly ${c.outfit}; this overrides any clothing named here` : ""}`,
+          ),
+          "Make every character you draw clearly different from them in hairstyle and clothing colour, so no one can be mistaken for them.",
+        ].join("\n")
+      : "",
     /*
      * 어른에게 안경·수염을 임의로 붙이지 않는다.
      *

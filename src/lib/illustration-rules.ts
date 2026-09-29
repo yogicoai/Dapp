@@ -14,9 +14,13 @@
 import {
   isIndoorPlace,
   knownPlaceFamily,
+  locationKeyOf,
   mentionsNotInCar,
   mentionsVehicle,
+  namesSchoolShuttle,
   placeVehicleKind,
+  schoolShuttleName,
+  schoolShuttleRide,
   vehicleState,
   type VehicleKind,
 } from "./story-quality.ts";
@@ -75,8 +79,16 @@ export function heroFromStory(
 }
 
 export type PageVehicle = {
-  /** 이 쪽이 어느 탈것 안인가 — 승용차·택시(car) / 버스·기차·지하철(transit) / 아님(null). */
+  /**
+   * 이 쪽이 어느 탈것 안인가 — 승용차·택시(car) / 버스·기차·지하철(transit) / 아님(null).
+   * 어린이집 차·학원 차도 통학 버스(schoolBus)면 transit 이다 — 가족 승용차 좌석 규칙(운전석 엄마 아빠)이 붙지 않게.
+   */
   vehicle: VehicleKind | null;
+  /**
+   * 어린이 통학 버스(어린이집·유치원·학원 버스, 등·하원 차) 안이다 — 아이들이 벨트를 맨 모습으로 그린다.
+   * 세림이법으로 통학 버스의 아이는 벨트를 맨다(2026-09-29 사장님 "조아"). 시내버스·기차·지하철은 그대로 벨트 없음.
+   */
+  schoolBus: boolean;
   /** 본문이 "탈것에서 내렸다"고 말한다 — 탈것 실내를 그리면 틀린다. */
   gotOff: boolean;
   /** 2층 관광버스 위층(지붕 없음) — 시내버스 실내와 다르게 그린다. */
@@ -111,6 +123,11 @@ export function pageVehicle(input: {
   storyText?: string;
   /** 부모 장소 칸처럼 책 전체에 걸친 글 — '근처에 탈것 이야기가 있나'에만 쓴다. */
   bookContext?: string;
+  /**
+   * 같은 장소 줄(열쇠)의 다른 쪽이 어린이 통학 버스다 — 책 전체를 본 schoolBusPlaceKeys 가 정한다.
+   * 이 쪽 본문이 무슨 버스인지 말하지 않을 때만 쓴다("창밖으로 포도밭이 보였어요").
+   */
+  schoolBusPlace?: boolean;
 }): PageVehicle {
   const name = input.locationName?.trim() ?? "";
   const description = input.locationDescription?.trim() ?? "";
@@ -151,35 +168,97 @@ export function pageVehicle(input: {
     ? null
     : carUnlessParked(nameKind ?? (description ? vehicleState(description).kind : null), location);
 
+  /*
+   * 어린이 통학 버스인가 — 장소 줄이 탈것이면 차례로 본다.
+   *   ① 장소 이름 — '어린이집 버스 안'이면 통학 버스, '시내버스 안'·'아빠 차'면 아니다. 이름이 정하면 설명·본문에 스친
+   *      다른 탈것("창밖으로 기차가 지나가는")으로 뒤집지 않는다.
+   *   ② 이름이 그냥 '버스 안'·'노란 버스 안'이면 본문(없으면 장면 문장)에서 **탄** 탈것 — schoolShuttleRide. 놓치거나
+   *      창밖으로 본 어린이집 버스는 세지 않는다("어린이집 버스를 놓쳐서 엄마랑 버스를 탔어요"는 시내버스다).
+   *   ③ 그래도 모르면 이름('노란 버스' + 같은 쪽의 어린이집 말)·장소 설명이 통학 버스를 부르거나,
+   *      같은 장소 줄의 다른 쪽이 통학 버스였다(schoolBusPlace) — 한 번 탄 버스는
+   *      내릴 때까지 같은 버스다. 어린이집 말이 앞 쪽에만 있다고 뒤 쪽을 벨트 금지로 돌리면, 벨트 맨 앞 쪽 그림을
+   *      기준으로 받은 뒤 쪽이 검수에서 떨어진다(2026-09-29 검토).
+   * 장소 줄이 탈것이 아니면(본문에서 탈것을 찾은 쪽) 탄 탈것을 먼저, 모르면 장소 이름을 본다("하원 차량"·"어린이집 버스
+   * 정류장"에서 버스에 탄 쪽).
+   * 통학 버스는 어린이집 차·학원 차여도 transit 으로 둔다 — 가족 승용차 줄(운전석 엄마 아빠, 앞뒤 좌석)이 붙지 않게.
+   * 통학 버스는 지붕 없는 2층 위층일 수 없다 — 본문에 스친 '2층 버스'로 위층 그림을 켜지 않는다.
+   */
+  const cueContext = `${location} ${sceneBody} ${storyText}`;
+  const schoolBusOf = (kind: VehicleKind, fromLocation: boolean): boolean => {
+    // 이름만으로 정해지는 곳(어린이집 버스 안 · 시내버스 안)은 이름을 따른다. '노란 버스'처럼 어린이집 말이 있어야
+    // 통학 버스인 이름은 본문이 "어린이집 버스를 놓쳐서 …"면 아니니, 탄 탈것을 먼저 본다.
+    const byName = schoolShuttleName(name);
+    if (fromLocation && byName) return byName === "shuttle";
+    const byRide = schoolShuttleRide(storyText, kind, cueContext) ?? schoolShuttleRide(sceneBody, kind, cueContext);
+    if (byRide) return byRide === "shuttle";
+    const nameWithCue = schoolShuttleName(name, cueContext) === "shuttle";
+    if (!fromLocation) return nameWithCue;
+    return nameWithCue || namesSchoolShuttle(description, cueContext) || input.schoolBusPlace === true;
+  };
+
   if (locationKind) {
     const off = scene.gotOff || (story.gotOff && !scene.kind);
     if (off) {
-      return { vehicle: null, gotOff: true, openDeck: false, staleVehicleLocation: true, vehicleNearby: nearby };
+      return { vehicle: null, schoolBus: false, gotOff: true, openDeck: false, staleVehicleLocation: true, vehicleNearby: nearby };
     }
+    const schoolBus = schoolBusOf(locationKind, true);
     return {
-      vehicle: locationKind,
+      vehicle: schoolBus ? "transit" : locationKind,
+      schoolBus,
       gotOff: false,
-      openDeck: locationKind === "transit" && openDeck,
+      openDeck: locationKind === "transit" && openDeck && !schoolBus,
       staleVehicleLocation: false,
       vehicleNearby: nearby,
     };
   }
 
   if ((scene.gotOff || story.gotOff) && !scene.kind) {
-    return { vehicle: null, gotOff: true, openDeck: false, staleVehicleLocation: false, vehicleNearby: nearby };
+    return { vehicle: null, schoolBus: false, gotOff: true, openDeck: false, staleVehicleLocation: false, vehicleNearby: nearby };
   }
 
   const vehicle = stayPlace
     ? null
     : (carUnlessParked(scene.kind, sceneBody) ?? carUnlessParked(story.kind, storyText));
+  const schoolBus = vehicle !== null && schoolBusOf(vehicle, false);
   return {
-    vehicle,
+    vehicle: schoolBus ? "transit" : vehicle,
+    schoolBus,
     gotOff: false,
-    openDeck: vehicle === "transit" && openDeck,
+    openDeck: vehicle === "transit" && openDeck && !schoolBus,
     staleVehicleLocation: false,
     // 머무는 곳인데 장면 문장은 타고 있다고 한다 — 어느 쪽이 맞는지 모르니 "벨트 없음"을 박지 않는다.
     vehicleNearby: nearby && !(vehicle === null && scene.kind),
   };
+}
+
+/**
+ * 책에서 어린이 통학 버스인 **장소**의 열쇠(locationKeyOf)들 — 쪽 그림 요청의 schoolBusPlace 를 정한다.
+ *
+ * 통학 버스인지는 쪽마다 정하는데, 장소 기준 그림·같은 장소 기준 쪽은 열쇠가 같은 쪽끼리 나눠 쓴다. 그래서
+ * "노란 버스 안"으로 탄 여러 쪽 중 '어린이집 친구들이랑 … 올라탔어요' 쪽만 통학 버스(벨트)이고, 다음 쪽
+ * '창밖으로 포도밭이 보였어요'는 벨트 금지 + 벨트 FAIL 이 됐다. 뒤 쪽은 벨트 맨 앞 쪽 그림을 기준으로 받으니
+ * 그대로 따라 그리고 떨어져, 다시 그리기(약 95원)만 쓴다(2026-09-29 검토). 한 장소 줄의 어느 쪽이든 통학 버스면
+ * 그 장소는 통학 버스다 — 본문이 다른 탈것을 대놓고 말한 쪽은 pageVehicle 이 여전히 뺀다.
+ * 장소 줄이 탈것인 쪽만 센다(열쇠가 곧 그 탈것일 때). 장소 줄은 쪽 그림 라우트와 같은 모양(`장소: 이름 — 설명`)으로 읽는다.
+ */
+export function schoolBusPlaceKeys(pages: { imagePrompt?: string; text?: string }[]): Set<string> {
+  const keys = new Set<string>();
+  for (const page of pages) {
+    const scene = page.imagePrompt ?? "";
+    const location = /장소\s*:\s*([^\n—.-]+?)\s*[—-]\s*([^\n.]+)/.exec(scene);
+    const name = location?.[1].trim() ?? "";
+    if (!location || !placeVehicleKind(name)) continue;
+    // 잠금 줄(등장인물·장소·물건)을 뺀 장면 문장 — 쪽 그림 라우트(api/illustrate-page)와 같은 방법.
+    const sceneBody = scene
+      .split(/\r?\n/)
+      .filter((line) => !/^\s*(?:등장인물|장소\s*:|물건\s*:)/.test(line))
+      .join(" ")
+      .replace(/등장인물\s*\d+\s*명(?:\s*:[^.\n]*)?\.?/g, "")
+      .replace(/(?:장소|물건)\s*:[^.\n]*\.?/g, "");
+    const ride = pageVehicle({ locationName: name, locationDescription: location[2].trim(), sceneBody, storyText: page.text ?? "" });
+    if (ride.schoolBus) keys.add(locationKeyOf(name));
+  }
+  return keys;
 }
 
 /*
@@ -243,6 +322,30 @@ export function heroLockLines(hero: HeroInfo | null, storyText = ""): string[] {
   return lines;
 }
 
+/**
+ * 탈것 안 배경 줄 — 쪽 그림(api/illustrate-page)과 장소 시트(api/location-sheet)가 '실내' 줄 대신 쓴다.
+ *
+ * 버스·차 안도 isIndoorPlace 로는 실내라, 예전엔 "INSIDE a building … shelves, furniture … 바깥은 작은 창으로만"이
+ * 붙었다. 이름이 '어린이집 버스 안'이면 어린이집·건물·선반이 한꺼번에 들어가 교실 창가 그림으로 끌려간다
+ * (2026-09-29 사장님 보고 — 버스에 올라탄 쪽이 어린이집 교실 창가로 나왔다). 검수도 "창밖이 작은 창보다 크면 FAIL"
+ * 이라, 창밖으로 나무가 휙휙 지나가는 맞는 그림을 떨어뜨릴 수 있었다. 부르는 쪽은 이때 indoor 를 null 로 둔다.
+ * 지붕 없는 2층 버스 위층은 실내가 아니라 여기 들지 않는다(부르는 쪽이 openDeck 을 뺀다).
+ *
+ * 어린이 통학 버스(schoolBus)면 좌석마다 작은 아이용 벨트가 있다고 한 줄 더한다 — 장소 시트는 쪽 검수의 정답이라,
+ * 시트의 좌석에 벨트가 없으면 벨트 맨 아이가 든 쪽 그림과 어긋나 보인다. 다른 탈것의 줄은 한 글자도 그대로다.
+ */
+export function vehicleInteriorLines(kind: VehicleKind, name: string, schoolBus = false): string[] {
+  const place = name.trim() || "this vehicle";
+  const what = schoolBus ? "a children's daycare or school shuttle bus" : kind === "car" ? "a car" : "a bus, train or subway";
+  return [
+    `VEHICLE INTERIOR — "${place}" is the inside of ${what} on the move, NOT a building and NOT a room. Draw its seats, its ${kind === "car" ? "cabin" : "aisle and floor"} and its side windows, seen from inside.`,
+    ...(schoolBus ? ["Its seats are low, child-size bus seats, each with a small child-size seat belt."] : []),
+    "No classroom, no house room, no desks, no shelves, no toy storage and no room furniture anywhere in it.",
+    "The passing scenery outside (trees, fields, streets) may show clearly through the windows, but everyone stays inside the vehicle.",
+    "PRESENT-DAY KOREA — a modern vehicle interior, with modern scenery outside.",
+  ];
+}
+
 /** 이 쪽에 탈것 이야기가 있나 — 벨트라는 낱말을 꺼낼지 정한다. */
 function vehicleTalk(page: PageVehicle | null | undefined): boolean {
   return Boolean(page && (page.vehicle || page.gotOff || page.vehicleNearby));
@@ -259,6 +362,7 @@ function vehicleTalk(page: PageVehicle | null | undefined): boolean {
  * "서 있는 사람은 벨트를 매지 않는다"도 탈것 이야기가 있는 쪽에만 붙인다 — 탈것이 없는 거실·옛이야기
  * 쪽에 'seat belt' 낱말을 넣으면 오히려 벨트를 부른다. 벨트·카시트는 승용차·택시 안일 때만,
  * 버스·기차·지하철에서는 반대로 "벨트·카시트 없음"을 일러 준다.
+ * 어린이 통학 버스만 예외다 — 세림이법대로 아이들이 낮은 버스 좌석에서 벨트를 맨다(카시트는 없다).
  */
 export function safetyRuleLines(page: PageVehicle, indoor: boolean | null): string[] {
   const lines = [
@@ -266,7 +370,12 @@ export function safetyRuleLines(page: PageVehicle, indoor: boolean | null): stri
     "Never draw a child standing on a sofa, chair, table, window sill, railing or stair rail. If the text says they jumped up or sprang up, draw them standing on the floor or sitting up on the seat.",
   ];
   if (vehicleTalk(page)) lines.push("A person who is STANDING never wears a seat belt.");
-  if (indoor === true) {
+  /*
+   * 집 안 신발 줄은 탈것 안에는 붙이지 않는다 — '버스 안·차 안'도 실내(isIndoorPlace)로 잡혀, 버스에 탄
+   * 아이를 맨발로 그리라는 말이 됐다(승용차는 "Inside a car, shoes stay ON"과 정면으로 부딪쳤다).
+   * 쪽 그림 라우트는 탈것 안이면 indoor 를 아예 null 로 넘기지만, 다른 부르는 쪽을 위해 여기서도 막는다.
+   */
+  if (indoor === true && !page.vehicle) {
     lines.push("Indoors at home Koreans do not wear shoes, and shoes are left at the entrance, not in the middle of the living room.");
   }
   if (page.gotOff) {
@@ -291,6 +400,10 @@ export function safetyRuleLines(page: PageVehicle, indoor: boolean | null): stri
       "Everyone wears a seat belt, clearly visible across chest and lap. The child faces FORWARD, seated, belt fastened. Never kneeling, standing, turned around, or leaning out of a window.",
       "EACH PERSON APPEARS EXACTLY ONCE IN THE CAR. An adult who is in a front seat must NOT also appear in the back seat, and vice versa. Count the people before you finish: the picture contains each named person one single time.",
       "The window shows the passing scenery outside; do not draw a second car interior, a mirrored cabin, or a doubled row of seats.",
+    );
+  } else if (page.vehicle === "transit" && page.schoolBus) {
+    lines.push(
+      "SCHOOL SHUTTLE — this scene is on a children's daycare or kindergarten shuttle bus, NOT a private car and NOT a city bus. The children sit in the low bus seats, each wearing a buckled child-size seat belt (lap-and-shoulder style). No child car seats, and no one stands in the aisle while the bus is moving.",
     );
   } else if (page.vehicle === "transit") {
     lines.push(
@@ -344,7 +457,26 @@ export function checkRuleLines(input: { hero?: HeroInfo | null; page?: PageVehic
       "The story text says they have already GOT OFF the vehicle: FAIL if they are drawn inside a bus, train, subway or car interior, or sitting in vehicle seats.",
     );
   } else if (page?.vehicle === "transit") {
-    lines.push("This page is on a bus, train or subway: FAIL if anyone wears a seat belt or sits in a child car seat.");
+    /*
+     * 어린이 통학 버스는 벨트를 맨 아이가 맞는 그림이다 — 벨트로 떨어뜨리지 않는다.
+     * 벨트가 안 보인다고 떨어뜨리는 줄도 넣지 않는다: 벨트는 작아서 헛떨어짐이 잦고, 한 번 떨어질 때마다
+     * 다시 그리기(약 95원)와 책 한 권의 다시 그리기 예산을 쓴다. 벨트는 그리기 프롬프트가 맡는다.
+     * 카시트 FAIL 도 뺀다 — 아이 키에 맞춘 낮은 좌석을 카시트로 잘못 보고 떨어뜨릴 수 있다.
+     */
+    lines.push(
+      page.schoolBus
+        ? "This page is on a children's daycare or school shuttle bus: children wearing seat belts in their seats is correct and never a FAIL. Belts are small — do not FAIL the page because a belt is missing, hidden or hard to see."
+        : "This page is on a bus, train or subway: FAIL if anyone wears a seat belt or sits in a child car seat.",
+    );
+    /*
+     * 버스에 탄 쪽이 교실·방으로 그려지는 것 — 2026-09-29 사장님 보고의 바로 그 틀림. 한눈에 틀린 것만 적는다.
+     * 창밖 풍경이 크게 보이는 것은 맞는 그림이다(탈것 안은 indoor 검사 줄을 받지 않는다).
+     */
+    if (!page.openDeck) {
+      lines.push(
+        "FAIL if the characters are drawn in a classroom, a house room or another building instead of inside the vehicle. Scenery through the vehicle windows is correct and is not a FAIL.",
+      );
+    }
   } else if (page && page.vehicle === null && page.vehicleNearby) {
     lines.push("This page is not inside a vehicle: FAIL if the characters are drawn sitting in vehicle seats with seat belts or in a child car seat.");
   }

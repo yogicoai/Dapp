@@ -35,6 +35,20 @@
  * (머리카락 맨 위 ~ 턱 : 머리카락 맨 위 ~ 신발 바닥 — 그린 뒤 재는 방식과 같다), 마네킹 몸 모양·회색·줄·빈 얼굴은 따라 하지
  * 말 것(자세는 POSE 줄)'으로 적는다. 비율표는 lib/family-head headChartRatio 한 곳에 있다.
  *
+ * 사진의 구도가 머리 크기를 정하지 않게(2026-09-29 오후 사장님 "엄마 비율이 이상해졌어" — 얼굴이 꽉 찬 셀카 같은 사진으로 그린
+ * 엄마가 표 1:7 인데 1:4.15, 다시 그려도 1:4.41): 사진 규칙 줄에 '얼굴·윗몸만 보이는 사진(얼굴이 꽉 찬 셀카)이어도 전신을
+ * PROPORTIONS 비율로 — 얼굴이 꽉 찬 사진이 큰 머리라는 뜻이 아니다, 사진의 구도·거리는 머리 크기를 정하지 않는다'를, 클로즈업
+ * 줄에 '꽉 찬 구도는 머리 크기도 아니다'를, 사진 갈래 PROPORTIONS 줄 끝에 '사진이 어떻게 잘렸든 이 비율은 그대로'를 적는다.
+ * 몸 부위 말(몸통·다리)은 사진 갈래에 넣지 않는다(실제 사람 사진 옆의 몸 말은 안전 검사에 걸리기 쉽다 — '전신'으로만).
+ *
+ * 머리 비율 다시 그리기(headRedrawRecipe, 같은 날 오후 사장님 승인): 그린 뒤 잰 머리가 표에서 많이 벗어나 다시 그릴 때는 사진을
+ * 다시 보내지 않는다 — 사진이 머리를 크게 당기는 버릇을 되풀이했다. 참고 그림은 **처음 그림(첫째) + 비율 견본(둘째)**뿐이고,
+ * 프롬프트는 '첫째 그림의 이 캐릭터를 그대로(얼굴·머리 모양·머리 색·안경·피부·몸집·옷·색·수채화 붓질), 비율만 고쳐: 머리(머리카락
+ * 맨 위 ~ 턱)는 키의 1/X(X 등신), 머리 높이는 처음 그림의 약 N%, 목·몸통·다리를 고르게 늘려(줄여)'. 얼마나 줄일지 숫자가
+ * 없으면 모델이 처음 그림을 거의 그대로 베낀다. 칩·사진·대신 그리기 모두 같다. 그림체 견본은 붙이지 않는다 —
+ * 처음 그림이 이미 그 그림체이고, 견본(앉은 여우)은 머리가 아주 커서 머리를 다시 키우는 쪽으로 당길 수 있다.
+ * 이 프롬프트에는 사진이 없어(우리가 그린 그림뿐) 사장님이 정한 대로 몸 부위 말을 쓴다. 아이 쪽 말·사진 말·카드 말은 없다.
+ *
  * 얼굴 픽셀: 3:4 1K(약 896×1200) 전신이라 얼굴이 작다. 머리 비율은 가족끼리 키가 맞아야 해서 키우지 않는다.
  * (얼굴 클로즈업은 그림 모델이 **보는** 얼굴을 키운다 — 그리는 얼굴 크기는 그대로다.)
  * gemini-3.1-flash-image 는 imageConfig.imageSize '2K' 를 받지만 값이 다르다(1K 장당 약 $0.067 ≈ 95원 → 2K 약 $0.101 ≈ 143원,
@@ -44,7 +58,7 @@
 import { ART_STYLES } from "./art-styles.ts";
 import { heroIdentity } from "./child-looks.ts";
 import { siblingGender, type FamilyRole } from "./family.ts";
-import { ADULT_HEAD_RATIO, TEEN_HEAD_RATIO, headChartRatio, kidHeadRatio, ratioText } from "./family-head.ts";
+import { ADULT_HEAD_RATIO, TEEN_HEAD_RATIO, headChartRatio, kidHeadRatio, ratioText, type HeadFix } from "./family-head.ts";
 import type { PhotoFallback } from "./family-photo.ts";
 import { keepTraits } from "./family-photo-card.ts";
 import { GeminiError } from "./gemini.ts";
@@ -332,13 +346,14 @@ function photoIntro(nth: string): string {
 
 /**
  * 얼굴 클로즈업 줄(lib/family-closeup) — 사진에서 자른 같은 사람 얼굴이라고 못박는다. 두 사람으로 그리거나, 클로즈업의
- * 꽉 찬 얼굴 구도를 따라 얼굴만 크게 그리는 일을 막는다(전신 한 사람은 WHO·FRAMING 줄).
+ * 꽉 찬 얼굴 구도를 따라 얼굴만 크게 그리는 일을 막는다(전신 한 사람은 WHO·FRAMING 줄) — 꽉 찬 구도가 머리 크기도 아니라고
+ * 못박는다(머리 크기는 PROPORTIONS 줄).
  * 머리 길이·전체 머리 모양은 사진에서 — 클로즈업은 턱 아래를 조금만 남겨(CLOSEUP_MARGIN) 어깨 길이·긴 머리·부푼 파마가
  * 잘린다. 클로즈업에서 머리를 읽으면 단발처럼 짧아진다.
  * 얼굴은 수채화로 — 선명하게 키운 실제 얼굴이라, 막지 않으면 얼굴만 사진처럼(피부 결·빛·그늘) 그리는 일이 있다.
  */
 function closeUpLine(nth: string, photoNth: string): string {
-  return `${nth} image = a close-up of the same person's face, cropped and enlarged from the ${photoNth} image — use it for the exact face: face shape, eyes, eyebrows, nose, mouth, cheeks, jaw, hairline and fringe. Hair length and the overall hairstyle come from the ${photoNth} image (the crop cuts the hair off). Paint that face in the same watercolor style as the rest of the figure — take only its features, never its photographic skin texture, lighting or shadows. It is the same single person, not a second person, and its tight crop is not the composition — still paint one full-body figure.`;
+  return `${nth} image = a close-up of the same person's face, cropped and enlarged from the ${photoNth} image — use it for the exact face: face shape, eyes, eyebrows, nose, mouth, cheeks, jaw, hairline and fringe. Hair length and the overall hairstyle come from the ${photoNth} image (the crop cuts the hair off). Paint that face in the same watercolor style as the rest of the figure — take only its features, never its photographic skin texture, lighting or shadows. It is the same single person, not a second person, and its tight crop is neither the composition nor the head size — still paint one full-body figure at the PROPORTIONS head-to-height ratio.`;
 }
 
 /**
@@ -389,6 +404,8 @@ const CLOTHES_CARD =
  * 물건·마스크·선글라스·모자)을 가른다. 얼굴 비율은 일반 그림책 얼굴로 바꾸지 않고 사진 그대로 — 단순하게 하는 건 붓질뿐.
  * ageFromWho — 아이 나이를 부모가 알려 줬다: 나이는 사진에서 따르지 않는다(세 살 때 사진으로 일곱 살을 그리는 일이 흔하다).
  * closeUp — 얼굴 클로즈업이 붙었다: 닮음의 출처에 넣고, 가져오지 말 것(구도·빛 …)도 클로즈업까지 넓힌다.
+ * 얼굴·윗몸만 보이는 사진 줄 — 사진의 구도·거리가 머리 크기를 정하지 않는다고 못박는다(머리글 '사진의 구도가 머리 크기를
+ * 정하지 않게'). 몸 부위 말 없이 '전신(whole figure)'으로만.
  */
 function photoRules(withCard: boolean, ageFromWho: boolean, closeUp: boolean): string[] {
   const sources = ["the photo", ...(closeUp ? ["its face close-up"] : []), ...(withCard ? ["the LIKENESS SPEC"] : [])];
@@ -401,7 +418,7 @@ function photoRules(withCard: boolean, ageFromWho: boolean, closeUp: boolean): s
     // 사진 그대로는 '얼굴' 비율만 — 머리:키는 표(PROPORTIONS 줄)를 따른다. 실제 다섯 살 사진은 1:5 쯤인데 표는 1:4 다.
     `Keep the face proportions faithful to the photo${closeUp ? " and its face close-up" : ""} — face length and width, jaw and chin, cheek fullness, eye size, shape and spacing, eyebrow shape, nose and mouth size — rather than a generic picture-book face. Simplify only the rendering (clean contour, soft washes), never the face proportions, and never exaggerate or caricature a feature. The head-to-height ratio of the whole figure follows the PROPORTIONS line, not the photo.`,
     `From the photo${closeUp ? " and the close-up" : ""} NEVER copy: the background or place, the lighting, shadows or colour cast, the camera angle, crop or pose, any other person or animal, objects, text or logos, or anything held in the hands. Leave out temporary things too — face masks, sunglasses, hats or caps, headphones, bags — unless the appearance line asks for them.`,
-    "If the photo shows only the face or upper body, complete the rest simply: everyday clothes in the colours that are visible, plain simple shoes. If more than one person is in the photo, draw only the main person in the middle.",
+    "Even if the photo shows only the face or upper body — a selfie or tight shot where the face fills most of the picture — paint the whole figure at the PROPORTIONS head-to-height ratio: a face-filling photo does NOT mean a big head, and the photo's crop or camera distance never sets the head size. Complete the rest simply: everyday clothes in the colours that are visible, plain simple shoes. If more than one person is in the photo, draw only the main person in the middle.",
     CLOTHES_PHOTO,
   ].filter(Boolean);
 }
@@ -470,6 +487,21 @@ export function cardFor(input: PortraitInput, card: string | null): string | nul
 }
 
 /* ─────────────────────────────── 프롬프트 ─────────────────────────────── */
+
+/*
+ * 자세·틀·바탕·오려 내기·글자 금지 — 처음 그리기(buildPrompt)와 머리 비율 다시 그리기(headRedrawPrompt)가 같은 글을 쓴다.
+ * 손이 몸에 닿으면 팔과 몸 사이 흰 틈이 갇혀 바탕 지우기가 못 닿는다 — 작은 틈을 두게 한다(POSE_LINE).
+ */
+const POSE_LINE =
+  "POSE: front view facing the viewer, relaxed natural standing pose, arms hanging loosely at the sides with a small gap between each arm and the body (hands not touching the body), feet slightly apart, soft gentle smile, eyes open looking at the viewer.";
+const FRAMING_LINE =
+  "FRAMING: 3:4 portrait. The WHOLE body — from the top of the hair to the soles of the shoes — is inside the picture and centred, with clear empty margin above the head, below the shoes and on both sides (roughly 6–10% of the picture on every side). Nothing touches or is cut off by an edge.";
+const BACKGROUND_LINE =
+  "BACKGROUND: one flat pure white colour (#FFFFFF) everywhere around the figure. The cream paper tone belongs to the figure's painting only — the empty background is pure white: no paper texture, no wash, no vignette, no floor or ground line, no cast or drop shadow, no props, no scenery, no frame or border.";
+const CUTOUT_LINE =
+  "The figure is cut out of the white background automatically afterwards, so: keep one continuous thin contour line around the whole silhouette (hair, hands and shoes included); clothes are never pure white or off-white — if a white garment is written, paint it as a clearly shaded very light grey so it still reads as white; white or grey hair is painted light grey with soft blue-grey shading and outlined, never paper-white.";
+const NO_TEXT_LINE =
+  "NO text anywhere: no name, no title, no letters, no numbers, no labels, no speech bubble, no signature, no watermark.";
 
 /**
  * 비율 견본 그림 줄 — 머리:키 비율만 가져가고 나머지(마네킹 몸 모양·회색·줄·빈 얼굴)는 절대 그리지 않게.
@@ -568,18 +600,99 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
     ...appearance,
     id.hairRule,
     "Hair texture is a hard identity trait: straight hair stays completely straight with no curls or perm volume; wavy, curly and permed hair stay clearly different from one another.",
-    `PROPORTIONS: ${id.proportion}${has("guide") ? ` The ${nth("guide")} image (proportion guide) shows exactly this head-to-height ratio.` : ""}`,
-    // 손이 몸에 닿으면 팔과 몸 사이 흰 틈이 갇혀 바탕 지우기가 못 닿는다 — 작은 틈을 두게 한다.
-    "POSE: front view facing the viewer, relaxed natural standing pose, arms hanging loosely at the sides with a small gap between each arm and the body (hands not touching the body), feet slightly apart, soft gentle smile, eyes open looking at the viewer.",
-    "FRAMING: 3:4 portrait. The WHOLE body — from the top of the hair to the soles of the shoes — is inside the picture and centred, with clear empty margin above the head, below the shoes and on both sides (roughly 6–10% of the picture on every side). Nothing touches or is cut off by an edge.",
-    "BACKGROUND: one flat pure white colour (#FFFFFF) everywhere around the figure. The cream paper tone belongs to the figure's painting only — the empty background is pure white: no paper texture, no wash, no vignette, no floor or ground line, no cast or drop shadow, no props, no scenery, no frame or border.",
-    "The figure is cut out of the white background automatically afterwards, so: keep one continuous thin contour line around the whole silhouette (hair, hands and shoes included); clothes are never pure white or off-white — if a white garment is written, paint it as a clearly shaded very light grey so it still reads as white; white or grey hair is painted light grey with soft blue-grey shading and outlined, never paper-white.",
-    "NO text anywhere: no name, no title, no letters, no numbers, no labels, no speech bubble, no signature, no watermark.",
+    // 사진 갈래는 '사진이 어떻게 잘렸든 이 비율 그대로'를 덧붙인다(머리글 '사진의 구도가 머리 크기를 정하지 않게').
+    `PROPORTIONS: ${id.proportion}${has("guide") ? ` The ${nth("guide")} image (proportion guide) shows exactly this head-to-height ratio.` : ""}${source === "photo" ? " However the photo is cropped, this ratio stays the same." : ""}`,
+    POSE_LINE,
+    FRAMING_LINE,
+    BACKGROUND_LINE,
+    CUTOUT_LINE,
+    NO_TEXT_LINE,
     // 칩은 예전 그대로. 사진·카드 갈래는 'innocent·fully clothed' 같은 말을 쓰지 않는다 — 실제 사람 사진과 섞이면 오히려 걸린다.
     source === "chips" ? "Wholesome, innocent, fully clothed, child-friendly." : "A warm, friendly look in ordinary everyday clothes.",
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+/* ─────────────────────────────── 머리 비율 다시 그리기 ─────────────────────────────── */
+
+/**
+ * 사진(과 클로즈업)이 든 참고 그림 배열로 **한 번만** 그리고, 잘 그렸든 실패했든 곧바로 배열을 비운다.
+ * 머리 비율 다시 그리기는 처음 그림으로 하므로(headRedrawRecipe) 사진이 다시 쓰일 일이 없다 — 사진은 그리기 한 번에만 쓰고
+ * 놓는다(lib/family-photo 약속 "그림을 그리는 데 한 번 쓰고 바로 지워요"). draw 에는 같은 배열을 넘긴다(보낼 때 쓴다).
+ */
+export async function drawThenRelease<T, R>(images: T[], draw: (images: T[]) => Promise<R>): Promise<R> {
+  try {
+    return await draw(images);
+  } finally {
+    images.length = 0;
+  }
+}
+
+/**
+ * 머리 비율 다시 그리기의 프롬프트(머리글 '머리 비율 다시 그리기'). 첫째 그림 = 처음 그림, 둘째 = 비율 견본(guide 면).
+ * 첫째 그림의 캐릭터를 그대로 두고(얼굴·머리 모양·머리 색·안경·피부·얼굴이 보여 주는 나이·몸집·옷·색·붓질) 머리:키 비율만
+ * fix.target 으로 고친다. 참고 그림을 흉내 내다 비율까지 베끼는 일을 막으려 '머리:키 비율만은 베끼지 말라'와, 틀이 그대로라
+ * 머리가 그림 안에서 작아(커)진다는 것을 **얼마나**(처음 그림 머리 높이의 약 N%)와 '몇 등신'(비율 견본 가로줄 한 칸 = 머리
+ * 하나)으로 적는다 — '더 작게'만 적으면 처음 그림을 거의 그대로 베낀다. 목만 길게 빼거나 다리만 늘리지 않게 '고르게'를
+ * 적고, 어른·청소년은 첫 그리기와 같은 이름(picture-book adult · teenage proportions)을 붙인다. 두 사람(전·후 비교)으로
+ * 그리는 일도 막는다.
+ * 사진·특징 카드·칩 글은 넣지 않는다(처음 그림에 이미 들어 있다 — 다시 적으면 모델이 다시 읽어 딴사람이 될 수 있다).
+ * 아이 쪽 말·가족 말도 없다(역할과 상관없이 같은 글 — 나이는 '첫째 그림의 보이는 나이 그대로').
+ */
+export function headRedrawPrompt(fix: HeadFix, o: { guide: boolean }): string {
+  const style = ART_STYLES.find((s) => s.id === "watercolor") ?? ART_STYLES[0];
+  const big = fix.verdict === "big";
+  const want = ratioText(fix.target);
+  // 몇 등신인가(7 · 5.5 · 6.5) — 그림 그리는 사람의 말. 비율 견본의 가로줄(머리 높이마다)과 같은 셈이다.
+  const heads = Math.round(fix.target * 10) / 10;
+  // 틀·여백이 같으니 전신 높이가 같다 — 머리 높이는 처음 그림의 (잰 비율 ÷ 표 비율)배. 엄마 4.15 → 7 이면 59%.
+  // 숫자 없이 '더 작게'만 적으면 모델이 처음 그림을 거의 그대로 베껴 조금만 줄인다(4.15 → 4.41 같은 되풀이).
+  const scale = Math.round((fix.measured / fix.target) * 100);
+  // 어른·청소년은 첫 그리기의 PROPORTIONS 줄과 같은 이름을 붙인다(숫자만 있으면 짧은 몸의 '어려 보임'을 따라가기 쉽다).
+  // 아이 표에는 붙이지 않는다 — 아이 쪽 말을 넣지 않는다(사진에서 온 그림일 수 있다).
+  const kind =
+    fix.target >= ADULT_HEAD_RATIO
+      ? " (picture-book adult proportions)"
+      : fix.target >= TEEN_HEAD_RATIO
+        ? " (picture-book teenage proportions)"
+        : "";
+  // 고르게 늘린다 — 짧은 목의 큰 머리 그림에서 목만 길게 빼거나 다리만 늘리는 쉬운 길을 막는다.
+  const evenly = `evenly, so the figure stays naturally proportioned${big ? " with a natural-length neck (never a long, stretched neck)" : ""} — never only the legs or only the torso changed`;
+  return [
+    `One full-body character portrait of a single person for a Korean picture book, ${style.prompt}.`,
+    // 몸집(body build)도 그대로 — 늘리다 보면 날씬한 패션 그림 몸으로 바뀌어 딴사람 같아진다. 나이는 '얼굴이 보여 주는 나이' —
+    // 짧은 몸이 주는 어려 보이는 인상은 따르지 않는다. 바꾸는 것은 머리:키 비율(머리 크기·목·몸통·다리 길이)뿐이다.
+    "FIRST image = our own earlier painting of this person — repaint THIS SAME character from the FIRST image. Keep exactly as in the FIRST image: the face (face shape, eyes, eyebrows, nose, mouth), the hairstyle, hair length, fringe and hair colour, glasses, beard or moustache only if the FIRST image has them (never add any), the skin tone, the age the face shows, the body build, the clothes, shoes and all their colours, and the watercolor rendering (brushwork, line, soft washes). Copy everything from it EXCEPT its head-to-height ratio — only the head size and the length of the neck, torso and legs change.",
+    o.guide ? guideLine("SECOND", fix.target) : "",
+    `PROPORTION FIX — the FIRST image drew the head too ${big ? "big" : "small"} (about ${ratioText(fix.measured)} of the full height). The head, from the top of the hair to the chin, must be ${want} of the full height, from the top of the hair to the soles of the shoes — the figure is ${heads} heads tall${o.guide ? ", one head-height per band between the SECOND image's lines" : ""}${kind}: paint a clearly ${big ? "smaller" : "bigger"} head in relation to the whole figure, and make the neck, torso and legs ${big ? "longer" : "shorter"} to match — ${evenly}.${big ? " NOT a big head, NOT chibi, NOT super-deformed." : ""}`,
+    `The whole figure, from the top of the hair to the soles of the shoes, still spans the same height of the same 3:4 frame with the same margins, so the head comes out ${big ? "smaller" : "bigger"} in the picture than in the FIRST image — about ${scale}% of its height there: the same face, just ${big ? "smaller" : "bigger"}.`,
+    "Exactly one person — a single full-body figure; never two figures side by side and never a before-and-after comparison.",
+    POSE_LINE,
+    FRAMING_LINE,
+    BACKGROUND_LINE,
+    CUTOUT_LINE,
+    NO_TEXT_LINE,
+    "A warm, friendly look in the same everyday clothes.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+/**
+ * 머리 비율 다시 그리기의 요청 — 참고 그림은 처음 그림(첫째) + 비율 견본(둘째, 있으면)뿐이다.
+ * 사진·얼굴 클로즈업·그림체 견본·같은 가족 그림은 받지도 않는다(칩·사진·대신 그리기 모두 같은 요청):
+ *  - 사진·클로즈업: 얼굴이 꽉 찬 사진이 머리를 크게 당겼고, 같은 사진으로 다시 그리면 같은 버릇을 되풀이한다(엄마 4.15 → 4.41).
+ *    처음 그림이 이미 사진을 닮게 그린 것이라 닮음은 그 그림에서 가져온다. 사진은 처음 그리기 직후에 놓는다(drawThenRelease).
+ *  - 그림체 견본: 처음 그림이 이미 그 그림체다. 견본(앉은 여우)은 머리가 아주 커서 머리를 키우는 쪽으로 당길 수 있다.
+ *  - 같은 가족 그림(칩 갈래): 대개 아이 그림이라 어른 머리를 키우는 쪽으로 당겼다.
+ *  - 칩 갈래도 처음 그림에서 — 같은 칩 글로 새로 뽑으면 같은 버릇(같은 가족 그림·글)을 되풀이하고, 얼굴·옷이 다른 사람이
+ *    나와 '표에 더 가까운 쪽'이 딴사람 그림일 수 있다. 칩 글은 처음 그림에 이미 들어 있다.
+ * first 는 우리가 방금 그린 그림(이 요청 메모리에만 — 건네는 쪽만 올린다).
+ */
+export function headRedrawRecipe<T>(o: { first: T; guide: T | null; fix: HeadFix }): { prompt: string; references: T[] } {
+  const refs: T[] = o.guide !== null ? [o.first, o.guide] : [o.first];
+  return { prompt: headRedrawPrompt(o.fix, { guide: o.guide !== null }), references: refs };
 }
 
 /* ─────────────────────────────── 대신 그리기(사진 거절 뒤) ─────────────────────────────── */

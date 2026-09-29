@@ -138,6 +138,14 @@ export type Book = {
    */
   cast?: { name: string; description: string; fixed?: boolean }[];
   /**
+   * 고정 가족의 원본 그림(우리 가족 캐릭터 portrait 참고용 JPEG 주소) — 시트에 원본이 선 사람만(2026-09-29~).
+   * 한 쪽만 다시 그릴 때도 그 쪽에 나오는 사람의 원본을 쪽 그림에 붙인다(api/illustrate-page). 주소 뒤에 회원 폴더가 있고,
+   * 서버가 부른 사람의 폴더인지 다시 검사한다 — 마스터가 남의 책을 다시 그리면 붙지 않고 시트만 쓴다. 옛 책엔 없다.
+   */
+  portraits?: { name: string; ref: string; memberId: string }[];
+  /** 인물 시트에 선 순서(왼쪽부터 이름) — 원본 픽셀로 짠 시트는 이야기 순서와 다를 수 있다. 옛 책엔 없다. */
+  sheetOrder?: string[];
+  /**
    * 주인공 이름·성별·생김새 — 한 쪽만 다시 그릴 때도 "주인공은 남자아이"를 못 박으려고 남긴다.
    *
    * 쪽 그림 요청에 성별이 한 번도 안 가서, 남자아이가 단발머리에 꽃핀을 달고 나왔다(my-mu0issap).

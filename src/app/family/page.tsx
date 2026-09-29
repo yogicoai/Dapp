@@ -90,7 +90,7 @@ import {
   type FamilyRemoval,
   type FamilyRole,
 } from "@/lib/family";
-import { cleanHeadRatio } from "@/lib/family-head";
+import { cleanBodyStretch, cleanHeadRatio } from "@/lib/family-head";
 import { PHOTO_FALLBACK_NOTE, PHOTO_TOO_BIG_MESSAGE, readPhotoFallback } from "@/lib/family-photo";
 import {
   loadChild,
@@ -145,7 +145,7 @@ type Status = {
   draws: number;
   pending: boolean;
   refunded: boolean;
-  pic: { url: string; ref: string; at: string; transparent: boolean; headRatio?: number } | null;
+  pic: { url: string; ref: string; at: string; transparent: boolean; headRatio?: number; bodyStretch?: number } | null;
   tokens: number | null;
 };
 
@@ -155,8 +155,9 @@ function readStatus(data: unknown): Status | null {
   const d = data as Record<string, unknown> | null;
   if (!d || typeof d !== "object" || typeof d.draws !== "number") return null;
   const p = d.pic as Record<string, unknown> | null | undefined;
-  // 서버가 잰 머리 비율(lib/family-head) — 믿을 범위의 숫자만
+  // 서버가 잰 머리 비율·굽기 때 늘인 몸 배율(lib/family-head) — 믿을 범위의 숫자만
   const headRatio = cleanHeadRatio(p?.headRatio);
+  const bodyStretch = cleanBodyStretch(p?.bodyStretch);
   return {
     draws: d.draws,
     pending: d.pending === true,
@@ -169,6 +170,7 @@ function readStatus(data: unknown): Status | null {
             at: typeof p.at === "string" ? p.at : "",
             transparent: p.transparent !== false,
             ...(headRatio !== undefined ? { headRatio } : {}),
+            ...(bodyStretch !== undefined ? { bodyStretch } : {}),
           }
         : null,
     tokens: typeof d.tokens === "number" ? d.tokens : null,
@@ -731,10 +733,11 @@ export default function FamilyPage() {
    * 받은 그림을 확인 전 그림(draft)으로 넣는다. serverDraws 는 서버 셈(관리자는 undefined — 셈을 안 한다).
    * fromPhoto — 사진을 보내 그린 그림. 표시만 남기고 사진 자체는 여기 없다(저장 금지).
    * p.headRatio — 서버가 잰 머리 비율(단체 사진이 얼굴 크기를 고르는 데 쓴다). 못 쟀으면 없다.
+   * p.bodyStretch — 서버가 굽기 때 몸을 늘인 배율(단체 사진이 두 번 늘이지 않게 본다). 안 늘였으면 없다.
    */
   function adoptPic(
     id: string,
-    p: { url: string; ref: string; at?: string; transparent?: boolean; headRatio?: number },
+    p: { url: string; ref: string; at?: string; transparent?: boolean; headRatio?: number; bodyStretch?: number },
     serverDraws: number | undefined,
     lockKey: string,
     fromPhoto: boolean,
@@ -749,6 +752,7 @@ export default function FamilyPage() {
       lockKey,
       ...(fromPhoto ? { fromPhoto: true } : {}),
       ...(p.headRatio !== undefined ? { headRatio: p.headRatio } : {}),
+      ...(p.bodyStretch !== undefined ? { bodyStretch: p.bodyStretch } : {}),
     };
     patchMember(
       id,
@@ -872,6 +876,7 @@ export default function FamilyPage() {
       at?: unknown;
       transparent?: unknown;
       headRatio?: unknown;
+      bodyStretch?: unknown;
       draw?: unknown;
       draws?: unknown;
       tokens?: unknown;
@@ -949,6 +954,7 @@ export default function FamilyPage() {
         at: typeof d.at === "string" ? d.at : undefined,
         transparent: d.transparent !== false,
         headRatio: cleanHeadRatio(d.headRatio),
+        bodyStretch: cleanBodyStretch(d.bodyStretch),
       },
       serverDraws,
       lockKey,

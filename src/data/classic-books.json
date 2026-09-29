@@ -261,6 +261,7 @@
         "n": 11,
         "text": "이번에는 생쥐 친구들 차례였어요.\n얍! 하고 요술봉이 반짝이자\n생쥐 넷이 늠름한 백마 네 마리로 변했지요.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p11.webp?v=2",
+        "video": "/classic/cinderella/p11.mp4",
         "segments": [
           {
             "who": "narration",
@@ -1279,6 +1280,7 @@
         "n": 12,
         "text": "\"막내야! 늑대가 나타났어, 문 열어 줘!\"\n첫째가 문을 쾅쾅 두드렸어요.\n막내는 벌떡 일어나 문을 열었어요.\n\"빨리 들어와!\"\n형들이 뛰어 들어오자 문이 쿵 닫혔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p12.webp?v=4",
+        "video": "/classic/threepigs/p12.mp4",
         "lines": [
           {
             "text": "막내야! 늑대가 나타났어, 문 열어 줘!",
@@ -2800,7 +2802,8 @@
             "src": "/classic/redridinghood/seg-p10-4.mp3",
             "text": "\n늑대가 벌떡 일어나, 빨간 모자도 꿀꺽 삼켜 버렸어요!"
           }
-        ]
+        ],
+        "video": "/classic/redridinghood/p10.mp4"
       },
       {
         "n": 11,

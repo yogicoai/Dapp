@@ -20,7 +20,8 @@
  *  4차: FamilyMember.looksOnly — '그림 없이 특징만 저장'(쿠키 0개). 이름·홈 보이기처럼 목록 쪽 칸으로 합친다.
  *  5차(2026-09-29): FamilyPortrait.fromPhoto — '사진으로 할게요'로 그린 그림 표시. 사진 자체는 여기 없다
  *  (저장하지 않는다 — lib/family-photo.ts). 그림 칸이라 합칠 때 그림과 함께 따라간다.
- *  6차(2026-09-29): FamilyPortrait.headRatio — 그린 뒤 잰 머리 비율(lib/family-head). 단체 사진이 얼굴 크기를 고른다.)
+ *  6차(2026-09-29): FamilyPortrait.headRatio — 그린 뒤 잰 머리 비율(lib/family-head). 단체 사진이 얼굴 크기를 고른다.
+ *  7차(2026-09-29): FamilyPortrait.bodyStretch — 굽기 때 몸을 늘인 배율. 단체 사진이 몸을 두 번 늘이지 않게 본다.)
  * 아이·엄마·아빠의 생김새는 여기 복사하지 않는다. ChildPrefs.looks / parents.mom·dad 가
  * 원본이고(가족 화면 생김새 고르기에서 고르고 만들기 화면도 같이 쓴다 — 회원 설정의 특징 칸은 2026-09-28 에
  * 걷었다), family 에는 역할과 그림만 둔다. 할머니·형제·친구처럼
@@ -29,7 +30,7 @@
 
 // 타입만 가져온다(런타임에는 지워진다) — prefs.ts 가 이 파일을 부르므로 값까지 부르면 서로 물린다.
 import type { ChildPrefs, ParentLooks } from "./prefs.ts";
-import { cleanHeadRatio } from "./family-head.ts";
+import { cleanBodyStretch, cleanHeadRatio } from "./family-head.ts";
 import {
   adultLookRows,
   CHILD_LOOK_ROWS_ALL,
@@ -82,10 +83,18 @@ export type FamilyPortrait = {
   /**
    * 그린 뒤 잰 머리 비율 — 키 ÷ 머리(머리카락 맨 위~턱 : 머리 위~신발 바닥), 0.01 단위(사장님 2026-09-29 "아빠만 머리가
    * 너무 크게 나와", lib/family-head). 서버(api/family/portrait)가 그린 그림을 값싼 글 모델로 재서 그림과 함께 건넨다.
-   * 단체 사진(FamilyGroupPhoto)이 사람마다 크기를 살짝 맞춰 얼굴 크기가 고르게 보이게 쓴다. 못 쟀거나 예전 그림이면 없다
-   * (그때는 실제 키 비율 그대로). 숫자 하나라 개인정보가 아니다.
+   * 단체 사진(FamilyGroupPhoto)이 이 값으로 턱선을 찾아 그림을 머리·몸·발 칸으로 나눠, 키는 실제 키·얼굴은 얼굴 크기표
+   * (lib/family-head FACE_SIZE)대로 세운다 — 그림은 전신에 맞춰 잘려 있어(lib/cutout, 흰 바탕 그림은 여백 OPAQUE_PAD)
+   * 턱선 = 그림 높이 ÷ 이 값이다.
+   * 못 쟀거나 예전 그림이면 없다(그때는 나누지 않고 실제 키 비율 그대로). 숫자 하나라 개인정보가 아니다.
    */
   headRatio?: number;
+  /**
+   * 굽기 때 목 ~ 발목 띠를 세로로 늘인 배율(1 초과 ~ 1.5, 0.01 단위 — lib/family-stretch, api/family/portrait 머리글 ④).
+   * 단체 사진이 몸 칸을 또 늘일 때 둘을 곱해 1.45 를 넘지 않게 본다(lib/family-head FACE_FIT.totalMax) — 두 번 늘여 윗옷이
+   * 튜닉처럼 길어지지 않게. 늘이지 않았거나 예전 그림이면 없다(1 로 친다). 숫자 하나라 개인정보가 아니다.
+   */
+  bodyStretch?: number;
 };
 
 export type FamilyMember = {
@@ -855,6 +864,8 @@ function normalizePortrait(raw: unknown): FamilyPortrait | undefined {
   const lockKey = typeof p.lockKey === "string" && p.lockKey.length <= 1000 ? p.lockKey : undefined;
   // 믿을 범위(2~10) 안의 숫자만, 0.01 단위로 — 이상한 값은 버린다(단체 사진이 실제 키 비율로 돌아간다).
   const headRatio = cleanHeadRatio(p.headRatio);
+  // 굽기 때 늘인 배율 — 1 초과 ~ 1.5 숫자만(이상하면 버린다 — 단체 사진이 늘이지 않은 그림으로 본다).
+  const bodyStretch = cleanBodyStretch(p.bodyStretch);
   return {
     url: p.url as string,
     ref: p.ref as string,
@@ -863,6 +874,7 @@ function normalizePortrait(raw: unknown): FamilyPortrait | undefined {
     ...(lockKey !== undefined ? { lockKey } : {}),
     ...(p.fromPhoto === true ? { fromPhoto: true } : {}),
     ...(headRatio !== undefined ? { headRatio } : {}),
+    ...(bodyStretch !== undefined ? { bodyStretch } : {}),
   };
 }
 

@@ -89,7 +89,7 @@ export const PRICING_FIELDS_SALES = [
 /** 고급 — 자주 만지지 않는 값. 화면에서는 접어 둔다. */
 export const PRICING_FIELDS_ADVANCED = [
   { key: "feedback_bonus_tokens", label: "의견 첫 글 보상", unit: "토큰", help: "게시판에 처음 글을 남기면 드리는 토큰이에요." },
-  { key: "max_free_rewrites", label: "무료 다시쓰기", unit: "회", help: "같은 줄거리로 대본을 공짜로 다시 쓸 수 있는 횟수예요." },
+  { key: "max_free_rewrites", label: "무료 다시쓰기", unit: "회", help: "대본 값을 낸 뒤 공짜로 다시 만들 수 있는 횟수예요. '문장만 다시 쓰기'와 '새로 짓기'를 합쳐 셉니다." },
 ] as const;
 
 export type PricingField =

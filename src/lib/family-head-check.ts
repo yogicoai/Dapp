@@ -5,15 +5,33 @@
  * gemini-flash-latest)에 한 번 보여 머리 상자(머리카락 맨 위 ~ 턱)와 전신 상자(머리카락 맨 위 ~ 신발 바닥)를
  * [위, 왼, 아래, 오른] 0~1000 비율로 받는다. 전신 높이 ÷ 머리 높이 = 잰 비율(lib/family-head headRatioFromBoxes).
  * 표에서 많이 벗어나면(headVerdict) 시간이 넉넉할 때만 같은 쿠키로 한 번 더 그리고, 표에 더 가까운 쪽을 남긴다(evenOutHead).
+ * 다시 그리기는 **처음 그림에서** 한다(사장님 승인 2026-09-29 오후 "엄마 비율이 이상해졌어"): 예전엔 같은 요청(사진 갈래면 사진 +
+ * 클로즈업 + 견본 + 비율 견본)에 바로잡는 한 줄만 붙여 다시 그렸는데, 얼굴이 꽉 찬 사진(셀카)이 머리를 크게 당기는 버릇까지
+ * 그대로 되풀이했다(엄마 표 7 → 처음 4.15 · 다시 4.41, 둘 다 대두). 이제 다시 그리기는 처음 그림(첫째) + 비율 견본(둘째)만
+ * 들고 '같은 캐릭터를 그대로, 비율만 고쳐'로 그린다 — 사진·클로즈업·특징 카드는 다시 그리기에 쓰지 않는다
+ * (lib/family-portrait-prompt headRedrawRecipe). 칩 갈래도 같다.
  *
  * 실패는 조용히 — 키 없음·한도 막힘·시간 초과·못 읽음이면 잰 값 없이(null) 오늘처럼 건넨다. 다시 걸지 않는다(시간은 그리기 몫).
  * 로그·결과에는 숫자(비율·걸린 시간)와 결과 갈래만 — 그림·프롬프트·사진·구글 답 글은 넣지 않는다.
  * 값: 그림 한 장(작게 줄여서) + 짧은 JSON 답이라 보통 한 번에 약 2~4원. 글 모델이 생각하는 모델이라 생각이 길어지면
  * 답 길이 상한(CHECK_MAX_OUTPUT_TOKENS)까지 — 한 번에 많아야 약 9원. 다시 그리면 그림 한 장 값(약 95원)과 재기 한 번이 더 든다.
  * 생각 설정(thinking)은 넣지 않았다(아래 measureHeadRatio). 첫 실제 로그에서 'timeout' 이 잦으면 모델에 맞춰 넣는다.
+ *
+ * 잰 상자(머리·전신)도 남긴 그림과 함께 돌려준다(evenOutHead boxes) — 그래도 머리가 크면 부른 쪽이 값 없이 몸을 늘인다
+ * (lib/family-stretch, 사장님 승인 2026-09-29 밤). 상자도 숫자뿐이라 그림·사진이 아니다(그래도 로그에는 찍지 않는다).
  */
 
-import { closerHead, headRatioFromBoxes, headVerdict, ratioText, readBox, type Box, type HeadVerdict } from "./family-head.ts";
+import {
+  closerHead,
+  headMiss,
+  headRatioFromBoxes,
+  headVerdict,
+  readBox,
+  type Box,
+  type HeadBoxes,
+  type HeadFix,
+  type HeadVerdict,
+} from "./family-head.ts";
 import { geminiBlocked, shrinkForReference, type GeneratedImage } from "./gemini.ts";
 
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
@@ -47,7 +65,7 @@ export const HEAD_CHECK_PROMPT = [
  * 글 모델의 답 → 머리·전신 상자. 우리가 부탁한 꼴({"head":[…],"figure":[…]})과 Gemini 가 흔히 쓰는 꼴
  * ([{"box_2d":[…],"label":"head"}, …]) 둘 다 받는다. ```json 울타리도 걷는다. 못 읽으면 null.
  */
-export function readHeadBoxes(text: string): { head: Box; figure: Box } | null {
+export function readHeadBoxes(text: string): HeadBoxes | null {
   const body = text.replace(/```(?:json)?/gi, "").trim();
   let data: unknown;
   try {
@@ -82,8 +100,11 @@ export function readHeadBoxes(text: string): { head: Box; figure: Box } | null {
   return head && figure ? { head, figure } : null;
 }
 
-/** 한 번 잰 결과 — 로그에는 ratio·ms·outcome 만 찍는다. */
-export type HeadMeasure = { ratio: number | null; ms: number; outcome: string };
+/**
+ * 한 번 잰 결과 — 로그에는 ratio·ms·outcome 만 찍는다.
+ * boxes: 비율을 낸 머리·전신 상자(ratio 가 있을 때만) — 몸 늘이기(lib/family-stretch)가 턱선·발목선을 잡는 데 쓴다.
+ */
+export type HeadMeasure = { ratio: number | null; ms: number; outcome: string; boxes?: HeadBoxes };
 
 type Part = { text?: string; thought?: boolean };
 
@@ -93,7 +114,12 @@ type Part = { text?: string; thought?: boolean };
  */
 export async function measureHeadRatio(image: GeneratedImage, opts: { timeoutMs: number }): Promise<HeadMeasure> {
   const startedAt = Date.now();
-  const done = (ratio: number | null, outcome: string): HeadMeasure => ({ ratio, ms: Date.now() - startedAt, outcome });
+  const done = (ratio: number | null, outcome: string, boxes?: HeadBoxes): HeadMeasure => ({
+    ratio,
+    ms: Date.now() - startedAt,
+    outcome,
+    ...(boxes ? { boxes } : {}),
+  });
 
   const key = process.env.GEMINI_API_KEY;
   if (!key) return done(null, "no-key");
@@ -143,7 +169,7 @@ export async function measureHeadRatio(image: GeneratedImage, opts: { timeoutMs:
       return done(null, finish && finish !== "STOP" ? `finish ${String(finish).slice(0, 40)}` : "unreadable");
     }
     const ratio = headRatioFromBoxes(boxes.head, boxes.figure);
-    return ratio === null ? done(null, "bad-boxes") : done(ratio, "ok");
+    return ratio === null ? done(null, "bad-boxes") : done(ratio, "ok", boxes);
   } catch (e) {
     return done(null, ctrl.signal.aborted ? "timeout" : e instanceof SyntaxError ? "unreadable" : "network");
   } finally {
@@ -152,17 +178,18 @@ export async function measureHeadRatio(image: GeneratedImage, opts: { timeoutMs:
 }
 
 /**
- * 다시 그릴 때 프롬프트 끝에 붙이는 한 줄 — 표 비율과 지난번에 잰 비율(숫자만)을 적는다.
- * 나머지(생김새·옷·자세·그림체)는 그대로라고 못박는다 — 머리 크기만 고치는 다시 그리기다.
- * 몸 부위 말(몸통·다리·body)은 쓰지 않는다 — 다시 그리기는 같은 참고 그림(사진 갈래면 실제 아이 사진)과 함께 가서, 사진 옆의
- * 몸 말은 안전 검사(IMAGE_SAFETY)에 걸리기 쉽다(2026-09-29 사진 거절). '전체 모습에 견주어'로만 적는다.
+ * 다시 그린 그림의 재기가 이 갈래면 처음 그림을 남긴다(evenOutHead 5) — 글 모델이 그림을 보고 답했는데 한 사람 전신 상자를
+ * 못 냈다: unreadable(한 사람 전신이 아니라며 null 을 줬거나 답을 못 읽음) · bad-boxes(상자가 전신·머리로 말이 안 됨).
+ * 시간·통신·키·한도(no-time·timeout·http·network·no-key·gemini-blocked …)는 그림 탓이 아니라 넣지 않는다.
  */
-export function headCorrectionLine(target: number, verdict: Exclude<HeadVerdict, "ok">, measured: number): string {
-  const want = `the head (top of the hair to the chin) must be only ${ratioText(target)} of the full height (top of the hair to the soles of the shoes)`;
-  return verdict === "big"
-    ? `HEAD SIZE — IMPORTANT CORRECTION: ${want}. The previous try drew the head too big (about ${ratioText(measured)}) — paint the head clearly smaller in relation to the whole figure. Everything else stays exactly as described above.`
-    : `HEAD SIZE — IMPORTANT CORRECTION: ${want.replace("must be only", "must be")}. The previous try drew the head too small (about ${ratioText(measured)}) — paint the head clearly bigger in relation to the whole figure. Everything else stays exactly as described above.`;
-}
+const UNREADABLE_REDRAW = new Set(["unreadable", "bad-boxes"]);
+
+/**
+ * 두 장을 건넬 때의 비율(effective)로 견줄 때, 표에서 벗어난 정도(headMiss)가 이만큼도 안 다르면 같다고 보고 잰 비율로 견준다 —
+ * 둘 다 늘여서 맞출 비율(표 × 0.8)에 닿으면 늘인 뒤 값은 반올림(0.01)만 다르다. 그때는 덜 늘여도 되는 쪽(잰 비율이 표에 더
+ * 가까운 쪽)을 남긴다(1% 안팎).
+ */
+const EFFECTIVE_TIE = 0.01;
 
 /** 머리 재기 한 번의 기록 — 숫자와 갈래뿐(로그용). */
 export type HeadPassLog = {
@@ -176,7 +203,10 @@ export type HeadPassLog = {
   second: number | null;
   /** 남긴 그림 */
   kept: "first" | "redraw";
-  /** ok · no-time · 재기 실패 갈래(timeout·http 4xx …) · no-time-redraw · redraw-failed · redraw-unmeasured · closer-first · closer-redraw */
+  /**
+   * ok · no-time · 재기 실패 갈래(timeout·http 4xx …) · no-time-redraw · redraw-failed · redraw-unreadable · redraw-unmeasured ·
+   * redraw-unmeasured-first · closer-first · closer-redraw
+   */
   outcome: string;
   /** 재기에 쓴 시간(두 번이면 합) */
   checkMs: number;
@@ -191,25 +221,42 @@ export type HeadPassLog = {
  *  1. 재기 — checkUntil 까지 HEAD_CHECK_MIN_MS 도 안 남았으면 재지 않고 처음 그림(ratio null).
  *  2. 못 쟀거나 표에 맞으면(ok) 처음 그림.
  *  3. 벗어났는데 redrawUntil 까지 redrawMinMs 가 안 남았으면 처음 그림(잰 비율은 그대로 남긴다 — 단체 사진이 쓴다).
- *  4. 다시 그리기(프롬프트 끝에 headCorrectionLine) — 실패·시간 초과면 처음 그림.
- *  5. 다시 잰다 — 쟀으면 표에 더 가까운 쪽(closerHead). 못 쟀으면 다시 그린 그림을 남긴다(잰 비율 없이):
- *     처음 그림은 이미 표에서 많이 벗어난 것을 알고, 다시 그린 그림은 그걸 바로잡으라고 그린 것이라 더 나을 공산이 크다.
+ *  4. 다시 그리기 — redraw(처음 그림, 바로잡을 것(HeadFix), 남은 시간). 부른 쪽은 처음 그림을 첫째 참고 그림으로 삼아 비율만
+ *     고쳐 그린다(lib/family-portrait-prompt headRedrawRecipe — 사진·클로즈업 없이). 실패·시간 초과면 처음 그림.
+ *  5. 다시 잰다 — 쟀으면 표에 더 가까운 쪽(closerHead). effective 를 주면 건넬 때의 비율(몸 늘이기 뒤)로 견준다 — 머리가 큰
+ *     처음 그림(4.6 → 늘여 5.6)과 너무 작게 다시 그린 그림(9.5)이면 처음 그림. 거의 같으면(EFFECTIVE_TIE) 잰 비율로.
+ *     시간·통신 탓으로 못 쟀으면 다시 그린 그림을 남긴다(잰 비율 없이): 처음 그림은 이미 표에서 많이 벗어난 것을 알고, 다시
+ *     그린 그림은 그걸 바로잡으라고 그린 것이라 더 나을 공산이 크다. 다만 머리가 큰 처음 그림을 늘여서 나아지면(effective 가
+ *     잰 비율보다 크다) 처음 그림(redraw-unmeasured-first) — 못 잰 다시 그린 그림은 상자가 없어 늘일 수 없고 단체 사진도 못
+ *     고른다. 늘인 처음 그림은 늘 같은 결과다(셀카 엄마 3.94 → 약 4.8, 4.15 → 약 5.1, 약 4.5 넘으면 5.6 — lib/family-stretch).
+ *     글 모델이 보고도 한 사람 전신을 못 찾았으면(UNREADABLE_REDRAW) 처음 그림(redraw-unreadable) — 두 사람·전후 비교처럼
+ *     깨진 그림일 공산이 크다.
+ * 돌려주는 boxes 는 **남긴 그림**을 잰 상자다(ratio 와 같은 그림·같은 재기) — 못 쟀으면(ratio null) null.
  */
 export async function evenOutHead<T>(o: {
   image: T;
   /** 이 사람의 표 비율(lib/family-head headChartRatio) */
   target: number;
   measure: (image: T, timeoutMs: number) => Promise<HeadMeasure>;
-  /** 같은 참고 그림·프롬프트에 line 을 붙여 한 번 더 그린다. timeoutMs 안에 못 끝내면 던진다. */
-  redraw: (line: string, timeoutMs: number) => Promise<T>;
+  /**
+   * first(처음 그림)에서 같은 캐릭터를 비율만 fix 대로 고쳐 한 번 더 그린다(headRedrawRecipe). timeoutMs 안에 못 끝내면 던진다.
+   * 처음 그림을 넘기는 까닭 — 다시 그리기가 사진·클로즈업·특징 카드 없이 처음 그림만으로 되게(부른 쪽은 그것들을 처음 그리기
+   * 직후에 놓는다).
+   */
+  redraw: (first: T, fix: HeadFix, timeoutMs: number) => Promise<T>;
   /** 재기는 이 시각(Date.now 기준)까지 끝나야 한다 */
   checkUntil: number;
   /** 다시 그리기는 이 시각까지 끝나야 한다 */
   redrawUntil: number;
   /** 다시 그리기를 시작하려면 redrawUntil 까지 최소 이만큼 남아야 한다 */
   redrawMinMs: number;
+  /**
+   * 잰 그림(비율·상자) → 건넬 때의 비율. 부른 쪽이 머리가 큰 그림의 몸을 늘이면(lib/family-stretch ratioAfterStretch) 늘인 뒤
+   * 비율을 준다 — 두 장을 견줄 때(5)와 못 잰 다시 그린 그림 대신 처음 그림을 남길지(5)에 쓴다. 없으면 잰 비율 그대로.
+   */
+  effective?: (ratio: number, boxes: HeadBoxes | null) => number;
   now?: () => number;
-}): Promise<{ image: T; ratio: number | null; log: HeadPassLog }> {
+}): Promise<{ image: T; ratio: number | null; boxes: HeadBoxes | null; log: HeadPassLog }> {
   const now = o.now ?? Date.now;
   const log: HeadPassLog = {
     target: o.target,
@@ -233,10 +280,14 @@ export async function evenOutHead<T>(o: {
       return { ratio: null, ms: 0, outcome: "error" };
     }
   };
-  const first = (outcome: string, ratio: number | null) => {
+  /** 처음 그림을 남긴다 — m 은 처음 그림을 잰 결과(못 쟀으면 null: 비율·상자 없이) */
+  const first = (outcome: string, m: HeadMeasure | null) => {
     log.outcome = outcome;
-    return { image: o.image, ratio, log };
+    return { image: o.image, ratio: m?.ratio ?? null, boxes: m?.ratio != null ? (m.boxes ?? null) : null, log };
   };
+
+  /** 건넬 때의 비율(effective 가 없으면 잰 비율 그대로) */
+  const effective = (ratio: number, m: HeadMeasure) => o.effective?.(ratio, m.boxes ?? null) ?? ratio;
 
   const m1 = await measure(o.image);
   if (!m1) return first("no-time", null);
@@ -244,33 +295,44 @@ export async function evenOutHead<T>(o: {
   log.first = m1.ratio;
   const verdict = headVerdict(m1.ratio, o.target);
   log.verdict = verdict;
-  if (verdict === "ok") return first("ok", m1.ratio);
+  if (verdict === "ok") return first("ok", m1);
 
   const left = o.redrawUntil - now();
-  if (!(left >= o.redrawMinMs)) return first("no-time-redraw", m1.ratio);
+  if (!(left >= o.redrawMinMs)) return first("no-time-redraw", m1);
 
   log.retried = true;
   const t0 = now();
   let second: T;
   try {
-    second = await o.redraw(headCorrectionLine(o.target, verdict, m1.ratio), left);
+    second = await o.redraw(o.image, { target: o.target, verdict, measured: m1.ratio }, left);
   } catch {
     log.redrawMs = now() - t0;
-    return first("redraw-failed", m1.ratio);
+    return first("redraw-failed", m1);
   }
   log.redrawMs = now() - t0;
 
   const m2 = await measure(second);
   if (m2?.ratio == null) {
+    // 글 모델이 다시 그린 그림을 **보고도** 한 사람 전신을 못 찾았다(null 상자·이상한 상자) — 처음 그림을 참고로 '다시 그려'라고
+    // 하면 두 사람을 나란히·전후 비교로 그리는 일이 있다. 쿠키를 낸 부모에게 깨진 그림을 건네지 않게 처음 그림(한 사람으로
+    // 잰 그림)을 남긴다. 시간이 없거나 통신이 안 돼 못 잰 것(no-time·timeout·http·network …)은 그대로 다시 그린 그림.
+    if (m2 && UNREADABLE_REDRAW.has(m2.outcome)) return first("redraw-unreadable", m1);
+    // 머리가 큰 처음 그림은 부른 쪽이 늘여서 고친다(값 없이 늘 같은 결과) — 상자가 없어 늘일 수 없는 다시 그린 그림보다 낫다.
+    // 머리가 작은 쪽(small)은 늘이기로 못 고치니(effective = 잰 비율) 다시 그린 그림 그대로.
+    if (effective(m1.ratio, m1) > m1.ratio) return first("redraw-unmeasured-first", m1);
     log.kept = "redraw";
     log.outcome = "redraw-unmeasured";
-    return { image: second, ratio: null, log };
+    return { image: second, ratio: null, boxes: null, log };
   }
   log.second = m2.ratio;
-  if (closerHead(m1.ratio, m2.ratio, o.target) === "second") {
+  // 건넬 때의 비율로 견준다 — 거의 같으면(둘 다 늘여서 맞출 비율에 닿는 등) 잰 비율로(덜 늘여도 되는 쪽)
+  const e1 = effective(m1.ratio, m1);
+  const e2 = effective(m2.ratio, m2);
+  const tie = Math.abs(headMiss(e1, o.target) - headMiss(e2, o.target)) < EFFECTIVE_TIE;
+  if ((tie ? closerHead(m1.ratio, m2.ratio, o.target) : closerHead(e1, e2, o.target)) === "second") {
     log.kept = "redraw";
     log.outcome = "closer-redraw";
-    return { image: second, ratio: m2.ratio, log };
+    return { image: second, ratio: m2.ratio, boxes: m2.boxes ?? null, log };
   }
-  return first("closer-first", m1.ratio);
+  return first("closer-first", m1);
 }

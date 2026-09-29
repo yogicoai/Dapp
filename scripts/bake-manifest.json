@@ -513,7 +513,7 @@
     "text": "\"형수님, 밥 한 술만 주세요. 아이들이 사흘을 굶었어요.\""
   },
   "folk/heungbu/seg-cast-p6-1.mp3": {
-    "voice": "tc-yubin",
+    "voice": "tc-chungah",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "\"흥, 밥 한 술도 아까워! 썩 물러가라!\""
@@ -537,7 +537,7 @@
     "text": "\"형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.\""
   },
   "folk/heungbu/seg-cast-p7-2.mp3": {
-    "voice": "tc-yubin",
+    "voice": "tc-chungah",
     "emotion": "angry",
     "intensity": 0.35,
     "text": "\"별 이상한 사람을 다 보겠네!\""
@@ -795,7 +795,7 @@
     "text": "\"슬근슬근, 톱질하세!\""
   },
   "folk/heungbu/seg-cast-p21-1.mp3": {
-    "voice": "tc-yubin",
+    "voice": "tc-chungah",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "\"어기여차, 톱질하세!\""
@@ -3171,7 +3171,7 @@
     "text": "내가 형님한테 한번 가 볼게요."
   },
   "folk/heungbu/say-p6-nolbuwife.mp3": {
-    "voice": "tc-yubin",
+    "voice": "tc-chungah",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "흥, 밥 한 술도 아까워! 썩 물러가라!"
@@ -3183,7 +3183,7 @@
     "text": "형수님, 밥 한 술만 주세요. 아이들이 사흘을 굶었어요."
   },
   "folk/heungbu/say-p7-nolbuwife.mp3": {
-    "voice": "tc-yubin",
+    "voice": "tc-chungah",
     "emotion": "angry",
     "intensity": 0.35,
     "text": "별 이상한 사람을 다 보겠네!"
@@ -3279,7 +3279,7 @@
     "text": "옳지! 이제 나도 부자가 되겠구나!"
   },
   "folk/heungbu/say-p21-nolbuwife.mp3": {
-    "voice": "tc-yubin",
+    "voice": "tc-chungah",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "어기여차, 톱질하세!"

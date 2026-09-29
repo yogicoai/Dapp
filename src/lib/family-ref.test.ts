@@ -1,6 +1,14 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { acceptFamilyRef, familyFolderOf, familyRefMemberId, familyUrlPrefix, fetchFamilyRef } from "./family-ref.ts";
+import {
+  acceptFamilyRef,
+  clearFamilyRefCacheForTests,
+  familyFolderOf,
+  familyRefMemberId,
+  familyUrlPrefix,
+  fetchFamilyRef,
+  fetchFamilyRefCached,
+} from "./family-ref.ts";
 
 /*
  * 가족 그림 주소 — 서버가 이 회원 폴더의 우리가 올린 참고용 JPEG 만 받아 오는지.
@@ -168,5 +176,64 @@ describe("fetchFamilyRef — 넘겨주기 없이, 시간·크기를 잘라, JPEG
     const started = Date.now();
     assert.equal(await fetchFamilyRef(REF, { fetchImpl: hangs, timeoutMs: 30 }), null);
     assert.ok(Date.now() - started < 2000);
+  });
+});
+
+describe("fetchFamilyRefCached — 쪽마다 같은 얼굴을 다시 받지 않는다(얼굴 고정 3단계)", () => {
+  it("같은 주소는 한 번만 받는다 — 동시에 불러도, 나중에 불러도", async () => {
+    clearFamilyRefCacheForTests();
+    let calls = 0;
+    const fetchImpl = fakeFetch(() => {
+      calls++;
+      return new Response(JPEG);
+    });
+    const [a, b] = await Promise.all([fetchFamilyRefCached(REF, { fetchImpl }), fetchFamilyRefCached(REF, { fetchImpl })]);
+    const c = await fetchFamilyRefCached(REF, { fetchImpl });
+    assert.equal(calls, 1);
+    assert.deepEqual(a, { mimeType: "image/jpeg", data: Buffer.from(JPEG).toString("base64") });
+    assert.deepEqual(b, a);
+    assert.deepEqual(c, a);
+  });
+
+  it("실패는 기억하지 않는다 — 다음에 다시 받아 본다", async () => {
+    clearFamilyRefCacheForTests();
+    let calls = 0;
+    const flaky = fakeFetch(() => (++calls === 1 ? new Response("no", { status: 503 }) : new Response(JPEG)));
+    assert.equal(await fetchFamilyRefCached(REF, { fetchImpl: flaky }), null);
+    assert.ok(await fetchFamilyRefCached(REF, { fetchImpl: flaky }));
+    assert.equal(calls, 2);
+  });
+
+  it("15분이 지나면 다시 받는다", async () => {
+    clearFamilyRefCacheForTests();
+    let calls = 0;
+    let clock = 1_000_000;
+    const fetchImpl = fakeFetch(() => {
+      calls++;
+      return new Response(JPEG);
+    });
+    await fetchFamilyRefCached(REF, { fetchImpl, now: () => clock });
+    clock += 14 * 60 * 1000;
+    await fetchFamilyRefCached(REF, { fetchImpl, now: () => clock });
+    assert.equal(calls, 1);
+    clock += 2 * 60 * 1000;
+    await fetchFamilyRefCached(REF, { fetchImpl, now: () => clock });
+    assert.equal(calls, 2);
+  });
+
+  it("24장을 넘으면 가장 오래 안 쓴 것부터 뺀다", async () => {
+    clearFamilyRefCacheForTests();
+    const seen: string[] = [];
+    const fetchImpl = fakeFetch((url) => {
+      seen.push(url);
+      return new Response(JPEG);
+    });
+    const urlOf = (i: number) => `${PREFIX}mom-17591000000${String(i).padStart(2, "0")}-${HEX}-ref.jpg`;
+    for (let i = 0; i < 25; i++) await fetchFamilyRefCached(urlOf(i), { fetchImpl });
+    assert.equal(seen.length, 25);
+    await fetchFamilyRefCached(urlOf(24), { fetchImpl }); // 남아 있다
+    assert.equal(seen.length, 25);
+    await fetchFamilyRefCached(urlOf(0), { fetchImpl }); // 빠졌다 — 다시 받는다
+    assert.equal(seen.length, 26);
   });
 });

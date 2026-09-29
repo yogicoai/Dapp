@@ -28,8 +28,11 @@ export const USUAL_WAIT = {
   pageBatchSec: 60,
 } as const;
 
-/** 기다림 종류 — 줄거리·대본·그림. */
-export type WaitKind = "outline" | "story" | "draw";
+/**
+ * 기다림 종류 — 줄거리·대본·그림, 그리고 script(줄거리를 짓고 곧바로 대본까지 이어 쓰는 한 번의 기다림).
+ * script 는 2026-09-29 줄거리 확인 화면을 없애면서 생겼다 — 부모에겐 '대본 만들기' 한 번이다.
+ */
+export type WaitKind = "outline" | "story" | "script" | "draw";
 
 /** 초를 "12초" / "1분" / "1분 12초" 로. 음수·NaN 은 0초로 본다. */
 export function formatDuration(totalSec: number): string {
@@ -73,6 +76,7 @@ export function uploadLine(done: number, total: number, pages: number): string {
 export function usualWaitSec(kind: WaitKind, pageCount = 5): number {
   if (kind === "outline") return USUAL_WAIT.outlineSec;
   if (kind === "story") return USUAL_WAIT.storySec;
+  if (kind === "script") return USUAL_WAIT.outlineSec + USUAL_WAIT.storySec;
   return usualDrawSec(pageCount);
 }
 
@@ -105,25 +109,43 @@ export function waitLine(kind: WaitKind, elapsedMs: number, pageCount = 5): stri
   return `${passed} · 보통 ${formatDuration(usual)}쯤 걸려요`;
 }
 
-/** 기다림 막(busy)이 무엇을 기다리나 — 줄거리 짓기·대본 쓰기·다시 저장하기. */
-export type BusyKind = "outline" | "story" | "save";
+/**
+ * 기다림 막(busy)이 무엇을 기다리나.
+ *  · script — 줄거리를 짓고 곧바로 대본까지(첫 '대본 만들기', 대본 화면의 '다른 이야기로 새로 짓기').
+ *  · story  — 같은 줄거리로 대본만 다시 쓰기.
+ *  · save   — 책장에 다시 넣기.
+ * 예전의 outline(줄거리만 짓기)은 2026-09-29 줄거리 확인 화면과 함께 없앴다 — 줄거리만 기다리는 일이 이제 없다.
+ */
+export type BusyKind = "script" | "story" | "save";
+
+/** script 기다림의 어느 쪽인가 — 줄거리를 짓는 중이냐, 대본을 쓰는 중이냐. */
+export type ScriptStage = "outline" | "story";
 
 /**
  * 기다림 막에 쓸 말 — 큰 문구, 흐르는 시간 줄의 종류(없으면 null), 감상 줄을 둘지.
  *
- * 줄거리 화면에서 '다른 이야기로 다시 짓기'도 같은 막을 쓴다. 단계(step)만 보고 고르면
- * 30초짜리 줄거리를 "대본을 쓰고 있어요 · 보통 2분"이라 해서 대본 값이 나간 줄 안다.
- * 그래서 무엇을 기다리는지는 단추를 누를 때 정한 값으로 고른다.
- *  · 감상 줄은 대본(2분)만 — 30초 줄거리·몇 초 저장에 책을 펼치면 읽다 끊긴다.
+ * 무엇을 기다리는지는 단추를 누를 때 정한 값으로 고른다 — 단계(step)만 보고 고르면
+ * 같은 대본 화면의 '다시 쓰기'와 '새로 짓기'를 못 가른다.
+ *  · script 는 한 번 기다리지만 안에서 두 걸음이다(줄거리 30초 → 대본 2분). 큰 문구만 바꿔 지금 걸음을 말한다.
+ *    흐르는 시간은 둘을 합친 '보통 2분 30초'. (따로 '줄거리 짓기 · 대본 쓰기' 진행 줄을 두면 ① 대본 만들기
+ *    밖의 단계처럼 보여 '이야기 짓기가 대본인가' 헷갈림이 되살아나서 두지 않는다.)
+ *  · 감상 줄은 대본이 드는 기다림(2분 넘게)만 — 몇 초 저장에 책을 펼치면 읽다 끊긴다.
  */
-export function busyWaitText(kind: BusyKind): { headline: string; line: WaitKind | null; showcase: boolean } {
+export function busyWaitText(
+  kind: BusyKind,
+  stage: ScriptStage = "outline",
+): { headline: string; line: WaitKind | null; showcase: boolean } {
   switch (kind) {
+    case "script":
+      return {
+        headline: stage === "outline" ? "줄거리를 짓고 있어요…" : "대본을 쓰고 있어요…",
+        line: "script",
+        showcase: true,
+      };
     case "story":
-      return { headline: "대본을 쓰고 있어요…", line: "story", showcase: true };
+      return { headline: "대본을 다시 쓰고 있어요…", line: "story", showcase: true };
     case "save":
       return { headline: "동화를 책장에 넣고 있어요…", line: null, showcase: false };
-    case "outline":
-      return { headline: "이야기를 짓고 있어요…", line: "outline", showcase: false };
   }
 }
 
@@ -169,15 +191,17 @@ export type NoticeState = { step: string; busy: boolean; saveFailed: boolean };
 /**
  * 앞 화면 → 지금 화면으로 바뀐 것을 보고 알릴 일을 고른다. 없으면 null.
  *
- *  · 대본: 줄거리 화면에서 기다리다(busy) 대본 화면으로 넘어왔을 때만. 임시저장을 되살려
+ *  · 대본: 성우 화면('대본 만들기')에서 기다리다(busy) 대본 화면으로 넘어왔을 때만. 임시저장을 되살려
  *    대본 화면으로 온 것은 기다린 게 아니므로 알리지 않는다.
+ *    (2026-09-29 전에는 줄거리 확인 화면(outline)에서 기다렸다 — 그 화면은 없앴다.)
+ *    대본 화면 안의 다시 쓰기·새로 짓기는 화면이 그대로라 알리지 않는다(예전 다시 쓰기와 같다).
  *  · 완성: 완성 화면이 새로 떴을 때.
  *  · 저장 실패: 실패 안내가 새로 떴을 때(이미 떠 있던 것을 또 알리지 않는다).
  */
 export function noticeFor(prev: NoticeState, next: NoticeState): NoticeKind | null {
   if (next.step === "done" && prev.step !== "done") return "done";
   if (next.saveFailed && !prev.saveFailed) return "saveFailed";
-  if (prev.step === "outline" && prev.busy && next.step === "story") return "script";
+  if (prev.step === "style" && prev.busy && next.step === "story") return "script";
   return null;
 }
 

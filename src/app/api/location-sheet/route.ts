@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
 import { GeminiError, generateImage, loadReferenceImage, shrinkForReference, toDataUrl } from "@/lib/gemini";
-import { isIndoorPlace, placeVehicleKind } from "@/lib/story-quality";
+import { pageVehicle, vehicleInteriorLines } from "@/lib/illustration-rules";
+import { isIndoorPlace, placeVehicleKind, schoolShuttleName } from "@/lib/story-quality";
 
 /*
  * 그리는 데 20~30초가 걸린다(검사에 걸려 다시 그리면 그 두 배).
@@ -62,9 +63,21 @@ export async function POST(request: Request) {
   const detail = typeof input.detail === "string" ? input.detail.trim().slice(0, 300) : "";
   const style = ART_STYLES.find((s) => s.id === input.artStyleId) ?? ART_STYLES[0];
   const phone = input.shape === "phone";
-  const indoor = isIndoorPlace(name, description);
   // 이름만 본다 — 설명에 "버스가 지나가는 길"이 있다고 그 장소를 탈것으로 치면 안 된다.
   const vehicle = placeVehicleKind(name);
+  /*
+   * 탈것 안(어린이집 버스 안·아빠 차)은 '건물 안' 줄 대신 탈것 줄을 준다 — 쪽 그림 라우트와 같은 판단.
+   * '실내'로 두면 "INSIDE a building … shelves, furniture"가 붙어 어린이집 버스가 교실로 그려질 수 있다.
+   * 지붕 없는 2층 버스 위층(openDeck)은 바깥이라 뺀다.
+   * 어린이 통학 버스 안이면 좌석에 작은 아이용 벨트를 그린다 — 쪽 그림의 벨트 맨 아이와 맞게(세림이법).
+   * 단 **이름만으로** 통학 버스일 때만(어린이집 버스·통학버스·학원 차) — 열쇠(locationKeyOf)도 이름만 보고 통학 버스를
+   * 따로 묶는다. '버스 안'·'노란 버스 안'은 설명·본문으로 통학 버스가 돼도 시내버스와 같은 열쇠라 이 시트를 나눠 쓰므로,
+   * 벨트 좌석을 그리면 벨트 금지인 시내버스 쪽의 기준이 된다(2026-09-29 검토). 그때는 이름의 탈것 그대로 보통 실내로 둔다.
+   */
+  const vehiclePlace = vehicle ? pageVehicle({ locationName: name, locationDescription: description }) : null;
+  const shuttleSheet = schoolShuttleName(name) === "shuttle";
+  const vehicleRoom = vehiclePlace?.vehicle && !vehiclePlace.openDeck ? (shuttleSheet ? "transit" : vehicle) : null;
+  const indoor = vehicleRoom ? null : isIndoorPlace(name, description);
   // 부모가 고른 그림체 견본(여우 그림)을 참조로 — 문구만으로는 그림체가 매번 조금씩 다르다.
   const styleSample = style.image
     ? await loadReferenceImage(new URL(style.image, request.url).toString()).catch(() => null)
@@ -106,7 +119,9 @@ export async function POST(request: Request) {
       "Keep it specific and simple — a few clear, memorable features rather than clutter. Everything shown here must be easy to repeat.",
     ].join("\n"),
     // 실내면 안쪽만 — 바깥 목록(아파트·보도)을 주면 마트 안을 마트 앞 길거리로 그린다.
-    indoor === true
+    vehicleRoom
+      ? vehicleInteriorLines(vehicleRoom, name, shuttleSheet).join("\n")
+      : indoor === true
       ? [
           `INDOOR PLACE — "${name}" is INSIDE a building. Draw only the interior: floor, walls, ceiling or ceiling lights, shelves, furniture and fixtures, from inside the room.`,
           "No street, no sidewalk, no shop front, no building exterior, no sky and no outdoor ground — except, at most, a small view through a window. Never combine the inside and the outside of a building.",

@@ -11,6 +11,8 @@ import { useTheme } from "@/components/ThemeProvider";
 import { VoiceGlyph } from "@/components/VoiceGlyph";
 import { VoiceInput } from "@/components/VoiceInput";
 import { QuestionFlow, type FlowOption, type FlowPos, type FlowQuestion } from "@/components/create/QuestionFlow";
+import { ChargeConfirm } from "@/components/create/ChargeConfirm";
+import { MakeSteps } from "@/components/create/MakeSteps";
 import {
   BestFriendChip,
   bestFriendEntry,
@@ -18,7 +20,7 @@ import {
   isBestFriendIn,
 } from "@/components/create/BestFriendChip";
 import { ART_STYLES } from "@/lib/art-styles";
-import { bestFriend, type FamilyMember } from "@/lib/family";
+import { bestFriend, heightFor, type FamilyMember } from "@/lib/family";
 import { castPortraits } from "@/lib/family-cast";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
@@ -58,8 +60,8 @@ import {
   saveMyBook,
 } from "@/lib/prefs";
 import { looksToDrawingPrompt } from "@/lib/child-looks";
-import { heroFromStory } from "@/lib/illustration-rules";
-import { locationKeyOf } from "@/lib/story-quality";
+import { heroFromStory, schoolBusPlaceKeys } from "@/lib/illustration-rules";
+import { locationKeyOf, sheetMatchesKey } from "@/lib/story-quality";
 import { tidyPunctuation } from "@/lib/story-punctuation";
 import { pickLocationDetail } from "@/lib/scene-edit";
 import {
@@ -72,8 +74,18 @@ import {
   type DrawCounts,
 } from "@/lib/draw-progress";
 import { rewriteScene, suggestLocationDetail } from "@/lib/scene-edit";
-import { illustrationTokenCost, scriptTokenCost } from "@/lib/tokens";
 import { illustrationCost, scriptCost as scriptCostOf } from "@/lib/pricing";
+import {
+  isRedoExhausted,
+  makeScriptBlock,
+  paidPlot,
+  redoLeft,
+  restorePaidOutline,
+  restorePendingPlot,
+  resumeStep,
+  reusablePlot,
+  type PendingPlot,
+} from "@/lib/create-flow";
 import { useEscClose } from "@/lib/use-esc-close";
 import { usePricing } from "@/lib/use-pricing";
 import { useScreenWakeLock } from "@/lib/use-wake-lock";
@@ -82,14 +94,17 @@ import {
   busyWaitText,
   drawNotice,
   drawProgressLine,
+  formatUsual,
   noticeFor,
   noticeText,
   pickShowcaseBooks,
   uploadLine,
+  usualWaitSec,
   waitLine,
   type BusyKind,
   type NoticeKind,
   type NoticeState,
+  type ScriptStage,
 } from "@/lib/waiting";
 import { asBooks } from "@/lib/types";
 import type { Book, NarrationStyle, VoiceDirection } from "@/lib/types";
@@ -104,7 +119,12 @@ type Character = { name: string; description: string };
 type Story = { title: string; summary: string; characters: Character[]; pages: StoryPage[] };
 type StoryMode = "today" | "imagine" | "emotion" | "direct";
 
-type Step = "child" | "theme" | "style" | "outline" | "story" | "illustrate" | "done";
+/*
+ * 줄거리 확인 단계("outline")는 2026-09-29 없앴다(사장님: "너무 과정 과정이 길어지는 것 같아서").
+ * 성우 화면의 '대본 만들기' 한 번에 줄거리를 짓고 대본까지 쓴다(makeScript). 줄거리는 이제 화면에 따로 안 보이고,
+ * 고치는 곳은 대본 화면 하나다. 옛 임시저장의 "outline" 은 되살릴 때 resumeStep 이 다른 단계로 바꾼다.
+ */
+type Step = "child" | "theme" | "style" | "story" | "illustrate" | "done";
 
 /**
  * 삽화(Gemini) 생성 스위치. 켜면 이야기 완성 후 "그림까지 그리기 🎨" 버튼이 뜨고,
@@ -370,6 +390,22 @@ function locationKeyFromImagePrompt(prompt: string): string {
 
 /** 만들 때 그린 장소 기준 그림 한 장. */
 type LocationSheet = { key: string; name: string; description: string; image: string; onePlace?: boolean };
+/** 시트에 원본이 선 고정 가족 한 사람 — 쪽 그림 서버가 주소를 다시 검사한다(api/illustrate-page). */
+type SheetPortraitRef = { name: string; ref: string; memberId: string };
+/** 쪽 그림 한 장의 응답(api/illustrate-page) */
+type PageImageReply = {
+  ok: boolean;
+  status: number;
+  data: {
+    image?: string;
+    error?: string;
+    code?: string;
+    qualityChecked?: boolean;
+    qualityPassed?: boolean;
+    qualityWarning?: string;
+    qualityIssue?: "text" | "border" | "other";
+  };
+};
 
 /**
  * 장면(쪽) 수는 5로 고정한다 (사장님 결정, 2026-09-08. 그전엔 6이었다).
@@ -495,6 +531,7 @@ const CREATE_DRAFT_KEY = "voice-storybook:create-draft";
 type CreateDraft = {
   version: number;
   savedAt: number;
+  /** "outline" 은 2026-09-29 전 임시저장에만 있다(그 화면은 없앴다) — 되살릴 때 resumeStep 이 바꾼다. */
   step: "child" | "theme" | "style" | "outline" | "story";
   name: string;
   age: number | null;
@@ -534,10 +571,28 @@ type CreateDraft = {
   directCrisis: string;
   directEnding: string;
   directText: string;
-  /** 지금까지 이야기를 다시 지은 횟수 — 새로고침해도 이어지게 임시저장에 함께 담는다. */
+  /**
+   * 옛 칸 — 대본 값을 내기 **전** 줄거리 화면에서 다시 지은 횟수였다. 그 화면이 없어져 읽지 않는다
+   * (값을 낸 뒤 '새로 짓기' 횟수와 뜻이 달라, 옮겨 오면 새로 짓기를 헛되이 막는다). 새 임시저장엔 없다.
+   */
   outlineRetries?: number;
+  /** 대본 화면에서 '다른 이야기로 새로 짓기'를 한 횟수 — 새로고침해도 이어지게. 없던 칸이라 옛 임시저장엔 없다. */
+  replots?: number;
   /** 대본 값(글 값)을 이미 받았는지 — 새로고침해도 두 번 받지 않게. */
   scriptCharged?: boolean;
+  /**
+   * 대본 값을 낸 줄거리 — 새로 짓기를 해도 서버가 이 줄거리로 세어 값을 또 받지 않는다(lib/create-flow paidPlot).
+   * 없던 칸이라 옛 임시저장엔 없다 — 그때는 outline 이 곧 값을 낸 줄거리다(선택 칸 — 형식 숫자는 그대로).
+   */
+  paidOutline?: Outline | null;
+  /**
+   * 줄거리는 나왔는데 대본을 못 받은 것 — 대본을 기다리다 끊긴 채 저장된 임시저장에만 있다.
+   * 서버가 대본 값을 이미 받았을 수 있어서, 다음 '대본 만들기'는 이 줄거리로 쓴다(lib/create-flow reusablePlot).
+   * 없던 칸이라 옛 임시저장엔 없다(선택 칸 — 형식 숫자는 그대로).
+   */
+  pendingPlot?: PendingPlot<Outline> | null;
+  /** 부모가 대본 문장·제목을 고쳤는지 — 다시 만들기 전에 '고친 것이 사라져요'를 묻는다. 없던 칸(선택). */
+  scriptEdited?: boolean;
   storyRewrites?: number;
   locationDetail?: string;
   /**
@@ -680,22 +735,15 @@ function clearCreateDraft(owner: string | null): void {
 }
 
 /**
- * 같은 재료로 이야기를 다시 지을 수 있는 횟수.
+ * 대본 화면에서 '다른 이야기로 새로 짓기'를 할 수 있는 횟수(대본 한 번에).
  *
- * 다시 짓기는 회원 토큰이 안 드는 단계지만, 누를 때마다 글 생성 값은 실제로 나간다.
- * 마음에 드는 이야기를 고를 자유(3번이면 서로 꽤 다른 이야기 넷을 보게 된다)와
- * 끝없이 돌려 보는 것 사이의 선이다. 재료를 바꾸면 0으로 되돌아간다.
+ * 예전엔 대본 값을 내기 전 줄거리 화면에서 3번까지 공짜로 다시 지었다(MAX_OUTLINE_RETRIES).
+ * 2026-09-29 그 화면을 없애고 이 단추를 대본 화면으로 옮겼다. 새로 짓기는 대본까지 새로 쓰므로
+ * 대본 값의 무료 다시 쓰기 횟수(가격표 max_free_rewrites, 기본 2 — 서버가 센다)를 '같은 줄거리로
+ * 다시 쓰기'와 함께 쓴다(lib/create-flow redoLeft). 이 숫자는 관리실에서 무료 횟수를 크게 늘렸을 때
+ * 줄거리 짓기만 끝없이 돌지 않게 거는 윗선이다. 새 재료로 대본을 새로 만들면 0으로 돌아간다.
  */
-const MAX_OUTLINE_RETRIES = 3;
-
-/**
- * 같은 줄거리로 대본을 다시 쓸 수 있는 횟수.
- *
- * 대본 값은 처음 한 번만 받으므로 다시 쓰기는 부모에게 공짜다 — 대신 우리가 API 값을
- * 문다. 문장이 조금 어색해서 한두 번 다시 쓰는 건 당연한 일이니 넉넉히 두 번 준다.
- * 그 이상 마음에 안 들면 줄거리부터 바꾸는 게 맞다.
- */
-const MAX_STORY_REWRITES = 2;
+const MAX_REPLOTS = 3;
 
 /** "친구들이랑"에서 친구를 몇 명까지 받을지. 주인공까지 넷이면 그림 한 장에 담기는 한계다. */
 const MAX_FRIENDS = 3;
@@ -1328,9 +1376,11 @@ export default function CreatePage() {
   /*
    * 값은 두 번에 나눠 받는다 — 대본을 만들 때 글 값, 그림을 붙일 때 그림 값.
    * 둘을 더하면 예전과 같다(쪽당 2토큰). 나누기만 한 것이지 올린 게 아니다.
+   * 숫자는 관리실 가격표(pricing)에서 — 실제로 깎는 DB 함수(charge_story·charge_illustration)와 같은 표다.
+   * (예전엔 이 화면만 lib/tokens 상수를 보여 줘서, 관리실에서 값을 바꾸면 단추 숫자와 실제가 어긋날 수 있었다.)
    */
-  const scriptCost = scriptTokenCost(pageCount);
-  const imageCost = illustrationTokenCost(pageCount);
+  const scriptCost = scriptCostOf(pageCount, pricing);
+  const imageCost = illustrationCost(pageCount, pricing);
   /*
    * 마스터는 토큰이 들지 않는다(auth.spendTokens에서 면제). 그런데 화면이 잔액으로
    * 버튼을 먼저 막고 있어서, 서버만 면제해 봐야 잔액이 바닥나면 못 만들었다.
@@ -1338,32 +1388,20 @@ export default function CreatePage() {
    */
   const shortOnTokens = !master && tokens < scriptCost;
 
-  // 생성 결과
-  const [outline, setOutline] = useState<Outline | null>(null);
-
   /*
-   * 줄거리 고치기 — 지금 고르고 있는 자리("title" 또는 장면 번호)와 입력 중인 글.
-   *
-   * 고치는 자리를 여기로 잡은 이유: 그림도 낭독도 아직 안 만들었다. 완성된 뒤에
-   * 글을 고치면 그 쪽 낭독을 다시 합성해야 해서 크레딧이 또 나가고, 그림은 옛 글에
-   * 맞춰진 채로 남아 어긋난다. 여기서 고치면 둘 다 없어서 얼마든지 고쳐도 공짜다.
+   * 생성 결과 — 줄거리는 화면에 따로 안 보인다(2026-09-29 줄거리 확인 화면을 없앴다).
+   * 대본을 쓸 때·같은 줄거리로 다시 쓸 때 서버에 보내려고 들고 있다. 고치는 곳은 대본 화면 하나다.
    */
-  const [editScene, setEditScene] = useState<number | "title" | null>(null);
-  const [sceneDraft, setSceneDraft] = useState("");
-
-  function saveSceneEdit() {
-    const text = sceneDraft.trim();
-    if (!text) return;
-    setOutline((prev) => {
-      if (!prev) return prev;
-      if (editScene === "title") return { ...prev, title: text };
-      return {
-        ...prev,
-        scenes: prev.scenes.map((s) => (s.sceneNo === editScene ? { ...s, text } : s)),
-      };
-    });
-    setEditScene(null);
-  }
+  const [outline, setOutline] = useState<Outline | null>(null);
+  /** 대본 값을 낸 줄거리 — 대본 화면에서 새로 지어도 이것으로 세어 값을 또 받지 않는다(lib/create-flow paidPlot). */
+  const [paidOutline, setPaidOutline] = useState<Outline | null>(null);
+  /*
+   * 줄거리는 나왔는데 대본을 아직 못 받은 것 — '대본 만들기'에서 줄거리가 오자마자 적고, 대본을 받으면 비운다.
+   * 서버는 대본을 쓰기 전에 값을 받으므로, 대본을 기다리다 끊기면(ESC·새로고침·폰이 탭을 닫음) 값만 나갔을 수 있다.
+   * 그때 줄거리를 새로 지으면 값을 또 받는다 — 그래서 다음 '대본 만들기'는 재료가 그대로면 이 줄거리로 쓴다
+   * (lib/create-flow reusablePlot). 서버가 값 낸 줄을 찾으면 무료, 못 찾으면(값이 안 나갔거나 되돌림) 한 번 받는다.
+   */
+  const [pendingPlot, setPendingPlot] = useState<PendingPlot<Outline> | null>(null);
 
   const [story, setStory] = useState<Story | null>(null);
   /*
@@ -1399,10 +1437,12 @@ export default function CreatePage() {
    */
   const [busyElapsed, setBusyElapsed] = useState(0);
   /*
-   * 기다림 막이 무엇을 기다리나 — 줄거리·대본·다시 저장. 단추를 누를 때 정한다(만들기 함수는 그대로).
-   * null 이면 단계로 어림한다(예전 셈). 막이 걷히면 비운다.
+   * 기다림 막이 무엇을 기다리나 — 대본 만들기(줄거리→대본)·대본 다시 쓰기·다시 저장. 단추를 누를 때 정한다.
+   * null 이면 단계로 어림한다. 막이 걷히면 비운다.
    */
   const [busyKind, setBusyKind] = useState<BusyKind | null>(null);
+  /** 대본 만들기 기다림 안에서 지금 걸음 — 줄거리를 짓는 중이냐, 대본을 쓰는 중이냐(기다림 막 문구). */
+  const [busyStage, setBusyStage] = useState<ScriptStage>("outline");
   /** 이번 그리기에서 '이어서 그리기'로 되살린 장수 — 그림 그리기 단추를 누를 때 적는다. */
   const drawRestoredRef = useRef(0);
   useEffect(() => {
@@ -1416,16 +1456,13 @@ export default function CreatePage() {
     };
   }, [busy]);
   /*
-   * 이야기를 다시 지은 횟수.
+   * 대본 화면에서 '다른 이야기로 새로 짓기'를 한 횟수(MAX_REPLOTS 까지).
    *
-   * 다시 짓기는 회원 토큰이 안 드는 단계다(토큰은 책이 저장될 때 한 번만 빠진다).
-   * 그런데 누를 때마다 글 생성 값은 실제로 나간다 — 마음에 드는 이야기를 고를 자유는
-   * 주되, 끝없이 돌려 보는 건 막는다.
-   *
-   * 새로고침으로 초기화되지 않게 임시저장에 함께 담는다. 재료를 바꾸면 0으로 되돌린다 —
-   * 다른 이야기를 짓는 것이지 같은 것을 다시 돌리는 게 아니기 때문이다.
+   * 토큰은 더 받지 않지만, 누를 때마다 줄거리·대본 글 값은 우리가 낸다 — 마음에 드는 이야기를
+   * 고를 자유는 주되, 끝없이 돌려 보는 건 막는다. 무료 횟수 셈은 서버가 따로 한다(storyRewrites).
+   * 새로고침으로 초기화되지 않게 임시저장에 함께 담는다. 새 재료로 대본을 새로 만들면 0으로 되돌린다.
    */
-  const [outlineRetries, setOutlineRetries] = useState(0);
+  const [replots, setReplots] = useState(0);
 
   /**
    * 대본 값(글 값)을 이미 받았는지.
@@ -1434,8 +1471,26 @@ export default function CreatePage() {
    * 재료를 바꿔 새로 지으면 0으로 되돌린다 — 그건 다른 이야기다.
    */
   const [scriptCharged, setScriptCharged] = useState(false);
-  /** 같은 줄거리로 대본을 다시 쓴 횟수. */
+  /**
+   * 대본 값을 낸 뒤 무료로 다시 만든 횟수 — 같은 줄거리로 다시 쓰기와 다른 이야기로 새로 짓기를 합친 것.
+   * 서버(charge_story)가 센 값을 받아 둔다(charge.rewrites). 남은 횟수는 redo(아래)가 셈한다.
+   */
   const [storyRewrites, setStoryRewrites] = useState(0);
+  /** 부모가 대본 문장·제목을 고쳤는지 — 다시 만들면 고친 것이 사라지므로 먼저 묻는다. 새 대본이 오면 비운다. */
+  const [scriptEdited, setScriptEdited] = useState(false);
+  /**
+   * 값이 나가는 단추의 확인 창 — "script"(대본 만들기) · "draw"(그림 그리기). 사장님(2026-09-29): "누르면 얼마의 크래딧이
+   * 발생됩니다 — 확인하고 생성되게". 관리자는 값이 안 나가서 묻지 않는다.
+   */
+  const [chargeAsk, setChargeAsk] = useState<null | "script" | "draw">(null);
+  /*
+   * 다시 만들기가 끝났다는 한 줄 — 같은 이야기로 다시 쓰면 제목이 그대로라 바뀐 줄 모른다.
+   * 잠깐 보이고 사라진다(redoNoteTimerRef).
+   */
+  const [redoNote, setRedoNote] = useState("");
+  const redoNoteTimerRef = useRef<number | null>(null);
+  /** 대본 쪽 목록(스크롤 칸) — 다시 만든 뒤 맨 위로 올린다. */
+  const pageListRef = useRef<HTMLOListElement | null>(null);
   /** 대본에서 지금 고치고 있는 쪽 번호. null이면 아무것도 안 고치는 중. */
   const [editingPage, setEditingPage] = useState<number | null>(null);
   const [pageDraft, setPageDraft] = useState("");
@@ -1464,6 +1519,12 @@ export default function CreatePage() {
    * 쪽 그림 요청과 책의 등장인물에 fixed 로 단다(얼굴·머리는 설명 글보다 시트를 따르게).
    */
   const fixedCastRef = useRef<Set<string>>(new Set());
+  /**
+   * 그 시트에 얼굴이 붙은 고정 가족의 원본 그림 주소, 시트에 선 순서(왼쪽부터) — 쪽 그림마다 원본을 함께 붙인다
+   * (2026-09-29 사장님 "얼굴이 달라 특히" — 시트만 보고 그리면 얼굴이 한 번 더 흐른다). 책에도 남겨 한 쪽 다시 그리기가 쓴다.
+   */
+  const sheetPortraitsRef = useRef<SheetPortraitRef[]>([]);
+  const sheetOrderRef = useRef<string[]>([]);
   // 장소 시트(장소마다 한 장)도 같이 저장한다 — 다시 그릴 때 같은 곳이 나오게.
   const locationSheetsRef = useRef<LocationSheet[]>([]);
   /*
@@ -1664,18 +1725,39 @@ export default function CreatePage() {
     </div>
   ) : null;
 
-  // 본문 생성은 토큰이 드는 단계라, 줄거리 화면에서 한 번 더 확인받는다(실수 방지).
-  const [confirmMake, setConfirmMake] = useState(false);
+  /*
+   * 대본 화면의 '다시 만들기' 남은 횟수 — 같은 줄거리로 다시 쓰기·다른 이야기로 새로 짓기가 무료 횟수를 함께 쓴다.
+   * 무료 횟수는 관리실 가격표 값(서버 charge_story 가 같은 값으로 센다). null = 관리자(세지 않음).
+   */
+  const redo = redoLeft({
+    master,
+    used: storyRewrites,
+    maxFree: pricing.max_free_rewrites,
+    replots,
+    maxReplots: MAX_REPLOTS,
+  });
+
+  // 완성 화면 아래 '① 대본 ✓ › ② 그림 ✓ › ③ 동화 완성' 알약 — 닫으면 다시 안 띄운다.
+  const [doneStepsOpen, setDoneStepsOpen] = useState(true);
+  /*
+   * 순서 줄은 몇 초 보여 주고 스스로 걷는다 — 두 줄짜리 알약이 가로 폰에서 첫 쪽 자막(뷰어 아래쪽)을 가린다.
+   * 그린 장수 한 줄(drawSummary)은 예전처럼 ✕ 를 누를 때까지 남는다.
+   */
+  useEffect(() => {
+    if (step !== "done" || !doneStepsOpen) return;
+    const id = window.setTimeout(() => setDoneStepsOpen(false), 6000);
+    return () => window.clearTimeout(id);
+  }, [step, doneStepsOpen]);
 
   const draftContent = JSON.stringify({
     version: CREATE_DRAFT_VERSION,
     savedAt: 0,
-    step: (["child", "theme", "style", "outline", "story"] as Step[]).includes(step) ? step : "theme",
+    step: (["child", "theme", "style", "story"] as Step[]).includes(step) ? step : "theme",
     name, age, gender, theme, themeGroup, storyMode, who, whoName, whoGender, friends,
     happening, extra, place, placeOwn, whoOwn, todayEvent, feeling, ending, emotion, situation,
     artStyle, screenShape, narratorVoice, narrationStyle, longerStory, pageCount, outline, story,
     directMode, directOpening, directDevelopment, directCrisis, directEnding, directText,
-    outlineRetries, scriptCharged, storyRewrites, locationDetail, jobId,
+    replots, scriptCharged, paidOutline, pendingPlot, scriptEdited, storyRewrites, locationDetail, jobId,
   });
 
   useEffect(() => {
@@ -1758,8 +1840,14 @@ export default function CreatePage() {
     setDirectCrisis("");
     setDirectEnding("");
     setDirectText(draft.directMode === "guided" && !draft.directText?.trim() ? oldGuided : draft.directText);
-    setOutlineRetries(draft.outlineRetries ?? 0);
+    // 옛 outlineRetries(값 내기 전 줄거리 다시 짓기)는 읽지 않는다 — 뜻이 다르다(CreateDraft 설명).
+    setReplots(draft.replots ?? 0);
     setScriptCharged(draft.scriptCharged ?? false);
+    // 옛 값 낸 임시저장엔 값 낸 줄거리 칸이 없다 — 저장된 줄거리로 채운다(lib/create-flow restorePaidOutline).
+    setPaidOutline(restorePaidOutline(draft));
+    // 대본을 기다리다 끊긴 줄거리 — 성우 화면으로 되살릴 때만(옛 '줄거리 확인' 것도 여기로).
+    setPendingPlot(restorePendingPlot(draft));
+    setScriptEdited(draft.scriptEdited ?? false);
     setStoryRewrites(draft.storyRewrites ?? 0);
     setLocationDetail(draft.locationDetail ?? "");
     // 만들기 기록 — 이어서 만들어도 같은 줄에 적는다.
@@ -1774,9 +1862,18 @@ export default function CreatePage() {
     // 길이는 늘 '넉넉하게' — 초안 값은 쓰지 않는다.
     // 예전 초안에 다른 쪽수가 남아 있어도 고정값으로 — 값이 책마다 달라지지 않게.
     setPageCount(FIXED_PAGE_COUNT);
-    setOutline(draft.outline);
-    setStory(draft.story);
-    setStep(draft.step);
+    /*
+     * 어느 화면으로 되살릴지는 resumeStep(lib/create-flow)이 정한다.
+     * 옛 '줄거리 확인'(outline) 임시저장은 성우 화면으로 — 되살리자마자 대본을 이어 쓰면 부모가 누르지도 않은
+     * 대본 값이 나간다. 성우 화면의 '대본 만들기 · 토큰 N개'를 눌러야 값이 나간다.
+     * 그 줄거리는 위 pendingPlot 으로 들고 가서 단추를 누르면 그대로 대본으로 쓴다(부모가 보고 고친 줄거리이고,
+     * 옛 화면에서 '네, 만들게요' 뒤 끊겼다면 서버가 값 낸 줄을 찾아 또 받지 않는다).
+     * 대본 화면이 아니면 outline·story 칸은 비운다 — 대본 화면에서 쓰는 칸이다.
+     */
+    const resumeAt = resumeStep(draft);
+    setOutline(resumeAt === "story" ? draft.outline : null);
+    setStory(resumeAt === "story" ? draft.story : null);
+    setStep(resumeAt);
     // 재료 질문 화면 — 재료가 하나라도 있으면 요약 장부터(일부러 건너뛴 질문을 다시 들이밀지 않는다),
     // 아무것도 없으면 첫 질문부터. 재료 단계 뒤(그림·성우…)에서 멈췄으면 돌아올 때 요약 장.
     const flowMode = draft.storyMode === "today" || draft.storyMode === "emotion" || draft.storyMode === "imagine";
@@ -2095,7 +2192,7 @@ export default function CreatePage() {
      * 상상 이야기 — 갈래 카드 → 세부 칩 → 누구랑 → 무슨 일 → 더 넣을 것.
      *
      * 상상·감정의 '어떻게 끝나면 좋을까요?'(바라는 마무리 칩 6개 + 직접 적기) 장은 2026-09-28 뺐다.
-     * 예전 한 화면에도 있었지만 그 답은 서버로 가지 않았다 — makeOutline 의 material 에 ending 이 없고,
+     * 예전 한 화면에도 있었지만 그 답은 서버로 가지 않았다 — requestOutline 의 material 에 ending 이 없고,
      * buildStoryMaterial 은 ""를 보낸다. 효과 없는 장이 한 번 더 누르게만 해서 '최대한 심플'에 어긋났다.
      * 되살리려면 칩 목록(WISH_ENDINGS, 커밋 d813142)과 함께 두 material 에 ending 을 실어야 한다
      * (서버 anthropic.ts 는 상상·감정의 ending 을 이미 받을 줄 안다).
@@ -2199,28 +2296,127 @@ export default function CreatePage() {
   }
 
   /**
-   * 줄거리 짓기. 이미 줄거리가 있는데 또 부르면 '다시 짓기'다.
+   * 줄거리 짓기 — /api/outline. 회원 토큰은 들지 않는다(글 값 약 22원은 우리가 낸다).
    *
-   * @param isRetry 다시 짓기인지 — 횟수를 세고, 다 썼으면 막는다.
+   * 줄거리는 부모에게 따로 보여 주지 않고 곧바로 대본으로 이어 쓴다(makeScript·redoScript).
+   * 실패하면 던진다 — 부른 쪽이 알린다. 이때는 대본 값이 나가지 않는다(대본 요청을 보내지 않는다).
    */
-  async function makeOutline(isRetry = false) {
+  async function requestOutline(signal: AbortSignal): Promise<Outline> {
+    const r = await authedFetch("/api/outline", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: outlineRequestBody(),
+      signal,
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error ?? "줄거리를 만들지 못했어요.");
+    return data.outline as Outline;
+  }
+
+  /**
+   * 줄거리 요청 본문(JSON 글) — 아이·재료·장면 수·분위기.
+   * '대본을 못 받은 줄거리'를 다시 써도 되는지(재료가 그대로인지) 가리는 열쇠로도 쓴다(pendingPlot.basis).
+   */
+  function outlineRequestBody(): string {
+    return JSON.stringify({
+      child,
+      // 항목별로 보낸다(콤마로 안 뭉침). 갈래에 따라 재료 형태가 다르다:
+      // 오늘=실경험(어디·누구·무슨일·기분), 상상=칩 조합(소재·누구·사건·자유).
+      material:
+        storyMode === "direct"
+          ? buildStoryMaterial()
+          : storyMode === "today"
+          ? {
+              kind: "today",
+              subject: "",
+              who,
+              whoName: whoName.trim(),
+              whoGender,
+              friends: who === "친구들이랑" ? friends.filter((x) => x.name.trim() || x.gender) : [],
+              happening: todayEvent.trim(),
+              place,
+              feeling,
+              ending,
+              emotion: "",
+              situation: "",
+              extra: "",
+            }
+          : storyMode === "emotion"
+            ? {
+                kind: "emotion",
+                subject: "",
+                who,
+                whoName: whoName.trim(),
+              whoGender,
+              friends: who === "친구들이랑" ? friends.filter((x) => x.name.trim() || x.gender) : [],
+                happening: "",
+                place: "",
+                feeling: "",
+                emotion,
+                situation: situation.trim(),
+                extra: "",
+              }
+            : {
+                kind: "imagine",
+                subject: theme,
+                who,
+                whoName: whoName.trim(),
+              whoGender,
+              friends: who === "친구들이랑" ? friends.filter((x) => x.name.trim() || x.gender) : [],
+                happening,
+                place: "",
+                feeling: "",
+                emotion: "",
+                situation: "",
+                extra: extra.trim(),
+              },
+      pageCount,
+      // 사용자가 고르지 않아도 재료에서 계산한 톤을 글과 삽화에 동일하게 넘긴다.
+      mood: mood.ko,
+    });
+  }
+
+  /*
+   * 성우 화면에서 — 대본을 기다리다 끊긴 줄거리를 이번 '대본 만들기'가 다시 쓸지(재료가 그대로일 때만),
+   * 그리고 단추를 막을 까닭(권수 상한·잔액). 이어 쓸 때는 잔액으로 막지 않는다(lib/create-flow makeScriptBlock).
+   */
+  const resumePlot = step === "style" ? reusablePlot(pendingPlot, outlineRequestBody()) : null;
+  const makeBlock = makeScriptBlock({ shortOnTokens, bookLimitReached, resuming: resumePlot !== null });
+
+  /**
+   * 첫 단추 '대본 만들기' — 줄거리를 짓고, 나오자마자 대본까지 이어 쓴다(한 번 기다림).
+   *
+   * 2026-09-29 사장님: "'이야기 짓기'가 대본 완성인가 생각할 것 같아 … 너무 과정 과정이 길어지는 것 같아서."
+   * 예전엔 줄거리 확인 화면('이 이야기로 만들까요?')을 한 번 거친 뒤 '네, 만들게요'에서 대본 값을 냈다.
+   * 이제 그 화면 없이 곧바로 대본 화면에 내린다 — 읽고 고치는 곳은 대본 화면 하나다.
+   *
+   * 값: 대본 값은 예전과 똑같이 대본을 쓸 때 서버가 받는다(charge_story). 단추에 값을 밝혀 두었다.
+   *  · 줄거리가 안 나오면 대본 요청을 보내지 않으므로 값이 나가지 않는다.
+   *  · 대본이 실패하면 서버가 되돌린다(refund_story).
+   *  · 줄거리가 온 뒤 대본을 기다리다 끊기면 값만 나갔을 수 있다 — 그 줄거리를 pendingPlot 에 적어 두고,
+   *    다음에 누르면 새로 짓지 않고 그 줄거리로 쓴다(서버가 값 낸 줄을 찾아 무료로 쓴다. 예전 줄거리 화면과 같다).
+   * 새 재료로 새 대본을 만드는 것이라 값을 새로 받고, 앞 대본의 셈(다시 만들기 횟수 등)은 처음부터다.
+   */
+  async function makeScript() {
     if (busyRef.current) return;
-    if (isRetry && !master && outlineRetries >= MAX_OUTLINE_RETRIES) {
-      setError(
-        `이야기 다시 짓기는 ${MAX_OUTLINE_RETRIES}번까지예요. 재료를 바꾸면 새로 지을 수 있어요.`,
-      );
-      return;
-    }
+    // 단추도 막혀 있지만 한 번 더 — 값이 걸린 요청이다.
+    const basis = outlineRequestBody();
+    const reuse = reusablePlot(pendingPlot, basis);
+    if (makeScriptBlock({ shortOnTokens, bookLimitReached, resuming: reuse !== null })) return;
     busyRef.current = true;
     setBusy(true);
+    setBusyKind("script");
+    // 끊긴 줄거리로 이어 쓰면 줄거리 짓기를 건너뛴다 — 기다림 막도 곧바로 '대본을 쓰고 있어요'.
+    setBusyStage(reuse ? "story" : "outline");
     setError("");
-    if (isRetry) setOutlineRetries((n) => n + 1);
-    // 새 줄거리 = 다른 이야기다. 대본을 새로 만들면 글 값을 다시 받는다.
+    // 새 재료로 새 대본 = 다른 이야기다. 대본을 새로 만들면 글 값을 다시 받는다.
     // 앞 대본의 기록은 '취소(다른 대본으로 바꿈)'로 닫고, 새 대본은 새 줄에 적는다.
     if (jobIdRef.current) void closeJobAsCancelled(jobIdRef.current);
     setJobId(null);
     setScriptCharged(false);
+    setPaidOutline(null);
     setStoryRewrites(0);
+    setReplots(0);
     setLocationDetail("");
     locationTouchedRef.current = false;
     const ac = new AbortController();
@@ -2228,73 +2424,16 @@ export default function CreatePage() {
     // 다음에 또 만들 때 아이 정보를 다시 안 묻도록 저장해 둔다.
     saveChild({ name: name.trim(), age, gender });
     try {
-      const r = await authedFetch("/api/outline", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          child,
-          // 항목별로 보낸다(콤마로 안 뭉침). 갈래에 따라 재료 형태가 다르다:
-          // 오늘=실경험(어디·누구·무슨일·기분), 상상=칩 조합(소재·누구·사건·자유).
-          material:
-            storyMode === "direct"
-              ? buildStoryMaterial()
-              : storyMode === "today"
-              ? {
-                  kind: "today",
-                  subject: "",
-                  who,
-                  whoName: whoName.trim(),
-                  whoGender,
-                  friends: who === "친구들이랑" ? friends.filter((x) => x.name.trim() || x.gender) : [],
-                  happening: todayEvent.trim(),
-                  place,
-                  feeling,
-                  ending,
-                  emotion: "",
-                  situation: "",
-                  extra: "",
-                }
-              : storyMode === "emotion"
-                ? {
-                    kind: "emotion",
-                    subject: "",
-                    who,
-                    whoName: whoName.trim(),
-                  whoGender,
-                  friends: who === "친구들이랑" ? friends.filter((x) => x.name.trim() || x.gender) : [],
-                    happening: "",
-                    place: "",
-                    feeling: "",
-                    emotion,
-                    situation: situation.trim(),
-                    extra: "",
-                  }
-                : {
-                    kind: "imagine",
-                    subject: theme,
-                    who,
-                    whoName: whoName.trim(),
-                  whoGender,
-                  friends: who === "친구들이랑" ? friends.filter((x) => x.name.trim() || x.gender) : [],
-                    happening,
-                    place: "",
-                    feeling: "",
-                    emotion: "",
-                    situation: "",
-                    extra: extra.trim(),
-                  },
-          pageCount,
-          // 사용자가 고르지 않아도 재료에서 계산한 톤을 글과 삽화에 동일하게 넘긴다.
-          mood: mood.ko,
-        }),
-        signal: ac.signal,
-      });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error ?? "줄거리를 만들지 못했어요.");
-      setOutline(data.outline);
-      setStep("outline");
+      const plot = reuse ?? (await requestOutline(ac.signal));
+      // 대본 요청을 보내기 전에 적는다 — 이 뒤로 끊기면 서버가 값을 받았을 수 있다(임시저장에도 담긴다).
+      if (!reuse) setPendingPlot({ plot, basis });
+      setBusyStage("story");
+      // again: false — 서버가 이 줄거리의 값 낸 줄을 찾으면 무료(다시 쓰기 한 번), 없으면 값을 받는다.
+      if (await writeScript(plot, { again: false, keepPaidJob: false, newPlot: true, signal: ac.signal })) {
+        setPendingPlot(null);
+      }
     } catch (e) {
-      // ESC로 취소한 경우는 오류가 아니다 — 조용히 원래 화면에 남는다.
+      // ESC로 취소한 경우는 오류가 아니다 — 조용히 성우 화면에 남는다(줄거리는 pendingPlot 에 남아 다음에 이어 쓴다).
       if ((e as Error).name !== "AbortError") setError((e as Error).message);
     } finally {
       busyRef.current = false;
@@ -2319,6 +2458,8 @@ export default function CreatePage() {
       setEditingPage(null);
       return; // 빈 쪽은 만들지 않는다 — 고치기 전 문장을 그대로 둔다
     }
+    // 실제로 바뀌었을 때만 '고쳤음' — 다시 만들기 전에 고친 것이 사라진다고 묻는다.
+    if (story && story.pages[index]?.text !== text) setScriptEdited(true);
     setStory((prev) =>
       prev
         ? {
@@ -2350,112 +2491,197 @@ export default function CreatePage() {
       setEditingTitle(false);
       return; // 제목 없는 책은 만들지 않는다
     }
+    if (story && story.title !== title) setScriptEdited(true);
     setStory((prev) => (prev ? { ...prev, title } : prev));
     setEditingTitle(false);
   }
 
-  async function makeStory() {
+  /**
+   * 대본 쓰기 — /api/story. 대본 값은 서버가 받는다(charge_story). 성공하면 대본 화면으로 간다.
+   *
+   * @param plot 대본으로 풀어 쓸 줄거리
+   * @param opts.again 이미 값을 낸 대본을 다시 만드는 것(같은 줄거리로 다시 쓰기·다른 이야기로 새로 짓기).
+   *   값은 더 받지 않는다 — '값을 낸 줄거리'(paidPlot)를 함께 보내 서버가 그 줄거리의 무료 횟수로 센다.
+   *   이걸 안 보내면 새 줄거리는 지문이 달라 값을 또 받는다. 그래서 보낼 것이 없으면 요청하지 않는다.
+   * @param opts.keepPaidJob 그림 값을 내고 책장에 못 넣은 기록이 있다 — 그 기록을 되열지 않게 기록 id 를 안 보낸다.
+   * @param opts.newPlot 새 줄거리다 — 장소 칸을 새 이야기에서 다시 뽑는다(앞 이야기의 장소가 남지 않게).
+   * @returns 대본을 받았으면 true. 옛 DB(값을 서버가 안 받음)에서 잔액이 모자라 멈췄으면 false(알림은 이미 띄웠다).
+   *   요청이 실패하면 던진다 — 지금 화면·대본은 그대로다.
+   */
+  async function writeScript(
+    plot: Outline,
+    opts: { again: boolean; keepPaidJob: boolean; newPlot: boolean; signal: AbortSignal },
+  ): Promise<boolean> {
+    const { again, keepPaidJob, newPlot, signal } = opts;
+    const anchor = again ? paidPlot(scriptCharged, paidOutline, outline) : null;
+    if (again && !anchor) throw new Error("다시 만들 대본을 찾지 못했어요. 새로 만들기를 눌러 주세요.");
+    const r = await authedFetch("/api/story", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        child,
+        outline: plot,
+        material: buildStoryMaterial(),
+        mood: mood.ko,
+        longer: longerStory,
+        narrationStyle,
+        // 다시 만들기면 같은 기록을 고치게 한다(새 줄을 만들지 않게).
+        jobId: again && !keepPaidJob ? jobIdRef.current : null,
+        // 다시 만들기면 값을 낸 줄거리로 센다 — 새로 지은 줄거리라도 값을 또 받지 않는다(서버 storyChargeKey).
+        ...(anchor ? { paidOutline: anchor } : {}),
+      }),
+      signal,
+    });
+    const data = await r.json();
+    // 서버가 만든(또는 고친) 기록 id — 실패했어도 받아 둔다(실패 기록과 이어지게).
+    if (isJobId(data?.jobId)) setJobId(data.jobId);
+    if (!r.ok) {
+      // 무료 횟수를 다 썼다는 서버 말("같은 줄거리로 다시 쓰기 …")은 새로 짓기에는 틀려서 쉬운 말로 바꾸고, 남은 횟수도 0으로 맞춘다.
+      if (again && isRedoExhausted(r.status, data?.error)) {
+        setStoryRewrites(pricing.max_free_rewrites);
+        throw new Error("무료로 다시 만들기를 다 썼어요. 문장을 눌러 직접 고치실 수 있어요.");
+      }
+      const detail = Array.isArray(data.detail) ? data.detail.slice(0, 2).join(" ") : "";
+      throw new Error([data.error ?? "동화를 만들지 못했어요.", detail].filter(Boolean).join(" "));
+    }
+    /*
+     * 대본이 나왔으면 여기서 글 값을 받고 멈춘다 — 그림은 아직 그리지 않는다.
+     *
+     * 예전엔 대본과 그림을 한 번에 만들고 끝에서 값을 한꺼번에 받았다. 그러면 부모가
+     * 대본을 보기도 전에 그림 값까지 나가서, 이야기가 마음에 안 들어도 되돌릴 수 없었다.
+     * 이제 대본을 먼저 읽고 고친 뒤 "이걸로 그림 만들자" 할 때 그림 값을 낸다.
+     */
+    const story = data.story as Story;
+    /*
+     * 값은 이제 서버가 받는다 — 만들기 전에, 그리고 '다시 만들기' 횟수까지 DB 가 센다
+     * (supabase-setup.sql 의 charge_story).
+     *
+     * 예전엔 여기 브라우저에서 깎았다. 그래서 경로를 직접 부르면 대본이 공짜였다.
+     * 서버가 이미 받았으면(charge 가 오면) 여기서는 잔액 표시만 맞춘다.
+     * 아직 SQL 을 안 돌린 DB 면 charge 가 없다 — 그때만 예전처럼 여기서 깎는다(처음 대본만).
+     */
+    const charge = data.charge as
+      | { charged: number; rewrites: number; tokens: number }
+      | null
+      | undefined;
+    if (charge) {
+      setTokens(charge.tokens);
+      setStoryRewrites(charge.rewrites);
+    } else if (!master && !again) {
+      const cost = scriptCostOf(story.pages.length, pricing);
+      if (!(await spendTokens(cost, "story"))) {
+        setError(`토큰이 부족해요. 대본을 만들려면 ${cost}개가 필요해요.`);
+        return false; // 성우 화면에 그대로 남는다 — 대본은 버린다
+      }
+      setTokens((t) => Math.max(0, t - cost));
+    }
+    // 처음 값을 낸 대본이면 그 줄거리를 '값을 낸 줄거리'로 적어 둔다 — 다시 만들 때 이것으로 센다.
+    // 다시 만들기인데 적힌 것이 없으면(옛 임시저장) 이번에 보낸 것을 적는다 — 아래 setOutline 이 줄거리를
+    // 새 것으로 바꾼 뒤에도 다음 다시 만들기가 값 낸 줄거리로 세어지게(안 그러면 두 번째에 값이 또 나갔다).
+    if (!again) setPaidOutline(plot);
+    else if (!paidOutline && anchor) setPaidOutline(anchor);
+    setScriptCharged(true);
+    if (!charge && again) setStoryRewrites((n) => n + 1);
+    setEditingPage(null); // 새 대본이니 고치던 자리는 닫는다
+    setEditingTitle(false);
+    setScriptEdited(false); // 새 대본 — 부모가 고친 것이 아직 없다
+    /*
+     * 장소 칸을 이야기에서 뽑아 미리 채운다.
+     *
+     * 빈칸을 내밀면 대부분 그냥 넘어간다 — 뭘 적어야 할지 모르기 때문이다.
+     * 클로드는 이미 쪽마다 `장소: 골목 — 회색 시멘트 담과 물웅덩이.`를 적어 뒀으니,
+     * 그걸 사람이 읽는 한 줄로 바꿔 두면 부모는 고치기만 하면 된다.
+     * 이미 손댄 값은 건드리지 않는다 — 단, 새 줄거리면 앞 이야기의 장소라 새로 뽑는다.
+     */
+    if (newPlot) locationTouchedRef.current = false;
+    if (!locationTouchedRef.current) {
+      setLocationDetail(suggestLocationDetail(story.pages.map((p) => p.imagePrompt)));
+    }
+    setOutline(plot);
+    setStory(story);
+    setStep("story");
+    return true;
+  }
+
+  /**
+   * 다시 만들기가 끝났다고 잠깐 알리고 새 대본의 맨 위(제목·첫 쪽)를 보여 준다.
+   * 기다림 막이 걷히면 부모는 아래 '다시 만들기' 칸에 그대로 있고, 같은 이야기로 다시 쓰면 제목도 같아서
+   * 바뀐 줄 몰랐다.
+   */
+  function showRedoDone(kind: "same" | "new") {
+    if (redoNoteTimerRef.current !== null) window.clearTimeout(redoNoteTimerRef.current);
+    setRedoNote(kind === "new" ? "새 이야기로 대본을 다시 만들었어요 ✓" : "같은 이야기로 문장을 새로 썼어요 ✓");
+    redoNoteTimerRef.current = window.setTimeout(() => setRedoNote(""), 6000);
+    const smooth = !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    // 새 대본이 그려진 다음에 올린다.
+    window.requestAnimationFrame(() => {
+      pageListRef.current?.scrollTo({ top: 0 });
+      window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+    });
+  }
+
+  /**
+   * 대본 화면의 '다시 만들기' — 토큰은 더 받지 않는다(무료 횟수 안에서, 서버가 센다).
+   *  · "same" 같은 이야기로 문장만 다시 쓰기 — 줄거리는 그대로, 글만 새로.
+   *  · "new"  다른 이야기로 새로 짓기 — 줄거리부터 새로 짓고 대본까지 이어 쓴다.
+   *           (예전 줄거리 화면의 '다른 이야기로 다시 짓기'를 옮겼다. 값을 낸 뒤라 값을 낸 줄거리로 센다.)
+   * 둘은 무료 횟수를 함께 쓴다(lib/create-flow redoLeft). 실패하면 지금 대본을 그대로 두고 알린다.
+   */
+  async function redoScript(kind: "same" | "new") {
     if (!outline || busyRef.current) return;
-    // 대본을 이미 받은 뒤 다시 부르는 것 = 다시 쓰기. 값은 더 받지 않으니 횟수로 막는다.
-    const isRewrite = scriptCharged;
-    if (isRewrite && !master && storyRewrites >= MAX_STORY_REWRITES) {
-      setError(
-        `같은 줄거리로 다시 쓰기는 ${MAX_STORY_REWRITES}번까지예요. 문장을 눌러 직접 고치실 수 있어요.`,
-      );
+    /*
+     * 대본 값을 이미 받은 뒤 다시 부르는 것 = 다시 만들기. 값은 더 받지 않으니 횟수로 막는다.
+     * 값을 냈다는 표시가 없는 대본(있어선 안 되지만 깨진 임시저장 등)은 다시 만들지 않는다 —
+     * 그대로 보내면 서버가 새 대본 값을 받는데, 단추는 '토큰 없이'라고 말하고 있다.
+     */
+    if (!scriptCharged) {
+      setError("이 대본은 다시 만들 수 없어요. ‘재료 바꿔 새로 만들기’를 눌러 새로 만들어 주세요.");
+      return;
+    }
+    const left = kind === "new" ? redo.replot : redo.rewrite;
+    if (left !== null && left <= 0) {
+      setError("무료로 다시 만들기를 다 썼어요. 문장을 눌러 직접 고치실 수 있어요.");
+      return;
+    }
+    // 부모가 고친 문장·제목은 새 대본으로 바뀌며 사라진다(되돌릴 길이 없다) — 고쳤으면 먼저 묻는다.
+    if (scriptEdited && !window.confirm("고치신 문장은 새 대본으로 바뀌면서 사라져요.\n그래도 다시 만들까요?")) {
       return;
     }
     /*
      * 그림 값을 내고 책장에 못 넣은 책이 이 대본에 있으면 먼저 묻는다.
-     * 다시 쓰면 대본이 바뀌어 그 책을 이 화면에서 다시 저장할 길이 없어진다(기록은 서버에 남아
+     * 다시 만들면 대본이 바뀌어 그 책을 이 화면에서 다시 저장할 길이 없어진다(기록은 서버에 남아
      * 마스터가 되살릴 수 있다). 기록 id 도 보내지 않는다 — 값 낸 기록을 되열지 않게(서버도 막는다).
      */
-    const keepPaidJob = isRewrite && unsavedPaid;
+    const keepPaidJob = unsavedPaid;
     if (
       keepPaidJob &&
       !window.confirm(
-        "그림 값을 낸 책이 아직 책장에 들어가지 않았어요.\n다시 쓰면 그 책은 이 화면에서 다시 저장할 수 없어요. (고객센터에서는 찾아 드릴 수 있어요)\n그래도 다시 쓸까요?",
+        "그림 값을 낸 책이 아직 책장에 들어가지 않았어요.\n다시 만들면 그 책은 이 화면에서 다시 저장할 수 없어요. (고객센터에서는 찾아 드릴 수 있어요)\n그래도 다시 만들까요?",
       )
     ) {
       return;
     }
     busyRef.current = true;
     setBusy(true);
+    setBusyKind(kind === "new" ? "script" : "story");
+    setBusyStage("outline");
     setError("");
+    setRedoNote("");
     const ac = new AbortController();
     abortRef.current = ac;
     try {
-      const r = await authedFetch("/api/story", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          child,
-          outline,
-          material: buildStoryMaterial(),
-          mood: mood.ko,
-          longer: longerStory,
-          narrationStyle,
-          // 같은 줄거리로 다시 쓰기면 같은 기록을 고치게 한다(새 줄을 만들지 않게).
-          jobId: isRewrite && !keepPaidJob ? jobIdRef.current : null,
-        }),
-        signal: ac.signal,
-      });
-      const data = await r.json();
-      // 서버가 만든(또는 고친) 기록 id — 실패했어도 받아 둔다(실패 기록과 이어지게).
-      if (isJobId(data?.jobId)) setJobId(data.jobId);
-      if (!r.ok) {
-        const detail = Array.isArray(data.detail) ? data.detail.slice(0, 2).join(" ") : "";
-        throw new Error([data.error ?? "동화를 만들지 못했어요.", detail].filter(Boolean).join(" "));
+      let plot = outline;
+      if (kind === "new") {
+        // 줄거리 짓기 값은 누를 때 나간다(우리 몫) — 실패해도 한 번으로 센다.
+        setReplots((n) => n + 1);
+        plot = await requestOutline(ac.signal);
+        setBusyStage("story");
       }
-      /*
-       * 대본이 나왔으면 여기서 글 값을 받고 멈춘다 — 그림은 아직 그리지 않는다.
-       *
-       * 예전엔 대본과 그림을 한 번에 만들고 끝에서 값을 한꺼번에 받았다. 그러면 부모가
-       * 대본을 보기도 전에 그림 값까지 나가서, 이야기가 마음에 안 들어도 되돌릴 수 없었다.
-       * 이제 대본을 먼저 읽고 고친 뒤 "이걸로 그림 만들자" 할 때 그림 값을 낸다.
-       */
-      const story = data.story as Story;
-      /*
-       * 값은 이제 서버가 받는다 — 만들기 전에, 그리고 '같은 줄거리로 다시 쓰기'
-       * 횟수까지 DB 가 센다(supabase-setup.sql 의 charge_story).
-       *
-       * 예전엔 여기 브라우저에서 깎았다. 그래서 경로를 직접 부르면 대본이 공짜였다.
-       * 서버가 이미 받았으면(charge 가 오면) 여기서는 잔액 표시만 맞춘다.
-       * 아직 SQL 을 안 돌린 DB 면 charge 가 없다 — 그때만 예전처럼 여기서 깎는다.
-       */
-      const charge = data.charge as
-        | { charged: number; rewrites: number; tokens: number }
-        | null
-        | undefined;
-      if (charge) {
-        setTokens(charge.tokens);
-        setStoryRewrites(charge.rewrites);
-      } else if (!master && !scriptCharged) {
-        const cost = scriptCostOf(story.pages.length, pricing);
-        if (!(await spendTokens(cost, "story"))) {
-          setError(`토큰이 부족해요. 대본을 만들려면 ${cost}개가 필요해요.`);
-          return; // 줄거리 화면에 그대로 남는다 — 대본은 버린다
-        }
-        setTokens((t) => Math.max(0, t - cost));
+      if (await writeScript(plot, { again: true, keepPaidJob, newPlot: kind === "new", signal: ac.signal })) {
+        showRedoDone(kind);
       }
-      setScriptCharged(true);
-      if (!charge && isRewrite) setStoryRewrites((n) => n + 1);
-      setEditingPage(null); // 새 대본이니 고치던 자리는 닫는다
-      setEditingTitle(false);
-      /*
-       * 장소 칸을 이야기에서 뽑아 미리 채운다.
-       *
-       * 빈칸을 내밀면 대부분 그냥 넘어간다 — 뭘 적어야 할지 모르기 때문이다.
-       * 클로드는 이미 쪽마다 `장소: 골목 — 회색 시멘트 담과 물웅덩이.`를 적어 뒀으니,
-       * 그걸 사람이 읽는 한 줄로 바꿔 두면 부모는 고치기만 하면 된다.
-       * 이미 손댄 값은 건드리지 않는다.
-       */
-      if (!locationTouchedRef.current) {
-        setLocationDetail(suggestLocationDetail(story.pages.map((p) => p.imagePrompt)));
-      }
-      setStory(story);
-      setStep("story");
     } catch (e) {
-      // ESC로 취소한 경우는 오류가 아니다 — 줄거리 화면에 그대로 남는다.
+      // ESC로 취소한 경우는 오류가 아니다 — 지금 대본이 그대로 남는다.
       if ((e as Error).name !== "AbortError") setError((e as Error).message);
     } finally {
       busyRef.current = false;
@@ -2604,6 +2830,8 @@ export default function CreatePage() {
         savedAt: 0,
         sheet: sheetImageRef.current,
         sheetFixed: [...fixedCastRef.current],
+        sheetPortraits: [...sheetPortraitsRef.current],
+        sheetOrder: [...sheetOrderRef.current],
         locationSheets: locationSheetsRef.current,
         images: [...images],
         passed: [...passedRef.current],
@@ -2618,6 +2846,9 @@ export default function CreatePage() {
       let sheet = saved?.sheet ?? null;
       // 이어 그리기면 그 시트에 고정 얼굴이 붙었던 이름 그대로(옛 보관본엔 없다 = 고정 얼굴 없이 그린 시트).
       fixedCastRef.current = new Set(sheet ? (saved?.sheetFixed ?? []) : []);
+      // 원본 그림 주소·시트 순서도 그대로(옛 보관본엔 없다 = 쪽마다 시트만 보고 그린다).
+      sheetPortraitsRef.current = sheet ? (saved?.sheetPortraits ?? []) : [];
+      sheetOrderRef.current = sheet ? (saved?.sheetOrder ?? []) : [];
       if (!sheet) {
         /*
          * 우리 가족 캐릭터의 고정 얼굴 — 이야기에 나오는 사람만, 고정한 그림(portrait)만(lib/family-cast).
@@ -2647,8 +2878,24 @@ export default function CreatePage() {
                 아빠: parentLooksToPrompt(child?.parents?.dad, "dad") || undefined,
               },
               // 고정 얼굴 — 서버에 필요한 것만(등장인물 이름·참고 그림 주소·사람 id). 서버가 주소를 다시 검사한다.
+              // 키(cm)·머리 비율 — 수채화 책은 서버가 원본 그림으로 시트를 짠다(키대로 발끝 맞춤, 얼굴 오리기. lib/sheet-compose).
               ...(withPortraits
-                ? { portraits: portraits.map((p) => ({ name: p.name, ref: p.ref, memberId: p.memberId })) }
+                ? {
+                    portraits: portraits.map((p) => {
+                      const member = family?.find((m) => m.id === p.memberId);
+                      return {
+                        name: p.name,
+                        ref: p.ref,
+                        memberId: p.memberId,
+                        ...(member
+                          ? {
+                              heightCm: heightFor(member, { age: age ?? child?.age ?? null, parents: child?.parents }),
+                              headRatio: member.portrait?.headRatio,
+                            }
+                          : {}),
+                      };
+                    }),
+                  }
                 : {}),
             }),
             signal: ac.signal,
@@ -2660,6 +2907,10 @@ export default function CreatePage() {
             image?: string;
             code?: string;
             fixed?: unknown;
+            /** 시트에 선 순서(왼쪽부터) — 원본 픽셀로 짠 시트만 */
+            order?: unknown;
+            /** "portraits"(AI 안 부름) | "mixed"(나머지만 AI) — 없으면 예전 AI 시트 */
+            composed?: unknown;
           };
           return { res, data };
         };
@@ -2669,6 +2920,21 @@ export default function CreatePage() {
           if (!withFaces || ac.signal.aborted) throw e;
           return null;
         });
+        /*
+         * 섞인 시트(고정 가족 원본 + 나머지 사람만 AI)의 AI 그림이 실패했다(code "subsheet") — 그 AI 그림엔 가족 얼굴이
+         * 붙지 않았으니 얼굴 탓이 아니다. 얼굴을 붙인 채로 한 번 더 부른다. 바로 얼굴 없이 가면 잠깐의 5xx 한 번에
+         * 책 전체가 고정 얼굴을 잃는다(검토 2026-09-29). 또 실패하면 아래에서 얼굴 없이 — AI 한 번씩이라 값은 같다.
+         */
+        if (withFaces && reply?.data.code === "subsheet" && !ac.signal.aborted) {
+          pageFailures.push({
+            stage: "sheet",
+            reason: `친구 등 나머지 인물 그림 실패(HTTP ${reply.res.status}) → 가족 얼굴 그대로 한 번 더`,
+          });
+          reply = await requestSheet(true).catch((e: unknown) => {
+            if (ac.signal.aborted) throw e;
+            return null;
+          });
+        }
         /*
          * 고정 얼굴을 붙인 시트가 실패했다 — 얼굴 없이 한 번 더 그린다. 책 만들기를 여기서 멈추지 않는다.
          * 거절(422 portrait)만이 아니다: 얼굴을 붙이면 요청이 길어져 60초 제한(504)·5xx·그림 없는 답·연결 끊김도
@@ -2697,11 +2963,19 @@ export default function CreatePage() {
         }
         sheet = sheetData.image ?? null;
         if (!sheet) throw new Error("캐릭터 그림을 받지 못했어요. 잠시 뒤 다시 시도해 주세요.");
-        counts.sheet += 1;
+        // 모두 고정 가족이라 원본으로만 짠 시트는 AI 를 부르지 않았다 — 그린 장수에 넣지 않는다.
+        if (sheetData.composed !== "portraits") counts.sheet += 1;
         // 서버가 실제로 붙인 얼굴만(주소가 이상하거나 못 받은 사람은 빠진다).
         fixedCastRef.current = new Set(
           Array.isArray(sheetData.fixed) ? sheetData.fixed.filter((n): n is string => typeof n === "string") : [],
         );
+        // 그 사람들의 원본 주소 — 쪽마다 함께 붙인다(서버가 수채화 책·이 회원 폴더인지 다시 본다). 얼굴 없이 다시 그린 시트면 빈다.
+        sheetPortraitsRef.current = portraits
+          .filter((p) => fixedCastRef.current.has(p.name))
+          .map((p) => ({ name: p.name, ref: p.ref, memberId: p.memberId }));
+        sheetOrderRef.current = Array.isArray(sheetData.order)
+          ? sheetData.order.filter((n): n is string => typeof n === "string")
+          : [];
       }
       sheetImageRef.current = sheet;
       locationSheetsRef.current = saved?.locationSheets ? [...saved.locationSheets] : [];
@@ -2735,7 +3009,8 @@ export default function CreatePage() {
         const key = locationKeyOf(location.name);
         if (!key || (pagesPerKey.get(key) ?? 0) < 2 || wanted.some((w) => w.key === key)) continue;
         // 이어 그리기 — 이미 있는 장소 시트는 다시 그리지 않는다.
-        if (locationSheetsRef.current.some((l) => l.key === key && l.image)) continue;
+        // 옛 열쇠로 저장된 시트도 이름으로 알아본다(sheetMatchesKey) — 못 알아보면 같은 장소 그림을 한 장 더 산다.
+        if (locationSheetsRef.current.some((l) => sheetMatchesKey(l, key) && l.image)) continue;
         wanted.push({ key, name: location.name, description: location.description, image: "" });
         if (wanted.length + locationSheetsRef.current.length >= 3) break;
       }
@@ -2770,7 +3045,9 @@ export default function CreatePage() {
         }
       }
       const locationSheetFor = (prompt: string) =>
-        locationSheetsRef.current.find((l) => l.key === locationKeyFromImagePrompt(prompt))?.image ?? "";
+        locationSheetsRef.current.find((l) => sheetMatchesKey(l, locationKeyFromImagePrompt(prompt)))?.image ?? "";
+      // 어린이 통학 버스인 장소(열쇠) — 한 번 탄 통학 버스는 쪽마다 같은 버스로(벨트) 그린다(api/illustrate-page schoolBusPlace).
+      const schoolBusKeys = schoolBusPlaceKeys(s.pages);
 
       // 삽화는 쪽마다 독립이다(캐릭터 일관성은 위에서 만든 캐릭터 시트가 잡아준다).
       // 예전엔 한 장씩 줄 세워 그려서 8쪽이면 '한 장 시간 × 8'을 기다려야 했다 —
@@ -2832,6 +3109,8 @@ export default function CreatePage() {
       // 그림에 글자가 박힌 경우 전용 예산 — 이건 취향 문제가 아니라 명백한 불량이다.
       const MAX_TEXT_REDRAWS_PER_BOOK = Math.max(2, Math.ceil(s.pages.length / 3));
       let textRedrawsUsed = 0;
+      // 원본 얼굴을 붙인 쪽이 그림 모델에 두 번 거절되면 이 책의 남은 쪽은 얼굴 없이(시트만) — 쪽마다 거절·다시 그리기로 늦어지지 않게.
+      let portraitRefusals = 0;
       const nextUnclaimedPage = (): number | null => {
         while (cursor < s.pages.length && claimedPages.has(cursor)) cursor++;
         if (cursor >= s.pages.length) return null;
@@ -2852,7 +3131,9 @@ export default function CreatePage() {
           }
           if (i === null || ac.signal.aborted) return;
           try {
-            const requestImage = async (qualityCorrection = "") => {
+            const requestImage = async (qualityCorrection = "", withFaces = true): Promise<PageImageReply> => {
+              // 고정 가족 원본 얼굴 — 시트에 얼굴이 붙은 사람의 원본 주소(서버가 이 쪽에 보이는 사람만 골라 붙인다).
+              const faces = withFaces && portraitRefusals < 2 ? sheetPortraitsRef.current : [];
               const locationKey = locationKeyFromImagePrompt(s.pages[i].imagePrompt);
               const sameLocationReference = locationKey ? locationReferences.get(locationKey) : undefined;
               // 그림체 기준은 '검사를 통과한' 그림에서만 가져온다. 떨어진 그림을 기준으로
@@ -2891,6 +3172,7 @@ export default function CreatePage() {
                   locationDetail: locationDetail.trim(),
                   // 이 쪽 장소의 기준 그림 — 있으면 모든 쪽이 같은 곳을 그린다.
                   locationSheet: locationSheetFor(s.pages[i].imagePrompt),
+                  schoolBusPlace: Boolean(locationKey) && schoolBusKeys.has(locationKey),
                   // 책 전체 인물을 보내되 서버가 장면에 이름이 있는 인물만 골라 잠근다.
                   cast: s.characters.map((c, characterIndex) => ({
                     name: c.name,
@@ -2908,20 +3190,25 @@ export default function CreatePage() {
                     gender !== "unspecified" ? gender : child?.gender,
                     heroLooksEn || heroLooks,
                   ),
+                  // 고정 가족 원본 그림 주소·시트에 선 순서 — 얼굴이 시트를 거쳐 또 흐르지 않게(api/illustrate-page).
+                  ...(faces.length ? { portraits: faces } : {}),
+                  ...(sheetOrderRef.current.length ? { sheetOrder: sheetOrderRef.current } : {}),
                 }),
                 signal: ac.signal,
               });
               // 몰림을 만났다 — 남은 요청들의 속도를 늦춘다.
               if (r.status === 429) crowdedUntil = Date.now() + 20_000;
               // ok 검사보다 .json()이 먼저면 HTML 오류 페이지에서 SyntaxError가 난다.
-              const data = (await r.json().catch(() => ({}))) as {
-                image?: string;
-                error?: string;
-                qualityChecked?: boolean;
-                qualityPassed?: boolean;
-                qualityWarning?: string;
-                qualityIssue?: "text" | "border" | "other";
-              };
+              const data = (await r.json().catch(() => ({}))) as PageImageReply["data"];
+              /*
+               * 원본 얼굴을 붙인 쪽을 그림 모델이 거절했다(422 portrait) — 이 쪽만 얼굴 없이(시트만) 한 번 더.
+               * 품질검사 다시 그리기 예산은 쓰지 않는다(그림이 아예 안 나온 것이다). 기록에는 남긴다.
+               */
+              if (faces.length && r.status === 422 && data.code === "portrait") {
+                portraitRefusals++;
+                pageFailures.push({ page: i + 1, stage: "draw", reason: "가족 원본 얼굴로 못 그림 → 얼굴 없이 다시 그림" });
+                return requestImage(qualityCorrection, false);
+              }
               return { ok: r.ok, status: r.status, data };
             };
 
@@ -3310,6 +3597,9 @@ export default function CreatePage() {
         description: c.description,
         ...(fixedCastRef.current.has(c.name) ? { fixed: true } : {}),
       })),
+      // 고정 가족 원본 그림 주소·시트에 선 순서 — 한 쪽만 다시 그릴 때도 원본 얼굴을 붙인다(옛 책은 없다).
+      portraits: sheetPortraitsRef.current.length ? [...sheetPortraitsRef.current] : undefined,
+      sheetOrder: sheetOrderRef.current.length ? [...sheetOrderRef.current] : undefined,
       // 한 쪽만 다시 그릴 때도 주인공 성별·생김새를 못 박게 남긴다.
       hero: heroFromStory(
         s.characters,
@@ -3594,16 +3884,35 @@ export default function CreatePage() {
     return (
       <>
         <BookViewer book={finalBook} />
-        {/* 이번에 실제로 그린 장수 — 저장 단계의 '10장'(표지 썸네일 포함)과 헷갈리지 않게 따로 보여 준다. */}
-        {drawSummary && (
+        {/*
+          완성 알약 — 만드는 순서의 끝(① 대본 ✓ › ② 그림 ✓ › ③ 동화 완성)과, 이번에 실제로 그린 장수
+          (저장 단계의 '10장' — 표지 썸네일 포함 — 과 헷갈리지 않게 따로 보여 준다).
+          뷰어 위쪽은 닫기·설정 단추가 차지해서 예전 그린 장수 알약 자리(아래)에 둔다. ✕ 로 닫는다.
+        */}
+        {(doneStepsOpen || drawSummary) && (
           <div className="pointer-events-none fixed inset-x-0 bottom-20 z-30 flex justify-center px-4">
-            <button
-              type="button"
-              onClick={() => setDrawSummary("")}
-              className="pointer-events-auto max-w-full break-keep rounded-full bg-neutral-900/80 px-4 py-2 text-[12px] font-bold text-white shadow-lg backdrop-blur"
+            <div
+              role="status"
+              className="pointer-events-auto flex max-w-full items-center gap-1 rounded-3xl bg-neutral-900/80 py-1.5 pl-4 pr-1 text-white shadow-lg backdrop-blur"
             >
-              🎨 {drawSummary} · 닫기 ✕
-            </button>
+              <div className="flex min-w-0 flex-col items-center gap-1">
+                {doneStepsOpen && <MakeSteps current={2} accent={accent} tone="dark" />}
+                {drawSummary && (
+                  <p className="break-keep text-center text-[12px] font-bold text-white">🎨 {drawSummary}</p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setDoneStepsOpen(false);
+                  setDrawSummary("");
+                }}
+                aria-label="안내 닫기"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-base font-extrabold text-white/90 hover:bg-white/10"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         )}
       </>
@@ -3661,19 +3970,70 @@ export default function CreatePage() {
 
         {/* 로딩 오버레이 */}
         {/*
-          busy 는 세 곳에서 켜진다: 줄거리 짓기(그림체·성우 화면, 줄거리 화면의 '다시 짓기'), 대본 쓰기(줄거리 화면), 다시 저장하기(그림 화면).
-          예전엔 줄거리 화면에서 "동화를 그리고 있어요", 나머지는 모두 "대본을 쓰고 있어요"라 거꾸로 보였다.
-          단계(step)만으로는 줄거리 다시 짓기와 대본 쓰기를 못 가르므로, 단추를 누를 때 정한 busyKind 로 고른다.
-          대본은 2분 넘게 걸리니 흐르는 시간과 감상할 동화를 함께 둔다.
+          busy 는 세 곳에서 켜진다: 대본 만들기(성우 화면의 첫 단추 — 줄거리를 짓고 곧바로 대본까지, 대본 화면의 '다른 이야기로 새로 짓기'),
+          같은 줄거리로 다시 쓰기(대본 화면), 다시 저장하기(그림 화면).
+          단계(step)만으로는 다시 쓰기와 새로 짓기를 못 가르므로, 단추를 누를 때 정한 busyKind 로 고른다.
+          대본 만들기는 한 번 기다리지만 안에서 두 걸음이라(줄거리 30초 → 대본 2분) 큰 문구만 바꿔 지금 걸음을 말한다.
+          (작은 진행 줄 '줄거리 짓기 · 대본 쓰기'를 따로 두면 ①②③ 밖의 단계처럼 보여 '이야기 짓기 vs 대본' 헷갈림이
+          되살아난다 — 그래서 두지 않는다.) 대본은 2분 넘게 걸리니 흐르는 시간과 감상할 동화를 함께 둔다.
+          대본을 기다리는 막 맨 위에는 만드는 순서(① 대본 만들기 › ② 그림 그리기 › ③ 동화 완성)를 둔다 —
+          처음 누른 부모가 이 기다림이 무엇이고 뒤에 무엇이 남았는지 여기서 처음 본다.
         */}
+        {chargeAsk === "script" && (
+          <ChargeConfirm
+            title={`토큰 ${scriptCost}개가 나가요`}
+            lines={[
+              resumePlot
+                ? "아까 지은 줄거리로 대본을 이어서 써요. 그때 대본 값이 이미 나갔다면 다시 받지 않아요."
+                : "줄거리를 짓고 대본까지 한 번에 써요.",
+              `내 잔액 ${tokens}개`,
+              ...(IMAGES_ENABLED ? [`그림 값 ${imageCost}개는 대본을 읽어 보고 고친 뒤, 그릴 때 따로 내요.`] : []),
+            ]}
+            confirmLabel="대본 만들기"
+            accent={accent}
+            accentDark={accentDark}
+            onCancel={() => setChargeAsk(null)}
+            onConfirm={() => {
+              setChargeAsk(null);
+              // 확인을 누른 이 순간이 사용자 동작이다 — 대본이 나왔을 때 소리를 낼 수 있게 소리 장치를 깨워 둔다.
+              primeChime();
+              void makeScript();
+            }}
+          />
+        )}
+        {chargeAsk === "draw" && story && (
+          <ChargeConfirm
+            title={`토큰 ${illustrationCost(story.pages.length, pricing)}개가 나가요`}
+            lines={[
+              resumablePages > 0
+                ? `그려 둔 ${resumablePages}장에 이어서 나머지를 그려요.`
+                : "이 대본으로 그림을 그려 동화를 완성해요.",
+              `내 잔액 ${tokens}개`,
+              "그리기 시작하면 대본은 더 고칠 수 없어요.",
+            ]}
+            confirmLabel="그림 그리기"
+            accent={accent}
+            accentDark={accentDark}
+            onCancel={() => setChargeAsk(null)}
+            onConfirm={() => {
+              setChargeAsk(null);
+              primeChime();
+              // 이어서 그리기면 되살릴 장수를 기억한다 — 진행 줄이 그 장들을 방금 그린 장으로 세지 않게.
+              drawRestoredRef.current = resumablePages;
+              illustrate(story);
+            }}
+          />
+        )}
         {busy && (() => {
-          const wait = busyWaitText(
-            busyKind ?? (step === "illustrate" ? "save" : step === "outline" ? "story" : "outline"),
-          );
+          const kind: BusyKind = busyKind ?? (step === "illustrate" ? "save" : "script");
+          const wait = busyWaitText(kind, busyStage);
           return (
             // justify-center 를 바깥에 두면 낮은 화면(가로 폰)에서 넘친 윗부분이 스크롤로도 안 닿는다 — 안쪽 my-auto 로 가운데 맞춘다.
             <div className="fixed inset-0 z-20 flex flex-col overflow-y-auto bg-black/40 px-4 py-6 backdrop-blur-sm">
               <div className="my-auto flex w-full flex-col items-center gap-4">
+                {kind !== "save" && (
+                  <MakeSteps current={0} accent={accent} tone="dark" className="rounded-full bg-black/30 px-3 py-1.5" />
+                )}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={ui.art.loading}
@@ -3682,7 +4042,9 @@ export default function CreatePage() {
                   height={880}
                   className="h-auto w-full max-w-[14rem] shrink-0 rounded-3xl border-4 border-white shadow-lg motion-safe:animate-[float_3s_ease-in-out_infinite]"
                 />
-                <p className="break-keep text-center text-lg font-extrabold text-white drop-shadow">{wait.headline}</p>
+                <p className="break-keep text-center text-lg font-extrabold text-white drop-shadow" aria-live="polite">
+                  {wait.headline}
+                </p>
                 {wait.line && (
                   <p className="break-keep text-center text-sm font-bold text-white/90 drop-shadow">
                     {waitLine(wait.line, busyElapsed)}
@@ -4033,27 +4395,94 @@ export default function CreatePage() {
                 )}
               </div>
 
+              {/*
+                * 만드는 순서 소개 — 값이 나가는 첫 단추 바로 위에서 먼저 보여 준다(사장님: "순서를 알려줘야 할 듯").
+                * 이 단추가 ① 대본 만들기이고, 그림(값이 따로)과 완성이 뒤에 남았다는 걸 누르기 전에 안다.
+                */}
+              <MakeSteps current={0} accent={accent} className="-mx-3" />
+
               {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
 
-              <div className="mt-2 flex flex-wrap justify-center gap-3">
-                <BigButton tone="white" onClick={() => setStep("theme")}>
-                  ← 뒤로
-                </BigButton>
-                <BigButton
-                  accent={accent}
-                  accentDark={accentDark}
-                  onClick={() => {
-                    // 성우를 안 골랐으면 진행 대신 골라달라고 안내한다.
-                    if (!narratorVoice) {
-                      setError("함께 동화를 읽어줄 성우를 먼저 골라주세요 🎙️");
-                      return;
-                    }
-                    setBusyKind("outline");
-                    makeOutline();
-                  }}
-                >
-                  이야기 짓기 ✨
-                </BigButton>
+              {/*
+                * 첫 단추 — 줄거리를 짓고 곧바로 대본까지 쓴다(makeScript). 2026-09-29 사장님: '이야기 짓기'가
+                * 대본 완성인지 헷갈리고 과정이 길다 → 줄거리 확인 화면을 없애고 단추 이름을 하는 일 그대로 '대본 만들기'로.
+                * 이 단추에서 대본 값이 나가므로(예전 '네, 만들게요' 자리) 값을 단추에 밝히고, 그림 값은 따로라고 적는다.
+                * 잔액이 모자라거나 권수 상한이면 누르기 전에 막는다(예전 확인 칸과 같은 검사 — makeBlock).
+                * 대본을 기다리다 끊긴 줄거리가 있으면(resumePlot) 그 줄거리로 이어 쓰고, 잔액으로는 막지 않는다.
+                */}
+              <div className="mt-2 flex flex-col items-center gap-2">
+                {/* 폰에서 두 단추가 한 줄에 안 들어가면 '대본 만들기'가 위, '뒤로'가 아래로 접힌다(wrap-reverse). */}
+                <div className="flex flex-wrap-reverse justify-center gap-3">
+                  <BigButton
+                    tone="white"
+                    onClick={() => {
+                      // 재료 화면으로 간다 — 재료를 모르는(옛 임시저장의) 끊긴 줄거리는 여기서 버린다.
+                      // 재료를 아는 것은 들고 있다가, 돌아와서 재료가 그대로면 이어 쓴다(reusablePlot).
+                      if (pendingPlot && pendingPlot.basis === null) setPendingPlot(null);
+                      setStep("theme");
+                    }}
+                  >
+                    ← 뒤로
+                  </BigButton>
+                  <BigButton
+                    accent={accent}
+                    accentDark={accentDark}
+                    disabled={makeBlock !== null}
+                    onClick={() => {
+                      // 성우를 안 골랐으면 진행 대신 골라달라고 안내한다.
+                      if (!narratorVoice) {
+                        setError("함께 동화를 읽어줄 성우를 먼저 골라주세요 🎙️");
+                        return;
+                      }
+                      if (makeBlock) return;
+                      // 값이 나가니 먼저 확인 창(ChargeConfirm)으로 묻는다 — 관리자는 값이 안 나가 바로 만든다.
+                      if (!master) {
+                        setChargeAsk("script");
+                        return;
+                      }
+                      // 대본이 나왔을 때 소리를 낼 수 있게 — 누른 이 순간에 소리 장치를 깨워 둔다.
+                      primeChime();
+                      void makeScript();
+                    }}
+                  >
+                    대본 만들기 ✍️{master ? "" : ` · 토큰 ${scriptCost}개`}
+                  </BigButton>
+                </div>
+                <p className="flex items-center justify-center gap-1 break-keep text-center text-[11px] font-medium leading-relaxed text-neutral-500">
+                  <span aria-hidden className="inline-block shrink-0 rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
+                  <span>
+                    {master
+                      ? "관리자는 토큰이 들지 않아요."
+                      : `지금은 대본 값 ${scriptCost}개만 나가요 (내 잔액 ${tokens}개).`}
+                    {IMAGES_ENABLED && !master && ` 그림 값 ${imageCost}개는 대본을 읽어 본 뒤 그릴 때 내요.`}
+                  </span>
+                </p>
+                {resumePlot ? (
+                  // 대본을 기다리다 끊긴 줄거리로 이어 쓴다 — 그때 값이 나갔으면 서버가 또 받지 않는다.
+                  <p className="break-keep text-center text-[11px] font-bold text-neutral-600">
+                    아까 지은 줄거리로 대본을 이어서 써요 · 보통 {formatUsual(usualWaitSec("story"))}쯤 걸려요
+                    {!master && (
+                      <>
+                        <br />
+                        그때 대본 값이 이미 나갔다면 다시 받지 않아요.
+                      </>
+                    )}
+                  </p>
+                ) : (
+                  <p className="break-keep text-center text-[11px] font-medium text-neutral-500">
+                    줄거리를 짓고 대본까지 한 번에 써요 · 보통 {formatUsual(usualWaitSec("script"))}쯤 걸려요
+                  </p>
+                )}
+                {makeBlock === "limit" ? (
+                  <p className="break-keep text-center text-xs font-bold text-red-600">
+                    베타에서는 아이디당 최대 {pricing.max_books_per_user}권까지 만들 수 있어요.
+                    <br />설정 › 내 동화에서 지우면 다시 만들 수 있어요.
+                  </p>
+                ) : makeBlock === "tokens" ? (
+                  <p className="break-keep text-center text-xs font-bold text-red-600">
+                    토큰이 부족해요. 설정에서 충전할 수 있어요.
+                  </p>
+                ) : null}
               </div>
             </section>
           )}
@@ -4064,6 +4493,8 @@ export default function CreatePage() {
               다시 들어와 '저장 못 한 책 다시 저장하기'로 이어 갈 수 있다. */}
           {step === "illustrate" && saveFailure && (
             <section className="flex flex-col items-center gap-4 py-4">
+              {/* 만드는 순서 — 책장에 넣는 것까지가 ② 그림 그리기다(아직 ③ 동화 완성이 아니다). */}
+              <MakeSteps current={1} accent={accent} className="-mx-3" />
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 책장에 넣지 못했어요
               </h1>
@@ -4097,6 +4528,8 @@ export default function CreatePage() {
           {/* ── 5. 그림 그리는 중 ── */}
           {step === "illustrate" && story && !saveFailure && (
             <section className="flex flex-col items-center gap-5 py-4">
+              {/* 만드는 순서 — 지금 ② 그림 그리기(대본은 끝났다). */}
+              <MakeSteps current={1} accent={accent} className="-mx-3" />
               {/* 나라 마스코트가 마법책에 그리는 그림 — 마스코트가 이미 들어 있어 따로 띄우지 않는다. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -4187,194 +4620,31 @@ export default function CreatePage() {
             </section>
           )}
 
-          {/* ── 4. 줄거리 확인 ── */}
-          {step === "outline" && outline && (
-            <section className="flex flex-col gap-4">
-              <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
-                이 이야기로 만들까요?
-              </h1>
-              {/* 고치는 자리는 여기다 — 그림도 크레딧도 쓰기 전이라, 마음에 안 드는
-                  장면을 지금 고치면 공짜이고 그림이 어긋날 일도 없다.
-                  완성된 뒤에 글만 고치면 그림은 그대로라 오히려 어긋난다. */}
-              <p className="-mt-2 self-center break-keep rounded-xl bg-white/90 px-4 py-2 text-center text-sm font-bold leading-relaxed text-neutral-700 shadow-sm ring-1 ring-black/5">
-                아래 내용이 동화 속 이야기로 표현돼요.<br />
-                바꾸고 싶은 부분을 눌러 수정해 주세요.
-              </p>
-              <div className="rounded-2xl p-5" style={{ background: accentSoft }}>
-                {editScene === "title" ? (
-                  <div className="flex flex-col gap-2">
-                    <input
-                      value={sceneDraft}
-                      onChange={(e) => setSceneDraft(e.target.value.slice(0, 60))}
-                      autoFocus
-                      className="w-full rounded-xl border-2 border-neutral-300 bg-white text-neutral-900 px-3 py-2 text-center text-lg font-extrabold outline-none focus:border-neutral-500"
-                    />
-                    <div className="flex justify-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setEditScene(null)}
-                        className="rounded-full bg-white/70 px-4 py-1.5 text-xs font-extrabold text-neutral-600"
-                      >
-                        취소
-                      </button>
-                      <button
-                        type="button"
-                        onClick={saveSceneEdit}
-                        className="rounded-full bg-neutral-800 px-4 py-1.5 text-xs font-extrabold text-white"
-                      >
-                        확인
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSceneDraft(outline.title);
-                      setEditScene("title");
-                    }}
-                    className="w-full rounded-xl px-2 py-1 text-center text-xl font-extrabold text-neutral-800 transition hover:bg-white/50"
-                  >
-                    {outline.title}
-                  </button>
-                )}
-                <ol className="mt-3 flex flex-col gap-2.5">
-                  {outline.scenes.map((s) => (
-                    <li key={s.sceneNo} className="flex gap-2.5">
-                      <span style={{ background: accent }}
-                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white">
-                        {s.sceneNo}
-                      </span>
-                      {editScene === s.sceneNo ? (
-                        <div className="flex min-w-0 flex-1 flex-col gap-2">
-                          <textarea
-                            value={sceneDraft}
-                            onChange={(e) => setSceneDraft(e.target.value)}
-                            rows={3}
-                            autoFocus
-                            className="w-full resize-y rounded-xl border-2 border-neutral-300 bg-white text-neutral-900 p-2.5 text-sm font-medium leading-relaxed outline-none focus:border-neutral-500"
-                          />
-                          <div className="flex justify-end gap-2">
-                            <button
-                              type="button"
-                              onClick={() => setEditScene(null)}
-                              className="rounded-full bg-white/70 px-4 py-1.5 text-xs font-extrabold text-neutral-600"
-                            >
-                              취소
-                            </button>
-                            <button
-                              type="button"
-                              onClick={saveSceneEdit}
-                              disabled={!sceneDraft.trim()}
-                              className="rounded-full bg-neutral-800 px-4 py-1.5 text-xs font-extrabold text-white disabled:opacity-40"
-                            >
-                              확인
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSceneDraft(s.text);
-                            setEditScene(s.sceneNo);
-                          }}
-                          className="min-w-0 flex-1 rounded-xl px-2 py-1 text-left text-sm font-medium leading-relaxed text-neutral-700 transition hover:bg-white/50"
-                        >
-                          {s.text}
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-
-              {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
-
-              <div className="mt-1 flex flex-col items-center gap-2">
-                {confirmMake ? (
-                  <div className="flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-neutral-200 p-3">
-                    <p className="text-sm font-extrabold text-neutral-700">
-                      이 줄거리로 대본을 만들까요?
-                    </p>
-                    <p className="flex items-center justify-center gap-1 break-keep text-center text-[11px] font-medium text-neutral-400">
-                      <span aria-hidden className="inline-block shrink-0 rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
-                      {outline.scenes.length}장 ·{" "}
-                      {master
-                        ? "관리자는 토큰이 들지 않아요"
-                        : `지금은 대본 값 ${scriptCostOf(outline.scenes.length, pricing)}개만 나가요 (내 잔액 ${tokens}개). 그림은 대본을 읽어 보고 정해요.`}
-                    </p>
-                    {bookLimitReached ? (
-                      <p className="text-center text-xs font-bold text-red-600">
-                        베타에서는 아이디당 최대 {pricing.max_books_per_user}권까지 만들 수 있어요.
-                        <br />설정 › 내 동화에서 지우면 다시 만들 수 있어요.
-                      </p>
-                    ) : shortOnTokens ? (
-                      <p className="text-center text-xs font-bold text-red-600">
-                        토큰이 부족해요. 설정에서 충전할 수 있어요.
-                      </p>
-                    ) : null}
-                    <div className="flex flex-wrap justify-center gap-3">
-                      <BigButton
-                        accent={accent}
-                        accentDark={accentDark}
-                        onClick={() => {
-                          if (shortOnTokens || bookLimitReached) return;
-                          setConfirmMake(false);
-                          // 대본이 나왔을 때 소리를 낼 수 있게 — 누른 이 순간에 소리 장치를 깨워 둔다.
-                          primeChime();
-                          setBusyKind("story");
-                          makeStory();
-                        }}
-                      >
-                        네, 만들게요 ✓
-                      </BigButton>
-                      <BigButton tone="white" onClick={() => setConfirmMake(false)}>
-                        아니요
-                      </BigButton>
-                    </div>
-                  </div>
-                ) : (
-                  <BigButton accent={accent} accentDark={accentDark} onClick={() => setConfirmMake(true)}>
-                    {/* 여기서는 글만 짓는다 — 그림은 대본을 읽어 보고 정한다. */}
-                    이야기로 대본 구성하기 ✍️
-                  </BigButton>
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    // 줄거리 화면에서 눌러도 기다리는 건 줄거리(30초)다 — 대본 문구·감상 줄을 띄우지 않게.
-                    setBusyKind("outline");
-                    makeOutline(true);
-                  }}
-                  disabled={!master && outlineRetries >= MAX_OUTLINE_RETRIES}
-                  className="text-sm font-bold text-neutral-500 underline disabled:no-underline disabled:opacity-50"
-                >
-                  {!master && outlineRetries >= MAX_OUTLINE_RETRIES
-                    ? "다시 짓기를 다 썼어요 — 재료를 바꾸면 새로 지을 수 있어요"
-                    : `다른 이야기로 다시 짓기 🔄${master ? "" : ` (${MAX_OUTLINE_RETRIES - outlineRetries}번 남음)`}`}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStep("theme")}
-                  className="text-xs font-bold text-neutral-400"
-                >
-                  ← 주제 바꾸기
-                </button>
-              </div>
-            </section>
-          )}
-
-          {/* ── 4.5 완성된 이야기 읽어보기 — 그림(비용의 80%)은 여기서 마음에
-              들었을 때만 만든다. 아니면 테마 배경 위 글 동화로 바로 본다. ── */}
+          {/* ── 4. 대본 읽고 고치기 — 그림(비용의 80%)은 여기서 마음에 들었을 때만 만든다.
+              2026-09-29부터 '대본 만들기' 단추가 곧바로 여기로 온다(줄거리 확인 화면은 없앴다).
+              그림을 그리기 전에 읽고 고치는 곳은 이 화면 하나다. ── */}
           {step === "story" && story && (
             <section className="flex flex-col gap-4">
+              {/* 만드는 순서 — 지금 ① 대본 만들기(읽고 고치는 중). 다음이 ② 그림 그리기라는 걸 보여 준다. */}
+              <MakeSteps current={0} accent={accent} className="-mx-3" />
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 대본이 완성됐어요!
               </h1>
               <p className="-mt-2 break-keep text-center text-xs font-medium text-neutral-400">
                 그림은 아직 그리지 않았어요. 문장을 눌러 마음에 들게 고친 뒤,
                 <br />그 글 그대로 그림을 그려요.
+              </p>
+              {/*
+                다시 만들기가 끝났다는 한 줄 — 몇 초 뒤 사라진다(showRedoDone).
+                비었을 때도 sr-only 로 자리를 남긴다 — 알림 영역(role=status)이 처음부터 있어야 화면 읽기가 새 글을 읽어 준다
+                (sr-only 는 겹쳐 놓여 칸 사이 간격도 안 생긴다).
+              */}
+              <p
+                role="status"
+                className={redoNote ? "-my-1 break-keep text-center text-sm font-extrabold" : "sr-only"}
+                style={{ color: accentDark }}
+              >
+                {redoNote}
               </p>
               <div className="rounded-2xl p-5" style={{ background: accentSoft }}>
                 {/* 제목도 눌러서 고친다 — 책장에서 제일 먼저 보이는 것이 제목이다. */}
@@ -4427,7 +4697,7 @@ export default function CreatePage() {
                 )}
                 {/* 쪽별로 나눠 보여준다 — 책이 어떻게 넘어갈지 그대로 보인다.
                     문장을 누르면 그 자리에서 고칠 수 있다(그림은 고친 글을 보고 그린다). */}
-                <ol className="mt-4 flex max-h-[42dvh] flex-col gap-3 overflow-y-auto pr-1">
+                <ol ref={pageListRef} className="mt-4 flex max-h-[42dvh] flex-col gap-3 overflow-y-auto pr-1">
                   {story.pages.map((p, pageIndex) => (
                     <li key={p.pageNo} className="flex gap-2.5">
                       <span
@@ -4531,6 +4801,11 @@ export default function CreatePage() {
                       disabled={shortOnImageTokens && !unsavedPaid}
                       onClick={() => {
                         if (shortOnImageTokens && !unsavedPaid) return;
+                        // 그림 값이 나가는 길이면 먼저 확인 창으로 묻는다(이미 낸 책을 다시 저장할 때·관리자는 바로).
+                        if (!master && !unsavedPaid) {
+                          setChargeAsk("draw");
+                          return;
+                        }
                         // 다 그렸을 때 소리를 낼 수 있게 — 누른 이 순간에 소리 장치를 깨워 둔다.
                         primeChime();
                         // 이어서 그리기면 되살릴 장수를 기억한다 — 진행 줄이 그 장들을 '방금 그린 장'으로 세지 않게.
@@ -4545,7 +4820,8 @@ export default function CreatePage() {
                             "다시 그려서 저장하기 🎨 (그림 값은 이미 냈어요)"
                         : resumablePages > 0
                         ? `이어서 그리기 🎨 (그려 둔 ${resumablePages}장 있음)`
-                        : "이 글로 그림 그리기 🎨"}
+                        : // 첫 단추('대본 만들기 · 토큰 N개')처럼 값이 나가는 단추에는 값을 단추에 밝힌다.
+                          `이 글로 그림 그리기 🎨${master ? "" : ` · 토큰 ${illustrationCost(story.pages.length, pricing)}개`}`}
                     </BigButton>
                   )}
                   {/*
@@ -4583,23 +4859,53 @@ export default function CreatePage() {
                     </p>
                   ))}
                 {/*
-                  * 다시 쓰기는 토큰을 더 받지 않는다(대본 값은 이미 냈다). 그래서 횟수로
-                  * 막는다 — 안 그러면 무한정 다시 쓸 수 있고, 값은 우리가 문다.
+                  * 다시 만들기 두 가지 — 토큰은 더 받지 않는다(대본 값은 이미 냈다). 그래서 횟수로
+                  * 막는다 — 안 그러면 무한정 다시 만들 수 있고, 값은 우리가 문다.
+                  *  · 같은 이야기로 문장만 다시 쓰기: 줄거리는 그대로, 글만 새로.
+                  *  · 다른 이야기로 새로 짓기: 줄거리부터 새로(2026-09-29 없앤 줄거리 화면의 '다른 이야기로 다시 짓기'를 이리 옮겼다).
+                  * 둘이 무료 횟수를 함께 쓴다 — 서버(charge_story)가 값을 낸 줄거리 하나에 세기 때문이다(lib/create-flow redoLeft).
+                  * 부모가 둘을 헷갈리지 않게 단추마다 무엇이 바뀌는지 한 줄씩 단다.
                   */}
-                <button
-                  type="button"
-                  onClick={makeStory}
-                  disabled={!master && storyRewrites >= MAX_STORY_REWRITES}
-                  className="text-xs font-bold text-neutral-400 underline disabled:no-underline disabled:opacity-50"
-                >
-                  {!master && storyRewrites >= MAX_STORY_REWRITES
-                    ? "다시 쓰기를 모두 썼어요"
-                    : `같은 줄거리로 다시 쓰기 🔄${master ? "" : ` (${MAX_STORY_REWRITES - storyRewrites}번 남음)`}`}
-                </button>
+                <div className="mt-2 flex w-full flex-col gap-2 rounded-2xl bg-white/70 p-3 ring-1 ring-black/5">
+                  <p className="break-keep text-center text-xs font-extrabold text-neutral-600">
+                    대본이 마음에 안 드세요?{" "}
+                    {/* 두 단추가 한 횟수를 함께 쓴다 — '각각 N번'으로 읽히지 않게 '합쳐'를 밝힌다. */}
+                    {redo.rewrite === null
+                      ? ""
+                      : redo.rewrite > 0
+                        ? `아래 두 가지를 합쳐 토큰 없이 ${redo.rewrite}번 더 할 수 있어요`
+                        : "무료로 다시 만들기를 다 썼어요 — 문장을 눌러 직접 고칠 수 있어요"}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => void redoScript("same")}
+                    disabled={busy || redo.rewrite === 0}
+                    className="flex min-h-11 w-full flex-col items-center justify-center rounded-2xl bg-white px-4 py-2 text-center shadow-sm ring-1 ring-black/10 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <span className="break-keep text-sm font-extrabold text-neutral-700">✍️ 같은 이야기로 문장만 다시 쓰기</span>
+                    <span className="break-keep text-[11px] font-medium text-neutral-500">줄거리는 그대로 두고 글만 새로 써요</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void redoScript("new")}
+                    disabled={busy || redo.replot === 0}
+                    className="flex min-h-11 w-full flex-col items-center justify-center rounded-2xl bg-white px-4 py-2 text-center shadow-sm ring-1 ring-black/10 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <span className="break-keep text-sm font-extrabold text-neutral-700">🔄 다른 이야기로 새로 짓기</span>
+                    <span className="break-keep text-[11px] font-medium text-neutral-500">
+                      {redo.replot === 0 && redo.rewrite !== 0
+                        ? `새로 짓기는 대본 한 번에 ${MAX_REPLOTS}번까지예요`
+                        : "같은 재료로 줄거리부터 새로 지어요"}
+                    </span>
+                  </button>
+                  <p className="break-keep text-center text-[11px] font-medium text-neutral-500">
+                    {master ? "관리자는 횟수를 세지 않아요 · " : ""}지금 대본과 고친 문장은 새 대본으로 바뀌어요 · 보통{" "}
+                    {formatUsual(usualWaitSec("story"))}~{formatUsual(usualWaitSec("script"))}
+                  </p>
+                </div>
                 {/*
-                  * 처음부터 다시 가는 길 — 이게 없으면 대본이 통째로 마음에 안 들 때
-                  * 갇힌다(다시 쓰기는 같은 줄거리 안에서만 돈다).
-                  * 다만 이야기 값은 이미 냈으니, 버리기 전에 반드시 물어본다.
+                  * 처음부터 다시 가는 길 — 재료(누구랑·무슨 일…)부터 바꾸고 싶을 때.
+                  * 새 재료로 만드는 대본은 새 이야기라 대본 값을 다시 받는다 — 버리기 전에 반드시 물어본다.
                   */}
                 <button
                   type="button"
@@ -4607,7 +4913,7 @@ export default function CreatePage() {
                     if (
                       !master &&
                       !window.confirm(
-                        `지금 이야기를 버리고 재료부터 새로 만들까요?\n이미 낸 이야기 값 ${scriptCostOf(story.pages.length, pricing)}개는 돌려받을 수 없어요.`,
+                        `지금 대본을 버리고 재료부터 새로 만들까요?\n이미 낸 대본 값 ${scriptCostOf(story.pages.length, pricing)}개는 돌려받을 수 없어요.`,
                       )
                     ) {
                       return;
@@ -4616,9 +4922,12 @@ export default function CreatePage() {
                     setJobId(null);
                     setStory(null);
                     setOutline(null);
+                    setPaidOutline(null);
+                    setPendingPlot(null);
+                    setScriptEdited(false);
                     setScriptCharged(false);
                     setStoryRewrites(0);
-                    setOutlineRetries(0);
+                    setReplots(0);
                     setLocationDetail("");
                     locationTouchedRef.current = false;
                     setEditingPage(null);
@@ -4626,9 +4935,9 @@ export default function CreatePage() {
                     setError("");
                     setStep("theme");
                   }}
-                  className="text-xs font-bold text-neutral-400"
+                  className="min-h-11 px-3 text-xs font-bold text-neutral-500"
                 >
-                  ← 재료 바꿔 새로 만들기
+                  ← 재료 바꿔 새로 만들기 (대본 값을 다시 내요)
                 </button>
               </div>
             </section>

@@ -2,7 +2,7 @@
  * 가족 그림(우리 가족 캐릭터) 주소 검사와 받아 오기 — 서버가 **이 회원 폴더의 우리가 올린 파일만** 받게 한다.
  *
  * 왜 있나(2026-09-29): 가족 화면에서 고정한 얼굴(FamilyMember.portrait)을 동화 인물 시트(api/character-sheet)에
- * 참고 그림으로 붙인다. 주소는 브라우저가 보내므로, 서버가 아무 주소나 받아 오면 남의 가족 그림을 끌어오거나
+ * 참고 그림으로 붙인다(같은 날 오후부터는 쪽 그림 api/illustrate-page 에도 — 잠깐 기억하는 fetchFamilyRefCached). 주소는 브라우저가 보내므로, 서버가 아무 주소나 받아 오면 남의 가족 그림을 끌어오거나
  * 서버가 내부 주소를 대신 두드리는 길(SSRF)이 생긴다. 그래서
  *   · https + cafe24 공개 주소 + family/<이 회원 uid 폴더>/ 로 시작하고,
  *   · 그 뒤는 우리가 지은 파일 이름(<사람 id>-<시각>-<32자리 16진수>-ref.jpg)과 글자 하나까지 같아야 하고,
@@ -139,4 +139,55 @@ export async function fetchFamilyRef(
   } finally {
     clearTimeout(timer);
   }
+}
+
+/*
+ * 받아 온 가족 그림 잠깐 기억(2026-09-29 얼굴 고정 3단계) — 쪽 그림 서버가 쪽마다(8~12번) 같은 얼굴을 다시 받지 않게.
+ * 안전한 까닭: 가족 그림은 올릴 때마다 새 이름(<사람 id>-<시각>-<임의 32자>)이고 덮어쓰지 않는다 — 주소가 같으면 그림도 같다.
+ * 부르는 쪽은 **먼저 acceptFamilyRef 로 이 회원 폴더인지 검사**한 뒤에만 이 함수를 부른다 — 그래서 남의 주소로는
+ * 기억에 닿지도 못한다. 성공만 기억한다(실패는 다음 쪽에서 다시 받아 본다). 서버 한 대 안에서만 산다.
+ */
+const REF_CACHE_MAX = 24;
+const REF_CACHE_TTL_MS = 15 * 60 * 1000;
+const refCache = new Map<string, { at: number; image: FamilyRefImage }>();
+/** 같은 주소를 동시에 받는 요청(쪽 세 장이 한꺼번에)은 한 번만 받는다. */
+const refInFlight = new Map<string, Promise<FamilyRefImage | null>>();
+
+/** fetchFamilyRef + 잠깐 기억. 못 받으면 null — 절대 던지지 않는다. */
+export async function fetchFamilyRefCached(
+  url: string,
+  opts: { timeoutMs?: number; maxBytes?: number; fetchImpl?: typeof fetch; now?: () => number } = {},
+): Promise<FamilyRefImage | null> {
+  const now = opts.now ?? Date.now;
+  const hit = refCache.get(url);
+  if (hit && now() - hit.at < REF_CACHE_TTL_MS) {
+    // 최근에 쓴 것을 뒤로 — 넘치면 오래 안 쓴 것부터 뺀다.
+    refCache.delete(url);
+    refCache.set(url, hit);
+    return hit.image;
+  }
+  if (hit) refCache.delete(url);
+  const pending = refInFlight.get(url);
+  if (pending) return pending;
+  const job = fetchFamilyRef(url, opts)
+    .then((image) => {
+      if (image) {
+        refCache.set(url, { at: now(), image });
+        while (refCache.size > REF_CACHE_MAX) {
+          const oldest = refCache.keys().next().value;
+          if (oldest === undefined) break;
+          refCache.delete(oldest);
+        }
+      }
+      return image;
+    })
+    .finally(() => refInFlight.delete(url));
+  refInFlight.set(url, job);
+  return job;
+}
+
+/** 시험에서만 쓴다 — 기억을 비운다. */
+export function clearFamilyRefCacheForTests(): void {
+  refCache.clear();
+  refInFlight.clear();
 }

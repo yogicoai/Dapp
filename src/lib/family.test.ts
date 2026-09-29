@@ -567,6 +567,18 @@ describe("'늘 그대로' 견주기 — lockKey", () => {
     assert.equal(mergeFamily(server, local).family?.[0].portrait?.headRatio, 5.31, "더 새 그림 쪽의 잰 비율");
     assert.equal(mergeFamily(local, { ...server, family: [{ ...server.family[0], picAt: "2026-09-29T11:00:00Z" }] }).family?.[0].portrait?.headRatio, undefined);
   });
+  it("bodyStretch(굽기 때 늘인 몸 배율)는 1 초과 ~ 1.5 숫자만 0.01 단위로 지키고 그림과 함께 따라간다", () => {
+    const out = normalizeFamily([
+      { id: "mom", role: "mom", callName: "엄마", portrait: { ...P, headRatio: 4.8, bodyStretch: 1.3487 } },
+      { id: "dad", role: "dad", callName: "아빠", portrait: { ...P, bodyStretch: "1.3" }, draft: { ...P, bodyStretch: 1 } },
+      { id: "child", role: "child", callName: "하온", portrait: { ...P, bodyStretch: 3 } },
+    ]);
+    assert.equal(out?.[0].portrait?.bodyStretch, 1.35);
+    assert.equal(out?.[0].portrait?.headRatio, 4.8);
+    assert.equal("bodyStretch" in (out?.[1].portrait ?? {}), false, "글자는 버린다");
+    assert.equal("bodyStretch" in (out?.[1].draft ?? {}), false, "1 은 안 늘인 것 — 칸이 없다");
+    assert.equal("bodyStretch" in (out?.[2].portrait ?? {}), false, "범위 밖은 버린다");
+  });
   it("lockedLooksChanged — 옷·메모만 바뀌면 false, 이런 점도 순서는 상관없다", () => {
     assert.equal(lockedLooksChanged({ hair: "단발", outfit: "니트" }, { hair: "단발", outfit: "셔츠", bottom: "치마" }), false);
     assert.equal(lockedLooksChanged({ marks: ["점", "덧니"] }, { marks: ["덧니", "점"] }), false);

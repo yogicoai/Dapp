@@ -11,14 +11,17 @@ import {
   type GeneratedImage,
 } from "@/lib/gemini";
 import { heroIdentity } from "@/lib/child-looks";
-import { familyFolderOf, familyUrlPrefix, fetchFamilyRef } from "@/lib/family-ref";
+import { familyFolderOf, familyUrlPrefix, fetchFamilyRefCached } from "@/lib/family-ref";
 import {
   characterSheetPrompt,
   fixedAdultNotes,
   maxPortraitRefs,
   pickSheetPortraits,
   sheetReferences,
+  type SheetAdultLooks,
+  type SheetCharacter,
 } from "@/lib/sheet-prompt";
+import { composeCharacterSheet, prepareSheetFigure, sheetFigureMeta, subSheetAspect } from "@/lib/sheet-compose";
 
 /*
  * 그리는 데 20~30초가 걸린다(검사에 걸려 다시 그리면 그 두 배).
@@ -38,6 +41,10 @@ export const maxDuration = 60;
  * 고정 얼굴(2026-09-29): 우리 가족 캐릭터에서 얼굴을 고정한 사람이 이야기에 나오면 그 그림(참고용 JPEG)을
  * 함께 붙인다(portraits 칸 — 만들기 화면이 lib/family-cast 로 짝지어 보낸다). 시트가 모든 쪽의 유일한 얼굴
  * 기준이라 여기만 물리면 책 전체가 그 얼굴이 된다. 프롬프트는 lib/sheet-prompt.
+ *
+ * 원본 픽셀 시트(2026-09-29 오후, 사장님 "얼굴이 달라 특히"): 참고로 붙여 AI 가 다시 그리면 얼굴이 한 번 흐르고, 쪽마다 또
+ * 흐른다. 수채화 책이면 고정 가족은 **가족 그림 원본을 그대로** 시트에 세우고(AI 안 거침), 나머지 사람만 AI 로 그려 옆에 붙인다
+ * (아래 composedSheet, lib/sheet-compose). 응답의 order = 왼쪽부터 선 순서, composed = "portraits"(AI 안 부름) | "mixed".
  */
 /*
  * 회원만 부를 수 있다.
@@ -148,7 +155,18 @@ export async function POST(request: Request) {
   if (asked > 0 && !familyPrefix) {
     console.warn("[character-sheet] CAFE24 주소 설정이 없어 고정 얼굴을 쓰지 못함:", asked);
   }
-  const picked = pickSheetPortraits(input.portraits, characters, familyPrefix, maxPortraitRefs(process.env));
+  /*
+   * 몇 명까지 받을까 — AI 가 참고로 보는 그림은 모델이 잘 따르는 수까지만(maxPortraitRefs, 2.x 는 2명).
+   * 수채화 책은 원본 픽셀로 짜서(아래 composedSheet) 참고 그림 수 제한이 없다 — 이야기에 나오는 고정 가족을 모두 받는다
+   * (만들기 화면 상한 CAST_PORTRAITS_MAX 4). 짜기에 실패해 예전 AI 시트로 물러서면 그때 aiCap 으로 자른다.
+   */
+  const aiCap = maxPortraitRefs(process.env);
+  const picked = pickSheetPortraits(
+    input.portraits,
+    characters,
+    familyPrefix,
+    style.id === "watercolor" ? characters.length : aiCap,
+  );
 
   /*
    * 그림체 견본을 참조로 붙인다.
@@ -164,23 +182,47 @@ export async function POST(request: Request) {
     style.image
       ? loadReferenceImage(new URL(style.image, request.url).toString()).catch(() => null)
       : Promise.resolve(null),
-    ...picked.portraits.map((p) => fetchFamilyRef(p.url)),
+    ...picked.portraits.map((p) => fetchFamilyRefCached(p.url)),
   ]);
-  const portraits = picked.portraits.flatMap((p, i) => {
+  const fetchedPortraits = picked.portraits.flatMap((p, i) => {
     const image = portraitImages[i];
     return image ? [{ name: p.name, memberId: p.memberId, image }] : [];
   });
   if (asked > 0) {
     console.info("[character-sheet] 고정 얼굴", {
       asked,
-      used: portraits.length,
+      used: fetchedPortraits.length,
       rejected: picked.rejected,
       dropped: picked.dropped,
-      unreachable: picked.portraits.length - portraits.length,
+      unreachable: picked.portraits.length - fetchedPortraits.length,
     });
   }
   // 주인공 얼굴이 고정돼 있으면 그 그림이 원본이다 — 아이 그림(지금은 늘 없음)은 붙이지 않는다.
-  const usedDrawing = portraits.some((p) => p.name === characters[0].name) ? null : drawing;
+  const usedDrawing = fetchedPortraits.some((p) => p.name === characters[0].name) ? null : drawing;
+
+  /*
+   * 원본 픽셀 시트(2026-09-29 사장님 "얼굴이 달라 특히") — 고정 얼굴을 AI 가 다시 그리지 않는다(lib/sheet-compose).
+   * 수채화 책만: 가족 그림은 늘 수채화라(api/family/portrait) 지브리·벡터 책에 원본을 세우면 시트(=모든 쪽의 그림체 기준)가
+   * 수채화가 된다 — 그 책들은 아래 예전 길(원본을 참고로 붙여 이 책 그림체로 옮겨 그리기) 그대로.
+   * 짜기가 안 되면(그림을 못 읽음 등) null — 아래 예전 AI 시트로 물러선다.
+   */
+  if (style.id === "watercolor" && fetchedPortraits.length > 0) {
+    const composed = await composedSheet({
+      characters,
+      portraits: fetchedPortraits,
+      rawPortraits: input.portraits,
+      stylePrompt: style.prompt,
+      styleSample,
+      drawing: usedDrawing,
+      hero,
+      looks,
+      adultLooks,
+    });
+    if (composed) return composed;
+  }
+
+  // 예전 AI 시트(지브리·벡터 책, 또는 원본으로 짜지 못함) — 참고로 붙이는 얼굴은 모델이 잘 따르는 수까지만(등장인물 순).
+  const portraits = fetchedPortraits.slice(0, aiCap);
 
   const prompt = characterSheetPrompt({
     stylePrompt: style.prompt,
@@ -242,6 +284,120 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
     }
     console.error("[character-sheet]", e);
+    return NextResponse.json({ error: "캐릭터를 그리지 못했습니다." }, { status: 500 });
+  }
+}
+
+/** 요청 portraits 칸에서 한 사람의 키·머리 비율(만들기 화면이 가족에서 읽어 보낸 값) — 없으면 빈 칸. */
+function rawFigureOf(raw: unknown, name: string): { heightCm?: unknown; headRatio?: unknown } {
+  if (!Array.isArray(raw)) return {};
+  const hit = raw
+    .slice(0, 12)
+    .find((o) => o && typeof o === "object" && typeof (o as { name?: unknown }).name === "string" && (o as { name: string }).name.trim() === name);
+  return hit && typeof hit === "object" ? (hit as { heightCm?: unknown; headRatio?: unknown }) : {};
+}
+
+/**
+ * 원본 픽셀 시트 — 고정 가족은 가족 그림 그대로, 나머지 사람만 AI 가 그린다(lib/sheet-compose 머리글).
+ *  · 모두 고정: AI 를 부르지 않는다(값 0, 1~7초). composed: "portraits".
+ *  · 섞임: 나머지 사람만 AI 로 한 장(얼굴은 붙이지 않는다 — 거절 위험은 얼굴 없는 시트와 같다), 고정 가족 칸 옆에 붙인다.
+ *    composed: "mixed". AI 가 실패하면 code "subsheet" 로 돌려준다 — 만들기 화면이 얼굴을 붙인 채 한 번 더, 그래도 안 되면
+ *    얼굴 없이 그린다.
+ * order = 왼쪽부터 선 순서 — 쪽 그림 프롬프트가 "시트의 몇째 칸이 누구"를 말한다(lib/page-refs sheetOrderLine).
+ * 고정 가족 그림을 읽지 못하면 null — 부르는 쪽이 예전 AI 시트로 물러선다(아직 값이 나가지 않았다).
+ */
+async function composedSheet(args: {
+  characters: SheetCharacter[];
+  portraits: { name: string; memberId: string; image: GeneratedImage }[];
+  rawPortraits: unknown;
+  stylePrompt: string;
+  styleSample: GeneratedImage | null;
+  drawing: GeneratedImage | null;
+  hero: string;
+  looks: string;
+  adultLooks: SheetAdultLooks[];
+}): Promise<NextResponse | null> {
+  const started = Date.now();
+  const { characters, portraits } = args;
+  let figures;
+  try {
+    figures = await Promise.all(
+      portraits.map((p) => {
+        const meta = sheetFigureMeta(p.memberId, rawFigureOf(args.rawPortraits, p.name));
+        return prepareSheetFigure({ name: p.name, image: p.image, heightCm: meta.heightCm, headRatio: meta.headRatio });
+      }),
+    );
+  } catch (e) {
+    console.warn("[character-sheet] 가족 그림을 읽지 못해 AI 시트로:", (e as Error).message);
+    return null;
+  }
+  const fixedNames = new Set(portraits.map((p) => p.name));
+  const fixed = characters.filter((c) => fixedNames.has(c.name)).map((c) => c.name);
+  const others = characters.filter((c) => !fixedNames.has(c.name));
+  const names = characters.map((c) => c.name);
+
+  if (others.length === 0) {
+    try {
+      const sheet = await composeCharacterSheet({ names, figures });
+      console.info("[character-sheet] 원본 시트(AI 안 부름)", { people: fixed.length, ms: Date.now() - started });
+      return NextResponse.json({ image: toDataUrl(sheet.image), fixed, order: sheet.order, composed: "portraits" });
+    } catch (e) {
+      console.warn("[character-sheet] 원본 시트 짜기 실패 — AI 시트로:", (e as Error).message);
+      return null;
+    }
+  }
+
+  // 섞임 — 나머지 사람만 AI 로. 주인공이 고정 가족이면 '첫 사람이 주인공' 줄·아이 생김새·아이 그림을 빼고,
+  // 고정 가족인 엄마·아빠의 부모 줄도 뺀다(그 사람은 이 그림에 없다).
+  const heroOnSheet = !fixedNames.has(characters[0].name);
+  const drawing = heroOnSheet ? args.drawing : null;
+  const droppedNotes = new Set(fixedAdultNotes(portraits.map((p) => p.memberId)));
+  const prompt = characterSheetPrompt({
+    stylePrompt: args.stylePrompt,
+    characters: others,
+    hero: args.hero,
+    looks: args.looks,
+    adultLooks: args.adultLooks.filter((a) => !droppedNotes.has(a.name)),
+    styleSample: Boolean(args.styleSample),
+    drawing: Boolean(drawing),
+    heroOnSheet,
+    // 가족 그림에서 잰 윗옷 색을 함께 — 설명 글의 옷(클로드가 정함)은 그림의 옷과 다를 수 있어, 글만 믿으면
+    // 친구를 가족과 같은 색으로 입힌다(lib/sheet-compose outfitColour).
+    alreadyDrawn: characters
+      .filter((c) => fixedNames.has(c.name))
+      .map((c) => ({ ...c, outfit: figures.find((f) => f.name === c.name)?.outfit ?? null })),
+  });
+  let block: GeneratedImage;
+  try {
+    block = await generateImage({
+      prompt,
+      references: sheetReferences<GeneratedImage>(args.styleSample, [], drawing),
+      aspectRatio: subSheetAspect(others.length),
+    });
+  } catch (e) {
+    /*
+     * code: "subsheet" — 이 AI 그림엔 가족 얼굴이 붙지 않았다. 얼굴 탓이 아니니 만들기 화면은 **얼굴을 붙인 채로**
+     * 한 번 더 부르고, 그래도 안 되면 얼굴 없이 그린다. 코드가 없으면 잠깐의 5xx·504 한 번에 책 전체가 고정 얼굴을
+     * 잃었다(검토 2026-09-29). 어느 쪽이든 AI 한 번이라 값은 같다.
+     */
+    if (e instanceof GeminiError) {
+      console.warn("[character-sheet] 나머지 사람 그림 실패:", e.status ?? "-", e.noImage ?? "");
+      return NextResponse.json({ error: e.message, code: "subsheet" }, { status: e.status ?? 500 });
+    }
+    console.error("[character-sheet] 나머지 사람 그림", e);
+    return NextResponse.json({ error: "캐릭터를 그리지 못했습니다.", code: "subsheet" }, { status: 500 });
+  }
+  try {
+    const sheet = await composeCharacterSheet({ names, figures, block: { image: block } });
+    console.info("[character-sheet] 원본 시트 + 나머지 AI", {
+      fixed: fixed.length,
+      others: others.length,
+      ms: Date.now() - started,
+    });
+    return NextResponse.json({ image: toDataUrl(sheet.image), fixed, order: sheet.order, composed: "mixed" });
+  } catch (e) {
+    // 드물다(그림은 이미 읽어 두었다). 한 요청에서 또 그리면 60초를 넘길 수 있어 실패로 알린다 — 화면이 얼굴 없이 다시 그린다.
+    console.error("[character-sheet] 원본 시트 짜기 실패(나머지 그림 뒤)", (e as Error).message);
     return NextResponse.json({ error: "캐릭터를 그리지 못했습니다." }, { status: 500 });
   }
 }

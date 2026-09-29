@@ -16,12 +16,15 @@ import {
 import { describePhoto } from "@/lib/family-photo-card";
 import { faceCloseUp } from "@/lib/family-closeup";
 import { guideImage } from "@/lib/family-guide";
-import { cleanHeadRatio, headChartRatio, type Box } from "@/lib/family-head";
+import { cleanBodyStretch, cleanHeadRatio, headChartRatio, type Box } from "@/lib/family-head";
 import { evenOutHead, measureHeadRatio, type HeadPassLog } from "@/lib/family-head-check";
+import { ratioAfterStretch, stretchFigure } from "@/lib/family-stretch";
 import {
   PHOTO_FALLBACK_MIN_MS,
   buildPrompt,
   cardFor,
+  drawThenRelease,
+  headRedrawRecipe,
   photoFallbackPlan,
   photoRefused,
   portraitReferences,
@@ -44,7 +47,7 @@ export const maxDuration = 60;
  * 함수가 없는 DB 면 브라우저 차감으로 물러서지 않고 503 으로 멈춘다 — 물러서면 경로를 직접 불러
  * 공짜로 그릴 수 있다.
  *
- * POST 순서: 로그인 → 입력 검사 → 값 받기(열쇠 lease 를 받는다) → 그리기(45초 제한) → 머리 재기(아래) → 흰 바탕 지우기
+ * POST 순서: 로그인 → 입력 검사 → 값 받기(열쇠 lease 를 받는다) → 그리기(45초 제한) → 머리 재기·몸 늘이기(아래) → 흰 바탕 지우기
  *       → cafe24 두 장(투명 PNG = 화면용, 흰 바탕 JPEG = 다음 그림의 참고용, 55초까지) → '받았음' 적기
  *       (열쇠 + 그림 주소를 DB 에 남긴다).
  * 그리기·지우기·올리기 어디서든 실패하면 받은 값을 바로 되돌린다(refund_family_portrait, 열쇠가 있어야).
@@ -59,10 +62,22 @@ export const maxDuration = 60;
  * 머리 비율(사장님 2026-09-29 "아빠만 머리가 너무 크게 나와", lib/family-head):
  *   ① 비율 견본 — 표 비율로 선 회색 마네킹(lib/family-guide, 서버가 만든다·값 없음)을 마지막 참고 그림으로 붙인다(칩·사진·대신 그리기 모두).
  *   ② 머리 재기 — 그린 그림을 값싼 글 모델로 한 번 재서(lib/family-head-check, 보통 약 2~4원·많아야 약 9원) 머리가 표보다
- *      15% 넘게 크거나 20% 넘게 작으면, 시간이 넉넉할 때만(HEAD_REDRAW 아래 — 처음 그리기가 빨리 끝났을 때뿐이라 드물다)
- *      같은 쿠키로 한 번 더 그려(약 95원) 표에 더 가까운 쪽을 건넨다. 재기가 실패하거나 늦으면 오늘처럼 건넨다.
- *      로그에는 숫자(비율·시간)와 갈래만.
+ *      20% 넘게 크거나 작으면(lib/family-head HEAD_TOO_BIG·HEAD_TOO_SMALL), 시간이 넉넉할 때만(HEAD_REDRAW 아래 — 처음 그리기가
+ *      빨리 끝났을 때뿐) 같은 쿠키로 한 번 더 그려(약 95원) 표에 더 가까운 쪽을 건넨다. 재기가 실패하거나 늦으면 오늘처럼 건넨다.
+ *      다시 그리기는 **처음 그림에서**(사장님 승인 2026-09-29 오후 "엄마 비율이 이상해졌어"): 참고 그림은 처음 그림(첫째) +
+ *      비율 견본(둘째)뿐, '같은 캐릭터 그대로 비율만 고쳐'(lib/family-portrait-prompt headRedrawRecipe). 사진·클로즈업·특징
+ *      카드는 다시 보내지 않는다 — 얼굴이 꽉 찬 사진이 머리를 크게 당기는 버릇을 같은 사진으로 되풀이했다(엄마 표 7 → 처음
+ *      4.15 · 다시 4.41). 칩·대신 그리기도 같다. 로그에는 숫자(비율·시간)와 갈래만.
  *   ③ 잰 비율(headRatio, 0.01 단위)을 그림과 함께 건네고 DB(last_pic)에도 적는다 — 단체 사진이 얼굴 크기를 고르는 데 쓴다.
+ *   ④ 몸 늘이기(사장님 승인 2026-09-29 밤 "그래도 아빠 비율이랑 비교해봐 엄마가 아직도 얼굴이 너무 크게 나왔어" — 셀카로 그린
+ *      엄마가 처음 3.94 → 다시 그림 4.56, 아빠 약 5.6): 남긴 그림을 쟀고 그래도 머리가 크면(표 × 0.8 보다 5% 넘게 작으면)
+ *      머리·목 윗부분은 그대로 두고 목 ~ 발목 띠만 세로로 늘인다(lib/family-stretch, 값 없음·보통 수십 ms, 띠 배율 1.35 까지).
+ *      얼굴을 건드리지 않아 닮음이 그대로다. 칩·사진·대신 그리기·모든 역할 같다. 못 쟀으면 늘이지 않는다.
+ *      ③의 headRatio 는 늘인 뒤 비율로 적고, 늘인 배율(bodyStretch, 0.01 단위)도 그림과 함께 건네고 DB(last_pic)에 적는다 —
+ *      단체 사진이 몸을 또 늘일 때 둘을 곱해 1.45 를 넘지 않게 본다(lib/family-head FACE_FIT.totalMax).
+ *      로그에는 숫자(늘이기 전·후 비율, 배율, 걸린 시간)만.
+ *      ②에서 두 장을 견줄 때도 늘인 뒤 비율로 견주고, 다시 그린 그림을 못 쟀으면(상자가 없어 못 늘인다) 늘여서 나아지는 처음
+ *      그림을 남긴다(lib/family-head-check evenOutHead effective).
  *
  * 사진(선택, 사장님 2026-09-29 '사진으로 할게요'): photo 칸에 그 사람 사진(JPEG·PNG·WEBP, 풀어서 2.5MB 까지 —
  * lib/family-photo readPortraitPhoto)을 실어 보내면 사진을 보고 같은 수채화 캐릭터로 그린다. 값은 칩으로 그릴 때와 같다.
@@ -85,7 +100,8 @@ export const maxDuration = 60;
  * 사진과 특징 카드·얼굴 상자·얼굴 클로즈업(사진에서 읽거나 잘라 낸 것이라 사진과 똑같이 다룬다)은 이 요청의 메모리에서
  * Gemini 로 넘기기만 한다: 결제 RPC(charge·finish·refund·status) 인자, cafe24(올리는 건 그린 그림뿐), Supabase, console 로그,
  * 오류·성공 응답 어디에도 사진·카드·상자·클로즈업·요청 본문을 넣지 않는다. 로그는 결과 갈래(있음·없음)와 걸린 시간만.
- * 클로즈업은 사진과 같은 참고 그림 배열(recipe.references)에 들어 사진을 버릴 때 같이 비운다.
+ * 사진·클로즈업은 **처음 그리기 한 번에만** 쓴다 — 한 참고 그림 배열에 들어 그 그리기가 끝나면(성공·실패 모두) 곧바로 비우고
+ * (drawThenRelease), 사진 변수와 특징 카드도 머리 재기 전에 놓는다. 머리 비율 다시 그리기는 처음 그림으로 하므로 사진이 필요 없다.
  * 이 파일에 로그를 더할 때도 input·body·photo·card·faceBox·closeUp·prompt·references 를 통째로 찍지 말 것.
  */
 
@@ -131,24 +147,23 @@ const FALLBACK_DEADLINE_MS = 48_000;
 const HEAD_CHECK_DEADLINE_MS = DRAW_DEADLINE_MS + 1_000;
 /**
  * 머리가 표에서 많이 벗어나 다시 그릴 때(머리글 ②) — 그리기 제한(DRAW_DEADLINE_MS)까지 끝나야 하고, 시작하려면 그때까지
- * max(PHOTO_FALLBACK_MIN_MS, 처음 그리기에 걸린 시간)이 남아야 한다(같은 그림을 한 번 더 그리니 비슷하게 걸린다).
+ * max(PHOTO_FALLBACK_MIN_MS, 처음 그리기에 걸린 시간)이 남아야 한다(같은 크기 그림을 한 번 더 그리니 비슷하게 걸린다 —
+ * 다시 그리기는 처음 그림 + 비율 견본만 보내 요청은 더 가볍지만, 걸리는 시간은 대개 그림을 만드는 쪽이라 넉넉히 같게 본다).
  * 셈하면(재기 4초 기준) 처음 그리기가 칩으로 약 19초, 사진으로 약 14초(특징 카드를 기다리는 몫 때문) 안에 끝났을 때만 다시
  * 그린다 — 그리기는 보통 20~30초라 다시 그리기는 드물다(로그 'no-time-redraw'). 머리를 실제로 고치는 몫은 비율 견본(①)과
- * 단체 사진 고르기(③)이고, 다시 그리기는 빨리 끝난 그림에만 붙는 덤이다. 함수 제한(60초, 배포 Hobby)을 늘리지 않는 한 넓힐 수 없다.
+ * 단체 사진 얼굴 크기표(③)이고, 다시 그리기는 빨리 끝난 그림에만 붙는 덤이다. 함수 제한(60초, 배포 Hobby)을 늘리지 않는 한 넓힐 수 없다.
  * 다시 그리기가 늦거나 실패해도 처음 그림을 건네므로 504 는 나지 않는다. 끊긴 뒤에는 새 요청을 시작하지 않지만(drawWithin),
  * 이미 나간 요청의 구글 값(약 95원)은 나갈 수 있다.
  */
 const HEAD_REDRAW_DEADLINE_MS = DRAW_DEADLINE_MS;
+/**
+ * 몸 늘이기(머리글 ④)는 요청 시작부터 이 시각 전에만 시작한다 — 재기(46초까지) 바로 뒤라 보통 늘 된다. 늘이기는 수십~백여 ms 라
+ * 그 뒤 지우기·줄이기 1~2초, 올리기(55초까지)에 몇 초가 그대로 남는다. 무슨 까닭으로 이보다 늦으면 늘이지 않고 건넨다.
+ */
+const STRETCH_DEADLINE_MS = HEAD_CHECK_DEADLINE_MS + 1_000;
 
 /** skipPhotoDraw — 이 사진은 이번 방문에 이미 거절됐다(머리글). 사진이 없으면 뜻이 없다. */
 type Input = PortraitInput & { skipPhotoDraw?: boolean };
-
-/**
- * 건넬 그림을 그린 요청 — 머리가 표에서 벗어나 다시 그릴 때(머리글 ②) 같은 참고 그림·프롬프트로 한 번 더 부른다.
- * 사진·특징 카드가 들 수 있어(references·prompt) 사진과 똑같이 다룬다: 이 요청 메모리에만, 로그에 찍지 않고,
- * 머리 재기가 끝나면(실패해도) 곧바로 비운다. ms 는 그 그리기에 걸린 시간(다시 그릴 시간이 되는지 어림한다).
- */
-type Recipe = { prompt: string; references: GeneratedImage[]; noImageAttempts?: number; ms: number };
 
 /** 사진이 거절됐고 대신 그리기도 못 했다 — 값을 되돌리고 '이 사진으로는 못 그렸어요'(422 photo). */
 class PhotoRefused extends Error {
@@ -334,16 +349,16 @@ const NO_CARD: CardGot = { card: null, faceBox: null };
 /**
  * 특징 카드 기다리기(머리글 ①). startCard 는 값을 받은 뒤에 부른다 — 참고 그림 받기와 나란히 돈다.
  * waitUntil(t): 시각 t 까지만 기다리고 그때까지 온 카드·얼굴 상자를 준다(없으면 null). 이 요청 메모리에만 있다.
+ * drop(): 그리기가 끝나 카드가 더 쓰일 일이 없다 — 받아 둔 카드·상자를 놓고, 늦게 오는 답도 담아 두지 않는다
+ *   (머리 비율 다시 그리기는 처음 그림으로 하므로 카드가 필요 없다 — 머리글 ②).
  */
-type CardJob = { startedAt: number; waitUntil: (t: number) => Promise<CardGot> };
+type CardJob = { startedAt: number; waitUntil: (t: number) => Promise<CardGot>; drop: () => void };
 
 function startCard(photo: PortraitPhoto, memberId: string, draw: number): CardJob {
   const startedAt = Date.now();
-  const got: CardGot & { done: boolean } = { card: null, faceBox: null, done: false };
+  const got: CardGot & { done: boolean; dropped: boolean } = { card: null, faceBox: null, done: false, dropped: false };
   const job = describePhoto(photo, { timeoutMs: CARD_TIMEOUT_MS }).then(
     (r): CardGot => {
-      got.card = r.card;
-      got.faceBox = r.faceBox;
       got.done = true;
       // 결과 갈래·상자 있음/없음·걸린 시간만 — 카드 글·상자 숫자는 찍지 않는다(사진과 똑같이 다룬다).
       console.info(
@@ -354,6 +369,9 @@ function startCard(photo: PortraitPhoto, memberId: string, draw: number): CardJo
         r.faceBox ? "얼굴 상자 있음" : "얼굴 상자 없음",
         `${r.ms}ms`,
       );
+      if (got.dropped) return NO_CARD;
+      got.card = r.card;
+      got.faceBox = r.faceBox;
       return { card: r.card, faceBox: r.faceBox };
     },
     (): CardGot => {
@@ -364,9 +382,15 @@ function startCard(photo: PortraitPhoto, memberId: string, draw: number): CardJo
   return {
     startedAt,
     waitUntil: async (t) => {
+      if (got.dropped) return NO_CARD;
       const ms = t - Date.now();
       if (got.done || ms <= 0) return { card: got.card, faceBox: got.faceBox };
       return (await orNullAfter(job, ms)) ?? NO_CARD;
+    },
+    drop: () => {
+      got.dropped = true;
+      got.card = null;
+      got.faceBox = null;
     },
   };
 }
@@ -375,7 +399,8 @@ function startCard(photo: PortraitPhoto, memberId: string, draw: number): CardJo
  * 사진으로 그린다(머리글 ②·③). 그림 모델이 사진을 거절하면 같은 요청에서 사진 없이 특징 카드(+칩)로 한 번 더 그리고,
  * 그것도 못 하면 PhotoRefused 를 던진다(값 되돌리기는 부른 쪽). 몰림(429)·서버 문제·시간 초과처럼 사진 탓이 아닌 실패는
  * 그대로 던진다(칩으로 그릴 때와 같은 처리). input.skipPhotoDraw 면 ②를 건너뛰고 ③만 한다.
- * recipe — 건넨 그림을 그린 요청(머리 재기 뒤 다시 그리기용). 사진으로 그렸으면 사진이 들어 있다 — 부른 쪽이 머리 재기 뒤에 비운다.
+ * ms — 건넨 그림을 그리는 데 걸린 시간(머리 비율 다시 그릴 시간이 되는지 어림한다). 사진·클로즈업은 그 그리기가 끝나면 곧바로
+ * 놓는다(drawThenRelease) — 머리 비율 다시 그리기는 처음 그림으로 한다(머리글 ②).
  */
 async function drawFromPhoto(o: {
   input: Input;
@@ -386,7 +411,7 @@ async function drawFromPhoto(o: {
   guide: GeneratedImage | null;
   startedAt: number;
   draw: number;
-}): Promise<{ image: GeneratedImage; fallback: PhotoFallback | null; recipe: Recipe }> {
+}): Promise<{ image: GeneratedImage; fallback: PhotoFallback | null; ms: number }> {
   const { input, card, startedAt, draw } = o;
   const since = () => `${Date.now() - startedAt}ms`;
 
@@ -397,7 +422,7 @@ async function drawFromPhoto(o: {
     // ② 사진으로 — 카드는 CARD_WAIT_MS 까지만 기다린다(늦으면 사진만으로 — 클로즈업도 없이).
     const first = await card.waitUntil(card.startedAt + CARD_WAIT_MS);
     // ①-2 얼굴 클로즈업 — 카드와 함께 온 얼굴 상자가 쓸 만할 때만(lib/family-closeup). 사진과 똑같이 다룬다: 아래 photoRefs.images
-    //     (와 recipe)에만 들고, 사진을 놓을 때 같이 놓는다. 찍지 않는다(있음·없음만).
+    //     에만 들고, 사진을 놓을 때 같이 놓는다. 찍지 않는다(있음·없음만).
     const closeUp = first.faceBox ? await orNullAfter(faceCloseUp(o.photo, first.faceBox), CLOSEUP_TIMEOUT_MS) : null;
     const photoRefs = portraitReferences({
       photo: o.photo,
@@ -409,16 +434,20 @@ async function drawFromPhoto(o: {
     const prompt = buildPrompt(input, photoRefs.attached, first.card);
     const t0 = Date.now();
     try {
-      const image = await drawWithin(
-        {
-          prompt,
-          references: photoRefs.images,
-          aspectRatio: "3:4",
-          provider: "gemini",
-          // 거절(그림 없는 답)은 한 번만 — 같은 사진은 대개 또 거절되고, 남은 시간은 대신 그리기 몫이다.
-          noImageAttempts: 1,
-        },
-        Math.max(DRAW_MIN_MS, startedAt + DRAW_DEADLINE_MS - Date.now()),
+      // 사진·클로즈업은 이 그리기 한 번에만 — 끝나면(성공·실패 모두) 배열을 곧바로 비운다(drawThenRelease). 머리가 표에서
+      // 벗어나 다시 그려도 사진으로 그리지 않는다(처음 그림으로 — 머리글 ②). 거절됐으면 아래 ③은 사진 없이 대신 그린다.
+      const image = await drawThenRelease(photoRefs.images, (references) =>
+        drawWithin(
+          {
+            prompt,
+            references,
+            aspectRatio: "3:4",
+            provider: "gemini",
+            // 거절(그림 없는 답)은 한 번만 — 같은 사진은 대개 또 거절되고, 남은 시간은 대신 그리기 몫이다.
+            noImageAttempts: 1,
+          },
+          Math.max(DRAW_MIN_MS, startedAt + DRAW_DEADLINE_MS - Date.now()),
+        ),
       );
       console.info(
         "[family/portrait] 사진으로 그림",
@@ -428,15 +457,8 @@ async function drawFromPhoto(o: {
         photoRefs.attached.closeUp ? "클로즈업 있음" : "클로즈업 없음",
         since(),
       );
-      // 사진은 recipe 에 남는다 — 머리가 표에서 벗어나 다시 그리면 같은 사진으로 그린다. 부른 쪽이 머리 재기 뒤에 비운다.
-      return {
-        image,
-        fallback: null,
-        recipe: { prompt, references: photoRefs.images, noImageAttempts: 1, ms: Date.now() - t0 },
-      };
+      return { image, fallback: null, ms: Date.now() - t0 };
     } catch (e) {
-      // 사진(과 클로즈업)을 이 배열에서도 놓는다(거절됐으면 사진 없이 대신 그린다).
-      photoRefs.images.length = 0;
       if (!photoRefused(e)) throw e;
       console.warn("[family/portrait] 사진 거절", input.memberId, draw, brief(e), since());
     }
@@ -472,7 +494,7 @@ async function drawFromPhoto(o: {
       msLeft,
     );
     console.info("[family/portrait] 대신 그림", input.memberId, draw, plan, since());
-    return { image, fallback: plan, recipe: { prompt, references: noPhoto.images, noImageAttempts: 1, ms: Date.now() - t0 } };
+    return { image, fallback: plan, ms: Date.now() - t0 };
   } catch (e) {
     console.warn("[family/portrait] 대신 그리기도 실패", input.memberId, draw, brief(e), since());
     throw new PhotoRefused();
@@ -513,8 +535,11 @@ async function refundDraw(caller: Caller, memberId: string, charge: Charge): Pro
   }
 }
 
-/** 건넨 그림 — 응답을 잃은 화면이 되찾을 수 있게 DB(last_pic)에도 적는다. headRatio 는 잰 머리 비율(머리글 ③, 못 쟀으면 없음). */
-type Pic = { url: string; ref: string; at: string; transparent: boolean; headRatio?: number };
+/**
+ * 건넨 그림 — 응답을 잃은 화면이 되찾을 수 있게 DB(last_pic)에도 적는다. headRatio 는 잰 머리 비율(머리글 ③, 못 쟀으면 없음),
+ * bodyStretch 는 몸을 늘인 배율(머리글 ④, 안 늘였으면 없음).
+ */
+type Pic = { url: string; ref: string; at: string; transparent: boolean; headRatio?: number; bodyStretch?: number };
 
 /** 머리 재기 로그 — 숫자와 갈래만(그림·프롬프트·사진·카드는 찍지 않는다). */
 function logHead(memberId: string, draw: number, h: HeadPassLog, startedAt: number) {
@@ -580,10 +605,12 @@ export async function POST(request: Request) {
   // 사진(선택) — 값을 받기 전에 형식·크기를 본다. 사진은 이 변수(와 특징 카드·그리기 도우미의 인자)에만 두고,
   // 본문은 곧바로 놓는다. 사진은 저장하지 않는다: 로그·DB·cafe24·오류 응답 어디에도 넣지 않고, 이 요청의 특징 카드와
   // 그리기에만 넘긴 뒤 버린다(머리글).
-  const photoRead = readPortraitPhoto((body as Record<string, unknown>).photo);
+  let photoRead: ReturnType<typeof readPortraitPhoto> | null = readPortraitPhoto((body as Record<string, unknown>).photo);
   body = undefined;
   if ("error" in photoRead) return fail(400, photoRead.error, "photo");
   let photo: PortraitPhoto | null = photoRead.photo;
+  // 사진을 가리키는 곳은 photo 하나만 — 읽은 결과도 놓아야 ④-1 에서 photo 를 비울 때 사진이 정말 놓인다.
+  photoRead = null;
   const withPhoto = photo !== null;
 
   // 폴더는 부른 사람의 uid 로 — 요청이 보낸 값은 쓰지 않는다.
@@ -672,9 +699,8 @@ export async function POST(request: Request) {
   /** 사진이 거절돼 사진 없이 대신 그렸으면 무엇으로 — 응답에 실어 화면이 한 줄 알린다(저장하지 않는다) */
   let fallback: PhotoFallback | null = null;
   // 특징 카드(머리글 ①) — 값을 받은 뒤에야 시작한다(값 없이 글 모델을 부르는 길을 막는다). 참고 그림 받기와 나란히 돈다.
-  const card = photo ? startCard(photo, input.memberId, draw) : null;
-  /** 건넨 그림을 그린 요청(머리 재기 뒤 다시 그리기용) — 사진이 들 수 있어 머리 재기가 끝나면 곧바로 비운다 */
-  let recipe: Recipe | null = null;
+  // 처음 그리기가 끝나면 사진과 함께 곧바로 놓는다(아래 ④-1).
+  let card = photo ? startCard(photo, input.memberId, draw) : null;
   try {
     // ④ 그리기 — 참고 그림 순서(= 프롬프트의 몇 번째)는 portraitReferences 가 정한다:
     //    칩: 그림체 견본 → 같은 가족 그림 → 비율 견본
@@ -682,8 +708,10 @@ export async function POST(request: Request) {
     // 가족 캐릭터는 늘 Gemini 로(사장님 결정) — IMAGE_PROVIDER=openai 여도, 한도에 막혀도 GPT 로 넘기지 않는다.
     const [styleSample, sibling, guide] = await refsReady;
     let image: GeneratedImage;
+    /** 처음 그리기에 걸린 시간 — 머리 비율 다시 그릴 시간이 되는지 어림한다(HEAD_REDRAW_DEADLINE_MS) */
+    let drawMs: number;
     if (photo && card) {
-      ({ image, fallback, recipe } = await drawFromPhoto({ input, photo, card, styleSample, sibling, guide, startedAt, draw }));
+      ({ image, fallback, ms: drawMs } = await drawFromPhoto({ input, photo, card, styleSample, sibling, guide, startedAt, draw }));
     } else {
       const refs = portraitReferences({ photo: null, sample: styleSample, sibling, guide });
       const prompt = buildPrompt(input, refs.attached);
@@ -697,22 +725,29 @@ export async function POST(request: Request) {
         },
         Math.max(DRAW_MIN_MS, startedAt + DRAW_DEADLINE_MS - Date.now()),
       );
-      recipe = { prompt, references: refs.images, ms: Date.now() - t0 };
+      drawMs = Date.now() - t0;
     }
 
-    // ④-2 머리 재기(머리글 '머리 비율' ②) — 던지지 않는다. 표에서 많이 벗어났고 시간이 넉넉하면 같은 요청(recipe)에 바로잡는 한 줄을
-    //    붙여 한 번 더 그리고, 표에 더 가까운 쪽을 남긴다. 다시 그리기 실패·시간 초과면 처음 그림 그대로.
-    const again: Recipe = recipe;
+    // ④-1 사진·특징 카드는 여기서 끝 — 처음 그리기에만 쓴다(사진·클로즈업이 든 참고 그림 배열은 drawFromPhoto 가 그리기 직후
+    //     이미 비웠다). 머리 비율 다시 그리기는 처음 그림으로 하므로 이 요청 안에서도 더 붙들지 않는다(그린 그림만 아래로 간다).
+    photo = null;
+    card?.drop();
+    card = null;
+
+    // ④-2 머리 재기(머리글 '머리 비율' ②) — 던지지 않는다. 표에서 많이 벗어났고 시간이 넉넉하면 **처음 그림에서** 같은 캐릭터를
+    //    비율만 고쳐 한 번 더 그리고(headRedrawRecipe — 처음 그림 + 비율 견본뿐, 사진·클로즈업·카드 없이), 표에 더 가까운 쪽을
+    //    남긴다. 칩·사진·대신 그리기 모두 같은 다시 그리기. 실패·거절·시간 초과면 처음 그림 그대로.
     const head = await evenOutHead({
       image,
       target: headTarget,
       measure: (img, ms) => measureHeadRatio(img, { timeoutMs: ms }),
-      redraw: async (line, ms) => {
+      redraw: async (first, fix, ms) => {
+        const again = headRedrawRecipe({ first, guide, fix });
         try {
           // 끊긴 뒤 뒤에서 다시 걸지 않는다(drawWithin until) — 버릴 그림에 값이 나가지 않게.
           return await drawWithin(
             {
-              prompt: `${again.prompt}\n${line}`,
+              prompt: again.prompt,
               references: again.references,
               aspectRatio: "3:4",
               provider: "gemini",
@@ -728,20 +763,46 @@ export async function POST(request: Request) {
       },
       checkUntil: startedAt + HEAD_CHECK_DEADLINE_MS,
       redrawUntil: startedAt + HEAD_REDRAW_DEADLINE_MS,
-      redrawMinMs: Math.max(PHOTO_FALLBACK_MIN_MS, again.ms),
+      redrawMinMs: Math.max(PHOTO_FALLBACK_MIN_MS, drawMs),
+      // 머리가 큰 그림은 아래 ④-3 에서 늘이니, 두 장을 견줄 때도 늘인 뒤 비율로 — 못 잰 다시 그린 그림보다 늘일 수 있는 처음 그림.
+      effective: (ratio, boxes) => ratioAfterStretch(ratio, boxes, headTarget),
     });
     image = head.image;
-    const headRatio = head.ratio;
+    let headRatio = head.ratio;
     logHead(input.memberId, draw, head.log, startedAt);
 
-    // 사진·클로즈업(과 특징 카드가 든 프롬프트)은 여기서 끝 — 이 요청 안에서도 더 붙들지 않는다(그린 그림만 아래로 간다).
-    again.references.length = 0;
-    recipe = null;
-    photo = null;
+    // ④-3 몸 늘이기(머리글 '머리 비율' ④) — 남긴 그림을 잰 상자가 있고 그래도 머리가 크면, 머리는 그대로 두고 목 ~ 발목만
+    //     세로로 늘인다(흰 바탕 그림에 — 지우기가 늘인 윤곽에서 가장자리를 새로 푼다). 실패하면 늘이지 않은 그림 그대로.
+    let drawn: Buffer = Buffer.from(image.data, "base64");
+    /** 늘인 배율(머리글 ④) — 단체 사진이 또 늘일 때 본다. 안 늘였으면 없다. */
+    let bodyStretch: number | undefined;
+    if (head.boxes && Date.now() - startedAt < STRETCH_DEADLINE_MS) {
+      const t0 = Date.now();
+      try {
+        const stretched = await stretchFigure(drawn, { boxes: head.boxes, chart: headTarget });
+        if (stretched) {
+          drawn = stretched.image;
+          headRatio = stretched.plan.after;
+          bodyStretch = cleanBodyStretch(stretched.plan.factor);
+          // 숫자만 — 그림·상자는 찍지 않는다.
+          console.info(
+            "[family/portrait] 몸 늘이기",
+            input.memberId,
+            draw,
+            `표 ${headTarget}`,
+            `${stretched.plan.before} → ${stretched.plan.after}`,
+            `배율 ${stretched.plan.factor.toFixed(2)}`,
+            `${Date.now() - t0}ms`,
+          );
+        }
+      } catch (e) {
+        console.warn("[family/portrait] 몸 늘이기 실패 — 늘이지 않고 건넴", input.memberId, draw, brief(e), `${Date.now() - t0}ms`);
+      }
+    }
 
     // ⑤ 흰 바탕 지우기 — 화면용 투명 PNG(가로 최대 720) + 참고용 흰 바탕 JPEG(최대 1024)
     stage = "cutout";
-    const cut = await removeWhiteBackground(Buffer.from(image.data, "base64"));
+    const cut = await removeWhiteBackground(drawn);
     if (!cut.transparent) {
       console.warn("[family/portrait] 흰 바탕을 못 지워 흰 바탕 그대로 둠 — 지운 비율", cut.clearedRatio.toFixed(3));
     }
@@ -775,11 +836,12 @@ export async function POST(request: Request) {
       at: new Date().toISOString(),
       transparent: cut.transparent,
       ...(headRatio !== null ? { headRatio } : {}),
+      ...(bodyStretch !== undefined ? { bodyStretch } : {}),
     };
   } catch (e) {
     photo = null;
-    if (recipe) recipe.references.length = 0;
-    recipe = null;
+    card?.drop();
+    card = null;
     // 오류만 찍는다 — 사진·카드·본문·참고 그림은 넣지 않는다(사진으로 그렸는지만 표시). 사진으로 그린 요청이면 그림 모델
     // 오류의 원문(구글 응답 본문)도 찍지 않는다 — 구글의 400 오류 글은 보낸 값을 되읊는 일이 있어 사진·카드 조각이 남을 수 있다.
     const logged =
@@ -844,6 +906,7 @@ export async function POST(request: Request) {
     freeRedrawLeft: charge ? freeRedrawsLeft(charge.draw) : 1,
     tokens: charge ? charge.tokens : null,
     ...(pic.headRatio !== undefined ? { headRatio: pic.headRatio } : {}),
+    ...(pic.bodyStretch !== undefined ? { bodyStretch: pic.bodyStretch } : {}),
     ...(fallback ? { photoFallback: fallback } : {}),
   });
 }
@@ -882,6 +945,7 @@ export async function GET(request: Request) {
   const p = d.pic as Record<string, unknown> | null | undefined;
   const https = (u: unknown): u is string => typeof u === "string" && /^https:\/\//.test(u) && u.length <= 500;
   const headRatio = cleanHeadRatio(p?.headRatio);
+  const bodyStretch = cleanBodyStretch(p?.bodyStretch);
   const pic =
     p && typeof p === "object" && https(p.url) && https(p.ref)
       ? {
@@ -890,6 +954,7 @@ export async function GET(request: Request) {
           at: typeof p.at === "string" ? p.at : "",
           transparent: p.transparent !== false,
           ...(headRatio !== undefined ? { headRatio } : {}),
+          ...(bodyStretch !== undefined ? { bodyStretch } : {}),
         }
       : null;
   return NextResponse.json({

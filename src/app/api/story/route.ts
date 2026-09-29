@@ -1,14 +1,18 @@
 import { after, NextResponse } from "next/server";
 import { callerOf } from "@/lib/api-auth";
 import { canReopenForRewrite, insertJob, isJobId, readJobResult, storyManuscript, updateJob } from "@/lib/book-jobs";
-import { createHash } from "node:crypto";
 import { generateStory } from "@/lib/anthropic";
-import { StoryParseError } from "@/lib/story-format";
+import { redoPlotProblem, storyChargeKey } from "@/lib/story-charge";
+import { StoryParseError, type ParsedOutline } from "@/lib/story-format";
 import { StoryQualityError } from "@/lib/story-quality";
 import { parseChild, parseMaterial, parseMood, parseOccasion, parseOutlineInput } from "../_input";
 import type { NarrationStyle } from "@/lib/types";
 
-/** 같은 줄거리로 공짜로 다시 쓸 수 있는 횟수. 앱의 MAX_STORY_REWRITES 와 같아야 한다. */
+/**
+ * 같은 줄거리로 공짜로 다시 쓸 수 있는 횟수 — 옛 SQL 과 맞추려고 보내는 값이다.
+ * 지금 SQL(charge_story)은 이 값을 쓰지 않고 가격표(app_pricing.max_free_rewrites)를 읽는다.
+ * 앱도 같은 가격표 값으로 남은 횟수를 보여 준다(create/page.tsx · lib/create-flow redoLeft).
+ */
 const MAX_FREE_REWRITES = 2;
 
 /**
@@ -29,16 +33,9 @@ const MAX_FREE_REWRITES = 2;
  * 첫 화면의 만들기 단추도 비회원이면 /login 으로 간다.
  * 굽기 스크립트도 이 경로를 부르지 않는다(/api/tts 만 쓴다).
  */
-/**
- * 줄거리 지문 — '같은 줄거리인가'를 서버가 가리는 열쇠.
- *
- * parseOutlineInput 이 이미 다듬어(장면 번호를 1,2,3… 으로 다시 매기고 공백을 턴다)
- * 정규화된 모양을 주므로, 그대로 해시하면 같은 줄거리는 늘 같은 지문이 나온다.
- * 줄거리를 새로 지으면 지문이 달라져 값을 다시 받는다 — 앱이 하던 것과 같은 규칙이다.
+/*
+ * 줄거리 지문(값을 셀 열쇠)은 lib/story-charge 에 있다 — 시험하려고 뺐다(라우트 파일은 함수를 내보낼 수 없다).
  */
-function outlineKeyOf(outline: unknown): string {
-  return createHash("sha256").update(JSON.stringify(outline)).digest("hex").slice(0, 40);
-}
 
 /** 대본 값을 받은 결과. 서버 DB 에 함수가 없으면(SQL 미적용) charged 가 null 이다. */
 type StoryCharge = { charged: number; entry: string | null; rewrites: number; tokens: number } | null;
@@ -64,17 +61,32 @@ export async function POST(request: Request) {
     longer?: unknown;
     narrationStyle?: unknown;
     jobId?: unknown;
+    /**
+     * 이번 만들기에서 대본 값을 낸 줄거리 — 다시 만들 때만 온다(같은 줄거리로 다시 쓰기·다른 이야기로 새로 짓기).
+     * 이 줄거리의 지문으로 값을 센다(lib/story-charge storyChargeKey). 없으면 outline 으로 센다(예전과 같다).
+     */
+    paidOutline?: unknown;
   };
 
   let child, outline, material, occasion, mood;
+  let paidOutline: ParsedOutline | null = null;
   try {
     child = parseChild(input.child);
     outline = parseOutlineInput(input.outline);
+    // 모양이 틀리면 만들지 않는다 — 몰래 새 값으로 셌다가 받아 버리는 일이 없게(값 낸 줄거리는 이미 한 번 통과한 모양이다).
+    if (input.paidOutline !== undefined && input.paidOutline !== null) {
+      paidOutline = parseOutlineInput(input.paidOutline);
+    }
     material = parseMaterial(input.material);
     occasion = parseOccasion(input.occasion);
     mood = parseMood(input.mood);
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 400 });
+  }
+  // 값 낸 줄거리보다 장면이 많은 다시 만들기는 받지 않는다 — 적은 값으로 긴 대본을 공짜로 받는 길(lib/story-charge).
+  const scenesProblem = paidOutline ? redoPlotProblem(outline.scenes.length, paidOutline.scenes.length) : null;
+  if (scenesProblem) {
+    return NextResponse.json({ error: scenesProblem }, { status: 400 });
   }
   const longer = input.longer === true;
   const narrationStyle: NarrationStyle =
@@ -85,10 +97,32 @@ export async function POST(request: Request) {
   /*
    * 값을 **만들기 전에** 받는다. 잔액이 없는데 Anthropic 을 먼저 부르면 그 돈은 그냥 나간다.
    * 같은 줄거리로 다시 쓰기는 정해진 횟수까지 공짜다 — 그 셈을 DB 가 한다.
+   * 다른 이야기로 새로 짓기(paidOutline 이 옴)도 값을 낸 줄거리의 지문으로 세어 같은 무료 횟수를 쓴다.
    * supabase-setup.sql 을 아직 안 돌린 DB 면 함수가 없다. 그때는 charged 를 null 로
    * 돌려주고 브라우저가 예전처럼 깎는다(배포가 SQL 보다 먼저 나가도 안 멈추게).
    */
-  const outlineKey = outlineKeyOf(outline);
+  const outlineKey = storyChargeKey(outline, paidOutline);
+  /*
+   * '토큰 없이 다시 만들기'라고 온 요청은 **값을 받지 않는다**. 값 낸 줄(story_charges)이 없으면
+   * charge_story 는 새 대본으로 보고 값을 받는데, 부모 화면의 단추는 '토큰 없이'라고 말하고 있다.
+   * 그래서 먼저 제 줄이 있는지 본다(본인 줄은 읽을 수 있다 — RLS '본인 열람'). 없으면 받지 않고 멈춘다.
+   * 표가 없는 옛 DB 등으로 읽기가 실패하면 예전처럼 간다(그때는 charge_story 도 없어 서버가 값을 받지 않는다).
+   * 관리자는 값도 횟수도 없어 줄이 없다 — 보지 않는다.
+   */
+  if (paidOutline && !caller.isMaster) {
+    const { data: paidRow, error: paidErr } = await caller.db
+      .from("story_charges")
+      .select("outline_key")
+      .eq("owner", caller.uid)
+      .eq("outline_key", outlineKey)
+      .maybeSingle();
+    if (!paidErr && !paidRow) {
+      return NextResponse.json(
+        { error: "처음 낸 대본 값 기록을 찾지 못해 다시 만들 수 없어요. 문장을 눌러 직접 고쳐 주세요." },
+        { status: 409 },
+      );
+    }
+  }
   let charge: StoryCharge = null;
   {
     const { data, error } = await caller.db.rpc("charge_story", {
