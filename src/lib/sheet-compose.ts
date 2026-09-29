@@ -11,7 +11,11 @@ import { cleanHeadRatio } from "./family-head.ts";
  *  · 고정 안 한 사람이 섞이면: AI 가 그 사람들만 따로 한 장 그리고(api/character-sheet), 그 그림을 한 덩어리(block)로
  *    고정 가족 칸 옆에 붙인다. AI 그림에서 사람을 하나씩 오려 내지 않는다 — 자리를 알려면 상자 재기(값·실패)가 또 든다.
  *
- * 앞쪽은 순수 함수(칸 나누기·그림 속 사람 찾기) — node --test 로 시험한다(sheet-compose.test.ts). 끝의 두 함수만 sharp 를 쓴다.
+ * 이 책의 옷(2026-09-29 저녁, 사장님 "옷은 그 주제안에서 랜덤으로 교체되게"): 원본 픽셀 시트는 가족 그림의 옷을 책마다 그대로
+ * 입혔다. 이제 고정 가족이 이 책의 옷을 입으면 AI 가 **옷만**(사람 없이) 한 장 그리고(옷 카드, api/character-sheet),
+ * 위 줄 전신 자리에 그 사람의 옷을 세운다. 아래 줄 얼굴은 그대로 원본 픽셀 — 얼굴은 여전히 한 번도 AI 를 거치지 않는다.
+ *
+ * 앞쪽은 순수 함수(칸 나누기·그림 속 사람 찾기) — node --test 로 시험한다(sheet-compose.test.ts). 끝의 sharp 함수들만 sharp 를 쓴다.
  * 상대 경로 + 확장자: node --test 가 "@/" 별칭을 모른다.
  */
 
@@ -133,13 +137,23 @@ export const SHEET_LAYOUT = {
 export const SHEET_HEIGHT_MIN_CM = 60;
 export const SHEET_HEIGHT_MAX_CM = 200;
 
-/** 한 칸 — 고정 가족 한 사람(figure) 또는 AI 가 그린 나머지 사람들 덩어리(block, aspect = 가로 ÷ 세로) */
+/**
+ * 한 칸 — 고정 가족 한 사람(figure) 또는 AI 가 그린 나머지 사람들 덩어리(block, aspect = 가로 ÷ 세로).
+ * figure.outfit — 옷 카드에서 잰 그 사람의 옷(카드 좌표). 있으면 위 줄에 원본 전신 대신 이 옷을 세운다(아래 줄 얼굴은 원본 그대로).
+ */
 export type SheetSlot =
-  | { kind: "figure"; name: string; scan: FigureScan; heightCm: number }
+  | { kind: "figure"; name: string; scan: FigureScan; heightCm: number; outfit?: FigureScan }
   | { kind: "block"; names: readonly string[]; aspect: number };
 
+/** top — 위 줄이 원본 전신(portrait)인지 옷 카드의 옷(outfit)인지. 옷이면 figure.crop 은 옷 카드 좌표다. */
 export type PlannedSlot =
-  | { kind: "figure"; name: string; figure: { crop: Rect; place: Rect }; closeup: { crop: Rect; place: Rect } }
+  | {
+      kind: "figure";
+      name: string;
+      top: "portrait" | "outfit";
+      figure: { crop: Rect; place: Rect };
+      closeup: { crop: Rect; place: Rect };
+    }
   | { kind: "block"; names: readonly string[]; place: Rect };
 
 export type SheetPlan = { width: number; height: number; slots: PlannedSlot[]; order: string[] };
@@ -163,6 +177,8 @@ function inside(r: Rect, width: number, height: number): Rect {
  *  · 고정 가족 칸: 위 줄 전신은 **실제 키 비율**로 발끝을 맞춘다(아이는 작게). 누가 칸보다 넓으면 모두 같은 배율로 줄인다.
  *    아래 줄은 같은 원본에서 머리·어깨를 오려 키운 것 — 그림이 아니라 원본 픽셀이다.
  *  · 덩어리 칸: AI 그림을 내용 높이에 맞춰 통째로(가로 = aspect × 내용 높이).
+ *  · 옷 칸(figure.outfit): 위 줄은 옷 카드의 옷 — 키 비율로(아이 옷이 작게) 발끝 줄에 세우되, 칸보다 넓으면 **그 옷만** 줄인다
+ *    (옷을 옆으로 늘어놓아 넓게 그린 카드 하나에 모든 사람이 작아지지 않게). 아래 줄 얼굴은 원본 그대로.
  */
 export function planComposedSheet(slots: readonly SheetSlot[]): SheetPlan {
   const L = SHEET_LAYOUT;
@@ -183,10 +199,10 @@ export function planComposedSheet(slots: readonly SheetSlot[]): SheetPlan {
   const cmOf = (s: { heightCm: number }) => clampInt(s.heightCm, SHEET_HEIGHT_MIN_CM, SHEET_HEIGHT_MAX_CM);
   const tallest = Math.max(1, ...figures.map(cmOf));
   const targetH = (s: Extract<SheetSlot, { kind: "figure" }>) => topH * L.figureFill * (cmOf(s) / tallest);
-  // 칸보다 넓은 전신이 있으면 모두 같은 배율로 줄인다 — 키 비율은 그대로.
+  // 칸보다 넓은 전신이 있으면 모두 같은 배율로 줄인다 — 키 비율은 그대로. 옷 칸은 아래에서 저마다 맞춘다.
   const shrink = Math.min(
     1,
-    ...figures.map((s) => {
+    ...figures.filter((s) => !s.outfit).map((s) => {
       const w = (s.scan.box.width * targetH(s)) / s.scan.box.height;
       return w > 0 ? (colW * L.columnFill) / w : 1;
     }),
@@ -206,11 +222,16 @@ export function planComposedSheet(slots: readonly SheetSlot[]): SheetPlan {
       continue;
     }
     const { box, headHeight, headCenterX, imageWidth, imageHeight } = s.scan;
-    // 위 줄 — 전신, 발끝 맞춤
-    const h = targetH(s) * shrink;
-    const w = (box.width * h) / box.height;
+    // 위 줄 — 전신(또는 이 책의 옷), 발끝 맞춤
+    const top = s.outfit ?? s.scan;
+    let h = targetH(s) * shrink;
+    let w = (top.box.width * h) / top.box.height;
+    if (s.outfit && w > colW * L.columnFill) {
+      h *= (colW * L.columnFill) / w;
+      w = colW * L.columnFill;
+    }
     const figure = {
-      crop: inside(box, imageWidth, imageHeight),
+      crop: inside(top.box, top.imageWidth, top.imageHeight),
       place: inside({ left: x + (colW - w) / 2, top: L.margin + topH - h, width: w, height: h }, width, height),
     };
     // 아래 줄 — 머리·어깨 오리기
@@ -231,7 +252,7 @@ export function planComposedSheet(slots: readonly SheetSlot[]): SheetPlan {
         height,
       ),
     };
-    planned.push({ kind: "figure", name: s.name, figure, closeup });
+    planned.push({ kind: "figure", name: s.name, top: s.outfit ? "outfit" : "portrait", figure, closeup });
     x += colW;
   }
   const order = planned.flatMap((p) => (p.kind === "figure" ? [p.name] : [...p.names]));
@@ -281,6 +302,66 @@ export function sheetFigureMeta(
       : fallbackCm;
   const kid = memberId === "child" || (memberId !== "mom" && memberId !== "dad" && heightCm < 140);
   return { heightCm, headRatio: cleanHeadRatio(raw.headRatio) ?? (kid ? 4.4 : 5.6), kid };
+}
+
+/* ─────────────────────────────── 옷 카드 ─────────────────────────────── */
+
+/*
+ * 옷 카드 — 고정 가족이 이 책에서 입는 옷을 사람 없이 한 장에 그린 것(api/character-sheet, 프롬프트는 lib/sheet-prompt
+ * outfitCardPrompt). 왼쪽부터 사람 순서대로 한 벌씩, 칸 사이는 흰 여백이다. 여기서 한 벌씩 잘라 시트 위 줄에 세운다.
+ */
+
+/**
+ * 옷 카드를 n 칸으로 나눈다(왼쪽부터). 칸 경계(k/n)마다 좌우 칸 너비의 절반 안에서 **잉크 없는 세로 줄이 가장 길게 이어진 곳**의
+ * 가운데를 자른다 — AI 는 칸을 정확히 같은 너비로 그리지 않는다. 빈 줄이 없으면(옷이 붙어 있음) k/n 자리에서 자른다.
+ * gray: 한 픽셀 channels 바이트(첫 바이트 = 밝기). 돌려주는 것 = 칸마다 { left, width }(카드 픽셀).
+ */
+export function splitCardColumns(
+  gray: Uint8Array,
+  width: number,
+  height: number,
+  n: number,
+  channels = 1,
+): { left: number; width: number }[] {
+  const count = Math.max(1, Math.round(n));
+  if (count === 1 || width < count * 2) return [{ left: 0, width: Math.max(0, width) }];
+  const minColInk = Math.max(2, Math.round(height * 0.004));
+  const inky: boolean[] = [];
+  for (let x = 0; x < width; x++) {
+    let k = 0;
+    for (let y = 0; y < height && k < minColInk; y++) if (gray[(y * width + x) * channels] < INK_MAX) k++;
+    inky.push(k >= minColInk);
+  }
+  const half = Math.floor(width / (2 * count));
+  const cuts = [0];
+  for (let k = 1; k < count; k++) {
+    const at = Math.round((k * width) / count);
+    const lo = Math.max(cuts[cuts.length - 1] + 1, at - half);
+    const hi = Math.min(width - 1, at + half);
+    // 가장 긴 빈 줄 — 길이가 같으면 k/n 자리에 가까운 쪽
+    let best: { start: number; len: number } | null = null;
+    for (let x = lo; x <= hi; ) {
+      if (inky[x]) {
+        x++;
+        continue;
+      }
+      const start = x;
+      while (x <= hi && !inky[x]) x++;
+      const len = x - start;
+      const mid = start + len / 2;
+      if (
+        !best ||
+        len > best.len ||
+        (len === best.len && Math.abs(mid - at) < Math.abs(best.start + best.len / 2 - at))
+      ) {
+        best = { start, len };
+      }
+    }
+    const cut = best ? Math.round(best.start + best.len / 2) : at;
+    cuts.push(Math.min(width - 1, Math.max(cuts[cuts.length - 1] + 1, cut)));
+  }
+  cuts.push(width);
+  return cuts.slice(0, -1).map((left, i) => ({ left, width: cuts[i + 1] - left }));
 }
 
 /* ─────────────────────────────── 옷 색 ─────────────────────────────── */
@@ -426,15 +507,119 @@ export async function prepareSheetFigure(input: {
   return { name: input.name, buffer, scan, heightCm: input.heightCm, outfit };
 }
 
+/** 옷 카드를 읽어 사람마다 옷을 찾아 둔 것 — scans 는 이름 → 그 사람 옷의 네모(카드 좌표). */
+export type PreparedOutfitCard = { buffer: Buffer; scans: Map<string, FigureScan> };
+
+/** 옷 카드에서 한 벌이 카드 높이의 이만큼은 돼야 한다 — 신발 한 켤레만 있는 칸(잘못 나눔)을 걸러 낸다. */
+const OUTFIT_MIN_HEIGHT_SHARE = 0.2;
+
+/** 이보다 어두우면 '흰 바탕이 아님' — 순백(#FFFFFF)으로 그리라 했으니 바탕은 250 넘게 나온다. 견본 종이는 242 안팎. */
+const CARD_WHITE_MIN = 248;
+
+/**
+ * 카드 가장자리(네 변, 짧은 변의 2% 띠) 가운데 **반 넘게 흰색이 아닌** 변이 몇 개인가.
+ * 그림체 견본(수채화)의 크림색 종이를 따라 그리면 바탕이 236~247 로 깔리고, 종이 결·물감 번짐이 군데군데 잉크(INK_MAX 아래)로
+ * 읽힌다(public/art-styles/style_01.webp 로 재 봄 — 네 변 모두 95% 넘게 248 아래, 검토 2026-09-29). 그러면 두 벌 이상은 칸 사이
+ * 흰 줄을 못 찾아 던지고, 한 벌이면 종이 전체가 옷 네모가 되어 시트 위에 크림색 판이 선다. 옷이 한두 변에 닿는 것은 괜찮다 —
+ * 세 변 이상이면 종이다.
+ */
+function tintedSides(gray: Uint8Array, width: number, height: number, channels: number): number {
+  const band = Math.max(2, Math.round(Math.min(width, height) * 0.02));
+  const share = (x0: number, y0: number, x1: number, y1: number) => {
+    let tinted = 0;
+    let all = 0;
+    for (let y = y0; y < y1; y++) {
+      for (let x = x0; x < x1; x++) {
+        all++;
+        if (gray[(y * width + x) * channels] < CARD_WHITE_MIN) tinted++;
+      }
+    }
+    return all ? tinted / all : 0;
+  };
+  return [
+    share(0, 0, width, band),
+    share(0, height - band, width, height),
+    share(0, 0, band, height),
+    share(width - band, 0, width, height),
+  ].filter((v) => v > 0.5).length;
+}
+
+/**
+ * 옷 카드(AI, 사람 없이 옷만)를 읽어 names 순서(왼쪽부터)로 한 벌씩 찾는다.
+ * 이럴 때 던진다 — 부르는 쪽(api/character-sheet)은 옷 카드 없이 예전처럼(가족 그림의 옷으로) 시트를 짠다:
+ *  · 칸 경계에 위아래로 이어진 흰 줄이 없다 — 옷이 붙었거나 사람 수보다 적게 그렸다. 억지로 자르면 한 사람이 옷 반 벌을 입는다.
+ *  · 어느 칸에 옷이 없거나 너무 작다(카드 높이의 20% 아래).
+ *  · 한 칸이 바탕까지 통째로 잉크다(흰 바탕이 아님) · 가장자리 세 변 이상이 흰색이 아니다(종이 — tintedSides).
+ *  · kids(names 와 같은 순서, 아이면 true)를 주면 — 어느 아이 옷이 어느 어른 옷보다 **뚜렷이 크다**. 순서가 뒤바뀐 카드다
+ *    (아빠 옷을 첫 칸에 그림). 칸은 자리로 이름에 붙으니 그대로 쓰면 하온이 아빠 옷을 입는다. 같은 크기로 그린 것은 받는다 —
+ *    시트는 어차피 키 비율로 다시 세우고, 크기가 같다고 버리면 맞게 그린 카드 값(약 95원)을 버린다.
+ * 사람·얼굴·마네킹이 그려졌는지는 여기서 못 본다(돈 드는 그림 읽기가 필요 — 사장님 확인 전엔 안 붙인다).
+ */
+export async function prepareOutfitCard(input: {
+  image: ImageData;
+  names: readonly string[];
+  kids?: readonly boolean[];
+}): Promise<PreparedOutfitCard> {
+  if (input.names.length === 0) throw new Error("옷 카드에 세울 사람이 없습니다.");
+  const buffer = Buffer.from(input.image.data, "base64");
+  const { data, info } = await sharp(buffer)
+    .flatten({ background: "#ffffff" })
+    .greyscale()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const { width, height, channels } = info;
+  if (tintedSides(data, width, height, channels) >= 3) throw new Error("옷 카드 바탕이 흰색이 아니에요(종이 결).");
+  const columns = splitCardColumns(data, width, height, input.names.length, channels);
+  const minColInk = Math.max(2, Math.round(height * 0.004));
+  for (const col of columns.slice(1)) {
+    let k = 0;
+    for (let y = 0; y < height && k < minColInk; y++) if (data[(y * width + col.left) * channels] < INK_MAX) k++;
+    if (k >= minColInk) throw new Error("옷 카드의 옷 사이에 빈 곳이 없어요(옷이 붙었거나 수가 모자라요).");
+  }
+  const scans = new Map<string, FigureScan>();
+  columns.forEach((col, i) => {
+    // 칸만 떼어 scanFigure 로 잰다(머리 비율은 옷에 쓰지 않는다 — 아무 값).
+    const sub = new Uint8Array(col.width * height * channels);
+    for (let y = 0; y < height; y++) {
+      const from = (y * width + col.left) * channels;
+      sub.set(data.subarray(from, from + col.width * channels), y * col.width * channels);
+    }
+    const found = scanFigure(sub, col.width, height, 5, channels);
+    if (!found || found.box.height < height * OUTFIT_MIN_HEIGHT_SHARE) throw new Error(`옷 카드 ${i + 1}째 칸에 옷이 없어요.`);
+    if (found.box.width >= col.width * 0.98 && found.box.height >= height * 0.98) {
+      throw new Error(`옷 카드 ${i + 1}째 칸이 흰 바탕이 아니에요.`);
+    }
+    scans.set(input.names[i], {
+      ...found,
+      box: { ...found.box, left: found.box.left + col.left },
+      headCenterX: found.headCenterX + col.left,
+      imageWidth: width,
+      imageHeight: height,
+    });
+  });
+  // 순서가 뒤바뀐 카드 — 아이 옷이 어느 어른 옷보다 뚜렷이(10% 넘게) 크다.
+  if (input.kids?.length === input.names.length) {
+    const heightOf = (i: number) => scans.get(input.names[i])?.box.height ?? 0;
+    const kidRows = input.names.map((_, i) => i).filter((i) => input.kids![i]);
+    const adultRows = input.names.map((_, i) => i).filter((i) => !input.kids![i]);
+    if (kidRows.some((k) => adultRows.some((a) => heightOf(k) > heightOf(a) * 1.1))) {
+      throw new Error("옷 카드의 아이 옷이 어른 옷보다 커요(순서가 뒤바뀐 듯해요).");
+    }
+  }
+  return { buffer, scans };
+}
+
 /**
  * 시트 한 장을 짠다 — 흰 바탕, 글자 없음, JPEG(쪽 그림 참고로 매번 다시 올라가니 작게).
  * names: 시트에 설 모든 사람(이야기 순서). figures 에 없는 사람은 block(AI 가 그린 나머지)에 있어야 한다.
+ * outfits: 옷 카드(prepareOutfitCard) — 있으면 거기 있는 사람의 위 줄은 이 책의 옷, 아래 줄 얼굴은 원본 그대로.
  * 돌려주는 order = 왼쪽부터 선 순서(쪽 그림 프롬프트가 말한다).
  */
 export async function composeCharacterSheet(input: {
   names: readonly string[];
   figures: readonly PreparedFigure[];
   block?: { image: ImageData } | null;
+  outfits?: PreparedOutfitCard | null;
 }): Promise<{ image: ImageData; order: string[]; width: number; height: number }> {
   const byName = new Map(input.figures.map((f) => [f.name, f]));
   const { layout } = sheetSlotOrder(input.names, new Set(byName.keys()));
@@ -449,7 +634,8 @@ export async function composeCharacterSheet(input: {
   const slots: SheetSlot[] = layout.map((s) => {
     if (s.kind === "block") return { kind: "block", names: s.names, aspect: blockAspect };
     const f = byName.get(s.name)!;
-    return { kind: "figure", name: f.name, scan: f.scan, heightCm: f.heightCm };
+    const outfit = input.outfits?.scans.get(f.name);
+    return { kind: "figure", name: f.name, scan: f.scan, heightCm: f.heightCm, ...(outfit ? { outfit } : {}) };
   });
   const plan = planComposedSheet(slots);
 
@@ -466,13 +652,15 @@ export async function composeCharacterSheet(input: {
     }
     const f = byName.get(p.name)!;
     for (const part of [p.figure, p.closeup]) {
-      const input = await sharp(f.buffer)
+      // 위 줄이 옷이면 옷 카드에서, 아래 줄 얼굴은 늘 원본에서
+      const source = part === p.figure && p.top === "outfit" && input.outfits ? input.outfits.buffer : f.buffer;
+      const layer = await sharp(source)
         .flatten({ background: "#ffffff" })
         .extract(part.crop)
         .resize(part.place.width, part.place.height, { fit: "fill" })
         .png()
         .toBuffer();
-      layers.push({ input, left: part.place.left, top: part.place.top });
+      layers.push({ input: layer, left: part.place.left, top: part.place.top });
     }
   }
   const out = await sharp({

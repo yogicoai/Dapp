@@ -249,3 +249,36 @@ describe("@@CHARACTER@@ 여러 줄", () => {
     assert.ok(!cast[0].description.includes("엄마"), "남의 설명이 섞이면 안 된다");
   });
 });
+
+describe("@@CHARACTER@@ 이 책의 옷 칸(이름 | 생김새 | 이 책의 옷)", () => {
+  const parse = (...rows: string[]) =>
+    parseStory(["@@TITLE@@ 제목", ...rows, "@@PAGE@@ 1", "@@TEXT@@ 본문이에요."].join("\n")).characters;
+
+  it("세 칸이면 설명 = 생김새, 옷 — 옷 칸은 따로도 남긴다", () => {
+    const [haon, mom] = parse(
+      "@@CHARACTER@@ 하온 | 5세 남자아이, 짧은 검은 머리 | 민트색 반팔 티셔츠, 베이지 반바지, 흰 운동화",
+      "엄마 | 어깨까지 오는 검은 머리 | 코랄 니트, 연청 바지",
+    );
+    assert.deepEqual(haon, {
+      name: "하온",
+      description: "5세 남자아이, 짧은 검은 머리, 민트색 반팔 티셔츠, 베이지 반바지, 흰 운동화",
+      outfit: "민트색 반팔 티셔츠, 베이지 반바지, 흰 운동화",
+    });
+    assert.equal(mom.outfit, "코랄 니트, 연청 바지");
+  });
+
+  it("두 칸짜리 옛 줄은 예전 그대로 — outfit 칸이 아예 없다", () => {
+    const [haon] = parse("@@CHARACTER@@ 하온 | 5세 남자아이, 노란 티셔츠");
+    assert.deepEqual(haon, { name: "하온", description: "5세 남자아이, 노란 티셔츠" });
+    assert.ok(!("outfit" in haon));
+    const [solo] = parse("@@CHARACTER@@ 하온");
+    assert.deepEqual(solo, { name: "하온", description: "" });
+  });
+
+  it("칸이 더 있으면 옷 칸에 합치고, 옷 칸이 비면 옷이 없다", () => {
+    const [a, b] = parse("@@CHARACTER@@ 하온 | 짧은 머리 | 파란 티셔츠 | 회색 바지", "서연 | 양갈래 머리 |  ");
+    assert.equal(a.outfit, "파란 티셔츠, 회색 바지");
+    assert.equal(a.description, "짧은 머리, 파란 티셔츠, 회색 바지");
+    assert.deepEqual(b, { name: "서연", description: "양갈래 머리" });
+  });
+});

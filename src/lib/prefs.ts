@@ -266,12 +266,21 @@ export function normalizeParents(raw: unknown): ChildPrefs["parents"] {
  * 이 줄이 이야기(@@CHARACTER@@)와 캐릭터 시트·가족 그림 양쪽에 그대로 간다
  * (문장 규칙 원본: lib/family.ts familyLooksToPrompt — 할머니·할아버지와 같은 말투).
  */
-export function parentLooksToPrompt(p: ParentLooks | undefined, role?: "mom" | "dad"): string {
+export function parentLooksToPrompt(
+  p: ParentLooks | undefined,
+  role?: "mom" | "dad",
+  opts: { clothes?: boolean } = {},
+): string {
   if (!p) return "";
-  return familyLooksToPrompt(p, role);
+  return familyLooksToPrompt(p, role, opts);
 }
 
-export function looksToPrompt(looks: ChildLooks | undefined): string {
+/**
+ * 아이 생김새 한 줄(한국어) — 이야기(describeChild)와 쪽 그림 설명에 간다.
+ * opts.clothes=false 면 '좋아하는 옷 색'을 뺀다 — 옷은 책마다 이야기가 정한다(@@CHARACTER@@ 이 책의 옷 칸, 2026-09-29~).
+ * 안 주면 예전 그대로(옛 대본을 이어 그릴 때).
+ */
+export function looksToPrompt(looks: ChildLooks | undefined, opts: { clothes?: boolean } = {}): string {
   if (!looks) return "";
   const parts: string[] = [];
   // 머리 — 색·모양·앞머리를 한 덩어리로 묶어야 그림이 헷갈리지 않는다.
@@ -291,7 +300,7 @@ export function looksToPrompt(looks: ChildLooks | undefined): string {
   if (looks.skin) parts.push(`피부는 ${looks.skin}`);
   if (looks.build) parts.push(looks.build);
   if (looks.glasses) parts.push("안경을 썼다");
-  if (looks.color) parts.push(`${looks.color} 옷을 즐겨 입는다`);
+  if (looks.color && opts.clothes !== false) parts.push(`${looks.color} 옷을 즐겨 입는다`);
   if (looks.items?.length) parts.push(`늘 ${looks.items.join("·")}을(를) 지니고 다닌다`);
   if (looks.marks?.length) parts.push(looks.marks.join("·"));
   if (looks.note) parts.push(looks.note); // 부모가 직접 적은 것 — 맨 뒤에 그대로 얹는다

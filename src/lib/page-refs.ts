@@ -121,18 +121,48 @@ export function readSheetOrder(raw: unknown, cast: readonly { name: string }[]):
 }
 
 /**
+ * 이 책의 옷을 옷 카드로 입은 고정 가족 — 요청의 sheetOutfits 칸(api/character-sheet 가 옷 카드를 시트에 세운 사람).
+ * 등장인물에 있고, 고정 가족이고, 이 책의 옷 글(outfit)이 있는 이름만, 한 번씩, 6명까지. 옛 책·오늘 만든 책은 칸이 없어 빈다.
+ */
+export function readSheetOutfits(
+  raw: unknown,
+  cast: readonly { name: string; fixed?: boolean; outfit?: string }[],
+): string[] {
+  if (!Array.isArray(raw)) return [];
+  const out: string[] = [];
+  for (const v of raw.slice(0, 12)) {
+    const name = typeof v === "string" ? v.trim() : "";
+    const c = name ? cast.find((x) => x.name === name) : undefined;
+    if (c && c.fixed && c.outfit?.trim() && !out.includes(name)) out.push(name);
+  }
+  return out.slice(0, 6);
+}
+
+/**
  * 시트 순서 한 줄 — 누가 어느 칸인지. 이름과 그림을 묶는 유일한 끈이 설명 글뿐이던 구멍을 막는다.
  * notToScale — AI 가 따로 그려 옆에 붙인 사람들(섞인 시트의 덩어리). 그 그림은 내용 높이 전체로 붙어서
  * 다섯 살 친구가 엄마만큼 크게 선다(검토 2026-09-29) — 키는 시트가 아니라 나이대로 그리라고 못박는다.
  * 비어 있으면(모두 고정) 글은 예전 그대로다.
+ * dressed — 옷 카드로 이 책의 옷을 입은 고정 가족(readSheetOutfits). 그 칸 위는 사람 없는 옷뿐이라, 그 옷을 입히고
+ * 장면에 따로 놓인 물건으로 그리지 말라고 한다. 비어 있으면 글은 예전 그대로다.
+ * 얼굴은 얼굴 칸에서만 — 옷 카드에 AI 가 사람·얼굴을 몰래 그려 넣어도(검사로 다 못 거른다) 그 얼굴을 따라가지 않게(검토 2026-09-29).
  */
-export function sheetOrderLine(order: readonly string[], notToScale: readonly string[] = []): string {
+export function sheetOrderLine(
+  order: readonly string[],
+  notToScale: readonly string[] = [],
+  dressed: readonly string[] = [],
+): string {
   const scale = notToScale.length
     ? ` ${notToScale.join(", ")} ${notToScale.length > 1 ? "were" : "was"} painted separately at a different scale — heights on this sheet are NOT to scale between people. Draw every person at the natural height for their age.`
     : "";
+  const worn = dressed.filter((n) => order.includes(n));
+  const everyone = order.every((n) => worn.includes(n));
+  const columns = worn.length
+    ? `Each column is one person. For ${worn.join(", ")} the top of the column shows ONLY the clothes they wear in this book (laid out, with no person in them) and the close-up below is their face; dress them in exactly those clothes, and never draw those laid-out clothes as loose objects in the scene. Their faces come ONLY from those close-ups, never from anything in the clothes area.${everyone ? "" : " For everyone else the full figure is on top and the same person's close-up below."}`
+    : "Each column is one person — the full figure on top and the same person's close-up below.";
   return `The reference sheet shows these people from left to right: ${order
     .map((name, i) => `${i + 1}. ${name}`)
-    .join(", ")}. Each column is one person — the full figure on top and the same person's close-up below.${scale}`;
+    .join(", ")}. ${columns}${scale}`;
 }
 
 /**
@@ -142,27 +172,48 @@ export function sheetOrderLine(order: readonly string[], notToScale: readonly st
  *  · composed(원본 픽셀로 짠 시트): 시트의 옷 = 가족 그림의 옷이고, 클로드가 적은 설명 글의 옷과 다를 수 있다.
  *    그 옷 낱말을 버리라고 분명히 한다 — 안 그러면 어떤 쪽은 노란 원피스, 어떤 쪽은 남색 카디건이 된다.
  * 원본도 없고 짠 시트도 아니면(옛 책) 예전 한 줄 그대로 — 시험이 못 박는다.
+ *  · outfits(이름 → 이 책의 옷 글): 옷 카드로 이 책의 옷을 입은 사람(2026-09-29 저녁~). 가족 그림·얼굴 칸 아래 끝의 옷이 아니라
+ *    시트 칸 위의 옷(사람 없는 옷)을 입으라고, 그 옷 글을 함께 준다. 비어 있으면 글은 예전 그대로다.
  */
 export function fixedFamilyFaceLines(
   fixedOnPage: readonly string[],
   portraitNames: ReadonlySet<string>,
   composed: boolean,
+  outfits: ReadonlyMap<string, string> = new Map(),
 ): string[] {
   if (fixedOnPage.length === 0) return [];
   const outfit = composed
     ? "Their outfit is exactly the one shown on the reference sheet — ignore any clothing named in their description above; change it only where this page's scene text itself dresses them differently (pajamas, coat, swimsuit)."
     : "Their outfit stays exactly as on the sheet, like everyone else's — change it only where this page's scene text itself dresses them differently.";
+  /** 한 묶음(원본 붙음·시트만)의 옷 문장 — 옷 카드로 입은 사람과 아닌 사람을 가른다. */
+  const outfitFor = (names: readonly string[]) => {
+    const worn = names.filter((n) => outfits.get(n)?.trim());
+    if (worn.length === 0) return outfit;
+    const rest = names.filter((n) => !worn.includes(n));
+    const list = worn.map((n) => `${n} — ${outfits.get(n)!.trim()}`).join("; ");
+    const dressedLine = `THIS BOOK'S OUTFIT — ${worn.join(", ")} do NOT wear the clothes shown in their portrait or at the bottom edge of their close-up. Each wears the clothes-only outfit drawn at the top of their own column on the reference sheet: ${list}. Copy those garments, colours and shoes exactly; change them only where this page's scene text itself dresses them differently (pajamas, coat, swimsuit).`;
+    return rest.length ? `${dressedLine} For ${rest.join(", ")}: ${outfit}` : dressedLine;
+  };
   const withPortrait = fixedOnPage.filter((n) => portraitNames.has(n));
   const sheetOnly = fixedOnPage.filter((n) => !portraitNames.has(n));
   const lines: string[] = [];
   if (withPortrait.length) {
     lines.push(
-      `FIXED FAMILY FACES: ${withPortrait.join(", ")} — face, hairstyle, hair length, hair colour and texture, glasses and body come ONLY from their attached original portrait (FIXED FACE PORTRAITS above) and the reference sheet; if their description above words it differently, follow the portrait. ${outfit}`,
+      `FIXED FAMILY FACES: ${withPortrait.join(", ")} — face, hairstyle, hair length, hair colour and texture, glasses and body come ONLY from their attached original portrait (FIXED FACE PORTRAITS above) and the reference sheet; if their description above words it differently, follow the portrait. ${outfitFor(withPortrait)}`,
     );
   }
   if (sheetOnly.length) {
+    /*
+     * 옷 카드로 입은 사람은 시트에 전신이 없다 — 칸 위는 옷뿐이고 얼굴 칸은 어깨에서 잘린다. 원본도 안 붙은 쪽(2.x 1장 상한·
+     * 마스터 다시 그리기)에서 "머리 길이·몸은 시트에서만"이라 하면 가슴까지 오는 엄마 머리가 어깨에서 끊긴 그대로 그려질 수 있다
+     * (검토 2026-09-29). 얼굴 칸 아래 끝에 닿은 머리는 더 내려간다고, 몸은 나이·역할대로라고 일러 준다.
+     */
+    const cropped = sheetOnly.filter((n) => outfits.get(n)?.trim());
+    const cropNote = cropped.length
+      ? ` On the sheet ${cropped.join(", ")} ${cropped.length > 1 ? "have" : "has"} no full figure and the close-up is cropped at the shoulders: hair that reaches the bottom edge of the close-up keeps going below it (long hair) — never shorten it; body build follows their age and role.`
+      : "";
     lines.push(
-      `FIXED FAMILY FACES${withPortrait.length ? " (no portrait attached for them on this page)" : ""}: ${sheetOnly.join(", ")} — face, hairstyle, hair length, hair colour and texture, glasses and body come ONLY from the reference sheet; if their description above words it differently, follow the sheet. ${outfit}`,
+      `FIXED FAMILY FACES${withPortrait.length ? " (no portrait attached for them on this page)" : ""}: ${sheetOnly.join(", ")} — face, hairstyle, hair length, hair colour and texture, glasses and body come ONLY from the reference sheet; if their description above words it differently, follow the sheet.${cropNote} ${outfitFor(sheetOnly)}`,
     );
   }
   return lines;
@@ -174,13 +225,24 @@ export function fixedFamilyFaceLines(
  *  · 원본 픽셀로 짠 시트인데 원본이 안 붙은 사람(2.x 1장 상한·받기 실패): 얼굴·머리·옷 모두 시트 — 시트의 옷이
  *    가족 그림의 옷이라 설명 글의 옷으로 견주면 맞게 그린 쪽을 떨어뜨린다(검토 2026-09-29).
  *  · 그 밖(옛 책): 예전 꼬리표 그대로.
+ *  · dressed(옷 카드로 이 책의 옷을 입음): 옷은 칸 위의 사람 없는 옷과 — 가족 그림·얼굴 칸 아래 끝의 옷과 견주면
+ *    맞게 입힌 쪽을 떨어뜨린다. 원본이 안 붙었으면 얼굴·머리는 시트의 얼굴 칸과.
  */
-export function fixedCheckDescription(description: string, withPortrait: boolean, composed: boolean): string {
-  const note = withPortrait
-    ? "judge face and hair against their attached original portrait and outfit against the reference sheet, not this text"
-    : composed
-      ? "judge face, hair and outfit against the reference sheet, not this text"
-      : "judge face and hair against the reference sheet, not this text";
+export function fixedCheckDescription(
+  description: string,
+  withPortrait: boolean,
+  composed: boolean,
+  dressed = false,
+): string {
+  const note = dressed
+    ? withPortrait
+      ? "judge face and hair against their attached original portrait, and the outfit against the clothes-only outfit at the top of their column on the reference sheet — never against the portrait's clothes"
+      : "judge face and hair against their close-up on the reference sheet (cropped at the shoulders — hair that reaches its bottom edge is long: FAIL if drawn clearly shorter), and the outfit against the clothes-only outfit at the top of their column — never against the clothes at the bottom edge of the close-up"
+    : withPortrait
+      ? "judge face and hair against their attached original portrait and outfit against the reference sheet, not this text"
+      : composed
+        ? "judge face, hair and outfit against the reference sheet, not this text"
+        : "judge face and hair against the reference sheet, not this text";
   return `${description} (fixed family face — ${note})`.trim();
 }
 

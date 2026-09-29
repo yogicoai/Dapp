@@ -95,8 +95,9 @@ export function wearableItems(items: string[] | undefined): string[] {
 /**
  * 그림 모델에 줄 영어 한 줄. 고르지 않은 항목은 빠지고, 대응표에 없는 값은 한국어 그대로
  * 남긴다(Gemini가 대체로 읽는다). 아무것도 없으면 빈 문자열.
+ * opts.clothes=false 면 좋아하는 옷 색을 뺀다 — 이 책의 옷(@@CHARACTER@@ 셋째 칸)과 부딪치지 않게(2026-09-29~).
  */
-export function looksToDrawingPrompt(looks: ChildLooks | undefined): string {
+export function looksToDrawingPrompt(looks: ChildLooks | undefined, opts: { clothes?: boolean } = {}): string {
   if (!looks) return "";
   const parts: string[] = [];
   const hair = [en(HAIR_COLOR, looks.hairColor), en(HAIR, looks.hair)].filter(Boolean).join(", ");
@@ -107,7 +108,7 @@ export function looksToDrawingPrompt(looks: ChildLooks | undefined): string {
   if (looks.skin) parts.push(en(SKIN, looks.skin)!);
   if (looks.build) parts.push(en(BUILD, looks.build)!);
   if (looks.glasses) parts.push("wears glasses");
-  if (looks.color) {
+  if (looks.color && opts.clothes !== false) {
     const c = en(COLOR, looks.color)!;
     parts.push(`favourite clothing colour is ${c} — their everyday outfit is mainly ${c}`);
   }

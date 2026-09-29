@@ -191,3 +191,31 @@ describe("illustrationCheckParts — 고정 가족 원본 그림과 얼굴 견�
     assert.equal(withoutFaceLines, GOLDEN_A);
   });
 });
+
+describe("illustrationCheckParts — 옷 카드로 입은 고정 가족(이 책의 옷)", () => {
+  it("칸 순서 줄에 '칸 위는 이 책의 옷만'을 덧붙인다 — 그 밖은 그대로", () => {
+    const text = textOf(illustrationCheckParts({ ...INPUT_A, sheetOrder: ["하온", "엄마", "서연"], sheetOutfits: ["하온", "엄마"] }));
+    const lines = text.split("\n");
+    assert.equal(
+      lines[2],
+      "The character reference sheet shows, left to right: 1. 하온, 2. 엄마, 3. 서연 (each column: full figure on top, close-up below; for 하온, 엄마 the top of the column is only the clothes they wear in this book — judge their outfit against those clothes). Match each person on the page to their own column by this order.",
+    );
+    assert.equal([...lines.slice(0, 2), ...lines.slice(3)].join("\n"), GOLDEN_A);
+  });
+
+  it("모두 입었으면 칸 위는 옷, 아래는 얼굴", () => {
+    const text = textOf(illustrationCheckParts({ ...INPUT_A, sheetOrder: ["하온", "엄마"], sheetOutfits: ["엄마", "하온"] }));
+    assert.match(
+      text,
+      /1\. 하온, 2\. 엄마 \(each column: on top only the clothes that person wears in this book, laid out with no person in them, and their face close-up below — judge their outfit against those clothes\)\. Match each person/,
+    );
+  });
+
+  it("없거나 비었거나 시트에 없는 이름뿐이면 예전 글 그대로", () => {
+    const plain = textOf(illustrationCheckParts({ ...INPUT_A, sheetOrder: ["하온", "엄마", "서연"] }));
+    assert.equal(textOf(illustrationCheckParts({ ...INPUT_A, sheetOrder: ["하온", "엄마", "서연"], sheetOutfits: [] })), plain);
+    assert.equal(textOf(illustrationCheckParts({ ...INPUT_A, sheetOrder: ["하온", "엄마", "서연"], sheetOutfits: null })), plain);
+    assert.equal(textOf(illustrationCheckParts({ ...INPUT_A, sheetOrder: ["하온", "엄마", "서연"], sheetOutfits: ["아빠"] })), plain);
+    assert.equal(textOf(illustrationCheckParts({ ...INPUT_A, sheetOutfits: ["하온"] })), GOLDEN_A);
+  });
+});

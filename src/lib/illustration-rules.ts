@@ -16,6 +16,7 @@ import {
   knownPlaceFamily,
   locationKeyOf,
   mentionsNotInCar,
+  mentionsToyVehicle,
   mentionsVehicle,
   namesSchoolShuttle,
   placeVehicleKind,
@@ -100,6 +101,11 @@ export type PageVehicle = {
   staleVehicleLocation: boolean;
   /** 탈것이 아닌 쪽인데 책 어딘가에 탈것 이야기가 있다 — "벨트 없음"을 따로 일러 줄 때. */
   vehicleNearby: boolean;
+  /**
+   * 탈것 안이 아닌 쪽에 놀잇감 탈것이 나온다 — 장난감 자동차, 종이 상자 기차, 음식 모형을 채워 넣은 '자동차 안'.
+   * 그 차는 방·교실 바닥의 놀잇감이라고 한 줄 일러 준다(벨트 낱말은 꺼내지 않는다).
+   */
+  toyVehicle: boolean;
 };
 
 /**
@@ -143,7 +149,12 @@ export function pageVehicle(input: {
     /((?:2층|이층|오픈\s*탑)\s*[가-힣]{0,8}버스|시티\s*투어\s*버스|버스\s*(?:위층|2층|이층)|지붕\s*없는\s*[가-힣]{0,4}버스)/.test(
       `${sceneBody} ${storyText}`,
     );
-  const nearby = mentionsVehicle(`${location} ${sceneBody} ${storyText} ${input.bookContext ?? ""}`);
+  /*
+   * 글마다 따로 본다 — 이어 붙이면 장소 설명의 '장난감 수납장'이 본문의 진짜 버스를 놀잇감으로 만든다(notARideAt ③은
+   * '같은 글 앞에 나온 놀잇감'을 본다).
+   */
+  const nearby = [location, sceneBody, storyText, input.bookContext ?? ""].some((text) => mentionsVehicle(text));
+  const toyOnPage = mentionsToyVehicle(sceneBody) || mentionsToyVehicle(storyText);
 
   const scene = vehicleState(sceneBody);
   const story = vehicleState(storyText);
@@ -199,7 +210,7 @@ export function pageVehicle(input: {
   if (locationKind) {
     const off = scene.gotOff || (story.gotOff && !scene.kind);
     if (off) {
-      return { vehicle: null, schoolBus: false, gotOff: true, openDeck: false, staleVehicleLocation: true, vehicleNearby: nearby };
+      return { vehicle: null, schoolBus: false, gotOff: true, openDeck: false, staleVehicleLocation: true, vehicleNearby: nearby, toyVehicle: false };
     }
     const schoolBus = schoolBusOf(locationKind, true);
     return {
@@ -209,11 +220,12 @@ export function pageVehicle(input: {
       openDeck: locationKind === "transit" && openDeck && !schoolBus,
       staleVehicleLocation: false,
       vehicleNearby: nearby,
+      toyVehicle: false,
     };
   }
 
   if ((scene.gotOff || story.gotOff) && !scene.kind) {
-    return { vehicle: null, schoolBus: false, gotOff: true, openDeck: false, staleVehicleLocation: false, vehicleNearby: nearby };
+    return { vehicle: null, schoolBus: false, gotOff: true, openDeck: false, staleVehicleLocation: false, vehicleNearby: nearby, toyVehicle: false };
   }
 
   const vehicle = stayPlace
@@ -228,6 +240,7 @@ export function pageVehicle(input: {
     staleVehicleLocation: false,
     // 머무는 곳인데 장면 문장은 타고 있다고 한다 — 어느 쪽이 맞는지 모르니 "벨트 없음"을 박지 않는다.
     vehicleNearby: nearby && !(vehicle === null && scene.kind),
+    toyVehicle: vehicle === null && toyOnPage,
   };
 }
 
@@ -417,6 +430,15 @@ export function safetyRuleLines(page: PageVehicle, indoor: boolean | null): stri
   } else if (page.vehicleNearby) {
     lines.push("This page is NOT inside any vehicle: no vehicle seats, NO seat belts, NO car seats.");
   }
+  /*
+   * 놀잇감 탈것 — "자동차 안에 가득가득 채워 넣었어요"의 자동차는 교실 바닥의 장난감이다. 본문(What happens on this page)에
+   * 맨 '자동차 안'이 그대로 가니, 그림 모델이 진짜 차 안으로 끌려가지 않게 한 줄 붙인다(2026-09-29 사장님 — 뒷좌석 그림).
+   */
+  if (page.toyVehicle && !page.vehicle && !page.gotOff) {
+    lines.push(
+      "TOY VEHICLE — the car, bus or train named on this page is a child's toy (a small toy, or a cardboard play vehicle big enough to sit in) on the floor or a table of this place. The children play with it right here; no one is inside a real vehicle.",
+    );
+  }
   return lines;
 }
 
@@ -479,6 +501,9 @@ export function checkRuleLines(input: { hero?: HeroInfo | null; page?: PageVehic
     }
   } else if (page && page.vehicle === null && page.vehicleNearby) {
     lines.push("This page is not inside a vehicle: FAIL if the characters are drawn sitting in vehicle seats with seat belts or in a child car seat.");
+  }
+  if (page?.toyVehicle && !page.vehicle && !page.gotOff) {
+    lines.push("The vehicle on this page is a toy: FAIL if the characters are drawn inside a real car, bus or train cabin.");
   }
   return lines;
 }

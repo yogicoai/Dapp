@@ -35,9 +35,13 @@ const PROP_SOURCE = "물건\\s*:\\s*([^\\n—.-]+?)\\s*[—-]\\s*([^\\n.]+)";
  * 대부분 놓쳤다 — 현관문을 열자 / 밖으로 나왔어요 / 집에 들어와 / 오는 길에 /
  * 저녁에. 넉넉히 잡는 편이 안전하다. 잘못 잡으면 장소가 한 번 더 바뀔 뿐이지만,
  * 못 잡으면 그림이 통째로 딴 곳이 된다.
+ *
+ * '에 가·로 가'는 뒤 글자를 본다 — "자동차 안에 가득가득 채워 넣었어요"의 '에 가(득)'를 간 것으로 읽어,
+ * 앞 쪽과 같은 교실을 지키는 문(sameAsPrevious)이 열리고 교실이 차 안으로 바뀌었다(2026-09-29 오프라인 재현).
+ * 가득·가까이·가방·가장은 간 말이 아니다.
  */
 const MOVE_PATTERN =
-  /(가기로|가던|갔|가요|갑니다|도착|출발|나섰|나가|나와|나왔|들어갔|들어와|들어서|돌아왔|돌아와|돌아오|돌아가|돌아온|옮겼|이동|건너갔|향했|찾아갔|올라갔|내려갔|뛰어갔|달려갔|따라갔|데려갔|따라나|현관|문을\s*열|밖으로|안으로|집으로|로\s*가|에\s*가|다음\s*날|이튿날|그날\s*(아침|점심|오후|저녁|밤)|아침이\s*되|저녁이\s*되|밤이\s*되|사흘|일주일|여름이\s*되|겨울이\s*되|잠시\s*후|한참\s*뒤|얼마\s*뒤|집을\s*나서|차를\s*타|버스를\s*타|걸어서|디뎠|디디|오는\s*길|가는\s*길|저녁에|아침에|낮에|밤에|점심에)/;
+  /(가기로|가던|갔|가요|갑니다|도착|출발|나섰|나가|나와|나왔|들어갔|들어와|들어서|돌아왔|돌아와|돌아오|돌아가|돌아온|옮겼|이동|건너갔|향했|찾아갔|올라갔|내려갔|뛰어갔|달려갔|따라갔|데려갔|따라나|현관|문을\s*열|밖으로|안으로|집으로|로\s*가(?![득까방장])|에\s*가(?![득까방장])|다음\s*날|이튿날|그날\s*(아침|점심|오후|저녁|밤)|아침이\s*되|저녁이\s*되|밤이\s*되|사흘|일주일|여름이\s*되|겨울이\s*되|잠시\s*후|한참\s*뒤|얼마\s*뒤|집을\s*나서|차를\s*타|버스를\s*타|걸어서|디뎠|디디|오는\s*길|가는\s*길|저녁에|아침에|낮에|밤에|점심에)/;
 
 /**
  * 이 글에 자리를 옮긴 말이 있나 — 낱말 목록(MOVE_PATTERN)에 더해 탈것에 **올라탄** 말과 **내린** 말도 센다.
@@ -212,6 +216,17 @@ function locationHints(text: string, forText = false): (LocationHint & { score: 
       if (VEHICLE_FAMILIES.has(definition.family) && vehicleState(text.slice(at, at + match[0].length + 24)).gotOff) {
         continue;
       }
+      /*
+       * 놀잇감은 있는 곳이 아니다 — 음식 모형을 채워 넣은 자동차 안(notARideAt), 장난감 집·인형의 집 안.
+       * 예전엔 "자동차 안에 가득가득 채워 넣었어요"가 '차 안'(점수 1)으로 뽑혀 어린이집 교실이 승용차 안이 됐다.
+       * 탈것과 집에만 쓴다 — 장난감 가게·꼬마 도서관은 진짜 가게·도서관이다(모든 곳에 걸면 같은 가게가 쪽마다 다른 열쇠가 됐다).
+       */
+      if (
+        (VEHICLE_FAMILIES.has(definition.family) && notARideAt(text, at, at + match[0].length)) ||
+        (definition.family === "home" && isToyAt(text, at))
+      ) {
+        continue;
+      }
       const after = text.slice(at + match[0].length, at + match[0].length + 12);
       hints.push({
         family: definition.family,
@@ -342,9 +357,74 @@ const BOARD_SOURCE = String.raw`(?:${TRANSIT_NOUN}|${CAR_NOUN})\s*(?:에|를|을
  * 장난감·상자·종이로 만든 탈것, 놀이 기구(꼬마 기차) — 탈것 낱말 바로 앞 글이 이것으로 끝나면 타도 자리를
  * 옮긴 게 아니다("하온이는 장난감 자동차에 올라탔어요"는 거실 그대로다). 끝 두 글자는 '자동'(자동차의 앞)까지 봐 준다.
  */
-const TOY_BEFORE = /(?:장난감|상자|종이|모형|꼬마|블록|레고)\s*[가-힣]{0,2}$/;
+// '새로 만든'(새로 생긴 곳)은 놀잇감이 아니다 — '상자로·블록으로 만든'만.
+const TOY_BEFORE = /(?:(?:장난감|상자|종이|박스|모형|꼬마|블록|레고|인형의?)\s*[가-힣]{0,2}|(?<!(?:^|[^가-힣])새)(?:으로|로)\s*만든\s*)$/;
 function isToyAt(source: string, at: number): boolean {
   return at > 0 && TOY_BEFORE.test(source.slice(Math.max(0, at - 10), at));
+}
+/*
+ * 탈것을 **그릇으로 쓴** 말 — 탈것 낱말 뒤 같은 문장에 '안에·에다·으로' + 넣다·채우다·담다·싣다·쌓다·꽂다.
+ * 물건을 넣은 것이지 아이가 그 안에 있는 게 아니다.
+ * 실제 사고(2026-09-29) — 어린이집에서 "음식 모형을 꺼냈어요. 자동차 안에 가득가득 채워 넣었어요." 쪽의
+ * '자동차 안'을 아이가 있는 곳으로 읽어, 클로드가 적은 어린이집 교실이 "뒷좌석 안전벨트 … 승용차 안"으로
+ * 갈아 끼워졌다. 그림은 뒷좌석에 벨트를 맨 아이들과 앞자리에서 몸을 돌린 선생님이었다.
+ * 사람을 태우거나(태웠) 스스로 타면(탔·올라·앉) 그릇이 아니다. 벨트·카시트를 '채우는' 말도 탄 말이다.
+ */
+const CONTAINER_AFTER =
+  /^\s*(?:안|속|위|뒤)?\s*(?:에다가|에다|에|으로|로)(?![가-힣])[^.!?\n]{0,24}?(?:넣|채워|채우|채웠|채운|담(?:았|아|고|는|은|을)|실(?:었|어|은|을|고)|싣|쌓(?:았|아|고)|꽂(?:았|아|고))/;
+const RIDE_IN_CLAUSE = /(?:타(?:고|서|요|자|며|니|기|러|는|면)|탔|탄(?![가-힣])|탑니|올라|태우|태워|태웠|태운|앉|벨트|카시트)/;
+/** 누구의 탈것인지 밝힌 말(아빠 차 · 시내버스 · 어린이집 버스) — 놀잇감 곁이어도 진짜 탈것이다. */
+const OWNED_BEFORE =
+  /(?:아빠|엄마|할머니|할아버지|삼촌|이모|고모|우리|선생님|어린이집|유치원|학원|학교|통학|등원|하원|스쿨|시내|마을|고속|시외|광역|관광|공항)\s*$/;
+/** 이 탈것 낱말에 바로 올라탄 말 — "자동차에 올라탔어요". 앞에 놀잇감이 나왔어도 진짜 탈것으로 본다. */
+const BOARDED_HERE = /^\s*(?:에|를|을)\s*(?:올라\s*)?(?:타|탔|탄|탑니)/;
+/*
+ * 같은 쪽 앞 글의 **놀잇감 탈것** — 장난감 자동차·모형 기차·레고 버스·상자 자동차·미니카. 끝 낱말(탈것 이름)을 잡아 둔다.
+ * 놀잇감 아무거나(장난감 공룡·음식 모형)는 세지 않는다 — "장난감 공룡을 챙겼어요. 온 가족이 자동차 안에서 노래를 불렀어요"의
+ * 진짜 차가 놀잇감이 되어, 클로드가 맞게 적은 '아빠 차 안'이 바다로 바뀌고 차 안 그림이 검수에서 떨어졌다(검토 2026-09-29).
+ * 음식 모형을 차에 채운 사고 쪽은 ②(그릇으로 쓴 탈것)가 잡는다.
+ */
+const PLAY_VEHICLE_EARLIER =
+  /(?:미니카|(?:장난감|모형|레고|블록|상자|종이|박스)\s*(?:(?:으로|로)\s*만든\s*|[가-힣]{0,2}?\s*)(자동차|승용차|버스|기차|열차|트럭|(?<![기열])차))/g;
+/** 탈것 이름 → 무리 — 앞의 놀잇감과 **같은 탈것**을 맨 이름으로 줄였을 때만 놀잇감으로 본다(장난감 트럭 ≠ 자동차). */
+function vehicleGroup(noun: string): string {
+  if (/버스/.test(noun)) return "bus";
+  if (/기차|열차/.test(noun)) return "train";
+  if (/트럭/.test(noun)) return "truck";
+  if (/미니카|자동차|승용차|(?<![기열전마모녹홍풍찻유주세])차|카시트|좌석|자리|조수석/.test(noun)) return "car";
+  return noun;
+}
+/** 쪽에 탈것을 타고 다니는 말 — 있으면 놀잇감 곁의 맨 '자동차'도 진짜 차일 수 있다. */
+const TRAVEL_CUE = /(?:창\s*밖|창문\s*밖|출발|도착|뒷자리|뒷좌석|앞자리|앞좌석|조수석|카시트|운전|벨트|드라이브|고속도로|휴게소|정류장|가는\s*길|오는\s*길)/;
+/**
+ * 이 탈것 낱말(source 의 at~end)이 **사람이 탄 탈것이 아닌가** — 장난감·놀이·그릇으로 쓴 탈것.
+ *   ① 바로 앞이 놀잇감 말(장난감 자동차, 종이 상자 기차, 레고로 만든 버스) — isToyAt.
+ *   ② 뒤가 '놀이'(기차 놀이) · 같은 문장에서 그 안에 물건을 넣었다(CONTAINER_AFTER).
+ *   ③ 같은 쪽 앞에 **같은 탈것의 놀잇감**(상자 자동차 → 자동차, 장난감 기차 → 기차)이 나왔고 쪽 어디에도 타고 다니는
+ *      말(TRAVEL_CUE)이 없는 맨 낱말. 누구 탈것인지 밝혔거나(아빠 차) 그 낱말에 바로 올라탔으면(자동차에 올라탔어요)
+ *      진짜 탈것이다 — "장난감 자동차에 올라탔어요"처럼 놀잇감 말이 바로 앞에 붙은 것(①)만 타도 놀잇감이다.
+ */
+function notARideAt(source: string, at: number, end: number): boolean {
+  if (isToyAt(source, at)) return true;
+  const after = source.slice(end);
+  if (/^\s*놀이/.test(after)) return true;
+  const clause = after.split(/[.!?\n]/)[0] ?? "";
+  if (CONTAINER_AFTER.test(clause) && !RIDE_IN_CLAUSE.test(clause)) return true;
+  if (OWNED_BEFORE.test(source.slice(Math.max(0, at - 8), at)) || BOARDED_HERE.test(after)) return false;
+  if (TRAVEL_CUE.test(source)) return false;
+  const group = vehicleGroup(source.slice(at, end));
+  for (const m of source.slice(0, at).matchAll(new RegExp(PLAY_VEHICLE_EARLIER.source, "g"))) {
+    if (vehicleGroup(m[1] ?? "미니카") === group) return true;
+  }
+  return false;
+}
+/** 탈것 안에 있다는 말(INSIDE_CUE)이 놀잇감이 아닌 탈것에 붙어 있나. */
+function insideCue(source: string): boolean {
+  for (const m of source.matchAll(new RegExp(INSIDE_CUE.source, "g"))) {
+    const at = m.index ?? 0;
+    if (!notARideAt(source, at, at + m[0].length)) return true;
+  }
+  return false;
 }
 /*
  * 탈것 **안**에 있다는 말 — 탔다(boardsVehicle)는 말 말고도 '버스 안·차 창가·뒷자리·카시트'.
@@ -382,7 +462,7 @@ function readVehicle(source: string): { kind: VehicleKind | null; gotOff: boolea
     for (const m of source.matchAll(new RegExp(re.source, "g"))) {
       const at = m.index ?? 0;
       const after = source.slice(at + m[0].length, at + m[0].length + 24);
-      if (/^\s*(?:를|을|가|이)?\s*기다/.test(after)) continue;
+      if (/^\s*(?:를|을|가|이)?\s*기다/.test(after) || notARideAt(source, at, at + m[0].length)) continue;
       mentions.push({ kind, index: at, end: at + m[0].length, off: gotOffAfter(after), seatOnly });
     }
   };
@@ -460,7 +540,7 @@ export function ridingAtEnd(text: string): VehicleKind | null {
   if (!state.kind || isToyAt(source, state.start)) return null;
   const rest = source.slice(state.end);
   // "창밖 길에서 버스가 멈췄어요"뿐이면 타고 있는지 모른다 — 탄 말이나 안에 있다는 말이 따로 있어야 한다.
-  if (MOTION_ONLY_AFTER.test(rest) && !boardsVehicle(source) && !INSIDE_CUE.test(source)) return null;
+  if (MOTION_ONLY_AFTER.test(rest) && !boardsVehicle(source) && !insideCue(source)) return null;
   for (const m of rest.matchAll(new RegExp(ARRIVE_SOURCE, "g"))) {
     if (/^\s*(?:안|속)?\s*(?:으로|로|에)?\s*$/.test(rest.slice(0, m.index))) continue;
     return null;
@@ -480,6 +560,27 @@ function ridingOnPage(text: string, sceneBody: string): VehicleKind | null {
   const state = vehicleState(narration);
   if (state.kind || state.gotOff || new RegExp(ARRIVE_SOURCE).test(narration) || arrivedAt(narration)) return null;
   return ridingAtEnd(sceneBody);
+}
+
+/*
+ * 이 쪽에서 정말 탈것을 **타고 있다**는 말 — 올라탔다·타고 가다, 또는 탈것 안에서 달린다·출발했다·창밖을 본다·
+ * 뒷자리·카시트·벨트. '자동차 안'이라는 낱말만으로는 모른다: "자동차 안에 가득가득 채워 넣었어요"는 놀잇감에
+ * 물건을 담은 것이고, "자동차 안에서 음식을 팔았어요"는 교실의 가게 놀이일 수 있다.
+ * 클로드가 탈것이 아닌 곳(교실·거실)을 적은 쪽을 탈것 안으로 바꿀 때만 쓴다 — 탈것이 아닌 곳을 믿는 쪽으로 기운다.
+ */
+/*
+ * 탈것 **안에 앉거나 들어간** 말도 탄 말이다 — "버스 안에 앉았어요", "버스 안으로 들어갔어요", "창가 좌석에 앉았어요".
+ * 빠져 있을 땐 버스에 오른 쪽의 교실·앞마당(클로드가 떠나온 곳을 적음)을 버스 안으로 고치지 못했다(검토 2026-09-29).
+ * 앉은 말은 탈것 낱말에 붙은 것만 본다 — 교실 가게 놀이의 "선생님이 의자에 앉았어요"는 탄 말이 아니다.
+ * 탈것 안에서 잠든 말("자동차 안에서 스르르 잠이 들었어요")도 타고 가는 중이다.
+ */
+const RIDE_EVIDENCE = new RegExp(
+  String.raw`(?:달리|달렸|달려|출발|창\s*밖|창문\s*밖|덜컹|부릉|타고|앉아\s*(?:가|갔|갑)|뒷자리|뒷좌석|앞자리|앞좌석|조수석|카시트|벨트|좌석|(?:${TRANSIT_NOUN}|${CAR_NOUN})\s*(?:창가|창문|자리)|(?:${TRANSIT_NOUN}|${CAR_NOUN})\s*(?:안|속)\s*(?:에서|에|으로|로)?\s*[^.!?\n]{0,12}?(?:앉|들어가|들어갔|들어와|들어왔|들어섰|잠이\s*들|잠들|졸))`,
+);
+function claimsRide(text: string): boolean {
+  const source = maskSpeech((text ?? "").normalize("NFC"));
+  if (boardsVehicle(source)) return true;
+  return readVehicle(source).kind !== null && RIDE_EVIDENCE.test(source);
 }
 
 /** 장면 지시에서 잠금 줄(등장인물·장소·물건)을 뺀 장면 문장 — 한 줄로 쓴 지시에서도 뺀다. */
@@ -502,6 +603,9 @@ function sceneSentences(imagePrompt: string): string {
 export function placeVehicleKind(name: string): VehicleKind | null {
   const n = (name ?? "").normalize("NFC").trim();
   if (!n || NOT_IN_CAR_WORDS.test(n)) return null;
+  // "장난감 자동차 안"·"종이 상자 기차"는 놀잇감이다 — 탈것 실내 줄·장소 시트를 부르지 않는다.
+  const head = new RegExp(`(?:${TRANSIT_NOUN}|${CAR_NOUN}|트럭)`).exec(n);
+  if (head && isToyAt(n, head.index)) return null;
   const tail = String.raw`(?:\s*(?:안|속|위층|아래층|2층|이층|객실|칸|좌석|창가|뒷자리|뒷좌석|앞자리|앞좌석))?$`;
   if (new RegExp(`${TRANSIT_NOUN}${tail}`).test(n)) return "transit";
   if (new RegExp(`${CAR_NOUN}${tail}`).test(n)) return "car";
@@ -511,7 +615,26 @@ export function placeVehicleKind(name: string): VehicleKind | null {
 
 /** 글에 탈것 이야기가 조금이라도 있는가 — 탈것이 아닌 쪽에 "벨트 없음"을 따로 일러 줄지 정한다. */
 export function mentionsVehicle(text: string): boolean {
-  return ANY_VEHICLE_WORDS.test((text ?? "").normalize("NFC"));
+  const source = (text ?? "").normalize("NFC");
+  for (const m of source.matchAll(new RegExp(ANY_VEHICLE_WORDS.source, "g"))) {
+    const at = m.index ?? 0;
+    if (!notARideAt(source, at, at + m[0].length)) return true;
+  }
+  return false;
+}
+
+/*
+ * 놀잇감 탈것이 나오나 — 장난감 자동차·종이 상자 기차, 음식 모형을 채운 '자동차 안'.
+ * 쪽 그림에 "그 차는 바닥의 놀잇감"이라는 줄을 붙일지 정한다(illustration-rules pageVehicle.toyVehicle).
+ */
+const TOY_VEHICLE_NOUN = /(?:자동차|승용차|트럭|버스|기차|열차|(?<![기열전마모녹홍풍찻유주세가-힣])차(?=\s|$|[을를이가에은는도로와랑]))/g;
+export function mentionsToyVehicle(text: string): boolean {
+  const source = (text ?? "").normalize("NFC");
+  for (const m of source.matchAll(new RegExp(TOY_VEHICLE_NOUN.source, "g"))) {
+    const at = m.index ?? 0;
+    if (notARideAt(source, at, at + m[0].length)) return true;
+  }
+  return false;
 }
 
 /** '주차장·세차장·주유소'처럼 차가 나오지만 차 안은 아닌 곳을 말하나. */
@@ -599,7 +722,7 @@ function rideMentions(source: string): { index: number; noun: string; motionOnly
     for (const m of source.matchAll(new RegExp(re.source, "g"))) {
       const at = m.index ?? 0;
       const after = source.slice(at + m[0].length, at + m[0].length + 24);
-      if (/^\s*(?:를|을|가|이)?\s*기다/.test(after) || isToyAt(source, at)) continue;
+      if (/^\s*(?:를|을|가|이)?\s*기다/.test(after) || notARideAt(source, at, at + m[0].length)) continue;
       found.push({ index: at, noun: m[0], motionOnly: MOTION_ONLY_AFTER.test(after) });
     }
   }
@@ -885,12 +1008,22 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
      */
     const claudeVehicle = location ? placeVehicleKind(location[1]) : null;
     const ridingThere = claudeVehicle !== null && ridingOnPage(page.text, sceneSentences(imagePrompt)) === claudeVehicle;
+    /*
+     * 본문 낱말이 탈것(차 안·버스에서)이고 클로드는 탈것이 아닌 곳을 적었으면, 이 쪽에서 정말 타고 있다는 말이
+     * 있을 때만 바꾼다(claimsRide). 어린이집에서 가게 놀이를 하는 쪽이 '자동차 안' 낱말 하나로 승용차 안이 됐다(2026-09-29).
+     */
+    const vehicleWordOnly =
+      textLocation !== null &&
+      VEHICLE_FAMILIES.has(textLocation.family) &&
+      claudeVehicle === null &&
+      !claimsRide(`${page.text} ${sceneSentences(imagePrompt)}`);
     if (
       location &&
       textLocation &&
       claudeFamily &&
       claudeFamily !== textLocation.family &&
       !ridingThere &&
+      !vehicleWordOnly &&
       !(sameAsPrevious && !moved)
     ) {
       const correctedClause = `장소: ${textLocation.name} — ${textLocation.description}`;
@@ -983,8 +1116,9 @@ export function placeRuleNotes(story: ParsedStory): string[] {
     const key = locationKeyOf(name);
     const vehicle = placeVehicleKind(name);
     const text = (page.text ?? "").normalize("NFC");
+    // 탈것 낱말만 있고 탄 말이 없으면(교실의 가게 놀이 '자동차 안에서') 클로드의 교실을 의심하지 않는다 — claimsRide.
     const riding = ridingAtEnd(text);
-    if (riding && !vehicle) {
+    if (riding && !vehicle && claimsRide(text)) {
       notes.push(`${index + 1}쪽 본문은 탈것을 타고 가는 중인데 장소가 '${name}'입니다`);
     } else if (!riding) {
       const destination = arrivedAt(text);
@@ -1076,7 +1210,12 @@ export function validateStoryQuality(
       }
       if (previousLocation && previousLocation.name !== placeName) {
         const transitionText = `${previousLocation.text} ${page.text}`;
-        const hasExplicitMove = movesPlace(transitionText);
+        /*
+         * '에 가·로 가'는 여기선 예전처럼 넓게 센다 — 좁힌 것(가득·가까이 빼기)은 장소를 고치는 문(repairStoryContinuity)용이다.
+         * 여기 항목은 하나만 나와도 대본을 통째로 다시 산다(유료). "놀이터에 가득 쌓인 낙엽"처럼 전에 통과하던 책이
+         * 좁힌 목록 때문에 새로 다시 쓰이지 않게 한다(검토 2026-09-29).
+         */
+        const hasExplicitMove = movesPlace(transitionText) || /(?:로|에)\s*가/.test(transitionText);
         if (!hasExplicitMove) {
           issues.push(
             `${index + 1}쪽 장소가 '${previousLocation.label}'에서 '${location[1].trim()}'(으)로 바뀌었지만 본문에 이동 과정이 없습니다.`,

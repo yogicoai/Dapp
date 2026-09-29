@@ -43,7 +43,13 @@ export type ParsedOutline = {
 
 export type StoryCharacter = {
   name: string;
+  /** 생김새 + (있으면) 이 책의 옷 — 시트·쪽 그림·검수가 예전처럼 이 한 줄을 본다. */
   description: string;
+  /**
+   * 이 책의 옷(2026-09-29~, `이름 | 생김새 | 이 책의 옷`) — 책마다 바뀐다. 고정 가족은 가족 그림의 옷 대신 이것을 입는다
+   * (api/character-sheet 옷 카드). 두 칸짜리 옛 줄엔 없다.
+   */
+  outfit?: string;
 };
 
 export type ParsedPage = {
@@ -262,15 +268,21 @@ export function parseStory(raw: string): ParsedStory {
          * 캐릭터 시트도 쪽별 인물 잠금도 한 명만 알았고, 남의 설명이 섞여 들어가
          * 네 살 아이 대사가 '용' 톤으로 읽히기까지 했다(마트'용' 장바구니).
          * 줄마다 한 사람으로 읽는다.
+         *
+         * 셋째 칸 = 이 책의 옷(2026-09-29~). 설명(description)에도 이어 붙인다 — 시트·쪽 그림·검수는 예전처럼
+         * 설명 한 줄만 보면 되고, 옷 칸은 고정 가족의 옷 카드와 쪽 그림의 '이 책의 옷' 줄만 따로 쓴다.
+         * 칸이 더 있으면(클로드가 옷 안에 | 를 씀) 쉼표로 이어 옷 칸에 합친다. 두 칸짜리 줄은 예전 그대로(outfit 없음).
          */
         for (const line of inlineOrBody.split(/[\r\n]+/)) {
           const row = line.trim();
           if (!row) continue;
-          const [name, ...rest] = row.split("|");
+          const [name, looks = "", ...more] = row.split("|");
           if (!name.trim()) continue;
+          const outfit = more.map((part) => part.trim()).filter(Boolean).join(", ");
           characters.push({
             name: name.trim(),
-            description: rest.join("|").trim(),
+            description: [looks.trim(), outfit].filter(Boolean).join(", "),
+            ...(outfit ? { outfit } : {}),
           });
         }
         break;

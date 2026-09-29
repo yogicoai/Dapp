@@ -29,6 +29,7 @@ import {
   pickPagePortraits,
   portraitBindingLines,
   readSheetOrder,
+  readSheetOutfits,
   refOrdinal,
   sheetOrderLine,
 } from "@/lib/page-refs";
@@ -93,6 +94,11 @@ export async function POST(request: Request) {
     portraits?: unknown;
     /** 인물 시트에 선 순서(왼쪽부터 이름) — 원본 픽셀로 짠 시트는 이야기 순서와 다를 수 있다. 옛 책은 없다. */
     sheetOrder?: unknown;
+    /**
+     * 옷 카드로 이 책의 옷을 입은 고정 가족 이름(2026-09-29 저녁~) — 시트의 그 사람 칸 위는 사람 없는 옷뿐이다.
+     * 옷 글은 cast[].outfit. 옛 책·오늘 낮에 만든 책은 없다(= 가족 그림의 옷).
+     */
+    sheetOutfits?: unknown;
     /** 같은 장소 줄의 다른 쪽이 어린이 통학 버스다 — 부르는 쪽이 책 전체로 정한다(lib/illustration-rules schoolBusPlaceKeys). */
     schoolBusPlace?: unknown;
   };
@@ -254,13 +260,16 @@ export async function POST(request: Request) {
   const cast = castRaw
     .map((c) => {
       if (typeof c === "string") return { name: c.trim(), description: "", fixed: false };
-      const o = c as { name?: unknown; description?: unknown; fixed?: unknown };
+      const o = c as { name?: unknown; description?: unknown; fixed?: unknown; outfit?: unknown };
+      // 이 책의 옷(@@CHARACTER@@ 셋째 칸) — 옷 카드로 입은 고정 가족 줄에만 쓴다(설명 글에도 이미 들어 있다).
+      const outfit = typeof o?.outfit === "string" ? o.outfit.trim().slice(0, 200) : "";
       return {
         name: typeof o?.name === "string" ? o.name.trim() : "",
         // 500자 — 부모 줄(최대 약 320자, _input 400자)에 클로드가 앞말(하온이 아빠, 30대 후반 남자 …)을 붙여도 끝이 안 잘리게.
         description: typeof o?.description === "string" ? o.description.trim().slice(0, 500) : "",
         // 가족 캐릭터의 고정 얼굴로 시트를 그린 인물 — 얼굴·머리는 설명 글보다 시트를 따른다(아래 CAST LOCK).
         fixed: o?.fixed === true,
+        ...(outfit ? { outfit } : {}),
       };
     })
     .filter((c) => c.name)
@@ -335,6 +344,12 @@ export async function POST(request: Request) {
   const composedSheet = Boolean(sheetOrder);
   /** 짠 시트에서 AI 가 따로 그려 붙인 사람(고정 안 함) — 키가 시트에서 제 비율이 아니다(lib/page-refs sheetOrderLine). */
   const notToScale = sheetOrder ? sheetOrder.filter((n) => !cast.some((c) => c.name === n && c.fixed)) : [];
+  /*
+   * 옷 카드로 이 책의 옷을 입은 고정 가족(2026-09-29 저녁~, 사장님 "옷은 그 주제안에서 랜덤으로") — 시트 칸 위가 사람 없는 옷이다.
+   * 짠 시트에서만, 시트에 선 사람만. 비면(옛 책·옷 카드 실패) 아래 글은 가족 그림의 옷 그대로다.
+   */
+  const dressed = sheetOrder ? readSheetOutfits(input.sheetOutfits, cast).filter((n) => sheetOrder.includes(n)) : [];
+  const dressedOutfits = new Map(dressed.map((n) => [n, cast.find((c) => c.name === n)?.outfit ?? ""]));
   /*
    * 붙이는 그림의 순서 — 인물 시트 → 고정 얼굴 → 장소 시트 → 승인 쪽(lib/page-refs). 프롬프트의 각 문장이
    * "몇 번째 그림"을 말하는지 여기서 정한다. 넷이 다 있으면 '첨부된 그림'이라는 말만으로는 어느 것인지 모델이 헷갈린다.
@@ -503,7 +518,8 @@ export async function POST(request: Request) {
           `The ${nth("sheet")} attached image is the CHARACTER REFERENCE SHEET. Use it ONLY to know what each character looks like — face, hair, clothing, colors.`,
           // 누가 몇째 칸인지 — 원본 픽셀로 짠 시트만 보낸다(이야기 순서와 다를 수 있다). 옛 책은 줄이 없다.
           // 섞인 시트면 AI 가 따로 그린 사람은 키가 제 비율이 아니라고 덧붙인다(친구가 엄마만큼 크게 서 있다).
-          ...(sheetOrder ? [sheetOrderLine(sheetOrder, notToScale)] : []),
+          // 옷 카드로 입은 고정 가족은 칸 위가 사람 없는 옷이라고 — 그 옷을 입히고 물건처럼 늘어놓지 말라고.
+          ...(sheetOrder ? [sheetOrderLine(sheetOrder, notToScale, dressed)] : []),
           "Do NOT copy the sheet's layout. The sheet lines characters up side by side on a blank background; this page is a real scene with its own composition.",
           "Each character exists exactly ONCE in this world. NEVER draw the same character twice in one picture — no twins, no repeated faces, no duplicated family members, no mirrored copies.",
           // 시트의 '정면 차렷 자세'까지 베껴 와서, 장면 한가운데 인물만 오려 붙인 것처럼
@@ -549,7 +565,10 @@ export async function POST(request: Request) {
            */
           // 원본 그림이 실제로 붙은 사람만 '붙은 원본'을 말하고, 짠 시트면 설명 글의 옷을 버리라고 한다(lib/page-refs).
           // 원본도 짠 시트도 없으면(옛 책) 예전 한 줄 그대로.
-          sheet && fixedOnPage.length ? fixedFamilyFaceLines(fixedOnPage, portraitNames, composedSheet).join("\n") : "",
+          // 옷 카드로 입었으면 가족 그림의 옷이 아니라 칸 위의 옷과 그 옷 글을(dressedOutfits).
+          sheet && fixedOnPage.length
+            ? fixedFamilyFaceLines(fixedOnPage, portraitNames, composedSheet, dressedOutfits).join("\n")
+            : "",
           sceneCast.length > 1
             ? [
                 "These are DIFFERENT people. They have different hair and different clothing colours — keep those differences obvious and never give one character another character's hair or outfit.",
@@ -671,6 +690,8 @@ export async function POST(request: Request) {
       portraits,
       // 짠 시트의 칸 순서 — 섞인 시트는 이야기 순서와 달라, 검수가 칸을 이름에 잘못 짝짓지 않게. 옛 책은 없다.
       sheetOrder,
+      // 옷 카드로 입은 고정 가족 — 그 칸 위의 옷과 견주게(옛 책은 빈다 = 예전 글).
+      sheetOutfits: dressed,
       styleReference: usedStyleReference,
       locationReference: locationSheet,
       indoor,
@@ -683,7 +704,15 @@ export async function POST(request: Request) {
       // 짠 시트면 원본이 안 붙은 고정 가족도 옷은 시트와(시트의 옷 = 가족 그림의 옷). lib/page-refs fixedCheckDescription.
       cast: sceneCast.map((c) =>
         c.fixed && sheet
-          ? { name: c.name, description: fixedCheckDescription(c.description, portraitNames.has(c.name), composedSheet) }
+          ? {
+              name: c.name,
+              description: fixedCheckDescription(
+                c.description,
+                portraitNames.has(c.name),
+                composedSheet,
+                dressed.includes(c.name),
+              ),
+            }
           : { name: c.name, description: c.description },
       ),
       stylePrompt: style.prompt,

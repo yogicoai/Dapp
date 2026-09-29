@@ -4,6 +4,9 @@ import {
   characterSheetPrompt,
   fixedAdultNotes,
   maxPortraitRefs,
+  outfitCardAspect,
+  outfitCardPrompt,
+  outfitCardSize,
   pickSheetPortraits,
   sheetReferences,
 } from "./sheet-prompt.ts";
@@ -362,5 +365,76 @@ describe("characterSheetPrompt — 원본 픽셀 시트의 '나머지 사람들�
   it("새 칸을 안 주거나 기본값이면 예전 글자 그대로", () => {
     assert.equal(characterSheetPrompt({ ...THREE, heroOnSheet: true, alreadyDrawn: [] }), GOLDEN_THREE);
     assert.equal(characterSheetPrompt({ ...ONE, heroOnSheet: true }), GOLDEN_ONE);
+  });
+});
+
+describe("outfitCardPrompt — 고정 가족의 이 책의 옷을 사람 없이 옷만", () => {
+  const people = [
+    { size: outfitCardSize({ memberId: "child", kid: true, age: 5 }), outfit: "민트색 반팔 티셔츠, 베이지 반바지, 흰 운동화" },
+    { size: outfitCardSize({ memberId: "mom", kid: false }), outfit: "코랄 니트, 연청 바지, 흰 운동화" },
+  ];
+
+  it("순서·크기·옷 글을 한 줄씩, 사람은 한 명도 그리지 않게", () => {
+    const p = outfitCardPrompt({ stylePrompt: "warm soft watercolor storybook illustration", styleSample: true, people });
+    assert.match(p, /^Clothing reference card for a children's picture book, warm soft watercolor storybook illustration\.$/m);
+    assert.match(p, /^The FIRST attached image is the STYLE SAMPLE for this whole book\./m);
+    assert.match(p, /do NOT draw the fox/);
+    assert.match(p, /There are NO people on this card: no heads, faces, hair, hands, arms, legs or bodies, no mannequins, no dress forms, no hangers\./);
+    assert.match(p, /^Draw EXACTLY 2 outfits, left to right in this order, each centred in its own equal-width column with clear white space between columns:$/m);
+    assert.match(p, /^1\. a 5-year-old child's outfit \(written in Korean\): 민트색 반팔 티셔츠, 베이지 반바지, 흰 운동화$/m);
+    assert.match(p, /^2\. a grown-up woman's outfit \(written in Korean\): 코랄 니트, 연청 바지, 흰 운동화$/m);
+    assert.match(p, /A child's outfit is clearly smaller than a grown-up's\./);
+    assert.match(p, /White garments are painted as clearly shaded very light grey/);
+    assert.match(p, /NO text, no letters, no labels, no numbers\.$/);
+    // 견본의 종이 결은 따라 하지 않는다 — 바탕은 순백(칸 나누기가 흰 줄을 찾는다)
+    assert.match(p, /Do NOT copy its paper, paper texture or background tone\./);
+    assert.doesNotMatch(p, /paper\/texture and finish/);
+    assert.match(p, /^BACKGROUND: one flat pure white colour \(#FFFFFF\) everywhere around the clothes — no paper texture/m);
+    // 사람 이름은 넣지 않는다(그림에 글자로 새지 않게)
+    assert.doesNotMatch(p, /하온|엄마/);
+  });
+
+  it("견본이 없으면 견본 줄이 없고, 한 벌이면 가운데 한 벌", () => {
+    const p = outfitCardPrompt({ stylePrompt: "flat vector", styleSample: false, people: people.slice(0, 1) });
+    assert.doesNotMatch(p, /STYLE SAMPLE|attached image/);
+    assert.match(p, /^Draw EXACTLY 1 outfit, centred on the card:$/m);
+  });
+
+  it("비율 — 한 벌 세로, 둘부터 가로", () => {
+    assert.equal(outfitCardAspect(1), "3:4");
+    assert.equal(outfitCardAspect(2), "4:3");
+    assert.equal(outfitCardAspect(4), "4:3");
+  });
+
+  it("크기 — 주인공은 나이로, 모르는 아이는 어린아이, 엄마·아빠·그 밖 어른", () => {
+    assert.equal(outfitCardSize({ memberId: "child", kid: true, age: 4 }), "a 4-year-old child's outfit");
+    assert.equal(outfitCardSize({ memberId: "child", kid: true, age: 9 }), "an 8-to-10-year-old child's outfit");
+    assert.equal(outfitCardSize({ memberId: "m-abc", kid: true, age: null }), "a young child's outfit");
+    assert.equal(outfitCardSize({ memberId: "dad", kid: false }), "a grown-up man's outfit");
+    assert.equal(outfitCardSize({ memberId: "m-abc", kid: false }), "a grown-up's outfit");
+  });
+});
+
+describe("characterSheetPrompt — 옷 카드를 그리는 책의 '나머지 사람들만' 그리기", () => {
+  it("가족 옷 색을 null 로 주면 '덮어쓴다' 말이 없다 — 설명 글에 이 책의 옷이 있다", () => {
+    const p = characterSheetPrompt({
+      ...THREE,
+      characters: [{ name: "서연", description: "양갈래 머리, 노란 원피스" }],
+      heroOnSheet: false,
+      alreadyDrawn: [{ name: "하온", description: "짧은 머리, 민트색 반팔 티셔츠, 베이지 반바지", outfit: null }],
+    });
+    assert.match(p, /^- 하온: 짧은 머리, 민트색 반팔 티셔츠, 베이지 반바지$/m);
+    assert.doesNotMatch(p, /overrides any clothing/);
+  });
+
+  it("옷 카드가 실패할 때를 대비해 가족 그림에서 잰 색도 피하라고 함께 준다(avoidOutfit)", () => {
+    const p = characterSheetPrompt({
+      ...THREE,
+      characters: [{ name: "서연", description: "양갈래 머리, 살구색 원피스" }],
+      heroOnSheet: false,
+      alreadyDrawn: [{ name: "엄마", description: "긴 머리, 라벤더 니트", outfit: null, avoidOutfit: "peach" }],
+    });
+    assert.match(p, /^- 엄마: 긴 머리, 라벤더 니트 — their finished picture may instead show them mostly in peach; keep clearly away from that colour too$/m);
+    assert.doesNotMatch(p, /overrides any clothing/);
   });
 });

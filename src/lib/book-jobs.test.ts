@@ -78,6 +78,22 @@ describe("storyManuscript — 대본 단계 원고", () => {
       { text: "첫 쪽", imagePrompt: "숲", voiceDirection: { narration: "normal" }, image: null },
     ]);
   });
+
+  it("이 책의 옷 칸이 있으면 등장인물에 함께 남긴다 — 없으면 예전 모양 그대로", () => {
+    const m = storyManuscript({
+      title: "제목",
+      summary: "요약",
+      characters: [
+        { name: "하온", description: "짧은 머리, 민트 티셔츠", outfit: "민트 티셔츠" },
+        { name: "서연", description: "양갈래" },
+      ],
+      pages: [],
+    });
+    assert.deepEqual(m.cast, [
+      { name: "하온", description: "짧은 머리, 민트 티셔츠", outfit: "민트 티셔츠" },
+      { name: "서연", description: "양갈래" },
+    ]);
+  });
 });
 
 describe("pickWritable — 쓸 수 있는 칸만", () => {

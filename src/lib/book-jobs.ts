@@ -125,13 +125,18 @@ export function stripEmbeddedArt<T extends object>(
 export function storyManuscript(story: {
   title: string;
   summary: string;
-  characters?: { name: string; description: string }[];
+  characters?: { name: string; description: string; outfit?: string }[];
   pages: { text: string; imagePrompt?: string; voiceDirection?: unknown }[];
 }): Record<string, unknown> {
   return {
     title: story.title,
     summary: story.summary,
-    cast: (story.characters ?? []).map((c) => ({ name: c.name, description: c.description })),
+    // outfit — 이 책의 옷(2026-09-29~). 마스터가 되살려 다시 그릴 때도 같은 옷이 되게 남긴다. 옛 대본엔 없다.
+    cast: (story.characters ?? []).map((c) => ({
+      name: c.name,
+      description: c.description,
+      ...(c.outfit ? { outfit: c.outfit } : {}),
+    })),
     pageCount: story.pages.length,
     pages: story.pages.map((p) => ({
       text: p.text,

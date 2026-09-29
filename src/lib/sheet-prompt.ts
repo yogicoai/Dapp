@@ -127,10 +127,12 @@ export function characterSheetPrompt(input: {
    * alreadyDrawn = 따로 서는 고정 가족(이름·설명) — 그리지 말고, 그들과 머리·옷 색이 확실히 다르게.
    *   outfit = 그 사람 가족 그림에서 잰 윗옷 색(lib/sheet-compose outfitColour) — 설명 글의 옷은 클로드가 정한 것이라
    *   그림의 옷과 다를 수 있다. 있으면 설명 글의 옷보다 이것을 믿으라고 적는다(친구가 가족과 같은 색을 입지 않게).
+   *   avoidOutfit = 옷 카드를 함께 그리는 책 — 가족은 설명 글의 옷(이 책의 옷)을 입지만, 옷 카드가 실패하면 가족 그림 옷(잰 색)으로
+   *   선다. 어느 쪽이 될지 이 그림을 그릴 때는 모르니 그 색도 피하라고 적는다(검토 2026-09-29).
    * 둘 다 안 주면 프롬프트는 예전과 한 글자도 다르지 않다(시험이 못 박는다).
    */
   heroOnSheet?: boolean;
-  alreadyDrawn?: readonly (SheetCharacter & { outfit?: string | null })[];
+  alreadyDrawn?: readonly (SheetCharacter & { outfit?: string | null; avoidOutfit?: string | null })[];
 }): string {
   const { stylePrompt, characters, hero, styleSample, drawing } = input;
   const heroOnSheet = input.heroOnSheet ?? true;
@@ -228,7 +230,7 @@ export function characterSheetPrompt(input: {
           "OTHER PEOPLE IN THIS BOOK — ALREADY PAINTED separately; their finished pictures will be placed beside yours. They are NOT part of this picture: never draw them, not even in the background.",
           ...alreadyDrawn.map(
             (c) =>
-              `- ${c.name}${c.description ? `: ${c.description}` : ""}${c.outfit ? ` — in their finished picture they wear mostly ${c.outfit}; this overrides any clothing named here` : ""}`,
+              `- ${c.name}${c.description ? `: ${c.description}` : ""}${c.outfit ? ` — in their finished picture they wear mostly ${c.outfit}; this overrides any clothing named here` : c.avoidOutfit ? ` — their finished picture may instead show them mostly in ${c.avoidOutfit}; keep clearly away from that colour too` : ""}`,
           ),
           "Make every character you draw clearly different from them in hairstyle and clothing colour, so no one can be mistaken for them.",
         ].join("\n")
@@ -295,4 +297,68 @@ export function characterSheetPrompt(input: {
     .filter(Boolean)
     .join("\n");
   return prompt;
+}
+
+/**
+ * 옷 카드 비율 — 한 벌이면 세로, 둘부터 가로(칸마다 한 벌). 그림 모델은 4:3·3:4·1:1 만 받는다(lib/gemini generateImage).
+ */
+export function outfitCardAspect(count: number): "3:4" | "4:3" {
+  return count <= 1 ? "3:4" : "4:3";
+}
+
+/** 옷 카드 한 벌 — size 는 누구 옷인지(영어, 사람 이름은 넣지 않는다), outfit 은 클로드가 쓴 이 책의 옷(한국어). */
+export type OutfitCardPerson = { size: string; outfit: string };
+
+/**
+ * 옷 카드에서 누구 옷인지(크기) — 아이 옷이 어른 옷만 하게 그려지지 않게.
+ * kid 는 lib/sheet-compose sheetFigureMeta 가 정한 것(사람 id·키). age 는 주인공일 때만 안다(형제는 모른다 — '어린아이').
+ */
+export function outfitCardSize(input: { memberId: string; kid: boolean; age?: number | null }): string {
+  if (input.kid) {
+    const age = input.age;
+    if (typeof age === "number" && Number.isFinite(age) && age >= 9) return "an 8-to-10-year-old child's outfit";
+    if (typeof age === "number" && Number.isFinite(age) && age > 0) return `a ${Math.round(age)}-year-old child's outfit`;
+    return "a young child's outfit";
+  }
+  if (input.memberId === "mom") return "a grown-up woman's outfit";
+  if (input.memberId === "dad") return "a grown-up man's outfit";
+  return "a grown-up's outfit";
+}
+
+/**
+ * 옷 카드 프롬프트(2026-09-29 저녁, 사장님 "옷은 그 주제안에서 랜덤으로 교체되게") — 고정 가족이 이 책에서 입는 옷을
+ * **사람 없이 옷만** 그린다. 원본 픽셀 시트(lib/sheet-compose)의 위 줄에 원본 전신 대신 이 옷이 서고, 아래 줄 얼굴은 원본 그대로다.
+ * 사람을 그리게 하면 얼굴이 AI 를 한 번 거친다 — 사장님 첫째 약속("얼굴 그대로, 변형없이")을 깬다. 그래서 얼굴·머리·몸을
+ * 한 줄도 그리지 않게 못 박고, 가족 그림도 붙이지 않는다(거절 위험도 가장 낮다).
+ * 그림체 견본만 붙인다 — 붙이는 순서의 첫째(FIRST).
+ * 흰 옷은 옅은 회색으로 — 흰 바탕에서 칸 나누기(splitCardColumns)가 옷을 못 찾는다.
+ */
+export function outfitCardPrompt(input: {
+  stylePrompt: string;
+  styleSample: boolean;
+  people: readonly OutfitCardPerson[];
+}): string {
+  const n = input.people.length;
+  return [
+    `Clothing reference card for a children's picture book, ${input.stylePrompt}.`,
+    input.styleSample
+      ? [
+          "The FIRST attached image is the STYLE SAMPLE for this whole book. Copy how the clothes are painted: medium, brush or line quality, edge softness, colour palette and saturation, shading method. Do NOT copy its paper, paper texture or background tone.",
+          "It is a style reference ONLY — do NOT draw the fox, do NOT copy its subject, pose or composition. Only the way it is painted carries over.",
+        ].join("\n")
+      : "",
+    "Draw ONLY CLOTHES. This card shows the outfits some people wear throughout this book. There are NO people on this card: no heads, faces, hair, hands, arms, legs or bodies, no mannequins, no dress forms, no hangers.",
+    n === 1
+      ? "Draw EXACTLY 1 outfit, centred on the card:"
+      : `Draw EXACTLY ${n} outfits, left to right in this order, each centred in its own equal-width column with clear white space between columns:`,
+    ...input.people.map((p, i) => `${i + 1}. ${p.size} (written in Korean): ${p.outfit}`),
+    "Lay each outfit out upright and front-facing as it would be worn: the top above the trousers, skirt or shorts (or a dress on its own), outerwear such as a coat, cardigan, raincoat or scarf over the top, and the pair of shoes at the bottom. Draw every garment that is written and nothing else, in exactly the written colours.",
+    "Keep every garment plain — solid colours or one bold simple pattern if written; no logos, no small prints — so the same outfit can be redrawn identically on every page. A child's outfit is clearly smaller than a grown-up's.",
+    "White garments are painted as clearly shaded very light grey with a thin outline.",
+    // 견본의 크림색 종이 결을 따라 그리면 칸 나누기(sheet-compose splitCardColumns)가 빈 줄을 못 찾아 카드를 버린다 — 가족 그림(family-portrait-prompt BACKGROUND_LINE)과 같은 말로 못 박는다.
+    "BACKGROUND: one flat pure white colour (#FFFFFF) everywhere around the clothes — no paper texture, no cream or beige tone, no wash, no vignette, no floor or ground line, no shadows, no props, no frame or border.",
+    "NO text, no letters, no labels, no numbers.",
+  ]
+    .filter(Boolean)
+    .join("\n");
 }

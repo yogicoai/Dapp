@@ -16,12 +16,23 @@ import {
   characterSheetPrompt,
   fixedAdultNotes,
   maxPortraitRefs,
+  outfitCardAspect,
+  outfitCardPrompt,
+  outfitCardSize,
   pickSheetPortraits,
   sheetReferences,
   type SheetAdultLooks,
   type SheetCharacter,
 } from "@/lib/sheet-prompt";
-import { composeCharacterSheet, prepareSheetFigure, sheetFigureMeta, subSheetAspect } from "@/lib/sheet-compose";
+import {
+  composeCharacterSheet,
+  prepareOutfitCard,
+  prepareSheetFigure,
+  sheetFigureMeta,
+  subSheetAspect,
+  type PreparedFigure,
+  type PreparedOutfitCard,
+} from "@/lib/sheet-compose";
 
 /*
  * 그리는 데 20~30초가 걸린다(검사에 걸려 다시 그리면 그 두 배).
@@ -44,7 +55,12 @@ export const maxDuration = 60;
  *
  * 원본 픽셀 시트(2026-09-29 오후, 사장님 "얼굴이 달라 특히"): 참고로 붙여 AI 가 다시 그리면 얼굴이 한 번 흐르고, 쪽마다 또
  * 흐른다. 수채화 책이면 고정 가족은 **가족 그림 원본을 그대로** 시트에 세우고(AI 안 거침), 나머지 사람만 AI 로 그려 옆에 붙인다
- * (아래 composedSheet, lib/sheet-compose). 응답의 order = 왼쪽부터 선 순서, composed = "portraits"(AI 안 부름) | "mixed".
+ * (아래 composedSheet, lib/sheet-compose). 응답의 order = 왼쪽부터 선 순서, composed = "portraits"(고정 가족뿐) | "mixed".
+ *
+ * 이 책의 옷(2026-09-29 저녁, 사장님 "옷은 그 주제안에서 랜덤으로 교체되게"): 원본 픽셀 시트는 가족 그림의 옷을 책마다 입혔다.
+ * 이제 고정 가족 모두에게 이 책의 옷(@@CHARACTER@@ 셋째 칸)이 있으면 AI 로 **옷만** 한 장 그려(옷 카드, 약 95원) 시트 위 줄에
+ * 세운다 — 얼굴은 여전히 원본 픽셀뿐이다. 옷 카드가 안 되면 예전처럼 가족 그림의 옷으로 짠다(책은 멈추지 않는다).
+ * 응답의 sheetOutfits = 옷 카드로 입은 이름, drawn = 이 요청에서 부른 AI 그림 수(만들기 화면이 그린 장수에 더한다).
  */
 /*
  * 회원만 부를 수 있다.
@@ -58,6 +74,8 @@ export const maxDuration = 60;
  * 굽기 스크립트도 이 경로를 부르지 않는다(/api/tts 만 쓴다).
  */
 export async function POST(request: Request) {
+  // 요청이 들어온 시각 — 옷 카드를 기다리는 한도(60초 제한 안)를 여기서 잰다. 로그인·견본·가족 그림 받기도 그 60초에 든다.
+  const requestStarted = Date.now();
   const caller = await callerOf(request);
   if (!caller) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
@@ -70,7 +88,7 @@ export async function POST(request: Request) {
   }
 
   const input = body as {
-    characters?: { name?: unknown; description?: unknown }[];
+    characters?: { name?: unknown; description?: unknown; outfit?: unknown }[];
     artStyleId?: unknown;
     drawing?: unknown;
     looks?: unknown;
@@ -80,6 +98,12 @@ export async function POST(request: Request) {
     adultLooks?: unknown;
     /** 고정 얼굴 [{ name: 등장인물 이름, ref: 가족 그림 참고 주소, memberId }] — 선택. 없으면 예전 그대로. */
     portraits?: unknown;
+    /**
+     * 옷 카드를 그려도 되나 — 새 만들기 화면만 true 를 보낸다(sheetOutfits 를 받아 쪽 그림·책에 넘기는 화면).
+     * 배포 전에 열어 둔 화면은 이 칸 없이 새 대본(옷 칸 있음)을 보내므로, 옷 칸만 보고 그리면 값(약 95원)만 나가고
+     * 그 화면은 sheetOutfits 를 버려 쪽 그림 글과 시트가 어긋났다(검토 2026-09-29).
+     */
+    outfitCard?: unknown;
   };
   /**
    * 엄마·아빠 생김새 — 부모가 설정에서 고른 것(선택).
@@ -127,11 +151,16 @@ export async function POST(request: Request) {
   const style =
     ART_STYLES.find((s) => s.id === input.artStyleId) ?? ART_STYLES[0];
 
-  const characters = (input.characters ?? [])
-    .map((c) => ({
-      name: typeof c.name === "string" ? c.name.trim() : "",
-      description: typeof c.description === "string" ? c.description.trim() : "",
-    }))
+  const characters: BookCharacter[] = (input.characters ?? [])
+    .map((c) => {
+      // 이 책의 옷(@@CHARACTER@@ 셋째 칸) — 고정 가족의 옷 카드에만 쓴다. 설명(description)에도 이미 들어 있다.
+      const outfit = typeof c.outfit === "string" ? c.outfit.trim().slice(0, 200) : "";
+      return {
+        name: typeof c.name === "string" ? c.name.trim() : "",
+        description: typeof c.description === "string" ? c.description.trim() : "",
+        ...(outfit ? { outfit } : {}),
+      };
+    })
     .filter((c) => c.name)
     /*
      * 상한 6 — 예전엔 4였다. 실제 책에서 아이 1 + 친구 3 + 선생님 = 5명이 나왔고,
@@ -204,8 +233,10 @@ export async function POST(request: Request) {
    * 원본 픽셀 시트(2026-09-29 사장님 "얼굴이 달라 특히") — 고정 얼굴을 AI 가 다시 그리지 않는다(lib/sheet-compose).
    * 수채화 책만: 가족 그림은 늘 수채화라(api/family/portrait) 지브리·벡터 책에 원본을 세우면 시트(=모든 쪽의 그림체 기준)가
    * 수채화가 된다 — 그 책들은 아래 예전 길(원본을 참고로 붙여 이 책 그림체로 옮겨 그리기) 그대로.
-   * 짜기가 안 되면(그림을 못 읽음 등) null — 아래 예전 AI 시트로 물러선다.
+   * 짜기가 안 되면(그림을 못 읽음 등) — 아래 예전 AI 시트로 물러선다. 그 전에 옷 카드를 그렸으면(drawnSoFar) 그 장수도 응답의
+   * drawn 에 넣는다 — 만들기 화면이 그린 장수(원가)를 적게 세지 않게(검토 2026-09-29).
    */
+  let drawnSoFar = 0;
   if (style.id === "watercolor" && fetchedPortraits.length > 0) {
     const composed = await composedSheet({
       characters,
@@ -215,11 +246,17 @@ export async function POST(request: Request) {
       styleSample,
       drawing: usedDrawing,
       hero,
+      heroAge,
       looks,
       adultLooks,
+      outfitCard: input.outfitCard === true,
+      requestStarted,
     });
-    if (composed) return composed;
+    if (composed instanceof NextResponse) return composed;
+    drawnSoFar = composed.drawnSoFar;
   }
+  /** 이 요청에서 이미 부른 AI 그림(옷 카드) — 응답마다 붙인다. 없으면 칸을 안 붙여 예전 응답 그대로. */
+  const drawnField = (more: number) => (drawnSoFar ? { drawn: drawnSoFar + more } : {});
 
   // 예전 AI 시트(지브리·벡터 책, 또는 원본으로 짜지 못함) — 참고로 붙이는 얼굴은 모델이 잘 따르는 수까지만(등장인물 순).
   const portraits = fetchedPortraits.slice(0, aiCap);
@@ -266,6 +303,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       image: toDataUrl(await shrinkForReference(image)),
       ...(portraits.length ? { fixed: portraits.map((p) => p.name) } : {}),
+      ...drawnField(1),
     });
   } catch (e) {
     /*
@@ -276,16 +314,87 @@ export async function POST(request: Request) {
     if (portraits.length > 0 && e instanceof GeminiError && (e.status === 422 || e.status === 400 || e.noImage)) {
       console.warn("[character-sheet] 고정 얼굴 시트 거절:", e.status ?? "-", e.noImage ?? "");
       return NextResponse.json(
-        { error: "가족 얼굴 그림으로 인물을 그리지 못했어요.", code: "portrait" },
+        { error: "가족 얼굴 그림으로 인물을 그리지 못했어요.", code: "portrait", ...drawnField(0) },
         { status: 422 },
       );
     }
     if (e instanceof GeminiError) {
-      return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
+      return NextResponse.json({ error: e.message, ...drawnField(0) }, { status: e.status ?? 500 });
     }
     console.error("[character-sheet]", e);
-    return NextResponse.json({ error: "캐릭터를 그리지 못했습니다." }, { status: 500 });
+    return NextResponse.json({ error: "캐릭터를 그리지 못했습니다.", ...drawnField(0) }, { status: 500 });
   }
+}
+
+/** 등장인물 — 이 책의 옷(outfit)은 새 대본(2026-09-29 저녁~)에만 있다. */
+type BookCharacter = SheetCharacter & { outfit?: string };
+
+/**
+ * 옷 카드를 그리지 않는 옷 — 수영복·속옷은 사람 없이 그려도 그림 모델이 막기 쉽고(아이 옷이라 더), 한두 쪽에서만 입는 옷이다.
+ * 그런 책은 예전처럼 가족 그림의 옷으로 짜고, 그 쪽은 장면 글이 갈아입힌다.
+ */
+const NO_CARD_OUTFIT = /수영복|래시가드|비키니|속옷/;
+
+/**
+ * 옷 카드 — 고정 가족이 이 책에서 입는 옷을 사람 없이 한 장(lib/sheet-prompt outfitCardPrompt), 읽어서 한 벌씩 찾는다
+ * (lib/sheet-compose prepareOutfitCard). 가족 그림은 붙이지 않는다 — 얼굴을 AI 에 한 번도 보이지 않는다.
+ * 실패하면(거절·시간·칸을 못 읽음) null — 부르는 쪽이 가족 그림의 옷으로 짠다. 던지지 않는다.
+ * deadline(Date.now 기준)이 지나면 기다리지 않는다 — 이 경로의 60초 제한에 걸려 응답이 JSON 이 아니게 되면 만들기 화면이
+ * 얼굴 없는 AI 시트로 물러선다(얼굴이 가장 중요하다). 같은 시각을 generateImage until 로 넘겨 그 뒤 다시 걸기도 막는다
+ * (이미 나간 요청은 멈추지 못한다 — api/family/portrait drawWithin 과 같은 방식).
+ */
+async function drawOutfitCard(args: {
+  people: { name: string; outfit: string; memberId: string; kid: boolean; age: number | null }[];
+  stylePrompt: string;
+  styleSample: GeneratedImage | null;
+  deadline: number;
+}): Promise<PreparedOutfitCard | null> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const prompt = outfitCardPrompt({
+      stylePrompt: args.stylePrompt,
+      styleSample: Boolean(args.styleSample),
+      people: args.people.map((p) => ({ size: outfitCardSize(p), outfit: p.outfit })),
+    });
+    const image = await Promise.race([
+      generateImage({
+        prompt,
+        references: args.styleSample ? [args.styleSample] : [],
+        aspectRatio: outfitCardAspect(args.people.length),
+        until: args.deadline,
+      }),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error("옷 카드 시간 초과")), Math.max(0, args.deadline - Date.now()));
+      }),
+    ]);
+    // kids — 아이 옷이 어른 옷보다 뚜렷이 크면 순서가 뒤바뀐 카드로 보고 버린다(lib/sheet-compose prepareOutfitCard).
+    return await prepareOutfitCard({ image, names: args.people.map((p) => p.name), kids: args.people.map((p) => p.kid) });
+  } catch (e) {
+    console.warn(
+      "[character-sheet] 옷 카드 실패 — 가족 그림 옷으로:",
+      e instanceof GeminiError ? `${e.status ?? "-"} ${e.noImage ?? ""}` : (e as Error).message,
+    );
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * 옷 카드를 얹어 시트를 짠다 — 옷 카드로 짜다 실패하면 옷 카드 없이(가족 그림의 옷으로) 한 번 더.
+ * 둘째도 실패하면 던진다. usedCard = 옷 카드가 실제로 시트에 섰는가.
+ */
+async function composeDressed(
+  args: Parameters<typeof composeCharacterSheet>[0],
+): Promise<{ sheet: Awaited<ReturnType<typeof composeCharacterSheet>>; usedCard: boolean }> {
+  if (args.outfits) {
+    try {
+      return { sheet: await composeCharacterSheet(args), usedCard: true };
+    } catch (e) {
+      console.warn("[character-sheet] 옷 카드로 시트 짜기 실패 — 가족 그림 옷으로:", (e as Error).message);
+    }
+  }
+  return { sheet: await composeCharacterSheet({ ...args, outfits: null }), usedCard: false };
 }
 
 /** 요청 portraits 칸에서 한 사람의 키·머리 비율(만들기 화면이 가족에서 읽어 보낸 값) — 없으면 빈 칸. */
@@ -304,46 +413,110 @@ function rawFigureOf(raw: unknown, name: string): { heightCm?: unknown; headRati
  *    composed: "mixed". AI 가 실패하면 code "subsheet" 로 돌려준다 — 만들기 화면이 얼굴을 붙인 채 한 번 더, 그래도 안 되면
  *    얼굴 없이 그린다.
  * order = 왼쪽부터 선 순서 — 쪽 그림 프롬프트가 "시트의 몇째 칸이 누구"를 말한다(lib/page-refs sheetOrderLine).
- * 고정 가족 그림을 읽지 못하면 null — 부르는 쪽이 예전 AI 시트로 물러선다(아직 값이 나가지 않았다).
+ * 고정 가족 그림을 읽지 못하면 { drawnSoFar } — 부르는 쪽이 예전 AI 시트로 물러선다. drawnSoFar = 그 전에 부른 AI 그림(옷 카드) 수.
+ * 이 책의 옷: 고정 가족 모두에게 옷 글이 있고 화면이 옷 카드를 받겠다고 했으면(outfitCard) 옷 카드를 함께 그린다
+ * (모두 고정이면 기다리고, 섞이면 나머지 그림과 동시에).
  */
 async function composedSheet(args: {
-  characters: SheetCharacter[];
+  characters: BookCharacter[];
   portraits: { name: string; memberId: string; image: GeneratedImage }[];
   rawPortraits: unknown;
   stylePrompt: string;
   styleSample: GeneratedImage | null;
   drawing: GeneratedImage | null;
   hero: string;
+  heroAge: number | null;
   looks: string;
   adultLooks: SheetAdultLooks[];
-}): Promise<NextResponse | null> {
+  /** 새 만들기 화면이 옷 카드를 받겠다고 했나(요청의 outfitCard) */
+  outfitCard: boolean;
+  /** 요청이 들어온 시각 — 옷 카드 한도를 여기서 잰다 */
+  requestStarted: number;
+}): Promise<NextResponse | { drawnSoFar: number }> {
   const started = Date.now();
   const { characters, portraits } = args;
-  let figures;
+  const metas = new Map(portraits.map((p) => [p.name, sheetFigureMeta(p.memberId, rawFigureOf(args.rawPortraits, p.name))]));
+  let figures: PreparedFigure[];
   try {
     figures = await Promise.all(
       portraits.map((p) => {
-        const meta = sheetFigureMeta(p.memberId, rawFigureOf(args.rawPortraits, p.name));
+        const meta = metas.get(p.name)!;
         return prepareSheetFigure({ name: p.name, image: p.image, heightCm: meta.heightCm, headRatio: meta.headRatio });
       }),
     );
   } catch (e) {
     console.warn("[character-sheet] 가족 그림을 읽지 못해 AI 시트로:", (e as Error).message);
-    return null;
+    return { drawnSoFar: 0 };
   }
   const fixedNames = new Set(portraits.map((p) => p.name));
   const fixed = characters.filter((c) => fixedNames.has(c.name)).map((c) => c.name);
   const others = characters.filter((c) => !fixedNames.has(c.name));
   const names = characters.map((c) => c.name);
 
+  /*
+   * 이 책의 옷 — 고정 가족 **모두**에게 옷 글이 있을 때만 옷 카드를 그린다(한 사람만 가족 그림 옷이면 시트가 두 규칙으로 갈린다).
+   * 옛 대본(옷 칸 없음)·수영복 책은 예전처럼 가족 그림의 옷. 모두 고정이면 옷 카드가 이 요청의 유일한 AI 그림이다.
+   */
+  const outfitOf = (name: string) => characters.find((c) => c.name === name)?.outfit ?? "";
+  const dressable =
+    args.outfitCard && fixed.length > 0 && fixed.every((n) => outfitOf(n) && !NO_CARD_OUTFIT.test(outfitOf(n)));
+  const cardJob = dressable
+    ? drawOutfitCard({
+        people: fixed.map((name) => {
+          const memberId = portraits.find((p) => p.name === name)?.memberId ?? "";
+          return {
+            name,
+            outfit: outfitOf(name),
+            memberId,
+            kid: metas.get(name)?.kid ?? false,
+            // 나이는 주인공만 안다(형제는 '어린아이').
+            age: name === characters[0].name ? args.heroAge : null,
+          };
+        }),
+        stylePrompt: args.stylePrompt,
+        styleSample: args.styleSample,
+        // 그림 한 장 20~30초 — 요청이 들어온 뒤 42초까지만 기다리고 짜기(1~3초)로 넘어간다(60초 제한 안).
+        // 이 함수가 시작한 때(started)로 재면 로그인·견본·가족 그림 받기(6초+)만큼 한도가 60초 쪽으로 밀렸다(검토 2026-09-29).
+        deadline: args.requestStarted + 42_000,
+      })
+    : null;
+  const cardFields = (usedCard: boolean) => ({
+    sheetOutfits: usedCard ? fixed : [],
+    ...(cardJob && !usedCard ? { outfitFallback: true } : {}),
+  });
+
   if (others.length === 0) {
+    const card = cardJob ? await cardJob : null;
     try {
-      const sheet = await composeCharacterSheet({ names, figures });
-      console.info("[character-sheet] 원본 시트(AI 안 부름)", { people: fixed.length, ms: Date.now() - started });
-      return NextResponse.json({ image: toDataUrl(sheet.image), fixed, order: sheet.order, composed: "portraits" });
+      const { sheet, usedCard } = await composeDressed({ names, figures, outfits: card });
+      console.info("[character-sheet] 원본 시트", {
+        people: fixed.length,
+        outfitCard: usedCard ? "ok" : cardJob ? "fallback" : "none",
+        ms: Date.now() - started,
+      });
+      return NextResponse.json({
+        image: toDataUrl(sheet.image),
+        fixed,
+        order: sheet.order,
+        composed: "portraits",
+        drawn: cardJob ? 1 : 0,
+        ...cardFields(usedCard),
+      });
     } catch (e) {
+      /*
+       * 옷 카드를 기다리느라 시간을 썼으면 이 요청에서 AI 시트(20~30초, 한도 없음)를 또 그리지 않는다 — 60초에 걸려 504가 나면
+       * 화면은 얼굴 없이 다시 그린다(얼굴이 가장 중요하다). 대신 "나머지 그림 실패"(subsheet)로 알리고 옷 카드 없이 다시 부르게 한다
+       * (retryWithoutCard) — 다시 온 요청은 옷 카드 없이 곧바로 짜거나, 그래도 안 되면 시간이 넉넉할 때 AI 시트로 물러선다.
+       */
+      if (cardJob && Date.now() - args.requestStarted > 25_000) {
+        console.warn("[character-sheet] 원본 시트 짜기 실패(옷 카드 뒤, 시간 부족) — 옷 카드 없이 다시:", (e as Error).message);
+        return NextResponse.json(
+          { error: "캐릭터 그림을 짜지 못했어요.", code: "subsheet", retryWithoutCard: true, drawn: 1 },
+          { status: 503 },
+        );
+      }
       console.warn("[character-sheet] 원본 시트 짜기 실패 — AI 시트로:", (e as Error).message);
-      return null;
+      return { drawnSoFar: cardJob ? 1 : 0 };
     }
   }
 
@@ -363,9 +536,19 @@ async function composedSheet(args: {
     heroOnSheet,
     // 가족 그림에서 잰 윗옷 색을 함께 — 설명 글의 옷(클로드가 정함)은 그림의 옷과 다를 수 있어, 글만 믿으면
     // 친구를 가족과 같은 색으로 입힌다(lib/sheet-compose outfitColour).
+    // 옷 카드를 그리면 가족은 설명 글의 옷(이 책의 옷)을 입는다 — 잰 색으로 덮지 않는다. 다만 옷 카드가 실패하면 시트는
+    // 가족 그림 옷으로 짜이고, 이 그림은 옷 카드와 동시에 그려 어느 쪽이 될지 모른다 — 잰 색도 피하라고 함께 준다(avoidOutfit).
     alreadyDrawn: characters
       .filter((c) => fixedNames.has(c.name))
-      .map((c) => ({ ...c, outfit: figures.find((f) => f.name === c.name)?.outfit ?? null })),
+      .map((c) => {
+        const measured = figures.find((f) => f.name === c.name)?.outfit ?? null;
+        return {
+          name: c.name,
+          description: c.description,
+          outfit: cardJob ? null : measured,
+          ...(cardJob && measured ? { avoidOutfit: measured } : {}),
+        };
+      }),
   });
   let block: GeneratedImage;
   try {
@@ -380,24 +563,39 @@ async function composedSheet(args: {
      * 한 번 더 부르고, 그래도 안 되면 얼굴 없이 그린다. 코드가 없으면 잠깐의 5xx·504 한 번에 책 전체가 고정 얼굴을
      * 잃었다(검토 2026-09-29). 어느 쪽이든 AI 한 번이라 값은 같다.
      */
+    // drawn — 동시에 그리던 옷 카드도 부른 그림이다(나머지 그림 실패는 예전처럼 세지 않는다).
     if (e instanceof GeminiError) {
       console.warn("[character-sheet] 나머지 사람 그림 실패:", e.status ?? "-", e.noImage ?? "");
-      return NextResponse.json({ error: e.message, code: "subsheet" }, { status: e.status ?? 500 });
+      return NextResponse.json({ error: e.message, code: "subsheet", drawn: cardJob ? 1 : 0 }, { status: e.status ?? 500 });
     }
     console.error("[character-sheet] 나머지 사람 그림", e);
-    return NextResponse.json({ error: "캐릭터를 그리지 못했습니다.", code: "subsheet" }, { status: 500 });
+    return NextResponse.json(
+      { error: "캐릭터를 그리지 못했습니다.", code: "subsheet", drawn: cardJob ? 1 : 0 },
+      { status: 500 },
+    );
   }
+  // 옷 카드는 나머지 그림과 동시에 그렸다 — 대개 이미 끝나 있다.
+  const card = cardJob ? await cardJob : null;
   try {
-    const sheet = await composeCharacterSheet({ names, figures, block: { image: block } });
+    const { sheet, usedCard } = await composeDressed({ names, figures, block: { image: block }, outfits: card });
     console.info("[character-sheet] 원본 시트 + 나머지 AI", {
       fixed: fixed.length,
       others: others.length,
+      outfitCard: usedCard ? "ok" : cardJob ? "fallback" : "none",
       ms: Date.now() - started,
     });
-    return NextResponse.json({ image: toDataUrl(sheet.image), fixed, order: sheet.order, composed: "mixed" });
+    return NextResponse.json({
+      image: toDataUrl(sheet.image),
+      fixed,
+      order: sheet.order,
+      composed: "mixed",
+      drawn: 1 + (cardJob ? 1 : 0),
+      ...cardFields(usedCard),
+    });
   } catch (e) {
     // 드물다(그림은 이미 읽어 두었다). 한 요청에서 또 그리면 60초를 넘길 수 있어 실패로 알린다 — 화면이 얼굴 없이 다시 그린다.
+    // drawn — 나머지 그림과 옷 카드는 값이 나갔다(화면이 그린 장수에 넣는다).
     console.error("[character-sheet] 원본 시트 짜기 실패(나머지 그림 뒤)", (e as Error).message);
-    return NextResponse.json({ error: "캐릭터를 그리지 못했습니다." }, { status: 500 });
+    return NextResponse.json({ error: "캐릭터를 그리지 못했습니다.", drawn: 1 + (cardJob ? 1 : 0) }, { status: 500 });
   }
 }

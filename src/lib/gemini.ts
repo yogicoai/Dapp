@@ -554,6 +554,11 @@ export type IllustrationCheckInput = {
    * AI 덩어리가 끝에 서서 이야기 순서와 다를 수 있다 — 검수가 칸을 이름에 잘못 짝짓지 않게. 없으면 글은 예전 그대로.
    */
   sheetOrder?: readonly string[] | null;
+  /**
+   * 옷 카드로 이 책의 옷을 입은 고정 가족(2026-09-29 저녁~, lib/page-refs readSheetOutfits) — 시트의 그 사람 칸 위는
+   * 사람 없는 옷뿐이다. 그 옷과 견주라고 칸 순서 줄에 덧붙인다. 없으면 글은 예전 그대로.
+   */
+  sheetOutfits?: readonly string[] | null;
   /** 실내 장소인가(true) — 실내가 바깥에 그려지거나 바깥과 합쳐지면 떨어뜨린다. */
   indoor?: boolean | null;
   scene: string;
@@ -568,6 +573,19 @@ export type IllustrationCheckInput = {
    */
   extraRules?: string[];
 };
+
+/**
+ * 검수의 시트 칸 설명(괄호 안) — 옷 카드로 입은 사람이 없으면 예전 글 그대로.
+ * 모두 입었으면 칸 위는 옷, 아래는 얼굴. 일부면 그 사람들만 칸 위가 옷이다.
+ */
+function sheetColumnsNote(order: readonly string[], outfits: readonly string[]): string {
+  const worn = outfits.filter((n) => order.includes(n));
+  if (worn.length === 0) return "each column: full figure on top, close-up below";
+  if (order.every((n) => worn.includes(n))) {
+    return "each column: on top only the clothes that person wears in this book, laid out with no person in them, and their face close-up below — judge their outfit against those clothes";
+  }
+  return `each column: full figure on top, close-up below; for ${worn.join(", ")} the top of the column is only the clothes they wear in this book — judge their outfit against those clothes`;
+}
 
 /** 검수 붙임 그림 '몇 번째' — 쪽 1 + 시트 1 + 얼굴 최대 4 + 승인 쪽 1 + 장소 1 = 8, 넉넉히 열까지. */
 const CHECK_ORDINALS = ["FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH", "SIXTH", "SEVENTH", "EIGHTH", "NINTH", "TENTH"];
@@ -607,7 +625,7 @@ export function illustrationCheckParts(input: IllustrationCheckInput): unknown[]
         // 빈 칸("")을 넣지 않는다 — 이 목록은 거르지 않고 이어 붙여, 빈 칸 하나가 예전 요청에 빈 줄을 더한다.
         ...(input.reference && input.sheetOrder?.length
           ? [
-              `The character reference sheet shows, left to right: ${input.sheetOrder.map((n, i) => `${i + 1}. ${n}`).join(", ")} (each column: full figure on top, close-up below). Match each person on the page to their own column by this order.`,
+              `The character reference sheet shows, left to right: ${input.sheetOrder.map((n, i) => `${i + 1}. ${n}`).join(", ")} (${sheetColumnsNote(input.sheetOrder, input.sheetOutfits ?? [])}). Match each person on the page to their own column by this order.`,
             ]
           : []),
         `Scene instruction: ${input.scene}`,

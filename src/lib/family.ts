@@ -601,8 +601,13 @@ function glassesPhrase(l: Pick<FamilyLooks, "glasses" | "glassesType">): string 
  *          → 평소 옷 → 늘 하는 것 → 늘 지니는 것 → 메모.
  * 머리 색은 꾸밈말로 머리 앞에 붙이고(까만 단발머리), 명사가 아닌 머리 칩은 문장으로 푼다(머리가 아주 짧다).
  * 머리 모양이 머리결·앞머리까지 정하는 칩(곱슬 파마·앞머리 내린 머리 …)이면 그 칸은 적지 않는다.
+ * opts.clothes=false 면 평소 옷·늘 하는 것을 뺀다(이야기가 책마다 옷을 정한다). 안 주면 예전 그대로.
  */
-export function familyLooksToPrompt(l: FamilyLooks | undefined, who?: LookWho): string {
+export function familyLooksToPrompt(
+  l: FamilyLooks | undefined,
+  who?: LookWho,
+  opts: { clothes?: boolean } = {},
+): string {
   if (!l) return "";
   const parts: string[] = [];
   const push = (s: string) => {
@@ -637,9 +642,15 @@ export function familyLooksToPrompt(l: FamilyLooks | undefined, who?: LookWho): 
   // '늘 착용한다'로 적으면 이야기 인물 줄(@@CHARACTER@@ · 인물 시트 'Follow it literally')이 앞치마·모자를
   // 모든 쪽에 붙인다.
   const acc = words(l.accessories).join("·");
-  if (clothes && acc) push(`평소에 ${eulReul(clothes)} 즐겨 입고 ${eulReul(acc)} 즐겨 한다`);
-  else if (clothes) push(`평소에 ${eulReul(clothes)} 즐겨 입는다`);
-  else if (acc) push(`평소에 ${eulReul(acc)} 즐겨 한다`);
+  /*
+   * opts.clothes=false — 평소 옷·늘 하는 것을 뺀다. 옷은 책마다 이야기가 정한다(@@CHARACTER@@ 이 책의 옷 칸, 2026-09-29~
+   * 사장님 "옷은 그 주제안에서 랜덤으로"). 평소 옷을 이야기에 주면 클로드가 그 옷을 책마다 그대로 옮겨 적는다.
+   */
+  if (opts.clothes !== false) {
+    if (clothes && acc) push(`평소에 ${eulReul(clothes)} 즐겨 입고 ${eulReul(acc)} 즐겨 한다`);
+    else if (clothes) push(`평소에 ${eulReul(clothes)} 즐겨 입는다`);
+    else if (acc) push(`평소에 ${eulReul(acc)} 즐겨 한다`);
+  }
   const items = words(l.items);
   if (items.length) push(`늘 ${eulReul(items.join("·"))} 지니고 다닌다`);
   if (typeof l.note === "string" && l.note.trim()) push(l.note.trim());

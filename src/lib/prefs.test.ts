@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { mergeRemoteChild, normalizeParents, parentLooksToPrompt } from "./prefs.ts";
+import { looksToPrompt, mergeRemoteChild, normalizeParents, parentLooksToPrompt } from "./prefs.ts";
 
 const BASE = { name: "하온", age: 5, gender: "girl" as const };
 
@@ -115,6 +115,13 @@ describe("parentLooksToPrompt — 엄마·아빠 한 줄", () => {
         "웃으면 눈이 반달이 된다, 피부는 밝은 편이다, 마른 편이다, 키가 큰 편이다, 동그란 안경을 썼다, 보조개가 있다, " +
         "평소에 베이지 블라우스에 치마를 즐겨 입고 귀걸이·목걸이를 즐겨 한다, 늘 웃고 있어요",
     );
+  });
+
+  it("clothes:false 면 평소 옷·늘 하는 것을 뺀다 — 이야기가 책마다 옷을 정한다", () => {
+    const p = { hair: "긴 머리", color: "베이지", outfit: "블라우스", accessories: ["귀걸이"] };
+    const out = parentLooksToPrompt(p, "mom", { clothes: false });
+    assert.equal(out, "긴 머리, 안경을 쓰지 않는다");
+    assert.ok(parentLooksToPrompt(p, "mom").includes("평소에 베이지 블라우스를 즐겨 입고 귀걸이를 즐겨 한다"));
   });
 
   it("아빠 수염 '없어요'는 '수염이 없다'로 적고, 엄마에게는 수염을 적지 않는다", () => {
@@ -249,5 +256,16 @@ describe("saveChild — 안 넘긴 항목은 그대로 둔다", () => {
     assert.deepEqual(out?.familyRemoved?.map((r) => r.id).sort(), ["m-g", "m-x"]);
     assert.deepEqual(out?.family?.map((m) => m.id), ["m-s"]);
     assert.equal(out?.schema, CHILD_SCHEMA);
+  });
+});
+
+describe("looksToPrompt — 아이 한 줄", () => {
+  it("clothes:false 면 좋아하는 옷 색만 뺀다(안 주면 예전 그대로)", () => {
+    const looks = { hair: "단발", hairColor: "까만색", color: "노랑", items: ["곰인형"] };
+    const out = looksToPrompt(looks, { clothes: false });
+    assert.ok(!out.includes("즐겨 입"), out);
+    assert.ok(out.includes("단발") && out.includes("곰인형"), out);
+    assert.ok(looksToPrompt(looks).includes("노랑 옷을 즐겨 입는다"));
+    assert.equal(looksToPrompt(looks, {}), looksToPrompt(looks));
   });
 });

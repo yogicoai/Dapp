@@ -136,7 +136,7 @@ export type Book = {
    * fixed — 우리 가족 캐릭터의 고정 얼굴을 붙여 그린 인물(2026-09-29~). 이 사람의 얼굴·머리는 시트가 정한다 —
    * 한 쪽만 다시 그릴 때 쪽 그림 서버가 "설명 글보다 시트"를 따르게 한다(api/illustrate-page). 옛 책엔 없다.
    */
-  cast?: { name: string; description: string; fixed?: boolean }[];
+  cast?: { name: string; description: string; fixed?: boolean; outfit?: string }[];
   /**
    * 고정 가족의 원본 그림(우리 가족 캐릭터 portrait 참고용 JPEG 주소) — 시트에 원본이 선 사람만(2026-09-29~).
    * 한 쪽만 다시 그릴 때도 그 쪽에 나오는 사람의 원본을 쪽 그림에 붙인다(api/illustrate-page). 주소 뒤에 회원 폴더가 있고,
@@ -145,6 +145,11 @@ export type Book = {
   portraits?: { name: string; ref: string; memberId: string }[];
   /** 인물 시트에 선 순서(왼쪽부터 이름) — 원본 픽셀로 짠 시트는 이야기 순서와 다를 수 있다. 옛 책엔 없다. */
   sheetOrder?: string[];
+  /**
+   * 옷 카드로 이 책의 옷을 입은 고정 가족 이름(2026-09-29 저녁~) — 시트의 그 사람 칸 위는 사람 없는 옷이다.
+   * 옷 글은 cast[].outfit. 한 쪽만 다시 그릴 때도 같은 옷을 입힌다. 옛 책·옷 카드가 안 된 책엔 없다(= 가족 그림의 옷).
+   */
+  sheetOutfits?: string[];
   /**
    * 주인공 이름·성별·생김새 — 한 쪽만 다시 그릴 때도 "주인공은 남자아이"를 못 박으려고 남긴다.
    *

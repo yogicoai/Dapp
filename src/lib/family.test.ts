@@ -454,6 +454,13 @@ describe("생김새 한 줄 — 새 칸", () => {
     assert.ok(familyLooksToPrompt({ bottom: "청바지" }).endsWith("평소에 청바지를 즐겨 입는다"));
     assert.ok(familyLooksToPrompt({ color: "카키", bottom: "치마" }).endsWith("평소에 카키 옷에 치마를 즐겨 입는다"));
   });
+  it("clothes:false — 평소 옷·늘 하는 것만 빼고 나머지는 그대로(이야기가 책마다 옷을 정한다)", () => {
+    const l = { hair: "단발", color: "카키", outfit: "카디건", bottom: "치마", accessories: ["앞치마"], items: ["곰인형"], note: "메모" };
+    const out = familyLooksToPrompt(l, "mom", { clothes: false });
+    assert.equal(out, "단발머리, 안경을 쓰지 않는다, 늘 곰인형을 지니고 다닌다, 메모");
+    assert.ok(!/즐겨 입|즐겨 한다|카키|카디건|치마|앞치마/.test(out), out);
+    assert.equal(familyLooksToPrompt(l, "mom", {}), familyLooksToPrompt(l, "mom"));
+  });
 });
 
 describe("'늘 그대로' 견주기 — lockKey", () => {

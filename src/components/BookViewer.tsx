@@ -686,6 +686,8 @@ export function BookViewer({
             // 서버가 부른 사람의 가족 폴더인지 다시 본다 — 마스터가 남의 책을 다시 그리면 붙지 않고 시트만 쓴다.
             ...(withFaces && book.portraits?.length ? { portraits: book.portraits } : {}),
             ...(book.sheetOrder?.length ? { sheetOrder: book.sheetOrder } : {}),
+            // 옷 카드로 이 책의 옷을 입은 고정 가족 — 옷 글은 cast[].outfit 에 함께 간다. 옛 책엔 없다(= 가족 그림의 옷).
+            ...(book.sheetOutfits?.length ? { sheetOutfits: book.sheetOutfits } : {}),
           }),
         });
         const d = (await r.json().catch(() => ({}))) as { image?: string; error?: string; code?: string };

@@ -10,6 +10,7 @@ import {
   portraitBindingLines,
   portraitKey,
   readSheetOrder,
+  readSheetOutfits,
   refOrdinal,
   sheetOrderLine,
 } from "./page-refs.ts";
@@ -218,5 +219,99 @@ describe("portraitBindingLines — 몇 번째 그림이 누구 얼굴인지", ()
 
   it("얼굴이 없으면 한 줄도 없다", () => {
     assert.deepEqual(portraitBindingLines(["sheet"], []), []);
+  });
+});
+
+/* ─────────── 이 책의 옷 — 옷 카드로 입은 고정 가족(2026-09-29 저녁~) ─────────── */
+
+describe("readSheetOutfits — 옷 카드로 입은 고정 가족만", () => {
+  const dressedCast = [
+    { name: "하온", description: "", fixed: true, outfit: "민트 티셔츠, 베이지 반바지" },
+    { name: "엄마", description: "", fixed: true, outfit: "코랄 니트, 연청 바지" },
+    { name: "아빠", description: "", fixed: true },
+    { name: "서연", description: "", outfit: "노란 원피스" },
+  ];
+
+  it("등장인물·고정·옷 글이 있는 이름만, 한 번씩", () => {
+    assert.deepEqual(readSheetOutfits(["하온", "엄마", "하온", "아빠", "서연", "누구", 3], dressedCast), ["하온", "엄마"]);
+    assert.deepEqual(readSheetOutfits(undefined, dressedCast), []);
+    assert.deepEqual(readSheetOutfits("하온", dressedCast), []);
+    assert.deepEqual(readSheetOutfits([" 엄마 "], dressedCast), ["엄마"]);
+  });
+});
+
+describe("sheetOrderLine — 옷 카드 칸", () => {
+  it("모두 옷 카드면 '위는 옷만, 아래는 얼굴' — 나머지 사람 말이 없다", () => {
+    assert.equal(
+      sheetOrderLine(["하온", "엄마"], [], ["하온", "엄마"]),
+      "The reference sheet shows these people from left to right: 1. 하온, 2. 엄마. Each column is one person. For 하온, 엄마 the top of the column shows ONLY the clothes they wear in this book (laid out, with no person in them) and the close-up below is their face; dress them in exactly those clothes, and never draw those laid-out clothes as loose objects in the scene. Their faces come ONLY from those close-ups, never from anything in the clothes area.",
+    );
+  });
+
+  it("섞인 시트 — 나머지 사람은 예전처럼 전신 위·얼굴 아래, 키 줄은 뒤에", () => {
+    const line = sheetOrderLine(["하온", "서연", "엄마"], ["서연"], ["하온", "엄마"]);
+    assert.match(line, /For 하온, 엄마 the top of the column shows ONLY the clothes they wear in this book/);
+    assert.match(line, /loose objects in the scene\. Their faces come ONLY from those close-ups, never from anything in the clothes area\. For everyone else the full figure is on top and the same person's close-up below\. 서연 was painted separately/);
+    // 시트에 없는 이름은 말하지 않는다
+    assert.equal(sheetOrderLine(["하온"], [], ["엄마"]), sheetOrderLine(["하온"]));
+  });
+});
+
+describe("fixedFamilyFaceLines — 이 책의 옷", () => {
+  const outfits = new Map([
+    ["하온", "민트 티셔츠, 베이지 반바지, 흰 운동화"],
+    ["엄마", "코랄 니트, 연청 바지"],
+  ]);
+
+  it("가족 그림·얼굴 칸 아래 끝의 옷이 아니라 칸 위의 옷을, 옷 글과 함께", () => {
+    const lines = fixedFamilyFaceLines(["하온", "엄마"], new Set(["하온", "엄마"]), true, outfits);
+    assert.equal(lines.length, 1);
+    assert.match(lines[0], /^FIXED FAMILY FACES: 하온, 엄마 — [^\n]*follow the portrait\. THIS BOOK'S OUTFIT — 하온, 엄마 do NOT wear the clothes shown in their portrait or at the bottom edge of their close-up\./);
+    assert.match(lines[0], /Each wears the clothes-only outfit drawn at the top of their own column on the reference sheet: 하온 — 민트 티셔츠, 베이지 반바지, 흰 운동화; 엄마 — 코랄 니트, 연청 바지\./);
+    assert.match(lines[0], /change them only where this page's scene text itself dresses them differently \(pajamas, coat, swimsuit\)\.$/);
+    assert.doesNotMatch(lines[0], /ignore any clothing named in their description/);
+  });
+
+  it("원본이 한 사람에게만 붙어도 두 줄 모두 이 책의 옷", () => {
+    const lines = fixedFamilyFaceLines(["하온", "엄마"], new Set(["하온"]), true, outfits);
+    assert.equal(lines.length, 2);
+    assert.match(lines[0], /THIS BOOK'S OUTFIT — 하온 do NOT wear[^\n]*: 하온 — 민트 티셔츠/);
+    assert.match(lines[1], /^FIXED FAMILY FACES \(no portrait attached for them on this page\): 엄마 — [^\n]*THIS BOOK'S OUTFIT — 엄마 do NOT wear[^\n]*: 엄마 — 코랄 니트, 연청 바지\./);
+    // 시트에 전신이 없다 — 얼굴 칸 아래 끝에 닿은 머리는 더 길다(원본이 붙은 하온 줄엔 없다)
+    assert.match(
+      lines[1],
+      /follow the sheet\. On the sheet 엄마 has no full figure and the close-up is cropped at the shoulders: hair that reaches the bottom edge of the close-up keeps going below it \(long hair\) — never shorten it; body build follows their age and role\. THIS BOOK'S OUTFIT/,
+    );
+    assert.doesNotMatch(lines[0], /cropped at the shoulders/);
+  });
+
+  it("옷 글이 없는 사람은 예전 문장 — 빈 지도면 글자 그대로", () => {
+    const mixed = fixedFamilyFaceLines(["하온", "아빠"], new Set(["하온", "아빠"]), true, outfits);
+    assert.match(mixed[0], /: 하온 — 민트 티셔츠, 베이지 반바지, 흰 운동화\. Copy those[^\n]*\(pajamas, coat, swimsuit\)\. For 아빠: Their outfit is exactly the one shown on the reference sheet/);
+    assert.deepEqual(
+      fixedFamilyFaceLines(["하온", "엄마"], new Set(["하온"]), true, new Map()),
+      fixedFamilyFaceLines(["하온", "엄마"], new Set(["하온"]), true),
+    );
+  });
+});
+
+describe("fixedCheckDescription — 이 책의 옷", () => {
+  it("원본이 붙으면 얼굴·머리는 원본, 옷은 칸 위의 옷 — 가족 그림 옷과 견주지 않는다", () => {
+    assert.equal(
+      fixedCheckDescription("짧은 머리, 민트 티셔츠", true, true, true),
+      "짧은 머리, 민트 티셔츠 (fixed family face — judge face and hair against their attached original portrait, and the outfit against the clothes-only outfit at the top of their column on the reference sheet — never against the portrait's clothes)",
+    );
+  });
+
+  it("원본이 안 붙으면 얼굴·머리는 시트의 얼굴 칸과", () => {
+    assert.match(
+      fixedCheckDescription("단발", false, true, true),
+      /judge face and hair against their close-up on the reference sheet \(cropped at the shoulders — hair that reaches its bottom edge is long: FAIL if drawn clearly shorter\), and the outfit against the clothes-only outfit at the top of their column — never against the clothes at the bottom edge of the close-up\)$/,
+    );
+  });
+
+  it("dressed 를 안 주면 예전 꼬리표 그대로", () => {
+    assert.equal(fixedCheckDescription("단발", true, true, false), fixedCheckDescription("단발", true, true));
+    assert.equal(fixedCheckDescription("단발", false, false, false), fixedCheckDescription("단발", false, false));
   });
 });

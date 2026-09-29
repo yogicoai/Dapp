@@ -38,6 +38,8 @@ export type DrawProgress = {
    */
   sheetPortraits?: { name: string; ref: string; memberId: string }[];
   sheetOrder?: string[];
+  /** 옷 카드로 이 책의 옷을 입은 고정 가족(2026-09-29 저녁~) — 이어 그릴 때도 같은 줄을 쓴다. 옛 보관본엔 없다. */
+  sheetOutfits?: string[];
   locationSheets: DrawLocationSheet[];
   images: (string | null)[];
   passed: boolean[];

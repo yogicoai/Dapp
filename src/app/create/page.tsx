@@ -115,7 +115,8 @@ type Gender = "girl" | "boy" | "unspecified";
 type Scene = { sceneNo: number; text: string };
 type Outline = { title: string; summary: string; scenes: Scene[] };
 type StoryPage = { pageNo: number; text: string; imagePrompt: string; voiceDirection: VoiceDirection };
-type Character = { name: string; description: string };
+/** outfit — 이 책의 옷(@@CHARACTER@@ 셋째 칸, 2026-09-29 저녁~). 옛 대본엔 없다. */
+type Character = { name: string; description: string; outfit?: string };
 type Story = { title: string; summary: string; characters: Character[]; pages: StoryPage[] };
 type StoryMode = "today" | "imagine" | "emotion" | "direct";
 
@@ -1525,6 +1526,8 @@ export default function CreatePage() {
    */
   const sheetPortraitsRef = useRef<SheetPortraitRef[]>([]);
   const sheetOrderRef = useRef<string[]>([]);
+  /** 옷 카드로 이 책의 옷을 입은 고정 가족(2026-09-29 저녁~) — 쪽 그림이 가족 그림 옷 대신 이 책의 옷을 입힌다. 책에도 남긴다. */
+  const sheetOutfitsRef = useRef<string[]>([]);
   // 장소 시트(장소마다 한 장)도 같이 저장한다 — 다시 그릴 때 같은 곳이 나오게.
   const locationSheetsRef = useRef<LocationSheet[]>([]);
   /*
@@ -1909,16 +1912,20 @@ export default function CreatePage() {
    * 캐릭터 시트에서 부모가 고른 값과 부딪혀, 고른 대로 안 그려지는 원인이 됐다.
    * 이제 이야기를 쓸 때부터 알려 줘서 인물 설명 자체가 이 값으로 나온다.
    */
+  /*
+   * 평소 옷(좋아하는 옷 색·엄마 아빠 평소 옷)은 이야기에 주지 않는다(clothes:false, 2026-09-29 저녁 사장님 "옷은 그 주제안에서
+   * 랜덤으로 교체되게") — 주면 클로드가 그 옷을 책마다 그대로 옮겨 적는다. 옷은 이야기가 책마다 정한다(이 책의 옷 칸).
+   */
   const child = {
     name: name.trim(),
     age: age ?? 0,
     gender,
-    looks: looksToPrompt(loadChild()?.looks) || undefined,
+    looks: looksToPrompt(loadChild()?.looks, { clothes: false }) || undefined,
     // 엄마·아빠 생김새(선택) — 안 주면 모델이 안경·수염을 지어낸다.
     parentLooks: {
       // 역할을 넘긴다 — 수염은 아빠만(가족 그림·설정 미리보기와 같은 문장).
-      mom: parentLooksToPrompt(loadChild()?.parents?.mom, "mom") || undefined,
-      dad: parentLooksToPrompt(loadChild()?.parents?.dad, "dad") || undefined,
+      mom: parentLooksToPrompt(loadChild()?.parents?.mom, "mom", { clothes: false }) || undefined,
+      dad: parentLooksToPrompt(loadChild()?.parents?.dad, "dad", { clothes: false }) || undefined,
     },
   };
 
@@ -2832,6 +2839,7 @@ export default function CreatePage() {
         sheetFixed: [...fixedCastRef.current],
         sheetPortraits: [...sheetPortraitsRef.current],
         sheetOrder: [...sheetOrderRef.current],
+        sheetOutfits: [...sheetOutfitsRef.current],
         locationSheets: locationSheetsRef.current,
         images: [...images],
         passed: [...passedRef.current],
@@ -2840,15 +2848,21 @@ export default function CreatePage() {
     const passedRef = { current: [] as boolean[] };
     try {
       const child = loadChild();
-      const heroLooks = looksToPrompt(child?.looks);
+      /*
+       * 이 책의 옷이 있는 대본(2026-09-29 저녁~)이면 좋아하는 옷 색·평소 옷을 그림에 주지 않는다 — 이 책의 옷과 부딪친다.
+       * 옛 대본(옷 칸 없음)은 예전 그대로.
+       */
+      const outfitStory = s.characters.some((c) => c.outfit);
+      const heroLooks = looksToPrompt(child?.looks, { clothes: !outfitStory });
       // 그림 모델에는 영어로 — 영어 규칙 사이에 한국어 한 줄이 끼는 것보다 확실히 읽힌다.
-      const heroLooksEn = looksToDrawingPrompt(child?.looks);
+      const heroLooksEn = looksToDrawingPrompt(child?.looks, { clothes: !outfitStory });
       let sheet = saved?.sheet ?? null;
       // 이어 그리기면 그 시트에 고정 얼굴이 붙었던 이름 그대로(옛 보관본엔 없다 = 고정 얼굴 없이 그린 시트).
       fixedCastRef.current = new Set(sheet ? (saved?.sheetFixed ?? []) : []);
       // 원본 그림 주소·시트 순서도 그대로(옛 보관본엔 없다 = 쪽마다 시트만 보고 그린다).
       sheetPortraitsRef.current = sheet ? (saved?.sheetPortraits ?? []) : [];
       sheetOrderRef.current = sheet ? (saved?.sheetOrder ?? []) : [];
+      sheetOutfitsRef.current = sheet ? (saved?.sheetOutfits ?? []) : [];
       if (!sheet) {
         /*
          * 우리 가족 캐릭터의 고정 얼굴 — 이야기에 나오는 사람만, 고정한 그림(portrait)만(lib/family-cast).
@@ -2858,12 +2872,17 @@ export default function CreatePage() {
          */
         const family = (await waitAtMost(loadChildRemote(), 3000, null))?.family ?? child?.family;
         const portraits = castPortraits(s.characters, family);
-        const requestSheet = async (withPortraits: boolean) => {
+        /*
+         * withCard — 이 책의 옷을 옷 카드로 입혀도 되나(서버는 이 칸이 true 일 때만 옷 카드를 그린다). 이 화면은 sheetOutfits 를 받아
+         * 쪽 그림·책에 넘기므로 true 를 보낼 수 있다 — 배포 전에 열어 둔 화면은 이 칸이 없어 값만 나가는 옷 카드를 부르지 않는다.
+         */
+        const requestSheet = async (withPortraits: boolean, withCard = false) => {
           const res = await authedFetch("/api/character-sheet", {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
               characters: s.characters,
+              ...(withCard ? { outfitCard: true } : {}),
               artStyleId: artStyle,
               drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
               // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
@@ -2873,9 +2892,10 @@ export default function CreatePage() {
               heroAge: age ?? child?.age ?? null,
               heroGender: gender !== "unspecified" ? gender : child?.gender,
               // 엄마·아빠도 부모가 고른 대로 — 안경은 여기 적혔을 때만 그린다.
+              // 이 책의 옷이 있으면 평소 옷은 빼고 — 옷은 등장인물 설명(이 책의 옷)을 따른다.
               adultLooks: {
-                엄마: parentLooksToPrompt(child?.parents?.mom, "mom") || undefined,
-                아빠: parentLooksToPrompt(child?.parents?.dad, "dad") || undefined,
+                엄마: parentLooksToPrompt(child?.parents?.mom, "mom", { clothes: !outfitStory }) || undefined,
+                아빠: parentLooksToPrompt(child?.parents?.dad, "dad", { clothes: !outfitStory }) || undefined,
               },
               // 고정 얼굴 — 서버에 필요한 것만(등장인물 이름·참고 그림 주소·사람 id). 서버가 주소를 다시 검사한다.
               // 키(cm)·머리 비율 — 수채화 책은 서버가 원본 그림으로 시트를 짠다(키대로 발끝 맞춤, 얼굴 오리기. lib/sheet-compose).
@@ -2909,14 +2929,24 @@ export default function CreatePage() {
             fixed?: unknown;
             /** 시트에 선 순서(왼쪽부터) — 원본 픽셀로 짠 시트만 */
             order?: unknown;
-            /** "portraits"(AI 안 부름) | "mixed"(나머지만 AI) — 없으면 예전 AI 시트 */
+            /** "portraits"(고정 가족뿐) | "mixed"(나머지만 AI) — 없으면 예전 AI 시트 */
             composed?: unknown;
+            /** 옷 카드로 이 책의 옷을 입은 고정 가족 이름 */
+            sheetOutfits?: unknown;
+            /** 옷 카드를 그렸지만 못 써서 가족 그림 옷으로 짰다 */
+            outfitFallback?: unknown;
+            /** 이 요청에서 부른 AI 그림 수(옷 카드 + 나머지 사람) — 없으면 예전 서버 */
+            drawn?: unknown;
+            /** 옷 카드를 기다린 뒤 시트를 못 짰다 — 옷 카드 없이 다시 부르라는 뜻 */
+            retryWithoutCard?: unknown;
           };
           return { res, data };
         };
         const withFaces = portraits.length > 0;
+        // 옷 카드는 가족 얼굴로 짜는 시트에서만, 이 책의 옷이 있는 대본에서만(서버가 수채화·고정 가족 모두의 옷 글을 다시 본다).
+        const withCard = withFaces && outfitStory;
         // 얼굴 없이 보낸 요청이거나 부모가 멈췄으면 예전처럼 그대로 던진다.
-        let reply = await requestSheet(withFaces).catch((e: unknown) => {
+        let reply = await requestSheet(withFaces, withCard).catch((e: unknown) => {
           if (!withFaces || ac.signal.aborted) throw e;
           return null;
         });
@@ -2926,11 +2956,20 @@ export default function CreatePage() {
          * 책 전체가 고정 얼굴을 잃는다(검토 2026-09-29). 또 실패하면 아래에서 얼굴 없이 — AI 한 번씩이라 값은 같다.
          */
         if (withFaces && reply?.data.code === "subsheet" && !ac.signal.aborted) {
+          // 동시에 그린 옷 카드는 값이 나갔다 — 그린 장수에 넣는다.
+          if (typeof reply.data.drawn === "number") counts.sheet += reply.data.drawn;
+          /*
+           * retryWithoutCard — 옷 카드를 기다린 뒤 시트 짜기가 실패했다(서버가 60초 안에 AI 시트를 또 그릴 시간이 없었다).
+           * 옷 카드 없이 다시 부른다 — 같은 옷 카드를 또 그리면 값만 두 번 나가고 짜기는 또 실패한다(검토 2026-09-29).
+           */
+          const dropCard = reply.data.retryWithoutCard === true;
           pageFailures.push({
             stage: "sheet",
-            reason: `친구 등 나머지 인물 그림 실패(HTTP ${reply.res.status}) → 가족 얼굴 그대로 한 번 더`,
+            reason: dropCard
+              ? `옷 카드 뒤 시트 짜기 실패(HTTP ${reply.res.status}) → 옷 카드 없이 가족 얼굴 그대로 한 번 더`
+              : `친구 등 나머지 인물 그림 실패(HTTP ${reply.res.status}) → 가족 얼굴 그대로 한 번 더`,
           });
-          reply = await requestSheet(true).catch((e: unknown) => {
+          reply = await requestSheet(true, withCard && !dropCard).catch((e: unknown) => {
             if (ac.signal.aborted) throw e;
             return null;
           });
@@ -2946,6 +2985,8 @@ export default function CreatePage() {
           !ac.signal.aborted &&
           (!reply || ((!reply.res.ok || !reply.data.image) && reply.res.status !== 401 && reply.res.status !== 429));
         if (faceSheetFailed) {
+          // 실패한 요청이라도 그 안에서 그린 옷 카드·나머지 그림은 값이 나갔다(서버가 drawn 으로 알려 준다).
+          if (typeof reply?.data.drawn === "number") counts.sheet += reply.data.drawn;
           pageFailures.push({
             stage: "sheet",
             reason:
@@ -2963,8 +3004,9 @@ export default function CreatePage() {
         }
         sheet = sheetData.image ?? null;
         if (!sheet) throw new Error("캐릭터 그림을 받지 못했어요. 잠시 뒤 다시 시도해 주세요.");
-        // 모두 고정 가족이라 원본으로만 짠 시트는 AI 를 부르지 않았다 — 그린 장수에 넣지 않는다.
-        if (sheetData.composed !== "portraits") counts.sheet += 1;
+        // 그린 장수 — 서버가 부른 AI 그림 수(옷 카드 + 나머지 사람). 옛 서버는 수를 안 준다: 원본으로만 짠 시트는 0, 그 밖 1.
+        counts.sheet +=
+          typeof sheetData.drawn === "number" ? sheetData.drawn : sheetData.composed === "portraits" ? 0 : 1;
         // 서버가 실제로 붙인 얼굴만(주소가 이상하거나 못 받은 사람은 빠진다).
         fixedCastRef.current = new Set(
           Array.isArray(sheetData.fixed) ? sheetData.fixed.filter((n): n is string => typeof n === "string") : [],
@@ -2976,6 +3018,14 @@ export default function CreatePage() {
         sheetOrderRef.current = Array.isArray(sheetData.order)
           ? sheetData.order.filter((n): n is string => typeof n === "string")
           : [];
+        // 옷 카드로 이 책의 옷을 입은 고정 가족 — 얼굴이 실제로 붙은 사람만.
+        sheetOutfitsRef.current = Array.isArray(sheetData.sheetOutfits)
+          ? sheetData.sheetOutfits.filter((n): n is string => typeof n === "string" && fixedCastRef.current.has(n))
+          : [];
+        // 옷 카드를 그렸는데 못 썼다 — 책은 가족 그림 옷으로 간다. 마스터가 어느 책인지 알게 남긴다.
+        if (sheetData.outfitFallback === true) {
+          pageFailures.push({ stage: "sheet", reason: "옷 카드 실패 → 가족 그림 옷으로" });
+        }
       }
       sheetImageRef.current = sheet;
       locationSheetsRef.current = saved?.locationSheets ? [...saved.locationSheets] : [];
@@ -3183,6 +3233,8 @@ export default function CreatePage() {
                         : c.description,
                     // 고정 얼굴로 시트를 그린 사람 — 얼굴·머리는 설명 글보다 시트를 따르게(api/illustrate-page).
                     ...(fixedCastRef.current.has(c.name) ? { fixed: true } : {}),
+                    // 이 책의 옷 — 옷 카드로 입은 고정 가족 줄이 이 글을 쓴다.
+                    ...(c.outfit ? { outfit: c.outfit } : {}),
                   })),
                   // 주인공 성별·생김새 — 시트에만 가고 쪽 그림엔 안 가서 남자아이가 단발·꽃핀으로 나왔다.
                   hero: heroFromStory(
@@ -3193,6 +3245,7 @@ export default function CreatePage() {
                   // 고정 가족 원본 그림 주소·시트에 선 순서 — 얼굴이 시트를 거쳐 또 흐르지 않게(api/illustrate-page).
                   ...(faces.length ? { portraits: faces } : {}),
                   ...(sheetOrderRef.current.length ? { sheetOrder: sheetOrderRef.current } : {}),
+                  ...(sheetOutfitsRef.current.length ? { sheetOutfits: sheetOutfitsRef.current } : {}),
                 }),
                 signal: ac.signal,
               });
@@ -3596,15 +3649,19 @@ export default function CreatePage() {
         name: c.name,
         description: c.description,
         ...(fixedCastRef.current.has(c.name) ? { fixed: true } : {}),
+        // 이 책의 옷 — 한 쪽만 다시 그릴 때도 같은 옷(옛 대본엔 없다).
+        ...(c.outfit ? { outfit: c.outfit } : {}),
       })),
       // 고정 가족 원본 그림 주소·시트에 선 순서 — 한 쪽만 다시 그릴 때도 원본 얼굴을 붙인다(옛 책은 없다).
       portraits: sheetPortraitsRef.current.length ? [...sheetPortraitsRef.current] : undefined,
       sheetOrder: sheetOrderRef.current.length ? [...sheetOrderRef.current] : undefined,
-      // 한 쪽만 다시 그릴 때도 주인공 성별·생김새를 못 박게 남긴다.
+      // 옷 카드로 이 책의 옷을 입은 고정 가족 — 한 쪽 다시 그리기도 칸 위의 옷을 입힌다.
+      sheetOutfits: sheetOutfitsRef.current.length ? [...sheetOutfitsRef.current] : undefined,
+      // 한 쪽만 다시 그릴 때도 주인공 성별·생김새를 못 박게 남긴다(이 책의 옷이 있으면 좋아하는 옷 색은 빼고 — 그릴 때와 같게).
       hero: heroFromStory(
         s.characters,
         gender !== "unspecified" ? gender : loadChild()?.gender,
-        looksToDrawingPrompt(loadChild()?.looks),
+        looksToDrawingPrompt(loadChild()?.looks, { clothes: !s.characters.some((c) => c.outfit) }),
       ),
       pages: s.pages.map((p, i) => ({
         text: p.text,

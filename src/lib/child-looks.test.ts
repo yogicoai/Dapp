@@ -41,6 +41,15 @@ describe("looksToDrawingPrompt — 칩을 영어로", () => {
     assert.equal(looksToDrawingPrompt(undefined), "");
     assert.equal(looksToDrawingPrompt({}), "");
   });
+
+  it("clothes:false 면 좋아하는 옷 색만 뺀다 — 이 책의 옷과 부딪치지 않게(안 주면 예전 그대로)", () => {
+    const looks = { hair: "단발", color: "파랑", items: ["머리핀"], note: "메모" };
+    const out = looksToDrawingPrompt(looks, { clothes: false });
+    assert.ok(!/favourite clothing colour|blue/.test(out), out);
+    assert.ok(out.includes("chin-length bob") && out.includes("hair pin") && out.includes("메모"), out);
+    assert.equal(looksToDrawingPrompt(looks, {}), looksToDrawingPrompt(looks));
+    assert.ok(looksToDrawingPrompt(looks, { clothes: true }).includes("favourite clothing colour is blue"));
+  });
 });
 
 describe("heroIdentity", () => {
