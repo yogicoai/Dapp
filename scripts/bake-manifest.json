@@ -9499,6 +9499,12 @@
     "intensity": null,
     "text": "헨젤은 제 몫의 빵을 다 먹지 않고, 절반을 슬며시 주머니에 넣었어요.\n숲은 넓어서, 길을 잃기 쉬우니까요."
   },
+  "classic/hansel/say-p2-father.mp3": {
+    "voice": "tc-hosun",
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "내일 아침 숲으로 가자. 먹을 것을 찾아보자꾸나."
+  },
   "classic/hansel/seg-tc-minjung-p3-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
@@ -9516,6 +9522,18 @@
     "emotion": "normal",
     "intensity": null,
     "text": "\"돌아갈 때 길을 찾으려고. 걱정 마, 내가 다 표시해 뒀어.\""
+  },
+  "classic/hansel/say-p3-gretel.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "오빠, 그건 왜 떨어뜨려?"
+  },
+  "classic/hansel/say-p3-hansel.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "돌아갈 때 길을 찾으려고. 걱정 마, 내가 다 표시해 뒀어."
   },
   "classic/hansel/seg-tc-minjung-p4-0.mp3": {
     "voice": "tc-minjung",
@@ -9547,6 +9565,12 @@
     "intensity": null,
     "text": "그레텔의 눈에 눈물이 그렁그렁 맺혔어요."
   },
+  "classic/hansel/say-p4-gretel.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "오빠… 아버지가 우리를 잊어버린 걸까?"
+  },
   "classic/hansel/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
@@ -9565,6 +9589,12 @@
     "intensity": null,
     "text": "그런데 뒤돌아보니, 길에는 빵 부스러기가 하나도 없었어요.\n배고픈 새들이 포르르 날아와, 몽땅 쪼아 먹어 버린 거예요.\n돌아갈 길이 한꺼번에 사라지고 말았답니다."
   },
+  "classic/hansel/say-p5-hansel.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "울지 마. 내가 빵으로 길을 표시해 뒀어."
+  },
   "classic/hansel/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
@@ -9582,6 +9612,12 @@
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"오빠, 이 집… 먹을 수 있는 거야?\""
+  },
+  "classic/hansel/say-p7-gretel.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "오빠, 이 집… 먹을 수 있는 거야?"
   },
   "classic/hansel/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
@@ -9602,6 +9638,13 @@
     "intensity": null,
     "text": "그 웃음 뒤에 무엇이 숨어 있는지, 아이들은 알지 못했답니다."
   },
+  "classic/hansel/say-p8-witch.mp3": {
+    "voice": "tc-gahee",
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "배가 고팠구나. 어서 들어오렴. 따뜻한 수프가 있단다.",
+    "tempo": 0.88
+  },
   "classic/hansel/seg-tc-minjung-p9-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
@@ -9613,6 +9656,13 @@
     "emotion": "angry",
     "intensity": 0.35,
     "text": "\"오빠를 살찌워야 하니 너는 부지런히 일해라!\"",
+    "tempo": 0.88
+  },
+  "classic/hansel/say-p9-witch.mp3": {
+    "voice": "tc-gahee",
+    "emotion": "angry",
+    "intensity": 0.35,
+    "text": "오빠를 살찌워야 하니 너는 부지런히 일해라!",
     "tempo": 0.88
   },
   "classic/hansel/seg-tc-minjung-p10-0.mp3": {
@@ -9632,6 +9682,12 @@
     "emotion": "normal",
     "intensity": null,
     "text": "마녀는 몇 날 며칠이 지나도, 고개를 갸웃할 뿐이었어요."
+  },
+  "classic/hansel/say-p10-hansel.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이것 보세요. 아직도 이렇게 말랐어요."
   },
   "classic/hansel/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
@@ -9664,6 +9720,19 @@
     "intensity": null,
     "text": "마녀가 허리를 굽혀 화덕 앞으로 몸을 기울였어요.\n바로 그 옆에는, 문이 활짝 열린 캄캄한 창고가 있었답니다."
   },
+  "classic/hansel/say-p11-witch.mp3": {
+    "voice": "tc-gahee",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "안이 뜨거운지 네가 먼저 들여다보아라.",
+    "tempo": 0.88
+  },
+  "classic/hansel/say-p11-gretel.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "저는 키가 작아서 잘 안 보여요. 할머니가 보여 주세요."
+  },
   "classic/hansel/seg-tc-minjung-p12-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
@@ -9682,6 +9751,13 @@
     "emotion": "normal",
     "intensity": null,
     "text": "남매는 손을 꼭 잡고 과자 집을 빠져나왔답니다."
+  },
+  "classic/hansel/say-p12-gretel.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "오빠, 어서 나와! 우리 집으로 가자!",
+    "tempo": 1.1
   },
   "classic/hansel/seg-tc-minjung-p13-0.mp3": {
     "voice": "tc-minjung",
