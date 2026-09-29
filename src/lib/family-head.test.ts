@@ -15,23 +15,23 @@ import {
 } from "./family-head.ts";
 
 describe("headChartRatio — 사장님 얼굴 비율표(키 ÷ 머리)", () => {
-  it("아이 6살까지 4 · 7~9살 4.5 · 10~12살 5 · 청소년 5.5 · 어른 5.5", () => {
-    assert.equal(headChartRatio("child", 3), 4);
-    assert.equal(headChartRatio("child", 6), 4);
-    assert.equal(headChartRatio("child", 7), 4.5);
-    assert.equal(headChartRatio("child", 9), 4.5);
-    assert.equal(headChartRatio("child", 10), 5);
-    assert.equal(headChartRatio("sibling", 12), 5);
-    assert.equal(headChartRatio("sibling", 13), 5.5);
-    assert.equal(headChartRatio("friend", 19), 5.5);
-    assert.equal(headChartRatio("friend", 30), 5.5);
-    for (const role of ["mom", "dad", "grandma", "grandpa"] as const) assert.equal(headChartRatio(role), 5.5);
+  it("아이 6살까지 5 · 7~9살 5.5 · 10~12살 6 · 청소년 6.5 · 어른 7 (09-29 오후 되돌림 — 1:4 는 대두)", () => {
+    assert.equal(headChartRatio("child", 3), 5);
+    assert.equal(headChartRatio("child", 6), 5);
+    assert.equal(headChartRatio("child", 7), 5.5);
+    assert.equal(headChartRatio("child", 9), 5.5);
+    assert.equal(headChartRatio("child", 10), 6);
+    assert.equal(headChartRatio("sibling", 12), 6);
+    assert.equal(headChartRatio("sibling", 13), 6.5);
+    assert.equal(headChartRatio("friend", 19), 6.5);
+    assert.equal(headChartRatio("friend", 30), 7);
+    for (const role of ["mom", "dad", "grandma", "grandpa"] as const) assert.equal(headChartRatio(role), 7);
   });
 
   it("나이를 모르면 아이는 6살까지와 같다", () => {
-    assert.equal(headChartRatio("child", null), 4);
-    assert.equal(headChartRatio("sibling"), 4);
-    assert.equal(headChartRatio("friend", 0), 4);
+    assert.equal(headChartRatio("child", null), 5);
+    assert.equal(headChartRatio("sibling"), 5);
+    assert.equal(headChartRatio("friend", 0), 5);
   });
 
   it("ratioText — 프롬프트·로그 글", () => {
@@ -100,18 +100,18 @@ describe("headRatioFromBoxes — 머리·전신 상자([위,왼,아래,오른] 0
 });
 
 describe("headVerdict·closerHead — 다시 그릴지, 무엇을 남길지", () => {
-  it("표보다 15% 넘게 작은 비율 = 머리가 크다(big), 20% 넘게 큰 비율 = 머리가 작다(small), 그 사이는 ok", () => {
-    // 어른 5.5: big 은 4.675 아래, small 은 6.6 위
-    assert.equal(headVerdict(4.2, 5.5), "big", "사장님이 본 아빠(약 1:4)");
-    assert.equal(headVerdict(4.66, 5.5), "big");
-    assert.equal(headVerdict(4.68, 5.5), "ok");
-    assert.equal(headVerdict(5.5, 5.5), "ok");
-    assert.equal(headVerdict(6.59, 5.5), "ok");
-    assert.equal(headVerdict(6.61, 5.5), "small");
-    // 아이 4: big 은 3.4 아래, small 은 4.8 위
-    assert.equal(headVerdict(3.3, 4), "big");
-    assert.equal(headVerdict(4.5, 4), "ok");
-    assert.equal(headVerdict(4.9, 4), "small");
+  it("표보다 20% 넘게 작은 비율 = 머리가 크다(big), 20% 넘게 큰 비율 = 머리가 작다(small), 그 사이는 ok", () => {
+    // 어른 7: big 은 5.6 아래, small 은 8.4 위
+    assert.equal(headVerdict(4.7, 7), "big", "사장님이 본 아빠(약 1:4.7)");
+    assert.equal(headVerdict(5.59, 7), "big");
+    assert.equal(headVerdict(5.61, 7), "ok");
+    assert.equal(headVerdict(7, 7), "ok");
+    assert.equal(headVerdict(8.39, 7), "ok");
+    assert.equal(headVerdict(8.41, 7), "small");
+    // 아이 5: big 은 4 아래, small 은 6 위 — 사장님이 고른 앞 그림(약 1:4.2)은 ok, 대두(약 1:3.5)는 big
+    assert.equal(headVerdict(3.5, 5), "big", "사장님이 대두라고 한 새 그림");
+    assert.equal(headVerdict(4.2, 5), "ok", "사장님이 고른 앞 그림");
+    assert.equal(headVerdict(6.1, 5), "small");
   });
 
   it("표에 더 가까운 쪽 — 배율로 잰다, 같으면 처음 것", () => {

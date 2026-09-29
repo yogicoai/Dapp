@@ -260,9 +260,9 @@ describe("비율 견본(guide) — 늘 맨 끝 참고 그림, 머리:키 비율�
     const p = buildPrompt(person("dad", { looks: "까만 짧은 머리" }), refs);
     assert.match(p, /FIRST image = painting-style sample/);
     assert.match(p, /SECOND image = another member of the same family/);
-    assert.match(p, /THIRD image = PROPORTION GUIDE only — a plain grey mannequin whose head is exactly 1\/5\.5 of its full height/);
+    assert.match(p, /THIRD image = PROPORTION GUIDE only — a plain grey mannequin whose head is exactly 1\/7 of its full height/);
     // 그린 뒤 재기와 같은 방식으로 — 머리카락 맨 위 ~ 턱 : 머리카락 맨 위 ~ 신발 바닥
-    assert.match(p, /their head, from the top of the hair to the chin, is 1\/5\.5 of their height from the top of the hair to the soles of the shoes/);
+    assert.match(p, /their head, from the top of the hair to the chin, is 1\/7 of their height from the top of the hair to the soles of the shoes/);
     assert.match(p, /NEVER copy anything else from it — not its stiff mannequin shape \(the pose comes from the POSE line\), grey colour, lines, blank face/);
     assert.ok(!/not its pose/.test(p), "견본 자세(정면·팔을 조금 벌림)는 POSE 줄과 같다 — 베끼지 말라고 하지 않는다");
     assert.match(p, /PROPORTIONS: .* The THIRD image \(proportion guide\) shows exactly this head-to-height ratio\./);
@@ -315,20 +315,20 @@ describe("비율 견본(guide) — 늘 맨 끝 참고 그림, 머리:키 비율�
     }
   });
 
-  it("비율표 글은 예전 그대로(1/4 · 1/4.5 · 1/5 · 1/5.5)", () => {
+  it("비율표 글(1/5 · 1/5.5 · 1/6 · 1/6.5 · 1/7) — 09-29 오후 되돌림, 1:4 는 대두", () => {
     const p = (who: PortraitInput) => /the head is about (1\/[\d.]+) of the full body height/.exec(buildPrompt(who, NO_PHOTO))?.[1];
-    assert.equal(p(person("child", { age: 5 })), "1/4");
-    assert.equal(p(person("child", { age: 8 })), "1/4.5");
-    assert.equal(p(person("child", { age: 11 })), "1/5");
-    assert.equal(p(person("sibling", { callName: "누나", age: 15 })), "1/5.5");
-    assert.equal(p(person("dad")), "1/5.5");
+    assert.equal(p(person("child", { age: 5 })), "1/5");
+    assert.equal(p(person("child", { age: 8 })), "1/5.5");
+    assert.equal(p(person("child", { age: 11 })), "1/6");
+    assert.equal(p(person("sibling", { callName: "누나", age: 15 })), "1/6.5");
+    assert.equal(p(person("dad")), "1/7");
   });
 
   it("어른 PROPORTIONS 줄은 머리를 키우는 쪽으로 당기지 않는다 — 'NOT a big head'(칩·사진 모두)", () => {
     for (const who of ADULTS) {
       for (const refs of [NO_PHOTO, PHOTO]) {
         const p = buildPrompt(who, refs);
-        assert.match(p, /PROPORTIONS: picture-book adult proportions — the head is about 1\/5\.5 of the full body height\. NOT a big head, NOT chibi/);
+        assert.match(p, /PROPORTIONS: picture-book adult proportions — the head is about 1\/7 of the full body height\. NOT a big head, NOT chibi/);
         assert.ok(!/tiny head/.test(p), `${who.role}`);
       }
     }

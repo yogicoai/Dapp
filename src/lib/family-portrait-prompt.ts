@@ -144,11 +144,11 @@ const ADULT_HAIR_PHOTO = `Hair colour as it looks in the photo — dyed, grey or
 const ADULT_HAIR_CARD = `Hair colour as the LIKENESS SPEC gives it — dyed, grey or white hair stays that colour; if it gives none, natural black or dark brown. ${HAIR_COLOUR_WORDS}`;
 /*
  * 가족 얼굴 비율표(사장님 2026-09-29: "각각 얼굴 비율이 있어야") — 머리 : 키.
- *   아이 6살까지 1:4 · 7~9살 1:4.5 · 10~12살 1:5 · 청소년 1:5.5 · 어른(엄마·아빠·조부모) 1:5.5
+ *   아이 6살까지 1:5 · 7~9살 1:5.5 · 10~12살 1:6 · 청소년 1:6.5 · 어른(엄마·아빠·조부모) 1:7
  * 사람마다 따로 그려 단체 사진(FamilyGroupPhoto)에서 실제 키 비율로 세우기 때문에, 비율이 사람마다 다르면
- * 얼굴 크기가 들쭉날쭉해진다. 예전 값(아이 1/5 · 어른 1/7)은 Gemini 가 어른을 1/5 쯤으로 그려 버려서
- * 하온이 얼굴만 아빠의 60% 로 작아 보였다. 이 표면 아이 얼굴이 어른의 약 83%, 엄마가 아빠의 약 93% 로 맞고,
- * 어른 1:5.5 는 모델이 원래 그리려는 쪽과 가까워 덜 흔들린다(얼굴이 커져 닮게 그리기에도 낫다).
+ * 얼굴 크기가 들쭉날쭉해진다. 오전엔 어른이 크게 그려진다고(아빠 약 1:4.7) 아이 1:4 · 어른 1:5.5 로 올렸는데,
+ * 비율 견본을 붙이자 모델이 그 값을 넘겨 아이가 대두(약 1:3.5)가 됐다 — 사장님이 앞 그림(아이 약 1:4.2)을 골랐다.
+ * 모델은 표보다 20% 안팎 크게 그리므로 예전 값을 표로 두고, 많이 큰 머리만 견본·재기로 막는다(lib/family-head).
  * 표 값은 lib/family-head(headChartRatio) 한 곳에 둔다 — 비율 견본 그림·그린 뒤 재기·단체 사진이 같은 표를 쓴다.
  */
 const FAMILY_SCALE =

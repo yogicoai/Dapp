@@ -127,9 +127,9 @@ describe("evenOutHead — 재고, 벗어났으면 시간이 될 때만 한 번 �
   });
 
   it("다시 그린 게 반대로 더 멀리 갔으면 처음 그림을 남긴다", async () => {
-    const r = rig({ ratios: { first: 4.4, redraw: 7.9 }, start: 12_000 });
+    const r = rig({ ratios: { first: 4.2, redraw: 8.3 }, start: 12_000 });
     const out = await evenOutHead({ image: "first" as Img, target: 5.5, ...r, ...BUDGET });
-    assert.deepEqual([out.image, out.ratio, out.log.outcome, out.log.second], ["first", 4.4, "closer-first", 7.9]);
+    assert.deepEqual([out.image, out.ratio, out.log.outcome, out.log.second], ["first", 4.2, "closer-first", 8.3]);
   });
 
   it("머리가 너무 작아도(small) 다시 그린다", async () => {
