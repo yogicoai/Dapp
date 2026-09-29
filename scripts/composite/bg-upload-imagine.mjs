@@ -5,7 +5,8 @@
  *
  * - 목록: scratch-art/상상배경목록.json — [{no, file, world, chip, ko, slug, hold?}] (분류 검사 뒤 만든 것).
  *   hold: true 인 그림(생물·글자가 들어간 것 등)은 올리지 않는다.
- * - 원본: 바탕화면 bg/상상나라/<file> (1448x1086). webp q82 로 바꿔 bg/<slug>.webp 에 올린다.
+ * - 원본: 바탕화면 bg/<dir>/<file> (1448x1086). dir 이 없으면 1차 폴더 상상나라, 3차(2026-09-29)는 dir "3차배경".
+ *   webp q82 로 바꿔 bg/<slug>.webp 에 올린다.
  * - 일상 배경과 같은 bg/ 폴더, 이름 앞머리 im-<세계>- 로 구분한다. 일상 배경 파일은 건드리지 않는다.
  * - 주소 끝 ?v=<MD5 앞 8자리> 는 bg-upload.mjs 와 같은 이유(cafe24 는 주소 통째로 캐시, 반쪽 파일이 한동안 남음).
  * - backgrounds.json 에서 im- 로 시작하는 줄만 이번 결과로 바꾸고, 일상 배경 줄은 그대로 둔다.
@@ -17,7 +18,7 @@ import { Client } from "basic-ftp";
 import { Readable } from "node:stream";
 
 const DRY = process.argv.includes("--dry");
-const ROOT = "C:/Users/Yogibo Design/Desktop/bg/상상나라";
+const ROOT = "C:/Users/Yogibo Design/Desktop/bg";
 const LIST = "scratch-art/상상배경목록.json";
 const MANIFEST = "src/data/backgrounds.json";
 const PUB = (process.env.CAFE24_PUBLIC_BASE_URL ?? "").replace(/\/+$/, "");
@@ -83,7 +84,7 @@ const out = [];
 let uploaded = 0, skipped = 0;
 let n = Math.max(0, ...everyday.map((e) => Number(e.n) || 0));
 for (const r of live) {
-  const buf = await sharp(fs.readFileSync(`${ROOT}/${r.file}`)).webp({ quality: 82 }).toBuffer();
+  const buf = await sharp(fs.readFileSync(`${ROOT}/${r.dir ?? "상상나라"}/${r.file}`)).webp({ quality: 82 }).toBuffer();
   const meta = await sharp(buf).metadata();
   const h = md5(buf);
   const rec = {

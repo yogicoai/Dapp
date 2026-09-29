@@ -19,6 +19,7 @@ import {
 } from "@/components/create/BestFriendChip";
 import { ART_STYLES } from "@/lib/art-styles";
 import { bestFriend, type FamilyMember } from "@/lib/family";
+import { castPortraits } from "@/lib/family-cast";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
 import {
@@ -59,6 +60,7 @@ import {
 import { looksToDrawingPrompt } from "@/lib/child-looks";
 import { heroFromStory } from "@/lib/illustration-rules";
 import { locationKeyOf } from "@/lib/story-quality";
+import { tidyPunctuation } from "@/lib/story-punctuation";
 import { pickLocationDetail } from "@/lib/scene-edit";
 import {
   EMPTY_COUNTS,
@@ -1457,6 +1459,11 @@ export default function CreatePage() {
   const locationTouchedRef = useRef(false);
   // 캐릭터 시트는 책에 함께 저장한다 — 나중에 한 쪽만 다시 그릴 때 얼굴 기준이 된다.
   const sheetImageRef = useRef<string | null>(null);
+  /**
+   * 그 시트에 고정 얼굴(우리 가족 캐릭터)이 붙은 등장인물 이름 — 서버가 실제로 붙였다고 답한 것만.
+   * 쪽 그림 요청과 책의 등장인물에 fixed 로 단다(얼굴·머리는 설명 글보다 시트를 따르게).
+   */
+  const fixedCastRef = useRef<Set<string>>(new Set());
   // 장소 시트(장소마다 한 장)도 같이 저장한다 — 다시 그릴 때 같은 곳이 나오게.
   const locationSheetsRef = useRef<LocationSheet[]>([]);
   /*
@@ -2305,7 +2312,9 @@ export default function CreatePage() {
   function savePageText(index: number) {
     // 맥에서 입력한 한글은 자모가 분리된 형태(NFD)로 들어올 수 있다. 그대로 두면
     // 동글 같은 글꼴에서 ◆?로 깨져 보인다 — 저장 전에 한 번 합쳐 둔다.
-    const text = pageDraft.normalize("NFC").trim();
+    // 부모가 고친 글도 만든 대본과 같이 부호만 손본다(빠진 마침표·띄어쓰기) — 성우가 문장 끝에서 쉬게.
+    // 글자는 한 자도 바꾸지 않는다(lib/story-punctuation tidyPunctuation).
+    const text = tidyPunctuation(pageDraft.normalize("NFC").trim());
     if (!text) {
       setEditingPage(null);
       return; // 빈 쪽은 만들지 않는다 — 고치기 전 문장을 그대로 둔다
@@ -2594,6 +2603,7 @@ export default function CreatePage() {
         key: progressKey,
         savedAt: 0,
         sheet: sheetImageRef.current,
+        sheetFixed: [...fixedCastRef.current],
         locationSheets: locationSheetsRef.current,
         images: [...images],
         passed: [...passedRef.current],
@@ -2606,37 +2616,92 @@ export default function CreatePage() {
       // 그림 모델에는 영어로 — 영어 규칙 사이에 한국어 한 줄이 끼는 것보다 확실히 읽힌다.
       const heroLooksEn = looksToDrawingPrompt(child?.looks);
       let sheet = saved?.sheet ?? null;
+      // 이어 그리기면 그 시트에 고정 얼굴이 붙었던 이름 그대로(옛 보관본엔 없다 = 고정 얼굴 없이 그린 시트).
+      fixedCastRef.current = new Set(sheet ? (saved?.sheetFixed ?? []) : []);
       if (!sheet) {
-        const sheetRes = await authedFetch("/api/character-sheet", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            characters: s.characters,
-            artStyleId: artStyle,
-            drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
-            // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
-            looks: heroLooks,
-            looksEn: heroLooksEn,
-            // 나이·성별은 이야기에만 가고 시트에는 안 갔다 — 다섯 살이 여덟 살 얼굴로 나오던 구멍.
-            heroAge: age ?? child?.age ?? null,
-            heroGender: gender !== "unspecified" ? gender : child?.gender,
-            // 엄마·아빠도 부모가 고른 대로 — 안경은 여기 적혔을 때만 그린다.
-            adultLooks: {
-              엄마: parentLooksToPrompt(child?.parents?.mom, "mom") || undefined,
-              아빠: parentLooksToPrompt(child?.parents?.dad, "dad") || undefined,
-            },
-          }),
-          signal: ac.signal,
+        /*
+         * 우리 가족 캐릭터의 고정 얼굴 — 이야기에 나오는 사람만, 고정한 그림(portrait)만(lib/family-cast).
+         * 가족 규칙(사장님 2026-09-28): 고정한 사람은 동화마다 그 모습 그대로. 예전엔 시트에 얼굴이 안 가서
+         * 고정한 하온과 다른 하온이 그려졌다(2026-09-29 '하온이의 나뭇잎 보물찾기').
+         * 다른 기기에서 방금 고정한 얼굴도 잡게 서버 가족을 한 번 더 읽는다(3초까지만 — 못 읽으면 이 기기 값).
+         */
+        const family = (await waitAtMost(loadChildRemote(), 3000, null))?.family ?? child?.family;
+        const portraits = castPortraits(s.characters, family);
+        const requestSheet = async (withPortraits: boolean) => {
+          const res = await authedFetch("/api/character-sheet", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              characters: s.characters,
+              artStyleId: artStyle,
+              drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
+              // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
+              looks: heroLooks,
+              looksEn: heroLooksEn,
+              // 나이·성별은 이야기에만 가고 시트에는 안 갔다 — 다섯 살이 여덟 살 얼굴로 나오던 구멍.
+              heroAge: age ?? child?.age ?? null,
+              heroGender: gender !== "unspecified" ? gender : child?.gender,
+              // 엄마·아빠도 부모가 고른 대로 — 안경은 여기 적혔을 때만 그린다.
+              adultLooks: {
+                엄마: parentLooksToPrompt(child?.parents?.mom, "mom") || undefined,
+                아빠: parentLooksToPrompt(child?.parents?.dad, "dad") || undefined,
+              },
+              // 고정 얼굴 — 서버에 필요한 것만(등장인물 이름·참고 그림 주소·사람 id). 서버가 주소를 다시 검사한다.
+              ...(withPortraits
+                ? { portraits: portraits.map((p) => ({ name: p.name, ref: p.ref, memberId: p.memberId })) }
+                : {}),
+            }),
+            signal: ac.signal,
+          });
+          // .json()을 ok 검사보다 먼저 부르면, 프록시가 HTML 오류 페이지를 주는 순간
+          // "Unexpected token '<'" 같은 알 수 없는 말이 부모에게 그대로 뜬다.
+          const data = (await res.json().catch(() => ({}))) as {
+            error?: string;
+            image?: string;
+            code?: string;
+            fixed?: unknown;
+          };
+          return { res, data };
+        };
+        const withFaces = portraits.length > 0;
+        // 얼굴 없이 보낸 요청이거나 부모가 멈췄으면 예전처럼 그대로 던진다.
+        let reply = await requestSheet(withFaces).catch((e: unknown) => {
+          if (!withFaces || ac.signal.aborted) throw e;
+          return null;
         });
-        // .json()을 ok 검사보다 먼저 부르면, 프록시가 HTML 오류 페이지를 주는 순간
-        // "Unexpected token '<'" 같은 알 수 없는 말이 부모에게 그대로 뜬다.
-        const sheetData = (await sheetRes.json().catch(() => ({}))) as { error?: string; image?: string };
+        /*
+         * 고정 얼굴을 붙인 시트가 실패했다 — 얼굴 없이 한 번 더 그린다. 책 만들기를 여기서 멈추지 않는다.
+         * 거절(422 portrait)만이 아니다: 얼굴을 붙이면 요청이 길어져 60초 제한(504)·5xx·그림 없는 답·연결 끊김도
+         * 늘고, 같은 얼굴로 다시 눌러 봐야 또 실패할 수 있다(2026-09-29 검토). 로그인(401)·잦은 요청(429)은 얼굴
+         * 탓이 아니라 그대로 둔다. 기록에는 남긴다(마스터가 어느 책이 얼굴 없이 그려졌는지 알게).
+         */
+        const faceSheetFailed =
+          withFaces &&
+          !ac.signal.aborted &&
+          (!reply || ((!reply.res.ok || !reply.data.image) && reply.res.status !== 401 && reply.res.status !== 429));
+        if (faceSheetFailed) {
+          pageFailures.push({
+            stage: "sheet",
+            reason:
+              reply?.data.code === "portrait"
+                ? "고정 얼굴로 인물 시트를 못 그림 → 얼굴 없이 다시 그림"
+                : `고정 얼굴 시트 실패(${reply ? `HTTP ${reply.res.status}` : "연결 끊김"}) → 얼굴 없이 다시 그림`,
+          });
+          reply = await requestSheet(false);
+        }
+        // 첫 요청이 연결 끊김으로 실패한 직후 부모가 멈춘 경우뿐이다 — 멈춤으로 넘긴다(오류 문구를 띄우지 않게).
+        if (!reply) throw new DOMException("그리기를 멈췄어요.", "AbortError");
+        const { res: sheetRes, data: sheetData } = reply;
         if (!sheetRes.ok) {
           throw new Error(sheetData.error ?? `캐릭터 그림을 만들지 못했어요 (HTTP ${sheetRes.status})`);
         }
         sheet = sheetData.image ?? null;
         if (!sheet) throw new Error("캐릭터 그림을 받지 못했어요. 잠시 뒤 다시 시도해 주세요.");
         counts.sheet += 1;
+        // 서버가 실제로 붙인 얼굴만(주소가 이상하거나 못 받은 사람은 빠진다).
+        fixedCastRef.current = new Set(
+          Array.isArray(sheetData.fixed) ? sheetData.fixed.filter((n): n is string => typeof n === "string") : [],
+        );
       }
       sheetImageRef.current = sheet;
       locationSheetsRef.current = saved?.locationSheets ? [...saved.locationSheets] : [];
@@ -2834,6 +2899,8 @@ export default function CreatePage() {
                       characterIndex === 0 && (heroLooksEn || heroLooks)
                         ? `${c.description}, ${heroLooksEn || heroLooks}`
                         : c.description,
+                    // 고정 얼굴로 시트를 그린 사람 — 얼굴·머리는 설명 글보다 시트를 따르게(api/illustrate-page).
+                    ...(fixedCastRef.current.has(c.name) ? { fixed: true } : {}),
                   })),
                   // 주인공 성별·생김새 — 시트에만 가고 쪽 그림엔 안 가서 남자아이가 단발·꽃핀으로 나왔다.
                   hero: heroFromStory(
@@ -3237,7 +3304,12 @@ export default function CreatePage() {
       characterSheet: hosted.sheet,
       locationSheets: hosted.locationSheets.length ? hosted.locationSheets : undefined,
       locationDetail: locationDetail.trim() || undefined,
-      cast: s.characters.map((c) => ({ name: c.name, description: c.description })),
+      // fixed — 고정 얼굴로 시트를 그린 사람. 한 쪽만 다시 그릴 때도 얼굴·머리는 시트를 따르게 남긴다.
+      cast: s.characters.map((c) => ({
+        name: c.name,
+        description: c.description,
+        ...(fixedCastRef.current.has(c.name) ? { fixed: true } : {}),
+      })),
       // 한 쪽만 다시 그릴 때도 주인공 성별·생김새를 못 박게 남긴다.
       hero: heroFromStory(
         s.characters,

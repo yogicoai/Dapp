@@ -515,6 +515,58 @@ describe("'늘 그대로' 견주기 — lockKey", () => {
     assert.deepEqual(lockChanges("sibling", { build: "보통이에요" }, { build: "통통해요" }), ["몸집: 보통이에요 → 통통해요"]);
     assert.deepEqual(lockChanges("grandma", {}, { outfit: "니트" }), []);
   });
+  it("사진으로 그린 그림(fromPhoto)은 칩이 비었거나 바뀌어도 '모습이 바뀌었어요'를 띄우지 않는다", () => {
+    const gm: FamilyMember = { id: "m-g", role: "grandma", callName: "할머니" };
+    // 칩 없이 사진으로 그렸다 — 그때 lockKey 는 빈 목록
+    const photoPic = { ...P, lockKey: currentLockKey(gm, null), fromPhoto: true };
+    const later: FamilyMember = { ...gm, portrait: photoPic, looks: { hair: "단발", glassesType: "뿔테" } };
+    assert.equal(portraitLooksChanged(later, null), false);
+    assert.equal(showsLooksChanged(later, null), false);
+    // 같은 칩 변화라도 칩으로 그린 그림이면 묻는다(지금까지와 같다)
+    const chipPic = { ...P, lockKey: currentLockKey(gm, null) };
+    assert.equal(showsLooksChanged({ ...later, portrait: chipPic }, null), true);
+  });
+  it("fromPhoto 는 true 만 저장하고, 기기끼리 합칠 때 그림과 함께 따라간다 — 사진 자체는 어디에도 없다", () => {
+    const out = normalizeFamily([
+      { id: "mom", role: "mom", callName: "엄마", portrait: { ...P, fromPhoto: true } },
+      { id: "dad", role: "dad", callName: "아빠", portrait: { ...P, fromPhoto: "yes" } },
+      // 누가 사진을 끼워 넣어도(옛 코드·손으로 고친 값) 정규화가 버린다 — 알려진 칸만 남긴다.
+      { id: "m-g", role: "grandma", callName: "할머니", draft: { ...P, photo: "data:image/jpeg;base64,/9j/AAAA" } },
+    ]);
+    assert.equal(out?.[0].portrait?.fromPhoto, true);
+    assert.equal("fromPhoto" in (out?.[1].portrait ?? {}), false);
+    assert.equal(JSON.stringify(out).includes("data:image"), false);
+    const server = { family: [{ id: "mom", role: "mom" as const, callName: "엄마" }], familyAt: "2026-09-29T09:00:00Z" };
+    const local = {
+      family: [{ id: "mom", role: "mom" as const, callName: "엄마", portrait: { ...P, fromPhoto: true }, picAt: "2026-09-29T10:00:00Z" }],
+      familyAt: "2026-09-29T08:00:00Z",
+    };
+    assert.equal(mergeFamily(server, local).family?.[0].portrait?.fromPhoto, true);
+  });
+  it("headRatio(잰 머리 비율)는 2~10 숫자만 0.01 단위로 지키고, 기기끼리 합칠 때 그림과 함께 따라간다", () => {
+    const out = normalizeFamily([
+      { id: "dad", role: "dad", callName: "아빠", portrait: { ...P, headRatio: 4.2137 }, draft: { ...P, headRatio: 5.5 } },
+      { id: "mom", role: "mom", callName: "엄마", portrait: { ...P, headRatio: "5.5" } },
+      { id: "child", role: "child", callName: "하온", portrait: { ...P, headRatio: 42 }, prevDraft: { ...P, headRatio: Number.NaN } },
+    ]);
+    assert.equal(out?.[0].portrait?.headRatio, 4.21);
+    assert.equal(out?.[0].draft?.headRatio, 5.5);
+    assert.equal("headRatio" in (out?.[1].portrait ?? {}), false, "글자는 버린다");
+    assert.equal("headRatio" in (out?.[2].portrait ?? {}), false, "범위 밖은 버린다");
+    assert.equal("headRatio" in (out?.[2].prevDraft ?? {}), false);
+    // 없는 그림(예전 그림)은 칸 자체가 없다 — 단체 사진이 실제 키 비율 그대로 세운다
+    assert.deepEqual(normalizeFamily([{ id: "child", role: "child", callName: "하온", portrait: P }])?.[0].portrait, P);
+    const server = {
+      family: [{ id: "dad", role: "dad" as const, callName: "아빠", portrait: P, picAt: "2026-09-29T09:00:00Z" }],
+      familyAt: "2026-09-29T09:00:00Z",
+    };
+    const local = {
+      family: [{ id: "dad", role: "dad" as const, callName: "아빠", portrait: { ...P, headRatio: 5.31 }, picAt: "2026-09-29T10:00:00Z" }],
+      familyAt: "2026-09-29T08:00:00Z",
+    };
+    assert.equal(mergeFamily(server, local).family?.[0].portrait?.headRatio, 5.31, "더 새 그림 쪽의 잰 비율");
+    assert.equal(mergeFamily(local, { ...server, family: [{ ...server.family[0], picAt: "2026-09-29T11:00:00Z" }] }).family?.[0].portrait?.headRatio, undefined);
+  });
   it("lockedLooksChanged — 옷·메모만 바뀌면 false, 이런 점도 순서는 상관없다", () => {
     assert.equal(lockedLooksChanged({ hair: "단발", outfit: "니트" }, { hair: "단발", outfit: "셔츠", bottom: "치마" }), false);
     assert.equal(lockedLooksChanged({ marks: ["점", "덧니"] }, { marks: ["덧니", "점"] }), false);

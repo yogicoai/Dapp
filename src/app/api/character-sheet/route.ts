@@ -1,8 +1,24 @@
 import { NextResponse } from "next/server";
 import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
-import { GeminiError, fromDataUrl, generateImage, loadReferenceImage, shrinkForReference, toDataUrl } from "@/lib/gemini";
+import {
+  GeminiError,
+  fromDataUrl,
+  generateImage,
+  loadReferenceImage,
+  shrinkForReference,
+  toDataUrl,
+  type GeneratedImage,
+} from "@/lib/gemini";
 import { heroIdentity } from "@/lib/child-looks";
+import { familyFolderOf, familyUrlPrefix, fetchFamilyRef } from "@/lib/family-ref";
+import {
+  characterSheetPrompt,
+  fixedAdultNotes,
+  maxPortraitRefs,
+  pickSheetPortraits,
+  sheetReferences,
+} from "@/lib/sheet-prompt";
 
 /*
  * 그리는 데 20~30초가 걸린다(검사에 걸려 다시 그리면 그 두 배).
@@ -18,6 +34,10 @@ export const maxDuration = 60;
  * 인수인계 앱이 검증한 방식: 시트를 한 장 만들어 매 쪽 삽화에 참조로 재주입하면
  * 8쪽 내내 같은 얼굴이 나온다. 우리는 사진 없이 클로드가 쓴 인물 묘사(@@CHARACTER@@)
  * 로 시트를 만든다. 역할 분담: 클로드가 묘사를 쓰고, Gemini는 그리기만 한다.
+ *
+ * 고정 얼굴(2026-09-29): 우리 가족 캐릭터에서 얼굴을 고정한 사람이 이야기에 나오면 그 그림(참고용 JPEG)을
+ * 함께 붙인다(portraits 칸 — 만들기 화면이 lib/family-cast 로 짝지어 보낸다). 시트가 모든 쪽의 유일한 얼굴
+ * 기준이라 여기만 물리면 책 전체가 그 얼굴이 된다. 프롬프트는 lib/sheet-prompt.
  */
 /*
  * 회원만 부를 수 있다.
@@ -51,6 +71,8 @@ export async function POST(request: Request) {
     heroAge?: unknown;
     heroGender?: unknown;
     adultLooks?: unknown;
+    /** 고정 얼굴 [{ name: 등장인물 이름, ref: 가족 그림 참고 주소, memberId }] — 선택. 없으면 예전 그대로. */
+    portraits?: unknown;
   };
   /**
    * 엄마·아빠 생김새 — 부모가 설정에서 고른 것(선택).
@@ -97,18 +119,6 @@ export async function POST(request: Request) {
 
   const style =
     ART_STYLES.find((s) => s.id === input.artStyleId) ?? ART_STYLES[0];
-  /*
-   * 그림체 견본을 참조로 붙인다.
-   *
-   * 시트는 책 전체의 그림체 기준인데, 정작 시트 자신은 한 줄짜리 영어 문구로만
-   * 그렸다. 문구는 해석이 갈린다 — 같은 "따뜻한 수채화"가 어느 날은 진하고 어느 날은
-   * 흐리게 나오고, 그 시트를 따라 책 전체가 흔들렸다. 부모가 화면에서 고른 견본
-   * (public/art-styles/여우 그림)이 바로 그 그림체의 실물이라 이것을 함께 준다.
-   * 요청의 origin으로 받아 온다 — Vercel 서버 함수 안에는 public 파일이 없을 수 있다.
-   */
-  const styleSample = style.image
-    ? await loadReferenceImage(new URL(style.image, request.url).toString()).catch(() => null)
-    : null;
 
   const characters = (input.characters ?? [])
     .map((c) => ({
@@ -127,103 +137,73 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "등장인물이 없습니다." }, { status: 400 });
   }
 
-  const cast = characters
-    .map((c) => `- ${c.name}: ${c.description || "주인공 아이"}`)
-    .join("\n");
+  /*
+   * 고정 얼굴 — 이 회원 폴더의 참고용 JPEG 만, 등장인물에 있는 이름에만 붙인다(lib/sheet-prompt pickSheetPortraits,
+   * 주소 규칙은 lib/family-ref). 아무 주소나 받아 오지 않는다(남의 가족 그림·서버 내부 주소를 막는다).
+   * 못 받은 사람(주소가 이상함·받기 실패·6초 넘음)은 그 사람만 예전처럼 글로 그린다 — 책은 그대로 만든다.
+   * 로그에는 수만 남긴다(주소에 회원 uid 가 들어 있다).
+   */
+  const asked = Array.isArray(input.portraits) ? input.portraits.length : 0;
+  const familyPrefix = familyUrlPrefix(process.env, familyFolderOf(caller.uid));
+  if (asked > 0 && !familyPrefix) {
+    console.warn("[character-sheet] CAFE24 주소 설정이 없어 고정 얼굴을 쓰지 못함:", asked);
+  }
+  const picked = pickSheetPortraits(input.portraits, characters, familyPrefix, maxPortraitRefs(process.env));
 
-  // "wholesome, fully clothed"는 인수인계 문서의 함정 메모 — 유아 장면이 안전필터에
-  // 과잉 차단되는 걸 이 순화 문구가 풀어준다.
-  // 붙이는 그림 순서: 그림체 견본 → 아이 그림. 문장이 "몇 번째"를 말하게 한다.
-  const attached = [styleSample ? "sample" : "", drawing ? "drawing" : ""].filter(Boolean);
-  const nth = (k: string) => ["FIRST", "SECOND"][attached.indexOf(k)] ?? "attached";
+  /*
+   * 그림체 견본을 참조로 붙인다.
+   *
+   * 시트는 책 전체의 그림체 기준인데, 정작 시트 자신은 한 줄짜리 영어 문구로만
+   * 그렸다. 문구는 해석이 갈린다 — 같은 "따뜻한 수채화"가 어느 날은 진하고 어느 날은
+   * 흐리게 나오고, 그 시트를 따라 책 전체가 흔들렸다. 부모가 화면에서 고른 견본
+   * (public/art-styles/여우 그림)이 바로 그 그림체의 실물이라 이것을 함께 준다.
+   * 요청의 origin으로 받아 온다 — Vercel 서버 함수 안에는 public 파일이 없을 수 있다.
+   * 고정 얼굴은 견본과 함께(동시에) 받는다 — 얼굴 받기가 늘리는 시간은 최대 6초.
+   */
+  const [styleSample, ...portraitImages] = await Promise.all([
+    style.image
+      ? loadReferenceImage(new URL(style.image, request.url).toString()).catch(() => null)
+      : Promise.resolve(null),
+    ...picked.portraits.map((p) => fetchFamilyRef(p.url)),
+  ]);
+  const portraits = picked.portraits.flatMap((p, i) => {
+    const image = portraitImages[i];
+    return image ? [{ name: p.name, memberId: p.memberId, image }] : [];
+  });
+  if (asked > 0) {
+    console.info("[character-sheet] 고정 얼굴", {
+      asked,
+      used: portraits.length,
+      rejected: picked.rejected,
+      dropped: picked.dropped,
+      unreachable: picked.portraits.length - portraits.length,
+    });
+  }
+  // 주인공 얼굴이 고정돼 있으면 그 그림이 원본이다 — 아이 그림(지금은 늘 없음)은 붙이지 않는다.
+  const usedDrawing = portraits.some((p) => p.name === characters[0].name) ? null : drawing;
 
-  const prompt = [
-    `Character reference sheet for a children's picture book, ${style.prompt}.`,
-    styleSample
-      ? [
-          `The ${nth("sample")} attached image is the STYLE SAMPLE for this whole book. Copy its rendering exactly: medium, brush or line quality, edge softness, colour palette and saturation, shading method, paper/texture and finish.`,
-          "It is a style reference ONLY — do NOT draw the fox, do NOT copy its subject, pose or composition. Only the way it is painted carries over.",
-        ].join("\n")
-      : "",
-    `Characters:\n${cast}`,
-    // 주인공(첫 번째 인물)은 나이·성별을 못박고, 생김새는 부모가 고른 특징을 그대로 따른다.
-    `The FIRST character is the child hero: ${hero}. Draw a child of exactly that age — a small child's proportions and face, never older.`,
-    looks
-      ? `The hero's appearance MUST match these traits exactly: ${looks}. Keep these traits visible and consistent — they are how the child recognizes themselves. Hair texture is a hard identity trait: straight hair must stay completely straight with no curls or perm volume; wave, natural curls, and permed curls must remain visually distinct and must never be substituted for one another.`
-      : "",
-    // 아이 그림이 있으면 그 그림이 주인공의 원본이다 — 아이가 자기 캐릭터로 알아보게
-    // 눈에 띄는 특징(머리 모양·옷 색·좋아하는 물건)을 반드시 살린다.
-    drawing
-      ? [
-          `The ${nth("drawing")} attached image is a CHILD'S OWN DRAWING of the first character. Treat it as a design brief, NOT as art to copy.`,
-          "COPY these identifying traits exactly so the child recognizes their character: hair color and hairstyle, clothing type and colors, any accessory or object they drew, and any other standout detail.",
-          "DO NOT copy the drawing's crude execution: no stick-figure limbs, no triangle body, no flat shapes, no childlike scrawl, no traced outlines.",
-          "Instead draw a fully realized, professional picture-book character with natural body proportions for their age, real arms and legs, expressive face, and properly drawn clothing — as a skilled illustrator would when handed a child's sketch and asked to turn it into a real storybook hero.",
-          "The child must think 'that's MY character, but drawn beautifully'.",
-        ].join("\n")
-      : "",
-    /*
-     * 시트가 흔들리면 책 전체가 흔들린다. 여기서 두 가지를 못박는다.
-     *
-     * ① 인원 수 — 목록에 없는 인물이 끼거나 같은 인물이 두 번 그려지면, 매 쪽 삽화가
-     *    그 시트를 참조하므로 8쪽 내내 같은 사고가 반복된다.
-     * ② 서로 달라 보이기 — 주인공과 친구가 비슷하게 그려지면, 쪽 삽화에서 모델이
-     *    둘을 구별하지 못해 주인공을 두 번 그린다(실제 발생: 친구가 주인공의 쌍둥이로 나옴).
-     *    그래서 머리와 옷 색이 확실히 다르도록 시트 단계에서 갈라 둔다.
-     */
-    `Draw EXACTLY ${characters.length} character${characters.length > 1 ? "s" : ""}, one per person listed above, arranged left to right in that order, evenly spaced and clearly separated.`,
-    "Each listed character appears exactly ONCE. Never repeat a character, never draw twins, never add anyone who is not on the list.",
-    /*
-     * 어른에게 안경·수염을 임의로 붙이지 않는다.
-     *
-     * 이 동화의 어른은 아이의 실제 엄마·아빠다. 안 쓰는 안경을 씌우면 아이가 "우리
-     * 아빠"로 못 알아본다(실제로 6쪽 내내 안경잡이 아빠가 그려졌다). 구별은 머리
-     * 길이와 옷 색으로 충분하다. 글로 적혀 있을 때만 그린다.
-     */
-    // 머리 색 한국어 풀이 — 어른 줄은 머리 색을 꾸밈말로 적는다(희끗희끗한 짧은 머리 …). 가족 그림(api/family/portrait)과 같은 풀이.
-    ...(adultLooks.length > 0
-      ? [
-          "Hair colour words in the adult descriptions below: 까만/까만색 = black, 짙은 갈색 = dark brown, 밝은 갈색 = light brown, 붉은 갈색 = auburn, 희끗희끗(한) = black with grey streaks, 회색 = grey, 하얀/흰머리 = white/silver.",
-        ]
-      : []),
-    ...adultLooks.map(
-      (a) =>
-        `The adult "${a.name}" looks EXACTLY like this, chosen by the child's parent (Korean): ${a.line}. Follow it literally — if it says they do not wear glasses, draw no glasses.`,
-    ),
-    "DO NOT invent facial accessories or features for the ADULTS. Never add glasses, sunglasses, a beard, a moustache, a hat, earrings, a mole or a tattoo to any adult unless that exact item is written in their description above. These adults are the child's real family — a father wearing glasses he does not own makes the child fail to recognise him. Tell adults apart by HAIR LENGTH/STYLE and CLOTHING COLOUR only.",
-    characters.length > 1
-      ? [
-          "MAKE THEM UNMISTAKABLY DIFFERENT FROM EACH OTHER. This is the most important rule of this sheet.",
-          "Give each character a clearly different hairstyle (length and shape) AND clearly different clothing colours. If two descriptions happen to be similar, push them apart — change one character's hair length and shirt colour so the two can never be confused.",
-          "A reader glancing at this sheet must be able to tell instantly which character is which. Two characters that could be mistaken for the same child is a failure.",
-          "These are Korean children. ALL of them have black or dark brown hair. Never draw blonde, golden, yellow, red, ginger, silver or light-coloured hair on any child, even if a description hints at it — read such a hint as a dark shade, not a light one. Tell them apart by HAIRSTYLE and CLOTHING COLOUR only.",
-          "Follow each description's stated sex exactly. A character described as a boy is drawn as a boy with short hair; a character described as a girl is drawn as a girl. Never infer sex from the name.",
-          "Draw every face LARGE and clearly readable — this sheet is the identity reference for every page of the book, so each character's eyes, nose, mouth, hair shape and face shape must be sharp enough to copy. Do not shrink the characters to fit; crop the composition tighter if needed.",
-        ].join("\n")
-      : "",
-    /*
-     * 얼굴을 크게 — 시트는 매 쪽이 베끼는 원본인데, 전신만 세우면 얼굴이 가로의
-     * 1/4~1/6밖에 안 돼 눈·코·입이 흐릿하다. 그래서 쪽마다 얼굴이 조금씩 달라졌다.
-     * 위 줄엔 전신, 아래 줄엔 같은 인물의 얼굴 클로즈업을 크게 둔다.
-     */
-    [
-      "LAYOUT — two rows on one simple plain white background.",
-      "TOP ROW: each character full body, front view, standing, in the listed order.",
-      "BOTTOM ROW: directly under each figure, a LARGE head-and-shoulders close-up of the SAME character (same face, same hair, same expression neutral-friendly), big enough that eyes, nose, mouth, eyebrows, face shape and fringe are sharp and easy to copy.",
-      "The close-up must be the same person as the figure above it — identical design, just closer.",
-    ].join("\n"),
-    "Consistent character design to be reused across every page of the book.",
-    "Wholesome, innocent, fully clothed, child-friendly.",
-    "NO text, no letters, no labels in the image.",
-  ]
-    .filter(Boolean)
-    .join("\n");
+  const prompt = characterSheetPrompt({
+    stylePrompt: style.prompt,
+    characters,
+    hero,
+    looks,
+    adultLooks,
+    styleSample: Boolean(styleSample),
+    drawing: Boolean(usedDrawing),
+    portraits: portraits.map((p) => p.name),
+    // 엄마·아빠 생김새 줄은 붙은 얼굴의 사람 id(파일 이름)로 고른다 — 인물 이름 꼴('엄마 (지은)'·'어머니')에 기대지 않는다.
+    fixedAdults: fixedAdultNotes(portraits.map((p) => p.memberId)),
+  });
 
   try {
     const image = await generateImage({
       prompt,
-      // 순서 = 프롬프트의 '몇 번째': 그림체 견본 → 아이 그림
-      references: [styleSample, drawing].filter(Boolean) as NonNullable<typeof drawing>[],
+      // 순서 = 프롬프트의 '몇 번째': 그림체 견본 → 고정 얼굴 → 아이 그림(sheetReferences)
+      references: sheetReferences<GeneratedImage>(
+        styleSample,
+        portraits.map((p) => p.image),
+        usedDrawing,
+      ),
       /*
        * 인물이 셋 이상이면 가로로 넓은 4:3에 그린다.
        * 정사각형 한 장에 넷을 나란히 세우면 얼굴 하나가 가로 1/4밖에 안 돼,
@@ -231,14 +211,33 @@ export async function POST(request: Request) {
        * 달라지던 실제 원인 중 하나). 넓게 그리면 얼굴에 픽셀이 더 간다.
        */
       aspectRatio: characters.length >= 3 ? "4:3" : "1:1",
+      // 고정 얼굴을 붙였으면 그림 없는 답(안전 검사 멈춤)은 두 번까지만 — 60초를 다 쓰기 전에 알리면
+      // 만들기 화면이 얼굴 없이 한 번 더 그린다(아래 422 portrait).
+      ...(portraits.length ? { noImageAttempts: 2 } : {}),
     });
     /*
      * 작게 줄여서 돌려준다 — 이 시트는 쪽마다 참조로 **다시 올라가는** 그림이다.
      * 원본(2~3MB)을 그대로 두면 장소 시트와 합쳐 요청이 4.5MB를 넘어 그 쪽들이
      * 통째로 실패한다(2026-08-29 실제 사고).
+     * fixed — 고정 얼굴이 실제로 붙은 등장인물 이름. 화면이 쪽 그림·책의 등장인물에 표시한다.
      */
-    return NextResponse.json({ image: toDataUrl(await shrinkForReference(image)) });
+    return NextResponse.json({
+      image: toDataUrl(await shrinkForReference(image)),
+      ...(portraits.length ? { fixed: portraits.map((p) => p.name) } : {}),
+    });
   } catch (e) {
+    /*
+     * 고정 얼굴을 붙인 시트를 그림 모델이 거절했다 — 안전 검사(422)·그림 없는 답(noImage)·그림을 못 읽음(400).
+     * 422(portrait)로 알리면 만들기 화면이 얼굴 없이 한 번 더 부른다 — 책 만들기는 멈추지 않는다.
+     * 여기서 바로 다시 그리지 않는다: 한 요청에서 두 번 그리면 60초 제한을 넘길 수 있다.
+     */
+    if (portraits.length > 0 && e instanceof GeminiError && (e.status === 422 || e.status === 400 || e.noImage)) {
+      console.warn("[character-sheet] 고정 얼굴 시트 거절:", e.status ?? "-", e.noImage ?? "");
+      return NextResponse.json(
+        { error: "가족 얼굴 그림으로 인물을 그리지 못했어요.", code: "portrait" },
+        { status: 422 },
+      );
+    }
     if (e instanceof GeminiError) {
       return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
     }

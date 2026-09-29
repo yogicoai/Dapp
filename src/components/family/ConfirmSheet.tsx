@@ -6,6 +6,7 @@
  * 관리자는 합계 옆에 '관리자 0개'.
  * 처음 고정(fix)이고 부르는 쪽이 onLooksOnly 를 주면 둘째 선택 '그림 없이 특징만 저장할게요'(쿠키 0개)를
  * 보인다(사장님 2026-09-28). 쿠키가 모자라도 누를 수 있다 — 그리기 서버는 부르지 않는다.
+ * 사진으로 그릴 사람(photoIds)은 이름 옆에 '사진으로'를 단다. 값은 칩으로 그릴 때와 같다(사장님 2026-09-29).
  */
 
 import { byRoleOrder, nextDrawCost, type FamilyMember } from "@/lib/family";
@@ -23,6 +24,7 @@ export function ConfirmSheet({
   master,
   variant,
   childGender,
+  photoIds,
   onClose,
   onConfirm,
   onCharge,
@@ -35,6 +37,8 @@ export function ConfirmSheet({
   /** fix: 처음 고정 / redraw: 고정된 사람 다시 그리기 */
   variant: "fix" | "redraw";
   childGender?: Gender;
+  /** 이번 방문에 사진을 고른 사람 id — '사진으로' 표시만(사진 자체는 넘기지 않는다) */
+  photoIds?: readonly string[];
   onClose: () => void;
   onConfirm: () => void;
   onCharge: () => void;
@@ -77,6 +81,9 @@ export function ConfirmSheet({
           <div key={m.id} className="flex min-h-[46px] items-center gap-2.5 border-b border-stone-200/70">
             <FaceAvatar member={m} size={34} childGender={childGender} />
             <span className="min-w-0 flex-1 truncate text-[15px] font-extrabold text-neutral-800">{displayName(m)}</span>
+            {photoIds?.includes(m.id) && (
+              <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-extrabold text-emerald-700">사진으로</span>
+            )}
             <span className="text-sm font-extrabold" style={{ color: colors.accentDark }}>
               {cost === 0 ? "0개 (포함된 다시 그리기)" : `${cost}개`}
             </span>

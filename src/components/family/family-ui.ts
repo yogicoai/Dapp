@@ -20,6 +20,7 @@ import {
   type FamilyPortrait,
   type FamilyRole,
 } from "@/lib/family";
+import { PHOTO_REFUSED_MESSAGE } from "@/lib/family-photo";
 import { GLASSES_LEGACY, GLASSES_NONE, glassesChoice, hasBeard } from "@/lib/look-options";
 import { parentLooksToPrompt, type ChildPrefs, type Gender } from "@/lib/prefs";
 
@@ -34,8 +35,15 @@ export type Job = {
    * 오류 갈래 — 화면이 충전 안내·다시 로그인 등 다른 버튼을 고른다.
    *  price : 화면이 보여 준 값보다 실제 값이 컸다(값은 안 나감) — 다시 하기 전에 확인 창을 띄운다.
    *  lost  : 응답을 잃었고 서버에도 닿지 못했다 — 다시 하기 전에 먼저 서버에 결과를 묻는다.
+   *  photo : 올린 사진으로는 못 그렸다(형식·크기, 또는 그림 모델이 거절 — 값은 되돌렸다). 같은 사진으로 다시 하지
+   *          않고 생김새 고르기로 가서 다른 사진이나 특징을 고르게 한다(사진은 이미 메모리에서 뺐다).
    */
-  kind?: "insufficient" | "setup" | "login" | "busy" | "price" | "lost" | "other";
+  kind?: "insufficient" | "setup" | "login" | "busy" | "price" | "lost" | "photo" | "other";
+  /**
+   * 다 그렸을 때 확인 화면에 보일 한 줄 — 사진이 거절돼 같은 쿠키로 대신 그렸을 때(응답 photoFallback,
+   * lib/family-photo PHOTO_FALLBACK_NOTE). 이 방문의 메모리에만 있다(저장하지 않는다).
+   */
+  note?: string;
 };
 
 /* ─────────────────────────── 글자 ─────────────────────────── */
@@ -297,6 +305,12 @@ export type PortraitRequest = {
   age?: number;
   looks: string;
   styleRef?: string;
+  /**
+   * 이 사람 사진(선택) — 'data:image/jpeg;base64,…'(긴 변 1024px로 줄인 것, components/family/photo.ts).
+   * 가족 화면 메모리에만 있던 것을 이 요청에 한 번 실어 보낸다. 서버는 그리기에만 쓰고 저장하지 않는다.
+   * 응답을 잃었을 때 되묻는 길(GET)은 사진이 필요 없다.
+   */
+  photo?: string;
 };
 
 /** 그림 맞추기용 참고 그림 — 이미 고정된 다른 사람 하나(아이 우선). 자기 자신은 빼고. */
@@ -306,7 +320,13 @@ function pickStyleRef(family: FamilyMember[], selfId: string): string | undefine
   return (kid ?? others[0])?.portrait?.ref;
 }
 
-export function portraitRequest(m: FamilyMember, child: ChildPrefs, family: FamilyMember[]): PortraitRequest {
+/** photo — 이 사람 사진(data URL, 메모리에만 있던 것). 없으면 칩(생김새 줄)으로만 그린다. */
+export function portraitRequest(
+  m: FamilyMember,
+  child: ChildPrefs,
+  family: FamilyMember[],
+  photo?: string | null,
+): PortraitRequest {
   const gender =
     m.role === "child"
       ? child.gender === "girl" || child.gender === "boy"
@@ -329,6 +349,7 @@ export function portraitRequest(m: FamilyMember, child: ChildPrefs, family: Fami
     // 서버가 받는 길이(PORTRAIT_LOOKS_MAX, 600자)까지 — 어른 칸을 다 채워도 약 320자라 잘리지 않는다.
     looks: looksLine(m, child).slice(0, PORTRAIT_LOOKS_MAX),
     ...(styleRef ? { styleRef } : {}),
+    ...(photo ? { photo } : {}),
   };
 }
 
@@ -364,6 +385,9 @@ export function jobError(status: number, data: unknown): Job {
       return { status: "error", kind: "other", message: msg("결제가 취소돼 그림을 드리지 못했어요. 다시 해 주세요.") };
     case "input":
       return { status: "error", kind: "other", message: msg("요청이 잘못됐어요. 생김새를 다시 골라 주세요.") };
+    case "photo":
+      // 사진 형식·크기(값은 안 나감), 또는 그림 모델이 사진을 거절(값은 되돌림 — 서버 글에 '돌려드렸어요'가 붙는다).
+      return { status: "error", kind: "photo", message: msg(PHOTO_REFUSED_MESSAGE) };
     default:
       return { status: "error", kind: "other", message: msg("그리다 멈췄어요. 잠시 뒤 다시 해 주세요.") };
   }

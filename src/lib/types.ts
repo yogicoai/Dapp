@@ -132,7 +132,11 @@ export type Book = {
    * 예전 책에는 없으므로 선택이다(없으면 옆 쪽 그림을 기준으로 삼는다).
    */
   artStyleId?: string;
-  cast?: { name: string; description: string }[];
+  /**
+   * fixed — 우리 가족 캐릭터의 고정 얼굴을 붙여 그린 인물(2026-09-29~). 이 사람의 얼굴·머리는 시트가 정한다 —
+   * 한 쪽만 다시 그릴 때 쪽 그림 서버가 "설명 글보다 시트"를 따르게 한다(api/illustrate-page). 옛 책엔 없다.
+   */
+  cast?: { name: string; description: string; fixed?: boolean }[];
   /**
    * 주인공 이름·성별·생김새 — 한 쪽만 다시 그릴 때도 "주인공은 남자아이"를 못 박으려고 남긴다.
    *

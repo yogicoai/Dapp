@@ -27,6 +27,11 @@ export type DrawProgress = {
   key: string;
   savedAt: number;
   sheet: string | null;
+  /**
+   * 그 시트에 우리 가족 캐릭터의 고정 얼굴이 붙은 등장인물 이름(2026-09-29~). 이어 그릴 때 쪽 그림에
+   * '얼굴은 시트대로' 표시를 다시 단다. 옛 보관본엔 없다(= 고정 얼굴 없이 그린 시트).
+   */
+  sheetFixed?: string[];
   locationSheets: DrawLocationSheet[];
   images: (string | null)[];
   passed: boolean[];

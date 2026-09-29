@@ -59,6 +59,48 @@ function tailOf(text: string): string {
     .slice(-3);
 }
 
+/*
+ * 앞말에 붙어 문장을 잇는 말 — 이게 오면 앞 조각의 느낌표·마침표는 문장 끝이 아니다.
+ *   붙여 쓰는 것:  "좋아!"라며 · "같이 가자"고 · "안 돼!"하고
+ *   띄어 쓰는 것:  "안 돼!" 하고 외쳤어요 · "우와!" 소리쳤어요
+ * 낱말 통째로만 본다 — '하온이가'·'하니가'(이름)나 '고양이가'가 '하'·'고'로 시작한다고
+ * 잇는 말로 잡으면, 새 문장인데도 쉬지 않고 붙여 읽는다.
+ * '하고는·하고서·하는데·하길래·면서'도 잇는 말이다 — 빠뜨리면 "잘 먹겠습니다!" 하고는 …
+ * 사이를 0.68초 쉬어, 뒷말이 떨어져 나온 토막처럼 들린다.
+ */
+const ATTACHED =
+  /^(?:고|며|면서|라고|라며|라면서|라는|이라고|이라며|이라면서|이라는|하고(?:는|서|선)?|하며|하면서|하자|하니|하는|하는데|하던|하더니|하길래)(?![가-힣])/;
+const SPACED_WORD =
+  /^\s+(?:하고(?:는|서|선)?|하며|하면서|하자|하자마자|하니|하니까|하더니|하는|하는데|하던|하곤|하길래|하듯|하듯이|하면|라고|라며|라면서|라는|이라고|이라며|이라면서|이라는|한다)(?![가-힣])/;
+/*
+ * 말하는 움직임 — "우와!" 소리쳤어요. 낱말 머리만 본다.
+ * '대답'·'중얼'은 뒷말까지 본다 — '대답 대신 웃었어요'·'중얼중얼 자장가를'은 새 문장이다.
+ */
+const SPACED_VERB = /^\s+(?:했|말하|말했|소리치|소리쳤|외치|외쳤|속삭|대답(?:했|하)|물었|중얼(?:거|댔|대))/;
+
+/**
+ * 다음 글이 앞 문장을 이어 가는가 — "안 돼!" 뒤의 ' 하고 외쳤어요'처럼.
+ * 쉼을 정할 때와, 빠진 마침표를 넣을지 정할 때(story-punctuation.ts) 같은 눈으로 본다.
+ */
+export function continuesSentence(next: string): boolean {
+  const t = next.normalize("NFC");
+  return ATTACHED.test(t) || SPACED_WORD.test(t) || SPACED_VERB.test(t);
+}
+
+/**
+ * 잇는 말 낱말(하고·라고·하며…)로만 이어 가는가 — 말하는 움직임(말했어요·물었어요)은 빼고 본다.
+ * 대사로 끝나지 않은 줄 뒤에서 쓴다: '끄덕였어요⏎대답했어요'는 앞말을 잇는 게 아니라 새 문장이다.
+ */
+export function continuesByWord(next: string): boolean {
+  const t = next.normalize("NFC");
+  return ATTACHED.test(t) || SPACED_WORD.test(t);
+}
+
+/** 끝맺음 부호로 끝났나(닫는 따옴표·빈칸은 걷어 내고 본다). */
+function endsWithMark(text: string): boolean {
+  return /[.!?…‥。！？]$/.test(tailOf(text));
+}
+
 /**
  * 조각 하나가 끝난 뒤 얼마나 쉴지(ms).
  *
@@ -73,8 +115,14 @@ export function restAfter(prev: RestSegment, next: RestSegment | null, rate = 1)
   /*
    * 줄이 바뀌었나 — 원고에서 줄바꿈은 곧 '문장이 끝났다'는 표시다.
    * 줄바꿈은 앞 조각 끝에 붙기도 하고 다음 조각 앞에 붙기도 해서 둘 다 본다.
+   *
+   * 줄이 안 바뀌었어도 끝맺음 부호로 끝났고 다음 조각이 그 문장을 잇는 말(하고·라고…)이
+   * 아니면 문장이 끝난 것이다. 만든 동화는 한 쪽이 통째로 한 줄이라, 예전에는
+   * '…소리쳐요.' 다음 "우와!" 사이도 문장 한가운데로 보고 0.15초만 쉬었다
+   * (2026-09-29 사장님: 끊임없이 읽는다). 전래·명작은 문장마다 줄을 바꿔 두어 거의 그대로다.
    */
-  if (next && !/\n\s*$/.test(prev.text) && !/^\s*\n/.test(next.text)) {
+  const lineBroke = /\n\s*$/.test(prev.text) || /^\s*\n/.test(next?.text ?? "");
+  if (next && !lineBroke && !(endsWithMark(prev.text) && !continuesSentence(next.text))) {
     // 한 문장이 이어지는 중이다. 여기서 길게 쉬면 두 문장처럼 들린다.
     const ms = SAME_LINE + (speakerChanged ? 60 : 0);
     return Math.round(Math.min(MAX, Math.max(MIN, ms / (rate > 0 ? rate : 1))));

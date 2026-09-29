@@ -12,6 +12,13 @@ import {
   repairStoryContinuity,
   validateStoryQuality,
 } from "./story-quality";
+import {
+  punctuationRetryLine,
+  reviewPunctuation,
+  sentenceRule,
+  tidyPages,
+  type PunctuationFinding,
+} from "./story-punctuation";
 import type { NarrationStyle } from "./types";
 
 const client = new Anthropic();
@@ -84,15 +91,22 @@ export type ChildProfile = {
  *
  * 중요 — 이건 아이가 직접 '읽는' 책이 아니라 성우가 '읽어주는(TTS)' 책이다. 그래서
  * 글자수 상한을 읽기 난이도에 묶을 필요가 없다. 미취학이라도 '듣기'로는 훨씬 긴
- * 문장을 이해하고 즐긴다. 문장 난이도(쉬운 단어)는 나이에 맞게 지키되, 분량은
+ * 이야기를 이해하고 즐긴다. 문장 난이도(쉬운 단어)는 나이에 맞게 지키되, 분량은
  * 듣기 기준으로 넉넉히 준다 — 짧으면 이야기가 허전해 만든 값어치가 안 난다.
+ *
+ * 다만 넉넉한 것은 **쪽의 분량**이지 **문장 하나의 길이**가 아니다(2026-09-29 사장님:
+ * 마침표·쉼표가 안 보여 끊임없이 읽는다). 분량만 일러 주면 모델은 문장을 늘여 채우고,
+ * 성우는 부호가 없는 자리에서 쉬지 않는다. 그래서 나이마다 한 문장 길이·숨 길이를 함께
+ * 준다(story-punctuation.ts sentenceRule — 검사도 같은 눈금을 쓴다).
  */
 function lengthGuide(age: number, longer = false): string {
   const base = ((): string => {
     if (age <= 2) {
       // 1~2세. 아직 이야기를 '따라가지' 못하고 소리와 그림에 반응하는 나이라,
       // 문장을 짧게 끊고 같은 말을 반복해 리듬으로 들려준다.
-      return "쪽당 1~2문장, 30~45자. 아주 짧고 쉬운 말만 쓴다. 의성어·의태어(콩콩, 반짝반짝, 아기아기)를 앞세우고 같은 말을 두 번 반복해 리듬을 만든다. 줄거리를 설명하지 말고 '지금 보이는 것'만 말한다.";
+      // 예전엔 "쪽당 1~2문장"이었다 — 한 문장 상한(16자, sentenceRule) 하나로는 30자를 못 채워,
+      // 한 문장짜리 쪽은 문장을 늘이라는 말이 됐다. 짧은 두세 문장으로 채운다.
+      return "쪽당 2~3문장, 30~45자. 아주 짧고 쉬운 말만 쓴다. 의성어·의태어(콩콩, 반짝반짝, 아기아기)를 앞세우고 같은 말을 두 번 반복해 리듬을 만든다. 줄거리를 설명하지 말고 '지금 보이는 것'만 말한다.";
     }
     if (age <= 3) {
       return "쪽당 2~3문장, 55~75자. 아주 쉬운 말과 의성어·의태어(콩콩, 반짝반짝)를 쓰고, 같은 말을 리듬처럼 반복한다. 3세는 '무엇을 했다'만 안다 — 이유나 시간 순서를 길게 설명하지 않는다.";
@@ -107,16 +121,20 @@ function lengthGuide(age: number, longer = false): string {
       return "쪽당 5~6문장, 150~180자. 감정과 이유를 함께 담고('무서웠지만 용기를 냈어요'), 앞뒤 사건이 매끄럽게 이어지게 한다. 6세는 이야기의 흐름을 따라온다.";
     }
     if (age === 7) {
-      return "쪽당 6~7문장, 180~210자. 조금 긴 문장과 새로운 낱말을 섞어도 된다. 7세는 인물의 마음이 변해가는 걸 이해한다.";
+      // 예전엔 "조금 긴 문장을 섞어도 된다"였다 — 긴 문장을 허락하니 숨 없는 문장이 늘었다.
+      return "쪽당 6~7문장, 180~210자. 새로운 낱말을 섞어도 되지만 문장은 짧게 끊고 쉼표로 숨을 준다. 7세는 인물의 마음이 변해가는 걸 이해한다.";
     }
-    return "쪽당 7~8문장, 210~250자. 문장을 여러 겹으로 엮고 조금 어려운 단어를 섞어도 된다. 8세 이상은 작은 반전과 여운을 즐긴다.";
+    // 예전엔 "문장을 여러 겹으로 엮고"였다 — '-고·-서'로 줄줄이 잇는 문장을 대놓고 부탁한 셈이었다.
+    return "쪽당 7~8문장, 210~250자. 조금 어려운 단어를 섞어도 되지만, 문장을 길게 엮지 말고 짧게 끊어 쉼표로 숨을 준다. 8세 이상은 작은 반전과 여운을 즐긴다.";
   })();
-  if (!longer) return base;
+  const withBreath = `${base} ${sentenceRule(age)}`;
+  if (!longer) return withBreath;
   // "넉넉하게(길게)" — 쪽수가 적어도 각 쪽을 위 기준의 약 1.5배 분량으로 채운다.
   // 문장 난이도(쉬운 단어)는 그대로 두고, 묘사·감각·짧은 대사·인물의 마음을 더 얹는다.
+  // 늘리는 것은 문장 수다 — 문장 수는 그대로 두고 글자만 1.5배로 하면 문장마다 1.5배로 길어진다.
   return (
-    base +
-    " 단, 이 이야기는 '넉넉하게(길게)'로 골랐다 — 각 쪽을 위 글자수 기준의 약 1.5배로 늘려, 장면의 묘사와 소리·냄새·감촉 같은 감각, 짧은 대사, 인물의 마음을 더 풍부하게 담는다. 쪽수가 적어도 각 쪽이 허전하지 않게 충분히 채운다. 문장 난이도(쉬운 단어)는 나이에 맞게 그대로 지킨다."
+    withBreath +
+    " 단, 이 이야기는 '넉넉하게(길게)'로 골랐다 — 각 쪽을 위 글자수 기준의 약 1.5배로 늘리되, **문장 수를 약 1.5배로 늘려** 채운다(한 문장을 길게 늘이지 않는다 — 한 문장 길이 기준은 그대로다). 장면의 묘사와 소리·냄새·감촉 같은 감각, 짧은 대사, 인물의 마음을 더 풍부하게 담는다. 쪽수가 적어도 각 쪽이 허전하지 않게 충분히 채운다. 문장 난이도(쉬운 단어)는 나이에 맞게 그대로 지킨다."
   );
 }
 
@@ -415,7 +433,11 @@ function whoLine(
   return `${label}: ${term} (이름을 지어내지 말고 '${term}'라고만 부른다.${g})`;
 }
 
-function materialLines(m: StoryMaterial): string[] {
+/**
+ * @param forStory 본문(generateStory)에 줄 때만 true — 부호 규칙은 쪽 글을 쓸 때의 일이라
+ *                 줄거리(generateOutline)에는 넣지 않는다.
+ */
+function materialLines(m: StoryMaterial, forStory = false): string[] {
   if (m.kind === "direct") {
     /*
      * 함께 나오는 인물은 여기서도 알려 준다.
@@ -429,12 +451,33 @@ function materialLines(m: StoryMaterial): string[] {
      * 글 한 칸(2026-09-28, 사장님: 기승전결은 더 헷갈린다) — 부모가 한두 문장만 적을 수도, 완성 원고를
      * 붙여 넣을 수도 있다. 짧으면 적힌 사실을 살려 장면 수만큼 풀어 쓰고, 길면 원고를 지키며 나눈다.
      */
+    /*
+     * 부모가 휴대폰으로 친 글은 마침표·쉼표·따옴표가 빠진 채 오는 일이 많다.
+     * 예전엔 "맞춤법과 어색한 조사만 바로잡고"라고만 해서 부호가 빠진 그대로 옮겨졌고,
+     * 성우가 한 쪽을 쉬지 않고 내리읽었다(2026-09-29 사장님 지적). 부호는 글을 바꾸는 게
+     * 아니라 읽는 숨을 되살리는 것이라 넣게 한다.
+     *
+     * 다만 '말한 부분'을 넓게 잡으면 옮겨 적은 말("이제 자자고 했어요")까지 새 대사가 되어
+     * 배역·목소리가 늘어난다 — 따옴표만 빠진 직접 한 말만 묶게 한다. 완성 원고는 부모의
+     * 문장이라, 부호를 채우는 데서 그치고 대사는 나누지 않는다.
+     */
+    const punctuate = forStory
+      ? [
+          "부모가 쓴 글에 마침표·쉼표·따옴표가 빠져 있으면 넣는다 — 성우가 숨 쉬는 자리다. 문장마다 끝 부호를 찍고, 따옴표 없이 적힌 직접 한 말만 따옴표로 묶는다('~하자고 했어요'처럼 옮겨 적은 말은 그대로 둔다).",
+        ]
+      : [];
+    const keepManuscript = forStory
+      ? [
+          "부모 원고는 부호를 채우는 데서 그친다 — 따옴표 안 대사는 나누거나 고치지 않고, 지문도 한 숨에 읽기 어려울 만큼 길 때만 뜻을 그대로 두고 둘로 나눈다.",
+        ]
+      : [];
     if (m.directMode === "full" && m.directText.length < 300) {
       return [
         "아래는 부모가 직접 적은 우리 아이 이야기다. 짧게 적혀 있으니 선택한 장면 수만큼 따뜻한 동화로 풀어 쓴다.",
         "적힌 사실(누가·어디서·무슨 일이·어떻게 끝났는지·어떤 마음이었는지)은 그대로 지키고 순서도 바꾸지 않는다.",
         "장면 사이를 잇는 작은 동작·대사·마음 표현은 보완해도 되지만, 적히지 않은 큰 사건·새 인물·악역·반전·교훈은 지어내지 않는다.",
         "결말이 적혀 있지 않으면 적힌 일에서 자연스럽게 이어지는 포근한 마무리로 끝낸다.",
+        ...punctuate,
         who,
         `- 부모가 적은 이야기:\n${m.directText}`,
       ];
@@ -442,7 +485,9 @@ function materialLines(m: StoryMaterial): string[] {
     return m.directMode === "full"
       ? [
           "아래는 부모가 직접 완성한 동화 원고다. 사건·인물·대사·결말을 새로 만들거나 삭제하지 않는다.",
-          "맞춤법과 어색한 조사만 바로잡고, 아이 연령에 맞게 문장을 다듬어 선택한 장면 수로 나눈다.",
+          "맞춤법·띄어쓰기와 어색한 조사만 바로잡고, 아이 연령에 맞게 문장을 다듬어 선택한 장면 수로 나눈다.",
+          ...punctuate,
+          ...keepManuscript,
           "원문에 없는 교훈, 악역, 반전, 새 인물을 추가하지 않는다.",
           who,
           `- 부모의 완성 원고:\n${m.directText}`,
@@ -450,6 +495,7 @@ function materialLines(m: StoryMaterial): string[] {
       : [
           "아래 기승전결은 부모가 직접 정한 이야기다. 네 부분의 사실과 순서와 결말을 반드시 보존한다.",
           "빈 곳을 임의의 큰 사건으로 채우지 말고, 연결 문장과 자연스러운 대사만 보완한다.",
+          ...punctuate,
           who,
           `- 기(시작): ${m.directOpening}`,
           `- 승(전개): ${m.directDevelopment}`,
@@ -663,9 +709,40 @@ const STORY_SYSTEM = `${VOICE}
 
 @@TEXT@@에 쓰는 것이 **아이가 실제로 보게 될 동화책 한 쪽의 글**이다. 부모가 그 자리에서
 소리 내어 읽어 준다. 쓰고 나면 반드시 소리 내어 읽어 보듯 확인한다 — 읽다가 걸리는 곳,
-숨이 안 쉬어지는 긴 문장, 조사가 어색한 곳이 있으면 고쳐서 낸다.
+숨이 안 쉬어지는 긴 문장, 끝 부호가 빠진 문장, 쉼표 없이 길게 이어지는 곳, 조사가 어색한
+곳이 있으면 고쳐서 낸다.
 특히 이름 뒤 조사를 매 쪽 확인한다: 주어 자리는 "하온이는/하온이가"이지 "하온은"이나
 "하온이"가 아니다. 이 실수가 가장 자주 나오니 쪽마다 눈으로 짚는다.
+
+## 문장부호와 숨 — 성우가 쉬는 자리
+
+이 글은 성우가 소리 내어 읽는다. 성우는 마침표에서 쉬고 쉼표에서 숨을 고르며,
+부호가 없으면 쉬지 않고 내리읽는다. 부호가 빠진 글은 아이 귀에 끝없는 한 덩어리로 들린다.
+- **모든 문장은 끝 부호로 닫는다** — 마침표(.)·느낌표(!)·물음표(?)·말줄임표(…).
+  쪽의 마지막 문장도 마찬가지다. 대사는 따옴표 **안에** 부호를 넣는다("같이 가자!").
+- **한 문장에는 한 가지 일만.** 쪽당 분량에 적힌 한 문장 길이를 넘으면 둘로 나눈다.
+  '-고, -서, -는데, -면서'로 줄줄이 잇지 않는다 — 적힌 횟수를 넘으면 그 자리에서 문장을 끊는다.
+- **쉼표는 숨이 길어질 때만 넣는다.** 쉼표 없이 쪽당 분량에 적힌 숨 길이를 넘기게 되면
+  아래 자리 가운데 한 곳에 넣는다. 짧은 문장("엄마 손을 잡고 걸었어요.", "무서웠지만 용기를
+  냈어요.")에는 굳이 넣지 않는다 — 문장마다 쉼표가 박히면 이번에는 뚝뚝 끊겨 들린다.
+  · 이어 주는 말 뒤: -고, -서, -는데, -지만, -면서, -자, -다가 ("문을 열자, 찬 바람이 들어왔어요.")
+  · 문장을 여는 말 뒤: 그때, 그런데, 그래서, 그러자, 하지만, 어느 날
+  · 부르는 말 뒤는 짧아도 넣는다: "엄마, 이것 봐요!"
+  · 띄어 쓴 소리말을 되풀이할 때: 톡, 톡, 톡! / 쿵! 쿵! — 한 낱말인 반짝반짝·콩콩·데굴데굴은 가르지 않는다.
+  다만 '-고 싶다', '-고 있다'처럼 한 덩어리인 말 가운데는 끊지 않는다.
+- **문장이 끝나면 줄을 바꾼다.** 대사도 한 줄을 따로 쓴다. "…!" 하고·라고처럼 대사에 바로
+  이어지는 말만 같은 줄에 둔다. 문장 한가운데서는 줄을 바꾸지 않는다(숨은 쉼표로 준다).
+  줄 사이에 빈 줄은 넣지 않는다.
+- **짧은 문장을 섞는다.** 쪽마다 한두 문장은 아주 짧게("문이 열렸어요.") 두면 읽는 리듬이 산다.
+- 말줄임표(…)는 머뭇거리거나 뜸 들일 때만, 한 쪽에 한 번까지 쓴다. 쉼표 대신 쓰지 않는다.
+- 소리말(쿵!, 톡톡)은 따옴표 밖 지문에 쓴다 — 나레이션이 읽는다.
+- 이모지·마크다운(**, #)·괄호 설명·물결표 늘임(~~)은 본문에 쓰지 않는다. 영어 낱말도 쓰지
+  않는다 — 다만 부모가 적어 준 이름·장소는 적힌 글자 그대로 쓴다(Ella는 Ella로).
+모양만 보고, 이 문장을 그대로 가져다 쓰지는 않는다:
+  (X) 강아지는 공을 물고 꽃밭을 지나 울타리까지 달려가서 멈추고 꼬리를 흔들었어요
+  (O) 강아지가 공을 물고 달려갔어요.
+      꽃밭을 지나, 울타리 앞에서 딱 멈췄어요.
+      그러고는 꼬리를 살랑살랑 흔들었어요.
 
 @@CHARACTER@@에는 이야기에 나오는 인물을 **한 명씩 한 줄로** 적는다(\`이름 | 생김새\`).
 주인공뿐 아니라 **여러 쪽에 나오는 친구·형제·어른도 빠짐없이** 적는다 — 여기 없는 인물은
@@ -841,7 +918,9 @@ const STORY_SYSTEM = `${VOICE}
 @@SUMMARY@@ 한 문장 요약
 @@CHARACTER@@ 이름 | 생김새와 특징
 @@PAGE@@ 1
-@@TEXT@@ ...
+@@TEXT@@
+...
+...
 @@VOICE@@ narration=normal | dialogue=happy | intensity=0.5 | pace=normal
 @@IMG@@ ...
 @@PAGE@@ 2
@@ -877,7 +956,17 @@ export async function generateStory(input: {
   // 이름 가드 — 줄거리와 같은 방식. 본문에서 이름이 틀리면 한 번 다시 짓는다.
   let story: ParsedStory | null = null;
   let lastIssues: string[] = [];
+  /*
+   * 문장부호·숨 권고 — 이것만으로는 다시 짓지 않는다.
+   * 다시 쓰기는 대본 한 편을 통째로 새로 사는 값(약 2분·토큰 두 배)이라, 긴 문장 몇 개로
+   * 부르기엔 비싸다. 다른 이유로 어차피 다시 쓸 때만 함께 넘기고, 아니면 로그로만 남긴다
+   * (얼마나 자주 나오는지 재 보려고). 예방은 STORY_SYSTEM의 '문장부호와 숨' 규칙이 맡는다.
+   */
+  let punctuationNotes: PunctuationFinding[] = [];
   for (let attempt = 1; attempt <= 2; attempt++) {
+    // 직전 결과에서 이름이 실제로 틀렸을 때만 이름 경고를 붙인다. 예전엔 다른 이유로
+    // 다시 써도 늘 "이름이 틀렸다"고 해서, 모델이 멀쩡한 이름 대신 엉뚱한 데를 고쳤다.
+    const nameWasWrong = lastIssues.some((issue) => issue.startsWith("주인공 이름"));
     const message = await client.messages.create({
       model: MODEL,
       max_tokens: 8000,
@@ -892,7 +981,7 @@ export async function generateStory(input: {
             `장면 수: ${pageCount}장면 (이 개수만큼, 장면 하나당 한 쪽씩 낸다)`,
             `쪽당 분량: ${lengthGuide(input.child.age, input.longer)}`,
             "처음 입력한 이야기 재료(사실·인물·장소)는 줄거리보다 우선하며, 빠뜨리거나 다른 내용으로 바꾸지 않는다.",
-            ...materialLines(input.material),
+            ...materialLines(input.material, true),
             "각 페이지에는 @@VOICE@@를 정확히 한 번 쓴다. 부모가 잠자리에서 책을 읽어주는 듯 낮고 편안한 낭독을 기준으로 한다. narration은 항상 normal이다. dialogue는 기본 normal이며 감정이 분명한 짧은 대사에만 happy|sad|angry를 쓴다(toneup은 사용하지 않는다). intensity는 0.3~0.65이고 기본 0.5다. pace는 기본 normal, 아주 차분한 장면은 slow, lively는 꼭 필요한 장면에만 쓴다. 신나는 감정은 높은 음정이나 빠른 말투가 아니라 자연스러운 리듬과 미소로 표현한다.",
             narrationStyleGuide,
             ...(input.occasion
@@ -902,7 +991,12 @@ export async function generateStory(input: {
             ...(attempt > 1
               ? [
                   `직전 결과의 품질 검사 실패 항목: ${lastIssues.join(" / ")}. 이 항목을 모두 바로잡아 전체를 다시 출력한다.`,
-                  `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 "${input.child.name}"이다 — 비슷한 다른 이름 절대 금지. (조사는 자연스럽게: ${josaGuide(input.child.name)})`,
+                  ...(punctuationNotes.length > 0 ? [punctuationRetryLine(punctuationNotes)] : []),
+                  ...(nameWasWrong
+                    ? [
+                        `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 "${input.child.name}"이다 — 비슷한 다른 이름 절대 금지. (조사는 자연스럽게: ${josaGuide(input.child.name)})`,
+                      ]
+                    : []),
                 ]
               : []),
             "",
@@ -914,7 +1008,12 @@ export async function generateStory(input: {
       ],
     });
 
-    story = repairStoryContinuity(parseStory(textOf(message)));
+    /*
+     * 쪽 글의 부호를 먼저 손본다 — 빠진 끝 부호·띄어쓰기만, 글자는 한 자도 안 바꾼다.
+     * 검사가 손본 글을 보게 여기서 한다. 제목에는 쓰지 않는다(제목엔 마침표를 안 찍는다).
+     */
+    const parsed = parseStory(textOf(message));
+    story = repairStoryContinuity({ ...parsed, pages: tidyPages(parsed.pages) });
 
     lastIssues = validateStoryQuality(story, {
       childName: input.child.name,
@@ -926,12 +1025,22 @@ export async function generateStory(input: {
         input.material.place.length <= 20 ? input.material.place : "",
       ].filter(Boolean),
     });
+    punctuationNotes = reviewPunctuation(story.pages, input.child.age);
     if (lastIssues.length === 0) break;
     if (attempt === 2) {
       const blockingIssues = lastIssues.filter(isBlockingStoryQualityIssue);
       if (blockingIssues.length > 0) throw new StoryQualityError(blockingIssues);
       console.warn(`[story] 자동 보정 후 진행하는 품질 권고: ${lastIssues.join(" / ")}`);
     }
+  }
+  if (punctuationNotes.length > 0) {
+    // 막지 않는다 — 얼마나 자주 나오는지 재 보려고 남긴다. 앞의 몇 곳만 적는다.
+    console.warn(
+      `[story] 문장부호·숨 권고 ${punctuationNotes.length}곳: ${punctuationNotes
+        .slice(0, 5)
+        .map((note) => note.message)
+        .join(" / ")}`,
+    );
   }
 
   // 아이가 보게 될 최종 본문이라 여기서 한 번 더 조사를 맞춘다.

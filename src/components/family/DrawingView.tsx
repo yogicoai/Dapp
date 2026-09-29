@@ -5,6 +5,7 @@
  *
  * 그리기 자체(서버 호출·동시 2명)는 page 가 돌리고, 여기는 사람마다 상태만 보여 준다:
  * 끝남(그림 + 초록 체크) / 그리는 중(연필이 끄적끄적) / 기다림(점선 사람) / 멈춤(다시 해 볼게요).
+ * 사진이 거절된 멈춤(kind 'photo')은 같은 사진으로 다시 하지 않고 '다른 사진·특징 고르기'(onRetry → 생김새 고르기).
  * 한 명이라도 끝나면 '먼저 된 사람부터 보기'가 켜진다 — 나머지는 뒤에서 계속 그린다.
  * 그리는 동안에도 '모아 보기로 — 뒤에서 계속 그려요'로 나갈 수 있다(망이 매달려도 갇히지 않게).
  */
@@ -137,6 +138,10 @@ export function DrawingView({
                 {j?.kind === "insufficient" ? (
                   <button type="button" onClick={onCharge} className="min-h-11 shrink-0 rounded-full px-3.5 text-[13px] font-extrabold text-white" style={{ background: colors.accentDark }}>
                     쿠키 충전하러 가기
+                  </button>
+                ) : j?.kind === "photo" ? (
+                  <button type="button" onClick={() => onRetry(m.id)} className="min-h-11 shrink-0 rounded-full px-3.5 text-[13px] font-extrabold text-white" style={{ background: colors.accentDark }}>
+                    다른 사진·특징 고르기
                   </button>
                 ) : j?.kind === "login" ? (
                   <button type="button" onClick={onLogin} className="min-h-11 shrink-0 rounded-full px-3.5 text-[13px] font-extrabold text-white" style={{ background: colors.accentDark }}>

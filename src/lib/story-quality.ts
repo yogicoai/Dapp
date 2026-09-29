@@ -618,6 +618,17 @@ export function isBlockingStoryQualityIssue(issue: string): boolean {
   return /(페이지 수가|주인공 이름|본문이 지나치게 짧|다른 페이지와 중복|아동용 이야기로 사용할 수 없는)/.test(issue);
 }
 
+/**
+ * 쪽 글의 최소 글자 수(띄어쓰기·부호 뺀 글자) — 이보다 짧으면 막는 오류다.
+ *
+ * 2세 이하는 낮춘다. 쪽 분량이 30~45자(띄어쓰기 포함, 글자로는 21~31자)라 25자 문턱은
+ * 원래도 빠듯했는데, 한 문장 12자 안팎(story-punctuation.ts)으로 짧게 끊으라고 하면서
+ * 두 문장짜리 쪽이 24자로 걸려 다시 쓰기(유료)·실패가 날 수 있었다(2026-09-29 검토).
+ */
+export function minPageLetters(age: number): number {
+  return age <= 2 ? 15 : 25;
+}
+
 /** 추가 AI 호출 없이 판매 전 최소 품질을 거르는 보수적인 검사다. */
 export function validateStoryQuality(
   story: ParsedStory,
@@ -642,7 +653,7 @@ export function validateStoryQuality(
   let previousLocation: { name: string; label: string; text: string } | null = null;
   story.pages.forEach((page, index) => {
     const normalized = compact(page.text);
-    if (normalized.length < 25) issues.push(`${index + 1}쪽 본문이 지나치게 짧습니다.`);
+    if (normalized.length < minPageLetters(input.age)) issues.push(`${index + 1}쪽 본문이 지나치게 짧습니다.`);
     if (normalized.length > (input.age <= 5 ? 620 : 900)) issues.push(`${index + 1}쪽 본문이 연령에 비해 지나치게 깁니다.`);
     if (seen.has(normalized)) issues.push(`${index + 1}쪽 본문이 다른 페이지와 중복됩니다.`);
     seen.add(normalized);

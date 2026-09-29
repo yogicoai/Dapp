@@ -61,6 +61,10 @@ export function ReviewView({
   const pending = !busy && Boolean(m.draft) && !compare;
   const confirmed = !busy && !m.draft && Boolean(m.portrait);
   const pic = m.draft ?? m.portrait;
+  // 사진을 보고 그린 그림 — 칩을 안 골랐어도 '알아서'가 아니라 '사진을 보고'
+  const fromPhoto = Boolean(pic?.fromPhoto);
+  // 사진이 거절돼 같은 쿠키로 대신 그린 새 그림 — 확인 전(draft)인 동안만 한 줄 알린다(Job.note, 메모리에만).
+  const note = !busy && job?.status === "done" && m.draft ? job.note : undefined;
   const pendingCount = people.filter((p) => p.draft && jobs[p.id]?.status !== "drawing" && jobs[p.id]?.status !== "wait").length;
   const sum = looksSummary(m, child);
   const cost = nextDrawCost(m.draws);
@@ -205,6 +209,16 @@ export function ReviewView({
         </div>
       )}
 
+      {note && (
+        <p
+          className="mt-3 w-full break-keep rounded-2xl px-3.5 py-2.5 text-center text-[13px] font-bold"
+          style={{ background: colors.accentSoft, color: colors.accentDark }}
+          role="status"
+        >
+          {compare ? `새 그림 — ${note}` : note}
+        </p>
+      )}
+
       {/* 늘 그대로 / 평소 옷 */}
       <div className="mt-3.5 flex w-full flex-col gap-2">
         <div className="flex items-center gap-2.5 text-sm font-semibold text-neutral-700">
@@ -212,7 +226,7 @@ export function ReviewView({
             <LockIcon />
           </span>
           <span className="break-keep">
-            <b className="font-extrabold">늘 그대로</b> — {sum.lock || "알아서 그렸어요"}
+            <b className="font-extrabold">늘 그대로</b> — {sum.lock || (fromPhoto ? "사진을 보고 그렸어요" : "알아서 그렸어요")}
           </span>
         </div>
         <div className="flex items-center gap-2.5 text-sm font-semibold text-neutral-700">
@@ -220,7 +234,7 @@ export function ReviewView({
             <HangerIcon />
           </span>
           <span className="break-keep">
-            <b className="font-extrabold">평소 옷</b> — {sum.outfit || "알아서 골랐어요"}{" "}
+            <b className="font-extrabold">평소 옷</b> — {sum.outfit || (fromPhoto ? "사진을 보고 골랐어요" : "알아서 골랐어요")}{" "}
             <span className="text-xs text-neutral-500">(동화마다 바뀔 수 있어요)</span>
           </span>
         </div>
@@ -236,14 +250,15 @@ export function ReviewView({
       {!compare && (
         <div className="mt-4 grid w-full grid-cols-2 items-start gap-3">
           <div className="flex flex-col items-center gap-2.5">
-            {failed && !pic ? (
+            {/* 사진이 거절됐으면(photo) 앞 그림이 있어도 '다시 고르기' — 같은 사진으로 다시 그리지 않는다. */}
+            {failed && (!pic || job?.kind === "photo") ? (
               job?.kind === "insufficient" ? (
                 <SoftButton tight onClick={onCharge}>
                   쿠키 충전
                 </SoftButton>
               ) : (
                 <SoftButton tight onClick={() => onRetry(m.id)}>
-                  다시 해 볼게요
+                  {job?.kind === "photo" ? "다시 고르기" : "다시 해 볼게요"}
                 </SoftButton>
               )
             ) : (

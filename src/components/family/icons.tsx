@@ -44,6 +44,26 @@ export function LockIcon({ size = 16 }: P) {
   );
 }
 
+/** 사진기 — '사진으로 할게요' */
+export function CameraIcon({ size = 20 }: P) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.4-2h5.8l1.4 2h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z" />
+      <circle cx="12" cy="12.5" r="3.5" />
+    </svg>
+  );
+}
+
+/** 칩 두 개 — '특징 고르기' */
+export function ChipsIcon({ size = 20 }: P) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <rect x="3" y="5" width="11" height="6" rx="3" />
+      <rect x="8" y="13" width="13" height="6" rx="3" />
+    </svg>
+  );
+}
+
 /** 옷걸이 — '이야기마다 갈아입는 옷' */
 export function HangerIcon({ size = 17 }: P) {
   return (

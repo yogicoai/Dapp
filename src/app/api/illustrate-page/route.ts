@@ -224,12 +224,14 @@ export async function POST(request: Request) {
   const castRaw = Array.isArray(input.cast) ? (input.cast as unknown[]) : [];
   const cast = castRaw
     .map((c) => {
-      if (typeof c === "string") return { name: c.trim(), description: "" };
-      const o = c as { name?: unknown; description?: unknown };
+      if (typeof c === "string") return { name: c.trim(), description: "", fixed: false };
+      const o = c as { name?: unknown; description?: unknown; fixed?: unknown };
       return {
         name: typeof o?.name === "string" ? o.name.trim() : "",
         // 500자 — 부모 줄(최대 약 320자, _input 400자)에 클로드가 앞말(하온이 아빠, 30대 후반 남자 …)을 붙여도 끝이 안 잘리게.
         description: typeof o?.description === "string" ? o.description.trim().slice(0, 500) : "",
+        // 가족 캐릭터의 고정 얼굴로 시트를 그린 인물 — 얼굴·머리는 설명 글보다 시트를 따른다(아래 CAST LOCK).
+        fixed: o?.fixed === true,
       };
     })
     .filter((c) => c.name)
@@ -252,6 +254,8 @@ export async function POST(request: Request) {
   const sceneCast = castLine
     ? cast.filter((c) => (castLine[2] ?? "").includes(c.name) || sceneBody.includes(c.name))
     : cast.filter((c) => scene.includes(c.name) || storyText.includes(c.name));
+  /** 이 쪽에 보이는 고정 얼굴(우리 가족 캐릭터) — 옛 책·가족 없는 책은 비어 있어 프롬프트가 예전 그대로다. */
+  const fixedOnPage = sceneCast.filter((c) => c.fixed).map((c) => c.name);
   /*
    * 주인공 — 요청에 없으면(옛 책) 등장인물 첫 사람과 그 설명으로 물러선다.
    * 이 쪽에 주인공이 보일 때만 고정 줄을 붙인다. 없는 쪽에 이름을 넣으면 없던 주인공이 그려진다.
@@ -263,6 +267,11 @@ export async function POST(request: Request) {
       (sceneCast.some((c) => c.name === hero.name) ||
         (cast.length === 0 && `${scene} ${storyText}`.includes(hero.name))),
   );
+  /*
+   * 주인공 얼굴을 고정했으면(우리 가족 캐릭터) 주인공 고정 줄에 설정 생김새 글을 싣지 않는다 — 얼굴·머리는 시트가 정한다.
+   * 설정 칩을 바꾸고 '나중에'를 눌렀거나 사진으로 그린 그림이면 글과 그림이 다르고, 앞쪽에 크게 적힌 글이 시트를 이긴다.
+   */
+  const heroFixed = Boolean(hero && sheet && cast.some((c) => c.name === hero.name && c.fixed));
 
   const prompt = [
     knownStyle
@@ -315,7 +324,7 @@ export async function POST(request: Request) {
      * 주인공 고정 — 장소 잠금 바로 뒤, 장면보다 앞에 둔다.
      * 뒤쪽 긴 안전·구도 문장 사이에 끼면 묽어진다. 성별·머리는 이 책에서 가장 눈에 띄는 약속이다.
      */
-    heroOnPage ? heroLockLines(hero, storyText).join("\n") : "",
+    heroOnPage ? heroLockLines(heroFixed && hero ? { ...hero, looks: undefined } : hero, storyText).join("\n") : "",
     `Scene: ${scene}`,
     /*
      * 구도 — 아래가 텅 비지 않게.
@@ -456,6 +465,14 @@ export async function POST(request: Request) {
           `CAST LOCK — draw EXACTLY ${sceneCast.length} people: ${sceneCast.map((c) => c.name).join(", ")}. Every listed person appears exactly once.`,
           `The reference sheet may contain other book characters. They are ABSENT from this page and must be ignored: ${cast.filter((c) => !sceneCast.some((s) => s.name === c.name)).map((c) => c.name).join(", ") || "none"}.`,
           ...sceneCast.filter((c) => c.description).map((c) => `- ${c.name}: ${c.description}`),
+          /*
+           * 고정 얼굴(우리 가족 캐릭터) — 시트를 그 사람의 고정 그림으로 그렸다. 클로드가 쓴 설명 글(머리·안경)은
+           * 그 그림과 어긋날 수 있다(할머니·형제·친구 생김새는 이야기에 안 간다). 얼굴·머리는 시트를 따른다.
+           * 옷은 다른 사람과 같이 시트대로 — 아래 '옷을 바꾸지 말라'(CHARACTER CONSISTENCY)와 부딪치지 않게.
+           */
+          sheet && fixedOnPage.length
+            ? `FIXED FAMILY FACES: ${fixedOnPage.join(", ")} — face, hairstyle, hair length, hair colour and texture, glasses and body come ONLY from the reference sheet; if their description above words it differently, follow the sheet. Their outfit stays exactly as on the sheet, like everyone else's — change it only where this page's scene text itself dresses them differently.`
+            : "",
           sceneCast.length > 1
             ? [
                 "These are DIFFERENT people. They have different hair and different clothing colours — keep those differences obvious and never give one character another character's hair or outfit.",
@@ -577,7 +594,15 @@ export async function POST(request: Request) {
       expectedLocation: currentLocation
         ? `${currentLocation.name}: ${currentLocation.description}`
         : "",
-      cast: sceneCast,
+      // 고정 얼굴은 설명 글이 아니라 시트와 견주게 한다 — 글과 다르다고 맞게 그린 쪽을 떨어뜨리지 않게.
+      cast: sceneCast.map((c) =>
+        c.fixed && sheet
+          ? {
+              name: c.name,
+              description: `${c.description} (fixed family face — judge face and hair against the reference sheet, not this text)`.trim(),
+            }
+          : { name: c.name, description: c.description },
+      ),
       stylePrompt: style.prompt,
       // 주인공 성별·머리, 벨트, 내린 뒤 장면 — 이 쪽에 주인공이 없으면 주인공 규칙은 빼고 보낸다.
       extraRules: checkRuleLines({ hero: heroOnPage ? hero : null, page: vehicleInfo, storyText }),

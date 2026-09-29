@@ -222,6 +222,94 @@ describe("Gemini 가 한도·결제로 막히면 GPT 로 대신 그린다", () =
   });
 });
 
+describe("그림 없는 답(안전 검사 멈춤·글만 옴) — noImageAttempts", () => {
+  const SAFETY = JSON.stringify({ candidates: [{ finishReason: "IMAGE_SAFETY", content: { parts: [] } }] });
+  const IMAGE = JSON.stringify({ candidates: [{ content: { parts: [{ inlineData: { mimeType: "image/png", data: "R0VN" } }] } }] });
+
+  async function withFetch<T>(replies: string[], run: (calls: { n: number }) => Promise<T>): Promise<T> {
+    const saved = { fetch: globalThis.fetch, gkey: process.env.GEMINI_API_KEY };
+    const calls = { n: 0 };
+    try {
+      resetImageFallbackForTests();
+      process.env.GEMINI_API_KEY = "g-test";
+      globalThis.fetch = (async () => {
+        const body = replies[Math.min(calls.n, replies.length - 1)];
+        calls.n += 1;
+        return new Response(body, { status: 200 });
+      }) as typeof fetch;
+      return await run(calls);
+    } finally {
+      globalThis.fetch = saved.fetch;
+      if (saved.gkey === undefined) delete process.env.GEMINI_API_KEY; else process.env.GEMINI_API_KEY = saved.gkey;
+      resetImageFallbackForTests();
+    }
+  }
+
+  it("정해 준 횟수만큼만 걸고 멈춘다 — 이유(finishReason)를 noImage 에 달아 던진다(가족 사진 거절)", async () => {
+    await withFetch([SAFETY], async (calls) => {
+      const err = await generateImage({ prompt: "p", aspectRatio: "3:4", provider: "gemini", noImageAttempts: 2 }).then(
+        () => null,
+        (e: unknown) => e,
+      );
+      assert.ok(err instanceof GeminiError);
+      assert.equal(err.noImage, "IMAGE_SAFETY");
+      assert.equal(err.status, 502);
+      assert.equal(calls.n, 2, "두 번 해 보고 멈춘다(45초를 다 쓰지 않게)");
+    });
+  });
+
+  it("횟수를 안 주면 지금처럼 다시 걸어 본다 — 다음 번에 그림이 오면 그 그림", async () => {
+    await withFetch([SAFETY, IMAGE], async (calls) => {
+      const img = await generateImage({ prompt: "p", aspectRatio: "3:4", provider: "gemini" });
+      assert.equal(img.data, "R0VN");
+      assert.equal(calls.n, 2);
+    });
+  });
+});
+
+describe("until — 부른 쪽이 기다리기를 멈춘 뒤에는 다시 걸지 않는다(가족 캐릭터 머리 다시 그리기)", () => {
+  const IMAGE = JSON.stringify({ candidates: [{ content: { parts: [{ inlineData: { mimeType: "image/png", data: "R0VN" } }] } }] });
+
+  async function withFetch<T>(replies: { status: number; body: string }[], run: (calls: { n: number }) => Promise<T>): Promise<T> {
+    const saved = { fetch: globalThis.fetch, gkey: process.env.GEMINI_API_KEY };
+    const calls = { n: 0 };
+    try {
+      resetImageFallbackForTests();
+      process.env.GEMINI_API_KEY = "g-test";
+      globalThis.fetch = (async () => {
+        const r = replies[Math.min(calls.n, replies.length - 1)];
+        calls.n += 1;
+        return new Response(r.body, { status: r.status });
+      }) as typeof fetch;
+      return await run(calls);
+    } finally {
+      globalThis.fetch = saved.fetch;
+      if (saved.gkey === undefined) delete process.env.GEMINI_API_KEY; else process.env.GEMINI_API_KEY = saved.gkey;
+      resetImageFallbackForTests();
+    }
+  }
+
+  it("서버 오류 뒤 다음 시도가 until 을 넘기면 더 걸지 않고 던진다 — 버려질 그림에 값이 나가지 않게", async () => {
+    await withFetch([{ status: 503, body: "busy" }], async (calls) => {
+      const err = await generateImage({ prompt: "p", aspectRatio: "3:4", provider: "gemini", until: Date.now() + 100 }).then(
+        () => null,
+        (e: unknown) => e,
+      );
+      assert.ok(err instanceof GeminiError);
+      assert.equal(err.status, 503);
+      assert.equal(calls.n, 1, "첫 요청만 — 다시 걸기(0.8초 뒤)는 until(0.1초 뒤)을 넘는다");
+    });
+  });
+
+  it("until 이 넉넉하면 지금처럼 다시 건다", async () => {
+    await withFetch([{ status: 503, body: "busy" }, { status: 200, body: IMAGE }], async (calls) => {
+      const img = await generateImage({ prompt: "p", aspectRatio: "3:4", provider: "gemini", until: Date.now() + 30_000 });
+      assert.equal(img.data, "R0VN");
+      assert.equal(calls.n, 2);
+    });
+  });
+});
+
 describe("readQuotaHint — 429가 '잠깐 몰림'인지 '오늘 다 씀'인지 가른다", () => {
   it("분당 한도면 기다릴 시간을 읽고 daily는 아니다", () => {
     const hint = readQuotaHint(MINUTE_BODY);

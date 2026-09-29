@@ -17,7 +17,10 @@
  * (2026-09-28 검토 반영으로 더한 것: FamilyPortrait.lockKey · FamilyMember.picAt · FAMILY_MAX_MEMBERS 60
  *  · mergeFamily. 2차: showOnHome · isOurChild · 어른 생김새 칸 확장 · 키 옵션 · lockKey 견주기.
  *  3차: 뺀 기록 FamilyRemoval · FamilyMember.addedAt — 합칠 때 사람은 합집합, 빼기는 뺀 기록으로만.
- *  4차: FamilyMember.looksOnly — '그림 없이 특징만 저장'(쿠키 0개). 이름·홈 보이기처럼 목록 쪽 칸으로 합친다.)
+ *  4차: FamilyMember.looksOnly — '그림 없이 특징만 저장'(쿠키 0개). 이름·홈 보이기처럼 목록 쪽 칸으로 합친다.
+ *  5차(2026-09-29): FamilyPortrait.fromPhoto — '사진으로 할게요'로 그린 그림 표시. 사진 자체는 여기 없다
+ *  (저장하지 않는다 — lib/family-photo.ts). 그림 칸이라 합칠 때 그림과 함께 따라간다.
+ *  6차(2026-09-29): FamilyPortrait.headRatio — 그린 뒤 잰 머리 비율(lib/family-head). 단체 사진이 얼굴 크기를 고른다.)
  * 아이·엄마·아빠의 생김새는 여기 복사하지 않는다. ChildPrefs.looks / parents.mom·dad 가
  * 원본이고(가족 화면 생김새 고르기에서 고르고 만들기 화면도 같이 쓴다 — 회원 설정의 특징 칸은 2026-09-28 에
  * 걷었다), family 에는 역할과 그림만 둔다. 할머니·형제·친구처럼
@@ -26,6 +29,7 @@
 
 // 타입만 가져온다(런타임에는 지워진다) — prefs.ts 가 이 파일을 부르므로 값까지 부르면 서로 물린다.
 import type { ChildPrefs, ParentLooks } from "./prefs.ts";
+import { cleanHeadRatio } from "./family-head.ts";
 import {
   adultLookRows,
   CHILD_LOOK_ROWS_ALL,
@@ -67,6 +71,21 @@ export type FamilyPortrait = {
    * 생김새와 견줘 '모습이 바뀌었어요'를 계속 보여 준다('나중에'를 눌러도 표시가 남게). 없으면 견주지 않는다.
    */
   lockKey?: string;
+  /**
+   * 부모가 올린 사진을 보고 그린 그림(사장님 2026-09-29 '사진으로 할게요'). 사진 자체는 어디에도 저장하지 않고
+   * 이 표시만 남긴다(lib/family-photo.ts). 칩이 아니라 사진이 모습을 정했으니, 나중에 칩을 바꿔도
+   * '모습이 바뀌었어요'를 띄우지 않는다(portraitLooksChanged). true 만 저장한다.
+   * 그림 모델이 사진을 거절해 사진 속 특징(특징 카드)으로 대신 그린 그림도 fromPhoto 다(photoFallback 'features').
+   * 카드를 못 받아 고른 특징(칩)으로 대신 그렸으면('looks') 칩으로 그린 그림과 같아 달지 않는다.
+   */
+  fromPhoto?: boolean;
+  /**
+   * 그린 뒤 잰 머리 비율 — 키 ÷ 머리(머리카락 맨 위~턱 : 머리 위~신발 바닥), 0.01 단위(사장님 2026-09-29 "아빠만 머리가
+   * 너무 크게 나와", lib/family-head). 서버(api/family/portrait)가 그린 그림을 값싼 글 모델로 재서 그림과 함께 건넨다.
+   * 단체 사진(FamilyGroupPhoto)이 사람마다 크기를 살짝 맞춰 얼굴 크기가 고르게 보이게 쓴다. 못 쟀거나 예전 그림이면 없다
+   * (그때는 실제 키 비율 그대로). 숫자 하나라 개인정보가 아니다.
+   */
+  headRatio?: number;
 };
 
 export type FamilyMember = {
@@ -740,11 +759,16 @@ export function lockKeyChanged(
   return JSON.stringify(lockPairs(then as Record<string, unknown>, member.role)) !== currentLockKey(member, child);
 }
 
-/** 고정한 그림을 그린 뒤로 '늘 그대로'가 바뀌었나(portrait.lockKey 기준) */
+/**
+ * 고정한 그림을 그린 뒤로 '늘 그대로'가 바뀌었나(portrait.lockKey 기준).
+ * 사진으로 그린 그림(fromPhoto)은 늘 false — 모습을 정한 건 칩이 아니라 사진이라, 칩을 비워 두었거나 나중에
+ * 골라도 그림이 낡은 게 아니다(다시 그리면 사진이 없어 오히려 덜 닮는다).
+ */
 export function portraitLooksChanged(
   member: Pick<FamilyMember, "role" | "looks" | "portrait">,
   child: Pick<ChildPrefs, "looks" | "parents"> | null | undefined,
 ): boolean {
+  if (member.portrait?.fromPhoto) return false;
   return lockKeyChanged(member.portrait?.lockKey, member, child);
 }
 
@@ -829,12 +853,16 @@ function normalizePortrait(raw: unknown): FamilyPortrait | undefined {
   const ok = (u: unknown) => typeof u === "string" && /^https:\/\//.test(u) && u.length <= 500;
   if (!ok(p.url) || !ok(p.ref)) return undefined;
   const lockKey = typeof p.lockKey === "string" && p.lockKey.length <= 1000 ? p.lockKey : undefined;
+  // 믿을 범위(2~10) 안의 숫자만, 0.01 단위로 — 이상한 값은 버린다(단체 사진이 실제 키 비율로 돌아간다).
+  const headRatio = cleanHeadRatio(p.headRatio);
   return {
     url: p.url as string,
     ref: p.ref as string,
     at: str(p.at, 40) ?? "",
     ...(p.opaque === true ? { opaque: true } : {}),
     ...(lockKey !== undefined ? { lockKey } : {}),
+    ...(p.fromPhoto === true ? { fromPhoto: true } : {}),
+    ...(headRatio !== undefined ? { headRatio } : {}),
   };
 }
 

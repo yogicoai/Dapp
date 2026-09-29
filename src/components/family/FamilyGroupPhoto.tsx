@@ -11,6 +11,10 @@
  *    (가장 큰 사람이 무대 높이의 78%). 발밑에 타원 그림자.
  *    어른 키 칩도 반영한다 — 엄마·아빠는 설정의 parents.*.height(parents 로 넘겨받음),
  *    할머니·할아버지는 member.looks.height. 안 고르면 '보통'.
+ *  - 얼굴 크기 고르기(사장님 2026-09-29 "아빠만 머리가 너무 크게 나와"): 그림마다 잰 머리 비율(portrait.headRatio)이
+ *    있으면 얼굴 비율표(headChartRatio)에서 벗어난 만큼 반만 크기를 맞춘다 — 사람마다 ±10% 안, 키 순서는 뒤집지 않고,
+ *    키가 같은 사람끼리는 ±3% 안(lib/family-head groupHeights 에 셈과 까닭). 잰 비율이 없는 그림(예전 그림)은 실제 키 비율 그대로.
+ *    그림(투명 PNG)은 흰 바탕 지우기가 여백을 잘라 둬서(lib/cutout) 그림 높이 = 사람 높이다 — 여백 차이는 따로 맞출 필요가 없다.
  *  - 식구가 많아 폭을 넘치면 줄 전체를 줄여 맞춘다(사람끼리 비율은 그대로).
  *    transform 으로 줄이지 않고 크기 자체를 줄인다 — transform 은 새 쌓임 맥락을 만들어
  *    흰 바탕 그림(opaque)의 곱하기(multiply)가 배경과 섞이지 못하고 흰 네모로 남는다.
@@ -19,6 +23,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { groupOrder, heightFor, type FamilyMember } from "@/lib/family";
+import { groupHeights, headChartRatio } from "@/lib/family-head";
 import type { ChildPrefs } from "@/lib/prefs";
 import { displayName } from "./family-ui";
 import { PortraitImg } from "./Figures";
@@ -56,7 +61,15 @@ export function FamilyGroupPhoto({
   empty,
 }: FamilyGroupPhotoProps) {
   const people = groupOrder(members.filter((m) => m.portrait));
-  const cms = people.map((m) => heightFor(m, { age: childAge, parents }));
+  // 세울 키 — 실제 키(cm)에 얼굴 크기 고르기를 살짝 더한 값. 표 비율의 나이는 그릴 때 보낸 나이와 같다
+  // (아이는 설정의 아이 나이, 형제·친구는 member.age — family-ui portraitRequest).
+  const cms = groupHeights(
+    people.map((m) => ({
+      cm: heightFor(m, { age: childAge, parents }),
+      headRatio: m.portrait?.headRatio,
+      target: headChartRatio(m.role, m.role === "child" ? childAge : m.age),
+    })),
+  );
   const tallest = Math.max(1, ...cms);
   const stage = height * 0.78;
 

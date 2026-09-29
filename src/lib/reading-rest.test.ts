@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { restAfter } from "./reading-rest.ts";
+import { continuesByWord, continuesSentence, restAfter } from "./reading-rest.ts";
+import { splitDialogue } from "./speaker-tone.ts";
 
 /*
  * 조각 글에는 줄바꿈이 붙어 있다 — 앞 조각 끝에 붙기도 하고 다음 조각 앞에 붙기도 한다.
@@ -117,4 +118,77 @@ test("restAfter — 재생 속도에 따라 같이 줄고 는다", async (t) => 
       restAfter(nar("말았어요.\n"), nextLine(), 1),
     );
   });
+});
+
+/*
+ * 만든 동화는 한 쪽이 통째로 한 줄이다(2026-09 원고). 그래서 줄바꿈이 없는 자리에서도
+ * 끝맺음 부호가 있으면 문장이 끝난 것으로 봐야 한다 — 예전엔 모든 경계가 0.15초였다.
+ */
+test("restAfter — 줄이 안 바뀌어도 끝맺음 부호 뒤 새 문장이면 문장 끝만큼 쉰다", async (t) => {
+  await t.test("마침표 뒤에 대사가 오면 줄바꿈이 있을 때와 같다", () => {
+    const sameLine = restAfter(nar("하온이가 눈을 크게 뜨고 소리쳐요. "), who('"우와, 비눗방울 같아!"', "dialogue"));
+    const lineBreak = restAfter(nar("하온이가 눈을 크게 뜨고 소리쳐요.\n"), who('"우와, 비눗방울 같아!"', "dialogue"));
+    assert.equal(sameLine, lineBreak);
+    assert.equal(sameLine, 560); // 마침표 340 + 말하는 사람 바뀜 220
+  });
+
+  await t.test("대사가 끝나고 새 문장이 오면 느낌표만큼 쉰다", () => {
+    assert.equal(restAfter(who('"잡았다!"', "dialogue"), nar(" 하온이가 소리치며 깔깔 웃었어요.")), 680);
+  });
+
+  await t.test("'하고·라고·라며'로 이어지면 여전히 한 문장이다", () => {
+    assert.equal(restAfter(who('"안 돼!"', "boy"), nar(" 하고 외쳤어요.")), 150);
+    assert.equal(restAfter(who('"좋아!"', "boy"), nar("라며 웃었어요.")), 150);
+    assert.equal(restAfter(who('"우와!"', "boy"), nar(" 소리쳤어요.")), 150);
+  });
+
+  await t.test("이름이나 낱말이 '하'·'고'로 시작해도 새 문장이다", () => {
+    // '하온이가'·'하니가'(이름), '고양이가' — 잇는 말(하고·고)로 잘못 보면 붙여 읽는다.
+    assert.equal(restAfter(who('"와!"', "boy"), nar(" 하온이가 웃었어요.")), 680);
+    assert.equal(restAfter(who('"와!"', "boy"), nar(" 하니가 웃었어요.")), 680);
+    assert.equal(restAfter(who('"야옹!"', "cat"), nar(" 고양이가 울었어요.")), 680);
+  });
+
+  await t.test("부호 없이 끊긴 자리는 예전처럼 거의 쉬지 않는다", () => {
+    assert.equal(restAfter(nar("하온이는 "), who('"같이 놀자!"', "dialogue")), 150);
+  });
+});
+
+test("continuesSentence — 앞 문장을 잇는 말만 골라낸다", () => {
+  for (const text of [" 하고 외쳤어요.", "하고 외쳤어요", "라고 말했어요.", "라며 웃었어요.", "고 했어요.", " 하며 뛰어갔어요.", " 말했어요.", " 속삭였어요."]) {
+    assert.equal(continuesSentence(text), true, text);
+  }
+  // '하고는·하고서·하는데·하길래·면서'도 대사를 잇는다(검토 2026-09-29).
+  for (const text of [" 하고는 하온이가 숟가락을 들었어요.", " 하고서 뛰어갔어요.", " 하고선 웃었어요.", " 하는데 문이 열렸어요.", " 하길래 돌아봤어요.", "면서 웃었어요.", "라면서 웃었어요.", " 대답했어요.", " 중얼거렸어요."]) {
+    assert.equal(continuesSentence(text), true, text);
+  }
+  for (const text of [" 하온이가 웃었어요.", " 하니가 말했어요.", " 고양이가 울었어요.", " 라온이는 웃었어요.", "\n하온이는 웃었어요.", " 한 마리 새가 날아왔어요.", " 하고은이가 웃었어요.", " 면사포를 썼어요."]) {
+    assert.equal(continuesSentence(text), false, text);
+  }
+  // '대답 대신'·'중얼중얼'은 말하는 움직임이 아니라 새 문장의 첫머리다.
+  for (const text of [" 대답 대신 토끼가 웃었어요.", " 중얼중얼 자장가를 불렀어요."]) {
+    assert.equal(continuesSentence(text), false, text);
+  }
+});
+
+test("continuesByWord — 말하는 움직임은 빼고 잇는 말 낱말만 본다", () => {
+  assert.equal(continuesByWord(" 하고 불렀어요."), true);
+  assert.equal(continuesByWord(" 라고 말했어요."), true);
+  assert.equal(continuesByWord(" 말하는 앵무새가 날아왔어요."), false);
+  assert.equal(continuesByWord(" 대답했어요."), false);
+});
+
+test("restAfter — '하고는'으로 이어지는 대사 뒤는 문장 한가운데라 거의 쉬지 않는다", () => {
+  assert.equal(restAfter(who('"잘 먹겠습니다!"', "boy"), nar(" 하고는 하온이가 숟가락을 들었어요.")), 150);
+  assert.equal(restAfter(who('"같이 가자!"', "boy"), nar("면서 손을 내밀었어요.")), 150);
+  assert.equal(restAfter(who('"고마워!"', "boy"), nar(" 대답 대신 토끼가 웃었어요.")), 680);
+});
+
+test("restAfter — 실제로 만든 동화 한 쪽의 조각 경계가 모두 문장 끝으로 쉰다", () => {
+  const page =
+    "그때 책 한 권이 스르륵 굴러와 하온이 발밑에 멈춰요. 피노키오가 고래 뱃속에 있는 그림이었는데, 동그란 물방울들이 도르르 반짝여요. 하온이가 눈을 크게 뜨고 소리쳐요. \"우와, 비눗방울 같아!\" 하온이는 손가락으로 물방울을 하나둘 세어 봐요.";
+  const segs = splitDialogue(page).map((s) => ({ text: s.text, who: s.dialogue ? "dialogue" : "narration" }));
+  assert.equal(segs.length, 3);
+  const rests = segs.slice(0, -1).map((s, i) => restAfter(s, segs[i + 1]));
+  assert.deepEqual(rests, [560, 680]); // 예전엔 [150, 150]
 });

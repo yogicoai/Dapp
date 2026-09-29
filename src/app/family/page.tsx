@@ -23,6 +23,14 @@
  *  - 서버 값이 뒤늦게 와도 이 화면에서 고친 생김새 칸(looksEdits)만 지키고 나머지는 서버 값을 따른다.
  *  - 쿠키 셈과 차감은 서버가 한다. 화면의 값은 안내일 뿐이고(nextDrawCost), 요청에 실어 보내
  *    서버 값이 더 크면 깎지 않고 409(price)로 돌아온다 — 그때 확인 창을 다시 띄운다.
+ *  - '사진으로 할게요'(사장님 2026-09-29): 생김새 고르기에서 칩 대신 그 사람 사진 한 장을 고를 수 있다. 약속은
+ *    "사진은 저장하지 않고, 그림을 그리는 데 한 번 쓰고 바로 지워요" — 사진은 이 화면의 메모리(photos state)에만
+ *    두고 ChildPrefs·FamilyMember·saveChild·saveFamilyNow·localStorage 에 **절대 넣지 않는다.** 그리기 요청에 실어
+ *    보내고(서버도 저장하지 않는다 — lib/family-photo.ts), 그 사람 그림을 고정하거나·사람을 빼거나·사진이 거절되거나·
+ *    부모가 빼거나·화면을 떠나면(pagehide 포함) 사라진다. 같은 방문 안의 다시 그리기는 메모리의 사진을 다시 쓴다
+ *    (그 사진이 거절돼 서버가 대신 그렸으면 다시 그리기는 skipPhotoDraw 로 사진 그리기를 건너뛴다 — photoSkipRef, 메모리만).
+ *    사진을 고르면 칩 없이 곧바로 다음 사람, 마지막이면 쿠키 확인 창 — 값은 그 창의 버튼을 눌러야 나간다.
+ *    사진으로 그린 그림에는 fromPhoto 표시만 남는다('모습이 바뀌었어요'를 띄우지 않는다). 값은 칩과 같다.
  *  - 쿠키 확인 창의 '그림 없이 특징만 저장할게요'(saveLooksOnly)는 쿠키 0개 — 그리기 서버를 부르지 않는다.
  *    생김새는 고를 때마다 이미 저장됐고, 그 사람들에게 looksOnly 표시만 달아(생김새와 같은 saveChild) 모아 보기로 간다.
  *  - 그리기 응답을 잃으면(끊김·75초 초과·함수 잘림) 다시 그리기 전에 서버에 결과를 묻는다(recover).
@@ -82,6 +90,8 @@ import {
   type FamilyRemoval,
   type FamilyRole,
 } from "@/lib/family";
+import { cleanHeadRatio } from "@/lib/family-head";
+import { PHOTO_FALLBACK_NOTE, PHOTO_TOO_BIG_MESSAGE, readPhotoFallback } from "@/lib/family-photo";
 import {
   loadChild,
   loadChildRemote,
@@ -104,6 +114,11 @@ type LooksSession = {
   from: From;
   /** 고치기 전 생김새 — '늘 그대로'가 바뀌었는지 견준다(그린 때 lockKey 가 없는 옛 그림일 때) */
   before?: FamilyLooks;
+  /**
+   * 그리던 중 사진이 거절돼 다시 고르러 왔다(그리기·확인 화면의 '다시 고르기') — 사진 쪽을 먼저 열고,
+   * 쿠키 확인은 지금 차례에 더하고(inline), 뒤로 가면 그리는 화면으로.
+   */
+  resume?: boolean;
 };
 
 type Overlay =
@@ -130,7 +145,7 @@ type Status = {
   draws: number;
   pending: boolean;
   refunded: boolean;
-  pic: { url: string; ref: string; at: string; transparent: boolean } | null;
+  pic: { url: string; ref: string; at: string; transparent: boolean; headRatio?: number } | null;
   tokens: number | null;
 };
 
@@ -140,13 +155,21 @@ function readStatus(data: unknown): Status | null {
   const d = data as Record<string, unknown> | null;
   if (!d || typeof d !== "object" || typeof d.draws !== "number") return null;
   const p = d.pic as Record<string, unknown> | null | undefined;
+  // 서버가 잰 머리 비율(lib/family-head) — 믿을 범위의 숫자만
+  const headRatio = cleanHeadRatio(p?.headRatio);
   return {
     draws: d.draws,
     pending: d.pending === true,
     refunded: d.refunded === true,
     pic:
       p && https(p.url) && https(p.ref)
-        ? { url: p.url, ref: p.ref, at: typeof p.at === "string" ? p.at : "", transparent: p.transparent !== false }
+        ? {
+            url: p.url,
+            ref: p.ref,
+            at: typeof p.at === "string" ? p.at : "",
+            transparent: p.transparent !== false,
+            ...(headRatio !== undefined ? { headRatio } : {}),
+          }
         : null,
     tokens: typeof d.tokens === "number" ? d.tokens : null,
   };
@@ -239,6 +262,42 @@ export default function FamilyPage() {
   const addSeq = useRef(0);
   /** 응답을 잃은 사람 — 다시 그리기 전에 먼저 서버에 결과를 묻는다(이미 그려졌으면 또 값을 내지 않게) */
   const resumeFirst = useRef(new Set<string>());
+  /**
+   * 이번 방문에 고른 사진 — 사람 id → 줄인 JPEG data URL. **메모리에만 둔다**: ChildPrefs·FamilyMember·saveChild·
+   * saveFamilyNow·localStorage 어디에도 넣지 않는다(약속 — 사진은 저장하지 않고, 그리는 데 한 번 쓰고 바로 지운다).
+   * 화면은 state 를, 비동기 그리기(drawOne)는 ref 를 본다.
+   */
+  const [photos, setPhotos] = useState<Record<string, string>>({});
+  const photosRef = useRef<Record<string, string>>({});
+  /**
+   * 이번 방문에 사진이 거절돼 서버가 대신 그린 사람 id — 다시 그리기는 사진 그리기를 건너뛰게(skipPhotoDraw) 알린다
+   * (또 거절될 사진 그리기에 구글 값·시간을 쓰지 않는다). 메모리에만 두고, 그 사람 사진이 바뀌거나 빠지면 지운다.
+   */
+  const photoSkipRef = useRef<Set<string>>(new Set());
+
+  /** 사진을 넣거나(data URL) 뺀다(null) — 메모리에서만 */
+  function setPhoto(id: string, photo: string | null) {
+    const cur = photosRef.current;
+    if (photo ? cur[id] === photo : !(id in cur)) return;
+    photoSkipRef.current.delete(id);
+    const next = { ...cur };
+    if (photo) next[id] = photo;
+    else delete next[id];
+    photosRef.current = next;
+    setPhotos(next);
+  }
+
+  // 화면을 떠나면(다른 주소로·탭 닫기·앞뒤 캐시에 얼려 둘 때도) 사진을 바로 버린다.
+  // 앱 안에서 다른 화면으로 가면 이 화면이 통째로 내려가 state 와 함께 사라진다.
+  useEffect(() => {
+    const drop = () => {
+      photosRef.current = {};
+      photoSkipRef.current.clear();
+      setPhotos({});
+    };
+    window.addEventListener("pagehide", drop);
+    return () => window.removeEventListener("pagehide", drop);
+  }, []);
 
   /* ───────────────────────── 불러오기 ───────────────────────── */
 
@@ -461,7 +520,7 @@ export default function FamilyPage() {
     patchMember(id, (m) => ({ ...m, looks: { ...(m.looks ?? {}), ...p } }), "soon");
   }
 
-  function startLooks(ids: string[], mode: "fix" | "edit", from: From) {
+  function startLooks(ids: string[], mode: "fix" | "edit", from: From, resume = false) {
     const first = findMember(ids[0]);
     setLooks({
       ids,
@@ -469,10 +528,17 @@ export default function FamilyPage() {
       mode,
       from,
       before: mode === "edit" && first ? currentLooksOf(first, childRef.current) : undefined,
+      ...(resume ? { resume: true } : {}),
     });
     setOverlay(null);
     go("looks");
   }
+
+  /** 그림이 있는 사람이면 '다시 그리기' 값, 없으면 '고정' 값으로 묻는다 */
+  const confirmVariant = (id: string): "fix" | "redraw" => {
+    const m = findMember(id);
+    return m && (m.portrait || m.draft) ? "redraw" : "fix";
+  };
 
   function looksNext() {
     if (!looks) return;
@@ -482,10 +548,29 @@ export default function FamilyPage() {
       return;
     }
     if (looks.mode === "fix") {
+      if (looks.resume) {
+        // 거절된 사진 대신 다시 골라 왔다 — 지금 그리는 차례에 더한다(inline). 쿠키 확인은 그대로 거친다.
+        setOverlay({ kind: "confirm", ids: looks.ids, variant: confirmVariant(looks.ids[0]), from: looks.from, inline: true });
+        return;
+      }
       setOverlay({ kind: "confirm", ids: looks.ids, variant: "fix", from: looks.from });
       return;
     }
     finishEdit();
+  }
+
+  /**
+   * 사진을 골랐다 — 칩 없이 곧바로 다음 사람, 마지막(또는 혼자)이면 쿠키 확인 창을 연다(사장님 2026-09-29).
+   * 값은 그 창의 '쿠키 N개로 그리기'를 눌러야 나간다 — 확인 창은 건너뛰지 않는다.
+   * 고치기(모아 보기에서 연 생김새 고치기)에서 고르면 이 사람을 사진으로 (다시) 그릴지 바로 묻는다.
+   */
+  function photoReady(id: string) {
+    if (!looks || !looks.ids.includes(id)) return;
+    if (looks.mode === "fix") {
+      looksNext();
+      return;
+    }
+    setOverlay({ kind: "confirm", ids: [id], variant: confirmVariant(id), from: looks.from });
   }
 
   /** 생김새 고치기 끝 — '늘 그대로'가 바뀐 고정된 사람만 다시 그릴지 묻는다(평소 옷·메모만이면 안 묻는다) */
@@ -498,17 +583,26 @@ export default function FamilyPage() {
     const after = currentLooksOf(m, c);
     // 그린 그림에 그때 생김새(lockKey)가 적혀 있으면 그것과 견준다 — '나중에'로 미룬 뒤 또 고쳐도,
     // 설정에서 먼저 바꿨어도 정확하게. 예전 글자(짧은 머리→숏컷)·칸 순서 차이는 바뀐 것으로 안 친다.
-    const drawnKey = (m.draft ?? m.portrait)?.lockKey;
+    const drawn = m.draft ?? m.portrait;
+    const drawnKey = drawn?.lockKey;
     const drawnLooks = drawnKey !== undefined ? lockKeyLooks(drawnKey) : before;
-    const lockChanged =
-      drawnKey !== undefined ? lockKeyChanged(drawnKey, m, c) : lockedLooksChanged(before, after, m.role);
+    // 사진으로 그린 그림은 칩이 모습을 정한 게 아니다 — 칩을 바꿔도 다시 그릴지 묻지 않는다(lib/family fromPhoto).
+    const lockChanged = drawn?.fromPhoto
+      ? false
+      : drawnKey !== undefined
+        ? lockKeyChanged(drawnKey, m, c)
+        : lockedLooksChanged(before, after, m.role);
     const anyChanged = looksKey(before) !== looksKey(after);
     if (m.portrait || m.draft) {
       if (lockChanged) {
         const diff = lockChanges(m.role, drawnLooks, after);
         setOverlay({ kind: "changed", id: m.id, diff: diff.length > 0 ? diff : ["생김새가 바뀌었어요"] });
       } else if (anyChanged) {
-        showToast("다시 그리지 않아도 돼요 — 옷은 이야기마다 바뀌어요");
+        showToast(
+          drawn?.fromPhoto
+            ? "특징을 저장했어요 — 사진으로 그린 얼굴은 그대로예요"
+            : "다시 그리지 않아도 돼요 — 옷은 이야기마다 바뀌어요",
+        );
       }
     } else if (anyChanged) {
       showToast("생김새를 저장했어요");
@@ -536,6 +630,8 @@ export default function FamilyPage() {
     const fam = familyRef.current;
     const mark = (m: FamilyMember) => pick.has(m.id) && !m.portrait && !m.draft && !m.looksOnly;
     if (fam.some(mark)) commit(fam.map((m) => (mark(m) ? { ...m, looksOnly: true } : m)), "soon");
+    // 그리지 않으니 고른 사진은 쓸 데가 없다 — 바로 버린다(특징만 남는다).
+    for (const id of ids) setPhoto(id, null);
     setOverlay(null);
     go("album");
     showToast("특징만 저장했어요 · 쿠키는 쓰지 않았어요");
@@ -601,6 +697,7 @@ export default function FamilyPage() {
       m.portrait || m.draft ? "now" : "soon",
       [{ id, at: new Date().toISOString() }],
     );
+    setPhoto(id, null);
     setOverlay(null);
     if (step === "album") showToast(m.role === "friend" ? `${objectOf(m)} 뺐어요` : `${objectOf(m)} 우리 가족에서 뺐어요`);
   }
@@ -630,12 +727,17 @@ export default function FamilyPage() {
     if (typeof t === "number") setTokens((prev) => Math.min(prev, t));
   }
 
-  /** 받은 그림을 확인 전 그림(draft)으로 넣는다. serverDraws 는 서버 셈(관리자는 undefined — 셈을 안 한다). */
+  /**
+   * 받은 그림을 확인 전 그림(draft)으로 넣는다. serverDraws 는 서버 셈(관리자는 undefined — 셈을 안 한다).
+   * fromPhoto — 사진을 보내 그린 그림. 표시만 남기고 사진 자체는 여기 없다(저장 금지).
+   * p.headRatio — 서버가 잰 머리 비율(단체 사진이 얼굴 크기를 고르는 데 쓴다). 못 쟀으면 없다.
+   */
   function adoptPic(
     id: string,
-    p: { url: string; ref: string; at?: string; transparent?: boolean },
+    p: { url: string; ref: string; at?: string; transparent?: boolean; headRatio?: number },
     serverDraws: number | undefined,
     lockKey: string,
+    fromPhoto: boolean,
   ) {
     const pic: FamilyPortrait = {
       url: p.url,
@@ -645,6 +747,8 @@ export default function FamilyPage() {
       ...(p.transparent === false ? { opaque: true } : {}),
       // 그릴 때의 '늘 그대로' — 모아 보기가 나중에 '모습이 바뀌었어요'를 알아본다.
       lockKey,
+      ...(fromPhoto ? { fromPhoto: true } : {}),
+      ...(p.headRatio !== undefined ? { headRatio: p.headRatio } : {}),
     };
     patchMember(
       id,
@@ -667,8 +771,13 @@ export default function FamilyPage() {
    *  got     : 새 그림을 받아 넣었다
    *  none    : 건넨 새 그림이 없고 진행 중인 그리기도 없다(값은 되돌려졌거나 안 나갔다) — 셈을 서버에 맞췄다
    *  unknown : 서버에 끝내 닿지 못했다
+   * 사진은 필요 없다(GET 으로 묻기만) — fromPhoto 는 되찾은 그림에 '사진으로 그림' 표시를 달지 정할 뿐이다.
    */
-  async function recover(id: string, lockKey: string): Promise<{ result: "got" | "none" | "unknown"; refunded?: boolean }> {
+  async function recover(
+    id: string,
+    lockKey: string,
+    fromPhoto: boolean,
+  ): Promise<{ result: "got" | "none" | "unknown"; refunded?: boolean }> {
     const until = Date.now() + RECOVER_MS;
     for (;;) {
       const s = await fetchStatus(id);
@@ -677,7 +786,7 @@ export default function FamilyPage() {
         const cur = findMember(id);
         const known = new Set([cur?.portrait?.url, cur?.draft?.url, cur?.prevDraft?.url]);
         if (s.pic && !known.has(s.pic.url)) {
-          adoptPic(id, s.pic, masterRef.current ? undefined : s.draws, lockKey);
+          adoptPic(id, s.pic, masterRef.current ? undefined : s.draws, lockKey, fromPhoto);
           return { result: "got" };
         }
         if (!s.pending) {
@@ -706,10 +815,14 @@ export default function FamilyPage() {
     // 그릴 때의 '늘 그대로' — 반드시 currentLockKey 로(얼굴형·키 같은 새 칸까지). 그래야 그리자마자
     // '모습이 바뀌었어요'가 뜨지 않는다.
     const lockKey = currentLockKey(m, c);
+    // 이번 방문 메모리에 사진이 있으면 그 사진으로 그린다(같은 방문의 다시 그리기도 다시 쓴다).
+    // 되찾는 길(recover)은 사진이 필요 없고, 되찾은 그림에 '사진으로 그림' 표시만 단다.
+    const photo = photosRef.current[id] ?? null;
+    const fromPhoto = photo !== null;
 
     // 앞에서 응답을 잃은 사람 — 먼저 결과를 묻는다. 이미 그려졌으면 또 값을 내지 않는다.
     if (resumeFirst.current.has(id)) {
-      const r = await recover(id, lockKey);
+      const r = await recover(id, lockKey, fromPhoto);
       if (r.result === "got") {
         resumeFirst.current.delete(id);
         setJob(id, { status: "done" });
@@ -725,8 +838,10 @@ export default function FamilyPage() {
     // 셈이 서버에 맞춰졌을 수 있어 다시 읽는다. 화면이 보여 준 값을 같이 보낸다 — 서버 값이 더 크면 깎지 않는다.
     const cur = findMember(id) ?? m;
     const body = {
-      ...portraitRequest(cur, c, familyRef.current),
+      ...portraitRequest(cur, c, familyRef.current, photo),
       ...(masterRef.current ? {} : { expectedCost: nextDrawCost(cur.draws) }),
+      // 이 사진은 이번 방문에 이미 거절됐다 — 서버가 사진 그리기를 건너뛰고 사진 속 특징으로 바로 그린다(값은 같다).
+      ...(photo && photoSkipRef.current.has(id) ? { skipPhotoDraw: true } : {}),
     };
 
     const ctrl = new AbortController();
@@ -756,13 +871,22 @@ export default function FamilyPage() {
       ref?: unknown;
       at?: unknown;
       transparent?: unknown;
+      headRatio?: unknown;
       draw?: unknown;
       draws?: unknown;
       tokens?: unknown;
       code?: unknown;
+      photoFallback?: unknown;
     };
     const code = typeof d.code === "string" ? d.code : undefined;
     noteTokens(d.tokens);
+
+    // 본문이 커서 배포 환경이 받지 않았다(우리 code 없는 413) — 서버에 닿지 않았으니 값도 안 나갔다. 되묻지 않는다.
+    if (res?.status === 413 && !code) {
+      setPhoto(id, null);
+      setJob(id, { status: "error", kind: "photo", message: PHOTO_TOO_BIG_MESSAGE });
+      return;
+    }
 
     /*
      * 응답을 잃었다 — 끊김·75초 초과·본문을 못 읽음·배포 환경 오류 페이지(우리 code 없음, 함수가 잘린 504 등).
@@ -771,7 +895,7 @@ export default function FamilyPage() {
      */
     const lost = !res || (!res.ok && !code) || (res.ok && !(https(d.url) && https(d.ref)));
     if (lost || code === "busy") {
-      const r = await recover(id, lockKey);
+      const r = await recover(id, lockKey, fromPhoto);
       if (r.result === "got") {
         setJob(id, { status: "done" });
       } else if (r.result === "none") {
@@ -795,7 +919,10 @@ export default function FamilyPage() {
         const draws = d.draws;
         patchMember(id, (x) => ({ ...x, draws }), "soon");
       }
-      setJob(id, jobError(res?.status ?? 0, data));
+      const job = jobError(res?.status ?? 0, data);
+      // 사진이 거절됐다 — 같은 사진으로 또 하지 않게 메모리에서 바로 뺀다('다시 고르기'로 다른 사진·특징을 고른다).
+      if (job.kind === "photo") setPhoto(id, null);
+      setJob(id, job);
       return;
     }
 
@@ -808,13 +935,26 @@ export default function FamilyPage() {
         : typeof d.draw === "number" && d.draw > 0
           ? d.draw
           : (cur.draws ?? 0) + 1;
+    // 사진이 거절돼 서버가 같은 쿠키로 대신 그렸다 — 'features'(사진 속 특징으로)면 그래도 사진으로 그린 그림,
+    // 'looks'(고르신 특징으로)면 칩으로 그린 그림과 같다(칩을 바꾸면 '모습이 바뀌었어요'가 떠야 한다).
+    // 사진은 이번 방문 메모리에 그대로 둔다(특징 카드에 다시 쓴다). 다만 거절된 사진이라 다시 그리기는 사진 그리기를
+    // 건너뛰게 적어 둔다(photoSkipRef) — 그 사이 부모가 사진을 바꿨으면 새 사진은 사진으로 먼저 해 본다.
+    const fallback = fromPhoto ? readPhotoFallback(d.photoFallback) : null;
+    if (fallback && photo && photosRef.current[id] === photo) photoSkipRef.current.add(id);
     adoptPic(
       id,
-      { url, ref, at: typeof d.at === "string" ? d.at : undefined, transparent: d.transparent !== false },
+      {
+        url,
+        ref,
+        at: typeof d.at === "string" ? d.at : undefined,
+        transparent: d.transparent !== false,
+        headRatio: cleanHeadRatio(d.headRatio),
+      },
       serverDraws,
       lockKey,
+      fromPhoto && fallback !== "looks",
     );
-    setJob(id, { status: "done" });
+    setJob(id, fallback ? { status: "done", note: PHOTO_FALLBACK_NOTE[fallback] } : { status: "done" });
   }
 
   function pump() {
@@ -858,16 +998,27 @@ export default function FamilyPage() {
   function retry(id: string) {
     const m = findMember(id);
     if (!m) return;
+    // 사진이 거절됐다 — 같은 사진으로는 또 거절된다. 그 사람 생김새 고르기로 가서 다른 사진이나 특징을 고른다
+    // (사진 쪽이 먼저 열리고, 쿠키 확인 뒤 지금 차례에 더해 그린다 — looksNext resume).
+    if (jobs[id]?.kind === "photo") {
+      startLooks([id], "fix", round.from, true);
+      return;
+    }
     if (jobs[id]?.kind === "price" && !master) {
       setOverlay({ kind: "confirm", ids: [id], variant: m.portrait || m.draft ? "redraw" : "fix", from: round.from, inline: true });
       return;
     }
     // 응답을 잃은 사람(lost)은 값 검사 없이 — 먼저 결과를 묻고, 이미 그려졌으면 값을 안 낸다(drawOne).
-    if (jobs[id]?.kind !== "lost" && !master && tokens < nextDrawCost(m.draws)) {
+    if (jobs[id]?.kind === "lost") {
+      queueDraw(id);
+      return;
+    }
+    if (!master && tokens < nextDrawCost(m.draws)) {
       showToast("쿠키가 조금 모자라요 — 설정에서 충전해 주세요");
       return;
     }
-    queueDraw(id);
+    // 실패한 그리기는 값을 돌려드렸으니 다시 하면 또 값이 든다 — 바로 그리지 않고 확인 창을 거친다(사장님 2026-09-29).
+    setOverlay({ kind: "confirm", ids: [id], variant: m.portrait || m.draft ? "redraw" : "fix", from: round.from, inline: true });
   }
 
   const busy = Object.values(jobs).some((j) => j.status === "wait" || j.status === "drawing");
@@ -960,34 +1111,35 @@ export default function FamilyPage() {
     // picAt — 고른 때를 적는다. 다른 기기의 옛 확인 전 그림이 합치기에서 이 선택을 이기지 않게.
     const at = new Date().toISOString();
     patchMember(id, (cur) => ({ ...cur, portrait: chosen, draft: undefined, prevDraft: undefined, picAt: at }), "now");
+    // 얼굴을 고정했다 — 사진은 할 일을 다 했다. 메모리에서도 바로 버린다.
+    setPhoto(id, null);
     advance(round.ids.indexOf(id));
   }
 
   function acceptAll() {
     const ids = new Set(round.ids);
     const at = new Date().toISOString();
+    const fixing = (m: FamilyMember) =>
+      ids.has(m.id) && Boolean(m.draft) && jobs[m.id]?.status !== "drawing" && jobs[m.id]?.status !== "wait";
+    const fixed = familyRef.current.filter(fixing).map((m) => m.id);
     commit(
       familyRef.current.map((m) =>
-        ids.has(m.id) && m.draft && jobs[m.id]?.status !== "drawing" && jobs[m.id]?.status !== "wait"
-          ? { ...m, portrait: m.draft, draft: undefined, prevDraft: undefined, picAt: at }
-          : m,
+        fixing(m) ? { ...m, portrait: m.draft, draft: undefined, prevDraft: undefined, picAt: at } : m,
       ),
       "now",
     );
+    // 고정한 사람들의 사진은 메모리에서도 버린다.
+    for (const id of fixed) setPhoto(id, null);
     advance(reviewIdx);
   }
 
-  /** 다시 그리기 — 포함된 한 번(0개)이면 바로, 값이 들면 확인 창 */
+  /**
+   * 다시 그리기 — 늘 확인 창을 거친다. 예전엔 포함된 한 번(0개)이나 관리자면 바로 그렸는데, 누르자마자 그림 값이
+   * 나가 버렸다(사장님 2026-09-29: "크레딧 발생은 알림창이 떠야"). 0개면 창에 '0개 (포함된 다시 그리기)'로 보인다.
+   */
   function redraw(id: string, inline: boolean) {
-    const m = findMember(id);
-    if (!m) return;
-    const cost = nextDrawCost(m.draws);
-    if (cost > 0 && !master) {
-      setOverlay({ kind: "confirm", ids: [id], variant: "redraw", from: inline ? round.from : "album", inline });
-      return;
-    }
-    if (inline) queueDraw(id);
-    else startRound([id], "album");
+    if (!findMember(id)) return;
+    setOverlay({ kind: "confirm", ids: [id], variant: "redraw", from: inline ? round.from : "album", inline });
   }
 
   /* ───────────────────────── 화면 ───────────────────────── */
@@ -1059,11 +1211,16 @@ export default function FamilyPage() {
         members={looksMembers}
         idx={Math.min(looks.idx, looksMembers.length - 1)}
         mode={looks.mode}
+        photos={photos}
+        photoFirst={looks.resume}
+        notice={looks.resume ? "앞 사진으로는 그리지 못했어요. 다른 사진을 고르거나 특징을 골라 주세요." : undefined}
         onPick={(i) => setLooks({ ...looks, idx: i })}
         onChildLook={setChildLooks}
         onParentLook={setParentLooks}
         onMemberLook={setMemberLooks}
-        onBack={() => (looks.mode === "edit" ? finishEdit() : go(looks.from))}
+        onPhoto={setPhoto}
+        onPhotoReady={photoReady}
+        onBack={() => (looks.mode === "edit" ? finishEdit() : go(looks.resume ? "drawing" : looks.from))}
         onNext={looksNext}
       />
     );
@@ -1184,12 +1341,15 @@ export default function FamilyPage() {
           master={master}
           variant={overlay.variant}
           childGender={child?.gender}
+          photoIds={Object.keys(photos)}
           onClose={() => setOverlay(null)}
           onConfirm={() => {
             const ids = confirmMembers.map((m) => m.id);
             if (overlay.inline) {
               setOverlay(null);
               ids.forEach(queueDraw);
+              // 거절된 사진 대신 다시 골라 온 길(생김새 고르기)이면 그리는 화면으로 돌아간다.
+              if (step === "looks") go("drawing");
             } else {
               startRound(ids, overlay.from);
             }
@@ -1245,7 +1405,7 @@ export default function FamilyPage() {
           cost={nextDrawCost(sheetMember.draws)}
           master={master}
           tokens={tokens}
-          onRedraw={() => startRound([sheetMember.id], "album")}
+          onRedraw={() => setOverlay({ kind: "confirm", ids: [sheetMember.id], variant: "redraw", from: "album" })}
           onLater={() => setOverlay(null)}
           onMore={overlay.fromAlbum ? () => setOverlay({ kind: "member", id: sheetMember.id }) : undefined}
           onCharge={() => router.push("/settings")}

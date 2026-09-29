@@ -7,7 +7,8 @@
  * 가족 화면에서 고친 직후에 뜨고, 설정에서 바꿨거나 '나중에'를 눌렀으면 모아 보기의 '모습이 바뀌었어요'
  * 카드를 눌러 연다(그릴 때 적어 둔 lockKey 와 지금 값을 견준다 — lib/family portraitLooksChanged).
  * diff 는 '머리 모양: 단발 → 숏컷' 처럼 바뀐 칸(lib/family lockChanges).
- * '지금 다시 그리기'는 버튼 안에 값이 적혀 있어 누르는 것이 곧 확인이다.
+ * '지금 다시 그리기'를 눌러도 바로 그리지 않는다 — 쿠키 확인 창(ConfirmSheet)을 한 번 더 거친다(사장님 2026-09-29:
+ * 값이 나가는 그리기는 늘 알림창이 떠야 한다).
  */
 
 import type { FamilyMember } from "@/lib/family";

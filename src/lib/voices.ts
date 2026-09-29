@@ -18,7 +18,24 @@ import {
 // 대사/지문 쪼개기는 독립 모듈로 옮겼다 — 브라우저 것을 안 들고 있어야
 // 낭독을 미리 굽는 스크립트에서도 같은 함수를 쓸 수 있다(두 벌이 되면 어긋난다).
 export { splitDialogue } from "@/lib/speaker-tone";
+import { breathForSpeech } from "@/lib/story-punctuation";
 import type { VoiceDirection, VoicePace } from "@/lib/types";
+
+/** 합성 서버가 한 번에 받는 글자 수 — 셋 중 가장 작은 /api/tts 기준(google 800·eleven 1000). */
+const TTS_MAX_CHARS = 500;
+
+/**
+ * 합성에 실제로 보낼 글 — 숨 쉴 자리에 쉼표를 더한다(story-punctuation.ts breathForSpeech).
+ *
+ * 합성기는 부호가 없는 자리에서 쉬지 않아 "끊임없이 읽는다"가 됐다(2026-09-29 사장님).
+ * 화면 글은 그대로라 글자 색칠은 어긋나지 않는다.
+ * **캐시 열쇠는 원문으로 둔다** — 열쇠를 바꾸면 이미 기기에 담긴 소리를 다시 합성해 크레딧이 나간다.
+ * 쉼표 몇 개로 서버 한도를 넘기면 원문을 그대로 보낸다.
+ */
+function spokenText(text: string): string {
+  const spoken = breathForSpeech(text);
+  return spoken.length <= TTS_MAX_CHARS ? spoken : text;
+}
 
 export type PresetVoice = {
   kind: "preset";
@@ -577,7 +594,7 @@ export async function fetchTypecastAudio(
     const r = await fetch("/api/tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, voiceId: tc.voiceId, model: tc.model, emotion, intensity: safeIntensity }),
+      body: JSON.stringify({ text: spokenText(text), voiceId: tc.voiceId, model: tc.model, emotion, intensity: safeIntensity }),
     });
     if (!r.ok) {
       const data = (await r.json().catch(() => null)) as { error?: string } | null;
@@ -598,7 +615,7 @@ export async function fetchGoogleAudio(voiceId: string, text: string): Promise<B
     const r = await fetch("/api/tts/google", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, voiceId }),
+      body: JSON.stringify({ text: spokenText(text), voiceId }),
     });
     if (!r.ok) {
       const data = (await r.json().catch(() => null)) as { error?: string } | null;
@@ -618,7 +635,7 @@ export async function fetchElevenAudio(voiceId: string, text: string): Promise<B
     const r = await fetch("/api/tts/eleven", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, voiceId }),
+      body: JSON.stringify({ text: spokenText(text), voiceId }),
     });
     if (!r.ok) {
       const d = (await r.json().catch(() => null)) as { error?: string } | null;
@@ -639,7 +656,7 @@ export async function fetchTypecastVoiceAudio(voiceId: string, text: string): Pr
     const r = await authedFetch("/api/tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, voiceId, model: "ssfm-v30" }),
+      body: JSON.stringify({ text: spokenText(text), voiceId, model: "ssfm-v30" }),
     });
     if (!r.ok) {
       const d = (await r.json().catch(() => null)) as { error?: string } | null;

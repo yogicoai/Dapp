@@ -30,6 +30,11 @@ export class GeminiError extends Error {
    * 부모에게는 "왜 안 되는지" 아무 말도 못 해 준다.
    */
   quotaExhausted?: boolean;
+  /**
+   * 그림 없이 끝난 답 — 안전 검사로 멈췄거나(finishReason IMAGE_SAFETY·PROHIBITED_CONTENT …) 글만 왔다.
+   * 값은 finishReason(없으면 'NO_IMAGE'). 가족 캐릭터 사진 그리기가 '이 사진으로는 못 그렸어요'를 가르는 데 쓴다.
+   */
+  noImage?: string;
 
   constructor(message: string, status?: number) {
     super(message);
@@ -349,6 +354,18 @@ export async function generateImage(input: {
    * 가족 캐릭터가 이렇게 쓴다 — 사장님 결정(2026-09-28): 캐릭터는 제미나이로.
    */
   provider?: "gemini";
+  /**
+   * 그림 없이 끝난 답(안전 검사 멈춤·글만 옴)을 몇 번까지 해 볼지. 안 적으면 지금처럼 다른 일시적 실패와 같이
+   * 다시 건다(IMAGE_ATTEMPTS). 가족 캐릭터를 사진으로 그릴 때 1 을 준다 — 사진을 거절한 답은 몇 번을 해도
+   * 대개 같아서, 45초를 다 쓰는 대신 곧바로 사진 없이 대신 그리기로 넘어간다(api/family/portrait).
+   */
+  noImageAttempts?: number;
+  /**
+   * 이 시각(Date.now 기준)이 지나면 새 요청(다시 걸기)을 시작하지 않는다. 부른 쪽이 제한 시간(withTimeout)으로 기다림을
+   * 끊어도 이 함수는 뒤에서 몰림·서버 오류 뒤 다시 걸기를 이어 가, 버릴 그림에 구글 값(약 95원)이 나갈 수 있다 — 그 길을 막는다.
+   * 이미 나간 요청은 멈추지 못한다. 안 적으면 지금처럼(RETRY_DEADLINE_MS 까지). 가족 캐릭터(api/family/portrait)가 준다.
+   */
+  until?: number;
 }): Promise<GeneratedImage> {
   const provider = input.provider ?? imageProvider();
   const key = process.env.GEMINI_API_KEY;
@@ -427,7 +444,7 @@ export async function generateImage(input: {
     }
 
     const json = (await res.json()) as {
-      candidates?: { content?: { parts?: Part[] } }[];
+      candidates?: { content?: { parts?: Part[] }; finishReason?: string }[];
       promptFeedback?: { blockReason?: string };
     };
 
@@ -451,7 +468,14 @@ export async function generateImage(input: {
     }
 
     // 그림 없이 글만 돌아오는 일이 가끔 있다 — 같은 요청을 다시 하면 대개 나온다.
-    throw new GeminiError("응답에 이미지가 없습니다. (모델이 텍스트만 반환)", 502);
+    // 안전 검사로 멈춘 답(finishReason IMAGE_SAFETY 등)도 그림이 없다 — 이유를 붙여 둔다(noImageAttempts 가 센다).
+    const finish = json.candidates?.[0]?.finishReason;
+    const noImage = new GeminiError(
+      `응답에 이미지가 없습니다. (${finish && finish !== "STOP" ? finish : "모델이 텍스트만 반환"})`,
+      502,
+    );
+    noImage.noImage = finish || "NO_IMAGE";
+    throw noImage;
   };
 
   /** OpenAI 로 한 번 부른다. 순환 import(openai-image → gemini)를 피하려고 여기서 불러온다. */
@@ -464,6 +488,7 @@ export async function generateImage(input: {
   const withRetries = async (attemptOnce: () => Promise<GeneratedImage>): Promise<GeneratedImage> => {
     const startedAt = Date.now();
     let lastError: unknown;
+    let noImages = 0;
     for (let attempt = 1; attempt <= IMAGE_ATTEMPTS; attempt++) {
       try {
         return await attemptOnce();
@@ -473,6 +498,8 @@ export async function generateImage(input: {
         if (!err || err.status === undefined) break;
         // 오늘치를 다 썼거나 지출 한도에 닿았으면 기다려도 소용없다 — 바로 알리는 편이 낫다.
         if (err.quotaExhausted) break;
+        // 그림 없는 답을 정해 준 횟수만큼 받았다(사진 거절 등) — 더 걸지 않는다.
+        if (err.noImage && input.noImageAttempts !== undefined && ++noImages >= input.noImageAttempts) break;
         if (!isRetryableStatus(err.status) || attempt === IMAGE_ATTEMPTS) break;
         const crowded = err.status === 429;
         const delay = retryDelayMs(
@@ -482,6 +509,8 @@ export async function generateImage(input: {
         );
         const deadline = crowded ? RATE_LIMIT_DEADLINE_MS : RETRY_DEADLINE_MS;
         if (Date.now() - startedAt + delay > deadline) break;
+        // 부른 쪽이 이미 기다리기를 멈췄을 때다 — 다시 걸어 그려도 버려진다(값만 나간다).
+        if (input.until !== undefined && Date.now() + delay >= input.until) break;
         await sleep(delay);
       }
     }

@@ -309,7 +309,8 @@ export function FamilyFrame({ childName, childAge, parents, childGender, family,
                 우리 가족 그리기
               </Link>
               <p className="mt-4 flex items-center gap-[5px] text-xs font-bold text-neutral-600">
-                <CookieIcon size={15} />한 사람 쿠키 {FAMILY_FIRST_COST}개 · 사진은 받지 않아요
+                {/* 사진으로도 그릴 수 있지만 저장하지 않는다(사장님 2026-09-29 — lib/family-photo.ts) */}
+                <CookieIcon size={15} />한 사람 쿠키 {FAMILY_FIRST_COST}개 · 사진은 저장하지 않아요
               </p>
             </div>
           </div>
