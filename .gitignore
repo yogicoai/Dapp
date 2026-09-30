@@ -57,3 +57,6 @@ tmp-stories/
 
 .dev-server.log
 .dev-server.log.err
+
+# 대외비 문서(클라이언트 가격 권고안 등) — 저장소에 올리지 않는다
+/*.pdf

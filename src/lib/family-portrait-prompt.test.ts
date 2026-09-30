@@ -9,9 +9,11 @@ import {
   photoFallbackPlan,
   photoRefused,
   portraitReferences,
+  redrawLikeness,
   type PortraitInput,
 } from "./family-portrait-prompt.ts";
 import { headChartRatio, type HeadFix } from "./family-head.ts";
+import { readFeatureCard } from "./family-photo-card.ts";
 import { GeminiError } from "./gemini.ts";
 
 const CARD = [
@@ -674,6 +676,35 @@ describe("cardFor — 특징 카드를 이 사람에게 맞게 거른다", () =>
     assert.ok(cardFor(person("child", { age: 6, gender: "girl" }), card)?.includes("- distinctive: baby face; thick straight eyebrows"));
   });
 
+  it("아이 카드의 흉터는 특징 하나씩 뺀다(주근깨·점은 둔다) — 어른은 그대로(2026-09-30)", () => {
+    const card = "- distinctive: small scar on the chin; dimples\n- skin marks: scar above the image-right eyebrow\n- hair: black bob";
+    assert.equal(cardFor(person("child", { age: 6, gender: "girl" }), card), "- distinctive: dimples\n- hair: black bob");
+    assert.equal(
+      cardFor(person("child", { age: 6 }), "- skin marks: freckles on the nose; scarred knee; small mole"),
+      "- skin marks: freckles on the nose; small mole",
+    );
+    assert.equal(cardFor(person("dad"), card), card);
+    // 어른의 피부 점 줄도 두드러진 특징 줄처럼 아이 쪽 말이 든 특징만 뺀다
+    assert.equal(cardFor(person("dad"), "- skin marks: freckles; birthmark since he was a baby"), "- skin marks: freckles");
+  });
+
+  // 2026-09-30 검토: 아이 사진 프롬프트의 나이·체형 줄 옆에 몸 부위 + 점·상처 말(허벅지의 모반·손의 화상)이 놓이면 안전 검사에 걸리기 쉽다.
+  it("아이 카드의 몸 쪽 점·화상·꿰맨 자국은 특징 하나씩 뺀다 — 얼굴 주근깨·점과 체형 말('narrow shoulders')은 둔다", () => {
+    const kid = person("child", { age: 6, gender: "girl" });
+    assert.equal(
+      cardFor(kid, "- distinctive: healed burn mark on the image-left hand; round cheeks; narrow shoulders\n- skin marks: mole on the image-left upper arm; birthmark on the image-right thigh; freckles on the nose"),
+      "- distinctive: round cheeks; narrow shoulders\n- skin marks: freckles on the nose",
+    );
+    assert.equal(cardFor(kid, "- distinctive: stitches above the lip; dimples"), "- distinctive: dimples");
+    // 다른 줄의 색 말('burnt orange')은 걸지 않는다 — 두 줄에만
+    assert.equal(cardFor(kid, "- clothing: burnt orange T-shirt"), "- clothing: burnt orange T-shirt");
+    const p = buildPrompt(kid, PHOTO, "- distinctive: healed burn mark on the image-left hand; round cheeks\n- skin marks: mole on the image-left upper arm\n- hair: black bob");
+    assert.ok(!/burn|upper arm/i.test(p), p);
+    // 몸 쪽 점이 빠지면 점 막기 줄도 없고 DO NOT 줄은 예전 글('… bag, mole, freckles or tattoo …') 그대로
+    assert.ok(!p.includes(G_MOLE) && !p.includes("- skin marks:"));
+    assert.ok(p.includes("bag, mole, freckles or tattoo unless it is clearly there."));
+  });
+
   it("남는 줄이 없으면 null — 그때는 칩 갈래로 그린다", () => {
     assert.equal(cardFor(person("dad"), null), null);
     assert.equal(cardFor(person("dad"), "- cheeks and jaw: baby face"), null);
@@ -725,6 +756,379 @@ describe("buildPrompt — 칩 갈래는 예전 그대로", () => {
     assert.match(p, /APPEARANCE — chosen by the family and written in Korean\. Follow it literally/);
     assert.match(p, /Wholesome, innocent, fully clothed, child-friendly\.$/);
     assert.ok(!p.includes("LIKENESS SPEC"));
+  });
+});
+
+/*
+ * 2026-09-30 엄마 사진(사장님 "100% 비슷하단 느낌이 덜한데") — 사진은 비치는 가운데 앞머리·긴 달걀형 얼굴·좁은 턱·가늘고 긴
+ * 홑꺼풀 눈·곧은 콧대·작게 다문 입·주근깨·입가 점인데, 그림은 두꺼운 일자 앞머리·둥근 얼굴·큰 둥근 눈·점 코·주근깨 없음이었다.
+ * 그 사진에서 읽혔을 법한 카드(실제 카드는 찍지 않아 모른다 — 모양만 같은 가짜).
+ */
+const MOM_CARD = [
+  "- gender: woman",
+  "- age: late 20s",
+  "- distinctive: thin see-through fringe parted in the centre; many freckles across the cheeks and nose; long oval face with a narrow chin; long narrow single-lidded eyes",
+  "- face shape: long oval, long for its width",
+  "- eyes: single, long and narrow, small, straight",
+  "- eyebrows: thin, straight, dark brown",
+  "- nose: defined and straight bridge, medium, small tip",
+  "- mouth: thin, small, closed-lip",
+  "- cheeks and jaw: flat cheeks, slim jawline, narrow and pointed chin",
+  "- skin tone: light, warm",
+  "- skin marks: many freckles across both cheeks and the nose bridge; small mole near the image-left mouth corner",
+  "- hair: jaw-length straight black bob",
+  "- fringe: see-through wispy; at the brows; parting: centre",
+  "- glasses: none",
+  "- clothing: white T-shirt",
+].join("\n");
+
+/** 아이 카드 — 비치는 가운데 앞머리·긴 얼굴·좁은 턱·주근깨, 그리고 아이 그림에서 뺄 흉터 */
+const KID_CARD = [
+  "- gender: girl",
+  "- age: about 4 years old",
+  "- distinctive: see-through wispy fringe; freckles on the nose; small scar on the chin",
+  "- face shape: long oval",
+  "- eyes: single, long and narrow",
+  "- nose: defined straight bridge",
+  "- mouth: small, closed-lip",
+  "- cheeks and jaw: full cheeks, narrow pointed chin",
+  "- skin marks: a few freckles across the nose; small scar above the image-right eyebrow",
+  "- hair: black bob",
+  "- fringe: see-through wispy, at the brows, centre parting",
+].join("\n");
+
+const G_MUST = "MUST KEEP — the ways portraits of this person usually drift; this one must not: ";
+const G_FRINGE =
+  "the fringe is a few thin, see-through wisps with the forehead showing between them — NOT a heavy, solid or blunt-cut fringe";
+const G_CENTRE = "the parting stays in the centre";
+const G_FACE = "the face keeps the shape and length the spec gives it — never rounded off into a short, round face";
+const G_CHIN = "the chin stays as narrow as the spec gives it — never widened into a broad jaw";
+const G_EYES =
+  "the eyes keep the eyelids, shape and size the spec gives them — NOT big round picture-book eyes, and never exaggerated into slits";
+const G_NOSE = "the nose keeps the clearly visible bridge the spec gives it — never shrunk to a dot or button nose";
+const G_MOUTH = "the mouth keeps its small size — a soft closed-lip smile, never a wide open grin";
+const G_MOUTH_CLOSED = "the mouth keeps the size the spec gives it, with a soft closed-lip smile — never a wide open grin";
+const G_FRINGE_LIGHT = "the fringe stays as light as the spec gives it — NOT a heavy, solid or blunt-cut fringe";
+const G_FRECKLES =
+  "the freckles are painted as the spec gives them, as many and in the places written — small, soft light-brown dots, subtle but clearly there; never left out, never dark blotches";
+const G_MOLE = "each mole or beauty mark is one small dark-brown dot in the place the spec gives";
+const SAMPLE_BASE =
+  "image = painting-style sample only (never copy its people, animals, subject, pose or composition). Copy only HOW it is painted: medium, brush and line quality, edge softness, colour palette, shading and paper finish.";
+const SAMPLE_NO_FACE = " Never copy how it draws faces either — not its dot eyes, open-mouthed grin or pink cheek blush.";
+const DO_NOT_OLD_PHOTO =
+  "DO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag, mole, freckles or tattoo unless it is clearly there. One invented accessory and the portrait no longer looks like them.";
+
+describe("MUST KEEP·ADULT FACE — 카드에 있는 특징이 흔히 어긋나는 쪽을 막는다(2026-09-30 엄마 사진)", () => {
+  const mom = person("mom", { callName: "엄마" });
+  const guideRefs = portraitReferences({ photo: "P", closeUp: "C", sample: "S", sibling: null, guide: "G" }).attached;
+
+  it("엄마 카드(사진) — 앞머리·가르마·얼굴·턱·눈·코·입·주근깨·점 모두 한 줄에, 카드 묶음 바로 뒤·사진 규칙 앞", () => {
+    const p = buildPrompt(mom, guideRefs, MOM_CARD);
+    const lines = p.split("\n");
+    const must = lines.findIndex((l) => l.startsWith(G_MUST));
+    assert.ok(must > 0, p);
+    assert.equal(
+      lines[must],
+      `${G_MUST}${[G_FRINGE, G_CENTRE, G_FACE, G_CHIN, G_EYES, G_NOSE, G_MOUTH, G_FRECKLES, G_MOLE].join("; ")}.`,
+    );
+    assert.match(lines[must - 1], /^Where the spec disagrees with the WHO line/, "카드 묶음 바로 뒤");
+    assert.match(lines[must + 1], /^ADULT FACE: /);
+    assert.match(lines[must + 2], /^LIKENESS from the photo/, "사진 규칙 앞");
+    assert.ok(!p.includes("no fringe"));
+    assert.equal(CHILD_FRAMING.exec(p), null);
+    assert.ok(!/torso|\blegs?\b/i.test(p), "사진 갈래에 몸 부위 말을 더하지 않는다");
+  });
+
+  it("카드에 주근깨·점이 있으면 DO NOT 줄이 카드와 부딪히지 않게 — '카드가 적은 것 말고는 더하지 말 것'", () => {
+    const photo = buildPrompt(mom, PHOTO, MOM_CARD);
+    assert.match(
+      photo,
+      /\nDO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag or tattoo unless it is clearly there, and no freckles or moles beyond those the LIKENESS SPEC gives\. One invented accessory and the portrait no longer looks like them\.\n/,
+    );
+    assert.ok(!photo.includes("bag, mole, freckles or tattoo"));
+    const card = buildPrompt(mom, NO_PHOTO, MOM_CARD);
+    assert.match(
+      card,
+      /\nDO NOT invent anything that is neither in the LIKENESS SPEC nor written above: no glasses, sunglasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag or tattoo unless it is written, and no freckles or moles beyond those the LIKENESS SPEC gives\. One invented accessory and the portrait no longer looks like them\.\n/,
+    );
+    // 주근깨가 두드러진 특징 줄에만 있어도 같다
+    const onlyDistinctive = `${CARD.replace("- distinctive: long narrow face, deep-set eyes", "- distinctive: long narrow face; freckles across the nose")}`;
+    const q = buildPrompt(person("dad"), PHOTO, onlyDistinctive);
+    assert.match(q, /and no freckles or moles beyond those the LIKENESS SPEC gives\./);
+    assert.ok(q.includes(G_FRECKLES) && !q.includes(G_MOLE));
+    // 'skin marks: none' 이면 예전 글 그대로
+    assert.ok(buildPrompt(person("dad"), PHOTO, `${CARD}\n- skin marks: none`).includes(DO_NOT_OLD_PHOTO));
+  });
+
+  it("ADULT FACE — 사진·카드 갈래 어른만, 볼 터치는 사진(카드)에 있을 때만, 아이 쪽 말 없음", () => {
+    for (const who of ADULTS) {
+      const photo = buildPrompt(who, PHOTO, CARD);
+      assert.match(
+        photo,
+        /\nADULT FACE: paint a grown-up's real face, not the generic cute picture-book face — keep the real eye shape and eye size \(never enlarged into big round eyes\), face length and chin \(never shortened or rounded off into a younger-looking face\), nose bridge \(never shrunk to a tiny dot nose\), mouth size and apparent age \(never younger-looking\)\. No pink blush circles on the cheeks unless the photo shows rosy cheeks\. The picture-book look comes only from the rendering — soft washes and the thin pencil contour\.\n/,
+        who.role,
+      );
+      assert.match(buildPrompt(who, PHOTO), /\nADULT FACE: /, "카드가 없어도(카드가 늦었다) 사진 갈래 어른이면");
+      assert.match(buildPrompt(who, NO_PHOTO, CARD), /No pink blush circles on the cheeks unless the LIKENESS SPEC gives rosy cheeks\./);
+      assert.equal(CHILD_FRAMING.exec(photo), null, who.role);
+    }
+  });
+
+  it("그림체 견본 줄 — 사진·카드 갈래 어른만 '견본의 얼굴 그리는 법은 가져오지 말 것'을 붙인다('face style' 이라는 말은 없다)", () => {
+    assert.ok(buildPrompt(mom, PHOTO, MOM_CARD).includes(`SECOND ${SAMPLE_BASE}${SAMPLE_NO_FACE}\n`));
+    assert.ok(buildPrompt(mom, NO_PHOTO, MOM_CARD).includes(`FIRST ${SAMPLE_BASE}${SAMPLE_NO_FACE}\n`));
+    assert.ok(!/face style/.test(buildPrompt(mom, PHOTO, MOM_CARD)));
+  });
+
+  it("아빠 카드(시험 카드) — 얼굴·눈만 걸리고 앞머리·주근깨·점 말은 없다, DO NOT 줄은 예전 그대로", () => {
+    const p = buildPrompt(person("dad"), PHOTO, CARD);
+    const must = p.split("\n").find((l) => l.startsWith(G_MUST));
+    assert.equal(must, `${G_MUST}${G_FACE}; ${G_EYES}.`);
+    assert.ok(!/fringe|freckl|\bmoles?\b/i.test(must ?? ""), "카드에 없는 특징 말은 적지 않는다(예시 낱말이 옮겨 그려지는 버릇)");
+    assert.ok(p.includes(DO_NOT_OLD_PHOTO));
+    // 걸 것이 없으면 줄째 없다
+    assert.ok(!buildPrompt(person("dad"), PHOTO, "- gender: man\n- hair: short straight black hair\n- glasses: none\n- build: slim\n- clothing: navy").includes("MUST KEEP"));
+  });
+
+  it("아이 — 앞머리·가르마·얼굴·턱·주근깨만(눈·코·입은 부드러운 그림책 얼굴 그대로), ADULT FACE·견본 얼굴 말·흉터는 없다", () => {
+    const kid = person("child", { callName: "하온", age: 6, gender: "girl" });
+    for (const refs of [PHOTO, NO_PHOTO]) {
+      const p = buildPrompt(kid, refs, KID_CARD);
+      const must = p.split("\n").find((l) => l.startsWith(G_MUST));
+      assert.equal(must, `${G_MUST}${[G_FRINGE, G_CENTRE, G_FACE, G_CHIN, G_FRECKLES].join("; ")}.`);
+      assert.ok(!p.includes("ADULT FACE"));
+      assert.ok(!p.includes(SAMPLE_NO_FACE));
+      assert.ok(!/\bscar/i.test(p), "아이 그림의 흉터 말은 뺀다(아이 나이 줄 옆의 상처 말 — 안전 검사)");
+      assert.ok(p.includes("- skin marks: a few freckles across the nose"));
+      assert.ok(p.includes("- distinctive: see-through wispy fringe; freckles on the nose"));
+    }
+  });
+
+  it("앞머리가 없다·두꺼운 일자 앞머리·옆으로 넘긴 앞머리 — 카드가 적은 대로만", () => {
+    const withFringe = (f: string) =>
+      buildPrompt(person("dad"), PHOTO, `${CARD}\n- fringe: ${f}`).split("\n").find((l) => l.startsWith(G_MUST)) ?? "";
+    assert.ok(withFringe("none; parting: image-left").includes("no fringe — the forehead stays open, never add bangs"));
+    assert.ok(!withFringe("none; parting: image-left").includes(G_FRINGE));
+    // 두꺼운 일자 앞머리면 '비치는 앞머리'를 걸지 않는다 — 'not heavy' 같은 부정은 두꺼운 말로 읽지 않는다
+    assert.ok(!withFringe("full blunt, to the brows").includes("fringe"));
+    // 2026-09-30 검토: 가벼운(light·thin) 앞머리는 '비치는 몇 가닥, 이마가 보인다'로 풀지 않는다 — 카드의 고를 말도 따로다
+    // (예전엔 light 를 비치는 앞머리로 풀어 보통 앞머리 아이가 비치는 앞머리로 그려질 뻔했다). '두껍게 일자로 자르지 말 것'만.
+    assert.equal(withFringe("light, not heavy, above the brows"), `${G_MUST}${[G_FRINGE_LIGHT, G_FACE, G_EYES].join("; ")}.`);
+    for (const light of ["light; at the brows; none", "thin; to the brows; image-left", "light and airy; above the brows"]) {
+      assert.ok(withFringe(light).includes(G_FRINGE_LIGHT), light);
+      assert.ok(!/forehead showing|see-through|wisps/.test(withFringe(light)), light);
+    }
+    assert.ok(withFringe("sparse, see-through; at the brows").includes(G_FRINGE));
+    // 커튼 앞머리는 가볍다고 적혀도 커튼 말이 먼저(더 구체적인 말)
+    assert.ok(withFringe("light curtain fringe, to the brows").includes("parted curtain-style"));
+    assert.ok(!withFringe("light curtain fringe, to the brows").includes(G_FRINGE_LIGHT));
+    // 머리 색 'light brown' 은 가벼운 앞머리 말이 아니다
+    assert.ok(!withFringe("light brown, to the brows").includes(G_FRINGE));
+    assert.ok(withFringe("side-swept to the image-left").includes("the fringe sweeps to the side the spec gives — NOT a straight-across blunt fringe"));
+    assert.ok(withFringe("curtain, to the brows").includes("parted curtain-style"));
+    for (const centre of ["see-through; parted in the centre", "wispy, center-parted", "light; middle part"]) {
+      assert.ok(withFringe(centre).includes(G_CENTRE), centre);
+    }
+    assert.ok(!withFringe("light fringe covering the centre of the forehead, no parting").includes(G_CENTRE));
+  });
+
+  it("얼굴·눈이 정말 둥글거나 크면 걸지 않는다 — 있는 생김새와 부딪히는 말을 적지 않는다", () => {
+    const card = CARD.replace("- face shape: long oval, narrow", "- face shape: round, short and wide")
+      .replace("- distinctive: long narrow face, deep-set eyes", "- distinctive: deep-set eyes")
+      .replace("- eyes: single eyelid, narrow, slightly upturned", "- eyes: double, round, large");
+    assert.ok(!buildPrompt(person("dad"), PHOTO, card).includes("MUST KEEP"));
+  });
+
+  it("칩 갈래는 예전 그대로 — MUST KEEP·ADULT FACE 없고 견본 줄·DO NOT 줄도 같다", () => {
+    for (const who of [person("mom", { callName: "엄마", looks: "까만 단발머리" }), person("dad")]) {
+      const p = buildPrompt(who, NO_PHOTO);
+      assert.ok(!p.includes("MUST KEEP") && !p.includes("ADULT FACE"), who.role);
+      assert.ok(p.split("\n").includes(`FIRST ${SAMPLE_BASE}`));
+      assert.match(p, /bag, mole, freckles or tattoo unless that exact item is written\./);
+    }
+  });
+
+  it("카드 → 프롬프트 — 글 모델 답의 주근깨·점이 카드를 거쳐 MUST KEEP 까지 간다", () => {
+    const reply = MOM_CARD.split("\n")
+      .map((l) => l.slice(2))
+      .join("\n");
+    const card = readFeatureCard(`${reply}\nface box: [120, 300, 520, 700]`);
+    assert.ok(card?.includes("- skin marks: many freckles across both cheeks and the nose bridge; small mole near the image-left mouth corner"));
+    assert.ok(card?.includes("- fringe: see-through wispy; at the brows; parting: centre"));
+    const p = buildPrompt(mom, PHOTO, card);
+    assert.ok(p.includes(G_FRECKLES) && p.includes(G_MOLE) && p.includes(G_FRINGE) && p.includes(G_CENTRE), p);
+    assert.match(p, /\nLeft and right in the spec \(image-left \/ image-right\)/);
+  });
+
+  // 2026-09-30 검토: 'no moles' 의 moles 가 점 막기 줄을 켜 없는 점을 그리게 했고, 'no freckles; small mole' 은 줄째 버려져
+  // 있는 점이 막기 줄을 잃었다. 새 부탁 글('freckles …, each mole …; or none')이 이런 답을 부르기 쉽다.
+  it("'없다'는 점 말은 막기 줄을 켜지 않는다 — 카드 읽기부터 그림 프롬프트·다시 그리기까지", () => {
+    const base = MOM_CARD.split("\n")
+      .filter((l) => !l.startsWith("- skin marks: ") && !l.startsWith("- distinctive: "))
+      .map((l) => l.slice(2))
+      .join("\n");
+    const guards = (marks: string, who = mom) => {
+      const card = readFeatureCard(`${base}\nskin marks: ${marks}`);
+      const must = buildPrompt(who, PHOTO, card)
+        .split("\n")
+        .find((l) => l.startsWith(G_MUST)) ?? "";
+      const again = redrawLikeness(who, card) ?? "";
+      return { freckles: must.includes(G_FRECKLES), mole: must.includes(G_MOLE), again, card: card ?? "" };
+    };
+    // ① 주근깨만 — 'no moles' 로 점 막기 줄이 켜지지 않는다
+    const a = guards("some freckles across the nose and cheeks; no moles");
+    assert.deepEqual([a.freckles, a.mole], [true, false]);
+    assert.ok(!a.again.includes(G_MOLE) && a.again.includes(G_FRECKLES));
+    assert.ok(!/no moles/.test(a.card), "카드에도 'no moles' 가 남지 않는다");
+    // ② 점만 — 'freckles: none' 으로 주근깨 막기 줄이 켜지지 않고, 있는 점은 막기 줄을 그대로 받는다
+    const b = guards("freckles: none; one small mole under the image-left eye");
+    assert.deepEqual([b.freckles, b.mole], [false, true]);
+    assert.ok(b.again.includes(G_MOLE) && !b.again.includes(G_FRECKLES));
+    const b2 = guards("no freckles; one small mole near the image-left mouth corner");
+    assert.deepEqual([b2.freckles, b2.mole], [false, true]);
+    // ③ 둘 다 없다 — 막기 줄 없음, 아빠도 같다(다시 그리기 LIKENESS 에도)
+    for (const who of [mom, person("dad")]) {
+      const c = guards("clear skin, no freckles or moles", who);
+      assert.deepEqual([c.freckles, c.mole], [false, false], who.role);
+      assert.ok(!c.again.includes(G_FRECKLES) && !c.again.includes(G_MOLE), who.role);
+    }
+    // ④ 주근깨 + 'mole: none'
+    const d = guards("freckles (many across the cheeks); mole: none");
+    assert.deepEqual([d.freckles, d.mole], [true, false]);
+    // 모두 '없다'면 'none' — DO NOT 줄은 예전 글('bag, mole, freckles or tattoo')
+    const e = guards("no freckles, moles or scars");
+    assert.deepEqual([e.freckles, e.mole], [false, false]);
+    assert.ok(e.card.includes("- skin marks: none"));
+    assert.ok(buildPrompt(mom, PHOTO, e.card).includes(DO_NOT_OLD_PHOTO));
+  });
+
+  it("한 특징 안의 '없다'도 걷는다 — 'freckles but no moles' · 'no moles and some freckles'(카드엔 그대로 남는 꼴)", () => {
+    // 두드러진 특징 줄(주근깨가 있다)은 빼고 피부 점 줄만 바꿔 본다
+    const must = (marks: string) =>
+      buildPrompt(mom, PHOTO, MOM_CARD.replace(/^- distinctive: .*\n/m, "").replace(/^- skin marks: .*$/m, `- skin marks: ${marks}`))
+        .split("\n")
+        .find((l) => l.startsWith(G_MUST)) ?? "";
+    for (const marks of ["freckles but no moles", "no moles and some freckles on the nose", "a few freckles on the nose, no visible moles"]) {
+      assert.ok(must(marks).includes(G_FRECKLES), marks);
+      assert.ok(!must(marks).includes(G_MOLE), marks);
+    }
+    for (const marks of ["small mole on the chin, not freckled", "no freckles or other marks, small mole on the chin"]) {
+      assert.ok(must(marks).includes(G_MOLE), marks);
+      assert.ok(!must(marks).includes(G_FRECKLES), marks);
+    }
+  });
+
+  // 2026-09-30 검토: 입 막기 줄이 'small·narrow' 에만 걸려, 너비가 medium 인 다문 입(엄마가 활짝 웃게 그려진 쪽)은 막지 못했다.
+  it("입 — 작지 않아도 다문 입(closed-lip)이면 '활짝 웃는 입 금지', 이가 보이거나 넓으면 걸지 않는다(어른만)", () => {
+    const must = (mouth: string, who = mom) =>
+      buildPrompt(who, PHOTO, MOM_CARD.replace(/^- mouth: .*$/m, `- mouth: ${mouth}`))
+        .split("\n")
+        .find((l) => l.startsWith(G_MUST)) ?? "";
+    assert.ok(must("thin lips, medium width, closed-lip").includes(G_MOUTH_CLOSED));
+    assert.ok(must("medium, lips together").includes(G_MOUTH_CLOSED));
+    assert.ok(must("thin, small, closed-lip").includes(G_MOUTH));
+    assert.ok(!must("thin, small, closed-lip").includes(G_MOUTH_CLOSED), "작은 입 말이 먼저 — 한 마디만");
+    for (const open of ["full, wide, showing teeth", "medium, medium, showing teeth", "full lips, wide"]) {
+      assert.ok(!/the mouth keeps/.test(must(open)), open);
+    }
+    // 'not showing teeth' 의 teeth 를 이가 보이는 입으로 읽지 않는다
+    assert.ok(must("medium, closed-lip, not showing teeth").includes(G_MOUTH_CLOSED));
+    // 아이는 입 막기 줄 없음(부드러운 그림책 얼굴 그대로)
+    assert.ok(!/the mouth keeps/.test(must("medium, closed-lip", person("child", { age: 6, gender: "girl" }))));
+  });
+});
+
+describe("redrawLikeness — 사진(카드)으로 그렸으면 머리 비율 다시 그리기에 카드의 얼굴·머리 줄을 다시 적는다(2026-09-30)", () => {
+  const MOM: HeadFix = { target: 7, verdict: "big", measured: 4.15 };
+  const mom = person("mom", { callName: "엄마" });
+
+  it("어른 — 나이·두드러진 특징·얼굴형·눈·눈썹·코·입·볼과 턱·피부 점·머리·앞머리만, 성별·피부색·안경·옷은 없다", () => {
+    const l = redrawLikeness(mom, MOM_CARD);
+    assert.ok(l);
+    const lines = l.split("\n");
+    assert.equal(
+      lines[0],
+      "LIKENESS SPEC — this person's real, recognisable face and hair, which the FIRST image was painted to match. Keep every trait below; where the FIRST image has drifted from one of them, follow the spec for the face and hair — everything else stays exactly as in the FIRST image.",
+    );
+    const keys = lines.filter((x) => x.startsWith("- ")).map((x) => x.slice(2, x.indexOf(":")));
+    assert.deepEqual(keys, ["age", "distinctive", "face shape", "eyes", "eyebrows", "nose", "mouth", "cheeks and jaw", "skin marks", "hair", "fringe"]);
+    assert.ok(lines.includes("Left and right in the spec (image-left / image-right) mean the left and right side of the picture as the viewer sees it, not the person's own left and right."));
+    assert.ok(lines.includes(`${G_MUST}${[G_FRINGE, G_CENTRE, G_FACE, G_CHIN, G_EYES, G_NOSE, G_MOUTH, G_FRECKLES, G_MOLE].join("; ")}.`));
+    assert.match(lines[lines.length - 1], /^ADULT FACE: .*unless the LIKENESS SPEC gives rosy cheeks\./);
+    assert.ok(!/\bphoto|close-up/i.test(l), "다시 그리기에는 사진이 없다");
+  });
+
+  it("아이 — 얼굴형·볼과 턱·피부 점·앞머리만, 흉터·아이 쪽 말·ADULT FACE 는 없다", () => {
+    const kid = person("child", { callName: "하온", age: 6, gender: "girl" });
+    const l = redrawLikeness(kid, KID_CARD.replace("- face shape: long oval", "- face shape: long oval, baby-like"));
+    assert.ok(l);
+    const keys = l
+      .split("\n")
+      .filter((x) => x.startsWith("- "))
+      .map((x) => x.slice(2, x.indexOf(":")));
+    assert.deepEqual(keys, ["face shape", "cheeks and jaw", "skin marks", "fringe"]);
+    assert.ok(l.includes("- face shape: long oval\n"), "아이 쪽 말은 특징 하나씩 뺀다");
+    assert.ok(l.includes("- skin marks: a few freckles across the nose\n"));
+    assert.ok(l.includes(`${G_MUST}${[G_FRINGE, G_CENTRE, G_FACE, G_CHIN, G_FRECKLES].join("; ")}.`));
+    assert.ok(!/\bscar|ADULT FACE|\bphoto/i.test(l));
+    assert.equal(CHILD_FRAMING.exec(l), null);
+    assert.ok(!/\bbaby/i.test(l));
+  });
+
+  it("어른 카드의 아이 쪽 말은 빼고, 남는 칸이 없으면 null(예전 그대로 다시 그린다)", () => {
+    const l = redrawLikeness(person("dad"), `${CARD}\n- cheeks and jaw: round baby face\n- skin marks: freckles; birthmark since he was a baby`);
+    assert.ok(l && !l.includes("baby") && l.includes("- skin marks: freckles\n"));
+    assert.equal(redrawLikeness(person("dad"), null), null);
+    assert.equal(redrawLikeness(person("dad"), "- gender: man\n- glasses: none\n- clothing: navy"), null);
+  });
+
+  it("안경·수염 말은 두드러진 특징 줄에 섞여 있어도 특징 하나씩 뺀다 — FIRST 줄 '처음 그림에 있을 때만(never add any)'과 부딪히지 않게", () => {
+    const dadCard = [
+      "- gender: man",
+      "- age: late 30s",
+      "- distinctive: thick black rectangular glasses; short boxed beard; long narrow face",
+      "- face shape: long oval",
+      "- mouth: thin lips under a thin moustache, medium",
+      "- hair: short black hair that frames the face",
+      "- glasses: thick black rectangular frames",
+      "- facial hair: short boxed beard",
+    ].join("\n");
+    const l = redrawLikeness(person("dad"), dadCard);
+    assert.ok(l);
+    assert.ok(l.includes("- distinctive: long narrow face\n"), l);
+    assert.ok(!/glasses|beard|moustache|- glasses:|- facial hair:/i.test(l), l);
+    assert.ok(l.includes("- hair: short black hair that frames the face\n"), "'frames the face' 는 머리 말 — 걸지 않는다");
+    assert.ok(l.includes("- mouth: medium\n"), l);
+  });
+
+  // 2026-09-30 검토: 예전 FIRST 줄('얼굴·앞머리 그대로, 바꾸는 건 머리 크기와 목·몸통·다리뿐')이 뒤의 닮음 줄('어긋났으면 카드대로')을
+  // 더 센 말로 막았다 — 닮음 줄이 붙으면 FIRST 줄이 '얼굴·머리는 닮음 줄이 바로잡는 곳만 바꾼다'로 바뀐다. 없으면 예전 글 그대로.
+  it("다시 그리기 요청 — 참고 그림은 그대로(처음 그림 + 비율 견본), 닮음 줄은 FIRST 줄 바로 뒤, FIRST 줄은 '닮음 줄이 바로잡는 곳만', 나머지 글은 같다", () => {
+    const likeness = redrawLikeness(mom, MOM_CARD);
+    assert.ok(likeness);
+    const plain = headRedrawRecipe({ first: "F", guide: "G", fix: MOM });
+    const r = headRedrawRecipe({ first: "F", guide: "G", fix: MOM, likeness });
+    assert.deepEqual(r.references, ["F", "G"]);
+    const lines = r.prompt.split("\n");
+    const oldFirst = plain.prompt.split("\n")[1];
+    assert.equal(
+      lines[1],
+      "FIRST image = our own earlier painting of this person — repaint THIS SAME character from the FIRST image. Keep exactly as in the FIRST image: glasses, beard or moustache only if the FIRST image has them (never add any), the skin tone, the body build, the clothes, shoes and all their colours, and the watercolor rendering (brushwork, line, soft washes). Keep the face (face shape, eyes, eyebrows, nose, mouth), the hairstyle, hair length, fringe, hair colour and the age the face shows as in the FIRST image too, except where the LIKENESS SPEC below corrects them — there the spec wins. Copy everything else from it EXCEPT its head-to-height ratio — only the head size, the length of the neck, torso and legs, and the face and hair traits the LIKENESS SPEC corrects change.",
+    );
+    assert.ok(!lines[1].includes("Copy everything from it EXCEPT"), "'얼굴도 그대로, 바꾸는 건 비율뿐'이 닮음 줄을 이기지 않게");
+    assert.equal(lines[2], likeness.split("\n")[0]);
+    assert.ok(r.prompt.includes(`${likeness}\nSECOND image = PROPORTION GUIDE only`));
+    assert.equal(
+      r.prompt.replace(`${likeness}\n`, "").replace(lines[1], oldFirst),
+      plain.prompt,
+      "닮음 줄·FIRST 줄 말고는 예전 글 그대로",
+    );
+    const hit = /\bphoto|close-up|painting-style sample|another member of the same family|APPEARANCE/i.exec(r.prompt);
+    assert.equal(hit, null, `'${hit?.[0]}'`);
+    assert.equal(CHILD_FRAMING.exec(r.prompt), null);
+    // 칩 갈래(닮음 줄 없음)는 예전과 한 글자도 같다
+    assert.equal(headRedrawRecipe({ first: "F", guide: "G", fix: MOM, likeness: null }).prompt, headRedrawPrompt(MOM, { guide: true }));
+    assert.equal(plain.prompt, headRedrawPrompt(MOM, { guide: true }));
   });
 });
 

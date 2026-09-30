@@ -19,6 +19,8 @@
 --
 -- 뒤쪽 8~13번이 토큰을 지키는 부분이다. 이걸 안 돌리면 로그인한 사람이
 -- 브라우저 콘솔 한 줄로 자기 토큰을 999999 로 만들 수 있다.
+-- 9번에는 회원 줄을 지우고 다시 넣어 관리자가 되는 길도 막혀 있다(2026-09-30,
+-- supabase-fix-profiles-escalation.sql 과 같은 내용).
 --
 -- 14~21번은 컴플레인 처리(만들기 기록 · 마스터 환불 · 책 되살리기 · 사고 목록 · 원고 90일 보관).
 --
@@ -426,6 +428,12 @@ declare
   pd  text := to_char((now() at time zone 'utc'), 'YYYY-MM');
   cur bigint;
 begin
+  -- 서버는 1~800자만 보낸다. 음수로 이번 달 사용량을 깎으면 무료 한도를 넘어도 안 멈춰 요금이 나간다
+  -- (이 함수는 비회원도 부른다). 0 이하·빈 값은 한도 초과처럼 거절하고 아무것도 안 더한다. 2026-09-30
+  if p_add is null or p_add < 1 then
+    return -1;
+  end if;
+
   select chars into cur from public.tts_usage where period = pd for update;
   if cur is null then
     cur := 0;
@@ -457,10 +465,20 @@ alter table public.books         enable row level security;
 alter table public.voice_clones  enable row level security;
 alter table public.feedback      enable row level security;
 alter table public.tts_usage     enable row level security;   -- 직접 접근 차단(함수로만)
+-- 정책이 없어 이미 막혀 있지만 권한까지 걷어 두 겹으로 한다(tts_reserve 함수로만 센다). 2026-09-30
+revoke all on public.tts_usage from anon, authenticated;
 
 -- 회원 ─────────────────────────────
+-- 본인은 읽기·고치기만. 넣기·지우기 정책은 없다 — 회원 줄은 가입 트리거만 만들고, 계정 삭제 때 연쇄로만 지워진다.
+-- (예전 "profiles: 본인"은 for all 이라 지우고 다시 넣어 토큰·관리자를 스스로 줄 수 있었다 — 9번, 2026-09-30)
 drop policy if exists "profiles: 본인" on public.profiles;
-create policy "profiles: 본인" on public.profiles for all
+
+drop policy if exists "profiles: 본인 열람" on public.profiles;
+create policy "profiles: 본인 열람" on public.profiles for select
+  using (auth.uid() = id);
+
+drop policy if exists "profiles: 본인 고치기" on public.profiles;
+create policy "profiles: 본인 고치기" on public.profiles for update
   using (auth.uid() = id) with check (auth.uid() = id);
 
 drop policy if exists "profiles: 마스터 열람" on public.profiles;
@@ -525,8 +543,8 @@ create policy "feedback delete own or master" on public.feedback
 --  여기부터 — 토큰을 브라우저가 아니라 DB 가 지키게 한다
 -- ════════════════════════════════════════════════════════════════════════
 --
---  바로 위 "profiles: 본인" 정책을 보라. "for all" 이라 update 도 포함이고,
---  조건은 "내 줄인가"뿐이다. 어느 칸을 고치는지는 보지 않는다. 그래서 로그인한
+--  바로 위 "profiles: 본인 고치기" 정책을 보라(예전엔 "profiles: 본인" for all).
+--  조건은 "내 줄인가"뿐이다. 어느 칸을 고치는지는 보지 않는다. 그래서 칸 권한이 없으면 로그인한
 --  사람이 브라우저 콘솔에서 한 줄이면 끝난다.
 --
 --    supabase.from('profiles').update({ tokens: 999999 }).eq('id', 내id)
@@ -571,14 +589,73 @@ drop policy if exists "token_ledger 마스터 열람" on public.token_ledger;
 create policy "token_ledger 마스터 열람" on public.token_ledger for select
   using (public.master_can_see(owner));
 
+-- 쓰기 정책이 없어 이미 막혀 있지만, Supabase 가 새 표에 통째로 준 쓰기 권한까지 걷어 두 겹으로 한다. 2026-09-30
+revoke insert, update, delete, truncate on public.token_ledger from anon, authenticated;
+
 
 -- ────────────────────────────────────────────────────────────────────────
--- 9. 회원은 profiles 에서 child 칸만 고칠 수 있다
+-- 9. 회원은 profiles 에서 child 칸만 고칠 수 있다 — 넣기·지우기는 아예 못 한다
 -- ────────────────────────────────────────────────────────────────────────
 -- RLS 정책은 "이 줄을 고쳐도 되나"만 본다. "어느 칸을 고치나"는 grant 가 정한다.
 -- tokens · is_master · username 은 여기서부터 아무도 직접 못 고친다(함수만 고친다).
+--
+-- 넣기·지우기도 걷는다 (2026-09-30). 고치기만 막았을 때는 회원 줄을 **지우고 다시 넣는** 길이 열려 있었다.
+--    await supabase.from('profiles').delete().eq('id', 내id)
+--    await supabase.from('profiles').insert({ id: 내id, username: 'x', tokens: 999999, is_master: true })
+--  → 토큰 999999 + 관리자(관리실·충전·환불이 다 열린다). 예전 "본인" 정책이 for all 이었고
+--    Supabase 가 새 표에 넣기·지우기 권한을 통째로 주기 때문이다(feedback 은 24번에서 이미 이렇게 막았다).
+--  새 회원 줄은 가입 트리거(handle_new_user, security definer)만 만든다. 계정을 지우면 auth.users 에서
+--  연쇄로 지워진다. 둘 다 이 권한이 필요 없다. 앱 코드에는 회원 줄을 넣거나 지우는 곳이 없다.
+revoke insert, delete, truncate on public.profiles from authenticated;
+revoke insert, update, delete, truncate on public.profiles from anon;
 revoke update on public.profiles from authenticated;
 grant  update (child) on public.profiles to authenticated;
+
+/*
+ * 지킴이 — 권한을 누가 실수로 다시 열어도(옛 파일 다시 붙이기 등) 앱을 쓰는 사람은
+ * 회원 줄을 넣거나 지우지 못하고, 토큰·관리자·아이디·의견 보상 칸을 바꾸지 못한다.
+ *
+ * current_user 로 가른다. 브라우저·서버가 PostgREST 로 들어오면 anon 이나 authenticated 다.
+ * security definer 함수(spend_tokens·grant_tokens·submit_feedback·handle_new_user …) 안에서는
+ * 함수 주인(postgres)이 되고, SQL 편집기도 postgres, 서버 관리 키는 service_role 이다 → 그대로 통과.
+ * 계정 삭제의 연쇄 지우기도 표 주인(postgres)으로 돈다 → 통과.
+ * 그래서 이 함수는 **security definer 로 만들면 안 된다**(그러면 늘 주인으로 보여 아무것도 못 막는다).
+ */
+create or replace function public.profiles_guard()
+returns trigger
+language plpgsql
+set search_path = public as $$
+begin
+  if current_user not in ('anon', 'authenticated') then
+    if tg_op = 'DELETE' then
+      return old;
+    end if;
+    return new;
+  end if;
+
+  if tg_op = 'INSERT' then
+    raise exception '회원 정보는 가입할 때 자동으로만 만들어져요.' using errcode = '42501';
+  end if;
+  if tg_op = 'DELETE' then
+    raise exception '회원 정보는 직접 지울 수 없어요.' using errcode = '42501';
+  end if;
+  if new.id                 is distinct from old.id
+     or new.username        is distinct from old.username
+     or new.tokens          is distinct from old.tokens
+     or new.is_master       is distinct from old.is_master
+     or new.feedback_reward_at is distinct from old.feedback_reward_at
+     or new.created_at      is distinct from old.created_at then
+    raise exception '토큰·관리자·아이디 칸은 직접 바꿀 수 없어요.' using errcode = '42501';
+  end if;
+  return new;
+end; $$;
+
+revoke all on function public.profiles_guard() from public, anon, authenticated;
+
+drop trigger if exists profiles_guard on public.profiles;
+create trigger profiles_guard
+  before insert or update or delete on public.profiles
+  for each row execute function public.profiles_guard();
 
 
 -- ────────────────────────────────────────────────────────────────────────
@@ -833,6 +910,9 @@ create policy "story_charges 본인 열람" on public.story_charges for select
 drop policy if exists "story_charges 마스터 열람" on public.story_charges;
 create policy "story_charges 마스터 열람" on public.story_charges for select
   using (public.master_can_see(owner));
+
+-- 쓰기는 charge_story·refund_story 함수만 한다. 정책이 없어 이미 막혀 있지만 권한까지 걷어 두 겹으로. 2026-09-30
+revoke insert, update, delete, truncate on public.story_charges from anon, authenticated;
 
 
 -- 대본 값을 받는다. 돌려주는 값(json):

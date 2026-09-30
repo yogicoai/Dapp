@@ -24,6 +24,8 @@
  *    사진 바로 뒤(SECOND)에 붙인다. '같은 사진에서 자른 같은 사람 얼굴 — 얼굴은 이것을 보고 정확히, 머리 길이·전체 머리 모양은
  *    사진에서(클로즈업은 머리를 자른다), 얼굴도 수채화로(사진 같은 피부 결·빛 금지)'. 사진과 똑같이 다룬다.
  *  ② 특징 카드가 '알아보게 하는 오래가는 특징 3~5개'(distinctive)부터 적는다(lib/family-photo-card). 좌우는 보는 쪽 기준.
+ *    (2026-09-30: 주근깨·점 칸과 앞머리 칸이 더해졌고, 카드에 있는 특징이 흔히 어긋나는 쪽을 막는 줄이 붙는다 — 아래 '어긋나기
+ *    쉬운 쪽 막기'.)
  *  ③ LIKENESS FIRST 줄 — 사진·카드 갈래 프롬프트 둘째 줄(첫 줄 = 그림 종류·그림체 바로 뒤)에 '그림만 보고 이 사람을 알아봐야
  *    한다, 두드러진 특징을 실제 그대로 또렷이(과장·캐리커처 금지), 얼굴 생김새·머리 모양은 사진(얼굴은 클로즈업도)·카드 그대로,
  *    수채화는 붓질만 바꾼다, 머리 크기는 PROPORTIONS 줄에서만'을 맨 먼저 적는다.
@@ -47,7 +49,14 @@
  * 맨 위 ~ 턱)는 키의 1/X(X 등신), 머리 높이는 처음 그림의 약 N%, 목·몸통·다리를 고르게 늘려(줄여)'. 얼마나 줄일지 숫자가
  * 없으면 모델이 처음 그림을 거의 그대로 베낀다. 칩·사진·대신 그리기 모두 같다. 그림체 견본은 붙이지 않는다 —
  * 처음 그림이 이미 그 그림체이고, 견본(앉은 여우)은 머리가 아주 커서 머리를 다시 키우는 쪽으로 당길 수 있다.
- * 이 프롬프트에는 사진이 없어(우리가 그린 그림뿐) 사장님이 정한 대로 몸 부위 말을 쓴다. 아이 쪽 말·사진 말·카드 말은 없다.
+ * 이 프롬프트에는 사진이 없어(우리가 그린 그림뿐) 사장님이 정한 대로 몸 부위 말을 쓴다. 아이 쪽 말·사진 말은 없다.
+ * 카드 말은 되돌렸다(2026-09-30 사장님 "100% 비슷하단 느낌이 덜한데"): 처음 그림만 보고 다시 그리면 처음 그림이 어긋난 것
+ * (두꺼운 앞머리·둥근 얼굴·큰 눈 …)을 그대로 베끼고, 두 번째로 뽑으면서 그림책 얼굴 쪽으로 한 번 더 어긋났다. 이제 사진으로
+ * 그렸으면(사진·대신 그리기 — 카드가 있을 때) 카드의 얼굴·머리 칸만 글로 다시 적는다(redrawLikeness — 어른: 나이·두드러진
+ * 특징·얼굴형·눈·눈썹·코·입·볼과 턱·피부 점·머리·앞머리 / 아이: 얼굴형·볼과 턱·피부 점·앞머리). 옷·몸집·안경·수염·성별은 여전히
+ * 다시 적지 않는다('처음 그림 그대로·never add any'와 부딪히지 않게 — 두드러진 특징 줄에 섞인 안경·수염 말도 뺀다). 이 줄이
+ * 붙으면 FIRST 줄도 '얼굴·머리는 닮음 줄이 바로잡는 곳만 바꾼다'로 바뀐다(예전 FIRST 줄의 '얼굴 그대로, 바꾸는 건 비율뿐'이
+ * 닮음 줄을 이겼다). 사진·클로즈업은 여전히 다시 보내지 않는다. 칩 갈래는 그대로.
  *
  * 얼굴 픽셀: 3:4 1K(약 896×1200) 전신이라 얼굴이 작다. 머리 비율은 가족끼리 키가 맞아야 해서 키우지 않는다.
  * (얼굴 클로즈업은 그림 모델이 **보는** 얼굴을 키운다 — 그리는 얼굴 크기는 그대로다.)
@@ -60,7 +69,7 @@ import { heroIdentity } from "./child-looks.ts";
 import { siblingGender, type FamilyRole } from "./family.ts";
 import { ADULT_HEAD_RATIO, TEEN_HEAD_RATIO, headChartRatio, kidHeadRatio, ratioText, type HeadFix } from "./family-head.ts";
 import type { PhotoFallback } from "./family-photo.ts";
-import { keepTraits } from "./family-photo-card.ts";
+import { BODY_PART, keepTraits, stripNegatedMarks } from "./family-photo-card.ts";
 import { GeminiError } from "./gemini.ts";
 
 /** 그리기 요청(검사를 마친 값) — api/family/portrait parseInput 이 만든다. */
@@ -433,6 +442,9 @@ function hasDistinctive(card: string | null): boolean {
 
 /** 카드에 좌우 말이 있나 — 'image-left' 도 걸린다(- 는 낱말 경계) */
 const SIDE_WORD = /\b(left|right)\b/i;
+/** 카드의 좌우는 보는 쪽 기준이라는 줄 — 처음 그리기(cardBlock)와 머리 비율 다시 그리기(redrawLikeness)가 같은 글을 쓴다. */
+const SIDE_LINE =
+  "Left and right in the spec (image-left / image-right) mean the left and right side of the picture as the viewer sees it, not the person's own left and right.";
 
 /**
  * 특징 카드 묶음 — 사진 갈래면 '사진에서 읽은', 카드 갈래(사진 없이)면 '사진을 보고 적어 둔' 특징.
@@ -447,9 +459,7 @@ function cardBlock(card: string, source: "photo" | "card"): string {
       ? `LIKENESS SPEC — this person's recognisable traits, read from the reference photo. Match every trait exactly; together with the photo it is the main likeness guide.${distinctive}`
       : `LIKENESS SPEC — this person's recognisable traits, noted from a photo of them. Match every trait exactly; it is the main likeness guide.${distinctive}`,
     card,
-    SIDE_WORD.test(card)
-      ? "Left and right in the spec (image-left / image-right) mean the left and right side of the picture as the viewer sees it, not the person's own left and right."
-      : "",
+    SIDE_WORD.test(card) ? SIDE_LINE : "",
     "Where the spec disagrees with the WHO line or the hair-colour rule below, the WHO line and the hair-colour rule win.",
   ]
     .filter(Boolean)
@@ -460,12 +470,43 @@ function cardBlock(card: string, source: "photo" | "card"): string {
 const CHILD_WORDS =
   /\b(child(ren)?|kids?|bab(y|ies)|toddlers?|infants?|sons?|daughters?|grandchild(ren)?|grandsons?|granddaughters?)\b/i;
 
+/** 카드의 피부 점 줄 머리(주근깨·점·오래된 흉터 — lib/family-photo-card skin marks, 2026-09-30) */
+const MARKS = "- skin marks: ";
+/** 특징 하나씩 거르는 줄(두드러진 특징·피부 점) — 여러 특징을 세미콜론으로 이어 적은 줄이라 줄째 버리지 않는다 */
+const TRAIT_HEADS = [DISTINCTIVE, MARKS];
+/**
+ * 아이 그림에서 빼는 흉터 말 — 카드는 이제 오래된 흉터를 오래가는 특징으로 적는다(2026-09-30). 아이 나이 줄 옆의 상처 말은
+ * 안전 검사에 좋지 않다(lib/family-photo-card PASSING_TRAIT 와 같은 까닭). 어른은 둔다.
+ */
+const KID_SCAR = /\bscar(s|red)?\b/i;
+/**
+ * 아이 그림의 두드러진 특징 줄·피부 점 줄에서 특징 하나씩 빼는 말(2026-09-30 검토) — 흉터·화상·꿰맨 자국·수술 같은 상처 말과,
+ * 얼굴이 아닌 몸 부위의 점('mole on the upper arm' · 'birthmark on the thigh', BODY_PART). 카드는 이제 얼굴 점만 묻고 몸 쪽 점은
+ * 카드 읽기에서도 빼지만, 두드러진 특징 줄에는 남을 수 있다. 몸 부위 말은 점 말이 같이 있을 때만 — 'narrow shoulders' 같은
+ * 체형 특징은 두고, 아이 나이 줄 옆에 몸 부위 + 점·상처 말이 놓이는 것만 막는다(KID_SCAR 와 같은 까닭). 두 줄에만 쓴다 — 다른
+ * 줄의 'burnt orange' 같은 색 말을 걸지 않게.
+ */
+const KID_MARK_DROP = new RegExp(
+  String.raw`\b(scar(s|red)?|burn\w*|stitch\w*|surger(y|ies)|operations?)\b|^(?=.*\b(freckl\w*|moles?|marks?|spots?|birth ?marks?)\b)(?=.*${BODY_PART.source})`,
+  "i",
+);
+
+/** 특징 하나씩 거르는 줄이면 drop 에 걸린 특징만 뺀다. 남는 게 없거나 그런 줄이 아니면 줄째 뺀다. */
+function traitLine(line: string, drop: RegExp): string[] {
+  const head = TRAIT_HEADS.find((h) => line.startsWith(h));
+  if (!head) return [];
+  const kept = keepTraits(line.slice(head.length), drop);
+  return kept ? [`${head}${kept}`] : [];
+}
+
 /**
  * 특징 카드(lib/family-photo-card readFeatureCard 결과)를 이 사람에게 맞게 거른다. 남는 줄이 없으면 null.
- *  어른 : 아이 쪽 말(CHILD_WORDS)이 든 줄을 뺀다 — 머리글 ①을 카드가 되살리지 않게. 두드러진 특징 줄만은 그 말이 든 특징만
- *    뺀다('baby face; thick straight eyebrows' → 'thick straight eyebrows') — 닮음에 가장 중요한 줄을 통째로 잃지 않게.
+ *  어른 : 아이 쪽 말(CHILD_WORDS)이 든 줄을 뺀다 — 머리글 ①을 카드가 되살리지 않게. 두드러진 특징 줄·피부 점 줄만은 그 말이 든
+ *    특징만 뺀다('baby face; thick straight eyebrows' → 'thick straight eyebrows') — 닮음에 가장 중요한 줄을 통째로 잃지 않게.
  *  아이·청소년 : 부모가 알려 준 나이·성별이 WHO 줄에 있으면 카드의 age·gender 줄을 뺀다 — 사진은 다른 나이 때일 수 있고,
  *    아이 나이·성별·체형 줄이 한데 놓이는 것도 피한다. 부모가 안 알려 줬으면 카드 것을 둔다(기댈 게 그것뿐이다).
+ *    두드러진 특징 줄·피부 점 줄의 흉터·상처 말과 몸 쪽 점(KID_MARK_DROP)은 특징 하나씩 뺀다 — 얼굴의 주근깨·점은 그대로 둔다.
+ *    다른 줄에 흉터 말(KID_SCAR)이 있으면 줄째 뺀다.
  */
 export function cardFor(input: PortraitInput, card: string | null): string | null {
   if (!card) return null;
@@ -475,16 +516,193 @@ export function cardFor(input: PortraitInput, card: string | null): string | nul
   const lines = card.split("\n").flatMap((line) => {
     if (!kid) {
       if (!CHILD_WORDS.test(line)) return [line];
-      if (!line.startsWith(DISTINCTIVE)) return [];
-      const kept = keepTraits(line.slice(DISTINCTIVE.length), CHILD_WORDS);
-      return kept ? [`${DISTINCTIVE}${kept}`] : [];
+      return traitLine(line, CHILD_WORDS);
     }
     if (ageGiven && line.startsWith("- age:")) return [];
     if (genderGiven && line.startsWith("- gender:")) return [];
+    if (TRAIT_HEADS.some((h) => line.startsWith(h))) return KID_MARK_DROP.test(line) ? traitLine(line, KID_MARK_DROP) : [line];
+    if (KID_SCAR.test(line)) return [];
     return [line];
   });
   return lines.length ? lines.join("\n") : null;
 }
+
+/* ─────────────────────────────── 어긋나기 쉬운 쪽 막기(2026-09-30) ─────────────────────────────── */
+
+/*
+ * 엄마 사진(2026-09-30 사장님 "캐릭터 생성이 내가 올린이미지랑 100% 비슷하단 느낌이 덜한데"): 사진은 속이 비치는 가는 앞머리를
+ * 가운데로 가르고 긴 달걀형 얼굴·좁은 턱·가로로 길고 가는 홑꺼풀 눈·곧은 콧대·작게 다문 입·뺨과 콧등의 주근깨·입가의 점이었는데,
+ * 그림은 두껍게 일자로 자른 앞머리·동그란 얼굴·크고 둥근 눈·점 같은 코·활짝 웃는 입·볼 터치·주근깨 없음·더 어려 보임이었다.
+ * 카드 쪽(lib/family-photo-card 머리글 '엄마 사진')과 함께 여기서 셋을 고친다(검사 모델을 더 부르지 않는다 — 값 그대로):
+ *  ① MUST KEEP 줄(driftGuards) — 카드에 그 특징이 **있을 때만** 그 특징이 흔히 어긋나는 쪽을 한 마디씩 막는다. 특징 말은 카드
+ *     에서만 오고, 없는 사람에게는 그 말을 적지 않는다(예시 낱말이 옮겨 그려지는 버릇 — 없는 주근깨·앞머리를 얹지 않게).
+ *     눈·코·입은 어른만 — 아이는 오늘의 부드러운 그림책 얼굴 그대로 두고, 앞머리·얼굴형·턱·주근깨·점만 지킨다.
+ *  ② ADULT FACE 줄(adultFace) — 어른 얼굴을 그림책의 귀여운 얼굴(둥근 얼굴·큰 둥근 눈·점 코·볼 터치)로 바꾸지 않게. 이 당김은
+ *     글이 아니라 붙인 그림체 견본(style_01, 점 눈·벌린 입·분홍 볼의 여우)에서 온다 — 견본 줄에도 '얼굴 양식은 가져오지 말 것'을
+ *     어른에게만 덧붙인다. 아이·칩 갈래는 그대로.
+ *  ③ 'DO NOT invent … mole, freckles' 줄이 카드의 주근깨·점과 부딪혀 모델이 빼는 쪽을 골랐다 — 카드에 주근깨·점이 있으면
+ *     '카드가 적은 것 말고는 더하지 말 것'으로 바꾼다. 없으면 예전 글 그대로.
+ */
+
+/** 카드 한 칸의 값('- 칸: 값' 줄에서) — 없으면 빈 글자 */
+function specValue(spec: string, key: string): string {
+  const head = `- ${key}: `;
+  const line = spec.split("\n").find((l) => l.startsWith(head));
+  return line ? line.slice(head.length) : "";
+}
+
+/** '없다'는 값·특징 — 'none' · 'no fringe' · 'without …' */
+const NONE = /^(none|no|without)\b/i;
+
+/** 여러 값을 이은 글을 하나씩 — 세미콜론, 없으면 쉼표로 나눈다(lib/family-photo-card keepTraits 와 같은 나눔) */
+function splitTraits(value: string): string[] {
+  const sep = value.includes(";") ? ";" : ",";
+  return value
+    .split(sep)
+    .map((t) => t.trim())
+    .filter(Boolean);
+}
+
+/** 두드러진 특징 줄에서 re 에 걸리는 특징들 — '없다'는 특징(no fringe …)은 뺀다 */
+function distinctiveTraits(spec: string, re: RegExp): string[] {
+  return splitTraits(specValue(spec, "distinctive")).filter((t) => re.test(t) && !NONE.test(t));
+}
+
+/** 주근깨·점 말 */
+const MARK_WORD = /\bfreckl|\bmoles?\b|\bbeauty (marks?|spots?)\b/i;
+
+/**
+ * 카드의 피부 점 — 피부 점 줄 + 두드러진 특징 줄의 주근깨·점 특징에서 '없다'는 점 말(no moles · freckles: none …)을 걷어 낸 글.
+ * 걷어 내지 않으면 'some freckles; no moles' 의 moles 가 점 막기 줄을 켜 없는 점을 그리게 하고, 'no freckles; small mole' 은 줄째
+ * 버려져 있는 점이 막기 줄을 잃었다(2026-09-30 검토). 카드 읽기(lib/family-photo-card dropNegatedMarks)가 먼저 빼지만,
+ * 한 특징 안의 'freckles but no moles' 같은 것은 여기서 걷는다.
+ */
+function marksOf(spec: string | null): string {
+  if (!spec) return "";
+  return stripNegatedMarks([specValue(spec, "skin marks"), ...distinctiveTraits(spec, MARK_WORD)].join("; "));
+}
+
+/** 카드에 주근깨·점이 적혀 있나 — 'DO NOT invent … freckles' 줄을 바꿀지 */
+function hasMarks(spec: string | null): boolean {
+  return MARK_WORD.test(marksOf(spec));
+}
+
+/** 'not heavy' · 'no blunt fringe' 처럼 부정한 말 — 무거운 앞머리 말로 잘못 읽지 않게 지운다 */
+const NEGATED = /\b(not|no|never|without)\s+(a\s+|an\s+|too\s+)?[\w-]+/gi;
+/**
+ * 속이 비치는 앞머리 말 — 이것만 '이마가 사이로 보이는 가는 몇 가닥'으로 푼다. 가벼운 앞머리(FRINGE_LIGHT)와 가른다: 카드의 고를 말도
+ * see-through wispy 와 light 가 따로라, light 를 비치는 앞머리로 풀면 보통 앞머리 아이가 비치는 앞머리로 그려진다(2026-09-30 검토).
+ */
+const FRINGE_SEE_THROUGH = /\b(see-?through|wispy|wisps?|sheer|sparse)\b/i;
+/** 가벼운 앞머리 말 — 'light brown' 같은 색 말은 빼고. '두껍게 일자로 자르지 말 것'만 걸고 꼴은 카드대로 둔다 */
+const FRINGE_LIGHT = /\b(thin|airy|feathery)\b|\blight\b(?![- ]?(brown|colou?red|blond|blonde|grey|gray|golden))/i;
+const FRINGE_HEAVY = /\b(heavy|thick|full|blunt|solid|dense)\b/i;
+const FRINGE_CURTAIN = /\bcurtain\b/i;
+const FRINGE_SIDE = /\bside-?swept\b|\bswept (to )?(the )?(image-)?(left|right|side|one side)\b|\bside fringe\b/i;
+/** 가운데 가르마 — 'centre parting' · 'parted in the centre' · 'parting: centre' · 'middle part' */
+const CENTRE_PART =
+  /\b(cent(re|er|ral)|middle)[- ]part|\bcentrally[- ]parted\b|\bpart(ing|ed)?\b[^;,]{0,14}\b(cent(re|er|ral|rally)|middle)\b/i;
+/** 긴 얼굴 말 · 둥글거나 짧은 얼굴 말(이것이 있으면 '둥글게 하지 말라'를 걸지 않는다) */
+const FACE_LONG = /\b(long|oblong|oval|narrow|slim|slender|heart|heart-shaped|diamond|square|rectangular|angular)\b/i;
+const FACE_ROUND = /\b(round|rounded|short|wide|broad|full|chubby|plump)\b/i;
+/** 턱 말이 든 특징 · 좁은 턱 말 · 넓은 턱 말 */
+const CHIN_TRAIT = /\b(chin|jaw\w*)\b|\bv-?shaped\b|\btaper(ed|ing)\b/i;
+const CHIN_NARROW = /\b(narrow|pointed|pointy|tapered|tapering|v-?shaped|slim|sharp|small)\b/i;
+const CHIN_BROAD = /\b(broad|wide|square|strong|heavy)\b/i;
+/** 눈 — 홑꺼풀·가늘고 긴·작은·아몬드 눈이면 '크고 둥근 그림책 눈 금지'. 크거나 둥근 눈이면 걸지 않는다. */
+const EYES_NARROW = /\b(single|monolid\w*|inner double|in-?fold\w*|hooded|narrow|long|small|almond)\b/i;
+const EYES_BIG = /\b(round|large|big)\b/i;
+/** 코 — 또렷한 콧대 · 낮은 코 */
+const NOSE_BRIDGE = /\b(defined|straight|high|prominent|clear)\b/i;
+const NOSE_LOW = /\b(low|flat)\b/i;
+/**
+ * 입 — 작은 입 · 다문 입(closed-lip — 카드 입 칸의 고를 말) · 큰 입(웃을 때 이가 보임). 너비가 medium 이어도 다문 입이면
+ * '활짝 웃는 입 금지'를 건다 — 엄마 그림이 작게 다문 입 대신 활짝 웃는 입이었다(2026-09-30 검토).
+ * 입 말은 부정을 먼저 걷는다('not showing teeth' 의 teeth 를 큰 입으로 읽지 않게 — MOUTH_NEGATED).
+ */
+const MOUTH_SMALL = /\b(small|narrow)\b/i;
+const MOUTH_CLOSED = /\bclosed[- ]?(lips?|lipped|mouth(ed)?)\b|\blips? (closed|together)\b/i;
+const MOUTH_WIDE = /\b(wide|teeth|toothy|open)\b/i;
+const MOUTH_NEGATED = /\b(not|no|never|without)\s+((showing|visible|any|very|too)\s+)*[\w-]+/gi;
+
+/**
+ * MUST KEEP 줄(머리글 '어긋나기 쉬운 쪽 막기' ①) — 카드에 그 특징이 있을 때만 그 한 마디를 넣는다. 걸 것이 없으면 빈 글자.
+ * adult — 어른이면 눈·코·입도(아이는 부드러운 그림책 얼굴 그대로). 어느 말이 카드의 어느 줄에서 걸리는지는 위 낱말 목록.
+ * 특징 말은 '카드가 적은 대로(as the spec gives)'로 가리키고 새 생김새 낱말을 지어 넣지 않는다 — 앞머리·주근깨의 꼴만 짧게 푼다.
+ */
+function driftGuards(spec: string, adult: boolean): string {
+  const fringe = specValue(spec, "fringe");
+  const fringeText = [fringe, ...distinctiveTraits(spec, /\b(fringe|bangs)\b/i)].join("; ").replace(NEGATED, " ");
+  const face = [specValue(spec, "face shape"), ...distinctiveTraits(spec, /\bface\b/i)].join("; ");
+  const chin = [...splitTraits(specValue(spec, "cheeks and jaw")), ...distinctiveTraits(spec, /\b(chin|jaw\w*)\b/i)]
+    .filter((t) => CHIN_TRAIT.test(t))
+    .join("; ");
+  const eyes = specValue(spec, "eyes");
+  const nose = specValue(spec, "nose");
+  const mouth = specValue(spec, "mouth").replace(MOUTH_NEGATED, " ");
+  const marks = marksOf(spec);
+  const noFringe = NONE.test(fringe) || splitTraits(specValue(spec, "distinctive")).some((t) => /^(no|without) (fringe|bangs)\b/i.test(t));
+  const heavy = FRINGE_HEAVY.test(fringeText);
+  const openMouth = MOUTH_WIDE.test(mouth);
+
+  const parts = [
+    noFringe ? "no fringe — the forehead stays open, never add bangs" : "",
+    // 비치는 앞머리 → 커튼 앞머리 → 가벼운 앞머리 차례로 하나만(더 구체적인 말 먼저). 가벼운 앞머리는 꼴을 풀지 않는다.
+    noFringe || heavy
+      ? ""
+      : FRINGE_SEE_THROUGH.test(fringeText)
+        ? "the fringe is a few thin, see-through wisps with the forehead showing between them — NOT a heavy, solid or blunt-cut fringe"
+        : FRINGE_CURTAIN.test(fringeText)
+          ? "the fringe is parted curtain-style, falling to both sides with the forehead showing in the middle — NOT a heavy, solid or blunt-cut fringe"
+          : FRINGE_LIGHT.test(fringeText)
+            ? "the fringe stays as light as the spec gives it — NOT a heavy, solid or blunt-cut fringe"
+            : "",
+    !noFringe && !heavy && FRINGE_SIDE.test(fringeText) ? "the fringe sweeps to the side the spec gives — NOT a straight-across blunt fringe" : "",
+    CENTRE_PART.test(fringeText) || distinctiveTraits(spec, /\bpart/i).some((t) => CENTRE_PART.test(t))
+      ? "the parting stays in the centre"
+      : "",
+    FACE_LONG.test(face) && !FACE_ROUND.test(face)
+      ? "the face keeps the shape and length the spec gives it — never rounded off into a short, round face"
+      : "",
+    CHIN_NARROW.test(chin) && !CHIN_BROAD.test(chin) ? "the chin stays as narrow as the spec gives it — never widened into a broad jaw" : "",
+    adult && EYES_NARROW.test(eyes) && !EYES_BIG.test(eyes)
+      ? "the eyes keep the eyelids, shape and size the spec gives them — NOT big round picture-book eyes, and never exaggerated into slits"
+      : "",
+    adult && NOSE_BRIDGE.test(nose) && !NOSE_LOW.test(nose)
+      ? "the nose keeps the clearly visible bridge the spec gives it — never shrunk to a dot or button nose"
+      : "",
+    !adult || openMouth
+      ? ""
+      : MOUTH_SMALL.test(mouth)
+        ? "the mouth keeps its small size — a soft closed-lip smile, never a wide open grin"
+        : MOUTH_CLOSED.test(mouth)
+          ? "the mouth keeps the size the spec gives it, with a soft closed-lip smile — never a wide open grin"
+          : "",
+    /freckl/i.test(marks)
+      ? "the freckles are painted as the spec gives them, as many and in the places written — small, soft light-brown dots, subtle but clearly there; never left out, never dark blotches"
+      : "",
+    /\bmoles?\b|\bbeauty (marks?|spots?)\b/i.test(marks) ? "each mole or beauty mark is one small dark-brown dot in the place the spec gives" : "",
+  ].filter(Boolean);
+  return parts.length ? `MUST KEEP — the ways portraits of this person usually drift; this one must not: ${parts.join("; ")}.` : "";
+}
+
+/**
+ * ADULT FACE 줄(머리글 '어긋나기 쉬운 쪽 막기' ②) — 사진·카드 갈래의 어른만. 그림책 그림체는 붓질에만 — 실제 눈 모양·크기,
+ * 얼굴 길이·턱, 콧대, 입 크기, 보이는 나이를 귀여운 그림책 얼굴로 바꾸지 않게. 볼 터치는 사진(카드)에 있을 때만.
+ * 'child' 같은 아이 쪽 말은 넣지 않는다(머리글 ① — 실제 사람 사진 옆). 얼굴이 정말 둥근 어른도 있어 '둥근 얼굴 금지'가 아니라
+ * '짧고 둥글게 줄여 어려 보이게 하지 말 것'으로 적는다.
+ */
+function adultFace(source: "photo" | "card"): string {
+  const rosy = source === "photo" ? "the photo shows rosy cheeks" : "the LIKENESS SPEC gives rosy cheeks";
+  return `ADULT FACE: paint a grown-up's real face, not the generic cute picture-book face — keep the real eye shape and eye size (never enlarged into big round eyes), face length and chin (never shortened or rounded off into a younger-looking face), nose bridge (never shrunk to a tiny dot nose), mouth size and apparent age (never younger-looking). No pink blush circles on the cheeks unless ${rosy}. The picture-book look comes only from the rendering — soft washes and the thin pencil contour.`;
+}
+
+/**
+ * 그림체 견본 줄 끝 — 사진·카드 갈래의 어른만(머리글 '어긋나기 쉬운 쪽 막기' ②). 견본(style_01 여우)의 얼굴 양식을 가져오지 않게.
+ * 'face style' 이라는 말은 쓰지 않는다 — 예전 '같은 얼굴 양식으로(face style)'가 사진에서 멀어지게 당겨 뺀 말이라, 시험이 그 말이
+ * 사진·카드 갈래에 없는지 본다.
+ */
+const SAMPLE_NO_FACE = " Never copy how it draws faces either — not its dot eyes, open-mouthed grin or pink cheek blush.";
 
 /* ─────────────────────────────── 프롬프트 ─────────────────────────────── */
 
@@ -527,6 +745,9 @@ function guideLine(nth: string, ratio: number): string {
  *    얼굴 클로즈업이 붙으면(closeUp) 사진 바로 뒤 줄에 '같은 사진에서 자른 같은 사람 얼굴'로 적는다.
  *  - 사진 없이 카드만(대신 그리기) — 카드가 사진 자리를 맡는다. 같은 가족 그림은 그림체만 맞춘다(얼굴 양식은 카드).
  *  - 사진·카드 갈래는 첫 줄 바로 뒤에 LIKENESS FIRST 줄(likenessFirst)을 둔다. 칩 갈래에는 없다.
+ *  - 사진·카드 갈래는 카드 묶음 바로 뒤에 MUST KEEP 줄(driftGuards — 카드에 있는 특징만)과, 어른이면 ADULT FACE 줄(adultFace)을
+ *    두고 그림체 견본 줄 끝에 '견본의 얼굴 양식은 가져오지 말 것'을 붙인다(머리글 '어긋나기 쉬운 쪽 막기', 2026-09-30).
+ *    카드에 주근깨·점이 있으면 DO NOT 줄은 '카드가 적은 것 말고는 더하지 말 것'으로 바뀐다. 칩 갈래는 모두 예전 그대로.
  *  - 둘 다 없으면 칩 — 예전 글에서 머리 비율 쪽만 바뀌었다(머리글 chips: 비율 견본 줄, 같은 가족 그림 줄의 비율 말,
  *    어른 PROPORTIONS 줄).
  */
@@ -543,6 +764,10 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
   const ageFromWho = kid && typeof input.age === "number";
   // 머리 크기·몸 비율을 어디서 따르나 — 같은 가족 그림(대개 아이 그림, 1:4)에서 따르면 어른 머리가 커진다
   const proportionSource = `the PROPORTIONS line${has("guide") ? " and the proportion guide" : ""}`;
+  // 사진·카드 갈래의 어른 — 그림책의 귀여운 얼굴로 당기지 않게(머리글 '어긋나기 쉬운 쪽 막기' ②). 아이·칩 갈래는 그대로.
+  const realAdultFace = !kid && source !== "chips";
+  // 카드에 주근깨·점이 있으면 'DO NOT invent … mole, freckles' 가 카드와 부딪히지 않게 바꾼다(같은 머리글 ③). 없으면 예전 글.
+  const marks = hasMarks(spec);
 
   const appearance =
     source === "photo"
@@ -551,7 +776,9 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
             ? `APPEARANCE LINE — chosen by the family and written in Korean, extra guidance on top of the photo: "${input.looks}". Where it disagrees with the photo${spec ? " or the LIKENESS SPEC" : ""} about the face, hair, glasses or body, follow the PHOTO; for everyday clothes, follow this line.`
             : "",
           "Glasses follow the PHOTO: draw ordinary glasses only if the person wears them in the photo (never sunglasses), whatever the appearance line says about 안경.",
-          "DO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag, mole, freckles or tattoo unless it is clearly there. One invented accessory and the portrait no longer looks like them.",
+          marks
+            ? "DO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag or tattoo unless it is clearly there, and no freckles or moles beyond those the LIKENESS SPEC gives. One invented accessory and the portrait no longer looks like them."
+            : "DO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag, mole, freckles or tattoo unless it is clearly there. One invented accessory and the portrait no longer looks like them.",
         ]
       : source === "card"
         ? [
@@ -559,7 +786,9 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
               ? `APPEARANCE LINE — chosen by the family and written in Korean: "${input.looks}". Where it disagrees with the LIKENESS SPEC about the face, hair, glasses or body, follow the SPEC; for everyday clothes, follow this line.`
               : "",
             "Glasses follow the LIKENESS SPEC: a described frame means ordinary glasses (never sunglasses); none means no glasses. Only if the spec has no glasses line, draw glasses when the appearance line says 안경을 썼다.",
-            "DO NOT invent anything that is neither in the LIKENESS SPEC nor written above: no glasses, sunglasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag, mole, freckles or tattoo unless it is written. One invented accessory and the portrait no longer looks like them.",
+            marks
+              ? "DO NOT invent anything that is neither in the LIKENESS SPEC nor written above: no glasses, sunglasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag or tattoo unless it is written, and no freckles or moles beyond those the LIKENESS SPEC gives. One invented accessory and the portrait no longer looks like them."
+              : "DO NOT invent anything that is neither in the LIKENESS SPEC nor written above: no glasses, sunglasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag, mole, freckles or tattoo unless it is written. One invented accessory and the portrait no longer looks like them.",
           ]
         : [
             input.looks
@@ -581,7 +810,7 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
     has("photo") ? photoIntro(nth("photo")) : "",
     has("closeUp") ? closeUpLine(nth("closeUp"), nth("photo")) : "",
     has("sample")
-      ? `${nth("sample")} image = painting-style sample only (never copy its people, animals, subject, pose or composition). Copy only HOW it is painted: medium, brush and line quality, edge softness, colour palette, shading and paper finish.`
+      ? `${nth("sample")} image = painting-style sample only (never copy its people, animals, subject, pose or composition). Copy only HOW it is painted: medium, brush and line quality, edge softness, colour palette, shading and paper finish.${realAdultFace ? SAMPLE_NO_FACE : ""}`
       : "",
     has("sibling")
       ? source === "card"
@@ -590,6 +819,9 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
       : "",
     has("guide") ? guideLine(nth("guide"), headChartRatio(input.role, input.age)) : "",
     spec && source !== "chips" ? cardBlock(spec, source) : "",
+    // 카드 바로 뒤 — 카드에 있는 특징만 '흔히 어긋나는 쪽'을 막는다(아이는 눈·코·입 빼고). 사진 규칙보다 앞.
+    spec && source !== "chips" ? driftGuards(spec, !kid) : "",
+    realAdultFace ? adultFace(source) : "",
     ...(source === "photo" ? photoRules(Boolean(spec), ageFromWho, has("closeUp")) : []),
     source === "card"
       ? "Keep the face shape and proportions the LIKENESS SPEC describes — face shape, eye shape and size, eyebrows, nose, mouth, cheeks and jaw — rather than a generic picture-book face; never exaggerate or caricature a feature."
@@ -630,6 +862,74 @@ export async function drawThenRelease<T, R>(images: T[], draw: (images: T[]) => 
 }
 
 /**
+ * 머리 비율 다시 그리기에 다시 적는 카드 칸 — 얼굴·머리뿐. 성별·옷·몸집·안경·수염은 넣지 않는다: 다시 그리기 FIRST 줄의
+ * '처음 그림 그대로(안경·수염은 처음 그림에 있을 때만 — never add any)·같은 옷'과 부딪히지 않게.
+ */
+const REDRAW_KEYS_ADULT = ["age", "distinctive", "face shape", "eyes", "eyebrows", "nose", "mouth", "cheeks and jaw", "skin marks", "hair", "fringe"];
+/**
+ * 아이는 얼굴형·턱·피부 점·앞머리만 — 눈·코·입은 부드러운 그림책 얼굴 그대로 두고(처음 그리기와 같다), 머리 줄(카드는 빛 때문에
+ * 까만 머리를 갈색으로 읽기도 한다 — 아이 머리 색 규칙은 다시 그리기에 없다)·두드러진 특징 줄(나이·머리 색 말이 섞인다)은 넣지 않는다.
+ */
+const REDRAW_KEYS_KID = ["face shape", "cheeks and jaw", "skin marks", "fringe"];
+/**
+ * 다시 그리기 닮음 줄에서 특징 하나씩 빼는 안경·수염 말(2026-09-30 검토) — 칸(glasses·facial hair)은 빼도 두드러진 특징 줄에
+ * 'thick black rectangular glasses; short boxed beard' 가 남으면, FIRST 줄의 '안경·수염은 처음 그림에 있을 때만(never add any)'과
+ * '어긋났으면 카드대로'가 부딪혀 결과를 알 수 없다. 안경·수염은 처음 그림을 따른다(처음 그리기가 사진·카드로 이미 정했다).
+ * 'frames the face'(머리가 얼굴을 감싸는) 같은 머리 말은 걸지 않는다.
+ */
+const REDRAW_EYEWEAR_BEARD =
+  /\b(glasses|spectacles|eyewear|rims?|rimmed|rimless|beards?|bearded|moustaches?|mustaches?|goatees?|stubble|sideburns|facial hair)\b|\bframes?\b(?!\s+(the|her|his|their)\b)/i;
+/** 다시 그리기 닮음 줄에서 특징 하나씩 빼는 말 — 아이 쪽 말 + 안경·수염 말 */
+const REDRAW_DROP = new RegExp(`${CHILD_WORDS.source}|${REDRAW_EYEWEAR_BEARD.source}`, "i");
+
+/**
+ * 머리 비율 다시 그리기에 붙이는 닮음 줄(2026-09-30 — 머리글 '머리 비율 다시 그리기'의 되돌림). 처음 그림이 사진(또는 사진에서 읽은
+ * 카드)으로 그린 것일 때만 부른 쪽이 넘긴다. 카드를 이 사람에게 맞게 거르고(cardFor) 얼굴·머리 칸만 남겨, '처음 그림이 이것을
+ * 맞추려고 그린 것 — 어긋났으면 얼굴·머리는 카드대로, 나머지는 처음 그림 그대로'로 적는다. 뒤에 MUST KEEP 줄(driftGuards —
+ * 남긴 칸에서만)과 어른이면 ADULT FACE 줄(카드 말씨)을 붙인다. 남는 칸이 없으면 null(예전 그대로 다시 그린다).
+ * 사진·클로즈업 말은 없다(다시 그리기에는 사진이 없다). 아이 쪽 말은 줄마다 특징 하나씩 뺀다 — 다시 그리기 글은 역할과 상관없이
+ * 아이 쪽 말이 없다(아이 카드의 'baby face' 같은 말도). 두드러진 특징 줄 등에 섞인 안경·수염 말도 특징 하나씩 뺀다(REDRAW_DROP).
+ * 이 줄이 붙으면 FIRST 줄도 '얼굴·머리는 이 줄이 바로잡는 곳만 바꾼다'로 바뀐다(headRedrawPrompt FIRST_LINE_LIKENESS).
+ * 카드에서 온 글이라 사진과 똑같이 다룬다 — 이 요청 메모리에서 다시 그리기 프롬프트로만 넘기고 찍지 않는다.
+ */
+export function redrawLikeness(input: PortraitInput, card: string | null): string | null {
+  const spec = cardFor(input, card);
+  if (!spec) return null;
+  const kid = isKid(input);
+  const keys = kid ? REDRAW_KEYS_KID : REDRAW_KEYS_ADULT;
+  const lines = spec.split("\n").flatMap((line) => {
+    if (!keys.some((k) => line.startsWith(`- ${k}: `))) return [];
+    if (!REDRAW_DROP.test(line)) return [line];
+    const at = line.indexOf(": ") + 2;
+    const kept = keepTraits(line.slice(at), REDRAW_DROP);
+    return kept ? [`${line.slice(0, at)}${kept}`] : [];
+  });
+  if (!lines.length) return null;
+  const notes = lines.join("\n");
+  return [
+    "LIKENESS SPEC — this person's real, recognisable face and hair, which the FIRST image was painted to match. Keep every trait below; where the FIRST image has drifted from one of them, follow the spec for the face and hair — everything else stays exactly as in the FIRST image.",
+    notes,
+    SIDE_WORD.test(notes) ? SIDE_LINE : "",
+    driftGuards(notes, !kid),
+    kid ? "" : adultFace("card"),
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+/** 다시 그리기 FIRST 줄 — 닮음 줄이 없을 때(칩 갈래·카드 없음). 예전 글 그대로(한 글자도 바꾸지 않는다 — 시험이 본다). */
+const FIRST_LINE =
+  "FIRST image = our own earlier painting of this person — repaint THIS SAME character from the FIRST image. Keep exactly as in the FIRST image: the face (face shape, eyes, eyebrows, nose, mouth), the hairstyle, hair length, fringe and hair colour, glasses, beard or moustache only if the FIRST image has them (never add any), the skin tone, the age the face shows, the body build, the clothes, shoes and all their colours, and the watercolor rendering (brushwork, line, soft washes). Copy everything from it EXCEPT its head-to-height ratio — only the head size and the length of the neck, torso and legs change.";
+/**
+ * 닮음 줄(redrawLikeness)이 붙을 때의 FIRST 줄(2026-09-30 검토) — 예전 줄은 '얼굴·앞머리를 처음 그림 그대로, 바꾸는 건 머리 크기와
+ * 목·몸통·다리뿐'이라, 바로 뒤 닮음 줄의 '어긋났으면 카드대로'를 더 센 말로 막았다(두꺼운 앞머리·둥근 얼굴이 새 비율로 그대로 남는다).
+ * 그래서 안경·수염·피부·몸집·옷·붓질은 '그대로', 얼굴·머리 모양·앞머리·머리 색·보이는 나이는 '처음 그림대로, 닮음 줄이 바로잡는
+ * 곳만 닮음 줄대로'로 가르고, 바뀌는 것에 '닮음 줄이 바로잡는 얼굴·머리'를 더한다.
+ */
+const FIRST_LINE_LIKENESS =
+  "FIRST image = our own earlier painting of this person — repaint THIS SAME character from the FIRST image. Keep exactly as in the FIRST image: glasses, beard or moustache only if the FIRST image has them (never add any), the skin tone, the body build, the clothes, shoes and all their colours, and the watercolor rendering (brushwork, line, soft washes). Keep the face (face shape, eyes, eyebrows, nose, mouth), the hairstyle, hair length, fringe, hair colour and the age the face shows as in the FIRST image too, except where the LIKENESS SPEC below corrects them — there the spec wins. Copy everything else from it EXCEPT its head-to-height ratio — only the head size, the length of the neck, torso and legs, and the face and hair traits the LIKENESS SPEC corrects change.";
+
+/**
  * 머리 비율 다시 그리기의 프롬프트(머리글 '머리 비율 다시 그리기'). 첫째 그림 = 처음 그림, 둘째 = 비율 견본(guide 면).
  * 첫째 그림의 캐릭터를 그대로 두고(얼굴·머리 모양·머리 색·안경·피부·얼굴이 보여 주는 나이·몸집·옷·색·붓질) 머리:키 비율만
  * fix.target 으로 고친다. 참고 그림을 흉내 내다 비율까지 베끼는 일을 막으려 '머리:키 비율만은 베끼지 말라'와, 틀이 그대로라
@@ -637,10 +937,13 @@ export async function drawThenRelease<T, R>(images: T[], draw: (images: T[]) => 
  * 하나)으로 적는다 — '더 작게'만 적으면 처음 그림을 거의 그대로 베낀다. 목만 길게 빼거나 다리만 늘리지 않게 '고르게'를
  * 적고, 어른·청소년은 첫 그리기와 같은 이름(picture-book adult · teenage proportions)을 붙인다. 두 사람(전·후 비교)으로
  * 그리는 일도 막는다.
- * 사진·특징 카드·칩 글은 넣지 않는다(처음 그림에 이미 들어 있다 — 다시 적으면 모델이 다시 읽어 딴사람이 될 수 있다).
+ * 사진·칩 글은 넣지 않는다(처음 그림에 이미 들어 있다 — 다시 적으면 모델이 다시 읽어 딴사람이 될 수 있다).
+ * 특징 카드는 사진으로 그렸을 때만 얼굴·머리 줄을 다시 적는다(o.likeness = redrawLikeness, 2026-09-30 — 머리글 '머리 비율
+ * 다시 그리기'의 되돌림). FIRST 줄 바로 뒤에 두고, 그때는 FIRST 줄도 '얼굴·머리는 닮음 줄이 바로잡는 곳만 바꾼다'로 바뀐다
+ * (FIRST_LINE_LIKENESS). 없으면(칩 갈래·카드 없음) 글자 하나 다르지 않게 예전 그대로다.
  * 아이 쪽 말·가족 말도 없다(역할과 상관없이 같은 글 — 나이는 '첫째 그림의 보이는 나이 그대로').
  */
-export function headRedrawPrompt(fix: HeadFix, o: { guide: boolean }): string {
+export function headRedrawPrompt(fix: HeadFix, o: { guide: boolean; likeness?: string | null }): string {
   const style = ART_STYLES.find((s) => s.id === "watercolor") ?? ART_STYLES[0];
   const big = fix.verdict === "big";
   const want = ratioText(fix.target);
@@ -663,7 +966,10 @@ export function headRedrawPrompt(fix: HeadFix, o: { guide: boolean }): string {
     `One full-body character portrait of a single person for a Korean picture book, ${style.prompt}.`,
     // 몸집(body build)도 그대로 — 늘리다 보면 날씬한 패션 그림 몸으로 바뀌어 딴사람 같아진다. 나이는 '얼굴이 보여 주는 나이' —
     // 짧은 몸이 주는 어려 보이는 인상은 따르지 않는다. 바꾸는 것은 머리:키 비율(머리 크기·목·몸통·다리 길이)뿐이다.
-    "FIRST image = our own earlier painting of this person — repaint THIS SAME character from the FIRST image. Keep exactly as in the FIRST image: the face (face shape, eyes, eyebrows, nose, mouth), the hairstyle, hair length, fringe and hair colour, glasses, beard or moustache only if the FIRST image has them (never add any), the skin tone, the age the face shows, the body build, the clothes, shoes and all their colours, and the watercolor rendering (brushwork, line, soft washes). Copy everything from it EXCEPT its head-to-height ratio — only the head size and the length of the neck, torso and legs change.",
+    // 닮음 줄이 붙으면 얼굴·머리는 그 줄이 바로잡는 곳만 바꾼다(FIRST_LINE_LIKENESS) — 없으면 예전 글 그대로.
+    o.likeness ? FIRST_LINE_LIKENESS : FIRST_LINE,
+    // 사진으로 그렸으면 카드의 얼굴·머리 줄(redrawLikeness) — 처음 그림이 어긋난 곳은 카드 쪽으로 되돌린다.
+    o.likeness ?? "",
     o.guide ? guideLine("SECOND", fix.target) : "",
     `PROPORTION FIX — the FIRST image drew the head too ${big ? "big" : "small"} (about ${ratioText(fix.measured)} of the full height). The head, from the top of the hair to the chin, must be ${want} of the full height, from the top of the hair to the soles of the shoes — the figure is ${heads} heads tall${o.guide ? ", one head-height per band between the SECOND image's lines" : ""}${kind}: paint a clearly ${big ? "smaller" : "bigger"} head in relation to the whole figure, and make the neck, torso and legs ${big ? "longer" : "shorter"} to match — ${evenly}.${big ? " NOT a big head, NOT chibi, NOT super-deformed." : ""}`,
     `The whole figure, from the top of the hair to the soles of the shoes, still spans the same height of the same 3:4 frame with the same margins, so the head comes out ${big ? "smaller" : "bigger"} in the picture than in the FIRST image — about ${scale}% of its height there: the same face, just ${big ? "smaller" : "bigger"}.`,
@@ -688,11 +994,15 @@ export function headRedrawPrompt(fix: HeadFix, o: { guide: boolean }): string {
  *  - 같은 가족 그림(칩 갈래): 대개 아이 그림이라 어른 머리를 키우는 쪽으로 당겼다.
  *  - 칩 갈래도 처음 그림에서 — 같은 칩 글로 새로 뽑으면 같은 버릇(같은 가족 그림·글)을 되풀이하고, 얼굴·옷이 다른 사람이
  *    나와 '표에 더 가까운 쪽'이 딴사람 그림일 수 있다. 칩 글은 처음 그림에 이미 들어 있다.
+ * likeness — 사진으로 그렸을 때 카드의 얼굴·머리 줄(redrawLikeness). 글로만 붙고 참고 그림은 그대로다(사진은 다시 보내지 않는다).
  * first 는 우리가 방금 그린 그림(이 요청 메모리에만 — 건네는 쪽만 올린다).
  */
-export function headRedrawRecipe<T>(o: { first: T; guide: T | null; fix: HeadFix }): { prompt: string; references: T[] } {
+export function headRedrawRecipe<T>(o: { first: T; guide: T | null; fix: HeadFix; likeness?: string | null }): {
+  prompt: string;
+  references: T[];
+} {
   const refs: T[] = o.guide !== null ? [o.first, o.guide] : [o.first];
-  return { prompt: headRedrawPrompt(o.fix, { guide: o.guide !== null }), references: refs };
+  return { prompt: headRedrawPrompt(o.fix, { guide: o.guide !== null, likeness: o.likeness }), references: refs };
 }
 
 /* ─────────────────────────────── 대신 그리기(사진 거절 뒤) ─────────────────────────────── */

@@ -47,6 +47,7 @@ import {
   photoFallbackPlan,
   photoRefused,
   portraitReferences,
+  redrawLikeness,
   type PortraitInput,
 } from "@/lib/family-portrait-prompt";
 import { GeminiError, generateImage, loadReferenceImage, type GeneratedImage } from "@/lib/gemini";
@@ -84,9 +85,12 @@ export const maxDuration = 60;
  *      20% 넘게 크거나 작으면(lib/family-head HEAD_TOO_BIG·HEAD_TOO_SMALL), 시간이 넉넉할 때만(HEAD_REDRAW 아래 — 처음 그리기가
  *      빨리 끝났을 때뿐) 같은 쿠키로 한 번 더 그려(약 95원) 표에 더 가까운 쪽을 건넨다. 재기가 실패하거나 늦으면 오늘처럼 건넨다.
  *      다시 그리기는 **처음 그림에서**(사장님 승인 2026-09-29 오후 "엄마 비율이 이상해졌어"): 참고 그림은 처음 그림(첫째) +
- *      비율 견본(둘째)뿐, '같은 캐릭터 그대로 비율만 고쳐'(lib/family-portrait-prompt headRedrawRecipe). 사진·클로즈업·특징
- *      카드는 다시 보내지 않는다 — 얼굴이 꽉 찬 사진이 머리를 크게 당기는 버릇을 같은 사진으로 되풀이했다(엄마 표 7 → 처음
+ *      비율 견본(둘째)뿐, '같은 캐릭터 그대로 비율만 고쳐'(lib/family-portrait-prompt headRedrawRecipe). 사진·클로즈업은
+ *      다시 보내지 않는다 — 얼굴이 꽉 찬 사진이 머리를 크게 당기는 버릇을 같은 사진으로 되풀이했다(엄마 표 7 → 처음
  *      4.15 · 다시 4.41). 칩·대신 그리기도 같다. 로그에는 숫자(비율·시간)와 갈래만.
+ *      특징 카드는 글로 다시 적는다(2026-09-30 사장님 "100% 비슷하단 느낌이 덜한데" — 처음 그림만 보고 다시 그리면 처음 그림이
+ *      어긋난 얼굴을 베끼고 한 번 더 그림책 얼굴 쪽으로 어긋났다): 사진(또는 사진에서 읽은 카드)으로 그렸으면 카드의 얼굴·머리
+ *      칸만 걸러 둔 닮음 줄(likeness — lib/family-portrait-prompt redrawLikeness)을 다시 그리기 프롬프트에 붙인다. 칩으로 그렸으면 없다.
  *   ③ 잰 비율(headRatio, 0.01 단위)을 그림과 함께 건네고 DB(last_pic)에도 적는다 — 단체 사진이 얼굴 크기를 고르는 데 쓴다.
  *   ④ 몸 늘이기(사장님 승인 2026-09-29 밤 "그래도 아빠 비율이랑 비교해봐 엄마가 아직도 얼굴이 너무 크게 나왔어" — 셀카로 그린
  *      엄마가 처음 3.94 → 다시 그림 4.56, 아빠 약 5.6): 남긴 그림을 쟀고 그래도 머리가 크면(표 × 0.8 보다 5% 넘게 작으면)
@@ -126,8 +130,10 @@ export const maxDuration = 60;
  * Gemini 로 넘기기만 한다: 결제 RPC(charge·finish·refund·status) 인자, cafe24(올리는 건 그린 그림뿐), Supabase, console 로그,
  * 오류·성공 응답 어디에도 사진·카드·상자·클로즈업·요청 본문을 넣지 않는다. 로그는 결과 갈래(있음·없음)와 걸린 시간만.
  * 사진·클로즈업은 **처음 그리기 한 번에만** 쓴다 — 한 참고 그림 배열에 들어 그 그리기가 끝나면(성공·실패 모두) 곧바로 비우고
- * (drawThenRelease), 사진 변수와 특징 카드도 머리 재기 전에 놓는다. 머리 비율 다시 그리기는 처음 그림으로 하므로 사진이 필요 없다.
- * 이 파일에 로그를 더할 때도 input·body·photo·card·faceBox·closeUp·prompt·references 를 통째로 찍지 말 것.
+ * (drawThenRelease), 사진 변수와 특징 카드 기다리기(CardJob)도 머리 재기 전에 놓는다. 머리 비율 다시 그리기는 처음 그림으로
+ * 하므로 사진이 필요 없다. 카드에서 걸러 낸 얼굴·머리 줄(likeness, 머리글 '머리 비율' ②)만 머리 재기·다시 그리기가 끝날 때까지
+ * 이 요청 메모리에 두고(다시 그리기 프롬프트로만 넘긴다), 끝나면(실패해도) 놓는다 — 카드와 똑같이 다룬다.
+ * 이 파일에 로그를 더할 때도 input·body·photo·card·likeness·faceBox·closeUp·prompt·references 를 통째로 찍지 말 것.
  */
 
 const MEMBER_ID = /^[a-z0-9-]{1,40}$/;
@@ -328,7 +334,7 @@ const NO_CARD: CardGot = { card: null, faceBox: null };
  * 특징 카드 기다리기(머리글 ①). startCard 는 값을 받은 뒤에 부른다 — 참고 그림 받기와 나란히 돈다.
  * waitUntil(t): 시각 t 까지만 기다리고 그때까지 온 카드·얼굴 상자를 준다(없으면 null). 이 요청 메모리에만 있다.
  * drop(): 그리기가 끝나 카드가 더 쓰일 일이 없다 — 받아 둔 카드·상자를 놓고, 늦게 오는 답도 담아 두지 않는다
- *   (머리 비율 다시 그리기는 처음 그림으로 하므로 카드가 필요 없다 — 머리글 ②).
+ *   (머리 비율 다시 그리기는 처음 그림 + 그 그림에 쓴 카드에서 걸러 낸 얼굴·머리 줄로 한다 — drawFromPhoto 가 돌려주는 card, 머리글 ②).
  */
 type CardJob = { startedAt: number; waitUntil: (t: number) => Promise<CardGot>; drop: () => void };
 
@@ -379,6 +385,8 @@ function startCard(photo: PortraitPhoto, memberId: string, draw: number): CardJo
  * 그대로 던진다(칩으로 그릴 때와 같은 처리). input.skipPhotoDraw 면 ②를 건너뛰고 ③만 한다.
  * ms — 건넨 그림을 그리는 데 걸린 시간(머리 비율 다시 그릴 시간이 되는지 어림한다). 사진·클로즈업은 그 그리기가 끝나면 곧바로
  * 놓는다(drawThenRelease) — 머리 비율 다시 그리기는 처음 그림으로 한다(머리글 ②).
+ * card — 건넨 그림을 그릴 때 쓴 특징 카드(사진 그리기의 카드 · 대신 그리기 features 의 카드, 칩으로 대신 그렸거나 카드가 늦었으면
+ * null). 머리 비율 다시 그리기가 그 얼굴·머리 줄을 다시 적는다(redrawLikeness). 사진과 똑같이 다룬다 — 찍지 않는다.
  */
 async function drawFromPhoto(o: {
   input: Input;
@@ -389,7 +397,7 @@ async function drawFromPhoto(o: {
   guide: GeneratedImage | null;
   startedAt: number;
   draw: number;
-}): Promise<{ image: GeneratedImage; fallback: PhotoFallback | null; ms: number }> {
+}): Promise<{ image: GeneratedImage; fallback: PhotoFallback | null; ms: number; card: string | null }> {
   const { input, card, startedAt, draw } = o;
   const since = () => `${Date.now() - startedAt}ms`;
 
@@ -435,7 +443,7 @@ async function drawFromPhoto(o: {
         photoRefs.attached.closeUp ? "클로즈업 있음" : "클로즈업 없음",
         since(),
       );
-      return { image, fallback: null, ms: Date.now() - t0 };
+      return { image, fallback: null, ms: Date.now() - t0, card: first.card };
     } catch (e) {
       if (!photoRefused(e)) throw e;
       console.warn("[family/portrait] 사진 거절", input.memberId, draw, brief(e), since());
@@ -472,7 +480,7 @@ async function drawFromPhoto(o: {
       msLeft,
     );
     console.info("[family/portrait] 대신 그림", input.memberId, draw, plan, since());
-    return { image, fallback: plan, ms: Date.now() - t0 };
+    return { image, fallback: plan, ms: Date.now() - t0, card: plan === "features" ? lateCard : null };
   } catch (e) {
     console.warn("[family/portrait] 대신 그리기도 실패", input.memberId, draw, brief(e), since());
     throw new PhotoRefused();
@@ -685,6 +693,11 @@ export async function POST(request: Request) {
   // 특징 카드(머리글 ①) — 값을 받은 뒤에야 시작한다(값 없이 글 모델을 부르는 길을 막는다). 참고 그림 받기와 나란히 돈다.
   // 처음 그리기가 끝나면 사진과 함께 곧바로 놓는다(아래 ④-1).
   let card = photo ? startCard(photo, input.memberId, draw) : null;
+  /**
+   * 머리 비율 다시 그리기에 다시 적을 얼굴·머리 줄(머리글 '머리 비율' ②) — 사진(카드)으로 그렸을 때만. 카드에서 걸러 낸 것이라
+   * 카드와 똑같이 다룬다: 이 요청 메모리에서 다시 그리기 프롬프트로만 넘기고, 머리 재기가 끝나면(실패해도) 놓는다. 찍지 않는다.
+   */
+  let likeness: string | null = null;
   try {
     // ④ 그리기 — 참고 그림 순서(= 프롬프트의 몇 번째)는 portraitReferences 가 정한다:
     //    칩: 그림체 견본 → 같은 가족 그림 → 비율 견본
@@ -696,7 +709,11 @@ export async function POST(request: Request) {
     /** 처음 그리기에 걸린 시간 — 머리 비율 다시 그릴 시간이 되는지 어림한다(HEAD_REDRAW_DEADLINE_MS) */
     let drawMs: number;
     if (photo && card) {
-      ({ image, fallback, ms: drawMs } = await drawFromPhoto({ input, photo, card, styleSample, sibling, guide, startedAt, draw }));
+      const got = await drawFromPhoto({ input, photo, card, styleSample, sibling, guide, startedAt, draw });
+      image = got.image;
+      fallback = got.fallback;
+      drawMs = got.ms;
+      likeness = redrawLikeness(input, got.card);
     } else {
       const refs = portraitReferences({ photo: null, sample: styleSample, sibling, guide });
       const prompt = buildPrompt(input, refs.attached);
@@ -716,19 +733,20 @@ export async function POST(request: Request) {
 
     // ④-1 사진·특징 카드는 여기서 끝 — 처음 그리기에만 쓴다(사진·클로즈업이 든 참고 그림 배열은 drawFromPhoto 가 그리기 직후
     //     이미 비웠다). 머리 비율 다시 그리기는 처음 그림으로 하므로 이 요청 안에서도 더 붙들지 않는다(그린 그림만 아래로 간다).
+    //     카드에서 걸러 낸 얼굴·머리 줄(likeness)만 머리 재기가 끝날 때까지 둔다(머리글 '머리 비율' ②).
     photo = null;
     card?.drop();
     card = null;
 
     // ④-2 머리 재기(머리글 '머리 비율' ②) — 던지지 않는다. 표에서 많이 벗어났고 시간이 넉넉하면 **처음 그림에서** 같은 캐릭터를
-    //    비율만 고쳐 한 번 더 그리고(headRedrawRecipe — 처음 그림 + 비율 견본뿐, 사진·클로즈업·카드 없이), 표에 더 가까운 쪽을
-    //    남긴다. 칩·사진·대신 그리기 모두 같은 다시 그리기. 실패·거절·시간 초과면 처음 그림 그대로.
+    //    비율만 고쳐 한 번 더 그리고(headRedrawRecipe — 처음 그림 + 비율 견본뿐, 사진·클로즈업 없이. 사진·카드로 그렸으면 카드의
+    //    얼굴·머리 줄을 글로), 표에 더 가까운 쪽을 남긴다. 칩·사진·대신 그리기 모두 같은 다시 그리기. 실패·거절·시간 초과면 처음 그림 그대로.
     const head = await evenOutHead({
       image,
       target: headTarget,
       measure: (img, ms) => measureHeadRatio(img, { timeoutMs: ms }),
       redraw: async (first, fix, ms) => {
-        const again = headRedrawRecipe({ first, guide, fix });
+        const again = headRedrawRecipe({ first, guide, fix, likeness });
         try {
           // 끊긴 뒤 뒤에서 다시 걸지 않는다(drawWithin until) — 버릴 그림에 값이 나가지 않게.
           return await drawWithin(
@@ -757,6 +775,8 @@ export async function POST(request: Request) {
     let headRatio = head.ratio;
     logHead(input.memberId, draw, head.log, startedAt);
     clock.mark("head");
+    // 다시 그리기가 끝났다 — 카드에서 걸러 낸 얼굴·머리 줄도 놓는다(더 쓰일 일이 없다).
+    likeness = null;
 
     // ④-3 몸 늘이기(머리글 '머리 비율' ④) — 남긴 그림을 잰 상자가 있고 그래도 머리가 크면, 머리는 그대로 두고 목 ~ 발목만
     //     세로로 늘인다(흰 바탕 그림에 — 지우기가 늘인 윤곽에서 가장자리를 새로 푼다). 실패하면 늘이지 않은 그림 그대로.
@@ -851,6 +871,7 @@ export async function POST(request: Request) {
     photo = null;
     card?.drop();
     card = null;
+    likeness = null;
     // 오류만 찍는다 — 사진·카드·본문·참고 그림은 넣지 않는다(사진으로 그렸는지만 표시). 사진으로 그린 요청이면 그림 모델
     // 오류의 원문(구글 응답 본문)도 찍지 않는다 — 구글의 400 오류 글은 보낸 값을 되읊는 일이 있어 사진·카드 조각이 남을 수 있다.
     // 올리기 오류는 짧은 코드로만(lib/cafe24 ftpErrorCode — ftp-421·ECONNREFUSED·passive …). basic-ftp 원문에는 서버 주소·포트,

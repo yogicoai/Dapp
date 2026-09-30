@@ -174,6 +174,66 @@ describe("readFeatureCard — 글 모델의 답 → 특징 카드", () => {
     assert.equal(keepTraits("baby face", /baby/), "");
   });
 
+  it("피부 점 칸(skin marks) — 주근깨·점은 남기고 여드름·긁힌 자국은 하나씩 빼고, 'none' 도 남기고, 피부색 줄 바로 뒤(2026-09-30)", () => {
+    const at = (reply: string) => {
+      const lines = readFeatureCard(`${FULL}\n${reply}`)?.split("\n") ?? [];
+      const i = lines.findIndex((l) => l.startsWith("- skin marks: "));
+      return { line: i >= 0 ? lines[i] : undefined, before: lines[i - 1], lines };
+    };
+    const mom = at(
+      "skin marks: many freckles across both cheeks and the nose bridge; acne on the chin; small mole near the image-left mouth corner",
+    );
+    assert.equal(
+      mom.line,
+      "- skin marks: many freckles across both cheeks and the nose bridge; small mole near the image-left mouth corner",
+    );
+    assert.equal(mom.before, "- skin tone: light, warm", "피부색 줄 바로 뒤");
+    assert.equal(mom.lines.length, 16);
+    assert.equal(at("skin marks: none").line, "- skin marks: none", "없다는 것도 닮음 — 그림에 얹지 않게");
+    assert.equal(at("Lasting marks: faint scar above the image-right eyebrow").line, "- skin marks: faint scar above the image-right eyebrow");
+    assert.equal(at("skin marks: acne on the forehead; scratched cheek").line, undefined, "다 걸리면 줄째 빠진다");
+    assert.equal(at("skin marks: not visible").line, undefined);
+  });
+
+  // 2026-09-30 검토: 'no moles' 가 카드에 남으면 그림 프롬프트의 점 막기 줄이 moles 에 걸려 없는 점을 그리게 했다.
+  it("피부 점 칸 — '없다'는 특징(no moles · freckles: none …)은 하나씩 빼고, 모두 '없다'면 'none'", () => {
+    const line = (v: string) => readFeatureCard(`${FULL}\nskin marks: ${v}`)?.split("\n").find((l) => l.startsWith("- skin marks: "));
+    assert.equal(line("some freckles across the nose and cheeks; no moles"), "- skin marks: some freckles across the nose and cheeks");
+    assert.equal(line("freckles: none; one small mole under the image-left eye"), "- skin marks: one small mole under the image-left eye");
+    assert.equal(line("no freckles; one small mole near the image-left mouth corner"), "- skin marks: one small mole near the image-left mouth corner");
+    assert.equal(line("freckles (many across the cheeks); mole: none"), "- skin marks: freckles (many across the cheeks)");
+    assert.equal(line("clear skin, no freckles or moles"), "- skin marks: clear skin");
+    assert.equal(line("some freckles, no moles"), "- skin marks: some freckles");
+    // 'no freckles, moles or scars' 는 한 특징 — 쉼표로 먼저 쪼개 'moles or scars' 가 남으면 없는 점이 생긴다
+    assert.equal(line("no freckles, moles or scars"), "- skin marks: none");
+    assert.equal(line("no freckles; no moles"), "- skin marks: none");
+    assert.equal(line("mole: none visible"), "- skin marks: none");
+    // 쉼표 뒤가 '있는' 점이면 남는다 · and 로 이은 주근깨는 남는다(한 특징 안이라 카드엔 그대로 — 그림 프롬프트가 걷는다)
+    assert.equal(line("no freckles, moles near the mouth"), "- skin marks: moles near the mouth");
+    assert.equal(line("no moles and some freckles on the nose"), "- skin marks: no moles and some freckles on the nose");
+    assert.equal(line("freckles across the cheeks, nose and forehead"), "- skin marks: freckles across the cheeks, nose and forehead");
+  });
+
+  it("피부 점 칸 — 얼굴이 아닌 몸 쪽 점·흉터는 하나씩 뺀다(부탁 글은 얼굴만 묻는다, 아이 사진 옆 몸 부위 말)", () => {
+    const line = (v: string) => readFeatureCard(`${FULL}\nskin marks: ${v}`)?.split("\n").find((l) => l.startsWith("- skin marks: "));
+    assert.equal(line("mole on the image-left upper arm; birthmark on the image-right thigh"), undefined);
+    assert.equal(line("freckles on the nose; mole on the back of the hand"), "- skin marks: freckles on the nose");
+    // 입술·눈썹·관자놀이·귀는 얼굴이다
+    assert.equal(line("small mole on the bottom lip; mole near the image-left temple"), "- skin marks: small mole on the bottom lip; mole near the image-left temple");
+  });
+
+  it("앞머리 칸(fringe) — 머리 칸과 따로, 머리 줄 바로 뒤, 'bangs' 로 적어도 받는다(2026-09-30)", () => {
+    const card = readFeatureCard(`${FULL}\nfringe: see-through wispy; at the brows; parting: centre`);
+    const lines = card?.split("\n") ?? [];
+    const i = lines.indexOf("- fringe: see-through wispy; at the brows; parting: centre");
+    assert.ok(i > 0, card ?? "");
+    assert.ok(lines[i - 1].startsWith("- hair: "), "머리 줄 바로 뒤");
+    assert.ok(readFeatureCard(`${FULL}\nBangs: none; parting: image-left`)?.includes("- fringe: none; parting: image-left"));
+    assert.ok(readFeatureCard(`${FULL}\nfringe and parting: full blunt, to the eyes`)?.includes("- fringe: full blunt, to the eyes"));
+    // 머리 칸은 그대로 머리 칸
+    assert.ok(readFeatureCard(`${FULL}\nfringe: light`)?.includes("- hair: short, side parting"));
+  });
+
   it("사람이 없다·거절·칸이 모자라면 null", () => {
     assert.equal(readFeatureCard("NO_PERSON"), null);
     assert.equal(readFeatureCard(`${FULL}\nNO_PERSON`), null);
@@ -186,22 +246,23 @@ describe("readFeatureCard — 글 모델의 답 → 특징 카드", () => {
 });
 
 describe("FEATURE_CARD_PROMPT — 부탁 글", () => {
-  it("누구인지·이름은 묻지 않고, 줄 16개(카드 15칸 + 얼굴 상자)와 NO_PERSON 을 적는다", () => {
+  // 2026-09-30: 칸이 15 → 17(피부 점 skin marks · 앞머리 fringe)로 늘어 줄도 16 → 18.
+  it("누구인지·이름은 묻지 않고, 줄 18개(카드 17칸 + 얼굴 상자)와 NO_PERSON 을 적는다", () => {
     assert.match(FEATURE_CARD_PROMPT, /Do not say or guess who they are or their name/);
     assert.match(FEATURE_CARD_PROMPT, /do not judge or compliment their looks/);
-    assert.match(FEATURE_CARD_PROMPT, /exactly these 16 lines/);
+    assert.match(FEATURE_CARD_PROMPT, /exactly these 18 lines/);
     assert.match(FEATURE_CARD_PROMPT, /NO_PERSON/);
-    // 부탁 글의 칸 이름이 읽는 쪽(readFeatureCard·readFaceBox)의 칸 이름과 어긋나지 않는다 — 칸 줄만 모으면 15칸 + 상자 줄
+    // 부탁 글의 칸 이름이 읽는 쪽(readFeatureCard·readFaceBox)의 칸 이름과 어긋나지 않는다 — 칸 줄만 모으면 17칸 + 상자 줄
     const fieldLines = FEATURE_CARD_PROMPT.split("\n").filter((l) => /^[a-z ]+: /.test(l));
-    assert.equal(fieldLines.length, 16);
-    assert.equal(readFeatureCard(fieldLines.join("\n"))?.split("\n").length, 15, "상자 줄은 카드 칸이 아니다");
+    assert.equal(fieldLines.length, 18);
+    assert.equal(readFeatureCard(fieldLines.join("\n"))?.split("\n").length, 17, "상자 줄은 카드 칸이 아니다");
     const boxLine = fieldLines[fieldLines.length - 1];
     assert.match(boxLine, /^face box: .*\[ymin, xmin, ymax, xmax\].*0-1000/);
     // 상자 줄 이름이 readFaceBox 가 읽는 이름이다
     assert.deepEqual(readFaceBox(`face box: [100, 200, 300, 400]`), [100, 200, 300, 400]);
   });
 
-  it("알아보게 하는 특징 3~5개를 먼저 — 같은 나이·성별의 보통 얼굴과 견줘, 꼴·크기·자리만(예시는 예시일 뿐)", () => {
+  it("알아보게 하는 특징 3~5개를 먼저 — 같은 나이·성별의 보통 얼굴과 견줘, 꼴·크기·자리만(구체 예시 대신 살펴볼 갈래만)", () => {
     const start = FEATURE_CARD_PROMPT.indexOf("Start from what makes this face recognisable");
     assert.ok(start > 0 && start < FEATURE_CARD_PROMPT.indexOf("gender: "), "칸 목록보다 앞에");
     assert.match(
@@ -210,13 +271,21 @@ describe("FEATURE_CARD_PROMPT — 부탁 글", () => {
     );
     // 대부분이 가진 것(까만 머리·까만 눈)은 두드러진 특징이 아니다 — 가족 모두 같은 줄이 되지 않게
     assert.match(FEATURE_CARD_PROMPT, /not traits most such people share \(such as dark hair or dark eyes\)/);
-    // 그날만의 것은 적지 않는다(모자·화장·반창고 …) — LIKENESS FIRST 가 '또렷이' 그리게 하므로
+    // 그날만의 것은 적지 않는다(모자·화장·반창고 …) — LIKENESS FIRST 가 '또렷이' 그리게 하므로.
+    // 2026-09-30: 그날만의 흠은 여드름·긁힌 자국·반창고로만 — 예전 'spots' 는 주근깨·점까지 흠으로 읽혔다(엄마 사진).
     assert.match(
       FEATURE_CARD_PROMPT,
-      /never the expression, make-up, temporary marks such as spots, scratches or plasters, face paint, hats, hair accessories, jewellery or clothes/,
+      /never the expression, make-up, face paint, temporary marks \(acne, scratches, plasters\), hats, hair accessories, jewellery or clothes/,
     );
-    assert.match(FEATURE_CARD_PROMPT, /examples only — name what this face really has/);
-    assert.match(FEATURE_CARD_PROMPT, /a straight blunt fringe, dimples, ears that stick out, thick straight eyebrows, a round chin, single eyelids, a small mole under the image-left eye/);
+    // 2026-09-30: 구체 예시 대신 살펴볼 갈래만 — 예시 'a straight blunt fringe' 가 그대로 옮겨져 비치는 가운데 앞머리가 일자 앞머리가 됐다
+    assert.match(
+      FEATURE_CARD_PROMPT,
+      /Look through every kind of trait — fringe and parting, hairline, face length and chin, eyelids and eye shape, eyebrows, nose bridge, lips, ears, dimples, freckles and moles — and name only what this face really has\./,
+    );
+    assert.ok(
+      !/straight blunt fringe|small mole under the image-left eye|ears that stick out|examples only/.test(FEATURE_CARD_PROMPT),
+      "예전 구체 예시는 없다",
+    );
     // 고정관념·그날만의 예시는 빠졌다
     assert.ok(!/narrow eyes|gap-toothed/.test(FEATURE_CARD_PROMPT));
     assert.match(FEATURE_CARD_PROMPT, /describe shapes, sizes and positions only/);
@@ -233,8 +302,49 @@ describe("FEATURE_CARD_PROMPT — 부탁 글", () => {
     assert.match(FEATURE_CARD_PROMPT, /compared with other people of the same age and gender who look broadly like them; write 'average' only when it truly is/);
     // 좌우는 보는 쪽 기준(그림 프롬프트 cardBlock 이 같은 말로 풀어 준다)
     assert.match(FEATURE_CARD_PROMPT, /Write left and right as image-left \/ image-right, as the viewer sees the photo\./);
-    assert.match(FEATURE_CARD_PROMPT, /hairline \(receding/);
+    // 2026-09-30 검토: 보통 머리선(normal)도 고를 말에 — 없으면 보통 머리선이 receding 으로 적혀 그림이 늙는다
+    assert.match(FEATURE_CARD_PROMPT, /hairline \(normal \/ receding/);
     assert.match(FEATURE_CARD_PROMPT, /cheekbones, dimples/);
+  });
+
+  it("주근깨·점·흉터는 오래가는 특징으로 센다 — 'temporary marks such as spots' 는 없다(2026-09-30 엄마 사진)", () => {
+    assert.match(FEATURE_CARD_PROMPT, /Freckles, moles, beauty marks, birthmarks and old scars are lasting traits — count them\./);
+    assert.ok(!/such as spots/.test(FEATURE_CARD_PROMPT));
+    // 얼굴만 묻는다(2026-09-30 검토) — 몸 쪽 점('mole on the upper arm')이 아이 사진 프롬프트의 나이 줄 옆에 놓이지 않게
+    assert.match(
+      FEATURE_CARD_PROMPT,
+      /^skin marks: on the face only, lasting marks only — freckles \(a few \/ some \/ many, and exactly where\), each mole or beauty mark and its place, birthmarks or old scars; or none\. Separate them with semicolons$/m,
+    );
+    assert.match(FEATURE_CARD_PROMPT, /the distinctive and skin marks lines at most about 25/);
+  });
+
+  it("고를 말을 / 로 준다 — 앞머리 종류·길이·가르마, 쌍꺼풀·눈 모양·크기, 얼굴 길이, 턱, 콧대, 입술, 나이대(2026-09-30)", () => {
+    assert.match(FEATURE_CARD_PROMPT, /Where a line offers choices separated by \/, pick the one that fits best\./);
+    assert.match(
+      FEATURE_CARD_PROMPT,
+      /^fringe: none \/ see-through wispy \/ light \/ full blunt \/ side-swept; how low it comes \(above the brows \/ at the brows \/ to the eyes\); parting \(centre \/ image-left \/ image-right \/ none\)$/m,
+    );
+    assert.match(
+      FEATURE_CARD_PROMPT,
+      /^eyes: eyelids \(single \/ inner double \/ double \/ hooded\), shape \(long and narrow \/ almond \/ round\), size for the face \(small \/ medium \/ large\)/m,
+    );
+    assert.match(FEATURE_CARD_PROMPT, /^face shape: long oval \/ oval \/ round \/ square \/ heart-shaped \/ diamond, and how long it is for its width/m);
+    assert.match(FEATURE_CARD_PROMPT, /chin \(narrow and pointed \/ narrow and rounded \/ rounded \/ broad \/ square\)$/m);
+    // 보통 쪽 말도 둔다(2026-09-30 검토) — '가장 맞는 것을 고르라'는데 보통이 없으면 보통 코가 defined(콧대 막기 줄이 걸린다),
+    // 보통 머리선이 receding(그림이 늙는다)으로 적힌다. 입 너비도 고를 말(small / medium / wide) — 입 막기 줄이 읽는다.
+    assert.match(FEATURE_CARD_PROMPT, /^nose: bridge \(defined and straight \/ medium \/ soft and low \/ high\), size, tip$/m);
+    assert.match(
+      FEATURE_CARD_PROMPT,
+      /^mouth: lip fullness \(thin \/ medium \/ full\), width \(small \/ medium \/ wide\), smile in the photo \(closed-lip \/ showing teeth\)$/m,
+    );
+    assert.match(FEATURE_CARD_PROMPT, /^hair: .*hairline \(normal \/ receding \/ thinning \/ bald areas\)$/m);
+    assert.match(FEATURE_CARD_PROMPT, /^age: apparent age band from the face itself — early, mid or late \+ decade for an adult/m);
+    // 머리 칸에는 앞머리·가르마가 없다(앞머리 칸으로 옮겼다) — 칸 순서: 피부색 → 피부 점, 머리 → 앞머리
+    assert.ok(!/^hair: .*(fringe|parting)/m.test(FEATURE_CARD_PROMPT));
+    const lines = FEATURE_CARD_PROMPT.split("\n");
+    const at = (name: string) => lines.findIndex((l) => l.startsWith(`${name}: `));
+    assert.equal(at("skin marks"), at("skin tone") + 1);
+    assert.equal(at("fringe"), at("hair") + 1);
   });
 
   it("'sex' 라는 말을 쓰지 않고, 드러낸 옷차림 낱말도 부탁 글에 넣지 않는다(옷은 평범한 옷만 묻는다)", () => {
