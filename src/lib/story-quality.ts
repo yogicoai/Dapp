@@ -124,6 +124,22 @@ function inferLocationFromText(text: string, forText = false): LocationHint | nu
 
 /** 글에 나오는 장소 낱말을 전부 찾는다(점수 포함). 고르는 일은 부르는 쪽이 한다. */
 const VEHICLE_FAMILIES = new Set(["car", "tourbus", "transit"]);
+/*
+ * 탈것 계열의 기성 설명 — 본문 낱말로 장소 줄을 갈아 끼울 때 붙는 글(locationHints).
+ * 옛 판정이 놀잇감 탈것("자동차 안에 가득가득 채워 넣었어요")을 탈것 안으로 읽어 책에 저장한 줄은 이 글을 그대로 달고 있다.
+ * 그래서 저장된 탈것 줄을 버릴지(staleToyVehiclePlace) 볼 때 이 글인지를 표시로 쓴다 — 클로드가 제 말로 적은 탈것 줄은
+ * 한 쪽짜리 진짜 차 안일 수 있어 건드리지 않는다(검토 2026-09-30). 옛 책에 남은 예전 글(09-14·08-19 전)도 함께 둔다.
+ */
+const CAR_PLACE_DESCRIPTION = "뒷좌석 안전벨트와 창문, 앞자리 등받이가 보이는 승용차 안, 창밖으로 흐르는 도시 풍경";
+const TOURBUS_PLACE_DESCRIPTION = "지붕 없이 하늘이 트인 2층 관광버스 위층, 줄지어 놓인 좌석과 낮은 난간, 옆으로 지나가는 도시 풍경";
+const TRANSIT_PLACE_DESCRIPTION = "나란히 놓인 좌석과 손잡이, 창밖 풍경이 흐르는 시내버스·지하철 같은 대중교통 안";
+const CANNED_VEHICLE_DESCRIPTIONS = [
+  CAR_PLACE_DESCRIPTION,
+  TOURBUS_PLACE_DESCRIPTION,
+  TRANSIT_PLACE_DESCRIPTION,
+  "나란히 놓인 좌석과 천장 손잡이, 창밖 풍경이 흐르는 차량 안",
+  "창밖 풍경이 흐르는 좌석과 손잡이",
+].map(compact);
 
 /**
  * forText — 쪽 본문·장면 문장을 읽을 때만 true. 그때만 '어린이집 친구들'의 어린이집을 있는 곳에서 뺀다
@@ -179,7 +195,7 @@ function locationHints(text: string, forText = false): (LocationHint & { score: 
       family: "car",
       // 버스와 같은 이유로 '차에서 내려'는 차 안이 아니다 — 내린 말은 아래 모으는 자리에서 거른다.
       re: /((?:자동차|(?<![기열전마모녹홍풍찻유주세])차)\s*(?:안|에서)|카시트|뒷자리|뒷좌석)/g,
-      description: "뒷좌석 안전벨트와 창문, 앞자리 등받이가 보이는 승용차 안, 창밖으로 흐르는 도시 풍경",
+      description: CAR_PLACE_DESCRIPTION,
     },
     /*
      * 2층 관광버스 위층은 시내버스 실내와 다른 곳이다.
@@ -192,7 +208,7 @@ function locationHints(text: string, forText = false): (LocationHint & { score: 
     {
       family: "tourbus",
       re: /((?:2층|이층|오픈\s*탑)\s*[가-힣]{0,8}버스(?:\s*(?:위층|2층|안|에서))?|시티\s*투어\s*버스(?:\s*(?:위층|2층|안|에서))?|버스\s*(?:위층|2층|이층))/g,
-      description: "지붕 없이 하늘이 트인 2층 관광버스 위층, 줄지어 놓인 좌석과 낮은 난간, 옆으로 지나가는 도시 풍경",
+      description: TOURBUS_PLACE_DESCRIPTION,
     },
     /*
      * '버스에서'는 뒤를 봐야 한다.
@@ -205,7 +221,7 @@ function locationHints(text: string, forText = false): (LocationHint & { score: 
     {
       family: "transit",
       re: /((?<!(?:2층|이층|오픈\s*탑|시티\s*투어)\s*[가-힣]{0,8})버스\s*(?:안|에서)|지하철|전철|기차\s*(?:안|에서))/g,
-      description: "나란히 놓인 좌석과 손잡이, 창밖 풍경이 흐르는 시내버스·지하철 같은 대중교통 안",
+      description: TRANSIT_PLACE_DESCRIPTION,
     },
   ];
   const hints: (LocationHint & { score: number })[] = [];
@@ -396,6 +412,18 @@ function vehicleGroup(noun: string): string {
 }
 /** 쪽에 탈것을 타고 다니는 말 — 있으면 놀잇감 곁의 맨 '자동차'도 진짜 차일 수 있다. */
 const TRAVEL_CUE = /(?:창\s*밖|창문\s*밖|출발|도착|뒷자리|뒷좌석|앞자리|앞좌석|조수석|카시트|운전|벨트|드라이브|고속도로|휴게소|정류장|가는\s*길|오는\s*길)/;
+/** 타고 다니는 말 중 자리 낱말과 놀이에서도 하는 말(PLAY_RIDE_CUE)을 뺀 것 — ridesInText 용. */
+const RIDE_CUE = /(?:창\s*밖|창문\s*밖|벨트|드라이브|고속도로|휴게소|정류장|가는\s*길|오는\s*길)/;
+/**
+ * 탈것 놀이에서도 흔히 하는 말 — "부릉부릉, 음식 차 출발!", "운전사 흉내", "음식 차가 도착했어요".
+ * 이것만으로 탄 흔적을 삼으면 옛 판정이 박아 둔 '자동차 안' 줄이 그대로 남아 차 뒷좌석을 또 그렸다(검토 2026-09-30).
+ * 대사 밖에서, 놀잇감이 아닌 진짜 탈것 낱말(아빠 차가 · 버스가)이 함께 있을 때만 센다.
+ */
+const PLAY_RIDE_CUE = /(?:출발|도착|운전)/;
+/** 자리 낱말 하나와, 그 바로 앞의 놀잇감 탈것(상자 자동차 · 장난감 자동차의) — 놀잇감의 자리는 차 안이 아니다. */
+const SEAT_WORD = /^(?:뒷자리|뒷좌석|앞자리|앞좌석|운전석|조수석|카시트)$/;
+const TOY_VEHICLE_BEFORE_SEAT =
+  /(?:미니카|(?:장난감|모형|레고|블록|상자|종이|박스)\s*(?:(?:으로|로)\s*만든\s*)?[가-힣]{0,2}?\s*(?:자동차|승용차|버스|기차|열차|트럭|(?<![기열])차))\s*(?:의\s*)?$/;
 /**
  * 이 탈것 낱말(source 의 at~end)이 **사람이 탄 탈것이 아닌가** — 장난감·놀이·그릇으로 쓴 탈것.
  *   ① 바로 앞이 놀잇감 말(장난감 자동차, 종이 상자 기차, 레고로 만든 버스) — isToyAt.
@@ -406,6 +434,8 @@ const TRAVEL_CUE = /(?:창\s*밖|창문\s*밖|출발|도착|뒷자리|뒷좌석|
  */
 function notARideAt(source: string, at: number, end: number): boolean {
   if (isToyAt(source, at)) return true;
+  // 놀잇감 탈것의 자리 — "상자 자동차 뒷자리에 인형을 앉혔어요", "장난감 자동차 카시트". 자리 낱말만 따로 잡혀 차 안이 됐다.
+  if (SEAT_WORD.test(source.slice(at, end)) && TOY_VEHICLE_BEFORE_SEAT.test(source.slice(Math.max(0, at - 16), at))) return true;
   const after = source.slice(end);
   if (/^\s*놀이/.test(after)) return true;
   const clause = after.split(/[.!?\n]/)[0] ?? "";
@@ -635,6 +665,210 @@ export function mentionsToyVehicle(text: string): boolean {
     if (notARideAt(source, at, at + m[0].length)) return true;
   }
   return false;
+}
+
+/*
+ * 이 글에 탈것을 **타고 있다·타고 간다**는 흔적이 조금이라도 있나 — 탈것 안(vehicleState), 탄 말(claimsRide),
+ * 타고 다니는 말(창밖·벨트·가는 길 — RIDE_CUE, 진짜 탈것 곁의 출발·도착·운전 — PLAY_RIDE_CUE).
+ * 저장된 탈것 장소 줄을 버릴지 정할 때만 쓴다.
+ */
+export function ridesInText(text: string): boolean {
+  const source = (text ?? "").normalize("NFC");
+  // 자리 낱말(뒷자리·카시트)은 vehicleState 가 놀잇감 자리를 가려서 본다 — 여기 cue 에서는 뺀다.
+  return vehicleState(source).kind !== null || rideEvidence(source);
+}
+
+/** ridesInText 에서 '탈것 안' 낱말 하나(자동차 안에 …)를 뺀 흔적 — 탄 말, 타고 다니는 말. */
+function rideEvidence(source: string): boolean {
+  if (claimsRide(source) || RIDE_CUE.test(source)) return true;
+  return PLAY_RIDE_CUE.test(maskSpeech(source)) && mentionsVehicle(source);
+}
+
+/*
+ * 누구 탈것인지 밝힌 탈것 안 — "아빠 차 안에서 노래를 불렀어요", "시내버스 안". 놀이의 '자동차 안'이 아니라 진짜 탈것이다.
+ * 옆 쪽 장소 줄을 '이어 타는 중'의 보증으로 쓸지 볼 때만 쓴다(neighbourPlaceClauses) — 빠져 있을 땐 아빠 차 쪽 다음의
+ * "장난감 자동차를 가지고 놀았어요" 쪽이 보증을 잃고 할머니 댁 마당으로 옮겨졌다(검토 2026-09-30).
+ */
+function namesOwnedVehicle(text: string): boolean {
+  const source = maskSpeech((text ?? "").normalize("NFC"));
+  const state = readVehicle(source);
+  return state.kind !== null && OWNED_BEFORE.test(source.slice(Math.max(0, state.start - 8), state.start));
+}
+
+/*
+ * 쪽 글에서 '있는 곳'을 읽는다 — 탈것은 빼고. 곳 낱말이 없고 선생님이 나오면 어린이집 교실(의사·태권도 선생님은 빼고).
+ */
+export function placeFromPageText(text: string, teacherFallback = true): { name: string; description: string } | null {
+  const source = (text ?? "").normalize("NFC");
+  const hint = inferLocationFromText(source, true);
+  if (hint && !VEHICLE_FAMILIES.has(hint.family)) return { name: hint.name, description: hint.description };
+  if (teacherFallback && /(?<!(?:의사|간호|태권도|수영|피아노|미술|발레)\s*)선생님/.test(source)) {
+    return { name: "어린이집 교실", description: VENUE_PART.school.home };
+  }
+  return null;
+}
+
+/*
+ * 누구 탈것인지 밝히지 않은 맨 탈것 이름 — 자동차 안 · 차 안 · 버스에서 · 뒷좌석(옛 판정이 본문 낱말을 그대로 이름으로 박은 꼴).
+ * "아빠 차 안"·"노란 버스 안"·"시내버스 안"은 클로드가 진짜 탈것을 적은 것이라 놀잇감으로 버리지 않는다.
+ */
+const BARE_VEHICLE_NAME =
+  /^(?:(?:자동차|승용차|차|택시|트럭|버스|기차|열차|지하철|전철)\s*(?:안|속|에서|좌석|자리|창가|뒷자리|뒷좌석|앞자리|앞좌석|객실|칸)?|뒷자리|뒷좌석|카시트|조수석)$/;
+
+/** 맨 탈것 이름에 기성 탈것 설명 그대로인 장소 줄인가 — 옛 판정이 본문 낱말로 갈아 끼운 줄의 표시. */
+function cannedVehicleLine(rawName: string, rawDescription?: string): boolean {
+  const name = (rawName ?? "").normalize("NFC").trim();
+  if (!placeVehicleKind(name) || !BARE_VEHICLE_NAME.test(name)) return false;
+  const description = compact(rawDescription ?? "");
+  return Boolean(description) && CANNED_VEHICLE_DESCRIPTIONS.some((canned) => description.startsWith(canned));
+}
+
+/**
+ * 장소 줄의 탈것이 사실은 놀잇감인가 — 다 맞을 때만:
+ *   이름이 맨 탈것이고(BARE_VEHICLE_NAME), 설명이 옛 판정이 붙인 기성 글 그대로이고(CANNED_VEHICLE_DESCRIPTIONS),
+ *   이 쪽 글이 탈것을 놀잇감·그릇으로 말하고(mentionsToyVehicle), 탄 흔적·내린 말이 없고(ridesInText·gotOff),
+ *   앞·뒤 쪽이 탈것이 아니다(이어 타는 중).
+ */
+export function staleToyVehiclePlace(input: {
+  name: string;
+  description?: string;
+  sceneBody: string;
+  storyText: string;
+  neighbourNames?: string[];
+}): boolean {
+  /*
+   * 옛 판정이 박은 줄인가 — 클로드가 제 말로 적은 탈것 줄("자동차 안 — 뒷좌석 카시트와 창문")은 한 쪽만 타고 가는 진짜
+   * 차 안일 수 있다. 그것까지 버리면 장난감 자동차를 쥐고 차에서 잠든 쪽이 떠나온 집 현관으로 옮겨졌다(검토 2026-09-30).
+   */
+  if (!cannedVehicleLine(input.name, input.description)) return false;
+  if (!mentionsToyVehicle(input.sceneBody) && !mentionsToyVehicle(input.storyText)) return false;
+  for (const text of [input.storyText, input.sceneBody]) {
+    if (ridesInText(text) || vehicleState(text).gotOff) return false;
+  }
+  /*
+   * 앞·뒤 쪽이 탈것이면 이어 타는 중으로 본다 — 같은 열쇠만 세면 '어린이집 버스 안'(school:transit)·'통학버스 안'
+   * (shuttle:transit) 사이의 맨 '버스 안' 쪽이 이어 타는 중이 아니게 되어, 통학 버스 쪽이 교실·포도밭으로 옮겨졌다(검토 2026-09-30).
+   */
+  return !(input.neighbourNames ?? []).some((n) => placeVehicleKind(n) !== null);
+}
+
+/** 잠금 줄(등장인물·장소·물건)을 뺀 장면 문장 — 쪽 그림 라우트(api/illustrate-page)와 같은 방법. */
+function sceneBodyOf(scene: string): string {
+  return scene
+    .split(/\r?\n/)
+    .filter((line) => !/^\s*(?:등장인물|장소\s*:|물건\s*:)/.test(line))
+    .join(" ")
+    .replace(/등장인물\s*\d+\s*명(?:\s*:[^.\n]*)?\.?/g, "")
+    .replace(/(?:장소|물건)\s*:[^.\n]*\.?/g, "");
+}
+
+/**
+ * 저장된 장면 지시의 장소 줄이 놀잇감 탈것을 탈것 안으로 잘못 읽어 박힌 것이면, 책의 진짜 장소로 갈아 끼운 장면 지시.
+ * 대신 넣는 곳: ① 이 쪽 글이 이름 댄 곳(앞·뒤 쪽이 같은 곳이면 그 줄 그대로) ② 앞 쪽, 없으면 뒤 쪽의 탈것 아닌 장소 줄
+ * ③ 선생님이 나오면 어린이집 교실 ④ 없으면 장소 줄을 뺀다.
+ * 왜 — 어제까지의 판정이 교실 가게 놀이 쪽에 "장소: 자동차 안 — 뒷좌석 안전벨트 …"를 저장했고, 한 쪽 다시 그리기가 그 줄을
+ * 그대로 보내 몇 번을 그려도 차 뒷좌석이 나왔다(2026-09-30). 쪽 그림 서버(api/illustrate-page)와 다시 그리기 화면(BookViewer)이 쓴다.
+ */
+export function repairStaleVehicleScene(input: {
+  scene: string;
+  storyText?: string;
+  neighbours?: (string | undefined)[];
+}): { scene: string; changed: boolean } {
+  const scene = input.scene ?? "";
+  const pattern = new RegExp(`${LOCATION_PATTERN.source}\\.?`);
+  const location = pattern.exec(scene);
+  if (!location) return { scene, changed: false };
+  const storyText = input.storyText ?? "";
+  const neighbours = (input.neighbours ?? [])
+    .map((n) => LOCATION_PATTERN.exec(n ?? ""))
+    .filter((m): m is RegExpExecArray => m !== null)
+    .map((m) => ({ name: m[1].trim(), clause: `장소: ${m[1].trim()} — ${m[2].trim()}` }));
+  const sceneBody = sceneBodyOf(scene);
+  if (
+    !staleToyVehiclePlace({
+      name: location[1],
+      description: location[2],
+      sceneBody,
+      storyText,
+      neighbourNames: neighbours.map((n) => n.name),
+    })
+  ) {
+    return { scene, changed: false };
+  }
+  const stay = neighbours.filter((n) => !placeVehicleKind(n.name));
+  const named = placeFromPageText(`${storyText} ${sceneBody}`, false);
+  let clause = "";
+  if (named) {
+    const key = locationKeyOf(named.name);
+    clause = stay.find((n) => locationKeyOf(n.name) === key)?.clause ?? `장소: ${named.name} — ${named.description}`;
+  } else if (stay.length) {
+    clause = stay[0].clause;
+  } else {
+    const teacher = placeFromPageText(`${storyText} ${sceneBody}`);
+    clause = teacher ? `장소: ${teacher.name} — ${teacher.description}` : "";
+  }
+  // 함수로 갈아 끼운다 — 앞·뒤 쪽 설명에 '$'가 있어도 치환 기호로 읽히지 않게. 뺄 때는 줄 바꿈을 살린다(라우트가 줄 단위로 읽는다).
+  const replaced = clause
+    ? scene.replace(location[0], () => `${clause}.`)
+    : scene.replace(location[0], "").replace(/[ \t]{2,}/g, " ").replace(/\n[ \t]*\n/g, "\n").trim();
+  return { scene: replaced, changed: true };
+}
+
+/** 장면 지시의 `장소: 이름 — 설명` 줄만(없으면 "") — 앞·뒤 쪽 장소를 쪽 그림 서버에 건넬 때(neighbourPlaces). */
+export function placeClauseOf(imagePrompt?: string): string {
+  return /장소\s*:[^.\n]*/.exec(imagePrompt ?? "")?.[0].trim() ?? "";
+}
+
+type PlacePage = { text?: string; imagePrompt?: string };
+
+/**
+ * 이 쪽(index)의 앞·뒤 쪽 장소 줄(앞 쪽 먼저, 없는 쪽은 뺀다) — 쪽 그림 서버에 neighbourPlaces 로 건넨다.
+ * 옆 쪽도 옛 판정이 놀잇감으로 박은 탈것 줄이면 고친 줄로 건넨다(고치다 장소 줄이 빠지면 뺀다).
+ * 옆 쪽이 기성 탈것 줄인데 탄 말이 '자동차 안에 가득 찬 김밥' 같은 낱말 하나뿐이고 그 너머 쪽도 탈것이 아니면 건네지 않는다 —
+ * 그 줄도 옛 판정이 박았을 수 있어, '이어 타는 중'으로 보증하면 옆의 놀잇감 쪽까지 차 안으로 남는다.
+ * 왜 — 놀잇감 쪽 두 장이 나란히 '자동차 안'으로 저장되면 서로를 '이어 타는 중'으로 보증해, 어느 쪽을 다시 그려도
+ * 차 뒷좌석이 나왔다(검토 2026-09-30). 옆 쪽은 **이 쪽 반대편**에서부터 거슬러 고쳐 온 줄로만 판단한다 — 책 끝에서
+ * 이 쪽 쪽으로 한 쪽씩 고치므로, 놀잇감 쪽이 셋 이어져도 풀리고, 진짜로 탄 쪽(아빠 차에 탔어요)에서 이어지는 줄은 남는다.
+ */
+export function neighbourPlaceClauses(pages: PlacePage[], index: number): string[] {
+  const toward = (step: 1 | -1): string => {
+    let far = "";
+    for (let j = step === 1 ? pages.length - 1 : 0; j !== index && j >= 0 && j < pages.length; j -= step) {
+      const page = pages[j];
+      const prompt = page?.imagePrompt?.trim() ?? "";
+      const text = (page?.text ?? "").normalize("NFC");
+      const fixed = prompt ? repairStaleVehicleScene({ scene: prompt, storyText: text, neighbours: far ? [far] : [] }) : null;
+      const location = fixed ? LOCATION_PATTERN.exec(fixed.scene) : null;
+      const unproven =
+        location !== null &&
+        !fixed?.changed &&
+        cannedVehicleLine(location[1], location[2]) &&
+        !(far && placeVehicleKind(LOCATION_PATTERN.exec(far)?.[1] ?? "")) &&
+        !rideEvidence(text) &&
+        !rideEvidence(sceneBodyOf(fixed?.scene ?? "")) &&
+        // 아빠 차·시내버스처럼 주인을 밝힌 탈것 안이면 진짜로 탄 쪽이다 — '자동차 안에 가득 찬 김밥'만 보증에서 뺀다.
+        !namesOwnedVehicle(text) &&
+        !namesOwnedVehicle(sceneBodyOf(fixed?.scene ?? ""));
+      far = fixed && !unproven ? placeClauseOf(fixed.scene) : "";
+    }
+    return far;
+  };
+  if (index < 0 || index >= pages.length) return [];
+  return [toward(-1), toward(1)].filter(Boolean);
+}
+
+/**
+ * 책 전체의 장면 지시에서 옛 판정이 박은 놀잇감 탈것 장소 줄을 고친 쪽들 — 고칠 것이 없는 쪽은 같은 객체 그대로.
+ * 만들기 화면(create)이 그리기 전에 쓴다 — 서버만 고치면 화면은 그 그림을 옛 열쇠(자동차 안)의 장소 기준 그림으로 삼아,
+ * 뒤의 진짜 차 안 쪽에 교실 그림을 기준으로 붙였다(검토 2026-09-30). 장소 시트·열쇠·저장하는 책도 고친 줄을 쓴다.
+ */
+export function repairStaleVehiclePages<T extends PlacePage>(pages: T[]): T[] {
+  return pages.map((page, index) => {
+    const prompt = page.imagePrompt?.trim() ?? "";
+    if (!prompt) return page;
+    const fixed = repairStaleVehicleScene({ scene: prompt, storyText: page.text ?? "", neighbours: neighbourPlaceClauses(pages, index) });
+    return fixed.changed ? { ...page, imagePrompt: fixed.scene } : page;
+  });
 }
 
 /** '주차장·세차장·주유소'처럼 차가 나오지만 차 안은 아닌 곳을 말하나. */

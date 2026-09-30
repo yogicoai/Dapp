@@ -2,9 +2,28 @@ import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { callerOf, type Caller } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
-import { uploadToCafe24 } from "@/lib/cafe24";
+import { ftpErrorCode, uploadHitDeadline, uploadManyToCafe24 } from "@/lib/cafe24";
 import { removeWhiteBackground } from "@/lib/cutout";
 import { PORTRAIT_LOOKS_MAX, ROLE_LABEL, freeRedrawsLeft, type FamilyRole } from "@/lib/family";
+import {
+  CARD_TIMEOUT_MS,
+  CARD_WAIT_MS,
+  CLOSEUP_TIMEOUT_MS,
+  DRAW_DEADLINE_MS,
+  DRAW_MIN_MS,
+  FALLBACK_DEADLINE_MS,
+  HEAD_CHECK_DEADLINE_MS,
+  HEAD_REDRAW_DEADLINE_MS,
+  REF_TIMEOUT_MS,
+  STRETCH_DEADLINE_MS,
+  UPLOAD_DEADLINE_MS,
+  UPLOAD_MIN_MS,
+  UPLOAD_RESERVE_MS,
+  UPLOAD_SAFETY_MS,
+  optionalAllowed,
+  stageClock,
+  uploadLeft,
+} from "@/lib/family-portrait-budget";
 import {
   PHOTO_REFUSED_MESSAGE,
   PHOTO_TOO_BIG_MESSAGE,
@@ -96,6 +115,12 @@ export const maxDuration = 60;
  *   skipPhotoDraw(선택): 이번 방문에 이 사진이 이미 거절돼 대신 그렸다(화면이 메모리에만 기억한다). 다시 그리기는 ②를
  *      건너뛰고 곧바로 ③ — 또 거절될 사진 그리기에 구글 값(약 95원)과 시간을 쓰지 않는다. 사진은 특징 카드에만 쓴다.
  * 시간: 모두 DRAW_DEADLINE_MS(대신 그리기만 FALLBACK_DEADLINE_MS) 안에서 — 함수 제한 60초(배포 Hobby)를 넘기지 않는다.
+ *   시간표는 lib/family-portrait-budget 에 모았다(2026-09-30 배포에서 '그림을 올리지 못했어요' 뒤): 올리기 몫(8초)을 먼저 떼어
+ *   두고 머리 재기·다시 그리기·몸 늘이기는 45초 전에만. 단계마다 걸린 ms 를 성공·실패 로그에 한 줄로 남긴다(단계 이름과 숫자만).
+ *   cafe24 두 장은 한 FTP 세션으로 올리고(lib/cafe24 uploadManyToCafe24 — 잠깐 끊기면 못 올린 것만 한 번 더), 실패하면 짧은
+ *   오류 코드(ftp-421·ECONNREFUSED·passive …, 주소·포트 없는 것)를 로그와 응답 detail 에 싣는다 — 배포 로그를 못 볼 때 화면의
+ *   개발자 도구로 원인을 가린다. 올리기 마감에 걸려 끊긴 것(detail closed·deadline)은 시간이 모자란 것이라 502 '올리지
+ *   못했어요'가 아니라 504 '너무 오래 걸려서'(code timeout)로 알린다.
  * **사진은 저장하지 않는다 — 화면 약속 "사진은 저장하지 않고, 그림을 그리는 데 한 번 쓰고 바로 지워요".**
  * 사진과 특징 카드·얼굴 상자·얼굴 클로즈업(사진에서 읽거나 잘라 낸 것이라 사진과 똑같이 다룬다)은 이 요청의 메모리에서
  * Gemini 로 넘기기만 한다: 결제 RPC(charge·finish·refund·status) 인자, cafe24(올리는 건 그린 그림뿐), Supabase, console 로그,
@@ -108,59 +133,12 @@ export const maxDuration = 60;
 const MEMBER_ID = /^[a-z0-9-]{1,40}$/;
 const ROLES = Object.keys(ROLE_LABEL) as FamilyRole[];
 
-/** 요청이 들어온 때부터 이만큼 지나면 그리기를 끊는다 — 나머지로 지우기·올리기·'받았음'·되돌리기를 한다. */
-const DRAW_DEADLINE_MS = 45_000;
-/** 그 사이 앞 단계가 길어져도 그리기에는 최소 이만큼은 준다 */
-const DRAW_MIN_MS = 5_000;
-/** 올리기는 요청 시작부터 여기까지 끝나야 한다(함수 제한 60초 — '받았음'·되돌리기 몫을 남긴다). */
-const UPLOAD_DEADLINE_MS = 55_000;
-/** 올리기에 이만큼도 안 남았으면 올리지 않고 되돌린다 */
-const UPLOAD_MIN_MS = 3_000;
-/** 참고 그림 받기 — 이보다 오래 걸리면 참고 없이 그린다(fetch 는 기본 제한이 몇 분이다). */
-const REF_TIMEOUT_MS = 6_000;
-/**
- * 특징 카드 — 사진 그리기는 카드가 시작된 때부터 이만큼까지만 기다린다. 늦으면 카드 없이 사진으로 그리고, 카드는 계속
- * 기다려 대신 그리기에 쓴다. 보통 몇 초면 온다.
- */
-const CARD_WAIT_MS = 6_000;
-/** 특징 카드 요청 자체의 제한 — 넘으면 끊는다(카드 없이 간다). */
-const CARD_TIMEOUT_MS = 12_000;
-/**
- * 얼굴 클로즈업 만들기(머리글 ①-2) — 사진 한 장 자르고 줄이기라 보통 수십 ms. 이보다 걸리면 클로즈업 없이 그린다
- * (그리기 제한 시각은 그대로라 504 쪽으로 밀리지 않는다 — 그리기 몫에서 많아야 이만큼 준다).
- */
-const CLOSEUP_TIMEOUT_MS = 1_000;
-/**
- * 대신 그리기(사진 거절 뒤, 사진 없이)는 요청 시작부터 여기까지 끝나야 한다 — 그리기 제한(45초)보다 3초 길게 준다.
- * 지우기·줄이기는 1~2초라 올리기(55초까지)에 몇 초가 남는다. 남은 시간이 PHOTO_FALLBACK_MIN_MS 보다 적으면 시작하지 않는다.
- * 사진 그리기가 보통 20~30초라 늦게 거절되면 대신 그리기를 못 할 수 있다 — 그때는 예전처럼 값을 되돌리고 알린다.
- * (함수 제한 60초를 늘리면 여유가 생기지만, 배포(Vercel Hobby) 한도를 넘기면 배포 전체가 막혀 건드리지 않았다.)
- */
-const FALLBACK_DEADLINE_MS = 48_000;
-/**
- * 머리 재기(머리글 ②)는 요청 시작부터 여기까지 끝나야 한다 — 그리기 제한(45초)보다 1초만 더 준다. 재기는 없어도 되는
- * 단계라 꼭 해야 하는 올리기 몫을 줄이지 않는다: 그 뒤 지우기·줄이기 1~2초, 올리기(55초까지)에 8초쯤 남긴다(올리기가 잘리면
- * 504 로 값을 되돌리고 그린 그림 값 약 95원이 버려진다). 재기를 시작하려면 lib/family-head-check HEAD_CHECK_MIN_MS(4초)가
- * 남아야 해서, 그리기가 42초 넘어 끝나거나 대신 그리기(48초까지) 뒤면 재지 않고 오늘처럼 건넨다.
- * 재기 한 번은 HEAD_CHECK_TIMEOUT_MS(8초)에서도 끊는다.
- */
-const HEAD_CHECK_DEADLINE_MS = DRAW_DEADLINE_MS + 1_000;
-/**
- * 머리가 표에서 많이 벗어나 다시 그릴 때(머리글 ②) — 그리기 제한(DRAW_DEADLINE_MS)까지 끝나야 하고, 시작하려면 그때까지
- * max(PHOTO_FALLBACK_MIN_MS, 처음 그리기에 걸린 시간)이 남아야 한다(같은 크기 그림을 한 번 더 그리니 비슷하게 걸린다 —
- * 다시 그리기는 처음 그림 + 비율 견본만 보내 요청은 더 가볍지만, 걸리는 시간은 대개 그림을 만드는 쪽이라 넉넉히 같게 본다).
- * 셈하면(재기 4초 기준) 처음 그리기가 칩으로 약 19초, 사진으로 약 14초(특징 카드를 기다리는 몫 때문) 안에 끝났을 때만 다시
- * 그린다 — 그리기는 보통 20~30초라 다시 그리기는 드물다(로그 'no-time-redraw'). 머리를 실제로 고치는 몫은 비율 견본(①)과
- * 단체 사진 얼굴 크기표(③)이고, 다시 그리기는 빨리 끝난 그림에만 붙는 덤이다. 함수 제한(60초, 배포 Hobby)을 늘리지 않는 한 넓힐 수 없다.
- * 다시 그리기가 늦거나 실패해도 처음 그림을 건네므로 504 는 나지 않는다. 끊긴 뒤에는 새 요청을 시작하지 않지만(drawWithin),
+/*
+ * 시간 값(DRAW_DEADLINE_MS·UPLOAD_DEADLINE_MS·HEAD_CHECK_DEADLINE_MS·STRETCH_DEADLINE_MS …)은 lib/family-portrait-budget 에 있다 —
+ * 순수 셈이라 시험(family-portrait-budget.test.ts)이 '없어도 되는 단계가 올리기 몫을 먹지 않는다'를 본다. 여기 따로 적지 말 것.
+ * 머리 다시 그리기가 늦거나 실패해도 처음 그림을 건네므로 504 는 나지 않는다. 끊긴 뒤에는 새 요청을 시작하지 않지만(drawWithin),
  * 이미 나간 요청의 구글 값(약 95원)은 나갈 수 있다.
  */
-const HEAD_REDRAW_DEADLINE_MS = DRAW_DEADLINE_MS;
-/**
- * 몸 늘이기(머리글 ④)는 요청 시작부터 이 시각 전에만 시작한다 — 재기(46초까지) 바로 뒤라 보통 늘 된다. 늘이기는 수십~백여 ms 라
- * 그 뒤 지우기·줄이기 1~2초, 올리기(55초까지)에 몇 초가 그대로 남는다. 무슨 까닭으로 이보다 늦으면 늘이지 않고 건넨다.
- */
-const STRETCH_DEADLINE_MS = HEAD_CHECK_DEADLINE_MS + 1_000;
 
 /** skipPhotoDraw — 이 사진은 이번 방문에 이미 거절됐다(머리글). 사진이 없으면 뜻이 없다. */
 type Input = PortraitInput & { skipPhotoDraw?: boolean };
@@ -584,10 +562,13 @@ async function finishDraw(caller: Caller, memberId: string, charge: Charge, pic:
 
 export async function POST(request: Request) {
   const startedAt = Date.now();
+  // 단계마다 걸린 ms — 배포에서 어디가 느렸는지 가리려고 성공·실패 로그에 한 줄로 싣는다(단계 이름과 숫자만).
+  const clock = stageClock(startedAt);
 
   // ① 로그인
   const caller = await callerOf(request);
   if (!caller) return fail(401, "로그인이 필요합니다.", "login");
+  clock.mark("auth");
 
   // ② 입력 — 사진이 든 본문이 너무 크면 읽기 전에 막는다(화면은 1024px JPEG 로 줄여 보내 보통 0.5MB 안팎).
   if (Number(request.headers.get("content-length") ?? 0) > PORTRAIT_BODY_MAX_BYTES) {
@@ -683,18 +664,21 @@ export async function POST(request: Request) {
     charge = reply.charge;
   }
   const draw = charge?.draw ?? 0;
+  clock.mark("charge");
 
   // 실패하면 값을 되돌리고 알린다. '돌려드렸어요'는 **실제로** 되돌렸을 때만 붙인다.
-  // 되돌린 뒤의 잔액도 함께 준다(화면의 쿠키 수를 맞추게).
-  const failAndRefund = async (status: number, error: string, code: string) => {
-    if (!charge) return fail(status, error, code);
+  // 되돌린 뒤의 잔액도 함께 준다(화면의 쿠키 수를 맞추게). extra 는 사진·카드가 없는 짧은 값만(올리기 오류 코드 등).
+  const failAndRefund = async (status: number, error: string, code: string, extra?: Record<string, unknown>) => {
+    if (!charge) return fail(status, error, code, extra);
     const r = await refundDraw(caller, input.memberId, charge);
     const refunded = r?.refunded === true;
     const note = refunded && charge.charged > 0 ? " 쿠키는 돌려드렸어요." : "";
-    return fail(status, `${error}${note}`, code, { refunded, tokens: r?.tokens ?? null });
+    return fail(status, `${error}${note}`, code, { ...extra, refunded, tokens: r?.tokens ?? null });
   };
 
   let stage: "draw" | "cutout" | "upload" = "draw";
+  /** 올리기를 시작할 때 마감까지 남았던 ms — 올리기 실패 로그에 싣는다 */
+  let uploadLeftMs: number | null = null;
   let pic: Pic;
   /** 사진이 거절돼 사진 없이 대신 그렸으면 무엇으로 — 응답에 실어 화면이 한 줄 알린다(저장하지 않는다) */
   let fallback: PhotoFallback | null = null;
@@ -707,6 +691,7 @@ export async function POST(request: Request) {
     //    사진: 이 사람 사진 → 얼굴 클로즈업(있으면) → 그림체 견본 → 비율 견본(같은 가족 그림은 붙이지 않는다)
     // 가족 캐릭터는 늘 Gemini 로(사장님 결정) — IMAGE_PROVIDER=openai 여도, 한도에 막혀도 GPT 로 넘기지 않는다.
     const [styleSample, sibling, guide] = await refsReady;
+    clock.mark("refs");
     let image: GeneratedImage;
     /** 처음 그리기에 걸린 시간 — 머리 비율 다시 그릴 시간이 되는지 어림한다(HEAD_REDRAW_DEADLINE_MS) */
     let drawMs: number;
@@ -727,6 +712,7 @@ export async function POST(request: Request) {
       );
       drawMs = Date.now() - t0;
     }
+    clock.mark("draw");
 
     // ④-1 사진·특징 카드는 여기서 끝 — 처음 그리기에만 쓴다(사진·클로즈업이 든 참고 그림 배열은 drawFromPhoto 가 그리기 직후
     //     이미 비웠다). 머리 비율 다시 그리기는 처음 그림으로 하므로 이 요청 안에서도 더 붙들지 않는다(그린 그림만 아래로 간다).
@@ -770,13 +756,19 @@ export async function POST(request: Request) {
     image = head.image;
     let headRatio = head.ratio;
     logHead(input.memberId, draw, head.log, startedAt);
+    clock.mark("head");
 
     // ④-3 몸 늘이기(머리글 '머리 비율' ④) — 남긴 그림을 잰 상자가 있고 그래도 머리가 크면, 머리는 그대로 두고 목 ~ 발목만
     //     세로로 늘인다(흰 바탕 그림에 — 지우기가 늘인 윤곽에서 가장자리를 새로 푼다). 실패하면 늘이지 않은 그림 그대로.
+    //     없어도 되는 단계라 올리기 몫을 떼어 둔 시각(STRETCH_DEADLINE_MS) 전에만 시작한다(lib/family-portrait-budget).
     let drawn: Buffer = Buffer.from(image.data, "base64");
     /** 늘인 배율(머리글 ④) — 단체 사진이 또 늘일 때 본다. 안 늘였으면 없다. */
     let bodyStretch: number | undefined;
-    if (head.boxes && Date.now() - startedAt < STRETCH_DEADLINE_MS) {
+    const stretchInTime = optionalAllowed(startedAt, Date.now(), STRETCH_DEADLINE_MS);
+    if (head.boxes && !stretchInTime) {
+      console.info("[family/portrait] 몸 늘이기 건너뜀(올리기 몫)", input.memberId, draw, `${clock.elapsed()}ms`);
+    }
+    if (head.boxes && stretchInTime) {
       const t0 = Date.now();
       try {
         const stretched = await stretchFigure(drawn, { boxes: head.boxes, chart: headTarget });
@@ -799,6 +791,7 @@ export async function POST(request: Request) {
         console.warn("[family/portrait] 몸 늘이기 실패 — 늘이지 않고 건넴", input.memberId, draw, brief(e), `${Date.now() - t0}ms`);
       }
     }
+    clock.mark("stretch");
 
     // ⑤ 흰 바탕 지우기 — 화면용 투명 PNG(가로 최대 720) + 참고용 흰 바탕 JPEG(최대 1024)
     stage = "cutout";
@@ -818,18 +811,34 @@ export async function POST(request: Request) {
         .jpeg({ quality: 85 })
         .toBuffer(),
     ]);
+    clock.mark("cutout");
 
     // ⑥ 올리기 — 남은 시간 안에서만. 함수 제한(60초)에 잘리면 값은 나갔는데 되돌리기도 못 돈다.
     stage = "upload";
-    const left = startedAt + UPLOAD_DEADLINE_MS - Date.now();
+    const left = uploadLeft(startedAt);
+    uploadLeftMs = left;
     if (left < UPLOAD_MIN_MS) throw new DrawTimeout();
+    if (left < UPLOAD_RESERVE_MS) {
+      // 올리기 몫보다 적게 남았다(대신 그리기 뒤 등) — 실패하면 이 줄이 까닭을 알려 준다.
+      console.warn("[family/portrait] 올리기 시간 빠듯", input.memberId, draw, `남음 ${left}ms`, clock.summary());
+    }
     // 매번 새 이름(cafe24 는 ?v= 를 무시해서 같은 이름이면 옛 그림이 보인다). 끝에 임의 32자를 붙여
     // 주소를 맞힐 수 없게 한다 — 건네지 못한(되돌린) 그림을 시각으로 찔러 찾아 공짜로 받는 길을 막는다.
     const stem = `family/${folder}/${input.memberId}-${Date.now()}-${crypto.randomUUID().replace(/-/g, "")}`;
+    // 두 장을 한 FTP 세션으로(로그인·폴더 찾기 한 번, 동시 접속 하나 — lib/cafe24). 마감(UPLOAD_DEADLINE_MS)에 cafe24 가
+    // 스스로 연결을 끊어 오류 코드를 남기고, 바깥 withTimeout 은 그보다 조금 늦게(UPLOAD_SAFETY_MS) 받치는 안전 제한이다.
+    // 마감에 끊긴 것(코드 끝이 closed)은 아래 catch 에서 바깥 제한과 똑같이 504 '너무 오래 걸려서'로 알린다(uploadHitDeadline).
     const [pngUp, jpgUp] = await withTimeout(
-      Promise.all([uploadToCafe24(`${stem}.png`, png), uploadToCafe24(`${stem}-ref.jpg`, jpg)]),
-      left,
+      uploadManyToCafe24(
+        [
+          { remotePath: `${stem}.png`, data: png },
+          { remotePath: `${stem}-ref.jpg`, data: jpg },
+        ],
+        { deadline: startedAt + UPLOAD_DEADLINE_MS },
+      ),
+      left + UPLOAD_SAFETY_MS,
     );
+    clock.mark("upload");
     pic = {
       url: pngUp.url,
       ref: jpgUp.url,
@@ -844,16 +853,33 @@ export async function POST(request: Request) {
     card = null;
     // 오류만 찍는다 — 사진·카드·본문·참고 그림은 넣지 않는다(사진으로 그렸는지만 표시). 사진으로 그린 요청이면 그림 모델
     // 오류의 원문(구글 응답 본문)도 찍지 않는다 — 구글의 400 오류 글은 보낸 값을 되읊는 일이 있어 사진·카드 조각이 남을 수 있다.
+    // 올리기 오류는 짧은 코드로만(lib/cafe24 ftpErrorCode — ftp-421·ECONNREFUSED·passive …). basic-ftp 원문에는 서버 주소·포트,
+    // PASV IP 가 들어 있어 통째로 찍지 않는다. 마감에 걸렸으면 deadline.
+    const uploadCode = stage === "upload" ? (e instanceof DrawTimeout ? "deadline" : ftpErrorCode(e)) : null;
+    // 시간이 모자라 멈췄나 — 바깥 제한(DrawTimeout)이든, cafe24 가 올리기 마감에 스스로 끊은 것(코드 끝 closed, 예
+    // "closed"·"ftp-421>closed")이든 같다. 2026-09-30 검토: 마감에 끊긴 것이 502 '그림을 올리지 못했어요'로 나가면
+    // 이번 사고와 같은 말이 떠 비밀번호·해외 접속 차단부터 찾게 된다 — 504 '너무 오래 걸려서'(code timeout)로 보내고
+    // 무엇에 걸렸는지는 detail(closed·deadline)로 남긴다.
+    const outOfTime = e instanceof DrawTimeout || (stage === "upload" && uploadHitDeadline(e));
     const logged =
-      e instanceof PhotoRefused ? "사진 거절 — 대신 그리기 못 함" : withPhoto && e instanceof GeminiError ? brief(e) : e;
-    console.error("[family/portrait]", stage, input.memberId, draw, withPhoto ? "사진" : "칩", logged);
+      e instanceof PhotoRefused
+        ? "사진 거절 — 대신 그리기 못 함"
+        : uploadCode !== null
+          ? `올리기 ${uploadCode} (시작 때 남음 ${uploadLeftMs ?? "-"}ms)`
+          : withPhoto && e instanceof GeminiError
+            ? brief(e)
+            : e;
+    console.error("[family/portrait]", stage, input.memberId, draw, withPhoto ? "사진" : "칩", logged, clock.summary());
+    // 올리기 단계의 실패는 코드를 응답에도 싣는다(detail) — 배포 로그를 못 볼 때 개발자 도구로 원인(동시 접속·로그인·용량·
+    // 해외 접속 막힘 …)을 가린다. 주소·포트·사진은 들어 있지 않다. 화면(family-ui jobError)은 code 만 본다.
+    const uploadExtra = uploadCode !== null ? { detail: uploadCode } : undefined;
     // 사진이 거절됐고 대신 그리기(사진 없이 카드·칩)도 못 했다 — 같은 사진으로는 또 거절되니 '다른 사진이나 특징으로'를
     // 알린다. 값은 되돌린다(failAndRefund).
     if (e instanceof PhotoRefused) {
       return failAndRefund(422, PHOTO_REFUSED_MESSAGE, "photo");
     }
-    if (e instanceof DrawTimeout) {
-      return failAndRefund(504, "그림이 너무 오래 걸려서 멈췄어요. 잠시 뒤 다시 해 주세요.", "timeout");
+    if (outOfTime) {
+      return failAndRefund(504, "그림이 너무 오래 걸려서 멈췄어요. 잠시 뒤 다시 해 주세요.", "timeout", uploadExtra);
     }
     if (e instanceof GeminiError) {
       // 부모가 읽을 말로 적힌 것은 429(한도·몰림)뿐이다. 나머지는 원문(HTTP 본문·키 설정 안내)이라 보이지 않는다.
@@ -869,7 +895,7 @@ export async function POST(request: Request) {
       return failAndRefund(status, msg, "draw");
     }
     if (stage === "upload") {
-      return failAndRefund(502, "그림을 올리지 못했어요. 잠시 뒤 다시 해 주세요.", "upload");
+      return failAndRefund(502, "그림을 올리지 못했어요. 잠시 뒤 다시 해 주세요.", "upload", uploadExtra);
     }
     return failAndRefund(500, "그림을 마무리하지 못했어요. 잠시 뒤 다시 해 주세요.", stage);
   }
@@ -893,6 +919,9 @@ export async function POST(request: Request) {
       }
     }
   }
+  clock.mark("finish");
+  // 단계마다 걸린 ms(단계 이름과 숫자만) — 느려지는 단계를 실패하기 전에 본다.
+  console.info("[family/portrait] 단계 시간", input.memberId, draw, withPhoto ? "사진" : "칩", clock.summary());
 
   // ⑧ photoFallback — 사진이 거절돼 대신 그렸을 때만('features' 사진 속 특징으로 · 'looks' 고르신 특징으로).
   //    카드 글은 싣지 않는다. 이 표시는 DB(last_pic)에도 적지 않는다 — 화면이 그 자리에서 한 줄 알리는 데만 쓴다.

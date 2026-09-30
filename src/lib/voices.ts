@@ -19,6 +19,7 @@ import {
 // 낭독을 미리 굽는 스크립트에서도 같은 함수를 쓸 수 있다(두 벌이 되면 어긋난다).
 export { splitDialogue } from "@/lib/speaker-tone";
 import { breathForSpeech } from "@/lib/story-punctuation";
+import { LIVE_READ_TEMPO, liveReadCacheId, liveReadFallbackId } from "@/lib/read-tempo";
 import type { VoiceDirection, VoicePace } from "@/lib/types";
 
 /** 합성 서버가 한 번에 받는 글자 수 — 셋 중 가장 작은 /api/tts 기준(google 800·eleven 1000). */
@@ -542,12 +543,21 @@ function hashText(s: string): string {
 // IndexedDB 저장이 끝날 때까지 Promise를 공유해 저장 직전의 중복 요청도 막는다.
 const pendingVoiceAudio = new Map<string, Promise<Blob>>();
 
+/**
+ * @param fallbackId 새 열쇠에 소리가 없을 때 대신 틀어도 되는 옛 열쇠(있으면). 거기 담긴 소리는
+ *                   새 열쇠로 옮겨 담지 않는다 — 옮기면 '새 빠르기로 합성한 소리'인 척하게 된다.
+ */
 async function fetchCachedVoiceAudio(
   cacheId: string,
   create: () => Promise<Blob>,
+  fallbackId: string | null = null,
 ): Promise<Blob> {
   const cached = await loadVoiceAudio(cacheId).catch(() => null);
   if (cached) return cached;
+  if (fallbackId) {
+    const old = await loadVoiceAudio(fallbackId).catch(() => null);
+    if (old) return old;
+  }
 
   const pending = pendingVoiceAudio.get(cacheId);
   if (pending) return pending;
@@ -571,12 +581,20 @@ async function fetchCachedVoiceAudio(
  * 두 번째부터는 크레딧이 나가지 않는다 — 아이들은 같은 책을 계속 반복해 듣는다.
  * 실패(크레딧 소진·오프라인·키 없음)는 그대로 던진다 — 부른 쪽이
  * 브라우저 목소리로 물러날지 정한다.
+ *
+ * 빠르기는 LIVE_READ_TEMPO(read-tempo.ts)로 조금 늦춰 합성한다 — 만든 동화가 구운 책보다
+ * 빨리 읽혔다(2026-09-30 사장님). 서버(/api/tts)는 0.5~2 사이 tempo 를 이미 받는다.
+ * 미리 굽기(prewarmBookAudio)·다음 쪽 미리 받기도 모두 이 함수를 거쳐 캐시 열쇠가 맞는다.
+ *
+ * 이미 기기에 본래 속도로 담긴 문장은 그 소리를 그대로 튼다(liveReadFallbackId) — 다시
+ * 합성하지 않는다. 빠르기를 바꿨다고 이미 들은 책을 모두 다시 사면 크레딧이 한꺼번에 나간다.
  */
 export async function fetchTypecastAudio(
   tc: TypecastPreset,
   text: string,
   emotion?: string,
   intensity?: number,
+  tempo: number = LIVE_READ_TEMPO,
 ): Promise<Blob> {
   /*
    * 담담하게 읽는 줄에는 세기를 아예 안 보낸다.
@@ -589,19 +607,29 @@ export async function fetchTypecastAudio(
   const plain = !emotion || emotion === "normal";
   const safeIntensity = plain ? undefined : Math.min(0.65, Math.max(0.3, intensity ?? 0.5));
   // 기존의 강한 연기 캐시와 분리한다. 새 낭독은 한 번만 합성된 뒤 다시 캐시된다.
-  const cacheId = `tts-read-v3:${tc.voiceId}:${emotion ?? "normal"}:${safeIntensity?.toFixed(2) ?? "-"}:${hashText(text)}`;
+  // 새로 합성한 소리는 빠르기가 든 열쇠에 담고, 옛 열쇠(빠르기 1)에 이미 담긴 소리는 그대로 튼다(read-tempo.ts).
+  const key = { voiceId: tc.voiceId, emotion, intensity: safeIntensity, tempo, textHash: hashText(text) };
+  const cacheId = liveReadCacheId(key);
   return fetchCachedVoiceAudio(cacheId, async () => {
     const r = await fetch("/api/tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: spokenText(text), voiceId: tc.voiceId, model: tc.model, emotion, intensity: safeIntensity }),
+      body: JSON.stringify({
+        text: spokenText(text),
+        voiceId: tc.voiceId,
+        model: tc.model,
+        emotion,
+        intensity: safeIntensity,
+        // 1이면 보내지 않는다 — 서버도 1은 audio_tempo 를 빼고 부른다(typecast.ts).
+        ...(tempo !== 1 ? { tempo } : {}),
+      }),
     });
     if (!r.ok) {
       const data = (await r.json().catch(() => null)) as { error?: string } | null;
       throw new Error(data?.error ?? `성우 음성 실패 (HTTP ${r.status})`);
     }
     return r.blob();
-  });
+  }, liveReadFallbackId(key));
 }
 
 /**

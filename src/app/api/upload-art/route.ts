@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { callerOf, type Caller } from "@/lib/api-auth";
-import { uploadToCafe24 } from "@/lib/cafe24";
+import { ftpErrorCode, uploadToCafe24 } from "@/lib/cafe24";
 
 /**
  * 만든 동화의 삽화 한 장을 cafe24에 올리고 공개 URL을 돌려준다.
@@ -135,7 +135,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ url });
   } catch (e) {
     // 올리기 실패는 동화 만들기를 막지 않는다 — 부르는 쪽이 base64로 물러난다.
-    console.error("[upload-art]", e);
+    // 짧은 코드만 찍는다(lib/cafe24 ftpErrorCode — ftp-530·ECONNREFUSED·env-ctrl …). 오류를 통째로 찍으면 Node 가 [cause] 까지
+    // 펼쳐, basic-ftp 원문의 서버 주소·포트와 — 환경변수에 줄바꿈이 섞였을 때는 'PASS <비밀번호>'까지 — Vercel 로그에 남는다.
+    console.error("[upload-art] 올리기 실패", ftpErrorCode(e));
     return NextResponse.json({ error: "이미지를 올리지 못했습니다." }, { status: 502 });
   }
 }

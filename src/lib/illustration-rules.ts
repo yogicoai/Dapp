@@ -20,6 +20,7 @@ import {
   mentionsVehicle,
   namesSchoolShuttle,
   placeVehicleKind,
+  staleToyVehiclePlace,
   schoolShuttleName,
   schoolShuttleRide,
   vehicleState,
@@ -134,6 +135,8 @@ export function pageVehicle(input: {
    * 이 쪽 본문이 무슨 버스인지 말하지 않을 때만 쓴다("창밖으로 포도밭이 보였어요").
    */
   schoolBusPlace?: boolean;
+  /** 앞·뒤 쪽의 장소 이름 — 탈것이면 이어 타는 중이라 이 쪽 탈것 줄을 놀잇감으로 버리지 않는다. 모르면 없다. */
+  neighbourPlaces?: string[];
 }): PageVehicle {
   const name = input.locationName?.trim() ?? "";
   const description = input.locationDescription?.trim() ?? "";
@@ -155,6 +158,8 @@ export function pageVehicle(input: {
    */
   const nearby = [location, sceneBody, storyText, input.bookContext ?? ""].some((text) => mentionsVehicle(text));
   const toyOnPage = mentionsToyVehicle(sceneBody) || mentionsToyVehicle(storyText);
+  /** 이 쪽 글(장면·본문)에 진짜 탈것 이야기가 있나 — 책 전체 글(부모 장소 칸)은 빼고. */
+  const nearbyOnPage = [sceneBody, storyText].some((text) => mentionsVehicle(text));
 
   const scene = vehicleState(sceneBody);
   const story = vehicleState(storyText);
@@ -212,6 +217,20 @@ export function pageVehicle(input: {
     if (off) {
       return { vehicle: null, schoolBus: false, gotOff: true, openDeck: false, staleVehicleLocation: true, vehicleNearby: nearby, toyVehicle: false };
     }
+    /*
+     * 놀잇감 탈것을 탈것 안으로 읽어 박힌 장소 줄 — 어제까지의 판정이 "자동차 안에 가득가득 채워 넣었어요"를 보고
+     * "자동차 안 — 뒷좌석 안전벨트 …"를 책에 저장했다. 한 쪽 다시 그리기는 저장된 줄을 그대로 보내 또 차 안이 됐다
+     * (2026-09-30 사장님 "재생성 했을때도 차안이란 컨셉을 버리지 못했어"). 다 맞을 때만 버린다 —
+     *   이름이 누구 탈것인지 밝히지 않았고(아빠 차·어린이집 버스는 클로드가 진짜 탈것을 적은 것),
+     *   설명이 옛 판정이 붙인 기성 글 그대로이고(클로드가 제 말로 적은 차 안은 한 쪽짜리 진짜 차일 수 있다),
+     *   이 쪽 글이 탈것을 놀잇감·그릇으로 말하고(toyOnPage), 탄 흔적이 하나도 없고(ridesInText),
+     *   앞·뒤 쪽이 탈것이 아니다(이어 타는 중에 장난감 자동차를 쥔 쪽은 진짜 차 안이다).
+     */
+    const toyPlace =
+      nameKind !== null && staleToyVehiclePlace({ name, description, sceneBody, storyText, neighbourNames: input.neighbourPlaces });
+    if (toyPlace) {
+      return { vehicle: null, schoolBus: false, gotOff: false, openDeck: false, staleVehicleLocation: true, vehicleNearby: nearbyOnPage, toyVehicle: true };
+    }
     const schoolBus = schoolBusOf(locationKind, true);
     return {
       vehicle: schoolBus ? "transit" : locationKind,
@@ -239,7 +258,8 @@ export function pageVehicle(input: {
     openDeck: vehicle === "transit" && openDeck && !schoolBus,
     staleVehicleLocation: false,
     // 머무는 곳인데 장면 문장은 타고 있다고 한다 — 어느 쪽이 맞는지 모르니 "벨트 없음"을 박지 않는다.
-    vehicleNearby: nearby && !(vehicle === null && scene.kind),
+    // 이 쪽 탈것이 놀잇감뿐이면 책 전체 글(장소 칸에 남은 옛 '자동차 안은 뒷좌석 안전벨트…')로 벨트 낱말을 꺼내지 않는다.
+    vehicleNearby: nearby && !(vehicle === null && scene.kind) && !(vehicle === null && toyOnPage && !nearbyOnPage),
     toyVehicle: vehicle === null && toyOnPage,
   };
 }

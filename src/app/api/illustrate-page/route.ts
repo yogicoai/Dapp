@@ -10,7 +10,7 @@ import {
   safetyRuleLines,
   vehicleInteriorLines,
 } from "@/lib/illustration-rules";
-import { isIndoorPlace, locationKeyOf, placeVehicleKind } from "@/lib/story-quality";
+import { isIndoorPlace, locationKeyOf, placeVehicleKind, repairStaleVehicleScene } from "@/lib/story-quality";
 import {
   GeminiError,
   detectBlankCanvasBorder,
@@ -101,6 +101,11 @@ export async function POST(request: Request) {
     sheetOutfits?: unknown;
     /** 같은 장소 줄의 다른 쪽이 어린이 통학 버스다 — 부르는 쪽이 책 전체로 정한다(lib/illustration-rules schoolBusPlaceKeys). */
     schoolBusPlace?: unknown;
+    /**
+     * 앞·뒤 쪽의 `장소: 이름 — 설명` 줄(앞 쪽 먼저, 2026-09-30~). 이 쪽 장소 줄이 놀잇감 탈것을 탈것 안으로 잘못 박은
+     * 것이면 책의 진짜 장소(앞·뒤 쪽 교실)로 갈아 끼우고, 이어 타는 중(앞·뒤가 탈것)이면 그대로 둔다. 옛 화면은 없다.
+     */
+    neighbourPlaces?: unknown;
   };
 
   // 어느 화면에서 볼 동화인가 — 핸드폰은 세로(3:4), 태블릿은 가로(4:3)로 그린다.
@@ -108,7 +113,7 @@ export async function POST(request: Request) {
   const phone = input.shape === "phone";
   const aspectRatio = phone ? ("3:4" as const) : ("4:3" as const);
 
-  const scene = typeof input.scene === "string" ? input.scene.trim() : "";
+  const rawScene = typeof input.scene === "string" ? input.scene.trim() : "";
   /*
    * 부모가 대본 화면에서 손으로 적어 준 장소 설명(선택).
    *
@@ -126,8 +131,31 @@ export async function POST(request: Request) {
    * 닿는 쪽이 생겼다. 여기서 400을 돌려주면 그 쪽만 그림 없이 남는다 — 길다고 막을
    * 일이 아니다. 상한은 터무니없는 입력을 걸러내는 용도로만 남긴다.
    */
-  if (!scene || scene.length > 700) {
+  if (!rawScene || rawScene.length > 700) {
     return NextResponse.json({ error: "장면 묘사가 비었거나 너무 깁니다." }, { status: 400 });
+  }
+  /*
+   * 저장된 장소 줄이 놀잇감 탈것을 탈것 안으로 잘못 박은 것이면 책의 진짜 장소로 갈아 끼운다(lib/story-quality repairStaleVehicleScene).
+   *
+   * 어제까지의 판정이 교실 가게 놀이의 "자동차 안에 가득가득 채워 넣었어요"를 보고 "장소: 자동차 안 — 뒷좌석 안전벨트 …"를
+   * 책에 저장했다. 판정을 고쳐도 한 쪽 다시 그리기는 저장된 줄을 그대로 보내, 장소 잠금·차 안 줄·벨트·검수 정답이 다
+   * 차 안이 됐고 장면 문장(Scene:)에도 그 설명이 그대로 들어갔다(2026-09-30 사장님 "재생성 했을때도 차안이란 컨셉을
+   * 버리지 못했어"). 아래는 모두 고친 장면을 읽는다. 앞·뒤 쪽을 안 보내는 옛 화면도 본문(선생님 → 교실)으로 고친다.
+   */
+  const neighbourPlaces = Array.isArray(input.neighbourPlaces)
+    ? input.neighbourPlaces
+        .filter((place): place is string => typeof place === "string")
+        .slice(0, 2)
+        .map((place) => place.slice(0, 300))
+    : [];
+  const staleFix = repairStaleVehicleScene({ scene: rawScene, storyText, neighbours: neighbourPlaces });
+  // 장소 줄만 있던 장면이면 뺀 뒤 비는데, 그때는 놀잇감을 말한 본문이 있다(없으면 고치지 않는다).
+  const scene = staleFix.scene || storyText;
+  if (staleFix.changed) {
+    console.info("[illustrate-page] 놀잇감 탈것 장소 줄을 고침", {
+      before: /장소\s*:[^.\n]*/.exec(rawScene)?.[0] ?? "",
+      after: /장소\s*:[^.\n]*/.exec(scene)?.[0] ?? "(뺌)",
+    });
   }
 
   /*
@@ -192,12 +220,21 @@ export async function POST(request: Request) {
     bookContext: locationDetail,
     // 한 번 탄 통학 버스는 내릴 때까지 같은 버스 — 어린이집 말이 앞 쪽에만 있어도 이 쪽 벨트를 같게 그린다.
     schoolBusPlace: input.schoolBusPlace === true,
+    // 앞·뒤 쪽 장소 이름 — 탈것이면 이어 타는 중이라 이 쪽 탈것 줄을 놀잇감으로 버리지 않는다(위 고침과 같은 판단).
+    neighbourPlaces: neighbourPlaces.map((place) => readLocation(place)?.name ?? "").filter(Boolean),
   });
   /*
    * 본문은 "버스에서 내려"인데 장소 줄이 버스 실내면, 그 장소 줄은 옛 판정이 잘못 박아 둔 것이다.
    * 따르면 다시 그려도 또 버스 안이 나온다 — 장소 잠금·장소 시트·검수 정답에서 뺀다.
    */
   const currentLocation = vehicleInfo.staleVehicleLocation ? null : parsedLocation;
+  /*
+   * 그림 모델·검수에 건네는 장면 문장 — 틀린 탈것 장소 줄을 버린 쪽은 장면 문장(Scene:)에서도 그 줄을 뺀다.
+   * 잠금·정답에서만 빼고 Scene: 에 남기면 "시내버스 안 — 좌석과 손잡이"가 그대로 읽혀 또 탈것 안이 나온다.
+   */
+  const drawnScene = vehicleInfo.staleVehicleLocation
+    ? scene.replace(/장소\s*:[^.\n]*\.?/, "").replace(/[ \t]{2,}/g, " ").trim() || storyText
+    : scene;
   const referenceLocation = readLocation(styleReferenceScene);
   // 이름 글자가 아니라 계열로 본다 — "놀이터"와 "동네 놀이터"는 같은 곳이다.
   const sameReferenceLocation = Boolean(
@@ -209,7 +246,8 @@ export async function POST(request: Request) {
    * 인물 시트가 얼굴을 잡듯 이것이 장소를 잡는다. 만들 때 장소마다 한 장 그려 둔다.
    */
   const locationSheet =
-    typeof input.locationSheet === "string" && currentLocation
+    // 서버가 장소 줄을 고친 쪽은 부르는 쪽이 옛 줄(자동차 안)의 열쇠로 고른 시트다 — 차 안 시트를 붙이지 않는다.
+    typeof input.locationSheet === "string" && currentLocation && !staleFix.changed
       ? await loadReferenceImage(input.locationSheet)
       : null;
   /*
@@ -227,10 +265,11 @@ export async function POST(request: Request) {
    */
   const pageLocationDetail = currentLocation
     ? pickLocationDetail(locationDetail, currentLocation.name)
-    : vehicleInfo.staleVehicleLocation
+    : vehicleInfo.staleVehicleLocation || staleFix.changed
       ? /*
          * 틀린 장소 줄(탈것 실내)을 버린 쪽 — 장소 칸 원문을 통째로 넣으면 그 안의 버스 노란 좌석 설명이
          * '가장 우선'으로 들어가 궁궐 마당에 버스 좌석을 또 부른다. 이름난 곳·탈것 부분은 빼고 물건만 넘긴다.
+         * 놀잇감 탈것 장소 줄을 뺀 쪽도 같다 — 장소 칸에 옛 '자동차 안은 뒷좌석 안전벨트…'가 남아 있다.
          */
         pickLocationDetail(locationDetail, "")
       : locationDetail;
@@ -410,7 +449,7 @@ export async function POST(request: Request) {
      * 뒤쪽 긴 안전·구도 문장 사이에 끼면 묽어진다. 성별·머리는 이 책에서 가장 눈에 띄는 약속이다.
      */
     heroOnPage ? heroLockLines(heroFixed && hero ? { ...hero, looks: undefined } : hero, storyText).join("\n") : "",
-    `Scene: ${scene}`,
+    `Scene: ${drawnScene}`,
     /*
      * 구도 — 아래가 텅 비지 않게.
      *
@@ -695,7 +734,7 @@ export async function POST(request: Request) {
       styleReference: usedStyleReference,
       locationReference: locationSheet,
       indoor,
-      scene: storyText ? `${scene}\nStory text: ${storyText}` : scene,
+      scene: storyText ? `${drawnScene}\nStory text: ${storyText}` : drawnScene,
       expectedLocation: currentLocation
         ? `${currentLocation.name}: ${currentLocation.description}`
         : "",

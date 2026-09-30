@@ -61,7 +61,7 @@ import {
 } from "@/lib/prefs";
 import { looksToDrawingPrompt } from "@/lib/child-looks";
 import { heroFromStory, schoolBusPlaceKeys } from "@/lib/illustration-rules";
-import { locationKeyOf, sheetMatchesKey } from "@/lib/story-quality";
+import { locationKeyOf, neighbourPlaceClauses, repairStaleVehiclePages, sheetMatchesKey } from "@/lib/story-quality";
 import { tidyPunctuation } from "@/lib/story-punctuation";
 import { pickLocationDetail } from "@/lib/scene-edit";
 import {
@@ -2701,7 +2701,14 @@ export default function CreatePage() {
    * 역할 분담: 장면 묘사는 클로드가 이미 써놨고(@@IMG@@), Gemini는 그리기만 한다.
    * 키가 없거나 실패하면 글만으로 보여준다 — 삽화가 없다고 동화를 막지 않는다.
    */
-  async function illustrate(s: Story) {
+  async function illustrate(script: Story) {
+    /*
+     * 옛 판정이 놀잇감 탈것을 탈것 안으로 박은 장소 줄("자동차 안 — 뒷좌석 안전벨트 …")을 그리기 전에 고친다.
+     * 쪽 그림 서버도 같은 줄을 고치지만, 화면이 모르면 그 쪽 그림(교실)을 옛 열쇠(자동차 안)의 장소 기준 그림으로 삼아
+     * 뒤의 진짜 차 안 쪽에 붙이고, 쓸모없는 차 안 장소 시트 값도 낸다(검토 2026-09-30). 고칠 것이 없으면 쪽은 그대로다.
+     * 이어 그리기 열쇠(drawProgressKey)는 받은 대본 그대로로 만든다 — 고친 줄로 만들면 지난번에 그린 쪽을 못 찾는다.
+     */
+    const s: Story = { ...script, pages: repairStaleVehiclePages(script.pages) };
     setStep("illustrate");
     setDrawn(0);
     drawStartRef.current = Date.now();
@@ -2745,7 +2752,7 @@ export default function CreatePage() {
      * 시트·장소 시트·그린 쪽을 IndexedDB에 두고, 같은 대본(내용+그림체)으로 다시 오면
      * 있는 것은 건너뛴다. 그림 단계에서 앱을 닫아도 이미 낸 돈이 헛되지 않는다.
      */
-    const progressKey = drawProgressKey(draftOwner ?? "guest", s, artStyle);
+    const progressKey = drawProgressKey(draftOwner ?? "guest", script, artStyle);
     drawProgressKeyRef.current = progressKey;
     const saved = await loadDrawProgress(progressKey);
     const counts: DrawCounts = { ...EMPTY_COUNTS, ...(saved?.counts ?? {}) };
@@ -3223,6 +3230,9 @@ export default function CreatePage() {
                   // 이 쪽 장소의 기준 그림 — 있으면 모든 쪽이 같은 곳을 그린다.
                   locationSheet: locationSheetFor(s.pages[i].imagePrompt),
                   schoolBusPlace: Boolean(locationKey) && schoolBusKeys.has(locationKey),
+                  // 앞·뒤 쪽 장소 줄 — 서버가 놀잇감 탈것을 탈것 안으로 적은 장소 줄을 고칠 때 책의 진짜 장소를 쓰고,
+                  // 이어 타는 중(앞·뒤가 탈것)이면 탈것 장소를 그대로 둔다(api/illustrate-page neighbourPlaces).
+                  neighbourPlaces: neighbourPlaceClauses(s.pages, i),
                   // 책 전체 인물을 보내되 서버가 장면에 이름이 있는 인물만 골라 잠근다.
                   cast: s.characters.map((c, characterIndex) => ({
                     name: c.name,

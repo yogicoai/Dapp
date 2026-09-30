@@ -41,7 +41,7 @@ import folkBooksJson from "@/data/folk-books.json";
 import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
-import { locationKeyOf, sheetMatchesKey } from "@/lib/story-quality";
+import { locationKeyOf, neighbourPlaceClauses, repairStaleVehicleScene, sheetMatchesKey } from "@/lib/story-quality";
 import { schoolBusPlaceKeys } from "@/lib/illustration-rules";
 import { detailMixesOtherPlaces } from "@/lib/scene-edit";
 import {
@@ -611,7 +611,19 @@ export function BookViewer({
 
   async function redrawPage() {
     const page = book.pages[index];
-    const scene = page.imagePrompt?.trim() || page.text;
+    /*
+     * 저장된 장소 줄이 놀잇감 탈것을 탈것 안으로 잘못 박은 것이면 책의 진짜 장소로 고쳐서 보낸다.
+     *
+     * 어제까지의 판정이 교실 가게 놀이 쪽("자동차 안에 가득가득 채워 넣었어요")에 "장소: 자동차 안 — 뒷좌석 안전벨트 …"를
+     * 저장했다. 그대로 보내면 몇 번을 다시 그려도 차 뒷좌석이 나온다(2026-09-30 사장님). 앞·뒤 쪽 장소 줄을 함께 보면
+     * 그 책의 진짜 장소(교실)를 그대로 쓸 수 있고, 장소 시트·기준 쪽도 고친 장소로 고른다. 고친 줄은 아래에서 책에 저장한다.
+     * 옆 쪽도 같은 옛 줄이면 고친 줄로 본다(neighbourPlaceClauses) — 놀잇감 쪽 둘이 서로 '이어 타는 중'으로 보증하지 않게.
+     */
+    const neighbourPlaces = neighbourPlaceClauses(book.pages, index);
+    const repaired = page.imagePrompt?.trim()
+      ? repairStaleVehicleScene({ scene: page.imagePrompt.trim(), storyText: page.text, neighbours: neighbourPlaces })
+      : { scene: "", changed: false };
+    const scene = repaired.scene || page.text;
     if (!scene) return;
     if (redrawsLeft <= 0 && !fillingBlank) {
       window.alert(
@@ -645,7 +657,8 @@ export function BookViewer({
         const name = /장소\s*:\s*([^—\-\n.]+)/.exec(prompt ?? "")?.[1]?.trim() ?? "";
         return name ? locationKeyOf(name) : "";
       };
-      const here = placeOf(page.imagePrompt);
+      // 고친 장면으로 — 저장된 '자동차 안'이 아니라 교실 열쇠로 장소 시트·같은 곳 옆 쪽·통학 버스를 고른다.
+      const here = placeOf(scene);
       const others = book.pages.filter((p, i) => i !== index && p.image);
       const sibling =
         (here ? others.find((p) => placeOf(p.imagePrompt) === here) : undefined) ?? others[0];
@@ -682,6 +695,8 @@ export function BookViewer({
             locationSheet,
             // 같은 장소 줄의 다른 쪽이 어린이 통학 버스면 이 쪽도 같은 버스로(벨트) — 옆 쪽 그림을 기준으로 받으니 어긋나면 검수에서 떨어진다.
             schoolBusPlace: Boolean(here) && schoolBusPlaceKeys(book.pages).has(here),
+            // 앞·뒤 쪽 장소 줄 — 서버도 같은 판단을 한 번 더 하고, 이어 타는 중(앞·뒤가 탈것)이면 탈것 장소를 그대로 둔다.
+            ...(neighbourPlaces.length ? { neighbourPlaces } : {}),
             // 고정 가족 원본 그림·시트에 선 순서(2026-09-29~) — 만들 때처럼 원본 얼굴을 붙인다. 옛 책엔 없다.
             // 서버가 부른 사람의 가족 폴더인지 다시 본다 — 마스터가 남의 책을 다시 그리면 붙지 않고 시트만 쓴다.
             ...(withFaces && book.portraits?.length ? { portraits: book.portraits } : {}),
@@ -730,7 +745,10 @@ export function BookViewer({
 
       const next: Book = {
         ...book,
-        pages: book.pages.map((p, i) => (i === index ? { ...p, image: stored } : p)),
+        // 고친 장소 줄도 함께 저장한다 — 안 하면 다음 다시 그리기가 또 옛 '자동차 안'에서 시작하고, 옆 쪽의 기준 장소로도 남는다.
+        pages: book.pages.map((p, i) =>
+          i === index ? { ...p, image: stored, ...(repaired.changed ? { imagePrompt: repaired.scene } : {}) } : p,
+        ),
         // 표지가 비어 있던 책이면 이 그림으로 채워 준다 — 책장에서 무지개로 보이던 것.
         coverImage: book.coverImage ?? stored,
         // 마스터는 세지 않는다. 그림이 나온 뒤에 올린다 — 실패한 시도로 기회를 잃으면 안 된다.
