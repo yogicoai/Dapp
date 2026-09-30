@@ -28,7 +28,7 @@ import { usePricing } from "@/lib/use-pricing";
  * 옆에서 보는 화면이라, 딱딱한 고객센터가 아니라 동화의 한 장면처럼 보이게 했다.
  *
  * 고치기·떼기는 **자기 글만**이다. 관리자 일(답변·처리·내부 메모)은 관리실이 전담한다
- * (FeedbackSection → /api/admin/feedback → master_feedback_reply). 예전엔 여기서도
+ * (관리자 페이지 의견·오류 /admin/support → /api/admin/feedback → master_feedback_reply). 예전엔 여기서도
  * 관리자에게 남의 글 단추를 띄웠는데, DB 는 마스터끼리 서로 못 보게 막아 둬서
  * (master_can_see) 다른 마스터 글에서는 눌러도 "권한이 없어요" 만 나왔다.
  * 답변이 달린 글은 아예 잠긴다 — feedback_guard 트리거가 막는다.

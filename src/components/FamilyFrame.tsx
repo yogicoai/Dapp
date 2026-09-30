@@ -6,6 +6,7 @@ import { displayName, familyExampleSrc } from "@/components/family/family-ui";
 import { FaceAvatar } from "@/components/family/Figures";
 import { FamilyGroupPhoto } from "@/components/family/FamilyGroupPhoto";
 import { CookieIcon, NextIcon } from "@/components/family/icons";
+import { StudioSheet } from "@/components/family/StudioSheet";
 import { useTheme } from "@/components/ThemeProvider";
 import {
   FAMILY_FIRST_COST,
@@ -13,11 +14,12 @@ import {
   familyTitle,
   fixedMembers,
   groupOrder,
-  hasBatchim,
+  homeGreeting,
   homeMembers,
   ourChildrenNames,
   type FamilyMember,
 } from "@/lib/family";
+import type { FamilyStudio } from "@/lib/family-studio";
 import type { ChildPrefs, Gender } from "@/lib/prefs";
 
 /**
@@ -31,7 +33,8 @@ import type { ChildPrefs, Gender } from "@/lib/prefs";
  *    + 명패('○○이네 가족 ›' → /family).
  *  - 고정한 가족은 있는데 모두 홈 보이기를 껐으면 큰 사진 대신 명패 한 줄 알약만(작은 얼굴 없이).
  *    끈 사람도 고정 얼굴은 그대로라 동화엔 나온다(사장님 2026-09-28).
- * 명패는 아이 이름에 '우리 아이예요'를 켠 형제 이름까지 — '하온·하린이네 가족'. 단짝 친구는 안 들어간다.
+ * 명패는 아이 이름에 '우리 아이예요'를 켠 형제의 진짜 이름까지 — '하온·하린이네 가족'(이름 없는 형제·단짝 친구는
+ * 안 들어간다 — lib/family ourChildrenNames).
  * 앞의 둘은 '접기·펼치기'가 된다(사장님 2026-09-28 — '나중에' 대신). 접으면 한 줄 알약.
  * 명패 한 줄은 이미 한 줄이라 접지 않는다.
  * 접은 값은 **아이디(계정)마다 저장**한다 — ChildPrefs.homeFamilyFolded(profiles.child). 그래서
@@ -39,23 +42,12 @@ import type { ChildPrefs, Gender } from "@/lib/prefs";
  * 이 컴포넌트는 값을 받아 그리기만 한다. 처음(저장값 없음)은 펼친 채로 — 예시 가족이 보이게.
  * 탭(세계명작·전래동화)을 옮겨도 저절로 접지 않는다(사장님: 위에 펴져 있어도 된다).
  * 게스트는 그릴 수 없으니 아예 그리지 않는다.
- * 단체 사진의 사람을 누르면 폴짝 뛰고 그 사람 위에 '하온아, 안녕!' 말풍선이 2초쯤 뜬다(시안 HomeFamily).
+ * 단체 사진의 사람을 누르면 폴짝 뛰고 그 사람 위에 인사 말풍선이 2초쯤 뜬다(시안 HomeFamily) — 어른·형·누나는
+ * '하온아, 안녕!', 동생(남동생·여동생·아이보다 어린 사람)은 '안녕!', 아이 자신은 '안녕! 반가워'(lib/family homeGreeting).
  * 목소리 인사는 아직 없다 — 말풍선만 먼저.
+ * 단체 사진 명패 옆 '꾸미기'는 가족 사진관 시트(StudioSheet — 배경 고르기·스티커, 사장님 2026-09-30)를 연다.
+ * 접힘처럼 계정마다 저장(ChildPrefs.familyStudio) — 저장은 홈이, 이 컴포넌트는 값을 받아 그리고 시트만 연다.
  */
-
-/** '하온아' · '지우야' — 받침이 있으면 '아', 없으면 '야'(받침 규칙은 lib/family hasBatchim) */
-function vocative(name: string): string {
-  const n = name.trim();
-  if (!n) return "";
-  return `${n}${hasBatchim(n) ? "아" : "야"}`;
-}
-
-/** 누른 사람이 아이에게 하는 인사 — 아이 자신을 누르면 '안녕! 반가워' */
-function greetingOf(m: FamilyMember, childName: string): string {
-  if (m.role === "child") return "안녕! 반가워";
-  const v = vocative(childName);
-  return v ? `${v}, 안녕!` : "안녕!";
-}
 
 type Greet = { text: string; x: number; bottom: number; n: number };
 
@@ -72,6 +64,10 @@ type Props = {
   folded?: boolean;
   /** 접기·펼치기를 눌렀을 때 — 홈이 계정에 저장한다 */
   onFoldedChange?: (folded: boolean) => void;
+  /** 가족 사진관 — 고른 배경·붙인 스티커(계정에 저장된 값) */
+  studio?: FamilyStudio;
+  /** 꾸미기 시트에서 바꿀 때마다 — 홈이 계정에 저장한다. 없으면 '꾸미기' 버튼을 안 보인다. */
+  onStudioChange?: (studio: FamilyStudio) => void;
 };
 
 /* ── 태블릿 판별(단체 사진 무대 높이) ── Tailwind sm 과 같은 40rem. */
@@ -93,7 +89,18 @@ function subscribeWide(cb: () => void): () => void {
 /** 명패 글꼴 — 손글씨(Gaegu). 레이아웃에서 --font-gaegu 로 싣는다. */
 const HAND_FONT = "var(--font-gaegu), 'Pretendard Variable', Pretendard, sans-serif";
 
-export function FamilyFrame({ childName, childAge, parents, childGender, family, guest, folded, onFoldedChange }: Props) {
+export function FamilyFrame({
+  childName,
+  childAge,
+  parents,
+  childGender,
+  family,
+  guest,
+  folded,
+  onFoldedChange,
+  studio,
+  onStudioChange,
+}: Props) {
   const { theme } = useTheme();
   const { accent, accentDark, accentSoft } = theme.colors;
   // 누른 즉시 바뀌게 화면 상태를 따로 둔다(저장은 800ms 뒤에 올라간다). null 이면 저장값을 따른다.
@@ -111,6 +118,8 @@ export function FamilyFrame({ childName, childAge, parents, childGender, family,
     const t = setTimeout(() => setGreet(null), 2200);
     return () => clearTimeout(t);
   }, [greet]);
+  // 가족 사진 꾸미기 시트
+  const [studioOpen, setStudioOpen] = useState(false);
 
   if (guest) return null;
 
@@ -122,10 +131,11 @@ export function FamilyFrame({ childName, childAge, parents, childGender, family,
     // 가로는 그 사람 가운데(액자 안에 들게 양끝을 조금 남기고), 세로는 머리 바로 위(너무 높으면 액자 안으로).
     const x = Math.min(Math.max(r.left + r.width / 2 - b.left, 72), Math.max(72, b.width - 72));
     const bottom = Math.min(Math.max(8, b.bottom - r.top + 6), Math.max(8, b.height - 40));
-    setGreet((g) => ({ text: greetingOf(m, childName), x, bottom, n: (g?.n ?? 0) + 1 }));
+    // 인사 글자 — 아이 자신은 '안녕! 반가워', 동생은 '안녕!', 어른·형·누나는 '하온아, 안녕!'(lib/family homeGreeting)
+    setGreet((g) => ({ text: homeGreeting(m, childName, childAge), x, bottom, n: (g?.n ?? 0) + 1 }));
   };
 
-  // 명패 — 아이 + '우리 아이예요'를 켠 형제(하온·하린이네 가족). 단짝 친구는 빠진다.
+  // 명패 — 아이 + '우리 아이예요'를 켠 형제의 진짜 이름(하온·하린이네 가족). 이름 없는 형제·단짝 친구는 빠진다.
   const title = familyTitle(ourChildrenNames(childName, family));
   // 얼굴을 고정한 **가족**(단짝 친구 뺌) — 단짝 친구는 처음 값이 '홈 사진 끔'이라, 친구만 고정한 사람을
   // '모두 껐다'로 보면 아무것도 안 껐는데 입구 액자가 사라진다.
@@ -213,6 +223,27 @@ export function FamilyFrame({ childName, childAge, parents, childGender, family,
     </button>
   );
 
+  /*
+   * 꾸미기 — 접기와 같은 모양, 명패와 접기 사이. 가족 사진관 시트(배경·스티커)를 연다.
+   * 폰(sm 미만)에서는 동그란 그림 단추(34px)만 — 글자까지 넣으면 360~390px 폰에서 명패·꾸미기·접기가 한 줄에 안 들어가
+   * 접기만 아랫줄로 떨어진다. 누름 영역은 before 로 44px 까지(가로도 넓힌다).
+   */
+  const studioButton = onStudioChange ? (
+    <button
+      type="button"
+      aria-haspopup="dialog"
+      aria-label="가족 사진 꾸미기"
+      onClick={() => setStudioOpen(true)}
+      className="relative flex h-[34px] w-[34px] shrink-0 items-center justify-center gap-1 rounded-full bg-white/85 text-xs font-extrabold text-neutral-600 shadow-sm transition hover:bg-white before:absolute before:-inset-[5px] sm:w-auto sm:pl-2 sm:pr-3 sm:before:inset-x-0"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/icons/func-edit.webp" alt="" aria-hidden className="h-[18px] w-[18px] object-contain" />
+      <span aria-hidden className="hidden sm:inline">
+        꾸미기
+      </span>
+    </button>
+  ) : null;
+
   /* ── 펼친 액자 ── */
   const frame: ReactNode =
     onHome.length > 0 ? (
@@ -229,6 +260,7 @@ export function FamilyFrame({ childName, childAge, parents, childGender, family,
               className="w-full"
               onMemberClick={sayHello}
               memberLabel={(m) => `${displayName(m)} — 누르면 인사해요`}
+              studio={studio}
             />
             {greet && (
               <div
@@ -259,7 +291,13 @@ export function FamilyFrame({ childName, childAge, parents, childGender, family,
               <NextIcon />
             </span>
           </Link>
-          {pendingPill ?? foldButton}
+          {/* 명패 · 꾸미기 · 접기 — 확인 안 한 가족이 있으면 그 알약만. 꾸미기·접기는 한 덩어리(긴 명패면 둘이 함께 아랫줄로). */}
+          {pendingPill ?? (
+            <div className="flex shrink-0 items-center gap-2">
+              {studioButton}
+              {foldButton}
+            </div>
+          )}
         </div>
       </>
     ) : (
@@ -391,6 +429,19 @@ export function FamilyFrame({ childName, childAge, parents, childGender, family,
         </div>
       </div>
       {!open && pill}
+      {/* 꾸미기 시트 — 접는 칸(접히면 inert) 밖에. 화면 전체에 뜨는 시트(fixed)라 자리는 상관없다. */}
+      {studioOpen && onStudioChange && onHome.length > 0 && (
+        <StudioSheet
+          colors={theme.colors}
+          members={onHome}
+          childAge={childAge}
+          parents={parents}
+          background={theme.background}
+          studio={studio}
+          onChange={onStudioChange}
+          onClose={() => setStudioOpen(false)}
+        />
+      )}
     </section>
   );
 }

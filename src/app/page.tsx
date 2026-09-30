@@ -10,6 +10,7 @@ import { FamilyFrame } from "@/components/FamilyFrame";
 import { useTheme } from "@/components/ThemeProvider";
 import { UpdateNotice } from "@/components/UpdateNotice";
 import { DEMO_SHELF_OWNER, loadSession } from "@/lib/auth";
+import { newerStudio, type FamilyStudio } from "@/lib/family-studio";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
@@ -76,6 +77,11 @@ export default function Home() {
   const [localFold, setLocalFold] = useState<boolean | undefined>(undefined);
   /** 아이 정보가 오기 전에 접거나 편 값 — 계정 값이 오면 그때 계정에 올린다 */
   const pendingFold = useRef<boolean | null>(null);
+  /**
+   * 계정 값(loadChildRemote)이 오기 전에 가족 사진을 꾸몄으면 그 값 — 뒤늦게 온 서버의 옛 값이 방금 꾸민 것을
+   * 잠깐 되돌리지 않게, 계정 값이 오면 이것을 얹어 다시 저장한다.
+   */
+  const pendingStudio = useRef<FamilyStudio | null>(null);
   /* eslint-disable react-hooks/set-state-in-effect -- 하이드레이션 안전: 저장된 아이 정보·접힘 값을 마운트 후 반영 */
   useEffect(() => {
     setChild(loadChild());
@@ -116,8 +122,17 @@ export default function Home() {
       // 가족 액자용 아이 정보 — 다른 기기에서 그린 가족도 보이게 계정 값을 받아 온다.
       // 기다리지 않는다: 책장을 늦추면 안 되고, 그동안은 기기에 있던 값(위 loadChild)으로 그린다.
       if (s.uid) {
-        loadChildRemote().then((c) => {
-          if (!alive || !c) return;
+        loadChildRemote().then((remote) => {
+          if (!alive || !remote) return;
+          let c = remote;
+          // 계정 값이 오기 전에 꾸몄으면 — 나중에 꾸민 쪽(at)이 이긴다. 받은 값은 이미 이 기기 값과 합친 것이라 보통
+          // 같다. 다른 기기에서 더 나중에 꾸민 값이면 그것을 둔다(방금 꾸민 옛 값으로 덮지 않는다).
+          const studio = newerStudio(c.familyStudio, pendingStudio.current);
+          pendingStudio.current = null;
+          if (studio && JSON.stringify(studio) !== JSON.stringify(c.familyStudio ?? null)) {
+            saveChild({ name: c.name, familyStudio: studio });
+            c = { ...c, familyStudio: studio };
+          }
           // 아이 정보가 없을 때 접었거나 폈으면(또는 계정에 아직 접힘 값이 없으면) 이제 계정에도 올린다.
           const f = pendingFold.current ?? (c.homeFamilyFolded === undefined ? readLocalFold() : undefined);
           pendingFold.current = null;
@@ -370,6 +385,14 @@ export default function Home() {
             // 계정(서버)에도 — 다른 기기에서도 같은 아이디면 그대로 접혀/펼쳐 있다.
             saveChild({ name: child.name, homeFamilyFolded: f });
             setChild({ ...child, homeFamilyFolded: f });
+          }}
+          // 가족 사진관(배경·스티커) — 접힘처럼 계정마다. 꾸미기 버튼은 단체 사진이 있을 때만(=아이 정보가 있다).
+          studio={child?.familyStudio}
+          onStudioChange={(s) => {
+            if (!child) return;
+            pendingStudio.current = s;
+            saveChild({ name: child.name, familyStudio: s });
+            setChild((c) => (c ? { ...c, familyStudio: s } : c));
           }}
         />
 

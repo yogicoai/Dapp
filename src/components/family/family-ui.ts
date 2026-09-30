@@ -93,16 +93,24 @@ export function objectOf(m: FamilyMember): string {
  * '우리 아이예요' 스위치 설명 — 켜면 명패가 어떻게 되는지 예로 보여 준다(이미 켠 형제까지 함께).
  * 예: 켜면 명패가 '하온·하린이네 가족'이 돼요
  *  - family: 지금 가족(이 형제가 들어 있어도 되고 아직 없어도 된다 — 더하기 시트)
- *  - sib: 이 형제 — 이름이 없으면 호칭('누나')으로 부른다
+ *  - sib: 이 형제 — 명패에는 **진짜 이름**만 선다(호칭 '남동생'으로 채우면 '우주·남동생네 가족'이 된다 — 사장님
+ *    2026-09-30). 이름이 없으면 이름을 적으라고 알린다.
+ *  - mode: 'add' = 더하기 시트(스위치는 바로 켜지고, 이름을 적어야 '넣기'가 된다 — 켠 뒤 알림은 시트가 따로 띄운다),
+ *    'saved' = 사람 메뉴(이미 넣은 사람 — 이름을 저장해야 켜진다. 켠 채로 이름이 없는 예전 값이면 '명패엔 안 나와요').
  */
 export function ourChildHint(
   childName: string | null | undefined,
   family: readonly FamilyMember[],
-  sib: { id?: string; name?: string; callName: string },
+  sib: { id?: string; name?: string; callName: string; isOurChild?: boolean },
+  mode: "add" | "saved" = "saved",
 ): string {
+  const n = (sib.name ?? "").trim();
+  if (!n) {
+    if (mode === "add") return "이름을 적으면 명패에 같이 나와요";
+    return sib.isOurChild ? "이름이 없어 명패엔 안 나와요 · 위에 이름을 적어 주세요" : "이름을 적으면 켤 수 있어요 · 명패에 이름이 같이 나와요";
+  }
   const others = family.filter((m) => m.id !== sib.id);
-  const n = (sib.name ?? "").trim() || sib.callName.trim();
-  const names = [...ourChildrenNames(childName, others), ...(n ? [n] : [])];
+  const names = [...ourChildrenNames(childName, others), n];
   return names.length >= 2 ? `켜면 명패가 '${familyTitle(names)}'이 돼요` : "켜면 명패에 이름이 같이 나와요";
 }
 

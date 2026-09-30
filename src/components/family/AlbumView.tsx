@@ -17,6 +17,8 @@
  * 가족 아래 '단짝 친구' 칸이 따로 있다 — 가족이 아니라 'N명' 숫자에 안 든다.
  * 그 밖의 카드를 누르면 MemberSheet(다시 그리기·생김새 고치기·홈 사진 켜기·빼기)가 뜬다.
  *
+ * 액자 아래 '사진 꾸미기'는 가족 사진관 시트(StudioSheet — 배경 고르기·스티커, 사장님 2026-09-30)를 연다.
+ *
  * 2차로 미룬 것: 시안 머리줄 오른쪽의 '가족 사진 보내기'(공유) 버튼. 단체 사진을 한 장으로 만들려면
  * 가족 그림(cafe24)을 캔버스에 그려야 하는데 cafe24 가 CORS 머리글을 주지 않아 캔버스가 막힌다
  * (2026-09-28 확인) — 서버에서 합성하는 경로가 생기면 넣는다. 그 자리에는 쿠키 잔액 알약을 둔다.
@@ -37,6 +39,7 @@ import {
   showsOnHome,
   type FamilyMember,
 } from "@/lib/family";
+import type { FamilyStudio } from "@/lib/family-studio";
 import type { ChildPrefs, Gender } from "@/lib/prefs";
 import { ageText, displayName, familyExampleSrc, hasPickedLooks, ROLE_STICKER, stemOf, type Colors } from "./family-ui";
 import { FamilyGroupPhoto } from "./FamilyGroupPhoto";
@@ -57,11 +60,17 @@ export function AlbumView({
   onAdd,
   onAddFriend,
   onCreate,
+  studio,
+  onStudio,
 }: {
   colors: Colors;
   background: string;
   child: ChildPrefs;
   family: FamilyMember[];
+  /** 가족 사진관 — 고른 배경·붙인 스티커(홈 액자와 같은 값) */
+  studio?: FamilyStudio;
+  /** '사진 꾸미기' — 가족 사진관 시트를 연다(사진이 있을 때만 버튼이 보인다) */
+  onStudio?: () => void;
   tokens: number;
   master: boolean;
   onHome: () => void;
@@ -146,15 +155,32 @@ export function AlbumView({
             background={background}
             className="rounded-[20px]"
             empty={fixedKin.length > 0 ? <HiddenFrame /> : <EmptyFrame childGender={child.gender} />}
+            studio={studio}
           />
         </div>
-        <p className="mt-2.5 text-center text-xs font-semibold text-neutral-500">
-          {onHomeNow.length > 0
-            ? "홈 첫 화면에도 이 사진이 보여요"
-            : fixedKin.length > 0
-              ? "홈에는 명패 한 줄만 보여요"
-              : "나라를 바꾸면 가족도 그 나라로 놀러 가요"}
-        </p>
+        {/* 사진 아래 한 줄 + '사진 꾸미기'(가족 사진관 — 사진 위가 아니라 아래라 모서리 스티커와 겹치지 않는다) */}
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5">
+          <p className="text-center text-xs font-semibold text-neutral-500">
+            {onHomeNow.length > 0
+              ? "홈 첫 화면에도 이 사진이 보여요"
+              : fixedKin.length > 0
+                ? "홈에는 명패 한 줄만 보여요"
+                : "나라를 바꾸면 가족도 그 나라로 놀러 가요"}
+          </p>
+          {onStudio && onHomeNow.length > 0 && (
+            <button
+              type="button"
+              aria-haspopup="dialog"
+              onClick={onStudio}
+              className="relative flex h-9 shrink-0 items-center gap-1 rounded-full pl-2 pr-3 text-xs font-extrabold transition hover:brightness-105 before:absolute before:inset-x-0 before:-inset-y-1"
+              style={{ background: colors.accentSoft, color: colors.accentDark, boxShadow: `0 0 0 1px ${colors.accent}55` }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icons/func-edit.webp" alt="" aria-hidden className="h-[18px] w-[18px] object-contain" />
+              사진 꾸미기
+            </button>
+          )}
+        </div>
 
         {/* 모습이 바뀐 고정된 사람 — 설정에서 바꿔도 여기서 알린다. 카드가 아래로 밀려 있어도 보이게 한 줄 더. */}
         {changedList.length > 0 && (

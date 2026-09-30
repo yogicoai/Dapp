@@ -2,7 +2,7 @@
 
 /**
  * 쿠키 확인 — 누구를 몇 개로 그리는지, 합계, 그린 뒤 남는 쿠키 (시안 Confirm.dc.html).
- * 잔액이 모자라면 그리기 버튼을 막고 충전(설정)으로 가는 글자 버튼을 보인다.
+ * 잔액이 모자라면 그리기 버튼을 막고 요금제(/plans)로 가는 글자 버튼을 보인다(결제가 열리기 전이라 '충전'을 약속하지 않는다).
  * 관리자는 합계 옆에 '관리자 0개'.
  * 처음 고정(fix)이고 부르는 쪽이 onLooksOnly 를 주면 둘째 선택 '그림 없이 특징만 저장할게요'(쿠키 0개)를
  * 보인다(사장님 2026-09-28). 쿠키가 모자라도 누를 수 있다 — 그리기 서버는 부르지 않는다.
@@ -137,7 +137,7 @@ export function ConfirmSheet({
         <div className="mt-3 flex w-full flex-col items-center gap-0.5 text-center">
           <p className="text-sm font-extrabold text-rose-600">쿠키가 조금 모자라요 ({total - tokens}개 더 필요해요)</p>
           <button type="button" onClick={onCharge} className="min-h-11 px-3 text-sm font-extrabold underline underline-offset-2" style={{ color: colors.accentDark }}>
-            쿠키 충전하러 가기
+            요금제 미리 보기
           </button>
         </div>
       )}

@@ -4,6 +4,7 @@
  * 아래에서 올라오는 시트 — 쿠키 확인·사람 메뉴·가족 더하기·모습이 바뀌었을 때.
  * 폰에서는 화면 아래에 붙고, 태블릿에서도 카드 폭(max-w-xl)만큼만 넓어진다.
  * 뒤 배경을 누르거나 ESC 로 닫는다(닫으면 안 되는 순간엔 dismissible=false).
+ * wide 면 더 넓게(max-w-3xl) — 가로로 눕힌 폰에서 두 칸으로 놓는 가족 사진 꾸미기(StudioSheet).
  */
 
 import { useEffect, useRef, type ReactNode } from "react";
@@ -17,12 +18,15 @@ export function Sheet({
   label,
   children,
   dismissible = true,
+  wide = false,
 }: {
   onClose: () => void;
   /** 화면 읽기 프로그램이 읽을 시트 이름 */
   label: string;
   children: ReactNode;
   dismissible?: boolean;
+  /** 더 넓은 시트(max-w-3xl) — 높이가 낮은 가로 화면에서 두 칸으로 놓을 때 */
+  wide?: boolean;
 }) {
   const panel = useRef<HTMLDivElement>(null);
   useEscClose(onClose, dismissible);
@@ -45,7 +49,7 @@ export function Sheet({
       <div
         ref={panel}
         tabIndex={-1}
-        className="relative flex max-h-[92dvh] w-full max-w-xl flex-col items-center overflow-y-auto rounded-t-[28px] bg-white px-5 pt-2.5 shadow-[0_-10px_30px_rgba(0,0,0,.2)] outline-none"
+        className={`relative flex max-h-[92dvh] w-full ${wide ? "max-w-3xl" : "max-w-xl"} flex-col items-center overflow-y-auto rounded-t-[28px] bg-white px-5 pt-2.5 shadow-[0_-10px_30px_rgba(0,0,0,.2)] outline-none`}
         style={{ paddingBottom: "max(24px, env(safe-area-inset-bottom))" }}
       >
         <span aria-hidden className="h-[5px] w-10 shrink-0 rounded-full bg-neutral-200" />

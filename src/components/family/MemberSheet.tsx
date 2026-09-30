@@ -10,9 +10,14 @@
  *  - '홈 가족 사진에 보이기' — 모든 사람. 처음 값은 가족 켬·단짝 친구 끔(showsOnHome). 꺼도 고정한 얼굴은
  *    동화에 그대로 나온다. 모두 끄면 홈은 큰 사진 대신 명패 한 줄.
  *  - '우리 아이예요' — 형제자매만. 켜면 명패에 이름이 같이 선다(하온·하린이네 가족).
+ *
+ * 이름(형제자매·단짝 친구 — 사장님 2026-09-30 "남동생이 아니라 이름으로 넣게 해줄수도 있게 해줘야해"):
+ * 맨 위 그림 옆 이름 아래에 이름 칸 + '저장'. 명패에는 진짜 이름만 서므로(lib/family ourChildrenNames) '우리 아이예요'는
+ * 이름이 있어야 켜진다 — 이름 없이 켜면 이름 칸으로 초점을 옮기고, 이름을 적어 저장하면 그때 같이 켠다. 켠 채로 이름을
+ * 지우는 저장은 막는다(먼저 끄게). 예전에 이름 없이 켜 둔 형제는 설명 줄이 이름을 적으라고 알린다.
  */
 
-import { useState, type ReactNode } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import { BEST_FRIEND_LABEL, nextDrawCost, showsOnHome, type FamilyMember } from "@/lib/family";
 import { displayName, objectOf, ourChildHint, type Colors } from "./family-ui";
 import { PortraitImg } from "./Figures";
@@ -34,6 +39,7 @@ export function MemberSheet({
   onEditLooks,
   onShowOnHome,
   onOurChild,
+  onRename,
   onRemove,
 }: {
   colors: Colors;
@@ -54,6 +60,11 @@ export function MemberSheet({
   onShowOnHome: (on: boolean) => void;
   /** '우리 아이예요' 켜기·끄기(형제자매만) */
   onOurChild: (on: boolean) => void;
+  /**
+   * 이름 저장(형제자매·단짝 친구) — 빈 글자면 이름 없음. ourChild 가 true 면 '우리 아이예요'도 같이 켠다(이름이 없어서
+   * 켜기를 미뤄 둔 경우 — 한 번에 저장해야 이름 없는 '우리 아이'가 잠깐도 생기지 않는다).
+   */
+  onRename: (name: string, ourChild?: boolean) => void;
   onRemove: () => void;
 }) {
   const [asking, setAsking] = useState(false);
@@ -63,6 +74,39 @@ export function MemberSheet({
   const fixedOrDrawn = Boolean(m.portrait || m.draft);
   const friend = m.role === "friend";
   const onHome = showsOnHome(m);
+  // 이름 칸(형제자매·단짝 친구)
+  const named = m.role === "sibling" || friend;
+  const saved = (m.name ?? "").trim();
+  const [nameDraft, setNameDraft] = useState(m.name ?? "");
+  /** '우리 아이예요'를 켜려는데 이름이 없었다 — 이름을 저장하면 같이 켠다 */
+  const [wantOurChild, setWantOurChild] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const nameId = useId();
+  const typed = nameDraft.trim();
+  // 켠 채로 이름을 지우는 저장은 막는다(명패에 이름 없는 '우리 아이'가 남지 않게 — 먼저 끄게). 예전에 이름 없이 켜 둔
+  // 형제는 막을 게 없다 — 스위치 설명 줄이 이름을 적으라고 알린다(family-ui ourChildHint).
+  const nameBlocked = Boolean(m.isOurChild) && Boolean(saved) && !typed;
+  const canSave = named && typed !== saved && !nameBlocked;
+  const saveName = () => {
+    if (!canSave && !(wantOurChild && typed)) return;
+    onRename(typed, wantOurChild && typed ? true : undefined);
+    setWantOurChild(false);
+  };
+  const toggleOurChild = (on: boolean) => {
+    if (on && !saved) {
+      // 적어 두고 아직 저장 안 한 이름이 있으면 이름과 함께 켠다, 없으면 이름 칸으로
+      if (typed) {
+        onRename(typed, true);
+        setWantOurChild(false);
+      } else {
+        setWantOurChild(true);
+        nameRef.current?.focus();
+      }
+      return;
+    }
+    setWantOurChild(false);
+    onOurChild(on);
+  };
 
   if (asking) {
     return (
@@ -114,6 +158,49 @@ export function MemberSheet({
         </div>
       </div>
 
+      {named && (
+        <form
+          className="mt-3 w-full"
+          onSubmit={(e) => {
+            e.preventDefault();
+            saveName();
+          }}
+        >
+          <label htmlFor={nameId} className="mb-1.5 block text-xs font-extrabold text-neutral-500">
+            {friend ? "친구 이름" : `이름 · 부르는 말(${m.callName})은 그대로예요`}
+          </label>
+          <div className="flex w-full items-center gap-2">
+            <input
+              ref={nameRef}
+              id={nameId}
+              value={nameDraft}
+              onChange={(e) => setNameDraft(e.target.value.slice(0, 20))}
+              maxLength={20}
+              placeholder={friend ? "예) 서준" : "예) 수아"}
+              aria-invalid={nameBlocked || (wantOurChild && !typed) || undefined}
+              className={`min-h-[52px] min-w-0 flex-1 rounded-2xl border-2 px-4 py-2.5 text-lg font-extrabold outline-none placeholder:font-medium placeholder:text-neutral-500 focus:border-neutral-400 ${
+                nameBlocked || (wantOurChild && !typed) ? "border-rose-300" : "border-neutral-200"
+              }`}
+            />
+            <button
+              type="submit"
+              disabled={!(canSave || (wantOurChild && typed))}
+              className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl px-4 text-[15px] font-extrabold text-white transition disabled:opacity-40"
+              style={{ background: colors.accentDark }}
+            >
+              저장
+            </button>
+          </div>
+          {(nameBlocked || wantOurChild) && (
+            <p role="alert" className="mt-1.5 break-keep px-1 text-xs font-bold text-rose-600">
+              {nameBlocked
+                ? "우리 아이는 이름이 있어야 해요 · 지우려면 아래 '우리 아이예요'를 먼저 꺼 주세요"
+                : "이름을 적고 저장하면 '우리 아이예요'가 켜져요"}
+            </p>
+          )}
+        </form>
+      )}
+
       <div className="mt-4 flex w-full flex-col gap-2">
         {m.draft && (
           <BigButton colors={colors} onClick={onReview}>
@@ -153,7 +240,7 @@ export function MemberSheet({
           {m.role === "sibling" && (
             <SwitchRow
               on={Boolean(m.isOurChild)}
-              onChange={onOurChild}
+              onChange={toggleOurChild}
               label="우리 아이예요"
               hint={ourChildHint(childName, family, m)}
               colors={colors}

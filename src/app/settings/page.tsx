@@ -18,13 +18,10 @@ import {
 import { FamilyCharacterRow } from "@/components/settings/FamilyBits";
 import type { FamilyMember } from "@/lib/family";
 import {
-  grantTokens,
-  loadAllUsers,
   loadSession,
   logOut,
   refundTokens,
   spendTokensEntry,
-  type Profile,
   type SpendEntry,
 } from "@/lib/auth";
 import {
@@ -38,9 +35,7 @@ import {
   loadStoryWeight,
   saveStoryWeight,
   STORY_WEIGHTS,
-  countBooksWithEmbeddedArt,
   deleteMyBook,
-  loadAllBooksBrief,
   loadChild,
   loadChildRemote,
   loadLang,
@@ -63,7 +58,6 @@ import {
   type BookBrief,
   type Gender,
 } from "@/lib/prefs";
-import { migrateBookArt, type MigrateProgress } from "@/lib/migrate-art";
 import { usePricing } from "@/lib/use-pricing";
 import { loadDevMode } from "@/lib/dev-mode-client";
 import { useEscClose } from "@/lib/use-esc-close";
@@ -93,7 +87,6 @@ import {
   approveParentVoice,
   cloneParentVoice,
   deleteParentVoice,
-  loadAllParentVoiceRoles,
   loadPendingParentVoices,
   loadParentVoices,
   metaForRole,
@@ -289,30 +282,13 @@ export default function SettingsPage() {
   // 내 동화 — 만든 책 전체. 여기서 책장 노출(숨기기/보이기)과 영구 삭제를 관리한다.
   // 목록에 쓰는 건 제목·숨김뿐이라 가벼운 형태로 받는다(본문·삽화 제외).
   const [myBooks, setMyBooks] = useState<BookBrief[]>([]);
-  // 계정 — 로그인한 아이디·토큰. 게스트면 스킨(테마)만 보인다. 마스터면 회원 목록도.
+  // 계정 — 로그인한 아이디·토큰. 게스트면 스킨(테마)만 보인다. 마스터면 관리자 페이지 링크도.
   const [guest, setGuest] = useState(false);
   const [acctId, setAcctId] = useState<string | null>(null);
   // 계정 uid — 녹음(customVoices) 계정별 저장 키에 쓴다.
   const [uid, setUid] = useState<string | null>(null);
   const [acctTokens, setAcctTokens] = useState(0);
   const [master, setMaster] = useState(false);
-  const [members, setMembers] = useState<Profile[]>([]);
-  const [openMember, setOpenMember] = useState<string | null>(null);
-  // 회원(owner) → 그 회원이 만든 책들. 마스터 진입 시 한 번에 불러와 개수·목록에 쓴다.
-  const [memberBooks, setMemberBooks] = useState<Record<string, BookBrief[]>>({});
-  // 회원(owner) → 등록한 부모 목소리 역할들(["mom","dad"]). 등록 여부 확인용.
-  const [memberVoices, setMemberVoices] = useState<Record<string, string[]>>({});
-  // 옛 책 삽화 옮기기 — 진행 중이면 진행 상황, 끝나면 결과 문장.
-  const [migrating, setMigrating] = useState<MigrateProgress | null>(null);
-  const [migrateDone, setMigrateDone] = useState("");
-  /**
-   * 아직 그림이 DB 안에 있는 책 수. 0이면 정리가 끝난 것이라 칸을 감춘다.
-   * -1은 '아직 모름'(조회 전이거나 실패) — 그땐 칸을 보여 준다.
-   */
-  const [oldArtCount, setOldArtCount] = useState(-1);
-  // 화면을 떠나면 옮기기를 멈춘다 — 안 보는 화면에서 계속 돌 이유가 없다.
-  const migrateStop = useRef(false);
-  useEffect(() => () => void (migrateStop.current = true), []);
 
   // 개발자 모드(fe) — 부모 목소리 녹음·만들기 칸은 지금 fe 에게만 보인다(2026-09-28).
   const [devMode, setDevMode] = useState(false);
@@ -430,28 +406,6 @@ export default function SettingsPage() {
       void loadMyBookBriefs()
         .then((b) => alive && setMyBooks(b))
         .catch(() => {});
-
-      if (s.isMaster) {
-        void loadAllUsers()
-          .then((users) => alive && setMembers(users))
-          .catch(() => {});
-        void loadAllBooksBrief()
-          .then((allBooks) => {
-            if (!alive) return;
-            // owner별로 묶어 회원마다 만든 동화 개수·목록을 바로 보여준다.
-            const grouped: Record<string, BookBrief[]> = {};
-            for (const b of allBooks) (grouped[b.owner] ??= []).push(b);
-            setMemberBooks(grouped);
-          })
-          .catch(() => {});
-        void loadAllParentVoiceRoles()
-          .then((v) => alive && setMemberVoices(v))
-          .catch(() => {});
-        // 정리할 게 남았는지 — 개수만 센다(그림은 안 받는다).
-        void countBooksWithEmbeddedArt()
-          .then((n) => alive && setOldArtCount(n))
-          .catch(() => {});
-      }
     })();
     return () => {
       alive = false;
@@ -459,28 +413,11 @@ export default function SettingsPage() {
   }, [router]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  // 회원 펼치기/접기 — 책은 이미 memberBooks에 다 불러와 있어 즉시 보인다.
-  function toggleMember(id: string) {
-    setOpenMember((cur) => (cur === id ? null : id));
-  }
-
   /*
-   * 토큰 충전(베타) — 지금은 단추가 잠겨 있다(결제 전).
-   *
-   * 예전엔 여기서 브라우저가 자기 profiles 를 직접 update 해서 토큰을 늘렸다.
-   * 그 길이 곧 구멍이었다 — 콘솔에서 같은 호출로 999999 를 넣을 수 있었다.
-   * 이제는 마스터만 되는 서버 함수를 지난다. 결제를 붙일 때는 결제 확인 뒤
-   * 서버가 넣어 주는 방식이어야 한다(이 단추를 그대로 열면 안 된다).
+   * 충전 — 예전엔 여기 잠긴 '충전' 단추가 마스터 지급 함수를 불렀다. 그 길은 없앴다(그대로 열면 마스터가
+   * 자기에게 진짜 지급 기록을 만든다). 이제 '요금제' 단추는 /plans 로 가는 링크일 뿐이다.
+   * 결제를 붙일 때는 결제 확인 뒤 서버가 넣어 주는 방식이어야 한다(pay-demo.guard.test 가 되돌림을 막는다).
    */
-  async function topUp() {
-    if (!uid) return;
-    if (!(await grantTokens(uid, 30))) {
-      setCloneErr("토큰 충전은 관리자만 할 수 있어요.");
-      return;
-    }
-    setAcctTokens((t) => t + 30);
-    flashSaved();
-  }
   // 로그아웃 → 로그인 화면.
   async function doLogout() {
     await logOut();
@@ -492,52 +429,6 @@ export default function SettingsPage() {
     await setMyBookHidden(id, hidden);
     setMyBooks((prev) => prev.map((b) => (b.id === id ? { ...b, hidden } : b)));
     flashSaved();
-  }
-  /**
-   * 옛 책 삽화를 cafe24로 옮긴다 (마스터 전용, 한 번만 돌리면 되는 정리 작업).
-   *
-   * 전 회원의 책을 대상으로 하되 폴더는 그 책 주인의 아이디로 나눈다 — 마스터가
-   * 대신 옮겨 줘도 파일은 원래 주인 자리에 들어가야 나중에 찾을 수 있다.
-   */
-  async function migrateOldArt() {
-    const all = Object.values(memberBooks).flat();
-    // 마스터 자신의 책도 대상 — memberBooks에는 다른 회원 것만 묶여 있을 수 있다.
-    const mine = myBooks.filter((b) => !all.some((x) => x.id === b.id));
-    const targets = [...all, ...mine];
-    if (targets.length === 0) {
-      setMigrateDone("옮길 동화가 없어요.");
-      return;
-    }
-    if (!window.confirm(`동화 ${targets.length}권의 그림을 옮길까요?\n\n몇 분 걸릴 수 있고, 이 화면을 열어 두셔야 해요.`)) return;
-
-    migrateStop.current = false;
-    setMigrateDone("");
-    // 회원id → 아이디. 폴더 이름이 될 값이라, 모르면 회원id를 그대로 쓴다.
-    const names: Record<string, string> = {};
-    for (const m of members) names[m.id] = m.username;
-    if (uid && acctId) names[uid] = acctId;
-
-    try {
-      const r = await migrateBookArt(
-        targets.map((b) => ({ id: b.id, owner: b.owner, title: b.title })),
-        (ownerId) => names[ownerId] ?? ownerId,
-        setMigrating,
-        () => migrateStop.current,
-      );
-      setMigrateDone(
-        `끝났어요 — ${r.moved}권에서 그림 ${r.images}장을 옮겼어요.` +
-          (r.skipped ? ` (이미 옮겨진 책 ${r.skipped}권)` : "") +
-          (r.failed ? ` ⚠️ ${r.failed}권은 실패했어요 — 다시 눌러 주세요.` : ""),
-      );
-      // 표지가 URL로 바뀌었으니 목록도 새로 읽고, 남은 권수도 다시 센다
-      // (0이 되면 정리 칸이 사라진다).
-      void loadMyBookBriefs().then(setMyBooks).catch(() => {});
-      void countBooksWithEmbeddedArt().then(setOldArtCount).catch(() => {});
-    } catch {
-      setMigrateDone("옮기는 중 문제가 생겼어요. 다시 눌러 주세요.");
-    } finally {
-      setMigrating(null);
-    }
   }
 
   // 영구 삭제 — 복원 불가라 경고를 띄우고 한 번 더 확인받는다.
@@ -880,6 +771,11 @@ export default function SettingsPage() {
           {guest && (
             <p className="rounded-2xl bg-neutral-100 px-4 py-3 text-center text-xs font-bold text-neutral-500">
               비회원은 <b>스킨(나라)</b>만 바꿀 수 있어요. 로그인하면 아이 정보·목소리·내 동화까지 설정할 수 있어요.
+              <br />
+              {/* 로그인 전에도 가격을 볼 수 있게 — /plans 는 누구나 연다 */}
+              <Link href="/plans" className="mt-1 inline-flex min-h-11 items-center px-2 font-extrabold text-neutral-700 underline underline-offset-2">
+                요금제 보기 ›
+              </Link>
             </p>
           )}
 
@@ -911,17 +807,6 @@ export default function SettingsPage() {
                   )}
                 </p>
               </div>
-              {/* 베타: 토큰 충전 잠금. 결제 연동 후 disabled만 빼면 다시 열린다. */}
-              {!master && (
-                <button
-                  type="button"
-                  onClick={topUp}
-                  disabled
-                  className="shrink-0 cursor-not-allowed whitespace-nowrap rounded-full bg-neutral-200 px-3 py-1.5 text-xs font-extrabold text-neutral-400"
-                >
-                  🔒 충전 준비중
-                </button>
-              )}
               <button
                 type="button"
                 onClick={doLogout}
@@ -930,8 +815,26 @@ export default function SettingsPage() {
                 로그아웃
               </button>
             </div>
-            <p className="-mt-1 text-[11px] font-medium text-neutral-400">
-              베타 기간에는 토큰 충전이 잠겨 있어요. 결제 연동 후에 열려요.
+            {/* 요금제(/plans)·내 결제·구독(/billing) — 마스터에게도 보인다(사장님이 fe 로 시연). 누르기 쉽게 48px 줄. */}
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                href="/plans"
+                className="flex min-h-12 items-center justify-between gap-1 rounded-2xl px-4 text-sm font-extrabold text-white shadow-sm"
+                style={{ background: theme.colors.accentDark }}
+              >
+                <span>요금제</span>
+                <span aria-hidden>›</span>
+              </Link>
+              <Link
+                href="/billing"
+                className="flex min-h-12 items-center justify-between gap-1 rounded-2xl bg-neutral-50 px-4 text-sm font-extrabold text-neutral-700 shadow-[inset_0_0_0_1px_#f0ede8]"
+              >
+                <span className="whitespace-nowrap">내 결제·구독</span>
+                <span aria-hidden>›</span>
+              </Link>
+            </div>
+            <p className="-mt-1 text-[11px] font-medium text-neutral-500">
+              결제는 곧 열려요. &apos;요금제&apos;에서 가족 패스를 미리 볼 수 있어요.
             </p>
           </section>
 
@@ -1681,161 +1584,26 @@ export default function SettingsPage() {
             </section>
           )}
 
-          {/* ── 관리자(마스터) ── 회원 목록과 각 회원이 만든 책장을 열람한다.
-              베타에선 이 기기에 저장된 회원만 보인다. Supabase가 붙으면 전체 회원이 뜬다. */}
+          {/* ── 관리자(마스터) ── 관리 일은 전부 관리자 페이지(/admin)에서 한다(2026-09-30 정식판).
+              예전 이 자리의 회원 목록·책장 열람·옛 그림 정리는 관리자 페이지의 회원·대시보드로 옮겼다 —
+              여기 남겨 두면 설정을 열 때마다 전 회원·전 책을 읽고, 그림 옮기기를 두 곳에서 겹쳐 돌릴 수 있다.
+              이 링크는 마스터에게만 보이지만 막는 것은 링크가 아니라 /api/admin/* 서버의 마스터 확인이다. */}
           {master && (
             <section className="flex flex-col gap-2.5">
-              <h2 className="text-sm font-extrabold text-amber-600">👑 관리자 · 회원 ({members.length})</h2>
-              {/* 관리실 — 사고 목록·환불·되살리기·토큰 충전. 이 링크는 마스터에게만 보이지만
-                  막는 것은 링크가 아니라 /api/admin/* 서버 경로의 마스터 확인이다. */}
+              <h2 className="text-sm font-extrabold text-amber-600">👑 관리자</h2>
               <Link
                 href="/admin"
-                className="flex items-center justify-between rounded-2xl bg-amber-50 px-4 py-3 text-sm font-extrabold text-amber-800 transition hover:bg-amber-100"
+                className="flex min-h-12 items-center justify-between rounded-2xl bg-amber-50 px-4 py-3 text-sm font-extrabold text-amber-800 transition hover:bg-amber-100"
               >
                 <span>
-                  관리실 열기
-                  <span className="ml-1.5 text-xs font-bold text-amber-700/70">사고 목록 · 환불 · 책 되살리기</span>
+                  관리자 페이지 열기
+                  <span className="ml-1.5 text-xs font-bold text-amber-700/70">회원 · 결제 · 의견 · 사업자 정보</span>
                 </span>
                 <span aria-hidden>→</span>
               </Link>
               <p className="-mt-1 text-xs font-medium text-neutral-400">
-                가입한 회원과 각자 만든 동화·부모 목소리 등록 여부를 볼 수 있어요. 회원을 누르면 그 사람의 책장이 펼쳐져요.
+                회원·토큰, 결제·구독, 의견·오류, 요금제, 사업자 정보·약관을 한곳에서 관리해요.
               </p>
-
-              {/* ── 옛 책 삽화 옮기기 ── 한 번만 돌리면 되는 정리 작업.
-                  예전 책은 그림이 DB 안에 들어 있어 열 때마다 전송량이 나간다.
-                  정리가 끝나면(0권) 칸 자체를 감춘다 — 할 일이 없는데 버튼이 남아
-                  있으면 "왜 아직 있지?" 하고 다시 누르게 된다. */}
-              {oldArtCount !== 0 && (
-                <div className="flex flex-col gap-2 rounded-2xl bg-amber-50 px-4 py-3">
-                  <p className="text-xs font-extrabold text-amber-700">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/icons/func-cleanup.webp" alt="" aria-hidden className="mr-1 inline-block h-5 w-5 object-contain align-[-0.25em]" />
-                    옛 책 그림 정리
-                    {oldArtCount > 0 && ` · ${oldArtCount}권 남음`}
-                  </p>
-                  <p className="text-[11px] font-medium leading-relaxed text-amber-700/80">
-                    예전에 만든 동화는 그림이 데이터베이스 안에 들어 있어, 책을 열 때마다 전송량이 나가요.
-                    그림을 이미지 호스팅으로 옮기면 전송량이 거의 안 나가고 책도 빨리 열려요.
-                    <b> 한 번만 누르면 되고, 중간에 멈춰도 옮긴 데까지는 그대로 남아요.</b>
-                  </p>
-                  {migrating ? (
-                    <p className="text-xs font-bold text-amber-800">
-                      {migrating.bookNo} / {migrating.bookCount}권 · {migrating.title}
-                      {migrating.imageCount > 0 && ` (그림 ${migrating.imageDone}/${migrating.imageCount}장)`}
-                    </p>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={migrateOldArt}
-                      className="self-start rounded-full bg-amber-500 px-4 py-2 text-xs font-extrabold text-white shadow-sm"
-                    >
-                      그림 옮기기 시작
-                    </button>
-                  )}
-                  {migrateDone && <p className="text-xs font-bold text-amber-800">{migrateDone}</p>}
-                </div>
-              )}
-              {/* 다 끝났는데 방금 돌린 결과는 알려 준다(칸이 사라져도 결과는 남게). */}
-              {oldArtCount === 0 && migrateDone && (
-                <p className="rounded-2xl bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-700">
-                  ✅ {migrateDone}
-                </p>
-              )}
-              {members.length === 0 ? (
-                <p className="rounded-2xl bg-neutral-100 px-4 py-3 text-sm font-bold text-neutral-500">
-                  아직 가입한 회원이 없어요.
-                </p>
-              ) : (
-                <ul className="flex flex-col gap-2">
-                  {members.map((m) => {
-                    const open = openMember === m.id;
-                    const books = memberBooks[m.id] ?? [];
-                    // 부모 목소리 등록 여부 — 등록했으면 또렷하게, 아니면 흐리게.
-                    const voices = memberVoices[m.id] ?? [];
-                    const hasMom = voices.includes("mom");
-                    const hasDad = voices.includes("dad");
-                    return (
-                      <li key={m.id} className="overflow-hidden rounded-2xl bg-neutral-100">
-                        <button
-                          type="button"
-                          onClick={() => toggleMember(m.id)}
-                          className="flex w-full items-center gap-2 px-4 py-3 text-left"
-                        >
-                          <span className="flex-1 truncate text-sm font-extrabold text-neutral-800">
-                            {m.username}
-                          </span>
-                          {/* 만든 동화 개수 — 한눈에 누가 얼마나 만들었는지 보인다. */}
-                          <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-bold text-neutral-500">
-                            동화 {books.length}
-                          </span>
-                          {/* 엄마·아빠 목소리 등록 여부 — 색이 들어오면 등록된 것.
-                              회색이면 아직 안 만든 것이라, 줄을 훑기만 해도 구분된다. */}
-                          <span
-                            className="flex shrink-0 items-center gap-1"
-                            title={`부모 목소리 — 엄마 ${hasMom ? "등록" : "없음"} · 아빠 ${hasDad ? "등록" : "없음"}`}
-                          >
-                            <span
-                              className={`rounded-full px-1.5 py-0.5 text-[10px] font-extrabold ${
-                                hasMom ? "bg-rose-500 text-white" : "bg-neutral-200 text-neutral-400"
-                              }`}
-                            >
-                              엄마
-                            </span>
-                            <span
-                              className={`rounded-full px-1.5 py-0.5 text-[10px] font-extrabold ${
-                                hasDad ? "bg-sky-500 text-white" : "bg-neutral-200 text-neutral-400"
-                              }`}
-                            >
-                              아빠
-                            </span>
-                          </span>
-                          <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-neutral-500">
-                            <span aria-hidden className="inline-block rounded-full" style={{ width: 11, height: 11, background: "radial-gradient(circle at 35% 30%, #ffe08a, #e0a020)" }} />
-                            {m.tokens}
-                          </span>
-                          <span className="shrink-0 text-neutral-400">{open ? "▲" : "▼"}</span>
-                        </button>
-                        {open && (
-                          <div className="border-t border-neutral-200 bg-white px-4 py-2">
-                            <p className="py-1 text-xs font-bold text-neutral-500">
-                              부모 목소리 —{" "}
-                              {hasMom || hasDad ? (
-                                <span className="text-neutral-700">
-                                  {[hasMom && "엄마", hasDad && "아빠"].filter(Boolean).join(" · ")} 등록됨
-                                </span>
-                              ) : (
-                                <span className="font-medium text-neutral-400">아직 안 만들었어요</span>
-                              )}
-                            </p>
-                            {books.length === 0 ? (
-                              <p className="py-1 text-xs font-medium text-neutral-400">만든 동화가 없어요.</p>
-                            ) : (
-                              <ul className="flex flex-col divide-y divide-neutral-100">
-                                {books.map((b) => (
-                                  <li key={b.id} className="flex items-center gap-2 py-2">
-                                    <span className="flex-1 truncate text-sm font-bold text-neutral-700">
-                                      {b.title}
-                                      {b.hidden && <span className="ml-1 text-[10px] text-neutral-400">(숨김)</span>}
-                                    </span>
-                                    <Link
-                                      href={`/book/${b.id}`}
-                                      className="shrink-0 rounded-full px-3 py-1 text-xs font-extrabold text-white"
-                                      style={{ background: accent }}
-                                    >
-                                      열기
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
             </section>
           )}
           </>)}

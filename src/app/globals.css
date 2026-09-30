@@ -166,3 +166,60 @@ body {
     visibility: hidden;
   }
 }
+
+/*
+  가족 사진 꾸미기의 스티커 크기 밀대(components/family/StudioSheet). 누름 칸은 44px(손가락), 길은 8px, 손잡이는
+  28px 흰 동그라미 + 나라 색 테두리. 채운 쪽 색·길이는 컴포넌트가 --range-accent·--range-fill(%)로 넘긴다.
+  (Firefox 는 -moz-range-progress 가 채운 쪽을 알아서 칠한다.)
+*/
+.studio-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 44px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: none;
+}
+.studio-range:focus {
+  outline: none;
+}
+.studio-range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, var(--range-accent, #f59e0b) var(--range-fill, 0%), #e7e5e4 var(--range-fill, 0%));
+}
+.studio-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  margin-top: -10px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 3px solid var(--range-accent, #f59e0b);
+  box-shadow: 0 2px 5px rgba(60, 40, 25, 0.25);
+}
+.studio-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--range-accent, #f59e0b) 35%, transparent);
+}
+.studio-range::-moz-range-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: #e7e5e4;
+}
+.studio-range::-moz-range-progress {
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--range-accent, #f59e0b);
+}
+.studio-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 3px solid var(--range-accent, #f59e0b);
+  box-shadow: 0 2px 5px rgba(60, 40, 25, 0.25);
+}
+.studio-range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--range-accent, #f59e0b) 35%, transparent);
+}

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { callerOf, type Caller } from "@/lib/api-auth";
 import { httpStatusForDb } from "@/lib/admin";
+import { isSchemaMissing } from "@/lib/admin-console";
 
 /**
  * 관리실 서버 경로의 문지기 — /api/admin/* 는 전부 이 함수로 감싸서 내보낸다.
@@ -48,6 +49,28 @@ export function masterOnly(handler: AdminHandler) {
       return fail("관리실 서버 오류가 났어요. 잠시 뒤 다시 해 주세요.", 500);
     }
   };
+}
+
+/**
+ * 표·함수가 아직 없으면(사장님이 새 SQL 을 아직 안 돌렸으면) 500 대신 200 + { schemaReady:false, ...빈값 }.
+ * 관리자 페이지가 "데이터베이스 준비 전이에요"라고 말하게 — 빨간 오류 화면으로 겁주지 않는다.
+ * 그 밖의 오류는 dbFail 그대로(DB 의 한국어 거절 문구를 보여 준다).
+ */
+export function dbFailOrNotReady(
+  err: { code?: string | null; message?: string | null } | null | undefined,
+  notReady: Record<string, unknown>,
+): Response {
+  if (isSchemaMissing(err)) return json({ ...notReady, schemaReady: false });
+  return dbFail(err);
+}
+
+/**
+ * 본문이 너무 큰가(Content-Length 로 먼저 본다). 약관 본문처럼 긴 글을 받는 경로가
+ * 본문을 다 읽기 전에 거절하려고 쓴다. 길이 머리글이 없으면 false — 그때는 파서가 길이를 다시 본다.
+ */
+export function bodyTooLarge(request: Request, maxBytes: number): boolean {
+  const n = Number(request.headers.get("content-length") ?? "");
+  return Number.isFinite(n) && n > maxBytes;
 }
 
 /** POST 본문 — JSON 객체가 아니면 null. */

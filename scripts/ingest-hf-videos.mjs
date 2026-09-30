@@ -3,7 +3,9 @@
  *
  *   node scripts/ingest-hf-videos.mjs <목록.json> [--dry]
  *
- * 목록.json = [{ title, n, url }]
+ * 목록.json = [{ title, n, url }] — 책은 title 대신 id 로, 원격 url 대신 미리 받아 둔 file(로컬 경로)로도 된다.
+ *   여러 작업자가 영상을 동시에 뽑을 때는 각자 file 로 받아만 두고, 붙이기는 이 스크립트로 한 번에 한다
+ *   (책 파일을 동시에 고치면 서로 덮어쓴다).
  *
  * 한 편마다:
  *   1) 받는다 — 원격 mp4 를 임시 폴더로.
@@ -27,12 +29,12 @@ const list = JSON.parse(fs.readFileSync(listPath, "utf8"));
 
 const FILES = { folk: "src/data/folk-books.json", classic: "src/data/classic-books.json" };
 const data = Object.fromEntries(Object.entries(FILES).map(([k, f]) => [k, JSON.parse(fs.readFileSync(f, "utf8"))]));
-const find = (title) => {
+const find = (title, id) => {
   for (const k of Object.keys(data)) {
-    const b = data[k].find((x) => x.title === title);
+    const b = data[k].find((x) => (id ? x.id === id : x.title === title));
     if (b) return { root: k, book: b };
   }
-  throw new Error(`책을 못 찾음: ${title}`);
+  throw new Error(`책을 못 찾음: ${id ?? title}`);
 };
 const dirOf = (b) => b.pages.find((p) => p.image)?.image.match(/dapp\/(?:folk|classic)\/([^/]+)\//)?.[1]
   ?? b.pages.find((p) => p.image)?.image.match(/dapp\/books\/(?:folk|classic)\/([^/]+)\//)?.[1];
@@ -51,8 +53,9 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), "hfvid-"));
 const touched = new Set();
 let ok = 0, fail = 0;
 
-for (const { title, n, url } of list) {
-  const { root, book } = find(title);
+for (const { title: t, id, n, url, file } of list) {
+  const { root, book } = find(t, id);
+  const title = t ?? book.title;
   const page = book.pages[n - 1];
   if (!page) { console.log(`✗ ${title} ${n}쪽 — 그런 쪽 없음`); fail++; continue; }
   const dir = dirOf(book);
@@ -62,7 +65,8 @@ for (const { title, n, url } of list) {
 
   try {
     const raw = path.join(TMP, `${root}-${dir}-p${n}.mp4`);
-    execFileSync("curl", ["-sSfL", url, "-o", raw]);
+    if (file) fs.copyFileSync(file, raw);
+    else execFileSync("curl", ["-sSfL", url, "-o", raw]);
     const seam = frameDiff(["-ss", "0", "-i", raw], ["-sseof", "-0.05", "-i", raw]);
     const needLoop = seam > 6; // 6 이하면 눈으로 이음매가 안 보인다
     console.log(`${title} ${n}쪽 → ${outRel}  이음매 ${seam.toFixed(1)}${needLoop ? " → 겹쳐 잇기" : ""}`);
@@ -74,7 +78,7 @@ for (const { title, n, url } of list) {
     } else {
       execFileSync("ffmpeg", ["-y", "-v", "error", "-i", raw, "-an",
         "-vf", "scale=1184:864:flags=lanczos,format=yuv420p",
-        "-c:v", "libx264", "-preset", "slow", "-crf", "23", "-movflags", "+faststart", out]);
+        "-c:v", "libx264", "-preset", "slow", "-crf", "27", "-movflags", "+faststart", out]);
     }
     page.video = outRel;
     touched.add(root);

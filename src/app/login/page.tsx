@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
@@ -11,12 +12,20 @@ import {
   signInWithGoogle,
   signUp,
 } from "@/lib/auth";
+import { safeAdminNext } from "@/lib/admin-console";
 import { usePricing } from "@/lib/use-pricing";
 
 /**
  * 회원가입 / 로그인 — 베타. 아이디·비밀번호만.
  * 성공하면 서재(/)로 보낸다. 가입 시 보너스 토큰을 준다(auth.signUp).
+ * 관리자 페이지 문 앞에서 온 로그인(?next=/admin…)이면 로그인 뒤 그 주소로 돌려보낸다 — 열려던 기록을 다시 찾지 않게.
+ * 관리실 주소만 받는다(safeAdminNext) — 아무 주소나 받으면 남의 링크로 엉뚱한 곳에 보내는 길이 된다.
  */
+function afterLoginPath(): string {
+  if (typeof window === "undefined") return "/";
+  return safeAdminNext(new URLSearchParams(window.location.search).get("next")) ?? "/";
+}
+
 export default function LoginPage() {
   const router = useRouter();
   // 가입 지급 토큰은 관리실 가격표에서 읽는다(못 읽으면 지금까지 쓰던 값).
@@ -41,7 +50,7 @@ export default function LoginPage() {
     finishOAuthLogin()
       .then((res) => {
         if (!alive || !res) return;
-        if (res.ok) router.replace("/");
+        if (res.ok) router.replace(afterLoginPath());
         else setError(res.error);
       })
       .catch(() => {});
@@ -69,7 +78,8 @@ export default function LoginPage() {
     setBusy(true);
     const res = await (mode === "signup" ? signUp(id, pw) : logIn(id, pw));
     if (res.ok) {
-      router.push("/");
+      // 새로 가입한 계정은 관리자가 아니므로 늘 서재로.
+      router.push(mode === "login" ? afterLoginPath() : "/");
     } else {
       setError(res.error);
       setBusy(false);
@@ -199,7 +209,15 @@ export default function LoginPage() {
           </button>
         </div>
 
-        <p className="mt-4 text-center text-xs font-medium text-white/90" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>
+        {/* 가입 전에도 값을 볼 수 있게 — /plans 는 로그인 없이 열린다 */}
+        <Link
+          href="/plans"
+          className="mt-4 inline-flex min-h-11 items-center self-center rounded-full bg-white/85 px-4 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+        >
+          요금제 보기 ›
+        </Link>
+
+        <p className="mt-3 text-center text-xs font-medium text-white/90" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>
           베타 버전 · 계정은 이 기기에 저장돼요
         </p>
       </main>

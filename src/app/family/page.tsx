@@ -64,6 +64,7 @@ import { LooksView } from "@/components/family/LooksView";
 import { MembersView } from "@/components/family/MembersView";
 import { MemberSheet } from "@/components/family/MemberSheet";
 import { ReviewView } from "@/components/family/ReviewView";
+import { StudioSheet } from "@/components/family/StudioSheet";
 import { BigButton } from "@/components/family/ui";
 import { fetchProfile, loadSession } from "@/lib/auth";
 import {
@@ -92,6 +93,7 @@ import {
 } from "@/lib/family";
 import { cleanBodyStretch, cleanHeadRatio } from "@/lib/family-head";
 import { PHOTO_FALLBACK_NOTE, PHOTO_TOO_BIG_MESSAGE, readPhotoFallback } from "@/lib/family-photo";
+import { newerStudio, type FamilyStudio } from "@/lib/family-studio";
 import {
   loadChild,
   loadChildRemote,
@@ -127,6 +129,8 @@ type Overlay =
   | { kind: "add"; role?: FamilyRole; mode: From; key: number }
   /** fromAlbum: 모아 보기의 '모습이 바뀌었어요' 카드에서 열었다 — 다른 메뉴로 갈 길을 둔다 */
   | { kind: "changed"; id: string; diff: string[]; fromAlbum?: boolean }
+  /** 가족 사진 꾸미기(가족 사진관 — 배경·스티커) */
+  | { kind: "studio" }
   | null;
 
 /** 동시에 그리는 사람 수 — 서버·이미지 모델에 한꺼번에 몰리지 않게 */
@@ -332,7 +336,10 @@ export default function FamilyPage() {
       parents = p;
     }
     const fam = withChild(remote.family ?? familyRef.current, remote.name);
-    const next: ChildPrefs = { ...remote, looks, parents, family: fam };
+    // 가족 사진관 — 나중에 꾸민 쪽(at). 받은 값은 이미 서버·이 기기 중 새것이고(loadChildRemote), 받는 사이 이 화면에서
+    // 꾸민 게 더 새것이면 그것. 다른 기기에서 나중에 꾸민 값은 받은 값이 이긴다(이 화면의 옛 값으로 되돌리지 않는다).
+    const familyStudio = newerStudio(remote.familyStudio, childRef.current?.familyStudio);
+    const next: ChildPrefs = { ...remote, looks, parents, family: fam, familyStudio };
     childRef.current = next;
     setChild(next);
     if (JSON.stringify(fam) !== JSON.stringify(familyRef.current)) {
@@ -345,6 +352,7 @@ export default function FamilyPage() {
     if (edits.child && !same(looks, remote.looks)) patch.looks = looks;
     if ((edits.mom || edits.dad) && !same(parents, remote.parents)) patch.parents = parents;
     if (!same(fam, remote.family)) patch.family = fam;
+    if (!same(familyStudio, remote.familyStudio)) patch.familyStudio = familyStudio;
     if (Object.keys(patch).length > 0) saveChild({ name: remote.name, ...patch });
   }, []);
 
@@ -516,6 +524,17 @@ export default function FamilyPage() {
     touched.current = true;
     looksEdits.current = { ...looksEdits.current, [role]: { ...looksEdits.current[role], ...p } };
     saveChild({ name: c.name, parents });
+  }
+
+  /** 가족 사진관(배경·스티커) — 꾸미기 시트가 바꿀 때마다. 이 기기에 바로, 서버는 800ms 뒤(saveChild). */
+  function saveStudio(s: FamilyStudio) {
+    const c = childRef.current;
+    if (!c) return;
+    touched.current = true;
+    const next = { ...c, familyStudio: s };
+    childRef.current = next;
+    setChild(next);
+    saveChild({ name: c.name, familyStudio: s });
   }
 
   function setMemberLooks(id: string, p: Partial<FamilyLooks>) {
@@ -709,9 +728,37 @@ export default function FamilyPage() {
     patchMember(id, (m) => ({ ...m, showOnHome: on }), "soon");
   }
 
-  /** '우리 아이예요'(형제자매만) — 켜면 명패에 이름이 같이 선다 */
+  /**
+   * '우리 아이예요'(형제자매만) — 켜면 명패에 이름이 같이 선다. 명패엔 진짜 이름만 서서(lib/family ourChildrenNames)
+   * 이름 없는 형제는 켜지 않는다(사람 메뉴가 먼저 이름을 받는다 — 여기는 안전판).
+   */
   function setOurChild(id: string, on: boolean) {
-    patchMember(id, (m) => (m.role === "sibling" ? { ...m, isOurChild: on ? true : undefined } : m), "soon");
+    patchMember(
+      id,
+      (m) => (m.role === "sibling" && (!on || (m.name ?? "").trim()) ? { ...m, isOurChild: on ? true : undefined } : m),
+      "soon",
+    );
+  }
+
+  /**
+   * 이름 저장(형제자매·단짝 친구, 사람 메뉴) — 빈 글자면 이름 없음. ourChild 면 '우리 아이예요'도 같이 켠다(한 번에).
+   * '우리 아이'인 형제의 이름은 지우지 않는다(사람 메뉴가 막는다 — 여기는 안전판).
+   */
+  function renameMember(id: string, name: string, ourChild?: boolean) {
+    const nm = name.trim().slice(0, 20);
+    const m = findMember(id);
+    if (!m || (m.role !== "sibling" && m.role !== "friend")) return;
+    if (!nm && m.isOurChild) return;
+    patchMember(
+      id,
+      (x) => ({
+        ...x,
+        name: nm || undefined,
+        ...(ourChild && nm && x.role === "sibling" ? { isOurChild: true } : {}),
+      }),
+      "soon",
+    );
+    showToast(nm ? (ourChild ? "이름을 저장하고 '우리 아이'로 켰어요" : "이름을 저장했어요") : "이름을 지웠어요");
   }
 
   /* ───────────────────────── 그리기 ───────────────────────── */
@@ -1020,7 +1067,7 @@ export default function FamilyPage() {
       return;
     }
     if (!master && tokens < nextDrawCost(m.draws)) {
-      showToast("쿠키가 조금 모자라요 — 설정에서 충전해 주세요");
+      showToast("쿠키가 조금 모자라요 — 충전은 결제가 열리면 할 수 있어요");
       return;
     }
     // 실패한 그리기는 값을 돌려드렸으니 다시 하면 또 값이 든다 — 바로 그리지 않고 확인 창을 거친다(사장님 2026-09-29).
@@ -1243,7 +1290,7 @@ export default function FamilyPage() {
         onRetry={retry}
         onReview={() => openReview()}
         onLeave={() => go("album")}
-        onCharge={() => router.push("/settings")}
+        onCharge={() => router.push("/plans")}
         onLogin={() => router.push("/login")}
       />
     );
@@ -1263,7 +1310,7 @@ export default function FamilyPage() {
         onRedraw={(id) => redraw(id, true)}
         onRetry={retry}
         onBack={() => go(busy ? "drawing" : "album")}
-        onCharge={() => router.push("/settings")}
+        onCharge={() => router.push("/plans")}
       />
     );
   } else if (step === "done") {
@@ -1281,6 +1328,7 @@ export default function FamilyPage() {
         stamp={stamp}
         onCreate={() => router.push("/create")}
         onHome={() => router.push("/")}
+        studio={child.familyStudio}
       />
     );
   } else {
@@ -1299,6 +1347,8 @@ export default function FamilyPage() {
         onAdd={() => setOverlay({ kind: "add", mode: "album", key: ++addSeq.current })}
         onAddFriend={() => setOverlay({ kind: "add", role: "friend", mode: "album", key: ++addSeq.current })}
         onCreate={() => router.push("/create")}
+        studio={child.familyStudio}
+        onStudio={() => setOverlay({ kind: "studio" })}
       />
     );
   }
@@ -1360,7 +1410,7 @@ export default function FamilyPage() {
               startRound(ids, overlay.from);
             }
           }}
-          onCharge={() => router.push("/settings")}
+          onCharge={() => router.push("/plans")}
           // 생김새 고르기에서 온 처음 고정만 — 그리는 중 값이 바뀌어 다시 묻는 창(inline)에는 없다.
           onLooksOnly={
             overlay.variant === "fix" && !overlay.inline
@@ -1372,6 +1422,7 @@ export default function FamilyPage() {
 
       {overlay?.kind === "member" && sheetMember && (
         <MemberSheet
+          key={sheetMember.id}
           colors={colors}
           member={sheetMember}
           childName={child?.name ?? ""}
@@ -1385,6 +1436,7 @@ export default function FamilyPage() {
           onEditLooks={() => startLooks([sheetMember.id], "edit", "album")}
           onShowOnHome={(on) => setShowOnHome(sheetMember.id, on)}
           onOurChild={(on) => setOurChild(sheetMember.id, on)}
+          onRename={(name, ourChild) => renameMember(sheetMember.id, name, ourChild)}
           onRemove={() => removeMember(sheetMember.id)}
         />
       )}
@@ -1414,7 +1466,20 @@ export default function FamilyPage() {
           onRedraw={() => setOverlay({ kind: "confirm", ids: [sheetMember.id], variant: "redraw", from: "album" })}
           onLater={() => setOverlay(null)}
           onMore={overlay.fromAlbum ? () => setOverlay({ kind: "member", id: sheetMember.id }) : undefined}
-          onCharge={() => router.push("/settings")}
+          onCharge={() => router.push("/plans")}
+        />
+      )}
+
+      {overlay?.kind === "studio" && child && (
+        <StudioSheet
+          colors={colors}
+          members={homeMembers(family)}
+          childAge={child.age}
+          parents={child.parents}
+          background={theme.background}
+          studio={child.familyStudio}
+          onChange={saveStudio}
+          onClose={() => setOverlay(null)}
         />
       )}
 

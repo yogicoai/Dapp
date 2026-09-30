@@ -13,6 +13,7 @@
 
 import { useRef, type ReactNode } from "react";
 import type { FamilyMember } from "@/lib/family";
+import type { FamilyStudio } from "@/lib/family-studio";
 import type { ChildPrefs } from "@/lib/prefs";
 import type { Colors } from "./family-ui";
 import { FamilyGroupPhoto } from "./FamilyGroupPhoto";
@@ -42,6 +43,7 @@ export function DoneView({
   stamp,
   onCreate,
   onHome,
+  studio,
 }: {
   colors: Colors;
   mascot: string;
@@ -60,6 +62,8 @@ export function DoneView({
   stamp: string;
   onCreate: () => void;
   onHome: () => void;
+  /** 가족 사진관 — 고른 배경·붙인 스티커(보기만, 꾸미기는 모아 보기·홈에서) */
+  studio?: FamilyStudio;
 }) {
   const float = useRef<HTMLDivElement>(null);
   useLoop(float, FLOAT, 3200);
@@ -93,6 +97,7 @@ export function DoneView({
           parents={parents}
           height={224}
           background={background}
+          studio={studio}
           className="rounded-[22px]"
           empty={
             <span className="break-keep rounded-2xl bg-white/90 px-4 py-2 text-center text-xs font-extrabold text-neutral-600 shadow">

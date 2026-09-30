@@ -6,11 +6,23 @@
  * 움직임 줄이기(prefers-reduced-motion)를 켠 기기에서는 아무것도 하지 않는다.
  */
 
-import { useEffect, type RefObject } from "react";
+import { useEffect, useSyncExternalStore, type RefObject } from "react";
 
 export function reducedMotion(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return true;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+const REDUCE = "(prefers-reduced-motion: reduce)";
+function onReduceChange(cb: () => void): () => void {
+  if (typeof window === "undefined" || !window.matchMedia) return () => {};
+  const mq = window.matchMedia(REDUCE);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+}
+/** 움직임 줄이기 설정을 따라가는 값 — 서버 그리기·첫 그리기에서는 true(움직이지 않는 쪽)라 화면이 어긋나지 않는다. */
+export function useReducedMotion(): boolean {
+  return useSyncExternalStore(onReduceChange, reducedMotion, () => true);
 }
 
 /** 한 번 폴짝 — 단체 사진에서 사람을 눌렀을 때 */

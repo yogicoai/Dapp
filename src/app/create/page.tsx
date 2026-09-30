@@ -4546,9 +4546,16 @@ export default function CreatePage() {
                     <br />설정 › 내 동화에서 지우면 다시 만들 수 있어요.
                   </p>
                 ) : makeBlock === "tokens" ? (
-                  <p className="break-keep text-center text-xs font-bold text-red-600">
-                    토큰이 부족해요. 설정에서 충전할 수 있어요.
-                  </p>
+                  <div className="flex flex-col items-center">
+                    <p className="break-keep text-center text-xs font-bold text-red-600">토큰이 부족해요.</p>
+                    {/* 결제는 아직 없다 — '충전'을 약속하지 않고 요금제를 미리 보여 준다. 손가락 크기(44px) 링크. */}
+                    <Link
+                      href="/plans"
+                      className="inline-flex min-h-11 items-center rounded-full px-3 text-xs font-extrabold text-neutral-600 underline underline-offset-2"
+                    >
+                      요금제 미리 보기 ›
+                    </Link>
+                  </div>
                 ) : null}
               </div>
             </section>
@@ -4913,8 +4920,16 @@ export default function CreatePage() {
                       (내 잔액 {tokens}개).
                       <br />
                       <span className="font-medium text-neutral-500">
-                        이 이야기는 이레 동안 보관돼요. 충전한 뒤에 이어서 그리시면 돼요.
+                        이 이야기는 이레 동안 보관돼요. 그 안에 이어서 그리실 수 있어요.
                       </span>
+                      <br />
+                      {/* 결제는 아직 없다 — '충전'을 약속하지 않고 요금제를 미리 보여 준다. 손가락 크기(44px) 링크. */}
+                      <Link
+                        href="/plans"
+                        className="inline-flex min-h-11 items-center rounded-full px-3 font-extrabold text-neutral-600 underline underline-offset-2"
+                      >
+                        요금제 미리 보기 ›
+                      </Link>
                     </p>
                   ) : (
                     <p className="break-keep text-center text-[11px] font-medium text-neutral-400">

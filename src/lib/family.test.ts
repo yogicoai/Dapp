@@ -14,8 +14,10 @@ import {
   heightCm,
   hasBatchim,
   heightFor,
+  homeGreeting,
   homeMembers,
   isKidRole,
+  isYoungerThanChild,
   lockChanges,
   lockedLooksChanged,
   lockKeyChanged,
@@ -31,6 +33,7 @@ import {
   portraitLooksChanged,
   ROLE_ORDER,
   showsLooksChanged,
+  vocative,
   withoutRemoved,
   type FamilyMember,
 } from "./family.ts";
@@ -89,14 +92,69 @@ describe("ourChildrenNames — '우리 아이예요'를 켠 형제", () => {
     { id: "m-c", role: "sibling", callName: "누나", name: "수아" },
     { id: "m-d", role: "friend", callName: "친구", name: "서준" },
   ];
-  it("아이 이름 먼저, 그다음 켠 형제(이름이 없으면 호칭)", () => {
-    assert.deepEqual(ourChildrenNames("하온", fam), ["하온", "하린", "남동생"]);
-    assert.equal(familyTitle(ourChildrenNames("하온", fam)), "하온·하린·남동생이네 가족");
+  it("아이 이름 먼저, 그다음 켠 형제의 진짜 이름 — 이름 없는 형제는 빠진다(호칭으로 채우지 않는다)", () => {
+    assert.deepEqual(ourChildrenNames("하온", fam), ["하온", "하린"]);
+    assert.equal(familyTitle(ourChildrenNames("하온", fam)), "하온·하린이네 가족");
+  });
+  it("사장님 예 — 우주 + 이름 없이 켠 남동생은 '우주·남동생네 가족'이 아니라 '우주네 가족', 이름을 적으면 이름으로", () => {
+    const noName: FamilyMember[] = [{ id: "m-b", role: "sibling", callName: "남동생", isOurChild: true }];
+    assert.deepEqual(ourChildrenNames("우주", noName), ["우주"]);
+    assert.equal(familyTitle(ourChildrenNames("우주", noName)), "우주네 가족");
+    const named: FamilyMember[] = [{ ...noName[0], name: "별이" }];
+    assert.equal(familyTitle(ourChildrenNames("우주", named)), "우주·별이네 가족");
+    // 빈칸·띄어쓰기만 적은 이름도 없는 것과 같다
+    assert.deepEqual(ourChildrenNames("우주", [{ ...noName[0], name: "  " }]), ["우주"]);
+  });
+  it("안 켠 형제·단짝 친구는 이름이 있어도 안 들어간다", () => {
+    assert.deepEqual(ourChildrenNames("하온", fam.filter((m) => m.id !== "m-a")), ["하온"]);
   });
   it("아무도 안 켰으면 예전과 같다", () => {
     assert.deepEqual(ourChildrenNames("하온", []), ["하온"]);
     assert.equal(familyTitle(ourChildrenNames("하온", undefined)), "하온이네 가족");
     assert.deepEqual(ourChildrenNames("", undefined), []);
+  });
+});
+
+describe("homeGreeting — 홈 단체 사진 인사(사장님 2026-09-30: 동생은 '안녕!' 정도로)", () => {
+  const sib = (callName: string, age?: number): FamilyMember => ({ id: `s-${callName}`, role: "sibling", callName, age });
+  it("아이 자신은 '안녕! 반가워'", () => {
+    assert.equal(homeGreeting({ role: "child", callName: "우주" }, "우주", 6), "안녕! 반가워");
+  });
+  it("남동생·여동생은 아이 이름을 부르지 않고 '안녕!'", () => {
+    assert.equal(homeGreeting(sib("남동생", 3), "우주", 6), "안녕!");
+    assert.equal(homeGreeting(sib("여동생"), "우주", 6), "안녕!");
+    assert.equal(homeGreeting(sib("남동생"), "우주", null), "안녕!"); // 나이를 몰라도 호칭으로
+  });
+  it("형·오빠·누나·언니와 어른은 '<아이>아/야, 안녕!' — 받침에 따라", () => {
+    for (const call of ["형", "오빠", "누나", "언니"]) assert.equal(homeGreeting(sib(call, 9), "우주", 6), "우주야, 안녕!", call);
+    for (const role of ["mom", "dad", "grandma", "grandpa"] as const) {
+      assert.equal(homeGreeting({ role, callName: "x" }, "하온", 5), "하온아, 안녕!", role);
+    }
+    // 호칭이 먼저다 — 나이를 잘못 적은 누나도 누나
+    assert.equal(homeGreeting(sib("누나", 3), "하온", 5), "하온아, 안녕!");
+  });
+  it("호칭으로 모르는 형제(예전 값)·단짝 친구는 나이로 — 아이보다 어리면 '안녕!', 또래·많으면 이름을 부른다", () => {
+    assert.equal(homeGreeting(sib("동생", 3), "하온", 5), "안녕!");
+    assert.equal(homeGreeting(sib("동생", 7), "하온", 5), "하온아, 안녕!");
+    assert.equal(homeGreeting({ role: "friend", callName: "친구", age: 4 }, "하온", 5), "안녕!");
+    assert.equal(homeGreeting({ role: "friend", callName: "친구", age: 5 }, "하온", 5), "하온아, 안녕!");
+    assert.equal(homeGreeting({ role: "friend", callName: "친구" }, "하온", 5), "하온아, 안녕!");
+  });
+  it("아이 이름이 없으면 모두 '안녕!'", () => {
+    assert.equal(homeGreeting({ role: "mom", callName: "엄마" }, "", 5), "안녕!");
+    assert.equal(homeGreeting(sib("형", 9), undefined, 5), "안녕!");
+  });
+  it("isYoungerThanChild — 어른·아이 자신은 어리지 않다", () => {
+    assert.equal(isYoungerThanChild({ role: "mom", callName: "엄마", age: 1 }, 5), false);
+    assert.equal(isYoungerThanChild({ role: "child", callName: "하온", age: 1 }, 5), false);
+    assert.equal(isYoungerThanChild(sib("여동생", 9), 5), true);
+    assert.equal(isYoungerThanChild(sib("오빠", 2), 5), false);
+  });
+  it("vocative — '하온아' · '지우야', 빈 이름은 ''", () => {
+    assert.equal(vocative("하온"), "하온아");
+    assert.equal(vocative(" 지우 "), "지우야");
+    assert.equal(vocative(""), "");
+    assert.equal(vocative(null), "");
   });
 });
 

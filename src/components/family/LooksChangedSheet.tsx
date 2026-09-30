@@ -90,7 +90,7 @@ export function LooksChangedSheet({
         <div className="mt-3 flex flex-col items-center">
           <p className="text-sm font-extrabold text-rose-600">쿠키가 조금 모자라요</p>
           <button type="button" onClick={onCharge} className="min-h-11 px-3 text-sm font-extrabold underline underline-offset-2" style={{ color: colors.accentDark }}>
-            쿠키 충전하러 가기
+            요금제 미리 보기
           </button>
         </div>
       )}

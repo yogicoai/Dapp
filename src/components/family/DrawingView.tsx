@@ -137,7 +137,7 @@ export function DrawingView({
                 {/* 작은 흰 글씨라 바탕은 accentDark — 밝은 나라 색(민트 등)에서도 글자 대비 4.5:1 을 넘게 */}
                 {j?.kind === "insufficient" ? (
                   <button type="button" onClick={onCharge} className="min-h-11 shrink-0 rounded-full px-3.5 text-[13px] font-extrabold text-white" style={{ background: colors.accentDark }}>
-                    쿠키 충전하러 가기
+                    요금제 미리 보기
                   </button>
                 ) : j?.kind === "photo" ? (
                   <button type="button" onClick={() => onRetry(m.id)} className="min-h-11 shrink-0 rounded-full px-3.5 text-[13px] font-extrabold text-white" style={{ background: colors.accentDark }}>

@@ -1,8 +1,13 @@
 "use client";
 
 /**
- * 가족 더하기 시트 — (없으면) 엄마·아빠, 형제자매(호칭·이름·나이·우리 아이), 할머니·할아버지(호칭),
+ * 가족 더하기 시트 — (없으면) 엄마·아빠, 형제자매(호칭·이름·우리 아이·나이), 할머니·할아버지(호칭),
  * 그리고 따로 단짝 친구(이름·나이·성별 — 한 명만).
+ *
+ * 형제자매 이름(사장님 2026-09-30 "남동생이 아니라 이름으로 넣게 해줄수도 있게 해줘야해 우주 남동생네 가족이 되니깐"):
+ * 호칭(남동생·누나 …)은 관계로 남고, 이름 칸을 호칭 바로 아래에 크게 둔다. '우리 아이예요'를 켜면 이름이 꼭 있어야
+ * 한다 — 명패에는 진짜 이름만 서서(lib/family ourChildrenNames), 이름 없이 켜면 명패에 아무것도 안 붙는다.
+ * 켜는 순간 이름이 비어 있으면 이름 칸으로 초점을 옮기고, 이름을 적을 때까지 '넣기'를 막는다.
  *
  * 순서(사장님 2026-09-28): 엄마 → 아빠 → 형제자매 → 할머니 → 할아버지 → (따로) 단짝 친구.
  * 단짝 친구는 가족이 아니라 가족 타일과 떨어진 자리에 두고, 이미 있으면 막는다(canAddRole).
@@ -10,7 +15,7 @@
  * 넣기만 하면 쿠키 0개다(모아 보기에서). 1단계(누가 우리 가족?)에서 넣으면 이번에 그릴 사람에 들어간다.
  */
 
-import { useId, useState, type ReactNode } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import {
   BEST_FRIEND_LABEL,
   CALL_NAMES,
@@ -73,6 +78,7 @@ export function AddMemberSheet({
   const [gender, setGender] = useState<"girl" | "boy" | undefined>(undefined);
   const [ourChild, setOurChild] = useState(false);
   const nameId = useId();
+  const nameRef = useRef<HTMLInputElement>(null);
 
   const pickRole = (r: AddRole) => {
     setRole(r);
@@ -99,8 +105,20 @@ export function AddMemberSheet({
   const isOld = role === "grandma" || role === "grandpa";
   const isParent = role === "mom" || role === "dad";
   const taken = isOld && family.some((m) => m.role === role && m.callName === callName);
+  // '우리 아이예요'를 켠 형제는 이름이 꼭 있어야 한다(명패에 진짜 이름만 선다 — 위 머리말)
+  const needName = role === "sibling" && ourChild && !name.trim();
   const ready =
-    Boolean(role) && (isParent || Boolean(callName)) && !taken && (role !== "friend" || Boolean(gender)) && (!role || canPick(role));
+    Boolean(role) &&
+    (isParent || Boolean(callName)) &&
+    !taken &&
+    !needName &&
+    (role !== "friend" || Boolean(gender)) &&
+    (!role || canPick(role));
+
+  const toggleOurChild = (on: boolean) => {
+    setOurChild(on);
+    if (on && !name.trim()) nameRef.current?.focus();
+  };
 
   const submit = () => {
     if (!role || !ready) return;
@@ -126,7 +144,6 @@ export function AddMemberSheet({
     }
     onAdd({ role: "friend", callName: "친구", name: trimmed || undefined, age, gender });
   };
-
 
   return (
     <Sheet onClose={onClose} label="가족 더하기">
@@ -200,55 +217,74 @@ export function AddMemberSheet({
       )}
 
       {(role === "sibling" || role === "friend") && (
-        <>
-          <Field label={role === "friend" ? "친구 이름 (선택)" : "이름 (선택)"} htmlFor={nameId}>
-            <input
-              id={nameId}
-              value={name}
-              onChange={(e) => setName(e.target.value.slice(0, 20))}
-              maxLength={20}
-              placeholder={role === "friend" ? "예) 서준" : "예) 수아"}
-              className="min-h-11 w-full rounded-2xl border-2 border-neutral-200 px-4 py-2.5 text-base font-bold outline-none placeholder:font-medium placeholder:text-neutral-500 focus:border-neutral-400"
-            />
-          </Field>
-          <Field label="나이">
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                aria-label="한 살 적게"
-                onClick={() => bump(-1)}
-                disabled={age <= MIN_AGE}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 disabled:opacity-40"
-              >
-                <MinusIcon size={18} />
-              </button>
-              <span className="min-w-16 text-center text-lg font-extrabold text-neutral-800" aria-live="polite">
-                {age}살
-              </span>
-              <button
-                type="button"
-                aria-label="한 살 많게"
-                onClick={() => bump(1)}
-                disabled={age >= MAX_AGE}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 disabled:opacity-40"
-              >
-                <PlusIcon size={18} />
-              </button>
-            </div>
-          </Field>
-        </>
+        <Field
+          label={role === "friend" ? "친구 이름 (선택)" : "이름"}
+          htmlFor={nameId}
+          hint={
+            role === "sibling"
+              ? `${ourChild ? "가족 화면과 명패에" : "가족 화면에"} 이 이름으로 나와요${callName ? ` · 부르는 말(${callName})은 그대로예요` : ""}`
+              : undefined
+          }
+        >
+          <input
+            ref={nameRef}
+            id={nameId}
+            value={name}
+            onChange={(e) => setName(e.target.value.slice(0, 20))}
+            maxLength={20}
+            placeholder={role === "friend" ? "예) 서준" : "예) 수아"}
+            aria-invalid={needName || undefined}
+            className={`w-full rounded-2xl border-2 px-4 outline-none placeholder:font-medium placeholder:text-neutral-500 focus:border-neutral-400 ${
+              role === "sibling" ? "min-h-[52px] py-3 text-lg font-extrabold" : "min-h-11 py-2.5 text-base font-bold"
+            } ${needName ? "border-rose-300" : "border-neutral-200"}`}
+          />
+        </Field>
       )}
 
       {role === "sibling" && (
-        <div className="mt-4 w-full">
+        <div className="mt-3 w-full">
           <SwitchRow
             on={ourChild}
-            onChange={setOurChild}
+            onChange={toggleOurChild}
             label="우리 아이예요"
-            hint={ourChildHint(childName, family, { name, callName })}
+            // 켰는데 이름이 없으면 설명 대신 아래 알림 한 줄만(같은 말을 두 번 하지 않게)
+            hint={needName ? undefined : ourChildHint(childName, family, { name, callName, isOurChild: ourChild }, "add")}
             colors={colors}
           />
+          {needName && (
+            <p role="alert" className="mt-1.5 break-keep px-1 text-xs font-bold text-rose-600">
+              우리 아이는 위에 이름을 꼭 적어 주세요 · 명패에 이름이 같이 나와요
+            </p>
+          )}
         </div>
+      )}
+
+      {(role === "sibling" || role === "friend") && (
+        <Field label="나이">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              aria-label="한 살 적게"
+              onClick={() => bump(-1)}
+              disabled={age <= MIN_AGE}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 disabled:opacity-40"
+            >
+              <MinusIcon size={18} />
+            </button>
+            <span className="min-w-16 text-center text-lg font-extrabold text-neutral-800" aria-live="polite">
+              {age}살
+            </span>
+            <button
+              type="button"
+              aria-label="한 살 많게"
+              onClick={() => bump(1)}
+              disabled={age >= MAX_AGE}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 disabled:opacity-40"
+            >
+              <PlusIcon size={18} />
+            </button>
+          </div>
+        </Field>
       )}
 
       {role === "friend" && (
@@ -313,8 +349,11 @@ function RoleTile({
   );
 }
 
-/** 칸 이름 — 입력칸이면(htmlFor) <label> 로 이어 화면 읽기가 이름을 읽고, 글자를 눌러도 칸에 초점이 가게 */
-function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; children: ReactNode }) {
+/**
+ * 칸 이름 — 입력칸이면(htmlFor) <label> 로 이어 화면 읽기가 이름을 읽고, 글자를 눌러도 칸에 초점이 가게.
+ * hint 는 칸 아래 작은 설명(입력칸의 aria-describedby 대신 label 뒤에 이어 읽힌다).
+ */
+function Field({ label, htmlFor, hint, children }: { label: string; htmlFor?: string; hint?: string; children: ReactNode }) {
   const cls = "mb-1.5 block text-xs font-extrabold text-neutral-500";
   return (
     <div className="mt-4 w-full">
@@ -326,6 +365,7 @@ function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; 
         <p className={cls}>{label}</p>
       )}
       {children}
+      {hint && <p className="mt-1 break-keep px-1 text-[11.5px] font-semibold text-neutral-500">{hint}</p>}
     </div>
   );
 }

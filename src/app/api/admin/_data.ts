@@ -103,6 +103,26 @@ export async function profilesFor(db: Db, ids: (string | null | undefined)[]) {
   return out;
 }
 
+/**
+ * 이 요청에서 '관리자 계정 것'으로 칠 회원 id — 나 자신 + 보이는 마스터 프로필. 못 읽으면 나 자신만.
+ *
+ * 사장님 규칙(2026-09-30): 관리자 계정에서 생긴 사고·오류·의견은 관리실 목록·숫자에 넣지 않는다.
+ * DB(master_can_see)가 다른 마스터 줄은 이미 가리므로 사실상 '나'뿐이지만, uid 만 보지 않고
+ * is_master 로 한 번 더 찾는다 — 그 DB 규칙이 나중에 바뀌어도 이 거르기는 그대로 맞게.
+ * 요청마다 새로 읽는다(부른 사람이 다르므로 요청을 넘어 캐시하지 않는다).
+ * id 는 소문자로 맞춘다 — dropMasterRows 가 소문자로 비교한다.
+ */
+export async function masterOwnerIds(caller: Caller): Promise<Set<string>> {
+  const ids = new Set<string>([caller.uid.toLowerCase()]);
+  const { data, error } = await caller.db.from("profiles").select("id").eq("is_master", true).limit(50);
+  if (error) {
+    console.warn("[admin] 관리자 계정 읽기 오류", error.code, error.message);
+    return ids;
+  }
+  for (const p of (data as { id: string }[] | null) ?? []) if (p.id) ids.add(p.id.toLowerCase());
+  return ids;
+}
+
 /** 장부 줄 — 표로 읽을 수 있는 칸만(환불 사유·처리 마스터는 사고 목록 함수에만 있다). */
 export type LedgerRow = { id: string; owner: string; amount: number; reason: string; refunded_at: string | null; created_at: string };
 

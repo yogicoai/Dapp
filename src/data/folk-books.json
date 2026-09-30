@@ -6274,7 +6274,7 @@
     "narrators": [
       "tc-minjung"
     ],
-    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p11.webp?v=2",
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/cover.webp?v=4",
     "voiceCast": {
       "narration": "tc-minjung",
       "brother": "tc-gunseok",
@@ -6289,7 +6289,7 @@
     "pages": [
       {
         "text": "옛날 어느 마을에 사이좋은 형제가 살았어요.\n형은 아랫마을에, 아우는 윗마을에 살았지만\n논은 나란히 붙어 있어 날마다 함께 일했지요.\n\"형님, 제가 물꼬를 볼게요!\"\n\"그래, 나는 풀을 뽑으마.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p1.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p1.webp?v=4",
         "lines": [
           {
             "text": "형님, 제가 물꼬를 볼게요!",
@@ -6307,10 +6307,10 @@
             "label": "brother",
             "line": "그래, 나는 풀을 뽑으마.",
             "box": [
-              220,
-              127,
-              787,
-              422
+              330,
+              155,
+              740,
+              375
             ],
             "audio": "/folk/brothers/say-p1-brother.mp3"
           },
@@ -6318,10 +6318,10 @@
             "label": "younger",
             "line": "형님, 제가 물꼬를 볼게요!",
             "box": [
-              347,
-              507,
-              787,
-              802
+              355,
+              655,
+              715,
+              860
             ],
             "audio": "/folk/brothers/say-p1-younger.mp3",
             "feel": "happy"
@@ -6347,7 +6347,7 @@
       },
       {
         "text": "가을이 되자 논이 온통 황금빛으로 물들었어요.\n형제는 함께 벼를 베어 볏단을 쌓았지요.\n해마다 그랬듯 볏단은 반으로 나누었어요.\n\"형님, 올해도 반씩이에요.\"\n\"그래, 늘 하던 대로.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p2.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p2.webp?v=4",
         "lines": [
           {
             "text": "형님, 올해도 반씩이에요.",
@@ -6363,10 +6363,10 @@
             "label": "brother",
             "line": "그래, 늘 하던 대로.",
             "box": [
-              139,
-              253,
-              764,
-              456
+              265,
+              120,
+              830,
+              340
             ],
             "audio": "/folk/brothers/say-p2-brother.mp3"
           },
@@ -6374,10 +6374,10 @@
             "label": "younger",
             "line": "형님, 올해도 반씩이에요.",
             "box": [
-              208,
-              540,
-              764,
-              760
+              305,
+              625,
+              845,
+              815
             ],
             "audio": "/folk/brothers/say-p2-younger.mp3"
           }
@@ -6402,7 +6402,7 @@
       },
       {
         "text": "그날 밤, 형은 잠이 오지 않았어요.\n'아우는 올해 살림을 새로 차렸잖아.\n필요한 게 많을 텐데… 내 볏단을 좀 나눠 줘야지.'\n형은 살그머니 문을 열고 밖으로 나갔어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p3.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p3.webp?v=4",
         "lines": [
           {
             "text": "'아우는 올해 살림을 새로 차렸잖아.\n필요한 게 많을 텐데… 내 볏단을 좀 나눠 줘야지.'",
@@ -6416,10 +6416,10 @@
             "label": "brother",
             "line": "아우한테 볏단을 좀 나눠 줘야지.",
             "box": [
-              174,
-              405,
-              880,
-              811
+              135,
+              525,
+              830,
+              810
             ],
             "audio": "/folk/brothers/say-p3-brother.mp3",
             "feel": "tonedown",
@@ -6446,7 +6446,7 @@
       },
       {
         "text": "달빛이 환한 논둑길이었어요.\n형은 볏단을 지게에 지고 아우네 논으로 갔지요.\n\"아우는 모르게 해야지. 알면 안 받을 테니까.\"\n형은 볏단을 살짝 얹어 놓고 돌아왔어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p4.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p4.webp?v=4",
         "lines": [
           {
             "text": "아우는 모르게 해야지. 알면 안 받을 테니까.",
@@ -6459,10 +6459,10 @@
             "label": "brother",
             "line": "아우는 모르게 해야지. 알면 안 받을 테니까.",
             "box": [
-              127,
-              321,
-              764,
-              608
+              185,
+              320,
+              870,
+              555
             ],
             "audio": "/folk/brothers/say-p4-brother.mp3",
             "feel": "whisper"
@@ -6488,7 +6488,7 @@
       },
       {
         "text": "같은 밤, 아우도 뒤척이고 있었어요.\n'형님 댁은 식구가 많잖아. 조카들도 한창 먹을 때인데…\n내 볏단을 형님께 드려야지.'\n아우도 살그머니 지게를 챙겨 나갔답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p5.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p5.webp?v=4",
         "lines": [
           {
             "text": "'형님 댁은 식구가 많잖아. 조카들도 한창 먹을 때인데…\n내 볏단을 형님께 드려야지.'",
@@ -6502,10 +6502,10 @@
             "label": "younger",
             "line": "형님 댁은 식구가 많잖아… 내 볏단을 드려야지.",
             "box": [
-              174,
-              397,
-              891,
-              693
+              185,
+              460,
+              865,
+              670
             ],
             "audio": "/folk/brothers/say-p5-younger.mp3",
             "feel": "tonedown",
@@ -6532,7 +6532,7 @@
       },
       {
         "text": "아우는 볏단을 지고 형네 논으로 갔어요.\n\"형님이 알면 도로 주실 거야. 몰래 놓고 와야지.\"\n아우는 볏단을 가만히 얹어 놓고\n휘파람을 불며 가볍게 돌아왔지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p6.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p6.webp?v=4",
         "lines": [
           {
             "text": "형님이 알면 도로 주실 거야. 몰래 놓고 와야지.",
@@ -6545,10 +6545,10 @@
             "label": "younger",
             "line": "형님이 알면 도로 주실 거야. 몰래 놓고 와야지.",
             "box": [
-              243,
-              625,
-              880,
-              887
+              220,
+              540,
+              780,
+              745
             ],
             "audio": "/folk/brothers/say-p6-younger.mp3",
             "feel": "whisper"
@@ -6574,7 +6574,7 @@
       },
       {
         "text": "이튿날 아침, 형은 논에 나가 볏단을 세어 보았어요.\n\"어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?\"\n아우도 제 논을 보고 고개를 갸웃했지요.\n\"형님 논에 놓고 왔는데 왜 그대로지?\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p7.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p7.webp?v=4",
         "lines": [
           {
             "text": "어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?",
@@ -6592,10 +6592,10 @@
             "label": "brother",
             "line": "어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?",
             "box": [
-              150,
-              253,
-              787,
-              473
+              300,
+              85,
+              835,
+              258
             ],
             "audio": "/folk/brothers/say-p7-brother.mp3",
             "feel": "toneup"
@@ -6604,10 +6604,10 @@
             "label": "younger",
             "line": "형님 논에 놓고 왔는데 왜 그대로지?",
             "box": [
-              266,
-              642,
-              521,
-              743
+              345,
+              812,
+              815,
+              955
             ],
             "audio": "/folk/brothers/say-p7-younger.mp3",
             "feel": "toneup"
@@ -6638,16 +6638,16 @@
       },
       {
         "text": "그날 밤에도, 그다음 밤에도\n형은 아우네 논으로, 아우는 형네 논으로 볏단을 옮겼어요.\n그런데 아침이면 볏단은 늘 그대로였지요.\n둘 다 고개를 갸웃했지만, 밤이 되면 또 지게를 졌답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p8.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p8.webp?v=4",
         "hotspots": [
           {
             "label": "brother",
             "line": "오늘 밤에도 한 단 더.",
             "box": [
-              150,
-              110,
-              741,
-              321
+              350,
+              205,
+              845,
+              430
             ],
             "audio": "/folk/brothers/say-p8-brother.mp3",
             "feel": "whisper"
@@ -6656,10 +6656,10 @@
             "label": "younger",
             "line": "형님 몰래, 살금살금.",
             "box": [
-              197,
-              676,
-              741,
-              887
+              300,
+              728,
+              595,
+              872
             ],
             "audio": "/folk/brothers/say-p8-younger.mp3",
             "feel": "whisper"
@@ -6675,16 +6675,16 @@
       },
       {
         "text": "보름달이 커다랗게 뜬 밤이었어요.\n형과 아우는 따로따로 볏단을 지고, 논둑길을 걸었지요.\n그런데 좁은 논둑 한가운데에서 — 쿵!\n볏짚이 흩날리며 누군가와 부딪치고 말았어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p9.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p9.webp?v=4",
         "hotspots": [
           {
             "label": "brother",
             "line": "어이쿠!",
             "box": [
-              197,
-              127,
-              810,
-              456
+              245,
+              300,
+              865,
+              495
             ],
             "audio": "/folk/brothers/say-p9-brother.mp3",
             "feel": "toneup"
@@ -6693,10 +6693,10 @@
             "label": "younger",
             "line": "아이고!",
             "box": [
-              220,
-              507,
-              810,
-              845
+              285,
+              497,
+              865,
+              680
             ],
             "audio": "/folk/brothers/say-p9-younger.mp3",
             "feel": "toneup"
@@ -6713,7 +6713,7 @@
       },
       {
         "text": "달빛 아래 마주 선 두 사람.\n서로의 지게 위에는 볏단이 똑같이 얹혀 있었어요.\n\"형님…!\" \"아우야…!\"\n그제야 형제는, 볏단이 늘 그대로였던 까닭을 알았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p10.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p10.webp?v=4",
         "lines": [
           {
             "text": "형님…!",
@@ -6731,10 +6731,10 @@
             "label": "brother",
             "line": "아우야…!",
             "box": [
-              174,
-              127,
-              833,
-              422
+              210,
+              215,
+              900,
+              435
             ],
             "audio": "/folk/brothers/say-p10-brother.mp3",
             "feel": "toneup"
@@ -6743,10 +6743,10 @@
             "label": "younger",
             "line": "형님…!",
             "box": [
-              174,
-              540,
-              833,
-              845
+              240,
+              500,
+              900,
+              712
             ],
             "audio": "/folk/brothers/say-p10-younger.mp3",
             "feel": "toneup"
@@ -6777,7 +6777,7 @@
       },
       {
         "text": "형제는 지게를 내려놓고 서로를 꼭 끌어안았어요.\n\"이 녀석아, 내 걱정은 말고 새살림에나 넉넉히 쓰지 그랬어.\"\n\"형님도 참. 조카들 한창 먹을 때라면서, 저한테 주시면 어떡해요.\"\n둘은 달을 올려다보며 한참을 웃었지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p11.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p11.webp?v=4",
         "lines": [
           {
             "text": "이 녀석아, 내 걱정은 말고 새살림에나 넉넉히 쓰지 그랬어.",
@@ -6795,10 +6795,10 @@
             "label": "brother",
             "line": "내 걱정은 말고 아우네나 넉넉히 쓰지 그랬어.",
             "box": [
-              150,
-              355,
-              787,
-              507
+              220,
+              365,
+              925,
+              500
             ],
             "audio": "/folk/brothers/say-p11-brother.mp3",
             "feel": "happy"
@@ -6807,10 +6807,10 @@
             "label": "younger",
             "line": "형님도 참, 조카들이나 넉넉히 먹이시지 그랬어요.",
             "box": [
-              150,
-              507,
-              787,
-              659
+              250,
+              500,
+              925,
+              618
             ],
             "audio": "/folk/brothers/say-p11-younger.mp3",
             "feel": "happy"
@@ -6841,16 +6841,16 @@
       },
       {
         "text": "다음 해 가을에도, 형제의 논은 나란히 황금빛으로 물들었어요.\n이번에는 볏단을 반으로 나누지 않았지요.\n\"형님, 어차피 서로 줄 텐데요. 그냥 같이 쓰지요!\"\n\"허허, 그러자꾸나.\"\n그 뒤로도 두 형제는 서로를 위하며, 오래오래 행복하게 살았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/p12.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p12.webp?v=4",
         "hotspots": [
           {
             "label": "brother",
             "line": "가자, 아우야.",
             "box": [
-              150,
-              144,
-              880,
-              439
+              190,
+              200,
+              870,
+              455
             ],
             "audio": "/folk/brothers/say-p12-brother.mp3",
             "feel": "happy"
@@ -6859,10 +6859,10 @@
             "label": "younger",
             "line": "네, 형님!",
             "box": [
-              220,
-              473,
+              230,
+              458,
               880,
-              743
+              655
             ],
             "audio": "/folk/brothers/say-p12-younger.mp3",
             "feel": "happy"
@@ -6914,7 +6914,7 @@
     "narrators": [
       "tc-minjung"
     ],
-    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p1.webp?v=1",
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/cover.webp?v=3",
     "voiceCast": {
       "narration": "tc-minjung",
       "gyeonu": "tc-hosun",
@@ -6938,7 +6938,7 @@
       {
         "n": 1,
         "text": "하늘나라에는 반짝이는 은하수가 흐르고 있었어요.\n은하수 동쪽에는 소를 모는 부지런한 목동, 견우가 살았지요.\n은하수 서쪽에는 베를 짜는 손 고운 공주, 직녀가 살았어요.\n직녀가 짠 비단은 노을처럼 곱다고 온 하늘나라에 소문이 났답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p1.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p1.webp?v=3",
         "segments": [
           {
             "who": "narration",
@@ -6950,7 +6950,7 @@
       {
         "n": 2,
         "text": "어느 날, 하늘 임금님이 두 사람을 불러, 서로를 만나게 해 주었어요.\n\"견우야, 직녀야. 너희는 참 잘 어울리는구나.\"\n견우와 직녀는 첫눈에 서로가 좋아졌지요.\n얼마 뒤, 둘은 온 하늘나라의 축하를 받으며 부부가 되었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p2.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p2.webp?v=3",
         "lines": [
           {
             "text": "견우야, 직녀야. 너희는 참 잘 어울리는구나.",
@@ -6979,7 +6979,7 @@
       {
         "n": 3,
         "text": "함께 지내는 나날은 꿈처럼 행복했어요.\n둘은 손을 꼭 잡고 은하수를 거닐며, 웃음이 끊이지 않았지요.\n\"우리, 매일매일 이렇게 함께 있어요.\"\n\"그래요. 나는 당신만 보고 있어도 하루가 다 가요.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p3.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p3.webp?v=3",
         "lines": [
           {
             "text": "우리, 매일매일 이렇게 함께 있어요.",
@@ -7015,7 +7015,7 @@
       {
         "n": 4,
         "text": "그런데 행복에 빠진 두 사람은 그만 할 일을 잊어버렸어요.\n견우는 소에게 풀 먹이는 것도 잊고,\n직녀는 베틀 앞에 앉지도 않았지요.\n\"일은 내일 하면 되죠. 오늘은 당신이랑 놀래요.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p4.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p4.webp?v=3",
         "lines": [
           {
             "text": "일은 내일 하면 되죠. 오늘은 당신이랑 놀래요.",
@@ -7040,7 +7040,7 @@
       {
         "n": 5,
         "text": "견우의 소들은 비쩍 마르고, 밭에는 잡초만 가득 자랐어요.\n직녀의 베틀에는 먼지가 뽀얗게 쌓였지요.\n하늘나라 사람들은 입을 것도, 덮을 것도 없어 걱정이 늘었어요.\n\"직녀님이 비단을 안 짜시니 큰일이네…\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p5.webp?v=2",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p5.webp?v=3",
         "lines": [
           {
             "text": "직녀님이 비단을 안 짜시니 큰일이네…",
@@ -7065,7 +7065,7 @@
       {
         "n": 6,
         "text": "마침내 하늘 임금님의 귀에까지 이 소식이 들어갔어요.\n임금님은 얼굴이 붉어지도록 노여워하며, 두 사람을 불러 세웠지요.\n임금님의 목소리가 하늘 끝까지 쩌렁쩌렁 울렸어요.\n\"너희가 맡은 일을 이리 내버려 두다니!\n오늘부터 은하수 양쪽에 떨어져 살아라!\"\n견우와 직녀는 아무 말도 하지 못하고, 고개만 푹 떨구었답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p6.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p6.webp?v=3",
         "lines": [
           {
             "text": "너희가 맡은 일을 이리 내버려 두다니!\n오늘부터 은하수 양쪽에 떨어져 살아라!",
@@ -7095,7 +7095,7 @@
       {
         "n": 7,
         "text": "견우는 은하수 동쪽 끝으로, 직녀는 서쪽 끝으로 쫓겨났어요.\n둘 사이를 깊고 넓은 은하수가 가로막았지요.\n직녀는 목이 메어 겨우 한마디를 외쳤어요.\n\"여보! 가지 말아요!\"\n견우도 눈물을 꾹 참고 떨리는 목소리로 대답했지요.\n\"조금만 기다려요. 꼭 다시 만나요!\"\n두 사람은 있는 힘껏 손을 뻗었지만, 손끝은 끝내 닿지 않았어요.\n목소리마저 은하수 물결에 묻혀 점점 멀어져 갔답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p7.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p7.webp?v=3",
         "lines": [
           {
             "text": "여보! 가지 말아요!",
@@ -7139,7 +7139,7 @@
       {
         "n": 8,
         "text": "견우는 날마다 은하수 건너를 바라보며 소를 몰았어요.\n직녀는 눈물을 흘리며 베를 짰지요.\n이제 둘은 누구보다 부지런해졌지만,\n서로를 볼 수 없어 마음은 온통 슬픔뿐이었어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p8.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p8.webp?v=3",
         "segments": [
           {
             "who": "narration",
@@ -7151,7 +7151,7 @@
       {
         "n": 9,
         "text": "헤어진 뒤로 두 사람은 밤마다 소리 없이 울었어요.\n그 눈물은 그대로 비가 되어 땅으로 쏟아졌지요.\n그칠 줄 모르는 비에 강이 넘치고 들판이 잠겼어요.\n땅 위의 동물들도 걱정이 점점 커졌지요.\n\"이러다 우리 사는 곳이 다 잠기겠어!\"\n하늘도 땅도 두 사람의 슬픔에 함께 젖어 갔답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p9.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p9.webp?v=3",
         "lines": [
           {
             "text": "이러다 우리 사는 곳이 다 잠기겠어!",
@@ -7181,7 +7181,7 @@
       {
         "n": 10,
         "text": "그때 까치와 까마귀들이 한자리에 모였어요.\n\"은하수만 건널 수 있다면 두 분이 만날 텐데.\"\n\"옳지! 우리가 다리를 놓아 드리자!\"\n새들은 힘을 모아 하늘로, 하늘로 날아올랐답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p10.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p10.webp?v=3",
         "lines": [
           {
             "text": "은하수만 건널 수 있다면 두 분이 만날 텐데.",
@@ -7220,7 +7220,7 @@
       {
         "n": 11,
         "text": "수많은 까치와 까마귀가 은하수 위로 날아가\n서로의 날개를 맞대어 기다란 다리를 만들었어요.\n반짝이는 은하수 위에 놓인 새들의 다리, 오작교였지요.\n\"자, 어서 건너오세요!\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p11.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p11.webp?v=3",
         "lines": [
           {
             "text": "자, 어서 건너오세요!",
@@ -7245,7 +7245,7 @@
       {
         "n": 12,
         "text": "견우와 직녀는 오작교를 건너 한달음에 달려갔어요.\n드디어 두 손을 마주 잡은 두 사람!\n직녀는 왈칵 눈물을 쏟으며 말했어요.\n\"여보, 얼마나 보고 싶었는지 몰라요.\"\n견우도 직녀의 손을 두 손으로 꼭 감싸며 대답했지요.\n\"이렇게 다시 만나다니, 꿈만 같아요.\"\n밤마다 흘리던 슬픈 눈물이, 이번에는 기쁨의 눈물이 되어 흘렀답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p12.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p12.webp?v=3",
         "lines": [
           {
             "text": "여보, 얼마나 보고 싶었는지 몰라요.",
@@ -7289,7 +7289,7 @@
       {
         "n": 13,
         "text": "그 모습을 본 하늘 임금님도 마음이 스르르 풀렸어요.\n\"이제 둘 다 일을 참 열심히 하는구나.\n그럼 일 년에 한 번, 칠월 칠석날에는 만나도 좋다.\"\n견우와 직녀는 임금님께 고맙다고 몇 번이나 인사했지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p13.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p13.webp?v=3",
         "lines": [
           {
             "text": "이제 둘 다 일을 참 열심히 하는구나.\n그럼 일 년에 한 번, 칠월 칠석날에는 만나도 좋다.",
@@ -7320,7 +7320,7 @@
       {
         "n": 14,
         "text": "그래서 지금도 해마다 칠월 칠석이 되면,\n까치와 까마귀가 하늘로 올라가, 오작교를 놓아 준답니다.\n그 다리를 건너 견우와 직녀가 다시 만나지요.\n칠석날 저녁에 보슬보슬 비가 내리면, 두 사람이 반가워서 흘리는 눈물이래요.\n오늘 밤 하늘을 올려다보세요. 은하수 양쪽에 반짝이는 두 별이 바로 견우와 직녀랍니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/p14.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p14.webp?v=3",
         "segments": [
           {
             "who": "narration",
@@ -9862,7 +9862,7 @@
     "narrators": [
       "tc-minjung"
     ],
-    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/cover.webp?v=1",
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/cover.webp?v=2",
     "voiceCast": {
       "narration": "tc-minjung",
       "mother": "tc-minju",
@@ -9878,7 +9878,7 @@
       {
         "n": 1,
         "text": "옛날 옛날, 맑은 냇가에\n엄마 청개구리와 아기 청개구리가\n살고 있었어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p1.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p1.webp?v=2",
         "segments": [
           {
             "who": "narration",
@@ -9890,7 +9890,7 @@
       {
         "n": 2,
         "text": "그런데 이 아기 청개구리는\n무슨 말을 해도 꼭!\n거꾸로만 하는 말썽쟁이였어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p2.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p2.webp?v=2",
         "segments": [
           {
             "who": "narration",
@@ -9902,7 +9902,7 @@
       {
         "n": 3,
         "text": "\"물속에 들어가 있어라\" 하면\n풀숲으로 폴짝!\n\"풀숲에 숨어 있어라\" 하면\n물속으로 풍덩!",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p3.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p3.webp?v=2",
         "lines": [
           {
             "text": "물속에 들어가 있어라",
@@ -9939,7 +9939,7 @@
       {
         "n": 4,
         "text": "\"엄마 올 때까지 저녁 먹지 마\" 하면\n엄마가 돌아서자마자 냠냠 먹어 치우고,\n\"어서 저녁 먹어라\" 하면\n입을 꼭 다문 채 뒤돌아앉았지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p4.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p4.webp?v=2",
         "segments": [
           {
             "who": "mother",
@@ -9966,7 +9966,7 @@
       {
         "n": 5,
         "text": "비가 오면 냇물이 불어나\n돌 위까지 찰랑거렸어요.\n\"물가에 가지 마라\" 하면\n아기는 더 가까이 폴짝!",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p5.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p5.webp?v=2",
         "segments": [
           {
             "who": "narration",
@@ -9994,7 +9994,7 @@
       {
         "n": 6,
         "text": "엄마 청개구리는\n이런 아기가 늘 걱정스러웠어요.\n'얘가 언제쯤 말을 잘 들을까…'",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p6.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p6.webp?v=2",
         "segments": [
           {
             "who": "narration",
@@ -10019,7 +10019,7 @@
       {
         "n": 7,
         "text": "그래도 해가 지면\n둘은 같은 연잎 아래 앉아\n별을 세었어요.\n엄마는 아기를 꼭 안아 주었지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p7.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p7.webp?v=2",
         "segments": [
           {
             "who": "narration",
@@ -10032,7 +10032,7 @@
       {
         "n": 8,
         "text": "여름이 가고, 또 한 번 여름이 갔어요.\n엄마 청개구리는 이제 잘 뛰지 않았어요.\n\"엄마는 여기 있을 테니, 저리 가서 놀아라.\"\n거꾸로 하는 아기는 엄마 옆에 꼭 붙어 앉았어요.\n\"우리 아기, 엄마는 네가 참 좋아.\"",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p8.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p8.webp?v=2",
         "lines": [
           {
             "text": "엄마는 여기 있을 테니, 저리 가서 놀아라.",
@@ -10052,10 +10052,10 @@
             "label": "mother",
             "line": "우리 아기, 엄마는 네가 참 좋아.",
             "box": [
-              122,
-              211,
-              706,
-              524
+              255,
+              265,
+              700,
+              535
             ],
             "audio": "/folk/greenfrog/say-p8-mother.mp3",
             "feel": "tonedown",
@@ -10088,7 +10088,7 @@
       {
         "n": 9,
         "text": "어느 저녁, 엄마가 아기의 앞발을 꼭 쥐었어요.\n\"얘야, 엄마가 하늘나라에 가면\n숲속 말고, 꼭 냇가에다 묻어 주렴.\"\n아기는 그게 무슨 말인지 몰랐어요.\n사실 엄마는 조용한 숲속이 좋았지만,\n거꾸로 하는 우리 아기를 잘 알아서, 반대로 말했지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p9.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p9.webp?v=2",
         "lines": [
           {
             "text": "얘야, 엄마가 하늘나라에 가면\n숲속 말고, 꼭 냇가에다 묻어 주렴.",
@@ -10103,10 +10103,10 @@
             "label": "mother",
             "line": "얘야, 엄마가 하늘나라에 가면\n숲속 말고, 꼭 냇가에다 묻어 주렴.",
             "box": [
-              150,
-              182,
-              741,
-              473
+              235,
+              200,
+              680,
+              520
             ],
             "audio": "/folk/greenfrog/say-p9-mother.mp3",
             "feel": "tonedown",
@@ -10135,7 +10135,7 @@
       {
         "n": 10,
         "text": "다음 날 아침이었어요.\n엄마는 돌 위에서 움직이지 않았어요.\n\"엄마. 엄마…\"\n두 번이나 불렀는데, 아무 소리도 나지 않았어요.\n엄마 청개구리는 하늘나라로 떠난 거예요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p10.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p10.webp?v=2",
         "lines": [
           {
             "text": "엄마. 엄마…",
@@ -10149,10 +10149,10 @@
             "label": "child",
             "line": "엄마. 엄마…",
             "box": [
-              474,
-              562,
-              671,
-              684
+              335,
+              415,
+              605,
+              580
             ],
             "audio": "/folk/greenfrog/say-p10-child.mp3",
             "feel": "normal",
@@ -10180,7 +10180,7 @@
       {
         "n": 11,
         "text": "늘 거꾸로만 하던 아기였지만, 이번엔 달랐어요.\n이제는 거꾸로 해도, 받아 줄 엄마가 없으니까요.\n\"엄마, 보고 싶어.\"\n'엄마 말대로, 이번엔 꼭 할게.'\n아기는 울면서, 엄마를 냇가에 조심조심 묻어 주었어요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p11.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p11.webp?v=2",
         "lines": [
           {
             "text": "엄마, 보고 싶어.",
@@ -10200,10 +10200,10 @@
             "label": "child",
             "line": "엄마, 보고 싶어.",
             "box": [
-              266,
-              224,
-              741,
-              507
+              390,
+              555,
+              700,
+              760
             ],
             "audio": "/folk/greenfrog/say-p11-child.mp3",
             "feel": "sad",
@@ -10236,7 +10236,7 @@
       {
         "n": 12,
         "text": "아기가 무덤 옆에 앉아 말했어요.\n\"엄마, 나 이번엔 진짜로 엄마 말대로 했어.\"\n그때 하늘이 흐려지더니, 후두둑 빗방울이 떨어졌어요.\n아기는 얼른 연잎을 따다, 돌무덤 위에 덮어 주었어요.\n냇물이 두런두런, 아기 곁에서 같이 흘러갔지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p12.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p12.webp?v=2",
         "lines": [
           {
             "text": "엄마, 나 이번엔 진짜로 엄마 말대로 했어.",
@@ -10250,10 +10250,10 @@
             "label": "child",
             "line": "엄마, 나 이번엔 진짜로 엄마 말대로 했어.",
             "box": [
-              382,
-              198,
-              799,
-              456
+              385,
+              500,
+              700,
+              670
             ],
             "audio": "/folk/greenfrog/say-p12-child.mp3",
             "feel": "sad",
@@ -10281,7 +10281,7 @@
       {
         "n": 13,
         "text": "그날 이후로, 비가 오는 날이면\n아기 청개구리는 냇가에 나와\n엄마 무덤이 떠내려가지는 않을까 걱정하며\n개굴개굴 울었답니다.\n지금도 비가 오면, 개구리가 그렇게 운대요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/p13.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p13.webp?v=2",
         "segments": [
           {
             "who": "narration",

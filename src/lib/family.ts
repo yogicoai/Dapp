@@ -103,7 +103,7 @@ export type FamilyMember = {
   role: FamilyRole;
   /** 호칭 — 하온·엄마·할머니·외할머니·누나·친구 … (이야기 인물 이름과 맞출 열쇠) */
   callName: string;
-  /** 형제·친구의 실제 이름(선택) */
+  /** 형제·친구의 실제 이름(선택 — 형제가 '우리 아이예요'면 꼭 있어야 한다. 명패·인사·화면 이름에 쓴다) */
   name?: string;
   gender?: "girl" | "boy";
   /** 형제·친구 나이 */
@@ -128,7 +128,10 @@ export type FamilyMember = {
    * 꺼도 고정 얼굴은 그대로다(동화엔 나온다). false 도 저장한다 — 가족을 끈 값이 사라지면 안 된다.
    */
   showOnHome?: boolean;
-  /** 형제자매만 — '우리 아이예요'. 켜면 명패에 이름이 함께 선다(하온·하린이네 가족). */
+  /**
+   * 형제자매만 — '우리 아이예요'. 켜면 명패에 **이름**이 함께 선다(하온·하린이네 가족). 켜려면 이름(name)이 있어야
+   * 한다(가족 더하기·사람 메뉴가 막는다). 예전에 이름 없이 켠 값은 그대로 두되 명패에선 빠진다(ourChildrenNames).
+   */
   isOurChild?: boolean;
   /**
    * '그림 없이 특징만 저장할게요'를 누른 사람(사장님 2026-09-28) — 쿠키 0개, 그리기 서버는 부르지 않는다.
@@ -295,8 +298,10 @@ export function hasBatchim(word: string): boolean {
 }
 
 /**
- * 명패에 설 우리 아이들 이름 — [아이 이름, …'우리 아이예요'를 켠 형제의 이름(없으면 호칭)].
- * 빈 이름은 뺀다.
+ * 명패에 설 우리 아이들 이름 — [아이 이름, …'우리 아이예요'를 켠 형제의 **진짜 이름**].
+ * 이름을 안 적은 형제는 빠진다 — 예전엔 호칭으로 채워 '우주·남동생네 가족'이 됐다(사장님 2026-09-30 "남동생이 아니라
+ * 이름으로 넣게 해줄수도 있게 해줘야해 우주 남동생네 가족이 되니깐"). 이제 '우리 아이예요'를 켜려면 이름을 적어야
+ * 하지만(가족 더하기·사람 메뉴), 예전에 이름 없이 켠 형제는 이름을 적을 때까지 명패에서 빠진다. 빈 이름은 뺀다.
  */
 export function ourChildrenNames(
   childName: string | null | undefined,
@@ -307,10 +312,60 @@ export function ourChildrenNames(
   if (c) out.push(c);
   for (const m of family ?? []) {
     if (m.role !== "sibling" || !m.isOurChild) continue;
-    const n = (m.name ?? "").trim() || m.callName.trim();
+    const n = (m.name ?? "").trim();
     if (n) out.push(n);
   }
   return out;
+}
+
+/* ─────────────────────────────── 홈 인사 ─────────────────────────────── */
+
+/** 아이보다 어린 형제 호칭 */
+const YOUNGER_CALLS = ["남동생", "여동생"];
+/** 아이보다 나이 많은 형제 호칭 — 부모가 고른 관계가 먼저다(나이를 잘못 적어도 형·누나는 형·누나) */
+const OLDER_CALLS = ["형", "오빠", "누나", "언니"];
+
+/** '하온아' · '지우야' — 받침이 있으면 '아', 없으면 '야'. 빈 이름이면 ''. */
+export function vocative(name: string | null | undefined): string {
+  const n = (name ?? "").trim();
+  if (!n) return "";
+  return `${n}${hasBatchim(n) ? "아" : "야"}`;
+}
+
+/**
+ * 아이보다 어린 사람인가 — 형제는 호칭이 먼저다: 남동생·여동생이면 어리고, 형·오빠·누나·언니면 나이와 상관없이
+ * 어리지 않다. 호칭으로 모르는 형제(예전 값)와 단짝 친구는 나이가 아이 나이보다 적을 때.
+ * 어른(엄마·아빠·할머니·할아버지)과 아이 자신은 아니다. 나이를 모르면 어리지 않다고 본다.
+ */
+export function isYoungerThanChild(
+  m: Pick<FamilyMember, "role" | "callName" | "age">,
+  childAge: number | null | undefined,
+): boolean {
+  if (m.role !== "sibling" && m.role !== "friend") return false;
+  if (m.role === "sibling") {
+    const call = (m.callName ?? "").trim();
+    if (YOUNGER_CALLS.includes(call)) return true;
+    if (OLDER_CALLS.includes(call)) return false;
+  }
+  return typeof m.age === "number" && m.age > 0 && typeof childAge === "number" && childAge > 0 && m.age < childAge;
+}
+
+/**
+ * 홈 단체 사진에서 사람을 누르면 뜨는 인사(components/FamilyFrame).
+ * 사장님 2026-09-30 "남동생을 넣었는데 우주야 안녕 하면 안될것 같아 … 어린아이 넣었을 경우에는 안녕 정도로":
+ *  - 아이 자신: '안녕! 반가워'
+ *  - 아이보다 어린 형제·친구(isYoungerThanChild): '안녕!' — 동생이 형·누나 이름을 부르지 않게
+ *  - 그 밖(엄마·아빠·할머니·할아버지·형·누나·또래 친구): '하온아, 안녕!' · '지우야, 안녕!'(아이 이름이 없으면 '안녕!')
+ */
+export function homeGreeting(
+  m: Pick<FamilyMember, "role" | "callName" | "age">,
+  childName: string | null | undefined,
+  childAge: number | null | undefined,
+): string {
+  if (m.role === "child") return "안녕! 반가워";
+  if (isYoungerThanChild(m, childAge)) return "안녕!";
+  const v = vocative(childName);
+  return v ? `${v}, 안녕!` : "안녕!";
 }
 
 /**

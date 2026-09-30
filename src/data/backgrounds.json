@@ -2741,5 +2741,330 @@
   "w": 1448,
   "h": 1086,
   "md5": "2b4e3bae8259a2970bdcc99e78221c3d"
+ },
+ {
+  "n": 239,
+  "slug": "bus-kindergarten-shuttle-inside",
+  "ko": "어린이집 버스 안",
+  "cat": "탈것",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/bus-kindergarten-shuttle-inside.webp?v=e458c336",
+  "w": 1448,
+  "h": 1086,
+  "md5": "e458c336d02789b6e9677928b5e1b2a9"
+ },
+ {
+  "n": 240,
+  "slug": "bus-city-bus-inside",
+  "ko": "시내버스 안",
+  "cat": "탈것",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/bus-city-bus-inside.webp?v=0bb11a69",
+  "w": 1448,
+  "h": 1086,
+  "md5": "0bb11a698f06992f6ff0fe2d4f4c225c"
+ },
+ {
+  "n": 241,
+  "slug": "bus-window-seat",
+  "ko": "버스 창가 자리",
+  "cat": "탈것",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/bus-window-seat.webp?v=cde54da7",
+  "w": 1448,
+  "h": 1086,
+  "md5": "cde54da74a0075b5d054e9bb27aae108"
+ },
+ {
+  "n": 242,
+  "slug": "bus-getting-off",
+  "ko": "버스에서 내리는 곳",
+  "cat": "탈것",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/bus-getting-off.webp?v=78d8a879",
+  "w": 1448,
+  "h": 1086,
+  "md5": "78d8a87963877524b313e7fb2fb3a0d8"
+ },
+ {
+  "n": 243,
+  "slug": "night-kids-bedroom",
+  "ko": "아이 방(밤)",
+  "cat": "집",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/night-kids-bedroom.webp?v=1ca5d750",
+  "w": 1448,
+  "h": 1086,
+  "md5": "1ca5d7502e28d72f3bfbaf414ec90ce2"
+ },
+ {
+  "n": 244,
+  "slug": "night-living-room",
+  "ko": "거실(밤)",
+  "cat": "집",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/night-living-room.webp?v=64245233",
+  "w": 1448,
+  "h": 1086,
+  "md5": "64245233ac80fe5377a0ca5c8e2649f7"
+ },
+ {
+  "n": 245,
+  "slug": "rainy-day-window",
+  "ko": "비 오는 날 창가",
+  "cat": "집",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/rainy-day-window.webp?v=c3268a31",
+  "w": 1448,
+  "h": 1086,
+  "md5": "c3268a31534d80e187d78c07b9fb187e"
+ },
+ {
+  "n": 246,
+  "slug": "kitchen-evening",
+  "ko": "부엌(저녁)",
+  "cat": "집",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/kitchen-evening.webp?v=aa1ba37d",
+  "w": 1448,
+  "h": 1086,
+  "md5": "aa1ba37def1ecd9bb6432e1b50133061"
+ },
+ {
+  "n": 247,
+  "slug": "grass-front-yard",
+  "ko": "잔디 마당",
+  "cat": "집",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/grass-front-yard.webp?v=cdd0f225",
+  "w": 1448,
+  "h": 1086,
+  "md5": "cdd0f2259a13b6e396a9800581d8c09c"
+ },
+ {
+  "n": 248,
+  "slug": "night-alley",
+  "ko": "동네 골목(밤)",
+  "cat": "동네",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/night-alley.webp?v=56ea5d0b",
+  "w": 1448,
+  "h": 1086,
+  "md5": "56ea5d0bf6be2e0ead08029b17b1191b"
+ },
+ {
+  "n": 249,
+  "slug": "night-apartment-complex",
+  "ko": "아파트 단지(밤)",
+  "cat": "동네",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/night-apartment-complex.webp?v=ec024df0",
+  "w": 1448,
+  "h": 1086,
+  "md5": "ec024df00dbf3332621b94e494e2653b"
+ },
+ {
+  "n": 250,
+  "slug": "rainy-street",
+  "ko": "비 오는 거리",
+  "cat": "동네",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/rainy-street.webp?v=6497c0ea",
+  "w": 1448,
+  "h": 1086,
+  "md5": "6497c0ea775b05d2c90b3966b0c8baee"
+ },
+ {
+  "n": 251,
+  "slug": "snowy-apartment-yard",
+  "ko": "눈 덮인 아파트 마당",
+  "cat": "동네",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/snowy-apartment-yard.webp?v=6e7379d4",
+  "w": 1448,
+  "h": 1086,
+  "md5": "6e7379d477eb21aef41b75b177dd0091"
+ },
+ {
+  "n": 252,
+  "slug": "underground-parking",
+  "ko": "지하 주차장",
+  "cat": "동네",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/underground-parking.webp?v=dbb5f4de",
+  "w": 1448,
+  "h": 1086,
+  "md5": "dbb5f4de4dcb21a156edf6425b32c30d"
+ },
+ {
+  "n": 253,
+  "slug": "night-campsite",
+  "ko": "캠핑장(밤)",
+  "cat": "자연",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/night-campsite.webp?v=a431c755",
+  "w": 1448,
+  "h": 1086,
+  "md5": "a431c755466ffc5d7553d7537d3164b7"
+ },
+ {
+  "n": 254,
+  "slug": "botanical-garden",
+  "ko": "식물원",
+  "cat": "자연",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/botanical-garden.webp?v=f907bdc6",
+  "w": 1448,
+  "h": 1086,
+  "md5": "f907bdc6fa57757ac07b0afdcf61326c"
+ },
+ {
+  "n": 255,
+  "slug": "petting-farm",
+  "ko": "목장 체험장",
+  "cat": "자연",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/petting-farm.webp?v=769c87c9",
+  "w": 1448,
+  "h": 1086,
+  "md5": "769c87c95b0751908d05ad6285ee6799"
+ },
+ {
+  "n": 256,
+  "slug": "riverside-bike-path",
+  "ko": "강변 자전거길",
+  "cat": "자연",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/riverside-bike-path.webp?v=de2d04d1",
+  "w": 1448,
+  "h": 1086,
+  "md5": "de2d04d13506518079cadef0083897cd"
+ },
+ {
+  "n": 257,
+  "slug": "vineyard-pergola",
+  "ko": "포도밭 덩굴 시렁",
+  "cat": "자연",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/vineyard-pergola.webp?v=c79c26cf",
+  "w": 1448,
+  "h": 1086,
+  "md5": "c79c26cf872d38fcd1d289c7e6d58c06"
+ },
+ {
+  "n": 258,
+  "slug": "fire-station",
+  "ko": "소방서",
+  "cat": "기관",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/fire-station.webp?v=80d8461b",
+  "w": 1448,
+  "h": 1086,
+  "md5": "80d8461b4a11da0dd87375118675b258"
+ },
+ {
+  "n": 259,
+  "slug": "police-box",
+  "ko": "파출소",
+  "cat": "기관",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/police-box.webp?v=470791b7",
+  "w": 1448,
+  "h": 1086,
+  "md5": "470791b7c5af16869201468283f8ae1f"
+ },
+ {
+  "n": 260,
+  "slug": "bank",
+  "ko": "은행",
+  "cat": "기관",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/bank.webp?v=b317ebef",
+  "w": 1448,
+  "h": 1086,
+  "md5": "b317ebef2e835935193a4ed9ac89b64d"
+ },
+ {
+  "n": 261,
+  "slug": "laundromat",
+  "ko": "빨래방",
+  "cat": "가게",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/laundromat.webp?v=9c4deb40",
+  "w": 1448,
+  "h": 1086,
+  "md5": "9c4deb405a7c4a49d15f87b0d501134a"
+ },
+ {
+  "n": 262,
+  "slug": "school-lunchroom",
+  "ko": "급식실",
+  "cat": "배움",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/school-lunchroom.webp?v=c7ddcffb",
+  "w": 1448,
+  "h": 1086,
+  "md5": "c7ddcffb964b8b4788ceb95d39458803"
+ },
+ {
+  "n": 263,
+  "slug": "nap-room",
+  "ko": "낮잠방",
+  "cat": "배움",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/nap-room.webp?v=16388c4a",
+  "w": 1448,
+  "h": 1086,
+  "md5": "16388c4a3883a1b5a13a7fa06b6cc3bc"
+ },
+ {
+  "n": 264,
+  "slug": "theater-backstage",
+  "ko": "공연장 무대 뒤",
+  "cat": "문화",
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/theater-backstage.webp?v=c649a20c",
+  "w": 1448,
+  "h": 1086,
+  "md5": "c649a20cb678f267d56e9e85b7dbae31"
+ },
+ {
+  "n": 265,
+  "slug": "im-space-meteor-shower-hill",
+  "ko": "유성우 언덕",
+  "cat": "상상",
+  "world": "우주",
+  "chip": "신나는 이야기 > 우주",
+  "place_no": null,
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/im-space-meteor-shower-hill.webp?v=c97649f6",
+  "w": 1448,
+  "h": 1086,
+  "md5": "c97649f630174dccecddcb4f3de17087"
+ },
+ {
+  "n": 266,
+  "slug": "im-sea-coral-village-square",
+  "ko": "산호 마을 광장",
+  "cat": "상상",
+  "world": "바다",
+  "chip": "신나는 이야기 > 바다",
+  "place_no": null,
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/im-sea-coral-village-square.webp?v=43fd9fab",
+  "w": 1448,
+  "h": 1086,
+  "md5": "43fd9fab7846add6f5c2d4b0e7358a51"
+ },
+ {
+  "n": 267,
+  "slug": "im-sea-giant-kelp-forest",
+  "ko": "거대한 다시마 숲",
+  "cat": "상상",
+  "world": "바다",
+  "chip": "신나는 이야기 > 바다",
+  "place_no": null,
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/im-sea-giant-kelp-forest.webp?v=c62b8223",
+  "w": 1448,
+  "h": 1086,
+  "md5": "c62b8223abaa46b43bf7a96bc1cfb9b5"
+ },
+ {
+  "n": 268,
+  "slug": "im-magic-tower-study-window",
+  "ko": "마법 탑 서재 창가",
+  "cat": "상상",
+  "world": "마법",
+  "chip": "신나는 이야기 > 마법",
+  "place_no": null,
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/im-magic-tower-study-window.webp?v=16019dc2",
+  "w": 1448,
+  "h": 1086,
+  "md5": "16019dc2c85aa0f42657e19364a104c7"
+ },
+ {
+  "n": 269,
+  "slug": "im-forest-moonlit-mushroom-glade",
+  "ko": "달밤 빛나는 버섯 숲",
+  "cat": "상상",
+  "world": "숲속 모험",
+  "chip": "신나는 이야기 > 숲속 모험",
+  "place_no": null,
+  "url": "https://yogibo.openhost.cafe24.com/app/img/dapp/bg/im-forest-moonlit-mushroom-glade.webp?v=be991ae3",
+  "w": 1448,
+  "h": 1086,
+  "md5": "be991ae3261442aa3917a6fc1ee66501"
  }
 ]

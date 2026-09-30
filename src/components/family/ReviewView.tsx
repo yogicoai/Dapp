@@ -254,7 +254,7 @@ export function ReviewView({
             {failed && (!pic || job?.kind === "photo") ? (
               job?.kind === "insufficient" ? (
                 <SoftButton tight onClick={onCharge}>
-                  쿠키 충전
+                  요금제 보기
                 </SoftButton>
               ) : (
                 <SoftButton tight onClick={() => onRetry(m.id)}>

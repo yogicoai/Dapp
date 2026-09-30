@@ -1,53 +1,47 @@
 import { isUuid } from "@/lib/admin";
+import { isMineFlag } from "@/lib/admin-console";
+import {
+  FEEDBACK_LIST_LIMIT,
+  keepCustomerPosts,
+  type AdminFeedbackResponse,
+  type AdminFeedbackRow,
+} from "@/lib/admin-support";
+import { masterOwnerIds } from "../_data";
 import { dbFail, fail, json, masterOnly, readBody } from "../_guard";
 
 /**
  * 의견 게시판 — 고객이 남긴 글을 관리실에서 보고, 답하고, 처리 끝으로 표시한다.
  *
- * GET  ?open=1        → 아직 처리 안 한 글만
+ * GET  ?open=1 &mine=1 → open: 아직 처리 안 한 글만 · mine: 관리자 계정 글도 함께('내 계정 것도 보기')
  * POST { id, reply?, note?, handled? } → 답변·내부 메모·처리 표시
  *
  * 답변은 **고객 게시판에 그대로 보인다**. 내부 메모(note)는 고객에게 안 보인다(칸 권한으로 가린다).
  * 다른 마스터가 쓴 글은 목록에 오지 않는다 — DB 의 master_can_see 가 거른다.
+ * 관리자 계정으로 남긴 글(점검용 오류 신고 등)도 목록·남은 수에서 뺀다(사장님 2026-09-30).
+ * 글 자체는 지우지 않는다 — 게시판에는 그대로 있고, mine=1 이면 여기서도 보인다.
  */
 
-export type AdminFeedbackRow = {
-  id: string;
-  owner: string;
-  username: string | null;
-  category: string;
-  content: string;
-  created_at: string;
-  reply: string | null;
-  replied_at: string | null;
-  replied_by_username: string | null;
-  handled_at: string | null;
-  master_note: string | null;
-  /** 글쓴이의 지금 잔액·책 수 — 답하기 전에 상황을 같이 보려고 함께 준다. */
-  tokens: number | null;
-  books: number | null;
-  /** 이 사람이 남긴 글 중 아직 처리 안 한 수. */
-  open_count: number | null;
-};
-
-export type AdminFeedbackResponse = {
-  posts: AdminFeedbackRow[];
-  openCount: number;
-  me: string;
-};
+// 모양(type)은 순수 함수 파일에 두고 여기서 다시 내보낸다 — 예전에 이 경로에서 가져가던 곳이 그대로 되게.
+export type { AdminFeedbackResponse, AdminFeedbackRow };
 
 export const GET = masterOnly(async (caller, request) => {
-  const onlyOpen = new URL(request.url).searchParams.get("open") === "1";
-  const { data, error } = await caller.db.rpc("master_feedback_list", {
-    p_only_open: onlyOpen,
-    p_limit: 200,
-  });
+  const sp = new URL(request.url).searchParams;
+  const onlyOpen = sp.get("open") === "1";
+  const mine = isMineFlag(sp);
+  const [{ data, error }, masters] = await Promise.all([
+    caller.db.rpc("master_feedback_list", { p_only_open: onlyOpen, p_limit: FEEDBACK_LIST_LIMIT }),
+    // 스위치가 켜져 있으면 뺄 것이 없으니 관리자 계정을 찾지 않는다.
+    mine ? Promise.resolve(new Set<string>()) : masterOwnerIds(caller),
+  ]);
   if (error) return dbFail(error);
-  const posts = ((data as AdminFeedbackRow[] | null) ?? []).slice(0, 200);
+  const raw = ((data as AdminFeedbackRow[] | null) ?? []).slice(0, FEEDBACK_LIST_LIMIT);
+  const { posts, openCount } = keepCustomerPosts(raw, masters, mine);
   const body: AdminFeedbackResponse = {
     posts,
-    openCount: posts.filter((p) => !p.handled_at).length,
+    openCount,
     me: caller.username,
+    // 상한에 닿았으면 더 오래된 글이 있을 수 있다 — 화면이 '최근 200건만 보여요'라고 말한다.
+    truncated: raw.length >= FEEDBACK_LIST_LIMIT,
   };
   return json(body);
 });

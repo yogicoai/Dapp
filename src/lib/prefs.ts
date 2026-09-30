@@ -21,6 +21,7 @@ import {
   type FamilySide,
 } from "./family.ts";
 import { CHILD_MULTI_MAX, GLASSES_NONE, lookNoteMax, wearsGlassesType } from "./look-options.ts";
+import { newerStudio, normalizeStudio, type FamilyStudio } from "./family-studio.ts";
 
 export type Gender = "girl" | "boy" | "unspecified";
 
@@ -159,6 +160,12 @@ export type ChildPrefs = {
    */
   homeFamilyFolded?: boolean;
   /**
+   * 가족 사진관 — 단체 사진 뒤 배경(없으면 나라 배경)과 붙인 스티커(계정마다 — 다른 기기에서도 그대로).
+   * 사장님 2026-09-30 "가족사진 뒤에 배경도 고객이 직접 지정할수 있게", "아이콘들도 … 스티커로" (lib/family-studio).
+   * 빈 값({ bg: null, stickers: [] })도 그대로 둔다 — 다른 기기에서 되돌린 것이 이겨야 한다. 합칠 때는 나중에 꾸민 값(at)이 이긴다.
+   */
+  familyStudio?: FamilyStudio;
+  /**
    * 이 값을 쓴 화면의 저장 모양 판(CHILD_SCHEMA). 옛 화면(가족 캐릭터 전 판)은 이 칸을 몰라 버린다 —
    * 서버 값에 이 칸이 없으면 옛 화면이 profiles.child 를 통째로 덮어쓴 것이다. 그때는 이 기기에 있던
    * 새 칸(엄마·아빠 얼굴형·키·안경 종류 …)을 되살려 다시 올린다(mergeRemoteChild).
@@ -238,6 +245,8 @@ function normalizeChild(raw: unknown): ChildPrefs | null {
       typeof (c as { homeFamilyFolded?: unknown }).homeFamilyFolded === "boolean"
         ? (c as { homeFamilyFolded: boolean }).homeFamilyFolded
         : undefined,
+    // 모르는 배경·아이콘은 버리고 스티커는 그림·글자 합쳐 8개까지, 예전 크기(size)는 배율로(lib/family-studio normalizeStudio)
+    familyStudio: normalizeStudio((c as { familyStudio?: unknown }).familyStudio),
     schema: typeof (c as { schema?: unknown }).schema === "number" ? (c as { schema: number }).schema : undefined,
   };
 }
@@ -317,6 +326,8 @@ const acctChildKey = (uid: string) => `${CHILD_KEY}:${uid}`;
 
 // 타이핑 연타(설정에서 이름 한 글자마다 저장) 시 계정 저장은 묶어서 한 번만.
 let childRemoteTimer: ReturnType<typeof setTimeout> | null = null;
+/** 800ms 뒤에 올릴 값 — flushChildSave 가 기다리지 않고 바로 올릴 때 쓴다 */
+let childRemotePending: ChildPrefs | null = null;
 
 /**
  * 아이 정보를 저장한다 — **넘기지 않은 항목은 건드리지 않는다.**
@@ -344,15 +355,28 @@ export function saveChild(child: Partial<ChildPrefs> & { name: string }): void {
     // 뺀 기록은 늘 더하기만 — 넘긴 기록(방금 뺀 사람)을 저장된 기록에 합친다.
     familyRemoved: mergeRemovals(prev?.familyRemoved, child.familyRemoved),
     homeFamilyFolded: "homeFamilyFolded" in child ? child.homeFamilyFolded : prev?.homeFamilyFolded,
+    familyStudio: "familyStudio" in child ? child.familyStudio : prev?.familyStudio,
     schema: CHILD_SCHEMA,
   };
   window.localStorage.setItem(acctKey(CHILD_KEY), JSON.stringify(merged));
   // 계정별 로컬 백업 + Supabase 저장 — 로그아웃/재로그인/기기 변경에도 유지된다.
   // 연타를 800ms로 묶어 네트워크를 아낀다.
   if (childRemoteTimer) clearTimeout(childRemoteTimer);
-  childRemoteTimer = setTimeout(() => {
-    void saveChildRemote(merged).catch(() => {});
-  }, 800);
+  childRemotePending = merged;
+  childRemoteTimer = setTimeout(flushChildSave, 800);
+}
+
+/**
+ * 800ms 묶음을 기다리지 않고 **지금** 서버에 올린다(기다리는 저장이 없으면 아무것도 안 한다).
+ * 가족 사진 꾸미기 시트를 닫을 때·앱을 내릴 때(pagehide·화면 숨김) — 꾸미고 바로 앱을 닫아도 다른 기기에 간다.
+ * 그래도 못 올라갔으면(오프라인) 이 기기 값이 더 새것이라 다음 불러오기(loadChildRemote)가 다시 올린다.
+ */
+export function flushChildSave(): void {
+  if (childRemoteTimer) clearTimeout(childRemoteTimer);
+  childRemoteTimer = null;
+  const c = childRemotePending;
+  childRemotePending = null;
+  if (c) void saveChildRemote(c).catch(() => {});
 }
 
 /**
@@ -393,7 +417,14 @@ async function pushChild(sb: Sb, uid: string, child: ChildPrefs): Promise<ChildP
   if (readError) return null;
   const server = normalizeChild((data as { child?: unknown } | null)?.child);
   const fam = mergeFamily(familySide(server), familySide(child));
-  const merged: ChildPrefs = { ...child, ...fam, schema: CHILD_SCHEMA };
+  // 가족 사진관은 나중에 꾸민 쪽 — 오래 열어 둔 기기의 접기·설정 저장이 다른 기기에서 방금 꾸민 값을 되돌리거나
+  // (이 기기에 아직 사진관 값이 없으면) 지우지 않게.
+  const merged: ChildPrefs = {
+    ...child,
+    ...fam,
+    familyStudio: newerStudio(server?.familyStudio, child.familyStudio),
+    schema: CHILD_SCHEMA,
+  };
   const { data: rows, error } = await sb.from("profiles").update({ child: merged }).eq("id", uid).select("id");
   if (error || !Array.isArray(rows) || rows.length === 0) return null;
   return merged;
@@ -478,6 +509,9 @@ export function mergeRemoteChild(
     parents: oldWriter ? healParents(remote.parents, local?.parents) : (remote.parents ?? local?.parents),
     ...fam,
     homeFamilyFolded: remote.homeFamilyFolded ?? local?.homeFamilyFolded,
+    // 사진관은 나중에 꾸민 값(at)이 이긴다 — 빈 값(되돌림)도. 같은 때면 서버. 서버에 없거나(옛 화면이 버림) 이 기기
+    // 값이 더 새것(서버에 못 올라간 꾸미기)이면 이 기기 값을 지키고, 아래 loadChildRemote 가 서버에 다시 올린다.
+    familyStudio: newerStudio(remote.familyStudio, local?.familyStudio),
     schema: remote.schema ?? local?.schema,
   };
 }
@@ -547,13 +581,15 @@ export async function loadChildRemote(): Promise<ChildPrefs | null> {
       window.localStorage.setItem(acctChildKey(uid), JSON.stringify(child));
     }
     // 이 기기에만 있던 가족(서버 저장이 실패했던 그림·고정·뺀 기록 등)이 합쳐졌거나, 옛 화면이 덮어쓴 값에서
-    // 새 칸을 되살렸으면(서버에 schema 없음) 서버에도 올린다.
+    // 새 칸을 되살렸으면(서버에 schema 없음) 서버에도 올린다. 가족 사진관도 — 이 기기 값이 이겼으면(서버에 못 올라간
+    // 꾸미기, 옛 화면이 schema 2 를 찍으며 버린 칸) 서버에 다시 올린다.
     const same = (a: unknown, b: unknown) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
     if (
       remote &&
       child &&
       (!same(child.family, remote.family) ||
         !same(child.familyRemoved, remote.familyRemoved) ||
+        !same(child.familyStudio, remote.familyStudio) ||
         (remote.schema === undefined && child.schema !== undefined))
     ) {
       void pushChild(sb, uid, child).catch(() => {});
