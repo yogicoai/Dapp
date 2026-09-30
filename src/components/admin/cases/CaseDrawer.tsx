@@ -28,6 +28,7 @@ import {
   type Payment,
 } from "@/lib/admin";
 import { useEscClose } from "@/lib/use-esc-close";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { AdminLink } from "../kit/display";
 import { useAdmin } from "../shell/AdminContext";
 import { CaseDialogs, type CaseDialogState } from "./CaseDialogs";
@@ -104,6 +105,7 @@ function CasePanel({
   }, [o, loadDetail, forget]);
 
   useEscClose(onClose, !dialog);
+  useScrollLock();
 
   /** 무엇을 처리한 뒤엔 목록·상세·배지를 다시 읽는다 — 화면이 짐작으로 고치면 DB 와 어긋난다. */
   const refreshAll = useCallback(async () => {

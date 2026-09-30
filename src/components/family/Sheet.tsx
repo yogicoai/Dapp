@@ -9,6 +9,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { useEscClose } from "@/lib/use-esc-close";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { useEnter } from "./motion";
 
 const FROM_BELOW: Keyframe = { transform: "translateY(32px)", opacity: 0 };
@@ -31,6 +32,8 @@ export function Sheet({
   const panel = useRef<HTMLDivElement>(null);
   useEscClose(onClose, dismissible);
   useEnter(panel, FROM_BELOW);
+  // 떠 있는 동안 뒤 화면이 같이 밀리지 않게(사장님 2026-09-30)
+  useScrollLock();
 
   // 열리면 시트로 초점을 옮긴다 — 키보드·화면 읽기 사용자가 뒤 화면에 남지 않게.
   useEffect(() => {
@@ -49,7 +52,7 @@ export function Sheet({
       <div
         ref={panel}
         tabIndex={-1}
-        className={`relative flex max-h-[92dvh] w-full ${wide ? "max-w-3xl" : "max-w-xl"} flex-col items-center overflow-y-auto rounded-t-[28px] bg-white px-5 pt-2.5 shadow-[0_-10px_30px_rgba(0,0,0,.2)] outline-none`}
+        className={`relative flex max-h-[92dvh] w-full ${wide ? "max-w-3xl" : "max-w-xl"} flex-col items-center overflow-y-auto overscroll-contain rounded-t-[28px] bg-white px-5 pt-2.5 shadow-[0_-10px_30px_rgba(0,0,0,.2)] outline-none`}
         style={{ paddingBottom: "max(24px, env(safe-area-inset-bottom))" }}
       >
         <span aria-hidden className="h-[5px] w-10 shrink-0 rounded-full bg-neutral-200" />

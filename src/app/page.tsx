@@ -11,6 +11,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { UpdateNotice } from "@/components/UpdateNotice";
 import { DEMO_SHELF_OWNER, loadSession } from "@/lib/auth";
 import { newerStudio, type FamilyStudio } from "@/lib/family-studio";
+import { withOutfit, type MemberOutfit, type OutfitThemeId } from "@/lib/family-outfit";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import books from "@/data/sample-books.json";
@@ -82,6 +83,21 @@ export default function Home() {
    * 잠깐 되돌리지 않게, 계정 값이 오면 이것을 얹어 다시 저장한다.
    */
   const pendingStudio = useRef<FamilyStudio | null>(null);
+  // 받은 옷을 차례로 얹을 때 늘 최신 아이 정보를 보도록(두 사람 옷이 거의 같이 와도 앞 것이 지워지지 않게)
+  const childRef = useRef<ChildPrefs | null>(null);
+  useEffect(() => {
+    childRef.current = child;
+  }, [child]);
+  /** 옷 갈아입기 — 한 사람 옷 한 벌을 받았다. 가족 화면(saveMemberOutfit)처럼 이 기기에 바로, 서버는 800ms 뒤 합쳐서. */
+  function saveMemberOutfit(id: string, theme: OutfitThemeId, outfit: MemberOutfit) {
+    const c = childRef.current;
+    if (!c) return;
+    const family = (c.family ?? []).map((m) => (m.id === id ? withOutfit(m, theme, outfit) : m));
+    const next = { ...c, family };
+    childRef.current = next;
+    setChild(next);
+    saveChild({ name: c.name, family });
+  }
   /* eslint-disable react-hooks/set-state-in-effect -- 하이드레이션 안전: 저장된 아이 정보·접힘 값을 마운트 후 반영 */
   useEffect(() => {
     setChild(loadChild());
@@ -394,6 +410,8 @@ export default function Home() {
             saveChild({ name: child.name, familyStudio: s });
             setChild((c) => (c ? { ...c, familyStudio: s } : c));
           }}
+          outfitEnabled
+          onMemberOutfit={saveMemberOutfit}
         />
 
         {/* 새 소식 — 회원에게만. 한 번 닫으면 작은 알약으로 접혀 아이 화면을 가리지 않는다. */}

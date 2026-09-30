@@ -40,12 +40,16 @@
  *  - 사람을 누르면 폴짝 뛴다(움직임 줄이기 설정이면 안 뛴다).
  *  - 가족 사진관(사장님 2026-09-30, lib/family-studio): 고른 배경이 있으면 나라 배경 대신 그것을 가운데·70% 로
  *    깔고(흐림·베일은 같다), 붙인 스티커는 사람 앞(StudioStickers — 이 isolate 상자 안 z 100)에. 안 골랐으면 예전 그대로.
+ *  - 옷 갈아입기(같은 날, lib/family-outfit): 사진관에 테마 옷(studio.outfit)이 있으면 그 테마 옷을 가진 사람은 옷 그림으로
+ *    선다(wornMember — 지금 얼굴 그림에서 만든 옷일 때만, 아니면 평소 그림). 옷 그림은 머리를 원본 그대로 얹고 키가 같아서
+ *    머리 비율·얼굴 크기표를 그대로 쓴다.
  */
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { groupOrder, heightFor, type FamilyMember, type FamilyPortrait } from "@/lib/family";
 import { groupLayout, guessHead, type GroupSlot } from "@/lib/family-group-layout";
 import { faceLayout, faceSize, OPAQUE_PAD, type FaceSplit } from "@/lib/family-head";
+import { wornMember } from "@/lib/family-outfit";
 import { studioBackground, type FamilyStudio } from "@/lib/family-studio";
 import { STUDIO_BG_POSITION } from "@/lib/family-studio-catalog";
 import type { ChildPrefs } from "@/lib/prefs";
@@ -126,7 +130,9 @@ export function FamilyGroupPhoto({
   const still = useReducedMotion();
   const bgVideo = picked?.video && !still ? picked.video : null;
   const stickers = studio?.stickers ?? [];
-  const people = groupOrder(members.filter((m) => m.portrait));
+  // 테마 옷을 입었으면 옷 그림으로(없는 사람·옛 얼굴 옷은 평소 그림)
+  const worn = studio?.outfit ?? null;
+  const people = groupOrder(members.filter((m) => m.portrait).map((m) => wornMember(m, worn)));
   // 키·얼굴과 같은 나이(heightFor: 아이는 설정의 아이 나이, 형제·친구는 member.age, 없으면 아이 나이) — 둘이 다르면
   // 몸 칸이 억지로 늘거나 준다. 앞줄 아이인지(12살까지)도 이 나이로 가른다.
   const ageOf = (m: FamilyMember) => (m.role === "child" ? childAge : (m.age ?? childAge));
@@ -145,7 +151,16 @@ export function FamilyGroupPhoto({
   const box = useRef<HTMLDivElement>(null);
   const [boxW, setBoxW] = useState<number | null>(null);
   const aspects = useAspects(people.map((m) => m.portrait?.url ?? ""));
-  const ready = people.every((m) => m.portrait && aspects[m.portrait.url] !== undefined);
+  // 옷을 갈아입는 순간(주소가 바뀜) 무리가 통째로 숨지 않게 — 옷 그림 비율을 읽기 전에는 이 화면에서 이미 읽은 평소 그림
+  // 비율로 선다(키가 같아 폭만 조금 다르다). 처음 여는 화면처럼 둘 다 모르면 예전처럼 다 읽을 때까지 숨긴다.
+  const baseUrl = new Map(members.map((m) => [m.id, m.portrait?.url]));
+  const aspectOf = (m: FamilyMember): number | undefined => {
+    const own = m.portrait ? aspects[m.portrait.url] : undefined;
+    if (own !== undefined) return own;
+    const base = baseUrl.get(m.id);
+    return base ? aspects[base] : undefined;
+  };
+  const ready = people.every((m) => m.portrait && aspectOf(m) !== undefined);
 
   // 무대 폭을 잰다 — 무리가 넘치면 groupLayout 이 모두 함께 줄인다(화면 폭이 바뀌어도 따라간다).
   useEffect(() => {
@@ -159,7 +174,7 @@ export function FamilyGroupPhoto({
   // 사람마다 그림 크기(cm 단위) → 자리(px). 폭은 가로·세로 같은 배율로 세운 높이(칸을 나누면 split.scale) × 그림 비율.
   const slots: GroupSlot[] = people.map((m, i) => {
     const plan = plans[i];
-    const aspect = (m.portrait && aspects[m.portrait.url]) || FALLBACK_ASPECT;
+    const aspect = aspectOf(m) || FALLBACK_ASPECT;
     return {
       id: m.id,
       role: m.role,

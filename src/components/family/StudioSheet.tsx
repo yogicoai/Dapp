@@ -26,6 +26,9 @@
  * 시트 안 모습은 부르는 쪽 값(studio)을 따른다 — 열어 둔 사이 다른 기기에서 온 더 새 값이 오면 그것 위에 고친다.
  * 끌기·두 손가락은 손을 뗄 때 한 번 저장, 밀대는 움직일 때마다(한 칸 0.05 — 같은 값이면 저장 안 함).
  * '다 됐어요'·ESC·뒤 배경 누르기는 모두 그냥 닫기. 돌리기·겹침 순서는 없다(사장님과 가볍게 하기로 함).
+ * 옷 갈아입기(사장님 2026-09-30 — lib/family-outfit): 부르는 쪽이 onOutfit 을 주면(가족 화면·홈 — 모든 회원) 탭 위에
+ * '옷 갈아입기 · 지금 옷' 줄이 붙고, 누르면 옷 고르기(OutfitPicker)로 간다. 세로 화면에서는 그 줄 높이만큼 미리보기를 줄여
+ * 고르기 몫을 지킨다(studioSheetFit stackExtra).
  */
 
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
@@ -57,6 +60,7 @@ import {
   studioThumb,
   type AnyStickerDef,
 } from "@/lib/family-studio-catalog";
+import { OUTFIT_ORIGINAL_PREVIEW, outfitTheme } from "@/lib/family-outfit";
 import { flushChildSave, type ChildPrefs } from "@/lib/prefs";
 import type { Colors } from "./family-ui";
 import { FamilyGroupPhoto } from "./FamilyGroupPhoto";
@@ -65,10 +69,18 @@ import { Sheet } from "./Sheet";
 import { StickerEditor, TextStickerFace } from "./StudioStickers";
 import { BigButton } from "./ui";
 
+/** '옷 갈아입기' 줄 높이(위 여백 8 + 줄 44) — 세로 화면에서 붙어 있는 칸에 더해진다 */
+const OUTFIT_ROW_H = 52;
+
 /* 화면 모양(세로 · 가로로 눕힌 폰 두 칸) — 셈은 lib/family-studio studioSheetFit. useSyncExternalStore 가 견줄 수 있게
  * 글자로("stack:200" · "side:150" — 모양:미리보기 높이). 창 크기가 바뀌면(돌리기·주소창) 다시 잰다. */
 function fitNow(): string {
   const f = studioSheetFit(window.innerWidth, window.innerHeight);
+  return `${f.side ? "side" : "stack"}:${f.height}`;
+}
+/** '옷 갈아입기' 줄이 붙을 때 */
+function fitNowWithOutfit(): string {
+  const f = studioSheetFit(window.innerWidth, window.innerHeight, OUTFIT_ROW_H);
   return `${f.side ? "side" : "stack"}:${f.height}`;
 }
 function subscribeFit(cb: () => void): () => void {
@@ -92,6 +104,7 @@ export function StudioSheet({
   studio,
   onChange,
   onClose,
+  onOutfit,
 }: {
   colors: Colors;
   /** 단체 사진에 설 사람(homeMembers) */
@@ -105,9 +118,11 @@ export function StudioSheet({
   /** 바뀔 때마다(꾸민 때 at 이 찍힌 값) — 부르는 쪽이 saveChild 로 저장한다 */
   onChange: (s: FamilyStudio) => void;
   onClose: () => void;
+  /** 옷 갈아입기로 가기 — 주면 탭 위에 '옷 갈아입기 · 지금 옷' 줄이 붙는다 */
+  onOutfit?: () => void;
 }) {
   const { accent, accentDark } = colors;
-  const fit = useSyncExternalStore(subscribeFit, fitNow, () => "stack:200");
+  const fit = useSyncExternalStore(subscribeFit, onOutfit ? fitNowWithOutfit : fitNow, () => "stack:200");
   const side = fit.startsWith("side:");
   const height = Number(fit.slice(fit.indexOf(":") + 1)) || 200;
   const top = useRef<HTMLDivElement>(null);
@@ -329,6 +344,36 @@ export function StudioSheet({
     </div>
   );
 
+  /* 옷 갈아입기 줄 — 지금 입은 테마(없으면 원래 옷)와 그 미리보기, 누르면 옷 고르기로 */
+  const wornTheme = outfitTheme(draft.outfit);
+  const outfitRow = onOutfit ? (
+    <button
+      type="button"
+      onClick={onOutfit}
+      className="mt-2 flex h-11 w-full items-center gap-2.5 rounded-2xl bg-stone-50 pl-1.5 pr-3 text-left shadow-[inset_0_0_0_1px_#f0ede8] transition hover:bg-stone-100"
+    >
+      <span className="relative h-8 w-14 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={wornTheme?.preview ?? OUTFIT_ORIGINAL_PREVIEW}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </span>
+      <span className="min-w-0 flex-1 truncate text-[15px] font-extrabold text-neutral-800">
+        옷 갈아입기{" "}
+        <span className="font-bold" style={{ color: accentDark }}>
+          · {wornTheme?.label ?? "원래 옷"}
+        </span>
+      </span>
+      <span aria-hidden className="shrink-0 text-xl font-extrabold leading-none text-neutral-400">
+        ›
+      </span>
+    </button>
+  ) : null;
+
   /* 스티커·글자 칸 위 — 몇 개 붙였나(그림·글자 합쳐) · 모두 떼기. 모두 뗀 바로 뒤엔 되돌리기(아이가 잘못 눌러도). */
   const countRow = canUndo ? (
     <div
@@ -459,6 +504,7 @@ export function StudioSheet({
             </div>
             <div className="min-w-0 flex-1">
               {title}
+              {outfitRow}
               <div className="sticky top-0 z-10 bg-white pb-1 pt-2">{tabs}</div>
               {picker}
               {done}
@@ -466,11 +512,12 @@ export function StudioSheet({
           </div>
         ) : (
           <>
-            {/* 제목은 내리면 올라가고, 미리보기·크기 줄·탭은 위에 붙어 있다(고르면서 바로 본다) */}
+            {/* 제목은 내리면 올라가고, 미리보기·크기 줄·(옷 갈아입기 줄)·탭은 위에 붙어 있다(고르면서 바로 본다) */}
             {title}
             <div className="sticky top-0 z-10 w-full bg-white pb-2 pt-2">
               {photo}
               {sizeRow}
+              {outfitRow}
               <div className="mt-1">{tabs}</div>
             </div>
             {picker}

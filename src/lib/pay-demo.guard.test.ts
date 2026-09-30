@@ -62,6 +62,7 @@ const ALLOWED = new Set([
   "@/lib/business-info",
   "@/lib/auth", // 아래에서 모양을 따로 본다(loadSession 하나만)
   "@/lib/site-info-client", // 사업자 정보·약관 링크는 관리실에서 바꾼다 — 공개 정보 GET 하나뿐인 읽기 전용 훅만 허용
+  "@/lib/scroll-lock", // 처리 가림막이 떠 있는 동안 뒤 화면 잠금 — 브라우저 모양만 바꾸고 서버·돈과 무관
 ]);
 const IMPORT_RE = /\bfrom\s*["']([^"']+)["']|\bimport\s*\(\s*["']([^"']+)["']\s*\)|\bimport\s+["']([^"']+)["']/g;
 

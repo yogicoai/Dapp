@@ -15300,5 +15300,375 @@
     "emotion": "normal",
     "intensity": null,
     "text": "신데렐라는 왕자님과 결혼해 왕궁으로 갔어요.\n부엌의 생쥐 친구들도 함께 갔지요.\n착한 마음은 언젠가 반드시 빛나는 법이랍니다.\n두 사람은 오래오래 행복하게 살았어요."
+  },
+  "classic/beauty/seg-tc-minjung-p1-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "옛날 어느 마을에 상인과 세 딸이 살았어요.\n두 언니는 예쁜 옷과 보석을 좋아했지만,\n막내 벨은 책과 꽃을 더 좋아했지요.\n마음씨가 고와 마을 사람들은 벨을 참 아꼈답니다."
+  },
+  "classic/beauty/seg-tc-minjung-p2-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "어느 날 아버지가 먼 장사를 떠나게 되었어요."
+  },
+  "classic/beauty/seg-cast-p2-1.mp3": {
+    "voice": "tc-daejin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"무엇을 사다 줄까?\""
+  },
+  "classic/beauty/seg-cast-p2-2.mp3": {
+    "voice": "tc-jinseo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"저는 비단 드레스요!\"",
+    "tempo": 0.8
+  },
+  "classic/beauty/seg-cast-p2-3.mp3": {
+    "voice": "tc-jinseo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"저는 진주 목걸이요!\"",
+    "tempo": 0.8
+  },
+  "classic/beauty/seg-tc-minjung-p2-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "벨은 가만히 웃으며 말했지요."
+  },
+  "classic/beauty/seg-cast-p2-5.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"저는 장미 한 송이면 돼요.\""
+  },
+  "classic/beauty/say-p2-eldersister.mp3": {
+    "voice": "tc-jinseo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "저는 비단 드레스요!",
+    "tempo": 0.8
+  },
+  "classic/beauty/say-p2-eldersister2.mp3": {
+    "voice": "tc-jinseo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "저는 진주 목걸이요!",
+    "tempo": 0.8
+  },
+  "classic/beauty/say-p2-belle.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "저는 장미 한 송이면 돼요."
+  },
+  "classic/beauty/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "장사를 마치고 돌아오는 길이었어요.\n갑자기 눈보라가 몰아쳐 길이 사라져 버렸지요.\n아버지는 밤새 숲을 헤매다가,\n나무 사이로 커다란 성을 발견했답니다."
+  },
+  "classic/beauty/seg-tc-minjung-p4-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "성문은 저절로 스르르 열렸어요.\n안에는 아무도 없는데 벽난로에 불이 활활 타고,\n식탁에는 따뜻한 수프가 차려져 있었지요.\n아버지는 고맙다고 인사하고 하룻밤을 묵었답니다."
+  },
+  "classic/beauty/seg-tc-minjung-p5-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이튿날 아침, 성을 나서던 아버지는,\n눈 속에 핀 장미 정원을 보았어요.\n한겨울인데도 새빨간 장미가 활짝 피어 있었지요."
+  },
+  "classic/beauty/seg-cast-p5-1.mp3": {
+    "voice": "tc-daejin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"아, 우리 벨이 부탁한 게 이거였지!\""
+  },
+  "classic/beauty/say-p5-father.mp3": {
+    "voice": "tc-daejin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아, 우리 벨이 부탁한 게 이거였지!"
+  },
+  "classic/beauty/seg-tc-minjung-p6-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아버지가 장미 한 송이를 톡 꺾는 순간이었어요.\n우르릉— 성 쪽에서 커다란 그림자가 다가왔어요.\n온몸이 털로 덮이고 뿔이 난 야수였지요."
+  },
+  "classic/beauty/seg-cast-p6-1.mp3": {
+    "voice": "tc-mckong",
+    "emotion": "sad",
+    "intensity": 0.35,
+    "text": "\"내 정원의 장미를 꺾다니!\""
+  },
+  "classic/beauty/say-p6-beast.mp3": {
+    "voice": "tc-mckong",
+    "emotion": "sad",
+    "intensity": 0.35,
+    "text": "내 정원의 장미를 꺾다니!"
+  },
+  "classic/beauty/seg-tc-minjung-p7-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "야수는 한참 아버지를 내려다보다가 말했어요."
+  },
+  "classic/beauty/seg-cast-p7-1.mp3": {
+    "voice": "tc-mckong",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그 장미는 내가 아끼던 것이다.\n꺾어 갔으니 그냥 보낼 수는 없다.\n누군가는 이 성에 남아야 한다.\""
+  },
+  "classic/beauty/seg-tc-minjung-p7-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아버지는 그 자리에 무릎을 꿇었어요."
+  },
+  "classic/beauty/seg-cast-p7-3.mp3": {
+    "voice": "tc-daejin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그러면 딸들에게 작별 인사만 하게 해 주세요.\""
+  },
+  "classic/beauty/seg-tc-minjung-p7-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "야수는 한참 말이 없다가, 고개를 끄덕였답니다."
+  },
+  "classic/beauty/say-p7-beast.mp3": {
+    "voice": "tc-mckong",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 장미는 내가 아끼던 것이다. 꺾어 갔으니 그냥 보낼 수는 없다. 누군가는 이 성에 남아야 한다."
+  },
+  "classic/beauty/say-p7-father.mp3": {
+    "voice": "tc-daejin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러면 딸들에게 작별 인사만 하게 해 주세요."
+  },
+  "classic/beauty/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "집에 돌아온 아버지는 장미를 내밀며,\n있었던 일을 모두 이야기했어요.\n언니들은 울음을 터뜨렸지만,\n벨은 조용히 장미를 받아 들었지요."
+  },
+  "classic/beauty/seg-cast-p8-1.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"제가 가겠어요, 아버지.\""
+  },
+  "classic/beauty/say-p8-belle.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "제가 가겠어요, 아버지."
+  },
+  "classic/beauty/seg-tc-minjung-p9-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "벨이 성에 도착하자 야수가 맞으러 나왔어요.\n벨은 무서워 고개를 들 수 없었지요.\n야수는 한참 벨을 바라보다가,\n조용히 말했어요."
+  },
+  "classic/beauty/seg-cast-p9-1.mp3": {
+    "voice": "tc-mckong",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"이곳에서 너는 무엇이든 해도 좋다.\""
+  },
+  "classic/beauty/say-p9-beast.mp3": {
+    "voice": "tc-mckong",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이곳에서 너는 무엇이든 해도 좋다."
+  },
+  "classic/beauty/seg-tc-minjung-p10-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "성에는 벨의 방이 이미 준비되어 있었어요.\n창가에는 꽃병이 놓이고, 벽 한 면은,\n천장까지 책으로 가득한 방이었지요."
+  },
+  "classic/beauty/seg-cast-p10-1.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"이 책을… 제가 다 읽어도 되나요?\""
+  },
+  "classic/beauty/say-p10-belle.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이 책을… 제가 다 읽어도 되나요?"
+  },
+  "classic/beauty/seg-tc-minjung-p11-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "날마다 저녁이면 둘은 한 식탁에 앉았어요.\n야수는 말이 서툴러 자주 입을 다물었지만,\n벨의 이야기를 끝까지 들어 주었지요.\n어느새 벨도 조금씩 웃게 되었답니다."
+  },
+  "classic/beauty/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "벨은 성의 정원을 가꾸기 시작했어요.\n잡초를 뽑고, 물을 주고, 얼었던 흙을 풀었지요.\n야수는 멀찍이서 그 모습을 지켜보곤 했답니다."
+  },
+  "classic/beauty/seg-tc-minjung-p13-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "눈이 몹시 내린 어느 날이었어요.\n야수가 커다란 손으로 무언가를 감싸 안고 있었지요.\n가만히 보니 날개를 다친 작은 새였어요.\n벨은 그 모습을 오래오래 바라보았답니다."
+  },
+  "classic/beauty/seg-tc-minjung-p14-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그날 밤, 벨이 먼저 말을 걸었어요."
+  },
+  "classic/beauty/seg-cast-p14-1.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"낮에 보았어요.\n다친 새를 감싸 안고 계시던 것.\n손이 참 다정하시더라고요.\""
+  },
+  "classic/beauty/seg-tc-minjung-p14-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "야수는 놀라 벨을 바라보았어요.\n무어라 답해야 할지 몰라 한참 있다가,\n처음으로 살며시 웃어 보였답니다."
+  },
+  "classic/beauty/say-p14-belle.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "낮에 보았어요. 다친 새를 감싸 안고 계시던 것. 손이 참 다정하시더라고요."
+  },
+  "classic/beauty/seg-tc-minjung-p15-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하지만 벨은 아버지가 그리웠어요.\n야수는 마법 거울을 내밀었지요.\n거울 속에는 자리에 누워 앓고 있는,\n아버지의 모습이 비쳤답니다."
+  },
+  "classic/beauty/seg-tc-minjung-p16-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "야수는 한참 거울을 들여다보다가 말했어요."
+  },
+  "classic/beauty/seg-cast-p16-1.mp3": {
+    "voice": "tc-mckong",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"다녀오너라. 아버지께 가 보아라.\""
+  },
+  "classic/beauty/seg-tc-minjung-p16-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러고는 창밖 정원의 장미를 가리켰지요."
+  },
+  "classic/beauty/seg-cast-p16-3.mp3": {
+    "voice": "tc-mckong",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "\"다만… 저 장미가 다 지기 전에 돌아와 다오.\n꽃이 모두 지고 나면,\n나는 더 기다릴 힘이 없단다.\""
+  },
+  "classic/beauty/seg-tc-minjung-p16-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "벨은 눈이 붉어진 채 고개를 끄덕였어요."
+  },
+  "classic/beauty/seg-cast-p16-5.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "sad",
+    "intensity": 0.3,
+    "text": "\"…꼭 돌아올게요.\""
+  },
+  "classic/beauty/seg-tc-minjung-p16-6.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "야수는 성문 앞에서 오래오래 손을 흔들었답니다."
+  },
+  "classic/beauty/say-p16-beast.mp3": {
+    "voice": "tc-mckong",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "다만… 저 장미가 다 지기 전에 돌아와 다오. 꽃이 모두 지고 나면 나는 더 기다릴 힘이 없단다."
+  },
+  "classic/beauty/say-p16-belle.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "sad",
+    "intensity": 0.3,
+    "text": "…꼭 돌아올게요."
+  },
+  "classic/beauty/seg-tc-minjung-p17-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "벨이 돌아온 모습을 보자,\n아버지의 병은 씻은 듯이 나았어요.\n언니들은 벨의 손을 붙잡고 놓아 주지 않았지요.\n하루가 이틀이 되고, 이틀이 사흘이 되었답니다."
+  },
+  "classic/beauty/seg-tc-minjung-p18-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그러던 어느 밤, 벨은 꿈을 꾸었어요.\n성의 장미가 한 잎 두 잎 시들어 가고,\n그 곁에 야수가 쓰러져 있는 꿈이었지요.\n벨은 벌떡 일어났어요."
+  },
+  "classic/beauty/seg-cast-p18-1.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"안 돼, 내가 약속했잖아!\""
+  },
+  "classic/beauty/seg-tc-minjung-p19-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "벨은 밤길을 달려 성으로 돌아갔어요.\n정원에 이르자 장미는 거의 다 시들어 있었지요.\n그 아래 야수가 눈을 감고 누워 있었어요.\n숨소리가 아주 가늘었답니다."
+  },
+  "classic/beauty/seg-tc-minjung-p20-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "벨은 야수의 손을 꼭 잡았어요."
+  },
+  "classic/beauty/seg-cast-p20-1.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "\"돌아왔어요. 제가 너무 늦었죠.\n…저는 당신을 사랑해요.\""
+  },
+  "classic/beauty/seg-tc-minjung-p20-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "벨의 눈물이 야수의 손등에 뚝 떨어졌답니다."
+  },
+  "classic/beauty/say-p20-belle.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "돌아왔어요. 제가 너무 늦었죠. …저는 당신을 사랑해요."
+  },
+  "classic/beauty/seg-tc-minjung-p21-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그 순간, 눈부신 빛이 정원을 가득 채웠어요.\n빛이 걷히자 야수가 있던 자리에,\n젊고 다정한 왕자가 앉아 있었지요.\n마법에 걸려 있었던 거예요."
+  },
+  "classic/beauty/seg-tc-minjung-p22-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "성에는 다시 봄이 찾아왔어요.\n아버지와 두 언니도 성으로 와서,\n이제는 온 가족이 함께 살게 되었지요.\n봄볕 드는 정원에서 장미를 가꾸며,\n다 같이 오래오래 행복하게 살았답니다."
   }
 }

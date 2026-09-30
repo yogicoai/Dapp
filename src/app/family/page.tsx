@@ -40,6 +40,9 @@
  *  - 순서는 ROLE_ORDER(아이 → 엄마 → 아빠 → 형제자매 → 할머니 → 할아버지 → 단짝 친구).
  *    단짝 친구는 한 명(canAddRole)이고 가족 명패·숫자에 안 든다. 명패는 ourChildrenNames 로(하온·하린이네 가족).
  *  - 모아 보기·완성 화면의 단체 사진은 홈과 같이 homeMembers('홈 가족 사진에 보이기'를 켠 고정된 사람).
+ *  - 옷 갈아입기(사장님 2026-09-30 — lib/family-outfit, 모든 회원): 꾸미기 시트의 '옷 갈아입기' 줄 → 옷 고르기
+ *    (OutfitPicker). 사람마다 받은 옷은 member.outfits 에(saveMemberOutfit — 사람 넣기·생김새와 같은 'soon' 저장), 가족이 입은
+ *    테마·짝 배경은 사진관 값에(saveStudio). 돈이 들지 않는다(서버가 미리 그린 몸에 원래 머리를 얹기만 한다).
  */
 
 import { useRouter } from "next/navigation";
@@ -63,6 +66,7 @@ import { LooksChangedSheet } from "@/components/family/LooksChangedSheet";
 import { LooksView } from "@/components/family/LooksView";
 import { MembersView } from "@/components/family/MembersView";
 import { MemberSheet } from "@/components/family/MemberSheet";
+import { OutfitPicker } from "@/components/family/OutfitPicker";
 import { ReviewView } from "@/components/family/ReviewView";
 import { StudioSheet } from "@/components/family/StudioSheet";
 import { BigButton } from "@/components/family/ui";
@@ -92,6 +96,7 @@ import {
   type FamilyRole,
 } from "@/lib/family";
 import { cleanBodyStretch, cleanHeadRatio } from "@/lib/family-head";
+import { withOutfit, type MemberOutfit, type OutfitThemeId } from "@/lib/family-outfit";
 import { PHOTO_FALLBACK_NOTE, PHOTO_TOO_BIG_MESSAGE, readPhotoFallback } from "@/lib/family-photo";
 import { newerStudio, type FamilyStudio } from "@/lib/family-studio";
 import {
@@ -131,6 +136,8 @@ type Overlay =
   | { kind: "changed"; id: string; diff: string[]; fromAlbum?: boolean }
   /** 가족 사진 꾸미기(가족 사진관 — 배경·스티커) */
   | { kind: "studio" }
+  /** 옷 갈아입기(꾸미기 시트에서) */
+  | { kind: "outfit" }
   | null;
 
 /** 동시에 그리는 사람 수 — 서버·이미지 모델에 한꺼번에 몰리지 않게 */
@@ -539,6 +546,14 @@ export default function FamilyPage() {
 
   function setMemberLooks(id: string, p: Partial<FamilyLooks>) {
     patchMember(id, (m) => ({ ...m, looks: { ...(m.looks ?? {}), ...p } }), "soon");
+  }
+
+  /**
+   * 옷 갈아입기 — 한 사람의 테마 옷 한 벌을 받았다. 지금 얼굴 그림에서 만든 옷만 넣고(withOutfit — 옛 얼굴 옷은 같이 치운다),
+   * 사람 넣기·생김새처럼 'soon'(이 기기에 바로, 서버는 800ms 뒤 서버 값과 합쳐서 — 옷 시트를 닫으면 바로 올린다).
+   */
+  function saveMemberOutfit(id: string, theme: OutfitThemeId, outfit: MemberOutfit) {
+    patchMember(id, (m) => withOutfit(m, theme, outfit), "soon");
   }
 
   function startLooks(ids: string[], mode: "fix" | "edit", from: From, resume = false) {
@@ -1480,6 +1495,22 @@ export default function FamilyPage() {
           studio={child.familyStudio}
           onChange={saveStudio}
           onClose={() => setOverlay(null)}
+          onOutfit={() => setOverlay({ kind: "outfit" })}
+        />
+      )}
+
+      {overlay?.kind === "outfit" && child && (
+        <OutfitPicker
+          colors={colors}
+          members={homeMembers(family)}
+          childAge={child.age}
+          childGender={child.gender}
+          parents={child.parents}
+          background={theme.background}
+          studio={child.familyStudio}
+          onStudio={saveStudio}
+          onOutfit={saveMemberOutfit}
+          onClose={() => setOverlay({ kind: "studio" })}
         />
       )}
 

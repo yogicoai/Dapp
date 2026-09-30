@@ -29,6 +29,7 @@ import {
   type StudioBackground,
   type StudioGroup,
 } from "./family-studio-catalog.ts";
+import { isOutfitTheme, outfitBackground, readOutfitTheme, type OutfitThemeId } from "./family-outfit.ts";
 
 /**
  * 붙인 스티커 하나 — icon 은 그림 스티커 이름 또는 글자 스티커 id(txt-…), x·y 는 스티커 가운데(사진 상자의 0~1 비율),
@@ -37,10 +38,13 @@ import {
 export type StudioSticker = { icon: string; x: number; y: number; scale: number };
 /**
  * bg = 배경 slug(lib/family-studio-catalog), null = 동화 나라(기본 — 지금 나라 배경).
+ * outfit = 가족이 함께 입은 테마 옷(lib/family-outfit — 사장님 2026-09-30 '옷 갈아입기'). 없으면 평소 옷. 사람마다 그 테마 옷이
+ *   있고 지금 얼굴 그림에서 만든 것일 때만 단체 사진이 그 옷을 세운다(FamilyGroupPhoto — 없는 사람은 평소 옷).
  * at = 마지막으로 꾸민 때(ISO) — 기기·서버 값을 합칠 때 **더 새것이 이긴다**(newerStudio, 가족 familyAt 과 같은 방식).
  * 꾸미기 시트가 바꿀 때마다 찍는다(stampStudio). 없으면 가장 옛것으로 본다.
+ * 칸 순서는 늘 bg · stickers · outfit · at(저장값을 글자로 견주는 곳이 있어 같은 값이면 같은 글자가 되게).
  */
-export type FamilyStudio = { bg: string | null; stickers: StudioSticker[]; at?: string };
+export type FamilyStudio = { bg: string | null; stickers: StudioSticker[]; outfit?: OutfitThemeId; at?: string };
 
 /**
  * 스티커는 그림·글자 합쳐 8개까지. 처음(그림만)엔 6개였는데, 글자 스티커도 같은 칸을 쓰니 '우리 가족'·'사랑해'를
@@ -193,10 +197,12 @@ function scaleOf(s: { scale?: unknown; size?: unknown }, kind: StickerKind): num
  *  - bg: 아는 배경(숨긴 것 포함)이 아니면 null(기본으로).
  *  - stickers: 아는 아이콘(그림·글자)에 x·y 가 숫자인 것만(사진 안으로 당김), 크기는 배율로(예전 size 옮기기·범위 안으로),
  *    앞의 STUDIO_MAX 개만. 배열이 아니면 [].
+ *  - outfit: 아는 테마만(예전 이름 'xmas' 는 'christmas' 로, 모르는 테마는 칸째 버린다 — 평소 옷). 옷 갈아입기 전에 저장한
+ *    값에는 없다.
  */
 export function normalizeStudio(raw: unknown): FamilyStudio | undefined {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
-  const v = raw as { bg?: unknown; stickers?: unknown };
+  const v = raw as { bg?: unknown; stickers?: unknown; outfit?: unknown };
   const bg = typeof v.bg === "string" && studioBackground(v.bg) ? v.bg : null;
   const stickers: StudioSticker[] = [];
   if (Array.isArray(v.stickers)) {
@@ -210,12 +216,18 @@ export function normalizeStudio(raw: unknown): FamilyStudio | undefined {
     }
   }
   const at = (v as { at?: unknown }).at;
-  return typeof at === "string" && Number.isFinite(Date.parse(at)) ? { bg, stickers, at } : { bg, stickers };
+  const outfit = readOutfitTheme(v.outfit);
+  return {
+    bg,
+    stickers,
+    ...(outfit ? { outfit } : {}),
+    ...(typeof at === "string" && Number.isFinite(Date.parse(at)) ? { at } : {}),
+  };
 }
 
 /** 꾸민 때를 찍는다 — 꾸미기 시트가 바꿀 때마다(서버·다른 기기 값과 합칠 때 더 새것이 이기게) */
 export function stampStudio(s: FamilyStudio, now: Date = new Date()): FamilyStudio {
-  return { bg: s.bg, stickers: s.stickers, at: now.toISOString() };
+  return { bg: s.bg, stickers: s.stickers, ...(s.outfit ? { outfit: s.outfit } : {}), at: now.toISOString() };
 }
 
 const stampOf = (s: FamilyStudio): number => {
@@ -265,7 +277,12 @@ export type StudioAction =
   | { type: "remove"; index: number }
   | { type: "clearStickers" }
   /** 스티커 목록을 통째로 — '모두 떼기' 되돌리기. 불러올 때처럼 거른다(모르는 아이콘 빼기·STUDIO_MAX 개까지·사진 안으로). */
-  | { type: "stickers"; stickers: readonly StudioSticker[] };
+  | { type: "stickers"; stickers: readonly StudioSticker[] }
+  /**
+   * 가족 옷 테마 — 테마를 고르면 배경도 그 테마 짝 배경으로 바뀐다(그 뒤에 배경만 따로 바꿔도 된다).
+   * null('원래 옷으로')은 옷만 벗고 배경은 그대로. 모르는 테마·같은 테마·같은 배경이면 그대로.
+   */
+  | { type: "outfit"; theme: OutfitThemeId | null };
 
 const validIndex = (s: FamilyStudio, i: number) => Number.isInteger(i) && i >= 0 && i < s.stickers.length;
 
@@ -310,14 +327,25 @@ export function studioReducer(s: FamilyStudio, a: StudioAction): FamilyStudio {
       const stickers = normalizeStudio({ stickers: a.stickers })?.stickers ?? [];
       return JSON.stringify(stickers) === JSON.stringify(s.stickers) ? s : { ...s, stickers };
     }
+    case "outfit": {
+      if (a.theme === null) {
+        if (!s.outfit) return s;
+        return { bg: s.bg, stickers: s.stickers, ...(s.at ? { at: s.at } : {}) };
+      }
+      if (!isOutfitTheme(a.theme)) return s;
+      const pair = outfitBackground(a.theme);
+      const bg = pair && studioBackground(pair) ? pair : s.bg;
+      if (s.outfit === a.theme && s.bg === bg) return s;
+      return { bg, stickers: s.stickers, outfit: a.theme, ...(s.at ? { at: s.at } : {}) };
+    }
     default:
       return s;
   }
 }
 
-/** 아무것도 안 바꾼 모습(나라 배경·스티커 없음)인가 — 저장값이 없어도 기본 */
+/** 아무것도 안 바꾼 모습(나라 배경·스티커 없음·평소 옷)인가 — 저장값이 없어도 기본 */
 export function isDefaultStudio(s: FamilyStudio | null | undefined): boolean {
-  return !s || (s.bg === null && s.stickers.length === 0);
+  return !s || (s.bg === null && s.stickers.length === 0 && !s.outfit);
 }
 
 /* ── 꾸미기 시트 모양(components/family/StudioSheet) — 창 크기만 보는 셈이라 여기서 시험한다 ── */
@@ -356,8 +384,9 @@ export const sheetRoom = (vh: number): number => vh * 0.92 - SHEET_CHROME;
  *    고르기가 STACK_LIST_MIN 은 보이게 줄인다(140 까지 — 아이폰 SE 사파리처럼 낮은 세로 화면).
  *  - 가로로 눕힌 폰(side — 높이 560 미만, 앱은 가로 고정): 붙여 두면 고르기가 아예 안 보인다(2026-09-30 검토) —
  *    왼쪽에 미리보기·크기 줄, 오른쪽에 고르기. 미리보기 폭 = 높이 × SIDE_ASPECT, 시트 폭의 55%까지. 110~180.
+ *  stackExtra — 세로일 때 붙어 있는 칸에 더 붙는 줄 높이(px, '옷 갈아입기' 줄 — 개발자 모드). 고르기 몫을 지키려고 미리보기를 그만큼 줄인다.
  */
-export function studioSheetFit(vw: number, vh: number): { side: boolean; height: number } {
+export function studioSheetFit(vw: number, vh: number, stackExtra = 0): { side: boolean; height: number } {
   const base = vw >= 640 ? 240 : 200;
   const room = sheetRoom(vh);
   if (vh < SIDE_MAX_H && vw > vh && vw >= SIDE_MIN_W) {
@@ -365,5 +394,8 @@ export function studioSheetFit(vw: number, vh: number): { side: boolean; height:
     const h = Math.min(180, Math.floor(room - SIDE_PINNED), Math.floor((contentW * 0.55) / SIDE_ASPECT));
     return { side: true, height: Math.max(110, h) };
   }
-  return { side: false, height: Math.max(140, Math.min(base, Math.floor(room - STACK_PINNED - STACK_LIST_MIN))) };
+  return {
+    side: false,
+    height: Math.max(140, Math.min(base, Math.floor(room - STACK_PINNED - Math.max(0, stackExtra) - STACK_LIST_MIN))),
+  };
 }

@@ -2263,7 +2263,8 @@
             "src": "/classic/redridinghood/seg-p1-0.mp3",
             "text": "옛날 어느 마을에 귀여운 여자아이가 살았어요.\n할머니가 떠 주신 빨간 모자가 어찌나 잘 어울리는지,\n다들 빨간 모자라고 불렀지요.\n아이도 그 모자를 제일 아꼈답니다."
           }
-        ]
+        ],
+        "video": "/classic/redridinghood/p1.mp4"
       },
       {
         "n": 2,
@@ -3350,7 +3351,8 @@
             "src": "/classic/bremen/seg-cast-p6-1.mp3",
             "text": "\"나쁜 도둑들이야. 우리가 쫓아내자!\""
           }
-        ]
+        ],
+        "video": "/classic/bremen/p6.mp4"
       },
       {
         "n": 7,
@@ -3801,7 +3803,8 @@
             "src": "/classic/bremen/seg-cast-p16-1.mp3",
             "text": "\"여기가 우리의 브레멘이야.\""
           }
-        ]
+        ],
+        "video": "/classic/bremen/p16.mp4"
       }
     ],
     "narrators": [
@@ -12741,6 +12744,730 @@
             "who": "narration",
             "src": "/classic/oz/seg-p20-3.mp3",
             "text": "\n도로시가 활짝 웃으며 대답했답니다."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "classic-beauty",
+    "lang": "ko",
+    "title": "미녀와 야수",
+    "summary": "장미 한 송이에서 시작된 약속 — 벨이 외로운 야수의 다정한 마음을 알아보는 이야기.",
+    "narrator": "tc-minjung",
+    "narrators": [
+      "tc-minjung"
+    ],
+    "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/cover.webp?v=1",
+    "voiceCast": {
+      "narration": "tc-minjung",
+      "belle": "tc-jiwoo",
+      "beast": "tc-mckong",
+      "father": "tc-daejin",
+      "eldersister": "tc-jinseo"
+    },
+    "roleOf": {
+      "벨": "belle",
+      "야수": "beast",
+      "왕자": "beast",
+      "아버지": "father",
+      "상인": "father",
+      "언니": "eldersister",
+      "언니들": "eldersister"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "text": "옛날 어느 마을에 상인과 세 딸이 살았어요.\n두 언니는 예쁜 옷과 보석을 좋아했지만\n막내 벨은 책과 꽃을 더 좋아했지요.\n마음씨가 고와 마을 사람들은 벨을 참 아꼈답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p1.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p1-0.mp3",
+            "text": "옛날 어느 마을에 상인과 세 딸이 살았어요.\n두 언니는 예쁜 옷과 보석을 좋아했지만\n막내 벨은 책과 꽃을 더 좋아했지요.\n마음씨가 고와 마을 사람들은 벨을 참 아꼈답니다."
+          }
+        ]
+      },
+      {
+        "n": 2,
+        "text": "어느 날 아버지가 먼 장사를 떠나게 되었어요.\n\"무엇을 사다 줄까?\"\n\"저는 비단 드레스요!\" \"저는 진주 목걸이요!\"\n벨은 가만히 웃으며 말했지요.\n\"저는 장미 한 송이면 돼요.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p2.webp?v=1",
+        "lines": [
+          {
+            "text": "무엇을 사다 줄까?",
+            "who": "father",
+            "feel": "normal"
+          },
+          {
+            "text": "저는 비단 드레스요!",
+            "who": "eldersister",
+            "feel": "normal"
+          },
+          {
+            "text": "저는 진주 목걸이요!",
+            "who": "eldersister",
+            "feel": "normal"
+          },
+          {
+            "text": "저는 장미 한 송이면 돼요.",
+            "who": "belle",
+            "feel": "normal"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "eldersister",
+            "line": "저는 비단 드레스요!",
+            "box": [
+              170,
+              45,
+              730,
+              205
+            ],
+            "audio": "/classic/beauty/say-p2-eldersister.mp3",
+            "feel": "normal"
+          },
+          {
+            "label": "eldersister",
+            "line": "저는 진주 목걸이요!",
+            "box": [
+              238,
+              175,
+              720,
+              295
+            ],
+            "audio": "/classic/beauty/say-p2-eldersister2.mp3",
+            "feel": "normal"
+          },
+          {
+            "label": "belle",
+            "line": "저는 장미 한 송이면 돼요.",
+            "box": [
+              258,
+              288,
+              728,
+              400
+            ],
+            "audio": "/classic/beauty/say-p2-belle.mp3",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p2-0.mp3",
+            "text": "어느 날 아버지가 먼 장사를 떠나게 되었어요.\n"
+          },
+          {
+            "who": "father",
+            "src": "/classic/beauty/seg-cast-p2-1.mp3",
+            "text": "\"무엇을 사다 줄까?\"\n"
+          },
+          {
+            "who": "eldersister",
+            "src": "/classic/beauty/seg-cast-p2-2.mp3",
+            "text": "\"저는 비단 드레스요!\" "
+          },
+          {
+            "who": "eldersister",
+            "src": "/classic/beauty/seg-cast-p2-3.mp3",
+            "text": "\"저는 진주 목걸이요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p2-4.mp3",
+            "text": "\n벨은 가만히 웃으며 말했지요.\n"
+          },
+          {
+            "who": "belle",
+            "src": "/classic/beauty/seg-cast-p2-5.mp3",
+            "text": "\"저는 장미 한 송이면 돼요.\""
+          }
+        ]
+      },
+      {
+        "n": 3,
+        "text": "장사를 마치고 돌아오는 길이었어요.\n갑자기 눈보라가 몰아쳐 길이 사라져 버렸지요.\n아버지는 밤새 숲을 헤매다가\n나무 사이로 커다란 성을 발견했답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p3.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p3-0.mp3",
+            "text": "장사를 마치고 돌아오는 길이었어요.\n갑자기 눈보라가 몰아쳐 길이 사라져 버렸지요.\n아버지는 밤새 숲을 헤매다가\n나무 사이로 커다란 성을 발견했답니다."
+          }
+        ]
+      },
+      {
+        "n": 4,
+        "text": "성문은 저절로 스르르 열렸어요.\n안에는 아무도 없는데 벽난로에 불이 활활 타고\n식탁에는 따뜻한 수프가 차려져 있었지요.\n아버지는 고맙다고 인사하고 하룻밤을 묵었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p4.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p4-0.mp3",
+            "text": "성문은 저절로 스르르 열렸어요.\n안에는 아무도 없는데 벽난로에 불이 활활 타고\n식탁에는 따뜻한 수프가 차려져 있었지요.\n아버지는 고맙다고 인사하고 하룻밤을 묵었답니다."
+          }
+        ]
+      },
+      {
+        "n": 5,
+        "text": "이튿날 아침, 성을 나서던 아버지는\n눈 속에 핀 장미 정원을 보았어요.\n한겨울인데도 새빨간 장미가 활짝 피어 있었지요.\n\"아, 우리 벨이 부탁한 게 이거였지!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p5.webp?v=1",
+        "lines": [
+          {
+            "text": "아, 우리 벨이 부탁한 게 이거였지!",
+            "who": "father",
+            "feel": "normal"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "father",
+            "line": "아, 우리 벨이 부탁한 게 이거였지!",
+            "box": [
+              140,
+              72,
+              858,
+              428
+            ],
+            "audio": "/classic/beauty/say-p5-father.mp3",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p5-0.mp3",
+            "text": "이튿날 아침, 성을 나서던 아버지는\n눈 속에 핀 장미 정원을 보았어요.\n한겨울인데도 새빨간 장미가 활짝 피어 있었지요.\n"
+          },
+          {
+            "who": "father",
+            "src": "/classic/beauty/seg-cast-p5-1.mp3",
+            "text": "\"아, 우리 벨이 부탁한 게 이거였지!\""
+          }
+        ]
+      },
+      {
+        "n": 6,
+        "text": "아버지가 장미 한 송이를 톡 꺾는 순간이었어요.\n우르릉— 성 쪽에서 커다란 그림자가 다가왔어요.\n온몸이 털로 덮이고 뿔이 난 야수였지요.\n\"내 정원의 장미를 꺾다니!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p6.webp?v=1",
+        "lines": [
+          {
+            "text": "내 정원의 장미를 꺾다니!",
+            "who": "beast",
+            "feel": "sad",
+            "intensity": 0.35
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "beast",
+            "line": "내 정원의 장미를 꺾다니!",
+            "box": [
+              100,
+              545,
+              922,
+              940
+            ],
+            "audio": "/classic/beauty/say-p6-beast.mp3",
+            "feel": "sad",
+            "intensity": 0.35
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p6-0.mp3",
+            "text": "아버지가 장미 한 송이를 톡 꺾는 순간이었어요.\n우르릉— 성 쪽에서 커다란 그림자가 다가왔어요.\n온몸이 털로 덮이고 뿔이 난 야수였지요.\n"
+          },
+          {
+            "who": "beast",
+            "src": "/classic/beauty/seg-cast-p6-1.mp3",
+            "text": "\"내 정원의 장미를 꺾다니!\""
+          }
+        ]
+      },
+      {
+        "n": 7,
+        "text": "야수는 한참 아버지를 내려다보다가 말했어요.\n\"그 장미는 내가 아끼던 것이다.\n꺾어 갔으니 그냥 보낼 수는 없다.\n누군가는 이 성에 남아야 한다.\"\n아버지는 그 자리에 무릎을 꿇었어요.\n\"그러면 딸들에게 작별 인사만 하게 해 주세요.\"\n야수는 한참 말이 없다가, 고개를 끄덕였답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p7.webp?v=1",
+        "lines": [
+          {
+            "text": "그 장미는 내가 아끼던 것이다.\n꺾어 갔으니 그냥 보낼 수는 없다.\n누군가는 이 성에 남아야 한다.",
+            "who": "beast",
+            "feel": "normal"
+          },
+          {
+            "text": "그러면 딸들에게 작별 인사만 하게 해 주세요.",
+            "who": "father",
+            "feel": "normal"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "beast",
+            "line": "그 장미는 내가 아끼던 것이다. 꺾어 갔으니 그냥 보낼 수는 없다. 누군가는 이 성에 남아야 한다.",
+            "box": [
+              60,
+              582,
+              932,
+              805
+            ],
+            "audio": "/classic/beauty/say-p7-beast.mp3",
+            "feel": "normal"
+          },
+          {
+            "label": "father",
+            "line": "그러면 딸들에게 작별 인사만 하게 해 주세요.",
+            "box": [
+              372,
+              92,
+              882,
+              350
+            ],
+            "audio": "/classic/beauty/say-p7-father.mp3",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p7-0.mp3",
+            "text": "야수는 한참 아버지를 내려다보다가 말했어요.\n"
+          },
+          {
+            "who": "beast",
+            "src": "/classic/beauty/seg-cast-p7-1.mp3",
+            "text": "\"그 장미는 내가 아끼던 것이다.\n꺾어 갔으니 그냥 보낼 수는 없다.\n누군가는 이 성에 남아야 한다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p7-2.mp3",
+            "text": "\n아버지는 그 자리에 무릎을 꿇었어요.\n"
+          },
+          {
+            "who": "father",
+            "src": "/classic/beauty/seg-cast-p7-3.mp3",
+            "text": "\"그러면 딸들에게 작별 인사만 하게 해 주세요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p7-4.mp3",
+            "text": "\n야수는 한참 말이 없다가, 고개를 끄덕였답니다."
+          }
+        ]
+      },
+      {
+        "n": 8,
+        "text": "집에 돌아온 아버지는 장미를 내밀며\n있었던 일을 모두 이야기했어요.\n언니들은 울음을 터뜨렸지만\n벨은 조용히 장미를 받아 들었지요.\n\"제가 가겠어요, 아버지.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p8.webp?v=1",
+        "lines": [
+          {
+            "text": "제가 가겠어요, 아버지.",
+            "who": "belle",
+            "feel": "normal"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "belle",
+            "line": "제가 가겠어요, 아버지.",
+            "box": [
+              98,
+              710,
+              950,
+              898
+            ],
+            "audio": "/classic/beauty/say-p8-belle.mp3",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p8-0.mp3",
+            "text": "집에 돌아온 아버지는 장미를 내밀며\n있었던 일을 모두 이야기했어요.\n언니들은 울음을 터뜨렸지만\n벨은 조용히 장미를 받아 들었지요.\n"
+          },
+          {
+            "who": "belle",
+            "src": "/classic/beauty/seg-cast-p8-1.mp3",
+            "text": "\"제가 가겠어요, 아버지.\""
+          }
+        ]
+      },
+      {
+        "n": 9,
+        "text": "벨이 성에 도착하자 야수가 맞으러 나왔어요.\n벨은 무서워 고개를 들 수 없었지요.\n야수는 한참 벨을 바라보다가\n조용히 말했어요.\n\"이곳에서 너는 무엇이든 해도 좋다.\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p9.webp?v=1",
+        "lines": [
+          {
+            "text": "이곳에서 너는 무엇이든 해도 좋다.",
+            "who": "beast",
+            "feel": "normal"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "beast",
+            "line": "이곳에서 너는 무엇이든 해도 좋다.",
+            "box": [
+              78,
+              700,
+              902,
+              930
+            ],
+            "audio": "/classic/beauty/say-p9-beast.mp3",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p9-0.mp3",
+            "text": "벨이 성에 도착하자 야수가 맞으러 나왔어요.\n벨은 무서워 고개를 들 수 없었지요.\n야수는 한참 벨을 바라보다가\n조용히 말했어요.\n"
+          },
+          {
+            "who": "beast",
+            "src": "/classic/beauty/seg-cast-p9-1.mp3",
+            "text": "\"이곳에서 너는 무엇이든 해도 좋다.\""
+          }
+        ]
+      },
+      {
+        "n": 10,
+        "text": "성에는 벨의 방이 이미 준비되어 있었어요.\n창가에는 꽃병이 놓이고, 벽 한 면은\n천장까지 책으로 가득한 방이었지요.\n\"이 책을… 제가 다 읽어도 되나요?\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p10.webp?v=1",
+        "lines": [
+          {
+            "text": "이 책을… 제가 다 읽어도 되나요?",
+            "who": "belle",
+            "feel": "normal"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "belle",
+            "line": "이 책을… 제가 다 읽어도 되나요?",
+            "box": [
+              253,
+              440,
+              940,
+              755
+            ],
+            "audio": "/classic/beauty/say-p10-belle.mp3",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p10-0.mp3",
+            "text": "성에는 벨의 방이 이미 준비되어 있었어요.\n창가에는 꽃병이 놓이고, 벽 한 면은\n천장까지 책으로 가득한 방이었지요.\n"
+          },
+          {
+            "who": "belle",
+            "src": "/classic/beauty/seg-cast-p10-1.mp3",
+            "text": "\"이 책을… 제가 다 읽어도 되나요?\""
+          }
+        ]
+      },
+      {
+        "n": 11,
+        "text": "날마다 저녁이면 둘은 한 식탁에 앉았어요.\n야수는 말이 서툴러 자주 입을 다물었지만\n벨의 이야기를 끝까지 들어 주었지요.\n어느새 벨도 조금씩 웃게 되었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p11.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p11-0.mp3",
+            "text": "날마다 저녁이면 둘은 한 식탁에 앉았어요.\n야수는 말이 서툴러 자주 입을 다물었지만\n벨의 이야기를 끝까지 들어 주었지요.\n어느새 벨도 조금씩 웃게 되었답니다."
+          }
+        ]
+      },
+      {
+        "n": 12,
+        "text": "벨은 성의 정원을 가꾸기 시작했어요.\n잡초를 뽑고, 물을 주고, 얼었던 흙을 풀었지요.\n야수는 멀찍이서 그 모습을 지켜보곤 했답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p12.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p12-0.mp3",
+            "text": "벨은 성의 정원을 가꾸기 시작했어요.\n잡초를 뽑고, 물을 주고, 얼었던 흙을 풀었지요.\n야수는 멀찍이서 그 모습을 지켜보곤 했답니다."
+          }
+        ]
+      },
+      {
+        "n": 13,
+        "text": "눈이 몹시 내린 어느 날이었어요.\n야수가 커다란 손으로 무언가를 감싸 안고 있었지요.\n가만히 보니 날개를 다친 작은 새였어요.\n벨은 그 모습을 오래오래 바라보았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p13.webp?v=1",
+        "video": "/classic/beauty/p13.mp4",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p13-0.mp3",
+            "text": "눈이 몹시 내린 어느 날이었어요.\n야수가 커다란 손으로 무언가를 감싸 안고 있었지요.\n가만히 보니 날개를 다친 작은 새였어요.\n벨은 그 모습을 오래오래 바라보았답니다."
+          }
+        ]
+      },
+      {
+        "n": 14,
+        "text": "그날 밤, 벨이 먼저 말을 걸었어요.\n\"낮에 보았어요.\n다친 새를 감싸 안고 계시던 것.\n손이 참 다정하시더라고요.\"\n야수는 놀라 벨을 바라보았어요.\n무어라 답해야 할지 몰라 한참 있다가,\n처음으로 살며시 웃어 보였답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p14.webp?v=1",
+        "lines": [
+          {
+            "text": "낮에 보았어요.\n다친 새를 감싸 안고 계시던 것.\n손이 참 다정하시더라고요.",
+            "who": "belle",
+            "feel": "normal"
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "belle",
+            "line": "낮에 보았어요. 다친 새를 감싸 안고 계시던 것. 손이 참 다정하시더라고요.",
+            "box": [
+              235,
+              122,
+              925,
+              415
+            ],
+            "audio": "/classic/beauty/say-p14-belle.mp3",
+            "feel": "normal"
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p14-0.mp3",
+            "text": "그날 밤, 벨이 먼저 말을 걸었어요.\n"
+          },
+          {
+            "who": "belle",
+            "src": "/classic/beauty/seg-cast-p14-1.mp3",
+            "text": "\"낮에 보았어요.\n다친 새를 감싸 안고 계시던 것.\n손이 참 다정하시더라고요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p14-2.mp3",
+            "text": "\n야수는 놀라 벨을 바라보았어요.\n무어라 답해야 할지 몰라 한참 있다가,\n처음으로 살며시 웃어 보였답니다."
+          }
+        ]
+      },
+      {
+        "n": 15,
+        "text": "하지만 벨은 아버지가 그리웠어요.\n야수는 마법 거울을 내밀었지요.\n거울 속에는 자리에 누워 앓고 있는\n아버지의 모습이 비쳤답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p15.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p15-0.mp3",
+            "text": "하지만 벨은 아버지가 그리웠어요.\n야수는 마법 거울을 내밀었지요.\n거울 속에는 자리에 누워 앓고 있는\n아버지의 모습이 비쳤답니다."
+          }
+        ]
+      },
+      {
+        "n": 16,
+        "text": "야수는 한참 거울을 들여다보다가 말했어요.\n\"다녀오너라. 아버지께 가 보아라.\"\n그러고는 창밖 정원의 장미를 가리켰지요.\n\"다만… 저 장미가 다 지기 전에 돌아와 다오.\n꽃이 모두 지고 나면\n나는 더 기다릴 힘이 없단다.\"\n벨은 눈이 붉어진 채 고개를 끄덕였어요.\n\"…꼭 돌아올게요.\"\n야수는 성문 앞에서 오래오래 손을 흔들었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p16.webp?v=1",
+        "lines": [
+          {
+            "text": "다녀오너라. 아버지께 가 보아라.",
+            "who": "beast",
+            "feel": "normal"
+          },
+          {
+            "text": "다만… 저 장미가 다 지기 전에 돌아와 다오.\n꽃이 모두 지고 나면\n나는 더 기다릴 힘이 없단다.",
+            "who": "beast",
+            "feel": "tonedown",
+            "intensity": 0.35
+          },
+          {
+            "text": "…꼭 돌아올게요.",
+            "who": "belle",
+            "feel": "sad",
+            "intensity": 0.3
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "beast",
+            "line": "다만… 저 장미가 다 지기 전에 돌아와 다오. 꽃이 모두 지고 나면 나는 더 기다릴 힘이 없단다.",
+            "box": [
+              205,
+              98,
+              792,
+              295
+            ],
+            "audio": "/classic/beauty/say-p16-beast.mp3",
+            "feel": "tonedown",
+            "intensity": 0.35
+          },
+          {
+            "label": "belle",
+            "line": "…꼭 돌아올게요.",
+            "box": [
+              195,
+              700,
+              655,
+              880
+            ],
+            "audio": "/classic/beauty/say-p16-belle.mp3",
+            "feel": "sad",
+            "intensity": 0.3
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p16-0.mp3",
+            "text": "야수는 한참 거울을 들여다보다가 말했어요.\n"
+          },
+          {
+            "who": "beast",
+            "src": "/classic/beauty/seg-cast-p16-1.mp3",
+            "text": "\"다녀오너라. 아버지께 가 보아라.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p16-2.mp3",
+            "text": "\n그러고는 창밖 정원의 장미를 가리켰지요.\n"
+          },
+          {
+            "who": "beast",
+            "src": "/classic/beauty/seg-cast-p16-3.mp3",
+            "text": "\"다만… 저 장미가 다 지기 전에 돌아와 다오.\n꽃이 모두 지고 나면\n나는 더 기다릴 힘이 없단다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p16-4.mp3",
+            "text": "\n벨은 눈이 붉어진 채 고개를 끄덕였어요.\n"
+          },
+          {
+            "who": "belle",
+            "src": "/classic/beauty/seg-cast-p16-5.mp3",
+            "text": "\"…꼭 돌아올게요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p16-6.mp3",
+            "text": "\n야수는 성문 앞에서 오래오래 손을 흔들었답니다."
+          }
+        ]
+      },
+      {
+        "n": 17,
+        "text": "벨이 돌아온 모습을 보자\n아버지의 병은 씻은 듯이 나았어요.\n언니들은 벨의 손을 붙잡고 놓아 주지 않았지요.\n하루가 이틀이 되고, 이틀이 사흘이 되었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p17.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p17-0.mp3",
+            "text": "벨이 돌아온 모습을 보자\n아버지의 병은 씻은 듯이 나았어요.\n언니들은 벨의 손을 붙잡고 놓아 주지 않았지요.\n하루가 이틀이 되고, 이틀이 사흘이 되었답니다."
+          }
+        ]
+      },
+      {
+        "n": 18,
+        "text": "그러던 어느 밤, 벨은 꿈을 꾸었어요.\n성의 장미가 한 잎 두 잎 시들어 가고\n그 곁에 야수가 쓰러져 있는 꿈이었지요.\n벨은 벌떡 일어났어요.\n\"안 돼, 내가 약속했잖아!\"",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p18.webp?v=1",
+        "lines": [
+          {
+            "text": "안 돼, 내가 약속했잖아!",
+            "who": "belle",
+            "feel": "toneup",
+            "intensity": 0.4
+          }
+        ],
+        "hotspots": [],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p18-0.mp3",
+            "text": "그러던 어느 밤, 벨은 꿈을 꾸었어요.\n성의 장미가 한 잎 두 잎 시들어 가고\n그 곁에 야수가 쓰러져 있는 꿈이었지요.\n벨은 벌떡 일어났어요.\n"
+          },
+          {
+            "who": "belle",
+            "src": "/classic/beauty/seg-cast-p18-1.mp3",
+            "text": "\"안 돼, 내가 약속했잖아!\""
+          }
+        ]
+      },
+      {
+        "n": 19,
+        "text": "벨은 밤길을 달려 성으로 돌아갔어요.\n정원에 이르자 장미는 거의 다 시들어 있었지요.\n그 아래 야수가 눈을 감고 누워 있었어요.\n숨소리가 아주 가늘었답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p19.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p19-0.mp3",
+            "text": "벨은 밤길을 달려 성으로 돌아갔어요.\n정원에 이르자 장미는 거의 다 시들어 있었지요.\n그 아래 야수가 눈을 감고 누워 있었어요.\n숨소리가 아주 가늘었답니다."
+          }
+        ]
+      },
+      {
+        "n": 20,
+        "text": "벨은 야수의 손을 꼭 잡았어요.\n\"돌아왔어요. 제가 너무 늦었죠.\n…저는 당신을 사랑해요.\"\n벨의 눈물이 야수의 손등에 뚝 떨어졌답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p20.webp?v=1",
+        "lines": [
+          {
+            "text": "돌아왔어요. 제가 너무 늦었죠.\n…저는 당신을 사랑해요.",
+            "who": "belle",
+            "feel": "tonedown",
+            "intensity": 0.4
+          }
+        ],
+        "hotspots": [
+          {
+            "label": "belle",
+            "line": "돌아왔어요. 제가 너무 늦었죠. …저는 당신을 사랑해요.",
+            "box": [
+              5,
+              485,
+              962,
+              1000
+            ],
+            "audio": "/classic/beauty/say-p20-belle.mp3",
+            "feel": "tonedown",
+            "intensity": 0.4
+          }
+        ],
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p20-0.mp3",
+            "text": "벨은 야수의 손을 꼭 잡았어요.\n"
+          },
+          {
+            "who": "belle",
+            "src": "/classic/beauty/seg-cast-p20-1.mp3",
+            "text": "\"돌아왔어요. 제가 너무 늦었죠.\n…저는 당신을 사랑해요.\""
+          },
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p20-2.mp3",
+            "text": "\n벨의 눈물이 야수의 손등에 뚝 떨어졌답니다."
+          }
+        ]
+      },
+      {
+        "n": 21,
+        "text": "그 순간, 눈부신 빛이 정원을 가득 채웠어요.\n빛이 걷히자 야수가 있던 자리에\n젊고 다정한 왕자가 앉아 있었지요.\n마법에 걸려 있었던 거예요.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p21.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p21-0.mp3",
+            "text": "그 순간, 눈부신 빛이 정원을 가득 채웠어요.\n빛이 걷히자 야수가 있던 자리에\n젊고 다정한 왕자가 앉아 있었지요.\n마법에 걸려 있었던 거예요."
+          }
+        ]
+      },
+      {
+        "n": 22,
+        "text": "성에는 다시 봄이 찾아왔어요.\n아버지와 두 언니도 성으로 와서\n이제는 온 가족이 함께 살게 되었지요.\n봄볕 드는 정원에서 장미를 가꾸며\n다 같이 오래오래 행복하게 살았답니다.",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p22.webp?v=1",
+        "segments": [
+          {
+            "who": "narration",
+            "src": "/classic/beauty/seg-p22-0.mp3",
+            "text": "성에는 다시 봄이 찾아왔어요.\n아버지와 두 언니도 성으로 와서\n이제는 온 가족이 함께 살게 되었지요.\n봄볕 드는 정원에서 장미를 가꾸며\n다 같이 오래오래 행복하게 살았답니다."
           }
         ]
       }

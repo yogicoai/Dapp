@@ -31,6 +31,8 @@
 // 타입만 가져온다(런타임에는 지워진다) — prefs.ts 가 이 파일을 부르므로 값까지 부르면 서로 물린다.
 import type { ChildPrefs, ParentLooks } from "./prefs.ts";
 import { cleanBodyStretch, cleanHeadRatio } from "./family-head.ts";
+// 옷 갈아입기 저장 모양 — family-outfit 은 이 파일의 타입만 부른다(값을 부르지 않아 서로 물리지 않는다)
+import { mergeOutfits, normalizeOutfits, type MemberOutfits } from "./family-outfit.ts";
 import {
   adultLookRows,
   CHILD_LOOK_ROWS_ALL,
@@ -145,6 +147,12 @@ export type FamilyMember = {
    * 다시 넣은 엄마가 예전 뺀 기록에 걸려 사라지지 않게. 없으면(옛 값) 그림 시각만 본다.
    */
   addedAt?: string;
+  /**
+   * 가족 사진관 '옷 갈아입기'로 만든 테마 옷(사장님 2026-09-30 — lib/family-outfit): 테마 → {합친 그림 주소, 받은 때,
+   * 만든 원본 그림 주소, 몸 판}. 고정된 그림(portrait)에서 만든 옷만 남는다 — 얼굴을 다시 고정하면 불러올 때 옛 옷은 빠진다.
+   * 합칠 때는 테마마다 더 새것(mergeFamily). 없으면 칸을 두지 않는다.
+   */
+  outfits?: MemberOutfits;
 };
 
 /**
@@ -1017,6 +1025,9 @@ export function normalizeFamily(raw: unknown): FamilyMember[] | undefined {
     seen.add(id);
     const age = typeof m.age === "number" && m.age > 0 && m.age < 100 ? Math.round(m.age) : undefined;
     const draws = typeof m.draws === "number" && m.draws >= 0 && m.draws < 1000 ? Math.round(m.draws) : undefined;
+    const portrait = normalizePortrait(m.portrait);
+    // 옷 갈아입기 — 지금 고정된 그림에서 만든 옷만(모르는 테마·이상한 값·옛 얼굴 옷은 버린다)
+    const outfits = portrait ? normalizeOutfits(m.outfits, portrait.url) : undefined;
     out.push({
       id,
       role,
@@ -1025,7 +1036,7 @@ export function normalizeFamily(raw: unknown): FamilyMember[] | undefined {
       gender: m.gender === "girl" || m.gender === "boy" ? m.gender : undefined,
       age,
       looks: normalizeLooksFor(m.looks, role),
-      portrait: normalizePortrait(m.portrait),
+      portrait,
       draft: normalizePortrait(m.draft),
       prevDraft: normalizePortrait(m.prevDraft),
       draws,
@@ -1035,6 +1046,7 @@ export function normalizeFamily(raw: unknown): FamilyMember[] | undefined {
       ...(typeof m.showOnHome === "boolean" ? { showOnHome: m.showOnHome } : {}),
       ...(role === "sibling" && m.isOurChild === true ? { isOurChild: true } : {}),
       ...(m.looksOnly === true ? { looksOnly: true } : {}),
+      ...(outfits ? { outfits } : {}),
     });
     if (out.length >= MAX_MEMBERS) break;
   }
@@ -1115,7 +1127,9 @@ function mergeMember(win: FamilyMember, other: FamilyMember): FamilyMember {
   const src = picTime(other) > picTime(win) ? other : win;
   const draws = Math.max(win.draws ?? -1, other.draws ?? -1);
   const addedAt = (other.addedAt ?? "") > (win.addedAt ?? "") ? other.addedAt : win.addedAt;
-  return {
+  // 옷 갈아입기 — 두 기기에서 만든 옷을 테마마다 더 새것으로 모으되, 남긴 그림(src.portrait)에서 만든 옷만
+  const outfits = src.portrait ? mergeOutfits(win.outfits, other.outfits, src.portrait.url) : undefined;
+  const merged: FamilyMember = {
     ...win,
     portrait: src.portrait,
     draft: src.draft,
@@ -1126,6 +1140,9 @@ function mergeMember(win: FamilyMember, other: FamilyMember): FamilyMember {
     // 뺀 기록과 견줄 때 쓴다 — 다시 넣은 쪽(더 늦은 때)을 남긴다.
     ...(addedAt ? { addedAt } : {}),
   };
+  if (outfits) merged.outfits = outfits;
+  else delete merged.outfits;
+  return merged;
 }
 
 /**

@@ -318,6 +318,18 @@ const BOOKS: Record<string, BookSpec> = {
     defaultNarrator: "tc-minjung",
     cast: [{ name: "신데렐라" }, { name: "새어머니" }, { name: "언니" }, { name: "요정 대모" }, { name: "왕자" }, { name: "신하" }],
   },
+  // 미녀와 야수 — 사장님 캐스팅(2026-09-30, 검토대 화면에서 확정): 나레이션 민정 · 벨 지우 ·
+  // 야수 MC콩 · 아버지 대진 · 언니 진서. 언니는 둘이지만 한 배역(sister)·한 목소리다 — 2쪽에서 한 마디씩.
+  // 21쪽 왕자는 야수와 같은 사람이라 roleOf 에서 beast 로 묶었다(왕자 대사는 없다). '우르릉—'은 나레이션.
+  // 대사 17줄은 전부 대사집(lines)에 배역·연기를 못 박았다 — 18쪽 "안 돼, …"는 비워 두면 angry 로 구워진다.
+  "미녀와 야수": {
+    data: "src/data/classic-books.json",
+    root: "classic",
+    dir: "beauty",
+    narrators: ["tc-minjung"],
+    defaultNarrator: "tc-minjung",
+    cast: [{ name: "벨" }, { name: "야수" }, { name: "아버지" }, { name: "언니" }],
+  },
   // 걸리버 여행기 2 — 사장님 캐스팅(2026-09-18): 나레이션 민정 · 걸리버 강일 ·
   // 거인의 딸 수아 · 공주님 아린이. 5쪽 거인 농부는 캐스팅표에 없던 배역이라,
   // 이 원고에 대사가 한 줄도 없는 임금님 자리의 왕권을 돌려 썼다.

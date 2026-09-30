@@ -78,7 +78,7 @@ for (const { title: t, id, n, url, file } of list) {
     } else {
       execFileSync("ffmpeg", ["-y", "-v", "error", "-i", raw, "-an",
         "-vf", "scale=1184:864:flags=lanczos,format=yuv420p",
-        "-c:v", "libx264", "-preset", "slow", "-crf", "27", "-movflags", "+faststart", out]);
+        "-c:v", "libx264", "-preset", "slow", "-crf", "23", "-maxrate", "3M", "-bufsize", "6M", "-movflags", "+faststart", out]);
     }
     page.video = outRel;
     touched.add(root);

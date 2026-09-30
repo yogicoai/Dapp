@@ -14,6 +14,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { useTheme } from "@/components/ThemeProvider";
 import { CheckIcon } from "@/components/family/icons";
 import { Sheet } from "@/components/family/Sheet";
@@ -77,6 +78,8 @@ export function CheckoutDemo({ plan: planId }: { plan: PlanId }) {
   const [sheet, setSheet] = useState<0 | 1 | null>(null);
   const [question, setQuestion] = useState<ParentQ | null>(null);
   const [busy, setBusy] = useState<Busy>(null);
+  // 처리 가림막이 떠 있는 동안 뒤 화면을 잠근다(사장님 2026-09-30)
+  useScrollLock(busy !== null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const viewButtons = useRef<(HTMLButtonElement | null)[]>([]);
   // ← 는 뒤로(요금제·내 결제·구독 등 온 곳으로). push 로 /plans 를 쌓으면 /plans 의 ← 가 여기로 되돌아와 맴돈다.

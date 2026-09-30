@@ -9,6 +9,7 @@
  */
 
 import { useEffect, useRef } from "react";
+import { useScrollLock } from "@/lib/scroll-lock";
 
 export function ChargeConfirm({
   title,
@@ -32,6 +33,8 @@ export function ChargeConfirm({
 }) {
   const okRef = useRef<HTMLButtonElement>(null);
 
+  // 떠 있는 동안 뒤 화면이 같이 밀리지 않게(사장님 2026-09-30)
+  useScrollLock();
   useEffect(() => {
     okRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {

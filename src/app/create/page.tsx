@@ -87,6 +87,7 @@ import {
   type PendingPlot,
 } from "@/lib/create-flow";
 import { useEscClose } from "@/lib/use-esc-close";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { usePricing } from "@/lib/use-pricing";
 import { useScreenWakeLock } from "@/lib/use-wake-lock";
 import { alertIfAway, primeChime } from "@/lib/away-notice";
@@ -1663,14 +1664,10 @@ export default function CreatePage() {
    * 책을 띄운 동안 뒤 만들기 화면이 쓸려 움직이지 않게 몸통 스크롤을 잠근다.
    * (대본 미리 읽기로 긴 그림 화면 — 쪽을 넘기려고 쓸다가 뒤 화면이 따라 움직이면 닫았을 때 자리가 바뀐다.)
    */
-  useEffect(() => {
-    if (!showcaseId) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [showcaseId]);
+  useScrollLock(!!showcaseId);
+  // 임시저장 이어 하기 물음·만드는 중 가림막이 떠 있는 동안도 뒤 화면을 잠근다(사장님 2026-09-30 "팝업이 열리면 배경이 안 움직이게")
+  useScrollLock(!!pendingDraft);
+  useScrollLock(busy);
   const showcaseBook = showcaseId ? SHELF_BOOKS.find((b) => b.id === showcaseId) ?? null : null;
   /*
    * 띄운 책 — 두 기다림(대본·그림) 어디서 열어도 같은 자리에 뜬다.

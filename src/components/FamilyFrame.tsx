@@ -6,6 +6,7 @@ import { displayName, familyExampleSrc } from "@/components/family/family-ui";
 import { FaceAvatar } from "@/components/family/Figures";
 import { FamilyGroupPhoto } from "@/components/family/FamilyGroupPhoto";
 import { CookieIcon, NextIcon } from "@/components/family/icons";
+import { OutfitPicker } from "@/components/family/OutfitPicker";
 import { StudioSheet } from "@/components/family/StudioSheet";
 import { useTheme } from "@/components/ThemeProvider";
 import {
@@ -19,6 +20,7 @@ import {
   ourChildrenNames,
   type FamilyMember,
 } from "@/lib/family";
+import type { MemberOutfit, OutfitThemeId } from "@/lib/family-outfit";
 import type { FamilyStudio } from "@/lib/family-studio";
 import type { ChildPrefs, Gender } from "@/lib/prefs";
 
@@ -68,6 +70,12 @@ type Props = {
   studio?: FamilyStudio;
   /** 꾸미기 시트에서 바꿀 때마다 — 홈이 계정에 저장한다. 없으면 '꾸미기' 버튼을 안 보인다. */
   onStudioChange?: (studio: FamilyStudio) => void;
+  /**
+   * 옷 갈아입기(사장님 2026-09-30 — 힉스필드로 미리 만든 테마 몸 + 가족 원래 머리) — 한 사람 옷 한 벌을 받았을 때 홈이 저장한다.
+   * outfitEnabled 가 아니거나 없으면 꾸미기 시트에 '옷 갈아입기' 줄을 안 보인다(2026-09-30 부터 모든 회원).
+   */
+  outfitEnabled?: boolean;
+  onMemberOutfit?: (memberId: string, theme: OutfitThemeId, outfit: MemberOutfit) => void;
 };
 
 /* ── 태블릿 판별(단체 사진 무대 높이) ── Tailwind sm 과 같은 40rem. */
@@ -100,6 +108,8 @@ export function FamilyFrame({
   onFoldedChange,
   studio,
   onStudioChange,
+  outfitEnabled = false,
+  onMemberOutfit,
 }: Props) {
   const { theme } = useTheme();
   const { accent, accentDark, accentSoft } = theme.colors;
@@ -120,6 +130,8 @@ export function FamilyFrame({
   }, [greet]);
   // 가족 사진 꾸미기 시트
   const [studioOpen, setStudioOpen] = useState(false);
+  // 옷 갈아입기 시트(꾸미기 시트의 '옷 갈아입기' 줄에서 연다 — 닫으면 꾸미기로 돌아간다)
+  const [outfitOpen, setOutfitOpen] = useState(false);
 
   if (guest) return null;
 
@@ -440,6 +452,31 @@ export function FamilyFrame({
           studio={studio}
           onChange={onStudioChange}
           onClose={() => setStudioOpen(false)}
+          onOutfit={
+            outfitEnabled && onMemberOutfit
+              ? () => {
+                  setStudioOpen(false);
+                  setOutfitOpen(true);
+                }
+              : undefined
+          }
+        />
+      )}
+      {outfitOpen && outfitEnabled && onStudioChange && onMemberOutfit && onHome.length > 0 && (
+        <OutfitPicker
+          colors={theme.colors}
+          members={onHome}
+          childAge={childAge}
+          childGender={childGender}
+          parents={parents}
+          background={theme.background}
+          studio={studio}
+          onStudio={onStudioChange}
+          onOutfit={onMemberOutfit}
+          onClose={() => {
+            setOutfitOpen(false);
+            setStudioOpen(true);
+          }}
         />
       )}
     </section>

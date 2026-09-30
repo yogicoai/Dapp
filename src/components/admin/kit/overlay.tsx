@@ -10,25 +10,16 @@
  */
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { useEscClose } from "@/lib/use-esc-close";
+import { useScrollLock } from "@/lib/scroll-lock";
 
 /**
  * 겹 화면이 떠 있는 동안 뒤 페이지가 같이 스크롤되지 않게. 여러 겹이면 마지막 것이 닫힐 때 푼다.
  * 원래 값은 첫 겹이 뜰 때 한 번만 적어 둔다 — 겹마다 적으면, 서랍이 닫히기 전에 뜬 확인창이 'hidden'을
  * 원래 값으로 적어 두었다가 마지막에 되돌려 페이지가 멈춘 채 남는다(겹이 닫히는 순서는 정해져 있지 않다).
  */
-let scrollLocks = 0;
-let savedOverflow = "";
+// 세기·원래 값 적기는 공용 잠금(lib/scroll-lock)이 한다 — 가족 시트·결제 창과 같은 장치(아이폰에서도 안 밀리게 몸통 고정).
 function useBodyScrollLock(on: boolean) {
-  useEffect(() => {
-    if (!on) return;
-    if (scrollLocks === 0) savedOverflow = document.body.style.overflow;
-    scrollLocks += 1;
-    document.body.style.overflow = "hidden";
-    return () => {
-      scrollLocks = Math.max(0, scrollLocks - 1);
-      if (scrollLocks === 0) document.body.style.overflow = savedOverflow;
-    };
-  }, [on]);
+  useScrollLock(on);
 }
 
 /* ── 서랍 ───────────────────────────────────────────────────────────────── */

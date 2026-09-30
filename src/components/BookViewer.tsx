@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useScrollLock } from "@/lib/scroll-lock";
 import {
   loadAutoNext,
   markAutoplayNext,
@@ -216,6 +217,11 @@ const HOTSPOT_KO: Record<string, string> = {
   citymouse: "도시 쥐",
   brother: "오빠",
   sister: "여동생",
+  // 미녀와 야수(2026-09-30) — 언니는 여동생(sister)과 이름표가 달라 따로 둔다
+  belle: "벨",
+  beast: "야수",
+  eldersister: "언니",
+  father: "아버지",
   tiger: "호랑이",
   spirit: "산신령",
   woodcutter: "나무꾼",
@@ -308,6 +314,8 @@ export function BookViewer({
   onOpenBook?: (id: string) => void;
 }) {
   const router = useRouter();
+  // 전체 화면 뷰어 — 떠 있는 동안 뒤 페이지가 같이 밀리지 않게(사장님 2026-09-30)
+  useScrollLock();
   // 그림 없는 쪽의 배경으로 쓴다 — 글 동화도 테마(동화나라) 안에서 읽힌다.
   const { theme: ui } = useTheme();
   // 글자 위치(위/아래) — 설정에서 고른다. 뷰어는 열 때마다 새로 읽으면 충분하다.
