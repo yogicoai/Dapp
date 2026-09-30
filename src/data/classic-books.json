@@ -12990,7 +12990,7 @@
       {
         "n": 7,
         "text": "야수는 한참 아버지를 내려다보다가 말했어요.\n\"그 장미는 내가 아끼던 것이다.\n꺾어 갔으니 그냥 보낼 수는 없다.\n누군가는 이 성에 남아야 한다.\"\n아버지는 그 자리에 무릎을 꿇었어요.\n\"그러면 딸들에게 작별 인사만 하게 해 주세요.\"\n야수는 한참 말이 없다가, 고개를 끄덕였답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p7.webp?v=1",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/beauty/p7.webp?v=2",
         "lines": [
           {
             "text": "그 장미는 내가 아끼던 것이다.\n꺾어 갔으니 그냥 보낼 수는 없다.\n누군가는 이 성에 남아야 한다.",
@@ -13008,10 +13008,10 @@
             "label": "beast",
             "line": "그 장미는 내가 아끼던 것이다. 꺾어 갔으니 그냥 보낼 수는 없다. 누군가는 이 성에 남아야 한다.",
             "box": [
-              60,
-              582,
-              932,
-              805
+              55,
+              475,
+              955,
+              895
             ],
             "audio": "/classic/beauty/say-p7-beast.mp3",
             "feel": "normal"
@@ -13020,10 +13020,10 @@
             "label": "father",
             "line": "그러면 딸들에게 작별 인사만 하게 해 주세요.",
             "box": [
-              372,
-              92,
-              882,
-              350
+              370,
+              80,
+              875,
+              340
             ],
             "audio": "/classic/beauty/say-p7-father.mp3",
             "feel": "normal"
