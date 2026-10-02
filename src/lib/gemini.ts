@@ -342,10 +342,35 @@ export function resetImageFallbackForTests(): void {
   geminiBlockedUntil = 0;
 }
 
+/**
+ * 그림 요청의 parts — 참조 그림들(이름표가 있으면 그 그림 바로 앞에 글 한 조각) → 프롬프트.
+ * 이름표가 없으면 예전과 같은 [그림…, 프롬프트]. 부르지 않고 만들기만 한다(시험용으로 떼어 냄, gemini.test.ts).
+ */
+export function imageRequestParts(
+  references: readonly GeneratedImage[],
+  labels: readonly (string | null | undefined)[] | undefined,
+  prompt: string,
+): unknown[] {
+  return [
+    ...references.flatMap((r, i) => {
+      const image = { inlineData: { mimeType: r.mimeType, data: r.data } };
+      const label = labels?.[i]?.trim();
+      return label ? [{ text: label }, image] : [image];
+    }),
+    { text: prompt },
+  ];
+}
+
 export async function generateImage(input: {
   prompt: string;
   /** 참조 이미지(캐릭터 시트 등). 인물 일관성의 핵심이라 매 쪽 재주입한다. */
   references?: GeneratedImage[];
+  /**
+   * 참조 그림마다 바로 앞에 끼울 이름표 글(references 와 같은 순서, 빈 칸은 이름표 없음) — 쪽 그림이 고정 가족 얼굴을 붙일 때
+   * "이 그림은 누구"를 그림 바로 앞에 둔다(lib/page-refs pageReferenceLabels, 2026-10-01). 안 주면 요청은 예전과 한 글자도 다르지 않다.
+   * Gemini 만 쓴다 — OpenAI(gpt-image /edits)는 그림과 글을 섞어 받지 않는다(프롬프트의 '몇 번째' 줄이 같은 말을 한다).
+   */
+  referenceLabels?: readonly (string | null | undefined)[];
   /** 4:3=태블릿(가로), 3:4=핸드폰(세로), 1:1=캐릭터 시트. Gemini가 네이티브로 지원하는 비율. */
   aspectRatio: "4:3" | "3:4" | "1:1";
   /**
@@ -378,12 +403,7 @@ export async function generateImage(input: {
 
   const model = process.env.GEMINI_IMAGE_MODEL ?? "gemini-2.5-flash-image";
 
-  const parts: unknown[] = [
-    ...(input.references ?? []).map((r) => ({
-      inlineData: { mimeType: r.mimeType, data: r.data },
-    })),
-    { text: input.prompt },
-  ];
+  const parts = imageRequestParts(input.references ?? [], input.referenceLabels, input.prompt);
 
   /** Gemini를 한 번 부른다. 다시 걸어 볼 만하면 retryable을 붙여 던진다. */
   const attemptGemini = async (): Promise<GeneratedImage> => {
@@ -548,7 +568,12 @@ export type IllustrationCheckInput = {
    * 있으면 얼굴·머리를 시트가 아니라 이 원본과 견줘, 얼굴형·눈·머리 모양·길이·앞머리·안경·나이가 확실히 다르면 떨어뜨린다
    * (2026-09-29 사장님 "얼굴이 달라 특히"). 없으면 검수 글은 예전과 한 글자도 다르지 않다.
    */
-  portraits?: readonly { name: string; image: GeneratedImage }[];
+  portraits?: readonly {
+    name: string;
+    image: GeneratedImage;
+    /** 얼굴 카드(왼쪽 전신 + 오른쪽 키운 얼굴, lib/sheet-compose composePortraitCard)로 붙였나 — 2026-10-01~ */
+    card?: boolean;
+  }[];
   /**
    * 인물 시트에 선 순서(왼쪽부터) — 원본 픽셀로 짠 시트만(lib/sheet-compose). 섞인 시트는 고정 가족이 먼저 서고
    * AI 덩어리가 끝에 서서 이야기 순서와 다를 수 있다 — 검수가 칸을 이름에 잘못 짝짓지 않게. 없으면 글은 예전 그대로.
@@ -587,7 +612,7 @@ function sheetColumnsNote(order: readonly string[], outfits: readonly string[]):
   return `each column: full figure on top, close-up below; for ${worn.join(", ")} the top of the column is only the clothes they wear in this book — judge their outfit against those clothes`;
 }
 
-/** 검수 붙임 그림 '몇 번째' — 쪽 1 + 시트 1 + 얼굴 최대 4 + 승인 쪽 1 + 장소 1 = 8, 넉넉히 열까지. */
+/** 검수 붙임 그림 '몇 번째' — 쪽 1 + 시트 1 + 얼굴 최대 6 + 승인 쪽 1 + 장소 1 = 10, 열째까지. */
 const CHECK_ORDINALS = ["FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH", "SIXTH", "SEVENTH", "EIGHTH", "NINTH", "TENTH"];
 
 /**
@@ -607,7 +632,9 @@ export function illustrationCheckParts(input: IllustrationCheckInput): unknown[]
   for (const p of portraits) {
     attached.push({
       image: p.image,
-      role: `the ORIGINAL approved portrait of "${p.name}" — the identity reference for ${p.name}'s face and hair (ignore its white background, standing pose and clothing)`,
+      role: p.card
+        ? `the ORIGINAL approved portrait of "${p.name}", shown twice as ONE person: the whole figure on the left and the same face enlarged on the right — the identity reference for ${p.name}'s face and hair (judge the face against the enlarged close-up; ignore its white background, standing pose, two-panel layout and clothing)`
+        : `the ORIGINAL approved portrait of "${p.name}" — the identity reference for ${p.name}'s face and hair (ignore its white background, standing pose and clothing)`,
     });
   }
   if (input.styleReference) {
@@ -653,7 +680,7 @@ export function illustrationCheckParts(input: IllustrationCheckInput): unknown[]
          */
         ...(portraits.length
           ? [
-              `FIXED FAMILY FACES — an approved ORIGINAL portrait is attached for: ${portraits.map((p) => p.name).join(", ")}. FAIL if any of them is visible with a face or hair that clearly differs from their portrait: a different face shape or eye shape, a different hairstyle, hair length, fringe or parting, a different hair colour or straight/curly texture, glasses or a beard added or removed, or a clearly different apparent age (looks older or younger). Do NOT fail for pose, expression, head angle or a mirrored/turned view (a parting or fringe that falls on the other side because the head is turned), lighting, size, brush texture, the portrait's white background or standing pose, clothing (clothing is judged against the reference sheet), or hair that is covered, tucked, tied up or wet because the scene gives them a hat, hood, helmet, scarf, swim cap, bath or bed — judge only the hair that is visible. If a face is too small, hidden or turned away to judge, do not fail on it. When you fail on this, name the person and the exact feature to fix.`,
+              `FIXED FAMILY FACES — an approved ORIGINAL portrait is attached for: ${portraits.map((p) => p.name).join(", ")}. FAIL if any of them is visible with a face or hair that clearly differs from their portrait: a different face shape or eye shape, a different hairstyle (including its overall outline and volume — tousled and spiky versus neat and smooth), hair length, fringe or parting, a different hair colour or straight/curly texture, glasses or a beard added or removed, or a clearly different apparent age (looks older or younger). Do NOT fail for pose, expression, head angle or a mirrored/turned view (a parting or fringe that falls on the other side because the head is turned), lighting, size, brush texture, the portrait's white background or standing pose, clothing (clothing is judged against the reference sheet), or hair that is covered, tucked, tied up or wet because the scene gives them a hat, hood, helmet, scarf, swim cap, bath or bed — judge only the hair that is visible. If a face is too small, hidden or turned away to judge, do not fail on it. When you fail on this, name the person and the exact feature to fix.`,
             ]
           : []),
         "FAIL for any rendering-style drift from the references: 3D/clay to flat 2D, 2D to 3D, watercolor to vector/anime, different line quality, texture, shading, saturation or finish. Treat the approved-page style as mandatory, not optional.",

@@ -2,10 +2,12 @@ import Anthropic from "@anthropic-ai/sdk";
 import {
   parseOutline,
   parseStory,
+  StoryParseError,
   type ParsedOutline,
   type ParsedStory,
 } from "./story-format";
 import { beatPlanLines, pickBeatTemplate } from "./story-beats";
+import { storyFamilyLookLines } from "./family-cast";
 import { outfitHintLine, pickOutfitPalette } from "./outfit-hint";
 import {
   StoryQualityError,
@@ -27,7 +29,8 @@ import type { NarrationStyle } from "./types";
 const client = new Anthropic();
 // 이야기 생성 모델 — 가성비 Sonnet 기본(원가 약 1/5). 품질이 필요한 순간엔
 // 환경변수 ANTHROPIC_MODEL로 Opus 등으로 바꿀 수 있다.
-const MODEL = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-5";
+// 2026-10-01 사장님 결정: Sonnet 5 → Sonnet 5.5(값 같음 — 입력 $2·출력 $10 / 100만 토큰). 생각하기(adaptive)·노력(effort)도 그대로 받는다.
+const MODEL = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-5-5";
 
 /**
  * 장면(쪽) 수는 부모가 3~8에서 고른다. 기승전결 네 막을 이 쪽수에 맞게 배분하되
@@ -40,15 +43,26 @@ export const MIN_PAGE_COUNT = 3;
 export const MAX_PAGE_COUNT = 8;
 export const DEFAULT_PAGE_COUNT = 8;
 
-/** 넘어온 쪽수를 3~8로 가둔다. 없거나 이상하면 기본값. 클라이언트 값은 안 믿는다. */
+/**
+ * 쪽수 하한 — 보통 3. 로컬 시험에서만 .env.local 의 TEST_MIN_PAGE_COUNT=2 로 2까지 연다(2026-10-01 사장님 "6장씩 계속 만들면
+ * 토큰 낭비, 시험은 2장"). .env.local 은 배포에 올라가지 않아 운영은 늘 3이다. 부를 때마다 읽는다 — .env.local 을 고친 뒤
+ * 개발 서버를 다시 켜지 않아도 맞게. 만들기 화면은 NEXT_PUBLIC_TEST_PAGE_COUNT 로 쪽수를 줄인다.
+ */
+export function minPageCount(): number {
+  return process.env.TEST_MIN_PAGE_COUNT?.trim() === "2" ? 2 : MIN_PAGE_COUNT;
+}
+
+/** 넘어온 쪽수를 하한(보통 3)~8로 가둔다. 없거나 이상하면 기본값. 클라이언트 값은 안 믿는다. */
 function clampPageCount(n: unknown): number {
   const v = Math.round(Number(n));
   if (!Number.isFinite(v)) return DEFAULT_PAGE_COUNT;
-  return Math.min(MAX_PAGE_COUNT, Math.max(MIN_PAGE_COUNT, v));
+  return Math.min(MAX_PAGE_COUNT, Math.max(minPageCount(), v));
 }
 
 /** 고른 쪽수에 기승전결을 어떻게 나눠 담을지 일러준다. */
 function pageGuide(n: number): string {
+  // 2쪽은 로컬 시험에서만 나온다(MIN_PAGE_COUNT).
+  if (n <= 2) return `${n}쪽: 시작과 사건(1쪽) → 해결과 마무리(1쪽)로 압축한다.`;
   if (n <= 3) return `${n}쪽: 기(1쪽) → 승·전을 한데 묶어(1쪽) → 결(1쪽)로 압축한다.`;
   if (n === 4) return "4쪽: 기·승·전·결을 각각 1쪽씩.";
   if (n <= 6) return `${n}쪽: 기승전결을 배분하되 사건과 위기(승·전)에 쪽을 더 준다.`;
@@ -78,6 +92,12 @@ export type ChildProfile = {
    * 안 주면 모델이 지어낸다 — 안경을 안 쓰는 아빠가 안경잡이로 그려졌다.
    */
   parentLooks?: { mom?: string; dad?: string };
+  /**
+   * 할머니·할아버지·형제·단짝 친구 — 우리 가족 캐릭터에 넣은 사람(선택, lib/family-cast storyFamilyLooks).
+   * 2026-10-01 사장님 "아바타와 너무 달라": 예전엔 엄마·아빠만 갔다. 클로드가 할머니 생김새를 지어내 고정 그림과 부딪쳤다.
+   * line = 부모가 고른 생김새(옷 빼고), fixed = 가족 화면에 그림이 고정된 사람(line 이 없으면 생김새를 적지 말라고만 한다).
+   */
+  familyLooks?: { who: string; line?: string; fixed?: boolean }[];
 };
 
 /**
@@ -174,10 +194,13 @@ function describeChild(child: ChildProfile): string {
     child.parentLooks?.dad
       ? `아빠가 이야기에 나오면 생김새는 이대로 쓴다(부모가 직접 고름, 여기 없는 것은 지어내지 않는다): ${child.parentLooks.dad}`
       : "",
+    // 할머니·할아버지·형제·단짝 친구 — 우리 가족 캐릭터에 넣은 사람(2026-10-01). 엄마·아빠와 같은 규칙이다(lib/family-cast).
+    ...storyFamilyLookLines(child.familyLooks),
   ]
     .filter(Boolean)
     .join(" ");
 }
+
 
 /**
  * 한국어 이름 뒤 조사 안내를 이름에 맞춰 만들어 준다.
@@ -288,6 +311,9 @@ const OUTLINE_SYSTEM = `${VOICE}
 장면 수가 몇이든 전체 흐름은 '시작 → 사건 → 위기 → 해결'(기승전결)을 이루게 배열한다.
 각 장면은 하나의 그림으로 그릴 수 있는 뚜렷한 한 장면이어야 한다(한 장면에 여러 사건을
 욱여넣지 않는다).
+한 장면에 함께 나오는 사람은 서너 명까지로 나눈다 — 한 그림에 다섯 명 넘게 서면 얼굴이 작아져
+누가 누구인지 흐려진다. 온 가족이 한 장면에 다 모이는 것은 책 전체에서 두 장면까지만 쓴다
+(부모가 적은 이야기가 정한 장면은 그대로 둔다).
 
 **장소는 최대 두 곳까지만 쓴다. 한 곳으로 끝낼 수 있으면 한 곳이 가장 좋다.**
 장면마다 장소를 옮기면 이야기가 넓어지는 게 아니라 흩어진다 — 그림책은 같은 자리에서
@@ -653,15 +679,25 @@ export async function generateOutline(input: {
   const template = pickBeatTemplate(input.material.kind, pageCount, input.child.age);
   const beatLines = template ? beatPlanLines(template, pageCount) : [];
 
-  // 이름 가드 — 최대 2회. 1회차에 이름이 틀리면 경고를 덧붙여 한 번만 다시 짓는다.
+  /*
+   * 최대 2회 — 1회차에 이름이 틀렸거나, 답이 길이 한도에서 끊겼거나, 형식·장면 수가 어긋났으면 그 까닭을 덧붙여 한 번만 다시 짓는다.
+   * 끊김·형식은 2026-10-01 Sonnet 5.5 로 바꾼 첫 시험에서 바로 났다("줄거리 형식이 어긋났습니다") — 대본(generateStory)과 같은 방식으로 받친다.
+   */
   let outline: ParsedOutline | null = null;
+  let nameWrong = false;
+  let cutShort = false;
+  let formatIssue = "";
   for (let attempt = 1; attempt <= 2; attempt++) {
     const message = await client.messages.create({
       model: MODEL,
-      max_tokens: 2000,
+      /*
+       * 8000 — 생각하기(adaptive)도 이 한도 안에서 쓴다. 2000 이던 때 Sonnet 5.5 가 생각을 조금 더 하자 줄거리가 중간에 끊겼다.
+       * 한도는 값이 아니다 — 실제로 쓴 만큼만 낸다. 끊긴 뒤 다시 쓸 때는 생각을 줄인다(effort low).
+       */
+      max_tokens: 8000,
       system: OUTLINE_SYSTEM,
       thinking: { type: "adaptive" },
-      output_config: { effort: "medium" },
+      output_config: { effort: cutShort ? "low" : "medium" },
       messages: [
         {
           role: "user",
@@ -681,9 +717,10 @@ export async function generateOutline(input: {
               ? `특별한 날: ${input.occasion} — 이 날을 축하하는 이야기로 지어라. 축하가 결말에 자연스럽게 스며들게 한다.`
               : "",
             input.mood ? `분위기: ${input.mood} — 이야기 전체 톤에 반영한다.` : "",
-            attempt > 1
+            attempt > 1 && nameWrong
               ? `경고: 직전 생성에서 주인공 이름 표기가 틀렸다. 이름은 "${input.child.name}"이다 — 비슷한 다른 이름 절대 금지. (조사는 자연스럽게: ${josaGuide(input.child.name)})`
               : "",
+            attempt > 1 && formatIssue ? `직전 결과의 문제: ${formatIssue}` : "",
           ]
             .filter(Boolean)
             .join("\n"),
@@ -691,16 +728,39 @@ export async function generateOutline(input: {
       ],
     });
 
-    outline = parseOutline(textOf(message));
-
-    if (outline.scenes.length !== pageCount) {
-      throw new Error(
-        `${pageCount}장면이어야 하는데 ${outline.scenes.length}장면이 나왔습니다.`,
-      );
+    if (message.stop_reason === "max_tokens") {
+      cutShort = true;
+      if (attempt < 2) {
+        formatIssue =
+          "답이 길이 한도에서 끊겼다 — 장면마다 1~2문장으로 짧게 쓰고 @@TITLE@@·@@SUMMARY@@·@@SCENE@@·@@TEXT@@ 마커를 끝까지 낸다";
+        continue;
+      }
+      throw new StoryParseError("줄거리가 길이 한도에서 끊겼습니다.");
     }
+    let parsed: ParsedOutline;
+    try {
+      parsed = parseOutline(textOf(message));
+    } catch (e) {
+      if (e instanceof StoryParseError && attempt < 2) {
+        formatIssue = `${e.message} — 출력 형식(@@마커@@)을 정확히 지켜 전체를 다시 낸다`;
+        continue;
+      }
+      throw e;
+    }
+
+    if (parsed.scenes.length !== pageCount) {
+      if (attempt < 2) {
+        formatIssue = `${pageCount}장면이어야 하는데 ${parsed.scenes.length}장면이 나왔다 — 정확히 ${pageCount}장면으로 다시 낸다`;
+        continue;
+      }
+      throw new Error(`${pageCount}장면이어야 하는데 ${parsed.scenes.length}장면이 나왔습니다.`);
+    }
+    outline = parsed;
 
     const joined = outline.title + " " + outline.scenes.map((s) => s.text).join(" ");
     if (nameOk(input.child.name, joined)) break;
+    nameWrong = true;
+    formatIssue = "";
     if (attempt === 2) {
       // 두 번 다 틀리면 그대로 내보내되 로그를 남긴다 — 부모가 줄거리에서 보고 다시 지을 수 있다.
       console.warn(`[outline] 이름 불일치 2회: "${input.child.name}"`);
@@ -873,6 +933,15 @@ const STORY_SYSTEM = `${VOICE}
 아이들이 모여 있다, 다른 친구들 사이에서)도 쓰지 않는다. 실제로 "등장인물 3명"인
 쪽에 모르는 아이 넷이 배경에 더 그려졌고, 다음 쪽에서 사라져 얼굴이 바뀐 것처럼
 보였다.
+
+**한 쪽 그림에 함께 서는 사람은 서너 명까지로 짠다.** 사람이 많이 나오는 이야기(온 가족,
+할머니·할아버지까지)일수록 쪽마다 그 장면의 중심인 서너 명만 함께 움직이게 이야기를 나눈다 —
+두세 사람씩 서로 다른 자리에서 다른 일을 하게 하는 식이다. 한 그림에 다섯 명 넘게 서면
+얼굴이 작아져 아이가 누가 누구인지 못 알아본다(실제로 여섯 식구가 모두 선 쪽에서 가족 얼굴이
+가족 그림과 다르게 나왔다).
+온 가족이 한 그림에 꼭 함께 있어야 하는 쪽(다 같이 둘러앉는 장면 같은 것)은 책 전체에서 두 쪽까지만
+쓰고, 그 쪽 장면 문장에는 모두 가까이 모여 얼굴이 크게 보이는 모습을 적는다.
+부모가 쓴 원고가 정한 장면은 그대로 둔다 — 이 규칙은 원고가 정하지 않은 빈 곳을 채울 때 따른다.
 그 다음에는 이름마다 위치와 행동을 하나씩 분명히 배정한다. 예:
 \`민준은 다리 왼쪽 입구에서 발을 멈추고 난간을 잡는다. 서연은 다리 가운데에서
 민준을 돌아본다.\` 누가 앞/뒤인지, 어느 쪽에 있는지, 무엇을 들고 누구를 보는지까지
@@ -1045,6 +1114,8 @@ export async function generateStory(input: {
   // 이름 가드 — 줄거리와 같은 방식. 본문에서 이름이 틀리면 한 번 다시 짓는다.
   let story: ParsedStory | null = null;
   let lastIssues: string[] = [];
+  /** 직전 답이 길이 한도에서 끊겼나 — 그러면 다음 번엔 생각을 줄여(effort low) 본문 자리를 넓힌다 */
+  let cutShort = false;
   /*
    * 문장부호·숨 권고 — 이것만으로는 다시 짓지 않는다.
    * 다시 쓰기는 대본 한 편을 통째로 새로 사는 값(약 2분·토큰 두 배)이라, 긴 문장 몇 개로
@@ -1066,12 +1137,14 @@ export async function generateStory(input: {
     // 직전 결과에서 이름이 실제로 틀렸을 때만 이름 경고를 붙인다. 예전엔 다른 이유로
     // 다시 써도 늘 "이름이 틀렸다"고 해서, 모델이 멀쩡한 이름 대신 엉뚱한 데를 고쳤다.
     const nameWasWrong = lastIssues.some((issue) => issue.startsWith("주인공 이름"));
+    // 한도는 생각(thinking)까지 합친 값이다 — 식구가 많은 긴 이야기(여섯 명)는 8000 에서 본문이 잘려 '본문 형식이 어긋났습니다'가
+    // 났다(사장님 2026-09-30). 쓴 만큼만 값이 나가므로 넉넉히 두고, 잘려서 다시 쓸 때는 생각을 줄인다.
     const message = await client.messages.create({
       model: MODEL,
-      max_tokens: 8000,
+      max_tokens: 16000,
       system: STORY_SYSTEM,
       thinking: { type: "adaptive" },
-      output_config: { effort: "medium" },
+      output_config: { effort: cutShort ? "low" : "medium" },
       messages: [
         {
           role: "user",
@@ -1118,7 +1191,25 @@ export async function generateStory(input: {
      * 쪽 글의 부호를 먼저 손본다 — 빠진 끝 부호·띄어쓰기만, 글자는 한 자도 안 바꾼다.
      * 검사가 손본 글을 보게 여기서 한다. 제목에는 쓰지 않는다(제목엔 마침표를 안 찍는다).
      */
-    const parsed = parseStory(textOf(message));
+    // 답이 한도에서 끊겼거나 형식이 어긋났으면 — 첫 번째면 한 번 더 쓴다(다시 쓰기 한 번은 원래 허용된 길이다).
+    if (message.stop_reason === "max_tokens") {
+      cutShort = true;
+      if (attempt < 2) {
+        lastIssues = ["형식: 답이 길이 한도에서 끊겼다 — 쪽 글·그림 설명을 간결하게 쓰고 마커(@@TITLE@@·@@PAGE@@·@@TEXT@@·@@IMG@@·@@VOICE@@)를 빠짐없이 끝까지 낸다"];
+        continue;
+      }
+      throw new StoryParseError("답이 길이 한도에서 끊겼습니다.");
+    }
+    let parsed: ParsedStory;
+    try {
+      parsed = parseStory(textOf(message));
+    } catch (e) {
+      if (e instanceof StoryParseError && attempt < 2) {
+        lastIssues = [`형식: ${e.message} — 출력 형식(@@마커@@)을 정확히 지켜 전체를 다시 낸다`];
+        continue;
+      }
+      throw e;
+    }
     story = repairStoryContinuity({ ...parsed, pages: tidyPages(parsed.pages) });
 
     lastIssues = validateStoryQuality(story, {

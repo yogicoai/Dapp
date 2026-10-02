@@ -3,9 +3,12 @@ import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import {
+  CARD_LAYOUT,
   composeCharacterSheet,
+  composePortraitCard,
   outfitColour,
   planComposedSheet,
+  planPortraitCard,
   prepareOutfitCard,
   prepareSheetFigure,
   scanFigure,
@@ -126,12 +129,12 @@ describe("planComposedSheet — 칸 나누기", () => {
     }
   });
 
-  it("얼굴 오리기는 머리 위에서 시작해 머리 × 1.6 쯤, 원본 밖으로 나가지 않는다", () => {
+  it("얼굴 오리기는 머리 위에서 시작해 머리 × 1.4 쯤(머리·목), 원본 밖으로 나가지 않는다", () => {
     const s = scan(300, 1000); // 머리 200, 원본 320×1010
     const plan = planComposedSheet([{ kind: "figure", name: "엄마", scan: s, heightCm: 163 }]);
     const [f] = figuresOf(plan.slots);
     assert.equal(f.closeup.crop.top, Math.round(s.box.top - s.headHeight * SHEET_LAYOUT.headroom) < 0 ? 0 : Math.round(s.box.top - s.headHeight * SHEET_LAYOUT.headroom));
-    assert.ok(f.closeup.crop.height >= s.headHeight * 1.5 && f.closeup.crop.height <= s.headHeight * 1.8);
+    assert.ok(f.closeup.crop.height >= s.headHeight * 1.35 && f.closeup.crop.height <= s.headHeight * 1.6, `crop ${f.closeup.crop.height}`);
     assert.ok(f.closeup.crop.left + f.closeup.crop.width <= s.imageWidth);
     assert.deepEqual(f.figure.crop, s.box);
   });
@@ -143,7 +146,8 @@ describe("planComposedSheet — 칸 나누기", () => {
   });
 
   it("넓은 사람이 있으면 모두 같은 배율로 줄인다 — 키 비율은 그대로, 칸을 넘지 않는다", () => {
-    const plan = planComposedSheet([fig("하온", 110, 1300, 1000), fig("아빠", 175, 300, 1000)]);
+    // 칸이 넓어져(2026-10-01, column 0.5) 옆으로 아주 넓은 그림이라야 칸을 넘는다.
+    const plan = planComposedSheet([fig("하온", 110, 2000, 1000), fig("아빠", 175, 300, 1000)]);
     const [kid, dad] = figuresOf(plan.slots);
     const content = plan.height - 2 * SHEET_LAYOUT.margin;
     const colW = SHEET_LAYOUT.column * content;
@@ -172,7 +176,7 @@ describe("planComposedSheet — 칸 나누기", () => {
     assert.ok(kid.figure.place.left < block.place.left && block.place.left + block.place.width <= mom.figure.place.left + 1);
   });
 
-  it("사람이 많으면 얼굴이 너무 작아지지 않게 가로만 늘린다(내용 높이 520 이상, 가로 1600 이하)", () => {
+  it("사람이 많으면 얼굴이 너무 작아지지 않게 가로만 늘린다(내용 높이 520 이상, 가로 1800 이하)", () => {
     const plan = planComposedSheet([
       fig("하온", 110),
       fig("엄마", 163),
@@ -185,6 +189,24 @@ describe("planComposedSheet — 칸 나누기", () => {
     assert.ok(plan.width > 1024);
     for (const s of plan.slots) {
       assert.ok(within(s.kind === "block" ? s.place : s.figure.place, plan.width, plan.height));
+    }
+  });
+
+  it("온 가족 6명이 모두 고정이어도 얼굴(머리)이 160px 넘게 선다 — 예전엔 100px 안팎(2026-10-01)", () => {
+    const plan = planComposedSheet([
+      fig("우주", 112),
+      fig("시우", 125),
+      fig("엄마", 163),
+      fig("아빠", 175),
+      fig("할머니", 154),
+      fig("할아버지", 168),
+    ]);
+    assert.ok(plan.width <= SHEET_LAYOUT.maxWidth);
+    assert.ok(plan.height - 2 * SHEET_LAYOUT.margin >= SHEET_LAYOUT.minContent - 1);
+    for (const f of figuresOf(plan.slots)) {
+      const head = (f.closeup.place.height / f.closeup.crop.height) * 200; // scan() 의 머리 = 200
+      assert.ok(head >= 160, `${f.name} 머리 ${head.toFixed(0)}px`);
+      assert.ok(within(f.closeup.place, plan.width, plan.height));
     }
   });
 
@@ -630,5 +652,68 @@ describe("prepareOutfitCard · composeCharacterSheet — 옷 카드로 짠 시�
     await assert.rejects(prepareOutfitCard({ image: await sized([760, 450, 700]), names, kids }), /순서가 뒤바뀐/);
     // kids 를 안 주면 예전처럼 크기를 보지 않는다
     await prepareOutfitCard({ image: await sized([760, 450, 700]), names });
+  });
+});
+
+/* ─────────── 얼굴 카드 — 쪽 그림에 붙이는 고정 가족 한 사람(2026-10-01 "아바타와 너무 달라") ─────────── */
+
+describe("planPortraitCard — 왼쪽 전신 + 오른쪽 키운 얼굴", () => {
+  it("카드 크기 고정, 모든 네모가 카드·원본 안, 전신은 왼쪽 · 얼굴은 오른쪽", () => {
+    const s = scan(300, 1000); // 머리 200, 원본 320×1010
+    const plan = planPortraitCard(s);
+    assert.equal(plan.width, CARD_LAYOUT.width);
+    assert.equal(plan.height, CARD_LAYOUT.height);
+    for (const part of [plan.figure, plan.closeup]) {
+      assert.ok(within(part.place, plan.width, plan.height));
+      assert.ok(within(part.crop, s.imageWidth, s.imageHeight));
+    }
+    assert.deepEqual(plan.figure.crop, s.box);
+    assert.ok(plan.figure.place.left + plan.figure.place.width <= plan.closeup.place.left);
+  });
+
+  it("얼굴은 머리 위에서 머리 × 1.45 쯤 오리고, 전신 속 얼굴보다 몇 배 크게 선다", () => {
+    const s = scan(300, 1000);
+    const plan = planPortraitCard(s);
+    const crop = plan.closeup.crop;
+    assert.ok(crop.height >= s.headHeight * 1.4 && crop.height <= s.headHeight * 1.7, `crop ${crop.height}`);
+    const closeupScale = plan.closeup.place.height / crop.height;
+    const figureScale = plan.figure.place.height / s.box.height;
+    // 같은 얼굴이 카드 오른쪽에서 왼쪽 전신보다 3배 넘게 크다
+    assert.ok(closeupScale / figureScale > 3, `${closeupScale / figureScale}`);
+    // 머리 가운데를 중심으로 오린다
+    assert.ok(Math.abs(crop.left + crop.width / 2 - s.headCenterX) <= 1);
+  });
+
+  it("좁은 그림이면 원본 너비까지만 오린다(넘치지 않는다)", () => {
+    const s = scan(80, 1000); // 원본 너비 100
+    const plan = planPortraitCard(s);
+    assert.ok(plan.closeup.crop.left >= 0 && plan.closeup.crop.left + plan.closeup.crop.width <= s.imageWidth);
+    assert.ok(within(plan.closeup.place, plan.width, plan.height));
+  });
+});
+
+describe("composePortraitCard — 원본 픽셀로 짠 얼굴 카드", () => {
+  it("흰 바탕 JPEG, 크기는 카드 그대로, 오른쪽 가운데는 머리 색 · 왼쪽 아래는 몸 색", async () => {
+    const image = await portrait(300, 1000, "#202020", "#ff3c3c");
+    const card = await composePortraitCard({ image, headRatio: 5.6 });
+    assert.equal(card.mimeType, "image/jpeg");
+    const meta = await sharp(Buffer.from(card.data, "base64")).metadata();
+    assert.equal(meta.width, CARD_LAYOUT.width);
+    assert.equal(meta.height, CARD_LAYOUT.height);
+    assert.ok(near(await pixel(card, 2, 2), [255, 255, 255], 6));
+    // 계획을 다시 세워 본다
+    const fig = await prepareSheetFigure({ name: "엄마", image, heightCm: 163, headRatio: 5.6 });
+    const plan = planPortraitCard(fig.scan);
+    const c = plan.closeup.place;
+    assert.ok(near(await pixel(card, c.left + c.width / 2, c.top + c.height * 0.4), [32, 32, 32], 50), "얼굴 칸 = 머리");
+    const f = plan.figure.place;
+    assert.ok(near(await pixel(card, f.left + f.width / 2, f.top + f.height * 0.75), [255, 60, 60]), "전신 아래 = 몸");
+  });
+
+  it("사람이 없는 그림은 던진다(부르는 쪽이 원본 그대로 붙인다)", async () => {
+    const blank = await sharp({ create: { width: 200, height: 300, channels: 3, background: { r: 255, g: 255, b: 255 } } })
+      .jpeg()
+      .toBuffer();
+    await assert.rejects(composePortraitCard({ image: { mimeType: "image/jpeg", data: blank.toString("base64") }, headRatio: 5 }));
   });
 });

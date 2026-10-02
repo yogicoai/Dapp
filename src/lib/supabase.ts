@@ -58,19 +58,40 @@ export async function currentUid(): Promise<string | null> {
  */
 export async function authedFetch(input: string, init: RequestInit = {}): Promise<Response> {
   const sb = getSupabase();
+  const send = (token: string | null) => {
+    if (!token) return fetch(input, init);
+    const headers = new Headers(init.headers);
+    headers.set("Authorization", `Bearer ${token}`);
+    return fetch(input, { ...init, headers });
+  };
   let token: string | null = null;
   if (sb) {
     try {
       const { data } = await sb.auth.getSession();
-      token = data.session?.access_token ?? null;
+      const s = data.session;
+      token = s?.access_token ?? null;
+      // 곧 만료될 표면 먼저 새로 받는다 — 오래 열어 둔 탭에서 화면은 '로그인됨'인데 서버는 옛 표를 거절해
+      // "로그인이 필요합니다"가 뜨던 자리(사장님 2026-09-30 "로그인된 상태인데도").
+      if (s?.expires_at && s.expires_at * 1000 < Date.now() + 60_000) {
+        const { data: fresh } = await sb.auth.refreshSession();
+        token = fresh.session?.access_token ?? token;
+      }
     } catch {
-      /* 무시 — 토큰 없이 보내고 서버 판단에 맡긴다 */
+      /* 무시 — 가진 표(또는 표 없이)로 보내고 서버 판단에 맡긴다 */
     }
   }
-  if (!token) return fetch(input, init);
-  const headers = new Headers(init.headers);
-  headers.set("Authorization", `Bearer ${token}`);
-  return fetch(input, { ...init, headers });
+  const res = await send(token);
+  if (res.status !== 401 || !token || !sb) return res;
+  // 서버가 표를 거절했다(만료 · 다른 창이 새 표를 받아 이 표가 옛것이 됨) — 한 번만 새로 받아 다시 보낸다.
+  // 401 은 서버가 로그인 확인에서 바로 돌려주는 것이라(값 받기·합성 전) 다시 보내도 두 번 처리되지 않는다.
+  try {
+    const { data } = await sb.auth.refreshSession();
+    const fresh = data.session?.access_token ?? null;
+    if (!fresh || fresh === token) return res;
+    return await send(fresh);
+  } catch {
+    return res;
+  }
 }
 
 /* ── 계정별 설정 저장 ──

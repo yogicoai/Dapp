@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { CheckoutDemo } from "@/components/pay/CheckoutDemo";
+import { getOfferView } from "@/lib/offer-settings-server";
 import { parsePlan } from "@/lib/pay-demo";
 
 /**
@@ -15,5 +16,7 @@ export default async function CheckoutPage({
   const sp = await searchParams;
   const plan = parsePlan(sp.plan);
   if (!plan) redirect("/plans");
-  return <CheckoutDemo plan={plan} />;
+  // 값·권수는 관리실 요금제 값(요금제 화면과 같은 곳) — 못 읽으면 기본값
+  const offer = await getOfferView();
+  return <CheckoutDemo plan={plan} terms={offer.plans} />;
 }

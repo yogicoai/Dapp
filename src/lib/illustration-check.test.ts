@@ -159,7 +159,7 @@ describe("illustrationCheckParts — 고정 가족 원본 그림과 얼굴 견�
 
   it("얼굴이 확실히 다를 때만 떨어뜨린다 — 자세·표정·옷·작은 얼굴로는 떨어뜨리지 않는다", () => {
     assert.match(text, /^FIXED FAMILY FACES — an approved ORIGINAL portrait is attached for: 하온, 엄마\. FAIL if any of them is visible with a face or hair that clearly differs from their portrait/m);
-    for (const feature of ["face shape or eye shape", "hairstyle, hair length, fringe or parting", "straight/curly texture", "glasses or a beard added or removed", "apparent age"]) {
+    for (const feature of ["face shape or eye shape", "a different hairstyle (including its overall outline and volume — tousled and spiky versus neat and smooth), hair length, fringe or parting", "straight/curly texture", "glasses or a beard added or removed", "apparent age"]) {
       assert.ok(text.includes(feature), feature);
     }
     assert.match(text, /Do NOT fail for pose, expression, head angle or a mirrored\/turned view \(a parting or fringe that falls on the other side because the head is turned\), lighting, size, brush texture, the portrait's white background or standing pose, clothing \(clothing is judged against the reference sheet\)/);

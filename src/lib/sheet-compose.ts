@@ -112,25 +112,30 @@ export function scanFigure(
  * column: 고정 가족 한 칸의 너비. 어른 전신(가로:세로 ≈ 1:3)이 위 줄에 들어가고, 아래 줄 얼굴 칸이 넉넉하게.
  * maxSide: 긴 변 — 쪽 그림 참고로 올리는 다른 그림(shrinkForReference 1024)과 같게. 사람이 많으면 내용 높이가 minContent 아래로
  *   떨어지지 않게 가로만 maxWidth 까지 늘린다(얼굴이 너무 작아지지 않게).
+ *
+ * 2026-10-01(사장님 "아바타와 너무 달라"): 아래 줄 얼굴을 키웠다 — 예전(칸 0.4·위 줄 0.6·얼굴 오리기 머리 × 1.6)엔 6명 시트의
+ * 얼굴이 100px 안팎이라 눈·코·입이 흐렸다. 칸을 넓히고(0.5) 위 줄 전신 몫을 줄이고(0.45) 얼굴은 머리·목만(× 1.4) 오려,
+ * 같은 사람 수에서 얼굴이 약 1.7배다. 전신은 키·몸·옷만 보이면 되고, 얼굴이 사람을 알아보는 곳이다.
+ * 6명이면 가로가 1600 을 넘어 maxWidth 를 1800 으로 — 내용 높이 520 을 지킨다.
  */
 export const SHEET_LAYOUT = {
   margin: 32,
-  column: 0.4,
-  topShare: 0.6,
-  rowGap: 0.04,
+  column: 0.5,
+  topShare: 0.45,
+  rowGap: 0.03,
   /** 가장 큰 사람이 위 줄 높이의 이만큼 */
   figureFill: 0.96,
   /** 전신이 칸 너비의 이만큼을 넘으면 모두 같은 배율로 줄인다 */
   columnFill: 0.9,
   /** 아래 줄 얼굴이 칸의 이만큼까지 */
-  closeupFill: 0.94,
-  /** 얼굴 오리기 높이 = 머리 높이 × 이 값(머리 + 목 + 어깨) */
-  closeupHeads: 1.6,
+  closeupFill: 0.96,
+  /** 얼굴 오리기 높이 = 머리 높이 × 이 값(머리 + 목 + 어깨 윗부분) */
+  closeupHeads: 1.4,
   /** 머리 위 여백 = 머리 높이 × 이 값 */
-  headroom: 0.1,
+  headroom: 0.08,
   maxSide: 1024,
   minContent: 520,
-  maxWidth: 1600,
+  maxWidth: 1800,
 } as const;
 
 /** 키(cm) 범위 — 요청 값은 이 안으로 */
@@ -302,6 +307,79 @@ export function sheetFigureMeta(
       : fallbackCm;
   const kid = memberId === "child" || (memberId !== "mom" && memberId !== "dad" && heightCm < 140);
   return { heightCm, headRatio: cleanHeadRatio(raw.headRatio) ?? (kid ? 4.4 : 5.6), kid };
+}
+
+/* ─────────────────────────────── 얼굴 카드 ─────────────────────────────── */
+
+/*
+ * 얼굴 카드(2026-10-01 사장님 "내가 생성한 아바타와 동화 속 아바타의 모습이 너무 달라") — 쪽 그림에 붙이는 고정 가족 한 사람의
+ * 참고 그림(api/illustrate-page). 예전엔 가족 그림 원본(전신, 흰 바탕 JPEG)을 그대로 붙였다. 그림 모델은 붙인 그림 한 장을
+ * 정해진 크기로 줄여 읽어서, 전신 그림 속 얼굴은 그림 넓이의 5% 안팎뿐이었다 — 눈·코·입이 뭉개진 채 읽혔다.
+ * 이제 한 장에 왼쪽은 그 원본 전신(키·몸·머리 길이·옷), 오른쪽은 같은 원본에서 오려 키운 얼굴(머리·목)을 둔다 — 얼굴이 그림 넓이의
+ * 30% 안팎이다. 얼굴은 원본 픽셀 그대로다(AI 를 거치지 않는다). 글자는 한 자도 넣지 않는다 — 누구인지는 요청의 글이 말한다.
+ */
+export const CARD_LAYOUT = {
+  width: 1024,
+  height: 768,
+  margin: 24,
+  /** 왼쪽 전신과 오른쪽 얼굴 사이 */
+  gap: 24,
+  /** 왼쪽 전신 칸 너비 — 카드 너비의 이만큼 */
+  figureShare: 0.3,
+  /** 칸 안에서 전신·얼굴이 차지하는 몫 */
+  fill: 0.96,
+  /** 얼굴 오리기 높이 = 머리 높이 × 이 값(머리 + 목 + 어깨 윗부분) */
+  closeupHeads: 1.45,
+  /** 머리 위 여백 = 머리 높이 × 이 값 */
+  headroom: 0.1,
+} as const;
+
+export type CardPlan = {
+  width: number;
+  height: number;
+  figure: { crop: Rect; place: Rect };
+  closeup: { crop: Rect; place: Rect };
+};
+
+/** 얼굴 카드 칸 나누기 — 왼쪽 전신(가운데 맞춤), 오른쪽 얼굴(가운데 맞춤). 원본 좌표의 네모는 원본 안으로 자른다. */
+export function planPortraitCard(scan: FigureScan): CardPlan {
+  const L = CARD_LAYOUT;
+  const innerH = L.height - 2 * L.margin;
+  const leftW = Math.round(L.width * L.figureShare);
+  const rightLeft = L.margin + leftW + L.gap;
+  const rightW = L.width - L.margin - rightLeft;
+  const { box, headHeight, headCenterX, imageWidth, imageHeight } = scan;
+
+  const fs = Math.min((leftW * L.fill) / box.width, (innerH * L.fill) / box.height);
+  const fw = box.width * fs;
+  const fh = box.height * fs;
+  const figure = {
+    crop: inside(box, imageWidth, imageHeight),
+    place: inside(
+      { left: L.margin + (leftW - fw) / 2, top: L.margin + (innerH - fh) / 2, width: fw, height: fh },
+      L.width,
+      L.height,
+    ),
+  };
+
+  const cellW = rightW * L.fill;
+  const cellH = innerH * L.fill;
+  const cropTop = Math.max(0, Math.round(box.top - headHeight * L.headroom));
+  const cropH = Math.max(1, Math.min(imageHeight - cropTop, Math.round(headHeight * L.closeupHeads + (box.top - cropTop))));
+  const cropW = Math.max(1, Math.min(imageWidth, Math.round((cropH * cellW) / cellH)));
+  const cropLeft = clampInt(headCenterX - cropW / 2, 0, imageWidth - cropW);
+  const cs = Math.min(cellW / cropW, cellH / cropH);
+  const cw = cropW * cs;
+  const ch = cropH * cs;
+  const closeup = {
+    crop: inside({ left: cropLeft, top: cropTop, width: cropW, height: cropH }, imageWidth, imageHeight),
+    place: inside(
+      { left: rightLeft + (rightW - cw) / 2, top: L.margin + (innerH - ch) / 2, width: cw, height: ch },
+      L.width,
+      L.height,
+    ),
+  };
+  return { width: L.width, height: L.height, figure, closeup };
 }
 
 /* ─────────────────────────────── 옷 카드 ─────────────────────────────── */
@@ -670,4 +748,37 @@ export async function composeCharacterSheet(input: {
     .jpeg({ quality: 86 })
     .toBuffer();
   return { image: { mimeType: "image/jpeg", data: out.toString("base64") }, order: plan.order, width: plan.width, height: plan.height };
+}
+
+/**
+ * 얼굴 카드 한 장을 짠다(planPortraitCard) — 흰 바탕 JPEG, 글자 없음. 가족 참고 그림(흰 바탕 JPEG)과 그 사람의 머리 비율을 받는다.
+ * 사람을 못 찾으면 던진다 — 부르는 쪽(api/illustrate-page)은 예전처럼 원본 그림을 그대로 붙인다.
+ */
+export async function composePortraitCard(input: { image: ImageData; headRatio: number }): Promise<ImageData> {
+  const buffer = Buffer.from(input.image.data, "base64");
+  const { data, info } = await sharp(buffer)
+    .flatten({ background: "#ffffff" })
+    .greyscale()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const scan = scanFigure(data, info.width, info.height, input.headRatio, info.channels);
+  if (!scan) throw new Error("가족 그림에서 사람을 찾지 못했어요.");
+  const plan = planPortraitCard(scan);
+  const layers: sharp.OverlayOptions[] = [];
+  for (const part of [plan.figure, plan.closeup]) {
+    const layer = await sharp(buffer)
+      .flatten({ background: "#ffffff" })
+      .extract(part.crop)
+      .resize(part.place.width, part.place.height, { fit: "fill" })
+      .png()
+      .toBuffer();
+    layers.push({ input: layer, left: part.place.left, top: part.place.top });
+  }
+  const out = await sharp({
+    create: { width: plan.width, height: plan.height, channels: 3, background: { r: 255, g: 255, b: 255 } },
+  })
+    .composite(layers)
+    .jpeg({ quality: 86 })
+    .toBuffer();
+  return { mimeType: "image/jpeg", data: out.toString("base64") };
 }

@@ -36,7 +36,7 @@ export type DrawProgress = {
    * 그 시트에 원본이 선 고정 가족의 참고 그림 주소(2026-09-29 오후~) — 이어 그릴 때도 쪽마다 원본을 붙인다.
    * sheetOrder = 시트에 선 순서(왼쪽부터). 옛 보관본엔 없다(= 시트만 보고 그린다).
    */
-  sheetPortraits?: { name: string; ref: string; memberId: string }[];
+  sheetPortraits?: { name: string; ref: string; memberId: string; heightCm?: number; headRatio?: number }[];
   sheetOrder?: string[];
   /** 옷 카드로 이 책의 옷을 입은 고정 가족(2026-09-29 저녁~) — 이어 그릴 때도 같은 줄을 쓴다. 옛 보관본엔 없다. */
   sheetOutfits?: string[];

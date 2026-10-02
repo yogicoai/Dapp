@@ -50,7 +50,15 @@ export type IconName =
   | "refresh"
   | "back";
 
-export type AdminNavKey = "dashboard" | "members" | "support" | "billing" | "pricing" | "business";
+export type AdminNavKey =
+  | "dashboard"
+  | "members"
+  | "library"
+  | "support"
+  | "billing"
+  | "pricing"
+  | "business"
+  | "report";
 export type AdminNavGroup = "운영" | "매출" | "회사";
 
 export type AdminNavItem = {
@@ -72,10 +80,15 @@ export const ADMIN_NAV_GROUPS: readonly AdminNavGroup[] = ["운영", "매출", "
 export const ADMIN_NAV: readonly AdminNavItem[] = [
   { key: "dashboard", href: "/admin", label: "대시보드", group: "운영", icon: "dashboard" },
   { key: "members", href: "/admin/members", label: "회원", group: "운영", icon: "users" },
+  // 공개 동화 — 회원 종류마다 어떤 세계명작·전래동화를 보여 줄지(2026-10-02 사장님 "운영 쪽에")
+  { key: "library", href: "/admin/library", label: "공개 동화", group: "운영", icon: "book" },
   { key: "support", href: "/admin/support", label: "의견·오류", group: "운영", icon: "inbox" },
   { key: "billing", href: "/admin/billing", label: "결제·구독", group: "매출", icon: "card", tag: "연동 전" },
   { key: "pricing", href: "/admin/pricing", label: "요금제·가격", group: "매출", icon: "tag" },
   { key: "business", href: "/admin/business", label: "사업자 정보·약관", group: "회사", icon: "building" },
+  // 가격정책 확인 데이터 — 원가·마진이 들어 있어 출시 전에 지운다(사장님 2026-10-02 "이건 삭제될꺼다 라는거 까지",
+  // 이름은 "보고용이라고 써주지 말고 가격정책 확인 데이터 식으로")
+  { key: "report", href: "/admin/report", label: "가격정책 확인 데이터", group: "회사", icon: "info", tag: "지울 예정" },
 ];
 
 /**
@@ -184,11 +197,12 @@ export function formatWon(n: number | null | undefined): string {
 /**
  * 표·함수가 아직 없어서 난 오류인가(사장님이 SQL 을 아직 안 돌렸을 때).
  * 이때 서버 경로는 500 대신 200 + { schemaReady:false } 를 준다 — 화면이 '데이터베이스 준비 전이에요'라고
- * 말하게. 42P01 표 없음 · 42883 함수 없음 · PGRST202 함수 못 찾음 · PGRST205 표 못 찾음(PostgREST 캐시).
+ * 말하게. 42P01 표 없음 · 42703 칸 없음(예전 판 SQL) · 42883 함수 없음 · PGRST202 함수 못 찾음 ·
+ * PGRST204 칸 못 찾음 · PGRST205 표 못 찾음(PostgREST 캐시).
  */
 export function isSchemaMissing(err: { code?: string | null } | null | undefined): boolean {
   const code = String(err?.code ?? "");
-  return code === "42P01" || code === "42883" || code === "PGRST202" || code === "PGRST205";
+  return ["42P01", "42703", "42883", "PGRST202", "PGRST204", "PGRST205"].includes(code);
 }
 
 /* ── id 검사 ───────────────────────────────────────────────────────────── */

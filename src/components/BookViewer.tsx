@@ -34,7 +34,11 @@ import {
   storyWeightForFont,
 } from "@/lib/prefs";
 import { loadSession } from "@/lib/auth";
-import { authedFetch } from "@/lib/supabase";
+import { loadLibraryAccess } from "@/lib/library-access";
+import { viewerTierOf } from "@/lib/member-plan";
+import { loadMyPlanKey } from "@/lib/member-plan-client";
+import { libraryLock, OPEN_LIBRARY } from "@/lib/offer-settings";
+import { authedFetch, currentUid } from "@/lib/supabase";
 import { loadPrivatePageVideos } from "@/lib/private-media";
 import { fitScale } from "@/lib/fit-text";
 import classicBooksJson from "@/data/classic-books.json";
@@ -789,10 +793,20 @@ export function BookViewer({
     if (!ended) return;
     let alive = true;
     (async () => {
+      // 안 보이는 책은 건너뛴다 — 관리실 '공개 동화'에서 '책장에 적용'을 켜면 다음 동화도 그 회원에게 보이는 책만.
+      // 비회원은 무료 책만, 요금제를 지정받은 회원은 그 요금제까지. 지정이 없는 회원은 결제 전이라 다 열려 있어 읽지 않는다
+      // (로그인 확인은 기기에 있는 세션만 본다).
+      const library = book.id.startsWith("folk-") || book.id.startsWith("classic-");
+      const uid = library ? await currentUid().catch(() => null) : null;
+      const plan = uid ? await loadMyPlanKey(uid) : null;
+      const viewer = library ? viewerTierOf(!!uid, plan) : "pass";
+      const access = viewer === "pass" ? OPEN_LIBRARY : await loadLibraryAccess();
+      if (!alive) return;
       const pickNext = (list: { id: string; title: string; hidden?: boolean }[]) => {
         const shown = list.filter((b) => !b.hidden);
         const at = shown.findIndex((b) => b.id === book.id);
-        return at >= 0 && at + 1 < shown.length ? shown[at + 1] : null;
+        if (at < 0) return null;
+        return shown.slice(at + 1).find((b) => !libraryLock(access, b.id, viewer)) ?? null;
       };
       if (book.id.startsWith("folk-")) {
         setNextBook(pickNext(asBooks(folkBooksJson)));

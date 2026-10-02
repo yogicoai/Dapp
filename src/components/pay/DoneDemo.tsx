@@ -29,7 +29,7 @@ import {
   type DemoReceipt,
   type PayMethodId,
 } from "@/lib/pay-demo";
-import { PLANS, booksText, formatDateKo, won, type PlanId } from "@/lib/plans";
+import { DEFAULT_PLAN_TERMS, booksText, formatDateKo, plansOf, won, type PlanId, type PlanTerms } from "@/lib/plans";
 import { useSiteInfo } from "@/lib/site-info-client";
 import {
   BigLink,
@@ -57,7 +57,10 @@ export function DoneDemo({
   orderId,
   plan,
   method,
+  terms = DEFAULT_PLAN_TERMS,
 }: {
+  /** 관리실 요금제 값 — 새 가족 패스의 이번 달 책 수를 여기서 센다(서버 page 가 읽어 넘긴다) */
+  terms?: PlanTerms;
   /** isDemoOrderId 를 통과한 값만(서버 page 가 거른다) */
   orderId: string | null;
   plan: PlanId | null;
@@ -84,7 +87,7 @@ export function DoneDemo({
           return;
         }
         if (e === "fresh") {
-          state = applyDemoOrder(state, new Date());
+          state = applyDemoOrder(state, new Date(), terms);
           writeDemoState(s.uid, state);
         }
         const receipt = state.receipts.find((r) => r.orderId === orderId);
@@ -100,7 +103,7 @@ export function DoneDemo({
     return () => {
       alive = false;
     };
-  }, [orderId, plan, method]);
+  }, [orderId, plan, method, terms]);
 
   if (view.kind === "loading") {
     return (
@@ -136,7 +139,7 @@ export function DoneDemo({
   }
 
   const { receipt, pass } = view;
-  const p = PLANS[receipt.plan];
+  const p = plansOf(terms)[receipt.plan];
   const isSub = p.kind === "subscription";
   const booksLeft = pass?.booksLeft ?? 0;
   const next = isSub && pass ? new Date(pass.nextBillingAt) : null;

@@ -1,7 +1,7 @@
 import {
   DEFAULT_PAGE_COUNT,
   MAX_PAGE_COUNT,
-  MIN_PAGE_COUNT,
+  minPageCount,
   type ChildProfile,
   type Gender,
   type StoryMaterial,
@@ -40,6 +40,7 @@ export function parseChild(value: unknown): ChildProfile {
   const pl = c?.parentLooks as { mom?: unknown; dad?: unknown } | undefined;
   const one = (x: unknown) => (typeof x === "string" ? x.trim().slice(0, 400) : "");
   const parentLooks = { mom: one(pl?.mom), dad: one(pl?.dad) };
+  const familyLooks = parseFamilyLooks(c?.familyLooks);
 
   return {
     name,
@@ -54,7 +55,26 @@ export function parseChild(value: unknown): ChildProfile {
           },
         }
       : {}),
+    ...(familyLooks.length ? { familyLooks } : {}),
   };
+}
+
+/**
+ * 할머니·할아버지·형제·단짝 친구 생김새(2026-10-01, 만들기 화면이 lib/family-cast storyFamilyLooks 로 보낸다).
+ * 프롬프트에 그대로 들어가는 남이 보낸 값이라 수·길이를 자르고 글자만 받는다. 이름(who)은 줄바꿈 없이 24자까지.
+ */
+function parseFamilyLooks(value: unknown): NonNullable<ChildProfile["familyLooks"]> {
+  if (!Array.isArray(value)) return [];
+  const out: NonNullable<ChildProfile["familyLooks"]> = [];
+  for (const item of value.slice(0, 8)) {
+    const o = (item && typeof item === "object" ? item : {}) as { who?: unknown; line?: unknown; fixed?: unknown };
+    const who = typeof o.who === "string" ? o.who.replace(/\s+/g, " ").trim().slice(0, 24) : "";
+    const line = typeof o.line === "string" ? o.line.replace(/\s+/g, " ").trim().slice(0, 400) : "";
+    const fixed = o.fixed === true;
+    if (!who || (!line && !fixed)) continue;
+    out.push({ who, ...(line ? { line } : {}), ...(fixed ? { fixed: true } : {}) });
+  }
+  return out;
 }
 
 /**
@@ -132,11 +152,11 @@ export function parseMaterial(value: unknown): StoryMaterial {
   return material;
 }
 
-/** 장면(쪽) 수 3~8. 값이 없거나 이상하면 기본 8쪽. 범위를 벗어나면 가둔다. */
+/** 장면(쪽) 수 하한(보통 3, 로컬 시험만 2 — lib/anthropic minPageCount)~8. 값이 없거나 이상하면 기본 8쪽. 범위를 벗어나면 가둔다. */
 export function parsePageCount(value: unknown): number {
   const n = Math.round(Number(value));
   if (!Number.isFinite(n)) return DEFAULT_PAGE_COUNT;
-  return Math.min(MAX_PAGE_COUNT, Math.max(MIN_PAGE_COUNT, n));
+  return Math.min(MAX_PAGE_COUNT, Math.max(minPageCount(), n));
 }
 
 /** 분위기(무드). 자유 문자열, 길이만 제한. 빈 값 허용. */
@@ -167,8 +187,8 @@ export function parseOutlineInput(value: unknown): ParsedOutline {
 
   if (!Array.isArray(o?.scenes)) throw new Error("줄거리에 장면이 없습니다.");
   const raw = o.scenes as unknown[];
-  if (raw.length < MIN_PAGE_COUNT || raw.length > MAX_PAGE_COUNT) {
-    throw new Error(`장면 수는 ${MIN_PAGE_COUNT}~${MAX_PAGE_COUNT}장이어야 합니다.`);
+  if (raw.length < minPageCount() || raw.length > MAX_PAGE_COUNT) {
+    throw new Error(`장면 수는 ${minPageCount()}~${MAX_PAGE_COUNT}장이어야 합니다.`);
   }
 
   // 번호는 클라이언트가 뭘 보내든 무시하고 순서대로 1,2,3…으로 다시 매긴다.

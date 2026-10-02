@@ -57,12 +57,16 @@ describe("메뉴", () => {
       assert.ok(existsSync(at(`app${n.href}/page.tsx`)), `${n.href} 화면 파일이 없다`);
     }
   });
-  it("여섯 메뉴 · 세 묶음 · 결제에만 '연동 전' 꼬리표", () => {
-    assert.equal(ADMIN_NAV.length, 6);
+  it("여덟 메뉴 · 세 묶음 · 결제엔 '연동 전', 가격정책 확인 데이터엔 '지울 예정' 꼬리표 · 공개 동화는 운영 묶음", () => {
+    assert.equal(ADMIN_NAV.length, 8);
+    assert.equal(ADMIN_NAV.find((n) => n.key === "library")?.group, "운영");
     assert.deepEqual([...new Set(ADMIN_NAV.map((n) => n.group))], [...ADMIN_NAV_GROUPS]);
     assert.deepEqual(
       ADMIN_NAV.filter((n) => n.tag).map((n) => [n.key, n.tag]),
-      [["billing", "연동 전"]],
+      [
+        ["billing", "연동 전"],
+        ["report", "지울 예정"],
+      ],
     );
   });
   it("activeNavKey — /admin 은 정확히 같을 때만, 나머지는 가장 길게 맞는 것", () => {
@@ -72,6 +76,8 @@ describe("메뉴", () => {
     assert.equal(activeNavKey("/admin/members/0b8f1c2e-1111-4222-8333-444455556666"), "members");
     assert.equal(activeNavKey("/admin/billing?demo=1"), "billing");
     assert.equal(activeNavKey("/admin/support#x"), "support");
+    assert.equal(activeNavKey("/admin/library"), "library");
+    assert.equal(activeNavKey("/admin/report"), "report");
     assert.equal(activeNavKey("/admin/membersx"), null);
     assert.equal(activeNavKey("/admin/unknown"), null);
     assert.equal(activeNavKey("/settings"), null);
@@ -158,8 +164,8 @@ describe("돈 표시", () => {
 });
 
 describe("DB 준비 · id · 주소", () => {
-  it("isSchemaMissing — 표·함수 없음 코드만", () => {
-    for (const code of ["42P01", "42883", "PGRST202", "PGRST205"]) assert.ok(isSchemaMissing({ code }), code);
+  it("isSchemaMissing — 표·칸·함수 없음 코드만", () => {
+    for (const code of ["42P01", "42703", "42883", "PGRST202", "PGRST204", "PGRST205"]) assert.ok(isSchemaMissing({ code }), code);
     for (const code of ["42501", "22023", "", null]) assert.ok(!isSchemaMissing({ code }), String(code));
     assert.ok(!isSchemaMissing(null));
   });

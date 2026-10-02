@@ -4,11 +4,16 @@ import {
   arrangePageReferences,
   fixedCheckDescription,
   fixedFamilyFaceLines,
+  facialFeatureLines,
+  familyFramingCheckLines,
+  familyFramingLines,
   maxPagePortraits,
   ordinalWord,
+  pageReferenceLabels,
   pickPagePortraits,
   portraitBindingLines,
   portraitKey,
+  readPortraitFigure,
   readSheetOrder,
   readSheetOutfits,
   refOrdinal,
@@ -72,11 +77,11 @@ describe("arrangePageReferences — 시트 → 고정 얼굴 → 장소 → 승�
 });
 
 describe("maxPagePortraits — 모델마다 한 쪽에 붙일 얼굴 수", () => {
-  it("gemini-2.x 는 1장(참고 그림이 많으면 흐려진다), 3.x·OpenAI 는 4장", () => {
+  it("gemini-2.x 는 1장(참고 그림이 많으면 흐려진다), 3.x·OpenAI 는 시트의 6명까지", () => {
     assert.equal(maxPagePortraits({}), 1);
     assert.equal(maxPagePortraits({ GEMINI_IMAGE_MODEL: "gemini-2.5-flash-image" }), 1);
-    assert.equal(maxPagePortraits({ GEMINI_IMAGE_MODEL: "gemini-3.1-flash-image" }), 4);
-    assert.equal(maxPagePortraits({ IMAGE_PROVIDER: "openai" }), 4);
+    assert.equal(maxPagePortraits({ GEMINI_IMAGE_MODEL: "gemini-3.1-flash-image" }), 6);
+    assert.equal(maxPagePortraits({ IMAGE_PROVIDER: "openai" }), 6);
   });
 });
 
@@ -313,5 +318,122 @@ describe("fixedCheckDescription — 이 책의 옷", () => {
   it("dressed 를 안 주면 예전 꼬리표 그대로", () => {
     assert.equal(fixedCheckDescription("단발", true, true, false), fixedCheckDescription("단발", true, true));
     assert.equal(fixedCheckDescription("단발", false, false, false), fixedCheckDescription("단발", false, false));
+  });
+});
+
+/* ─────────── 얼굴 카드·이름표·사람 많은 쪽(2026-10-01 사장님 "아바타와 너무 달라") ─────────── */
+
+describe("portraitBindingLines — 얼굴 카드로 붙인 사람", () => {
+  const r = arrangePageReferences({
+    sheet: "S",
+    portraits: [
+      { name: "하온", image: "P1" },
+      { name: "엄마", image: "P2" },
+    ],
+    location: null,
+    style: null,
+  });
+
+  it("카드면 한 사람이 두 번(왼쪽 전신·오른쪽 키운 얼굴)이라고, 얼굴은 키운 쪽에서 읽으라고", () => {
+    const text = portraitBindingLines(r.order, ["하온", "엄마"], new Set(["하온"])).join("\n");
+    assert.match(
+      text,
+      /^- The SECOND attached image is "하온" — 하온's exact face and hair\. It shows ONE person, 하온, twice: the whole figure on the left and the same face enlarged on the right — read the face from the enlarged close-up\. Copy exactly: face shape, eyes/m,
+    );
+    // 카드가 아닌 사람은 예전 줄 그대로
+    assert.match(text, /^- The THIRD attached image is "엄마" — 엄마's exact face and hair\. Copy exactly: face shape/m);
+    assert.match(text, /Ignore each portrait's white background, standing pose and framing \(and the side-by-side layout of a two-panel portrait\): draw the person/);
+  });
+
+  it("카드가 없으면 글자 하나 다르지 않다", () => {
+    assert.deepEqual(portraitBindingLines(r.order, ["하온", "엄마"], new Set()), portraitBindingLines(r.order, ["하온", "엄마"]));
+  });
+});
+
+describe("pageReferenceLabels — 붙이는 그림마다 앞에 끼우는 이름표", () => {
+  it("order 와 같은 길이·같은 순서, 서수가 프롬프트와 같다", () => {
+    const r = arrangePageReferences({
+      sheet: "S",
+      portraits: [
+        { name: "우주", image: "P1" },
+        { name: "할머니", image: "P2" },
+      ],
+      location: "L",
+      style: "T",
+    });
+    const labels = pageReferenceLabels(r.order, new Set(["우주"]));
+    assert.equal(labels.length, r.order.length);
+    assert.match(labels[0], /^\[FIRST attached image\] The CHARACTER REFERENCE SHEET/);
+    assert.match(labels[1], /^\[SECOND attached image\] 우주 — ONLY 우주: the original approved portrait of 우주, whole figure on the left and the same face enlarged on the right \(one person\)\. Copy 우주's face and hair from it\.$/);
+    assert.equal(labels[2], "[THIRD attached image] 할머니 — ONLY 할머니: the original approved portrait of 할머니. Copy 할머니's face and hair from it.");
+    assert.match(labels[3], /^\[FOURTH attached image\] The LOCATION REFERENCE SHEET/);
+    assert.match(labels[4], /^\[FIFTH attached image\] A previously APPROVED page of this book — use it for the rendering style only, never for a face\.$/);
+    // 프롬프트의 '몇 번째'와 같은 말
+    for (const [i, key] of r.order.entries()) assert.ok(labels[i].startsWith(`[${refOrdinal(r.order, key)} attached image]`));
+  });
+});
+
+describe("familyFramingLines — 가족 얼굴이 나오는 쪽은 가까운 구도", () => {
+  it("넷 이상이면 허리 위로 가까이 모인 구도", () => {
+    const lines = familyFramingLines(6, 6);
+    assert.equal(lines.length, 2);
+    assert.match(lines[0], /^GROUP FRAMING — 6 people are on this page. Frame them as a close, warm group: a medium shot from about the hips up/);
+    assert.match(lines[0], /Never a wide shot with small full-body figures/);
+    assert.equal(familyFramingLines(4, 1).length, 2);
+  });
+
+  it("셋 이하도 허리 위 구도가 기본 — 전신은 다리가 꼭 필요한 동작일 때만(2026-10-01 이목구비가 약하다)", () => {
+    const one = familyFramingLines(1, 1);
+    assert.match(one[0], /^FAMILY CLOSE FRAMING — the family member on this page must be recognisable by their face. Use a medium shot from about the waist up as the default/);
+    const three = familyFramingLines(3, 2);
+    assert.match(three[0], /^FAMILY CLOSE FRAMING — the family members on this page/);
+    assert.match(three[1], /Show a whole body only when the action truly needs the legs/);
+    assert.match(three[1], /Keep enough of the place visible behind them to recognise it.$/);
+  });
+
+  it("고정 가족이 없거나 사람이 없으면 아무 줄도 없다(예전 글 그대로)", () => {
+    assert.deepEqual(familyFramingLines(3, 0), []);
+    assert.deepEqual(familyFramingLines(6, 0), []);
+    assert.deepEqual(familyFramingLines(0, 0), []);
+  });
+
+  it("검수는 가까운 구도를 받아들인다 — 구도 줄이 있을 때만", () => {
+    assert.match(familyFramingCheckLines(familyFramingLines(2, 2))[0], /Do not fail because legs or feet are cropped/);
+    assert.deepEqual(familyFramingCheckLines([]), []);
+  });
+});
+
+describe("facialFeatureLines — 카드의 이목구비를 같은 모양·같은 정도로", () => {
+  it("카드로 붙인 사람이 있으면 키운 얼굴에서, 점 눈·평균 얼굴 금지", () => {
+    const [line] = facialFeatureLines(["우주", "아빠"], new Set(["우주"]));
+    assert.ok(line.startsWith("FACIAL FEATURES — for 우주, 아빠, copy the features from the enlarged face close-up in their attached portrait: eye shape and size (single or double eyelid"), line);
+    assert.match(line, /Draw them at the same level of detail as the portrait, never simpler — do not turn anyone.s eyes into generic dots/);
+  });
+
+  it("머리는 숱·결·앞머리 쏠림·색 농도까지 — 단정한 기본 머리로 정리하지 않게(2쪽 시험, 아들 머리)", () => {
+    const lines = facialFeatureLines(["시우"], new Set(["시우"]));
+    assert.equal(lines.length, 2);
+    assert.match(lines[1], /^HAIR — for 시우, the hair is as much a part of who they are as the face/);
+    assert.match(lines[1], /whether it is tousled and spiky or neat and smooth, the direction the fringe falls/);
+    assert.match(lines[1], /a brown-haired child stays brown, not black\)\. Never tidy, smooth, flatten or restyle/);
+  });
+
+  it("카드가 없으면 붙인 원본에서, 원본을 안 붙였으면 아무 줄도 없다", () => {
+    assert.match(facialFeatureLines(["엄마"])[0], /copy the features from their attached portrait:/);
+    assert.deepEqual(facialFeatureLines([]), []);
+  });
+});
+
+describe("readPortraitFigure — 요청 portraits 칸에서 키·머리 비율", () => {
+  it("이름이 같은 줄을 찾고, 없으면 빈 칸", () => {
+    const raw = [
+      { name: "할머니", ref: "x", memberId: "m-1", heightCm: 152, headRatio: 5.2 },
+      { name: " 우주 ", ref: "y", memberId: "child", heightCm: 112 },
+    ];
+    assert.deepEqual(readPortraitFigure(raw, "할머니"), raw[0]);
+    assert.equal(readPortraitFigure(raw, "우주").heightCm, 112);
+    assert.deepEqual(readPortraitFigure(raw, "아빠"), {});
+    assert.deepEqual(readPortraitFigure(undefined, "할머니"), {});
+    assert.deepEqual(readPortraitFigure([null, 3, "할머니"], "할머니"), {});
   });
 });

@@ -33,7 +33,16 @@ import {
   type ParentQ,
   type PayMethodId,
 } from "@/lib/pay-demo";
-import { PASS, PLANS, billingDayText, formatDateKo, nextBillingDate, won, type PlanId } from "@/lib/plans";
+import {
+  DEFAULT_PLAN_TERMS,
+  billingDayText,
+  formatDateKo,
+  nextBillingDate,
+  plansOf,
+  won,
+  type PlanId,
+  type PlanTerms,
+} from "@/lib/plans";
 import { ParentCheck } from "./ParentCheck";
 import {
   BigLink,
@@ -66,11 +75,16 @@ type View =
 /** 가짜 처리 가림막 단계 */
 type Busy = null | "open" | "confirm";
 
-export function CheckoutDemo({ plan: planId }: { plan: PlanId }) {
+/** terms — 관리실 요금제 값(서버 page 가 읽어 넘긴다). 값·권수·목소리 수가 요금제 화면과 같게. */
+export function CheckoutDemo({ plan: planId, terms = DEFAULT_PLAN_TERMS }: { plan: PlanId; terms?: PlanTerms }) {
   const router = useRouter();
   const { theme } = useTheme();
   const colors = theme.colors;
-  const plan = PLANS[planId];
+  const plan = plansOf(terms)[planId];
+  // 아래 확인 효과는 값(글자·참거짓)에만 기대게 한다 — 요금제 묶음은 그릴 때마다 새로 만들어져서
+  const planSubscriberOnly = plan.subscriberOnly;
+  const planIsSub = plan.kind === "subscription";
+  const passVoices = (planId === "yearly" ? terms.yearly : terms.monthly).voices;
 
   const [view, setView] = useState<View>(PAY_DEMO === "off" ? { kind: "soon" } : { kind: "loading" });
   const [method, setMethod] = useState<PayMethodId>("card");
@@ -96,11 +110,11 @@ export function CheckoutDemo({ plan: planId }: { plan: PlanId }) {
           return;
         }
         const state = readDemoState(s.uid);
-        if (plan.subscriberOnly && !canBuyExtra(state)) {
+        if (planSubscriberOnly && !canBuyExtra(state)) {
           setView({ kind: "extra-no" });
           return;
         }
-        if (plan.kind === "subscription" && state.pass) {
+        if (planIsSub && state.pass) {
           setView({ kind: "already" });
           return;
         }
@@ -112,7 +126,7 @@ export function CheckoutDemo({ plan: planId }: { plan: PlanId }) {
     return () => {
       alive = false;
     };
-  }, [plan]);
+  }, [planSubscriberOnly, planIsSub]);
 
   // 화면을 떠나면 가짜 처리 시계를 멈춘다.
   useEffect(() => {
@@ -249,7 +263,7 @@ export function CheckoutDemo({ plan: planId }: { plan: PlanId }) {
           <p className="text-[17px] font-extrabold text-neutral-800">{plan.name}</p>
           <p className="mt-0.5 break-keep text-[13px] font-medium text-neutral-500">
             {isSub
-              ? `매달 새 동화책 ${plan.books}권 · 가족 목소리 ${PASS.voices}개 · 다시 듣기 무제한`
+              ? `매달 새 동화책 ${plan.books}권 · 가족 목소리 ${passVoices}명 · 다시 듣기 무제한`
               : `지금 쓰는 가족 패스에 동화책 ${plan.books}권을 더해요`}
           </p>
           <InfoBox className="mt-3">

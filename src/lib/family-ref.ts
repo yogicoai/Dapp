@@ -186,6 +186,24 @@ export async function fetchFamilyRefCached(
   return job;
 }
 
+/** 다시 받기 제한 시간 — 첫 받기(6초)가 실패한 뒤 한 번 더 기다리는 몫. */
+export const FAMILY_REF_RETRY_TIMEOUT_MS = 4_000;
+
+/**
+ * fetchFamilyRefCached 를 한 번 더 — 처음 받기가 실패하면(잠깐의 끊김·느림) 짧게 한 번 더 받아 본다(2026-10-01).
+ * 못 받으면 그 사람은 인물 시트에서 고정 얼굴 없이 글로만 그려지는데, 부모는 그 까닭을 모른다 — 한 번의 끊김으로 얼굴을 잃지 않게.
+ * 못 받으면 null — 절대 던지지 않는다.
+ */
+export async function fetchFamilyRefRetry(
+  url: string,
+  opts: { timeoutMs?: number; retryTimeoutMs?: number; maxBytes?: number; fetchImpl?: typeof fetch; now?: () => number } = {},
+): Promise<FamilyRefImage | null> {
+  const { retryTimeoutMs = FAMILY_REF_RETRY_TIMEOUT_MS, ...rest } = opts;
+  const first = await fetchFamilyRefCached(url, rest);
+  if (first) return first;
+  return fetchFamilyRefCached(url, { ...rest, timeoutMs: retryTimeoutMs });
+}
+
 /** 시험에서만 쓴다 — 기억을 비운다. */
 export function clearFamilyRefCacheForTests(): void {
   refCache.clear();

@@ -3,27 +3,33 @@
 /**
  * /plans 요금제 — 로그인 없이 누구나 본다(법이 요구하는 '로그인 없이 보이는 가격 화면'도 이 화면).
  * 로그인 상태를 읽지 않는다 — 첫 HTML 에 가격이 그대로 들어 있어야 해서. 로그인 확인은 /checkout 이 한다.
- * 가격·구성은 lib/plans 한 곳에서만 온다(숫자를 손으로 적지 않는다). 고객에게는 "권"으로만 보인다.
+ * 가격·구성은 lib/plans 한 곳에서만 온다(숫자를 손으로 적지 않는다). 동화는 "권"으로 센다.
+ * 무료·스타트팩 권수와 크레딧 값은 관리실 설정이라 서버 화면(app/plans/page)이 읽어 offer 로 넘긴다 — 이 파일은 받기만 한다.
  * 시연 스위치가 off 여도 가격은 그대로 보이고, 시작 단추만 '결제는 곧 열려요'로 잠긴다.
+ * 스타트팩·크레딧은 아직 시연 결제가 없다 — 늘 '곧 열려요'로 잠근다(2026-10-01 구성 확정, 결제 연결 전).
  */
 
 import { useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 import { PAY_DEMO } from "@/lib/pay-demo";
 import {
-  EXTRA,
-  FAQ,
-  PASS_FEATURES,
+  CREDIT_USES,
+  CREDIT_USE_LABEL,
+  DEFAULT_OFFER_VIEW,
   PASS_TAG,
-  PLANS,
   PLANS_PREVIEW_NOTE,
   REFUND_SUMMARY,
-  TRIAL,
-  TRIAL_FEATURES,
+  creditsText,
+  freeFeatures,
   monthlyEquivalent,
+  passFeaturesFor,
+  planFaq,
+  plansOf,
   priceLabel,
+  starterFeatures,
   won,
   yearlyDiscountPct,
+  type OfferView,
 } from "@/lib/plans";
 import {
   BackPill,
@@ -34,7 +40,6 @@ import {
   DraftPill,
   FOCUS,
   FOCUS_WITHIN,
-  GrayPill,
   LockedButton,
   PayShell,
   SoftLink,
@@ -43,12 +48,15 @@ import { SiteFooter } from "./SiteFooter";
 
 type Period = "monthly" | "yearly";
 
-export function PlansView() {
+export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView }) {
   const { theme } = useTheme();
   const colors = theme.colors;
   const [period, setPeriod] = useState<Period>("monthly");
-  const plan = PLANS[period];
-  const pct = yearlyDiscountPct();
+  // 값·구성은 관리실 요금제 값(offer.plans) — 연간 할인율도 그 값으로 계산한다(싸지 않으면 할인 꼬리표를 감춘다)
+  const plans = plansOf(offer.plans);
+  const plan = plans[period];
+  const pct = yearlyDiscountPct(plans);
+  const free = freeFeatures(offer);
 
   return (
     <PayShell>
@@ -93,7 +101,7 @@ export function PlansView() {
                 onChange={() => setPeriod(id)}
                 className="sr-only"
               />
-              {id === "yearly" && (
+              {id === "yearly" && pct > 0 && (
                 <span
                   className="absolute -top-2.5 right-2 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-extrabold text-white shadow-sm"
                   style={{ background: colors.accentDark }}
@@ -103,7 +111,7 @@ export function PlansView() {
               )}
               <span className="whitespace-nowrap text-[15px] font-extrabold">{id === "monthly" ? "매달 결제" : "1년 한 번에"}</span>
               <span className={`whitespace-nowrap text-[13px] font-bold ${on ? "text-white/90" : "text-neutral-600"}`}>
-                {priceLabel(PLANS[id])}
+                {priceLabel(plans[id])}
               </span>
             </label>
           );
@@ -133,14 +141,15 @@ export function PlansView() {
             </p>
             {period === "yearly" && (
               <p className="text-[13px] font-bold text-neutral-600">
-                월 {won(monthlyEquivalent(plan))}꼴 · {pct}% 할인
+                월 {won(monthlyEquivalent(plan))}꼴{pct > 0 ? ` · ${pct}% 할인` : ""}
               </p>
             )}
           </div>
           <p className="mt-0.5 text-xs font-semibold text-neutral-500">부가세 포함 · 언제든 해지할 수 있어요</p>
         </div>
         <div className="px-5 pb-5 pt-4">
-          <CheckList items={PASS_FEATURES} />
+          {/* 연간은 가족 캐릭터·가족 목소리가 더 많다 — 고른 주기의 구성을 보여 준다(바뀐 값은 위 가격 줄이 알린다) */}
+          <CheckList items={passFeaturesFor(period, offer)} />
           <div className="mt-5">
             {PAY_DEMO === "off" ? (
               <LockedButton describedBy="pass-soon">결제는 곧 열려요</LockedButton>
@@ -165,34 +174,71 @@ export function PlansView() {
         </div>
       </section>
 
-      {/* 무료 체험 */}
-      <Card labelledBy="trial-title">
+      {/* 스타트팩 — 처음 한 번만. 결제 연결 전이라 늘 잠근다 */}
+      <Card labelledBy="starter-title">
         <CardTitle
-          id="trial-title"
-          right={<span className="text-[17px] font-extrabold text-neutral-800">{won(TRIAL.priceWon)}</span>}
+          id="starter-title"
+          right={<span className="text-[17px] font-extrabold text-neutral-800">{won(offer.plans.starter.priceWon)}</span>}
         >
-          무료 체험
+          스타트팩
         </CardTitle>
-        <CheckList items={TRIAL_FEATURES} />
-        {PLANS_PREVIEW_NOTE && (
-          <p className="mt-2.5 break-keep text-xs font-semibold text-neutral-500">무료 체험 조건은 정식 출시 때부터 적용돼요.</p>
-        )}
+        <p className="-mt-1 mb-3 break-keep text-[13px] font-medium leading-relaxed text-neutral-500">
+          처음이라면 우리 아이 동화 한 권부터 만들어 보세요.
+        </p>
+        <CheckList items={starterFeatures(offer)} />
         <div className="mt-5">
-          <SoftLink href="/create">무료로 먼저 만들어 보기</SoftLink>
+          <LockedButton describedBy="starter-soon">곧 열려요</LockedButton>
         </div>
+        <p id="starter-soon" className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
+          스타트팩은 결제가 열리면 살 수 있어요.
+        </p>
       </Card>
 
-      {/* 추가 3권 */}
-      <Card labelledBy="extra-title">
-        <CardTitle id="extra-title">책이 더 필요할 때</CardTitle>
-        <div className="flex items-center justify-between gap-2 rounded-[20px] bg-stone-50 px-4 py-3 shadow-[inset_0_0_0_1px_#f0ede8]">
-          <span className="text-[15px] font-extrabold text-neutral-800">
-            {PLANS.extra3.name} · <span style={{ color: colors.accentDark }}>{won(EXTRA.priceWon)}</span>
-          </span>
-          <GrayPill>패스 전용</GrayPill>
-        </div>
+      {/* 무료로 듣기 — 비회원도. 무료로 연 동화가 없으면 감춘다 */}
+      {free.length > 0 && (
+        <Card labelledBy="free-title">
+          <CardTitle id="free-title" right={<span className="text-[17px] font-extrabold text-neutral-800">{won(0)}</span>}>
+            무료로 듣기
+          </CardTitle>
+          <CheckList items={free} />
+          {offer.free.titles.length > 0 && (
+            <p className="mt-2.5 break-keep text-xs font-semibold leading-relaxed text-neutral-500">
+              {offer.free.titles.join(" · ")}
+            </p>
+          )}
+          <div className="mt-5">
+            <SoftLink href="/">동화 들으러 가기</SoftLink>
+          </div>
+        </Card>
+      )}
+
+      {/* 크레딧 — 플랜에 든 몫을 다 쓴 뒤 더할 때. 값은 관리실 설정 */}
+      <Card labelledBy="credit-title">
+        <CardTitle id="credit-title">더 필요할 때는 크레딧</CardTitle>
+        <ul className="flex flex-col gap-2">
+          {offer.creditPacks.map((p) => (
+            <li
+              key={p.priceWon}
+              className="flex items-center justify-between gap-2 rounded-[20px] bg-stone-50 px-4 py-3 shadow-[inset_0_0_0_1px_#f0ede8]"
+            >
+              <span className="text-[15px] font-extrabold text-neutral-800">{creditsText(p.credits)}</span>
+              <span className="text-[15px] font-extrabold tabular-nums" style={{ color: colors.accentDark }}>
+                {won(p.priceWon)}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 text-[13px] font-extrabold text-neutral-700">이렇게 써요</p>
+        <ul className="mt-1.5 flex flex-col gap-1">
+          {CREDIT_USES.map((k) => (
+            <li key={k} className="flex items-center justify-between gap-2 text-[13px] font-medium text-neutral-600">
+              <span className="break-keep">{CREDIT_USE_LABEL[k]}</span>
+              <span className="shrink-0 font-bold tabular-nums text-neutral-800">{creditsText(offer.creditCosts[k])}</span>
+            </li>
+          ))}
+        </ul>
         <p className="mt-2.5 break-keep text-[13px] font-medium leading-relaxed text-neutral-500">
-          가족 패스를 쓰는 분이 이번 달 책을 다 만들었을 때 더 살 수 있어요.
+          가족 패스·스타트팩에 든 몫을 다 쓴 뒤에 더할 때 써요. 크레딧은 결제가 열리면 살 수 있어요.
         </p>
       </Card>
 
@@ -200,7 +246,7 @@ export function PlansView() {
       <Card labelledBy="faq-title">
         <CardTitle id="faq-title">자주 묻는 질문</CardTitle>
         <div className="flex flex-col">
-          {FAQ.map(({ q, a }) => (
+          {planFaq(offer).map(({ q, a }) => (
             <details key={q} className="group border-b border-stone-200/70 last:border-b-0">
               <summary
                 className={`flex min-h-12 cursor-pointer list-none items-center gap-2 rounded-xl py-2 text-[14px] font-extrabold text-neutral-800 [&::-webkit-details-marker]:hidden ${FOCUS}`}

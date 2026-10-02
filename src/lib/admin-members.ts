@@ -12,6 +12,7 @@
 import { refundLabel } from "./admin.ts";
 import { kstDaysAgoStart, withParams } from "./admin-console.ts";
 import { isPlanId, PLANS } from "./plans.ts";
+import type { MemberPlanKey } from "./member-plan.ts";
 
 /* ── 부모 목소리 ───────────────────────────────────────────────────────── */
 
@@ -72,6 +73,9 @@ export type MemberListRow = {
   openFeedback: number;
   /** 준비된 부모 목소리(엄마·아빠 순서). */
   voices: VoiceRole[];
+  /** 관리자가 지정한 요금제(지정 없으면 null) — 끝나는 때가 지났어도 그대로 온다(화면이 "끝남"으로 보인다). */
+  plan: MemberPlanKey | null;
+  planEndsAt: string | null;
 };
 
 export type MembersListResponse = {
@@ -81,7 +85,7 @@ export type MembersListResponse = {
   /** 최근 가입 순으로 상한까지만 왔다. */
   truncated: boolean;
   /** 책 수·의견 수·목소리 중 못 읽은 것 — 그 칸은 0 으로 보일 수 있다고 알린다. */
-  partial: ("books" | "feedback" | "voices")[];
+  partial: ("books" | "feedback" | "voices" | "plans")[];
   me: string;
 };
 

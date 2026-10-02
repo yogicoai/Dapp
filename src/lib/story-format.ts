@@ -108,7 +108,14 @@ export class StoryParseError extends Error {
   }
 }
 
-const MARKER = /^@@([A-Z]+)@@[ \t]*(.*)$/;
+/*
+ * 마커 줄. 모델이 마커를 꾸며 쓰는 일에 대비한다(2026-10-01, 대본 모델을 Sonnet 5.5 로 바꾼 날):
+ * 앞에 공백·'**'·'#'·'-'·'>'를 붙이거나 뒤에 '**'를 붙인 꼴(**@@TITLE@@** 제목)도 같은 마커로 읽는다.
+ * 마커 이름은 @@대문자@@ 뿐이라 본문 글과 헷갈릴 일이 없다.
+ */
+const MARKER = /^[\s>*#_`-]*@@([A-Z]+)@@[*_`]*[ \t]*(.*)$/;
+/** 코드 울타리(```) 줄 — 모델이 답 전체를 코드 블록에 담으면 생긴다. 본문에 넣지 않는다. */
+const FENCE = /^\s*```/;
 
 type Block = { tag: string; inline: string; body: string[] };
 
@@ -117,9 +124,11 @@ function toBlocks(raw: string): Block[] {
   const blocks: Block[] = [];
 
   for (const line of raw.replace(/\r\n?/g, "\n").split("\n")) {
+    if (FENCE.test(line)) continue;
     const m = line.match(MARKER);
     if (m) {
-      blocks.push({ tag: m[1], inline: m[2].trim(), body: [] });
+      // 마커 뒤 글 끝의 꾸밈(**제목**의 끝 '**')만 걷는다.
+      blocks.push({ tag: m[1], inline: m[2].replace(/[*_`]+$/, "").trim(), body: [] });
     } else if (blocks.length > 0) {
       blocks[blocks.length - 1].body.push(line);
     }

@@ -6,6 +6,8 @@ import {
   GeminiError,
   generateImage,
   geminiBlocked,
+  illustrationCheckParts,
+  imageRequestParts,
   isRetryableStatus,
   measureBlankBands,
   openAIFallbackAvailable,
@@ -341,5 +343,57 @@ describe("readQuotaHint — 429가 '잠깐 몰림'인지 '오늘 다 씀'인지 
     assert.equal(retryDelayMs(1, "35s", 45_000), 35_000);
     // 상한은 지킨다.
     assert.equal(retryDelayMs(1, "600s", 45_000), 45_000);
+  });
+});
+
+describe("imageRequestParts — 참고 그림마다 앞에 이름표(2026-10-01)", () => {
+  const A = { mimeType: "image/jpeg", data: "AAA" };
+  const B = { mimeType: "image/png", data: "BBB" };
+
+  it("이름표가 없으면 예전 그대로 [그림…, 프롬프트]", () => {
+    const want = [{ inlineData: A }, { inlineData: B }, { text: "draw" }];
+    assert.deepEqual(imageRequestParts([A, B], undefined, "draw"), want);
+    assert.deepEqual(imageRequestParts([A, B], [], "draw"), want);
+    assert.deepEqual(imageRequestParts([A, B], ["", "  "], "draw"), want);
+  });
+
+  it("이름표는 그 그림 바로 앞에, 빈 칸은 건너뛴다", () => {
+    assert.deepEqual(imageRequestParts([A, B], ["sheet", null], "draw"), [
+      { text: "sheet" },
+      { inlineData: A },
+      { inlineData: B },
+      { text: "draw" },
+    ]);
+    assert.deepEqual(imageRequestParts([A, B], [undefined, " 우주 "], "draw"), [
+      { inlineData: A },
+      { text: "우주" },
+      { inlineData: B },
+      { text: "draw" },
+    ]);
+  });
+});
+
+describe("illustrationCheckParts — 얼굴 카드로 붙인 원본", () => {
+  const img = { mimeType: "image/jpeg", data: "X" };
+  const textOf = (parts: unknown[]) => (parts.at(-1) as { text: string }).text;
+
+  it("카드면 한 사람이 두 번이라고, 얼굴은 키운 쪽과 견주라고", () => {
+    const parts = illustrationCheckParts({
+      image: img,
+      reference: img,
+      portraits: [
+        { name: "할머니", image: img, card: true },
+        { name: "우주", image: img },
+      ],
+      scene: "s",
+      cast: [
+        { name: "할머니", description: "" },
+        { name: "우주", description: "" },
+      ],
+      stylePrompt: "watercolor",
+    });
+    const text = textOf(parts);
+    assert.match(text, /The THIRD attached image is the ORIGINAL approved portrait of "할머니", shown twice as ONE person: the whole figure on the left and the same face enlarged on the right/);
+    assert.match(text, /The FOURTH attached image is the ORIGINAL approved portrait of "우주" — the identity reference for 우주's face and hair \(ignore its white background, standing pose and clothing\)\./);
   });
 });

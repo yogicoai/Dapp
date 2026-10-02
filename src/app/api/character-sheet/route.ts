@@ -11,7 +11,8 @@ import {
   type GeneratedImage,
 } from "@/lib/gemini";
 import { heroIdentity } from "@/lib/child-looks";
-import { familyFolderOf, familyUrlPrefix, fetchFamilyRefCached } from "@/lib/family-ref";
+import { familyFolderOf, familyUrlPrefix, fetchFamilyRefRetry } from "@/lib/family-ref";
+import { readPortraitFigure } from "@/lib/page-refs";
 import {
   characterSheetPrompt,
   fixedAdultNotes,
@@ -187,7 +188,7 @@ export async function POST(request: Request) {
   /*
    * 몇 명까지 받을까 — AI 가 참고로 보는 그림은 모델이 잘 따르는 수까지만(maxPortraitRefs, 2.x 는 2명).
    * 수채화 책은 원본 픽셀로 짜서(아래 composedSheet) 참고 그림 수 제한이 없다 — 이야기에 나오는 고정 가족을 모두 받는다
-   * (만들기 화면 상한 CAST_PORTRAITS_MAX 4). 짜기에 실패해 예전 AI 시트로 물러서면 그때 aiCap 으로 자른다.
+   * (만들기 화면 상한 CAST_PORTRAITS_MAX 6). 짜기에 실패해 예전 AI 시트로 물러서면 그때 aiCap 으로 자른다.
    */
   const aiCap = maxPortraitRefs(process.env);
   const picked = pickSheetPortraits(
@@ -205,13 +206,14 @@ export async function POST(request: Request) {
    * 흐리게 나오고, 그 시트를 따라 책 전체가 흔들렸다. 부모가 화면에서 고른 견본
    * (public/art-styles/여우 그림)이 바로 그 그림체의 실물이라 이것을 함께 준다.
    * 요청의 origin으로 받아 온다 — Vercel 서버 함수 안에는 public 파일이 없을 수 있다.
-   * 고정 얼굴은 견본과 함께(동시에) 받는다 — 얼굴 받기가 늘리는 시간은 최대 6초.
+   * 고정 얼굴은 견본과 함께(동시에) 받는다 — 얼굴 받기가 늘리는 시간은 최대 6초(못 받으면 한 번 더 4초).
    */
   const [styleSample, ...portraitImages] = await Promise.all([
     style.image
       ? loadReferenceImage(new URL(style.image, request.url).toString()).catch(() => null)
       : Promise.resolve(null),
-    ...picked.portraits.map((p) => fetchFamilyRefCached(p.url)),
+    // 한 번 못 받으면 짧게 한 번 더 — 한 번의 끊김으로 그 사람이 책 전체에서 고정 얼굴을 잃지 않게(2026-10-01).
+    ...picked.portraits.map((p) => fetchFamilyRefRetry(p.url)),
   ]);
   const fetchedPortraits = picked.portraits.flatMap((p, i) => {
     const image = portraitImages[i];
@@ -397,15 +399,6 @@ async function composeDressed(
   return { sheet: await composeCharacterSheet({ ...args, outfits: null }), usedCard: false };
 }
 
-/** 요청 portraits 칸에서 한 사람의 키·머리 비율(만들기 화면이 가족에서 읽어 보낸 값) — 없으면 빈 칸. */
-function rawFigureOf(raw: unknown, name: string): { heightCm?: unknown; headRatio?: unknown } {
-  if (!Array.isArray(raw)) return {};
-  const hit = raw
-    .slice(0, 12)
-    .find((o) => o && typeof o === "object" && typeof (o as { name?: unknown }).name === "string" && (o as { name: string }).name.trim() === name);
-  return hit && typeof hit === "object" ? (hit as { heightCm?: unknown; headRatio?: unknown }) : {};
-}
-
 /**
  * 원본 픽셀 시트 — 고정 가족은 가족 그림 그대로, 나머지 사람만 AI 가 그린다(lib/sheet-compose 머리글).
  *  · 모두 고정: AI 를 부르지 않는다(값 0, 1~7초). composed: "portraits".
@@ -435,7 +428,7 @@ async function composedSheet(args: {
 }): Promise<NextResponse | { drawnSoFar: number }> {
   const started = Date.now();
   const { characters, portraits } = args;
-  const metas = new Map(portraits.map((p) => [p.name, sheetFigureMeta(p.memberId, rawFigureOf(args.rawPortraits, p.name))]));
+  const metas = new Map(portraits.map((p) => [p.name, sheetFigureMeta(p.memberId, readPortraitFigure(args.rawPortraits, p.name))]));
   let figures: PreparedFigure[];
   try {
     figures = await Promise.all(

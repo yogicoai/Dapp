@@ -29,6 +29,10 @@ import {
   type ChildPrefs,
   type ShelfBook,
 } from "@/lib/prefs";
+import { loadLibraryAccess } from "@/lib/library-access";
+import { viewerTierOf, type MemberPlanKey } from "@/lib/member-plan";
+import { loadMyPlanKey } from "@/lib/member-plan-client";
+import { libraryLock, OPEN_LIBRARY, type LibraryAccess } from "@/lib/offer-settings";
 import { acctKey, currentUid } from "@/lib/supabase";
 import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
@@ -62,6 +66,8 @@ export default function Home() {
   // 로그인 게이트(베타) — 로그인/게스트 둘 다 아니면 로그인 화면으로. authed=null은 확인 전.
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [guest, setGuest] = useState(false);
+  // 로그인한 회원 id — 관리자가 지정한 요금제(책장 자물쇠)를 읽을 때 쓴다. 게스트는 null.
+  const [memberUid, setMemberUid] = useState<string | null>(null);
   const [master, setMaster] = useState(false);
   // 데모 책장(sample-books.json)을 띄울 계정인가 — yogico 하나. DEMO_SHELF_OWNER 설명 참고.
   const [demoShelf, setDemoShelf] = useState(false);
@@ -132,6 +138,7 @@ export default function Home() {
       }
       setAuthed(true);
       setGuest(s.guest);
+      setMemberUid(s.uid ?? null);
       setMaster(s.isMaster);
       setDemoShelf(s.isMaster && s.profile?.username === DEMO_SHELF_OWNER);
       setTokens(s.profile?.tokens ?? 0);
@@ -217,10 +224,43 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 게스트 판별 후 기본 탭 전환
     if (guest) setShelf("classic");
   }, [guest]);
+  // 공개 동화 단계(관리실) — 비회원은 무료 책만, 관리자가 요금제를 지정한 회원은 그 요금제까지 열린다.
+  // 요금제 지정이 없는 회원은 결제를 붙이기 전이라 다 열려 있어서 단계를 읽지 않는다.
+  // 관리실 스위치가 꺼져 있거나 못 읽으면 지금처럼 다 열림.
+  const [myPlan, setMyPlan] = useState<MemberPlanKey | null>(null);
+  useEffect(() => {
+    if (!memberUid) return;
+    let alive = true;
+    void loadMyPlanKey(memberUid).then((p) => {
+      if (alive) setMyPlan(p);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [memberUid]);
+  const viewer = viewerTierOf(!guest, myPlan);
+  const [libraryAccess, setLibraryAccess] = useState<LibraryAccess>(OPEN_LIBRARY);
+  useEffect(() => {
+    if (viewer === "pass") return;
+    let alive = true;
+    void loadLibraryAccess().then((a) => {
+      if (alive) setLibraryAccess(a);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [viewer]);
   // hidden 책은 서가에서만 내린다 (주소로는 열림) — 다듬는 중인 책 보관용.
-  const folk = asBooks(folkBooksJson).filter((b) => !b.hidden);
-  const classics = asBooks(classicBooksJson).filter((b) => !b.hidden);
+  // 회원 종류마다 고른 동화만 보인다(관리실 '공개 동화'에서 '책장에 적용'을 켰을 때 — 사장님 2026-10-02 "비회원일 때는
+  // 5권씩만 보여주기"). 나머지는 서가에서 감추고, 책장 아래 한 줄로 더 있다는 것만 알린다. 내가 만든 책은 감추지 않는다.
+  const canSee = (b: { id: string }) => !libraryLock(libraryAccess, b.id, viewer);
+  const folkAll = asBooks(folkBooksJson).filter((b) => !b.hidden);
+  const classicsAll = asBooks(classicBooksJson).filter((b) => !b.hidden);
+  const folk = folkAll.filter(canSee);
+  const classics = classicsAll.filter(canSee);
   const shown = shelf === "mine" ? mine : shelf === "folk" ? folk : classics;
+  const moreBooks =
+    shelf === "folk" ? folkAll.length - folk.length : shelf === "classic" ? classicsAll.length - classics.length : 0;
 
   // 준비 화면 — 로그인 확인과 책장 데이터가 '둘 다' 끝날 때까지 붙잡아 둔다.
   // 중간에 화면을 열면 빈 책장이 잠깐 보였다가 책이 채워져 어수선하다(사장님 지적).
@@ -536,7 +576,17 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <Bookshelf books={shown} cols={shelfCols} />
+          <>
+            <Bookshelf books={shown} cols={shelfCols} />
+            {moreBooks > 0 ? (
+              <p className="mx-auto mt-8 w-fit max-w-full break-keep rounded-full bg-white/85 px-4 py-2 text-center text-sm font-extrabold text-neutral-700 shadow backdrop-blur">
+                {shelf === "folk" ? "전래동화" : "세계명작"} {moreBooks}권을 더 들을 수 있어요 ·{" "}
+                <Link href="/plans" className="underline underline-offset-2">
+                  요금제 보기
+                </Link>
+              </p>
+            ) : null}
+          </>
         )}
 
 

@@ -40,6 +40,8 @@ const row = (p: Partial<MemberListRow> & { username: string }): MemberListRow =>
   books: 0,
   openFeedback: 0,
   voices: [],
+  plan: null,
+  planEndsAt: null,
   ...p,
 });
 

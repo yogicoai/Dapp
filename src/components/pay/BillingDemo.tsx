@@ -1,7 +1,8 @@
 "use client";
 
 /**
- * /billing 내 결제·구독 (시연) — 지금 요금제, 남은 책, 다음 결제일, 추가 3권 사기, 잠긴 해지, 결제 내역.
+ * /billing 내 결제·구독 (시연) — 지금 요금제, 남은 책, 다음 결제일, 크레딧 안내, 잠긴 해지, 결제 내역.
+ * 요금제 값(값·책 수)은 관리실 값(terms) — 서버 page 가 읽어 넘긴다.
  * 화면 갈래: loading → login(비회원) → soon(스위치 off — 시연 기록을 읽지 않는다) → ready.
  * 값은 이 탭의 시연 기록에서만 읽는다. 앱의 잔액·만들기 권한과 아무 관계가 없다.
  *
@@ -17,7 +18,15 @@ import { LockIcon } from "@/components/family/icons";
 import { TopBar } from "@/components/family/ui";
 import { loadSession } from "@/lib/auth";
 import { PAY_DEMO, clearDemoState, readDemoState, type DemoState } from "@/lib/pay-demo";
-import { PLANS, TRIAL, booksText, formatDateKo, formatShortDateKo, won } from "@/lib/plans";
+import {
+  DEFAULT_PLAN_TERMS,
+  booksText,
+  formatDateKo,
+  formatShortDateKo,
+  plansOf,
+  won,
+  type PlanTerms,
+} from "@/lib/plans";
 import {
   BigLink,
   BookDots,
@@ -36,8 +45,9 @@ import { SiteFooter } from "./SiteFooter";
 
 type View = { kind: "loading" } | { kind: "login" } | { kind: "soon" } | { kind: "ready"; uid: string; state: DemoState };
 
-export function BillingDemo() {
+export function BillingDemo({ terms = DEFAULT_PLAN_TERMS }: { terms?: PlanTerms }) {
   const router = useRouter();
+  const plans = plansOf(terms);
   const { theme } = useTheme();
   const colors = theme.colors;
   const [view, setView] = useState<View>({ kind: "loading" });
@@ -107,7 +117,7 @@ export function BillingDemo() {
 
   const { uid, state } = view;
   const pass = state.pass;
-  const passPlan = pass ? PLANS[pass.plan] : null;
+  const passPlan = pass ? plans[pass.plan] : null;
   const hasRecord = !!(pass || state.receipts.length || state.pending);
 
   function clearRecord() {
@@ -140,9 +150,8 @@ export function BillingDemo() {
             </Row>
           </InfoBox>
           <div className="mt-4 flex flex-col gap-3">
-            <SoftLink href="/checkout?plan=extra3">
-              {PLANS.extra3.name} 사기 · {won(PLANS.extra3.priceWon)}
-            </SoftLink>
+            {/* 추가 3권은 크레딧으로 바뀌었다(2026-10-01) — 크레딧은 결제가 열리면 산다 */}
+            <SoftLink href="/plans">책이 더 필요하면 크레딧 · 요금제 보기</SoftLink>
             <Link
               href="/plans"
               className={`mx-auto inline-flex min-h-11 items-center rounded-full px-3 text-sm font-extrabold underline underline-offset-2 ${FOCUS}`}
@@ -173,7 +182,7 @@ export function BillingDemo() {
       ) : (
         <Card labelledBy="no-plan">
           <CardTitle id="no-plan">아직 쓰는 요금제가 없어요</CardTitle>
-          <p className="break-keep text-[13px] font-medium text-neutral-500">무료 체험으로 첫 동화 {booksText(TRIAL.books)}을 만들어 볼 수 있어요.</p>
+          <p className="break-keep text-[13px] font-medium text-neutral-500">처음이라면 스타트팩({won(terms.starter.priceWon)})으로 동화 {booksText(terms.starter.books)}부터 만들어 볼 수 있어요.</p>
           <div className="mt-4">
             <BigLink href="/plans" colors={colors}>
               요금제 보기
@@ -191,7 +200,7 @@ export function BillingDemo() {
                 <span className="w-12 shrink-0 text-[13px] font-bold tabular-nums text-neutral-500">
                   {formatShortDateKo(new Date(r.at))}
                 </span>
-                <span className="min-w-0 flex-1 truncate text-sm font-extrabold text-neutral-800">{PLANS[r.plan].name}</span>
+                <span className="min-w-0 flex-1 truncate text-sm font-extrabold text-neutral-800">{plans[r.plan].name}</span>
                 <span className="shrink-0 text-sm font-extrabold text-neutral-800">{won(r.amountWon)}</span>
                 <DemoPill />
               </li>

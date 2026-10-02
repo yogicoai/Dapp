@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { PLANS, formatDateKo } from "./plans.ts";
+import { DEFAULT_PLAN_TERMS, PLANS, formatDateKo } from "./plans.ts";
 import {
   CONSENTS,
   EMPTY_DEMO,
@@ -42,7 +42,7 @@ const NOW = new Date(2026, 8, 30, 10, 0, 0);
 const OID = "DEMO-20260930-7K2Q9X";
 
 function pending(over: Partial<DemoPending> = {}): DemoPending {
-  return { orderId: OID, plan: "monthly", method: "card", amountWon: 12_900, at: NOW.toISOString(), ...over };
+  return { orderId: OID, plan: "monthly", method: "card", amountWon: 19_900, at: NOW.toISOString(), ...over };
 }
 function state(over: Partial<DemoState> = {}): DemoState {
   return { v: 1, pending: null, pass: null, receipts: [], ...over };
@@ -127,9 +127,9 @@ describe("동의", () => {
   it("구독과 추가 3권의 문구가 다르다", () => {
     assert.match(CONSENTS[0].label(PLANS.monthly), /자동 결제/);
     assert.doesNotMatch(CONSENTS[0].label(PLANS.extra3), /자동 결제/);
-    assert.ok(CONSENTS[0].sheetBody(PLANS.monthly).join(" ").includes("12,900원"));
-    assert.ok(CONSENTS[0].sheetBody(PLANS.yearly).join(" ").includes("119,000원"));
-    assert.ok(CONSENTS[0].sheetBody(PLANS.extra3).join(" ").includes("4,900원"));
+    assert.ok(CONSENTS[0].sheetBody(PLANS.monthly).join(" ").includes("19,900원"));
+    assert.ok(CONSENTS[0].sheetBody(PLANS.yearly).join(" ").includes("199,000원"));
+    assert.ok(CONSENTS[0].sheetBody(PLANS.extra3).join(" ").includes("9,900원"));
   });
 });
 
@@ -204,39 +204,49 @@ describe("완료 화면 자격", () => {
     assert.equal(doneEligibility(state(), OID, "monthly"), "no");
   });
   it("가족 패스 없이 추가 3권은 no", () => {
-    const p = pending({ plan: "extra3", amountWon: 4900 });
+    const p = pending({ plan: "extra3", amountWon: 9900 });
     assert.equal(doneEligibility(state({ pending: p }), OID, "extra3"), "no");
     assert.equal(doneEligibility(state({ pending: p, pass: pass() }), OID, "extra3"), "fresh");
   });
 });
 
 describe("applyDemoOrder", () => {
-  it("월간 — 남은 책 6권, 다음 결제일 한 달 뒤, 대기 비움", () => {
+  it("월간 — 남은 책 4권(가족 패스 2026-10-01 확정), 다음 결제일 한 달 뒤, 대기 비움", () => {
     const s = applyDemoOrder(state({ pending: pending() }), NOW);
     assert.equal(s.pending, null);
     assert.equal(s.pass?.plan, "monthly");
-    assert.equal(s.pass?.booksLeft, 6);
+    assert.equal(s.pass?.booksLeft, 4);
     assert.equal(formatDateKo(new Date(s.pass?.nextBillingAt ?? "")), "2026. 10. 30.");
     assert.equal(s.receipts.length, 1);
-    assert.equal(s.receipts[0].amountWon, 12_900);
+    assert.equal(s.receipts[0].amountWon, 19_900);
   });
   it("연간 — 다음 결제일 한 해 뒤", () => {
-    const s = applyDemoOrder(state({ pending: pending({ plan: "yearly", amountWon: 119_000 }) }), NOW);
+    const s = applyDemoOrder(state({ pending: pending({ plan: "yearly", amountWon: 199_000 }) }), NOW);
     assert.equal(s.pass?.plan, "yearly");
     assert.equal(formatDateKo(new Date(s.pass?.nextBillingAt ?? "")), "2027. 9. 30.");
   });
+  it("남은 책 수는 관리실 요금제 값을 따른다(월간·연간 따로, 2026-10-02)", () => {
+    const terms = {
+      ...DEFAULT_PLAN_TERMS,
+      monthly: { ...DEFAULT_PLAN_TERMS.monthly, booksPerMonth: 6 },
+      yearly: { ...DEFAULT_PLAN_TERMS.yearly, booksPerMonth: 8 },
+    };
+    assert.equal(applyDemoOrder(state({ pending: pending() }), NOW, terms).pass?.booksLeft, 6);
+    const y = applyDemoOrder(state({ pending: pending({ plan: "yearly", amountWon: 199_000 }) }), NOW, terms);
+    assert.equal(y.pass?.booksLeft, 8);
+  });
   it("가족 패스 없이 추가 3권 → 아무것도 바뀌지 않음", () => {
-    const before = state({ pending: pending({ plan: "extra3", amountWon: 4900 }) });
+    const before = state({ pending: pending({ plan: "extra3", amountWon: 9900 }) });
     assert.deepEqual(applyDemoOrder(before, NOW), before);
   });
   it("가족 패스가 있으면 추가 3권 → 9권", () => {
-    const s = applyDemoOrder(state({ pending: pending({ plan: "extra3", amountWon: 4900 }), pass: pass() }), NOW);
+    const s = applyDemoOrder(state({ pending: pending({ plan: "extra3", amountWon: 9900 }), pass: pass() }), NOW);
     assert.equal(s.pass?.booksLeft, 9);
     assert.equal(s.receipts.length, 1);
   });
   it("같은 번호를 두 번 넣어도 영수증은 1개, 책도 한 번만", () => {
-    const once = applyDemoOrder(state({ pending: pending({ plan: "extra3", amountWon: 4900 }), pass: pass() }), NOW);
-    const twice = applyDemoOrder({ ...once, pending: pending({ plan: "extra3", amountWon: 4900 }) }, NOW);
+    const once = applyDemoOrder(state({ pending: pending({ plan: "extra3", amountWon: 9900 }), pass: pass() }), NOW);
+    const twice = applyDemoOrder({ ...once, pending: pending({ plan: "extra3", amountWon: 9900 }) }, NOW);
     assert.equal(twice.receipts.length, 1);
     assert.equal(twice.pass?.booksLeft, 9);
     assert.equal(twice.pending, null);
@@ -245,7 +255,7 @@ describe("applyDemoOrder", () => {
     let s = state({ pass: pass() });
     for (let i = 0; i < 12; i++) {
       const id = `DEMO-20260930-AAAAA${"23456789ABCDEF"[i]}`;
-      s = applyDemoOrder({ ...s, pending: pending({ orderId: id, plan: "extra3", amountWon: 4900 }) }, NOW);
+      s = applyDemoOrder({ ...s, pending: pending({ orderId: id, plan: "extra3", amountWon: 9900 }) }, NOW);
     }
     assert.equal(s.receipts.length, 10);
     assert.equal(s.receipts[0].orderId, "DEMO-20260930-AAAAAD"); // 마지막(12번째)이 맨 앞

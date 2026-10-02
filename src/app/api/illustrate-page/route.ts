@@ -19,20 +19,27 @@ import {
   repairBlankCanvasBorder,
   toDataUrl,
   validateIllustration,
+  type GeneratedImage,
 } from "@/lib/gemini";
-import { familyFolderOf, familyUrlPrefix, fetchFamilyRefCached } from "@/lib/family-ref";
+import { familyFolderOf, familyUrlPrefix, fetchFamilyRefRetry } from "@/lib/family-ref";
 import {
   arrangePageReferences,
   fixedCheckDescription,
   fixedFamilyFaceLines,
+  facialFeatureLines,
+  familyFramingCheckLines,
+  familyFramingLines,
   maxPagePortraits,
+  pageReferenceLabels,
   pickPagePortraits,
   portraitBindingLines,
+  readPortraitFigure,
   readSheetOrder,
   readSheetOutfits,
   refOrdinal,
   sheetOrderLine,
 } from "@/lib/page-refs";
+import { composePortraitCard, sheetFigureMeta } from "@/lib/sheet-compose";
 
 /*
  * 그리는 데 20~30초가 걸린다(검사에 걸려 다시 그리면 그 두 배).
@@ -41,6 +48,36 @@ import {
  */
 export const runtime = "nodejs";
 export const maxDuration = 60;
+
+/*
+ * 얼굴 카드 잠깐 기억 — 쪽마다(8~12번) 같은 사람의 카드를 다시 짜지 않게. 가족 그림 주소는 그릴 때마다 새 이름이라
+ * (lib/family-ref fetchFamilyRefCached 머리글) 주소 + 머리 비율이 같으면 카드도 같다. 서버 한 대 안에서만 산다.
+ * 짜지 못하면 null — 부르는 쪽이 원본 그대로 붙인다. 로그에 주소를 남기지 않는다(회원 uid 가 들어 있다).
+ */
+const CARD_CACHE_MAX = 24;
+const cardCache = new Map<string, GeneratedImage>();
+async function portraitCard(url: string, image: GeneratedImage, headRatio: number): Promise<GeneratedImage | null> {
+  const key = `${url}#${headRatio}`;
+  const hit = cardCache.get(key);
+  if (hit) {
+    cardCache.delete(key);
+    cardCache.set(key, hit);
+    return hit;
+  }
+  try {
+    const card = await composePortraitCard({ image, headRatio });
+    cardCache.set(key, card);
+    while (cardCache.size > CARD_CACHE_MAX) {
+      const oldest = cardCache.keys().next().value;
+      if (oldest === undefined) break;
+      cardCache.delete(oldest);
+    }
+    return card;
+  } catch (e) {
+    console.warn("[illustrate-page] 얼굴 카드를 짜지 못해 원본 그대로:", (e as Error).message);
+    return null;
+  }
+}
 
 /**
  * 쪽별 삽화. 클로드가 쓴 장면 묘사(@@IMG@@) + 그림체 프롬프트 + 캐릭터 시트 참조.
@@ -363,11 +400,24 @@ export async function POST(request: Request) {
         watercolor: knownStyle && style.id === "watercolor",
       })
     : { portraits: [], rejected: 0, offPage: 0 };
-  const portraitImages = await Promise.all(pickedPortraits.portraits.map((p) => fetchFamilyRefCached(p.url)));
-  const portraits = pickedPortraits.portraits.flatMap((p, i) => {
-    const image = portraitImages[i];
-    return image ? [{ name: p.name, image }] : [];
-  });
+  // 한 번 못 받으면 짧게 한 번 더(lib/family-ref fetchFamilyRefRetry) — 잠깐의 끊김으로 이 쪽 얼굴 참고를 잃지 않게.
+  const portraitImages = await Promise.all(pickedPortraits.portraits.map((p) => fetchFamilyRefRetry(p.url)));
+  /*
+   * 얼굴 카드(2026-10-01 사장님 "아바타와 너무 달라") — 원본 전신 그림 그대로면 그림 모델이 읽는 얼굴이 손톱만 했다.
+   * 왼쪽 전신 + 오른쪽 같은 원본에서 오려 키운 얼굴로 한 장을 짜 붙인다(lib/sheet-compose composePortraitCard, AI 없음).
+   * 짜지 못하면 그 사람은 예전처럼 원본 그대로 붙인다.
+   */
+  const portraits = (
+    await Promise.all(
+      pickedPortraits.portraits.map(async (p, i) => {
+        const image = portraitImages[i];
+        if (!image) return null;
+        const meta = sheetFigureMeta(p.memberId, readPortraitFigure(input.portraits, p.name));
+        const card = await portraitCard(p.url, image, meta.headRatio);
+        return card ? { name: p.name, image: card, card: true } : { name: p.name, image, card: false };
+      }),
+    )
+  ).filter((p): p is { name: string; image: GeneratedImage; card: boolean } => p !== null);
   if (pickedPortraits.rejected > 0 || portraits.length < pickedPortraits.portraits.length) {
     console.info("[illustrate-page] 고정 얼굴", {
       used: portraits.length,
@@ -377,6 +427,8 @@ export async function POST(request: Request) {
   }
   /** 이 쪽에서 원본 그림이 붙은 사람 — 없으면(옛 책·가족 없는 책) 아래 글은 예전과 한 글자도 다르지 않다. */
   const portraitNames = new Set(portraits.map((p) => p.name));
+  /** 그 가운데 얼굴 카드로 붙은 사람 */
+  const cardNames = new Set(portraits.filter((p) => p.card).map((p) => p.name));
   /** 인물 시트에 선 순서(왼쪽부터) — 원본 픽셀로 짠 시트만 보낸다. 옛 책은 없다. */
   const sheetOrder = sheet ? readSheetOrder(input.sheetOrder, cast) : null;
   /** 원본 픽셀로 짠 시트인가 — 순서가 온 시트만 그렇다. 그 시트의 고정 가족 옷은 가족 그림의 옷이다. */
@@ -396,6 +448,8 @@ export async function POST(request: Request) {
    */
   const refs = arrangePageReferences({ sheet, portraits, location: locationSheet, style: usedStyleReference });
   const nth = (kind: string) => refOrdinal(refs.order, kind);
+  /** 가족 얼굴이 나오는 쪽의 구도 줄(lib/page-refs familyFramingLines) — 검수도 이 쪽은 가까운 구도를 받아들이게 한다(아래 extraRules). */
+  const familyFraming = familyFramingLines(sceneCast.length, fixedOnPage.length);
 
   const prompt = [
     knownStyle
@@ -463,6 +517,8 @@ export async function POST(request: Request) {
       "Draw the characters large enough that a small child can read their faces and expressions clearly.",
       "Every face must be cleanly and correctly drawn: two clear eyes, a nose and a mouth in the right places, no smeared, doubled, melted or distorted features. A child whose face came out broken is the single most upsetting error in this book.",
       "Draw the expression the text asks for. If the child is looking up at something, their head is tilted back and their eyes point upward, not at the viewer.",
+      // 가족 얼굴이 나오는 쪽은 허리 위 구도가 기본, 넷 이상이면 가까이 모인 구도 — 얼굴이 작으면 이목구비가 뭉개진다(lib/page-refs familyFramingLines).
+      ...familyFraming,
     ].join("\n"),
     /*
      * 배경을 채울 때 한국 = 전통이라고 읽지 않게 한다.
@@ -571,7 +627,10 @@ export async function POST(request: Request) {
         ].join("\n")
       : "",
     // 고정 가족 원본 그림 — 몇 번째 그림이 누구 얼굴인지(lib/page-refs). 시트 바로 뒤에 붙였으니 글도 시트 바로 뒤에.
-    portraits.length ? portraitBindingLines(refs.order, [...portraitNames]).join("\n") : "",
+    // 얼굴 카드로 붙인 사람은 한 장에 같은 사람이 두 번 보인다고 — 두 사람으로 읽지 않게.
+    portraits.length ? portraitBindingLines(refs.order, [...portraitNames], cardNames).join("\n") : "",
+    // 이목구비 — 카드의 눈·눈썹·코·입을 같은 모양·같은 정도로, 카드보다 단순하게 그리지 않게(lib/page-refs facialFeatureLines).
+    portraits.length ? facialFeatureLines([...portraitNames], cardNames).join("\n") : "",
     usedStyleReference
       ? [
           `The ${nth("style")} attached image is a previously APPROVED page from this same book.`,
@@ -705,6 +764,8 @@ export async function POST(request: Request) {
     let image = await generateImage({
       prompt,
       references: refs.images,
+      // 고정 가족 얼굴을 붙인 쪽은 그림마다 바로 앞에 "이 그림은 누구"를(lib/page-refs pageReferenceLabels). 없으면 예전 요청 그대로.
+      ...(portraits.length ? { referenceLabels: pageReferenceLabels(refs.order, cardNames) } : {}),
       aspectRatio,
       // 원본 얼굴을 붙였으면 그림 없는 답(안전 검사 멈춤)은 두 번까지만 — 60초를 다 쓰기 전에 알리면
       // 부르는 쪽이 얼굴 없이 한 번 더 그린다(아래 422 portrait). 인물 시트(api/character-sheet)와 같은 방식.
@@ -756,7 +817,11 @@ export async function POST(request: Request) {
       ),
       stylePrompt: style.prompt,
       // 주인공 성별·머리, 벨트, 내린 뒤 장면 — 이 쪽에 주인공이 없으면 주인공 규칙은 빼고 보낸다.
-      extraRules: checkRuleLines({ hero: heroOnPage ? hero : null, page: vehicleInfo, storyText }),
+      // 가족 얼굴 쪽은 일부러 가깝게 찍었다 — 다리가 잘리거나 장소가 덜 보인다고 떨어뜨리지 않게(lib/page-refs familyFramingCheckLines).
+      extraRules: [
+        ...checkRuleLines({ hero: heroOnPage ? hero : null, page: vehicleInfo, storyText }),
+        ...familyFramingCheckLines(familyFraming),
+      ],
     });
     const check = borderLeft
       ? { ok: false, checked: true, issues: [borderLeft, aiCheck.ok ? "" : aiCheck.issues].filter(Boolean).join(" ") }

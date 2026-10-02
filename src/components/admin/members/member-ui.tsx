@@ -1,13 +1,43 @@
 "use client";
 
 /**
- * 회원 화면 작은 부품 — 부모 목소리 배지.
+ * 회원 화면 작은 부품 — 부모 목소리 배지 · 요금제 배지.
  * 엄마·아빠 둘 다 늘 보이고, 등록 안 된 쪽은 흐리게 둔다(설정 화면 관리실과 같은 모양).
  * 색만으로 뜻을 전하지 않게 화면 읽기 프로그램에는 '엄마 등록 · 아빠 없음'을 읽어 준다.
  */
 import { useState } from "react";
 import { membersListHref, voiceBadges } from "@/lib/admin-members";
-import { AdminLink, Badge, Icon } from "@/components/admin/kit";
+import { activePlanKey, kstDateText, MEMBER_PLAN_LABEL, type MemberPlanKey } from "@/lib/member-plan";
+import { AdminLink, Badge, Icon, type BadgeTone } from "@/components/admin/kit";
+
+const PLAN_TONE: Record<MemberPlanKey, BadgeTone> = { free: "green", starter: "amber", monthly: "blue", yearly: "blue" };
+
+/**
+ * 요금제 배지 — 지정 없음은 '–', 끝나는 때가 지났으면 회색 '끝남'. now 는 관리실 시계(clock)를 넘긴다
+ * (그리는 동안 시각이 바뀌어 서버·화면 모양이 어긋나지 않게).
+ */
+export function PlanBadge({ plan, endsAt, now }: { plan: MemberPlanKey | null; endsAt: string | null; now: number }) {
+  if (!plan) {
+    return (
+      <span className="text-[#b0b8c1]" aria-label="요금제 지정 없음">
+        –
+      </span>
+    );
+  }
+  const end = kstDateText(endsAt);
+  if (!activePlanKey({ plan, endsAt }, now)) {
+    return (
+      <Badge tone="gray" title={`${end}에 끝났어요`}>
+        {MEMBER_PLAN_LABEL[plan]} · 끝남
+      </Badge>
+    );
+  }
+  return (
+    <Badge tone={PLAN_TONE[plan]} title={end ? `${end}까지` : "끝나는 날 없음"}>
+      {MEMBER_PLAN_LABEL[plan]}
+    </Badge>
+  );
+}
 
 /*
  * 회원 목록 → 회원 → [회원 목록]으로 돌아올 때 거른 목록 그대로 — 목록에서 줄을 누를 때 그 회원 id 와

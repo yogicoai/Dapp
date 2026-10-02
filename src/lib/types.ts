@@ -142,7 +142,8 @@ export type Book = {
    * 한 쪽만 다시 그릴 때도 그 쪽에 나오는 사람의 원본을 쪽 그림에 붙인다(api/illustrate-page). 주소 뒤에 회원 폴더가 있고,
    * 서버가 부른 사람의 폴더인지 다시 검사한다 — 마스터가 남의 책을 다시 그리면 붙지 않고 시트만 쓴다. 옛 책엔 없다.
    */
-  portraits?: { name: string; ref: string; memberId: string }[];
+  /* 키(cm)·머리 비율 — 쪽 그림 서버가 얼굴 카드(왼쪽 전신 + 오른쪽 키운 얼굴)를 오릴 때 쓴다(2026-10-01~, 없으면 사람 id 로 짐작). */
+  portraits?: { name: string; ref: string; memberId: string; heightCm?: number; headRatio?: number }[];
   /** 인물 시트에 선 순서(왼쪽부터 이름) — 원본 픽셀로 짠 시트는 이야기 순서와 다를 수 있다. 옛 책엔 없다. */
   sheetOrder?: string[];
   /**

@@ -25,7 +25,7 @@
  * 브라우저에서 돈다(이 기기 가족이 서버보다 새 그림을 들고 있을 수 있다). 서버는 주소만 다시 검사한다(lib/family-ref).
  * 순수 함수만 둔다 — node --test 로 시험한다(family-cast.test.ts).
  */
-import type { FamilyMember, FamilyRole } from "./family.ts";
+import { familyLooksToPrompt, type FamilyMember, type FamilyRole } from "./family.ts";
 
 /** 인물 시트에 물릴 고정 얼굴 한 사람 */
 export type CastPortrait = {
@@ -39,8 +39,13 @@ export type CastPortrait = {
 
 /** 시트가 그리는 최대 인원(api/character-sheet 가 6명에서 자른다) */
 const SHEET_CAST_MAX = 6;
-/** 기본 상한 — 그림체 견본까지 5장. 서버가 모델에 따라 더 줄일 수 있다(lib/sheet-prompt maxPortraitRefs). */
-export const CAST_PORTRAITS_MAX = 4;
+/**
+ * 기본 상한 — 시트가 그리는 6명 모두. 예전엔 4명이라, 6명이 나오는 가족 동화에서 뒤의 둘(대개 할머니·할아버지)은
+ * 고정 얼굴 없이 클로드의 글로만 그려졌다(2026-10-01 사장님 "내가 생성한 아바타와 동화 속 아바타가 너무 달라").
+ * 수채화 책은 시트를 원본 픽셀로 짜서(lib/sheet-compose) 수 제한이 없다. AI 가 다시 그리는 시트(지브리·벡터 책)는
+ * 서버가 모델에 따라 줄인다(lib/sheet-prompt maxPortraitRefs).
+ */
+export const CAST_PORTRAITS_MAX = 6;
 
 const MOM_WORDS = new Set(["엄마", "어머니"]);
 const DAD_WORDS = new Set(["아빠", "아버지"]);
@@ -225,4 +230,78 @@ export function castPortraits(
     out.push({ name: c.name, ref, memberId: m.id, role: m.role });
   });
   return out;
+}
+
+/** 이야기(클로드)에 건네는 가족 한 사람의 생김새 — 아이·엄마·아빠는 따로 간다(lib/anthropic ChildProfile looks·parentLooks). */
+export type StoryFamilyLook = {
+  /** 이야기에서 부를 이름 — 형제 '시우(형)', 단짝 친구 '서연(단짝 친구)', 할머니·할아버지는 호칭('외할머니') */
+  who: string;
+  /** 부모가 고른 생김새 한 줄(옷은 빼고) — 없으면 fixed 만 */
+  line?: string;
+  /** 가족 화면에 그림이 고정된 사람 */
+  fixed?: boolean;
+};
+
+/** 이야기에 건네는 최대 인원 — 할머니·할아버지 넷 + 형제·친구 넉넉히 */
+const STORY_FAMILY_MAX = 8;
+
+/**
+ * 할머니·할아버지·형제·단짝 친구의 생김새를 이야기에 건넨다(2026-10-01 사장님 "아바타와 너무 달라" ④).
+ * 예전엔 아이·엄마·아빠 생김새만 이야기에 갔다. 그래서 클로드가 할머니를 '하얀 쪽진 머리'처럼 지어냈고, 그 글이 쪽 그림 프롬프트에
+ * 고정 그림과 함께 들어가 얼굴을 끌어당겼다. 고정 그림이 없는 사람은 그 지어낸 모습 그대로 그려졌다.
+ *  · 칩(생김새)을 고른 사람: 그 칩 그대로 — 옷은 뺀다(옷은 책마다 이야기가 정한다, 2026-09-29).
+ *  · 사진으로 그린 고정 그림(fromPhoto): 모습을 정한 건 칩이 아니라 사진이다(칩이 비었거나 다를 수 있다) — 생김새를 적지 말라고만(fixed).
+ *  · 칩도 그림도 없는 사람, 이름 없는 형제·친구: 건네지 않는다 — 이름 없는 '친구'는 이야기의 아무 친구다(castPortraits ⑥과 같다).
+ */
+export function storyFamilyLooks(family: readonly FamilyMember[] | undefined): StoryFamilyLook[] {
+  const out: StoryFamilyLook[] = [];
+  for (const m of family ?? []) {
+    if (m.role !== "grandma" && m.role !== "grandpa" && m.role !== "sibling" && m.role !== "friend") continue;
+    const call = m.callName?.trim() ?? "";
+    const name = m.name?.trim() ?? "";
+    const who =
+      m.role === "grandma" || m.role === "grandpa"
+        ? call
+        : !name
+          ? ""
+          : m.role === "friend"
+            ? `${name}(단짝 친구)`
+            : call && call !== name
+              ? `${name}(${call})`
+              : name;
+    if (!who) continue;
+    const fixed = Boolean(m.portrait?.ref);
+    const line = m.portrait?.fromPhoto ? "" : familyLooksToPrompt(m.looks, m.role, { clothes: false });
+    if (line) out.push({ who, line, ...(fixed ? { fixed: true } : {}) });
+    else if (fixed) out.push({ who, fixed: true });
+    if (out.length >= STORY_FAMILY_MAX) break;
+  }
+  return out;
+}
+
+/**
+ * 이야기 프롬프트(lib/anthropic describeChild)에 넣는 줄 — storyFamilyLooks 를 받은 그대로 문장으로.
+ * 고른 생김새가 있으면 엄마·아빠와 같은 말로("이야기에 나오면 생김새는 이대로"). 그림이 고정됐는데 고른 생김새가 없으면(사진으로 그림)
+ * 지어내지 말고 '가족 그림 그대로'라고만 적게 한다 — 쪽 그림은 얼굴을 고정 그림에서 가져오는데, 지어낸 머리·얼굴 글이 함께 들어가면
+ * 그림을 엉뚱하게 끌어당긴다.
+ */
+export function storyFamilyLookLines(looks: readonly StoryFamilyLook[] | undefined): string[] {
+  if (!looks?.length) return [];
+  const fixedOnly = looks.filter((l) => !l.line && l.fixed).map((l) => l.who);
+  return [
+    ...looks
+      .filter((l) => l.line)
+      .map((l) => `${subjectOf(l.who)} 이야기에 나오면 생김새는 이대로 쓴다(부모가 직접 고름, 여기 없는 것은 지어내지 않는다): ${l.line}`),
+    ...(fixedOnly.length
+      ? [
+          `가족 그림이 정해져 있는 사람: ${fixedOnly.join(", ")}. 이 사람이 이야기에 나오면 @@CHARACTER@@ 생김새 칸에 머리·얼굴을 지어내지 말고 '가족 그림 그대로'라고만 쓴다.`,
+        ]
+      : []),
+  ];
+}
+
+/** '할머니가'·'시우(형)가'·'하준(형)이' — 괄호 앞 글자의 받침으로 이/가를 고른다. */
+function subjectOf(who: string): string {
+  const base = who.replace(/[(（][^)）]*[)）]\s*$/, "").trim() || who;
+  return `${who}${hasFinal(base[base.length - 1] ?? "") ? "이" : "가"}`;
 }

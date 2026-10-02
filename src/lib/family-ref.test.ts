@@ -8,6 +8,7 @@ import {
   familyUrlPrefix,
   fetchFamilyRef,
   fetchFamilyRefCached,
+  fetchFamilyRefRetry,
 } from "./family-ref.ts";
 
 /*
@@ -235,5 +236,55 @@ describe("fetchFamilyRefCached — 쪽마다 같은 얼굴을 다시 받지 않�
     assert.equal(seen.length, 25);
     await fetchFamilyRefCached(urlOf(0), { fetchImpl }); // 빠졌다 — 다시 받는다
     assert.equal(seen.length, 26);
+  });
+});
+
+describe("fetchFamilyRefRetry — 한 번 못 받으면 짧게 한 번 더(2026-10-01)", () => {
+  it("첫 받기가 실패해도 둘째에 받으면 그림 — 한 번의 끊김으로 얼굴을 잃지 않는다", async () => {
+    clearFamilyRefCacheForTests();
+    let calls = 0;
+    const flaky = fakeFetch(() => (++calls === 1 ? new Response("no", { status: 503 }) : new Response(JPEG)));
+    assert.deepEqual(await fetchFamilyRefRetry(REF, { fetchImpl: flaky }), {
+      mimeType: "image/jpeg",
+      data: Buffer.from(JPEG).toString("base64"),
+    });
+    assert.equal(calls, 2);
+  });
+
+  it("처음에 받으면 다시 받지 않고, 두 번 다 실패하면 null(던지지 않는다)", async () => {
+    clearFamilyRefCacheForTests();
+    let calls = 0;
+    const ok = fakeFetch(() => {
+      calls++;
+      return new Response(JPEG);
+    });
+    assert.ok(await fetchFamilyRefRetry(REF, { fetchImpl: ok }));
+    assert.equal(calls, 1);
+    clearFamilyRefCacheForTests();
+    let fails = 0;
+    const down = fakeFetch(() => {
+      fails++;
+      return new Response("no", { status: 503 });
+    });
+    assert.equal(await fetchFamilyRefRetry(REF, { fetchImpl: down }), null);
+    assert.equal(fails, 2);
+  });
+
+  it("다시 받기는 짧은 제한 시간으로", async () => {
+    clearFamilyRefCacheForTests();
+    const timeouts: number[] = [];
+    const hangs = fakeFetch(
+      (_url, init) =>
+        new Promise<Response>((_resolve, reject) => {
+          const t0 = Date.now();
+          init.signal?.addEventListener("abort", () => {
+            timeouts.push(Date.now() - t0);
+            reject(new DOMException("aborted", "AbortError"));
+          });
+        }),
+    );
+    assert.equal(await fetchFamilyRefRetry(REF, { fetchImpl: hangs, timeoutMs: 120, retryTimeoutMs: 30 }), null);
+    assert.equal(timeouts.length, 2);
+    assert.ok(timeouts[1] < timeouts[0], `${timeouts}`);
   });
 });

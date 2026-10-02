@@ -21,7 +21,7 @@ import {
 } from "@/components/create/BestFriendChip";
 import { ART_STYLES } from "@/lib/art-styles";
 import { bestFriend, heightFor, type FamilyMember } from "@/lib/family";
-import { castPortraits } from "@/lib/family-cast";
+import { castPortraits, storyFamilyLooks } from "@/lib/family-cast";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
 import {
@@ -392,8 +392,11 @@ function locationKeyFromImagePrompt(prompt: string): string {
 
 /** 만들 때 그린 장소 기준 그림 한 장. */
 type LocationSheet = { key: string; name: string; description: string; image: string; onePlace?: boolean };
-/** 시트에 원본이 선 고정 가족 한 사람 — 쪽 그림 서버가 주소를 다시 검사한다(api/illustrate-page). */
-type SheetPortraitRef = { name: string; ref: string; memberId: string };
+/**
+ * 시트에 원본이 선 고정 가족 한 사람 — 쪽 그림 서버가 주소를 다시 검사한다(api/illustrate-page). 키·머리 비율은 쪽 그림 서버가
+ * 얼굴 카드(왼쪽 전신 + 오른쪽 키운 얼굴)를 오릴 때 쓴다(2026-10-01~, 옛 보관본엔 없다 — 서버가 사람 id 로 짐작한다).
+ */
+type SheetPortraitRef = { name: string; ref: string; memberId: string; heightCm?: number; headRatio?: number };
 /** 쪽 그림 한 장의 응답(api/illustrate-page) */
 type PageImageReply = {
   ok: boolean;
@@ -427,7 +430,16 @@ type PageImageReply = {
  * 장면째 그리는 방식으로 바꾸면서 쪽 수를 늘리기로 했다. 한 권 값은 12토큰(대본 6 + 그림 6).
  * 요청이 권당 7번 이상이라 429(몰림)는 첫 몇 권에서 다시 지켜볼 것.
  */
-const FIXED_PAGE_COUNT = 6;
+const FIXED_PAGE_COUNT = testPageCount(process.env.NEXT_PUBLIC_TEST_PAGE_COUNT) ?? 6;
+
+/**
+ * 로컬 시험용 쪽수 — .env.local 의 NEXT_PUBLIC_TEST_PAGE_COUNT(2~6, 2026-10-01 사장님 "6장씩 계속 만들면 토큰 낭비, 시험은 2장").
+ * .env.local 은 배포에 올라가지 않아 운영은 늘 6쪽이다. 서버 하한(lib/anthropic MIN_PAGE_COUNT)은 TEST_MIN_PAGE_COUNT 로 함께 연다.
+ */
+function testPageCount(raw: string | undefined): number | null {
+  const n = Number(raw?.trim());
+  return Number.isInteger(n) && n >= 2 && n <= 6 ? n : null;
+}
 
 /** 조사를 떼어 지칭어를 만든다 — "친구랑"→"친구", "동생이랑"→"동생". */
 function companionTerm(who: string): string {
@@ -1924,6 +1936,8 @@ export default function CreatePage() {
       mom: parentLooksToPrompt(loadChild()?.parents?.mom, "mom", { clothes: false }) || undefined,
       dad: parentLooksToPrompt(loadChild()?.parents?.dad, "dad", { clothes: false }) || undefined,
     },
+    // 할머니·할아버지·형제·단짝 친구 생김새(2026-10-01) — 예전엔 안 가서 클로드가 지어냈고, 고정 그림과 부딪쳤다(lib/family-cast).
+    familyLooks: storyFamilyLooks(loadChild()?.family),
   };
 
   // '누구랑' 칩 — 아이 성별에 맞는 형제 호칭을 끼워 만든다.
@@ -2723,6 +2737,8 @@ export default function CreatePage() {
      * 왜 안 됐는지를 알아야 기다렸다 다시 할지, 오늘은 그만둘지 정할 수 있다.
      */
     const drawFailures: string[] = [];
+    /** 그림 AI 가 가족 얼굴을 거절해 얼굴 없이 그렸나 — 다 그린 뒤 부모에게 알린다(2026-10-01, 몰래 얼굴을 빼지 않는다). */
+    let facesDropped = false;
     /*
      * 참조로 다시 올려보낼 그림은 줄여서 보낸다.
      *
@@ -2877,6 +2893,22 @@ export default function CreatePage() {
         const family = (await waitAtMost(loadChildRemote(), 3000, null))?.family ?? child?.family;
         const portraits = castPortraits(s.characters, family);
         /*
+         * 고정 얼굴 — 서버에 필요한 것만(등장인물 이름·참고 그림 주소·사람 id)과 키(cm)·머리 비율. 서버가 주소를 다시 검사한다.
+         * 키·머리 비율 — 수채화 책은 서버가 원본 그림으로 시트를 짜고(키대로 발끝 맞춤, 얼굴 오리기. lib/sheet-compose),
+         * 쪽 그림 서버는 얼굴 카드(왼쪽 전신 + 오른쪽 키운 얼굴)를 오린다 — 그래서 쪽 그림에도 그대로 보낸다(sheetPortraitsRef).
+         */
+        const portraitRefs: SheetPortraitRef[] = portraits.map((p) => {
+          const member = family?.find((m) => m.id === p.memberId);
+          const headRatio = member?.portrait?.headRatio;
+          return {
+            name: p.name,
+            ref: p.ref,
+            memberId: p.memberId,
+            ...(member ? { heightCm: heightFor(member, { age: age ?? child?.age ?? null, parents: child?.parents }) } : {}),
+            ...(typeof headRatio === "number" ? { headRatio } : {}),
+          };
+        });
+        /*
          * withCard — 이 책의 옷을 옷 카드로 입혀도 되나(서버는 이 칸이 true 일 때만 옷 카드를 그린다). 이 화면은 sheetOutfits 를 받아
          * 쪽 그림·책에 넘기므로 true 를 보낼 수 있다 — 배포 전에 열어 둔 화면은 이 칸이 없어 값만 나가는 옷 카드를 부르지 않는다.
          */
@@ -2901,26 +2933,8 @@ export default function CreatePage() {
                 엄마: parentLooksToPrompt(child?.parents?.mom, "mom", { clothes: !outfitStory }) || undefined,
                 아빠: parentLooksToPrompt(child?.parents?.dad, "dad", { clothes: !outfitStory }) || undefined,
               },
-              // 고정 얼굴 — 서버에 필요한 것만(등장인물 이름·참고 그림 주소·사람 id). 서버가 주소를 다시 검사한다.
-              // 키(cm)·머리 비율 — 수채화 책은 서버가 원본 그림으로 시트를 짠다(키대로 발끝 맞춤, 얼굴 오리기. lib/sheet-compose).
-              ...(withPortraits
-                ? {
-                    portraits: portraits.map((p) => {
-                      const member = family?.find((m) => m.id === p.memberId);
-                      return {
-                        name: p.name,
-                        ref: p.ref,
-                        memberId: p.memberId,
-                        ...(member
-                          ? {
-                              heightCm: heightFor(member, { age: age ?? child?.age ?? null, parents: child?.parents }),
-                              headRatio: member.portrait?.headRatio,
-                            }
-                          : {}),
-                      };
-                    }),
-                  }
-                : {}),
+              // 고정 얼굴(위 portraitRefs) — 얼굴 없이 다시 그리는 요청이면 보내지 않는다.
+              ...(withPortraits ? { portraits: portraitRefs } : {}),
             }),
             signal: ac.signal,
           });
@@ -2954,6 +2968,8 @@ export default function CreatePage() {
           if (!withFaces || ac.signal.aborted) throw e;
           return null;
         });
+        // 옷 카드를 다시 불러도 되나 — 서버가 "옷 카드 없이 다시"(retryWithoutCard)라고 하면 그 뒤로는 부르지 않는다.
+        let cardAllowed = withCard && reply?.data.retryWithoutCard !== true;
         /*
          * 섞인 시트(고정 가족 원본 + 나머지 사람만 AI)의 AI 그림이 실패했다(code "subsheet") — 그 AI 그림엔 가족 얼굴이
          * 붙지 않았으니 얼굴 탓이 아니다. 얼굴을 붙인 채로 한 번 더 부른다. 바로 얼굴 없이 가면 잠깐의 5xx 한 번에
@@ -2973,31 +2989,48 @@ export default function CreatePage() {
               ? `옷 카드 뒤 시트 짜기 실패(HTTP ${reply.res.status}) → 옷 카드 없이 가족 얼굴 그대로 한 번 더`
               : `친구 등 나머지 인물 그림 실패(HTTP ${reply.res.status}) → 가족 얼굴 그대로 한 번 더`,
           });
-          reply = await requestSheet(true, withCard && !dropCard).catch((e: unknown) => {
+          cardAllowed = cardAllowed && !dropCard;
+          reply = await requestSheet(true, cardAllowed).catch((e: unknown) => {
             if (ac.signal.aborted) throw e;
             return null;
           });
+          if (reply?.data.retryWithoutCard === true) cardAllowed = false;
         }
         /*
-         * 고정 얼굴을 붙인 시트가 실패했다 — 얼굴 없이 한 번 더 그린다. 책 만들기를 여기서 멈추지 않는다.
-         * 거절(422 portrait)만이 아니다: 얼굴을 붙이면 요청이 길어져 60초 제한(504)·5xx·그림 없는 답·연결 끊김도
-         * 늘고, 같은 얼굴로 다시 눌러 봐야 또 실패할 수 있다(2026-09-29 검토). 로그인(401)·잦은 요청(429)은 얼굴
-         * 탓이 아니라 그대로 둔다. 기록에는 남긴다(마스터가 어느 책이 얼굴 없이 그려졌는지 알게).
+         * 고정 얼굴을 붙인 시트가 실패했다(2026-10-01 바꿈 — 사장님 "내가 생성한 아바타와 동화 속 아바타가 너무 달라").
+         * 예전엔 어떤 실패든 곧바로 얼굴 없이 다시 그렸다. 잠깐의 5xx·504·연결 끊김 한 번에 책 전체가 가족 얼굴 없이 그려졌고,
+         * 부모는 그 까닭을 몰랐다(기록에만 남았다). 이제는:
+         *  · 잠깐의 실패(5xx·504·그림 없는 답·연결 끊김) — 가족 얼굴을 붙인 채 한 번 더. 그래도 안 되면 여기서 멈추고 알린다.
+         *    쪽 그림 값이 나가기 전이라 부모 손해가 없다(아래 catch — 대본 화면으로 돌아가 다시 누를 수 있다).
+         *  · 그림 AI 가 가족 얼굴을 거절했다(422 portrait — 같은 얼굴로 다시 해도 같다) — 얼굴 없이 그리되, 다 그린 뒤 부모에게 알린다.
+         * 로그인(401)·잦은 요청(429)은 얼굴 탓이 아니라 그대로 둔다(아래 !sheetRes.ok 에서 서버의 말로 멈춘다).
          */
-        const faceSheetFailed =
-          withFaces &&
-          !ac.signal.aborted &&
-          (!reply || ((!reply.res.ok || !reply.data.image) && reply.res.status !== 401 && reply.res.status !== 429));
-        if (faceSheetFailed) {
+        const faceSheetHiccup = (r: typeof reply) =>
+          !r ||
+          ((!r.res.ok || !r.data.image) && r.res.status !== 401 && r.res.status !== 429 && r.data.code !== "portrait");
+        if (withFaces && !ac.signal.aborted && faceSheetHiccup(reply)) {
           // 실패한 요청이라도 그 안에서 그린 옷 카드·나머지 그림은 값이 나갔다(서버가 drawn 으로 알려 준다).
           if (typeof reply?.data.drawn === "number") counts.sheet += reply.data.drawn;
           pageFailures.push({
             stage: "sheet",
-            reason:
-              reply?.data.code === "portrait"
-                ? "고정 얼굴로 인물 시트를 못 그림 → 얼굴 없이 다시 그림"
-                : `고정 얼굴 시트 실패(${reply ? `HTTP ${reply.res.status}` : "연결 끊김"}) → 얼굴 없이 다시 그림`,
+            reason: `고정 얼굴 시트 실패(${reply ? `HTTP ${reply.res.status}` : "연결 끊김"}) → 가족 얼굴 그대로 한 번 더`,
           });
+          reply = await requestSheet(true, cardAllowed && reply?.data.retryWithoutCard !== true).catch((e: unknown) => {
+            if (ac.signal.aborted) throw e;
+            return null;
+          });
+        }
+        if (withFaces && !ac.signal.aborted && faceSheetHiccup(reply)) {
+          if (typeof reply?.data.drawn === "number") counts.sheet += reply.data.drawn;
+          // 얼굴 없이 몰래 그리지 않는다 — 아래 catch 가 대본 화면으로 돌려보내고 이 말을 띄운다(기록에도 남는다).
+          throw new Error(
+            `가족 얼굴로 인물 그림을 만들지 못했어요(${reply ? `오류 ${reply.res.status}` : "연결 끊김"}). 잠시 뒤 '그림 그리기'를 다시 눌러 주세요.`,
+          );
+        }
+        if (withFaces && !ac.signal.aborted && reply?.data.code === "portrait") {
+          if (typeof reply.data.drawn === "number") counts.sheet += reply.data.drawn;
+          pageFailures.push({ stage: "sheet", reason: "그림 AI 가 가족 얼굴을 거절 → 얼굴 없이 다시 그림(다 그린 뒤 부모에게 알림)" });
+          facesDropped = true;
           reply = await requestSheet(false);
         }
         // 첫 요청이 연결 끊김으로 실패한 직후 부모가 멈춘 경우뿐이다 — 멈춤으로 넘긴다(오류 문구를 띄우지 않게).
@@ -3016,9 +3049,8 @@ export default function CreatePage() {
           Array.isArray(sheetData.fixed) ? sheetData.fixed.filter((n): n is string => typeof n === "string") : [],
         );
         // 그 사람들의 원본 주소 — 쪽마다 함께 붙인다(서버가 수채화 책·이 회원 폴더인지 다시 본다). 얼굴 없이 다시 그린 시트면 빈다.
-        sheetPortraitsRef.current = portraits
-          .filter((p) => fixedCastRef.current.has(p.name))
-          .map((p) => ({ name: p.name, ref: p.ref, memberId: p.memberId }));
+        // 키·머리 비율도 함께 — 쪽 그림 서버가 얼굴 카드를 오릴 때 쓴다.
+        sheetPortraitsRef.current = portraitRefs.filter((p) => fixedCastRef.current.has(p.name));
         sheetOrderRef.current = Array.isArray(sheetData.order)
           ? sheetData.order.filter((n): n is string => typeof n === "string")
           : [];
@@ -3157,12 +3189,14 @@ export default function CreatePage() {
         setDrawn(done);
         setPageImages([...images]);
       }
-      // 비용 상한일 뿐 실패 사유가 아니다 — 여기 걸려도 그림은 그대로 책에 들어간다.
-      const MAX_QA_REDRAWS_PER_BOOK = Math.max(2, Math.ceil(s.pages.length / 3));
-      let qaRedrawsUsed = 0;
-      // 그림에 글자가 박힌 경우 전용 예산 — 이건 취향 문제가 아니라 명백한 불량이다.
-      const MAX_TEXT_REDRAWS_PER_BOOK = Math.max(2, Math.ceil(s.pages.length / 3));
-      let textRedrawsUsed = 0;
+      /*
+       * 검사에 떨어진 쪽 다시 그리기 — 권당 모두 합쳐 2장까지. 비용 상한일 뿐 실패 사유가 아니다 — 여기 걸려도 그림은 그대로 책에 들어간다.
+       * 2026-10-01 사장님 "권당 최대 4장을 2장으로 줄여 원가 줄이자": 예전엔 품질 지적 2장 + 글자 박힘 2장을 따로 세어(6쪽 책)
+       * 권당 4장(장당 약 110원)까지 다시 그렸다. 이제 한 예산을 같이 쓴다. 예산이 먼저 다 쓰여 글자가 박힌 쪽이 남으면
+       * 부모가 책에서 그 쪽만 무료로 다시 그릴 수 있다(BookViewer FREE_REDRAWS_PER_BOOK).
+       */
+      const MAX_REDRAWS_PER_BOOK = 2;
+      let redrawsUsed = 0;
       // 원본 얼굴을 붙인 쪽이 그림 모델에 두 번 거절되면 이 책의 남은 쪽은 얼굴 없이(시트만) — 쪽마다 거절·다시 그리기로 늦어지지 않게.
       let portraitRefusals = 0;
       const nextUnclaimedPage = (): number | null => {
@@ -3314,22 +3348,19 @@ export default function CreatePage() {
               first.data.qualityChecked !== false;
 
             /*
-             * 그림 안에 글자가 그려진 경우는 예산과 따로 센다.
+             * 그림 안에 글자가 그려진 경우 — 다시 그릴 때 글자를 빼라고 따로 일러 준다.
              *
              * '그림체가 조금 다르다'는 사람에 따라 갈리지만, 그림에 박힌 엉터리 글자는
              * 언제나 잘못이고 한눈에 보인다(실제로 한국어 본문을 옮긴 듯한 영어 문장이
-             * 그려져 나왔다). 예산이 떨어졌다는 이유로 그대로 책에 넣으면 안 된다.
+             * 그려져 나왔다). 예산은 다른 지적과 같이 쓴다(위 MAX_REDRAWS_PER_BOOK, 2026-10-01).
              */
             const isTextIssue = first.data.qualityIssue === "text";
-            const canRedraw = isTextIssue
-              ? textRedrawsUsed < MAX_TEXT_REDRAWS_PER_BOOK
-              : qaRedrawsUsed < MAX_QA_REDRAWS_PER_BOOK;
+            const canRedraw = redrawsUsed < MAX_REDRAWS_PER_BOOK;
 
             // 검사를 못 한 그림으로 다시 그리기 예산을 태우지 않는다 — 잘못이 있는지조차 모른다.
             if (image && !ok && first.data.qualityChecked !== false && canRedraw) {
               // 증분은 await 전에 동기적으로 실행돼 동시 worker끼리도 예산을 넘기지 않는다.
-              if (isTextIssue) textRedrawsUsed++;
-              else qaRedrawsUsed++;
+              redrawsUsed++;
               const second = await requestImage(
                 isTextIssue
                   ? "The previous attempt drew readable words inside the picture. Draw the same scene with absolutely no writing of any kind."
@@ -3460,6 +3491,16 @@ export default function CreatePage() {
           reasons.length ? `\n이유: ${reasons.join(" / ")}` : "",
           "\n\n동화는 그대로 저장돼요. 못 그린 쪽은 글만 보이고,",
           "\n책을 열어서 그 쪽만 다시 그릴 수 있어요.",
+        ].join(""),
+      );
+    }
+    // 가족 얼굴 없이 그린 책 — 몰래 넘어가지 않는다(2026-10-01). 기록에도 남아 있다(pageFailures).
+    if (facesDropped && !ac.signal.aborted) {
+      window.alert(
+        [
+          "그림 AI가 이번에는 가족 얼굴 그림을 받아 주지 않아서,",
+          "\n이 동화는 가족 얼굴을 고정하지 않고 그렸어요.",
+          "\n\n동화는 그대로 저장돼요.",
         ].join(""),
       );
     }

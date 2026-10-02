@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * 회원 한 명(/admin/members/<id>) — 잔액·동화·열린 사고·부모 목소리, 그리고 탭 다섯:
+ * 회원 한 명(/admin/members/<id>) — 잔액·동화·열린 사고·부모 목소리, 요금제(지정·한도·쓴 양), 그리고 탭 다섯:
  * 만들기 기록 · 토큰 장부 · 충전 기록 · 책 · 실제 결제.
  *
  * 옛 관리실 '고객 찾기'(잔액·만들기 기록·토큰 충전)와 설정 화면 관리실(책 목록·목소리 배지)을 한 화면에 모았다(2026-09-30).
@@ -13,6 +13,7 @@
  *  · 한 사람을 콕 집어 여는 화면이라 관리자 계정 거르기를 하지 않는다(내 계정도 점검용으로 열 수 있다).
  * id 가 uuid 모양이 아니면 서버에 묻지 않고 '못 찾았어요'를 보여 준다.
  */
+import { useRouter } from "next/navigation";
 import { useCallback, useRef, useState, type ReactNode } from "react";
 import { formatDateKo, isUuid, type CustomerResponse } from "@/lib/admin";
 import { groupDigits } from "@/lib/admin-console";
@@ -33,11 +34,13 @@ import {
 import { CaseDrawer } from "@/components/admin/cases/CaseDrawer";
 import { GrantDialog } from "@/components/admin/cases/GrantDialog";
 import { useCaseParam, type CaseOpen } from "@/components/admin/cases/useCaseParam";
+import { DeleteMemberDialog } from "./DeleteMemberDialog";
 import { MemberBooks } from "./MemberBooks";
 import { MemberGrants } from "./MemberGrants";
 import { MemberJobs } from "./MemberJobs";
 import { MemberLedger } from "./MemberLedger";
 import { MemberPayments } from "./MemberPayments";
+import { MemberPlanCard } from "./MemberPlanCard";
 import { MembersBackLink } from "./member-ui";
 
 const TABS = ["jobs", "ledger", "grants", "books", "payments"] as const;
@@ -61,6 +64,8 @@ function MemberDetail({ id }: { id: string }) {
   const [tab, setTab] = useTabParam("tab", TABS, "jobs");
   const { open, openCase, closeCase } = useCaseParam();
   const [grantOpen, setGrantOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const router = useRouter();
   // 서랍을 연 줄 — 닫으면 거기로 초점을 돌린다(키보드로 다음 줄을 이어 보게).
   const lastRow = useRef<HTMLElement | null>(null);
 
@@ -125,6 +130,12 @@ function MemberDetail({ id }: { id: string }) {
             <Button tone="primary" onClick={() => setGrantOpen(true)} disabled={!c}>
               토큰 충전
             </Button>
+            {/* 관리자 계정은 지우지 못한다(서버·DB 가 막는다) — 버튼부터 감춘다 */}
+            {c && !c.profile.isMaster ? (
+              <Button tone="danger" onClick={() => setDeleteOpen(true)}>
+                회원 지우기
+              </Button>
+            ) : null}
           </>
         }
       />
@@ -149,6 +160,9 @@ function MemberDetail({ id }: { id: string }) {
           />
         </section>
       )}
+
+      {/* 요금제 — 관리자가 지정한다(결제 전 베타). 따로 읽어서 이 카드가 실패해도 나머지는 보인다. */}
+      <MemberPlanCard memberId={id} username={c?.profile.username ?? "이 회원"} />
 
       <SectionTabs
         label="회원 기록"
@@ -195,6 +209,15 @@ function MemberDetail({ id }: { id: string }) {
       ) : null}
 
       <CaseDrawer open={open} onClose={onCloseCase} onChanged={reloadAll} showCustomerLink={false} />
+      {deleteOpen && c ? (
+        <DeleteMemberDialog
+          memberId={c.profile.id}
+          username={c.profile.username}
+          books={c.booksCount}
+          onClose={() => setDeleteOpen(false)}
+          onDeleted={() => router.push("/admin/members")}
+        />
+      ) : null}
       {grantOpen && c ? (
         <GrantDialog
           customer={{ id: c.profile.id, username: c.profile.username, tokens: c.profile.tokens }}

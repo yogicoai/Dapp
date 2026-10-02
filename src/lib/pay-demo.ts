@@ -11,7 +11,19 @@
  * TODO(PG-HOOK-3) 화면 자리는 없다 — 결제사 알림을 받는 서버 경로(api/payments/webhook)가 취소·자동결제 성공·실패 상태를 맞춘다.
  * import 는 ./plans.ts 하나뿐인 순수 파일이다 — node --test 가 그대로 읽는다.
  */
-import { EXTRA, PASS, PLANS, REFUND_DAYS, isPlanId, nextBillingDate, won, type Plan, type PlanId } from "./plans.ts";
+import {
+  DEFAULT_PLAN_TERMS,
+  EXTRA,
+  PLANS,
+  REFUND_DAYS,
+  isPlanId,
+  nextBillingDate,
+  plansOf,
+  won,
+  type Plan,
+  type PlanId,
+  type PlanTerms,
+} from "./plans.ts";
 
 /* ─────────────────────────── 스위치 ─────────────────────────── */
 
@@ -299,16 +311,16 @@ export function doneEligibility(
 
 /**
  * 대기 주문을 기록에 반영한다(순수 — 저장은 부르는 쪽이).
- *  구독: pass = { plan, startedAt, nextBillingAt, booksLeft: 6 }
+ *  구독: pass = { plan, startedAt, nextBillingAt, booksLeft: 그 주기의 매달 권수(관리실 요금제 값 terms) }
  *  추가 3권: pass 가 있으면 booksLeft + 3, 없으면 그대로
  *  영수증을 앞에 하나 더한다(같은 번호는 한 번만, 최대 10개). pending 은 비운다.
  */
-export function applyDemoOrder(s: DemoState, now: Date): DemoState {
+export function applyDemoOrder(s: DemoState, now: Date, terms: PlanTerms = DEFAULT_PLAN_TERMS): DemoState {
   const p = s.pending;
   if (!p) return s;
   // 이미 반영한 번호 — 대기만 비운다(두 번 반영하지 않는다).
   if (s.receipts.some((r) => r.orderId === p.orderId)) return { ...s, pending: null };
-  const plan = PLANS[p.plan];
+  const plan = plansOf(terms)[p.plan];
   let pass: DemoPass | null;
   if (plan.kind === "subscription") {
     const next = nextBillingDate(now, plan) ?? now;
@@ -316,7 +328,7 @@ export function applyDemoOrder(s: DemoState, now: Date): DemoState {
       plan: p.plan === "yearly" ? "yearly" : "monthly",
       startedAt: now.toISOString(),
       nextBillingAt: next.toISOString(),
-      booksLeft: PASS.booksPerMonth,
+      booksLeft: (p.plan === "yearly" ? terms.yearly : terms.monthly).booksPerMonth,
     };
   } else {
     if (!s.pass) return s;

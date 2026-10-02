@@ -282,3 +282,38 @@ describe("@@CHARACTER@@ 이 책의 옷 칸(이름 | 생김새 | 이 책의 옷)"
     assert.deepEqual(b, { name: "서연", description: "양갈래 머리" });
   });
 });
+
+describe("꾸민 마커·코드 블록도 읽는다(2026-10-01, 대본 모델 Sonnet 5.5)", () => {
+  it("**굵게**·# 제목·- 목록·앞 공백으로 꾸민 마커도 같은 마커", () => {
+    const outline = parseOutline(
+      [
+        "**@@TITLE@@ 우주와 시우의 가을 연날리기**",
+        "## @@SUMMARY@@ 가족이 수목원에 놀러 간 이야기.",
+        "- @@SCENE@@ 1",
+        "  @@TEXT@@ 온 가족이 잔디밭에 도착한다.",
+        "**@@SCENE@@** 2",
+        "@@TEXT@@ 우주와 할아버지가 연못에서 잉어를 본다.",
+      ].join("\n"),
+    );
+    assert.equal(outline.title, "우주와 시우의 가을 연날리기");
+    assert.equal(outline.summary, "가족이 수목원에 놀러 간 이야기.");
+    assert.deepEqual(
+      outline.scenes.map((s) => [s.sceneNo, s.text]),
+      [
+        [1, "온 가족이 잔디밭에 도착한다."],
+        [2, "우주와 할아버지가 연못에서 잉어를 본다."],
+      ],
+    );
+  });
+
+  it("답 전체를 코드 블록(```)에 담아도 울타리 줄은 글에 들어가지 않는다", () => {
+    const outline = parseOutline(["```", "@@TITLE@@ 무제", "@@SCENE@@ 1", "@@TEXT@@ 첫째 장면", "```"].join("\n"));
+    assert.equal(outline.title, "무제");
+    assert.equal(outline.scenes[0].text, "첫째 장면");
+  });
+
+  it("본문 속 평범한 글은 그대로 — 마커는 @@대문자@@ 뿐", () => {
+    const outline = parseOutline("@@TITLE@@ 무제\n@@SCENE@@ 1\n@@TEXT@@ - 할머니가 \"**정말?**\" 하고 웃었다.");
+    assert.equal(outline.scenes[0].text, "- 할머니가 \"**정말?**\" 하고 웃었다.");
+  });
+});

@@ -11,7 +11,7 @@
  */
 import { maxPortraitRefs, pickSheetPortraits, type SheetCharacter, type SheetPortrait } from "./sheet-prompt.ts";
 
-/** 붙이는 그림 '몇 번째' — 시트 1 + 얼굴 최대 4 + 장소 1 + 승인 쪽 1 = 7, 넉넉히 열까지. */
+/** 붙이는 그림 '몇 번째' — 시트 1 + 얼굴 최대 6 + 장소 1 + 승인 쪽 1 = 9, 넉넉히 열까지. */
 export const REF_ORDINALS = [
   "FIRST",
   "SECOND",
@@ -68,10 +68,13 @@ export function arrangePageReferences<T>(input: {
 /**
  * 한 쪽에 붙일 고정 얼굴 최대 수.
  * gemini-2.x 그림 모델은 참고 그림 3장 이하에서 가장 잘 따른다 — 시트·장소·승인 쪽이 이미 있으니 얼굴은 1장만.
- * 3.x 그림 모델·OpenAI 는 참고 그림 10장 넘게 받는다 — 만들기 화면이 붙이는 최대(CAST_PORTRAITS_MAX 4)까지.
+ * 3.x 그림 모델·OpenAI 는 참고 그림 10장 넘게 받는다 — 만들기 화면이 붙이는 최대(CAST_PORTRAITS_MAX 6)까지.
+ * 예전 4장 상한에선 온 가족 6명이 모인 쪽의 뒤 둘이 얼굴 없이 그려졌다(2026-10-01). 구글 안내로는 3.1 Flash Image 가
+ * 사람 참고 그림을 4장 안팎까지 가장 잘 따른다 — 그래서 이야기 쪽에서 한 그림에 서는 사람을 서너 명으로 줄이게 하고
+ * (lib/anthropic STORY_SYSTEM), 다섯 장 넘게 붙는 쪽은 온 가족이 모이는 한두 쪽에서만 나온다.
  */
 export function maxPagePortraits(env: Parameters<typeof maxPortraitRefs>[0]): number {
-  return maxPortraitRefs(env) >= 4 ? 4 : 1;
+  return maxPortraitRefs(env) >= 4 ? 6 : 1;
 }
 
 /** 요청에서 읽을 최대 줄 수 — pickSheetPortraits 의 상한(12)과 같게, 여기선 쪽에 없는 사람을 걸러 낸 뒤 자른다. */
@@ -249,18 +252,118 @@ export function fixedCheckDescription(
 /**
  * 고정 얼굴 원본을 붙였을 때의 묶음 줄 — 몇 번째 그림이 누구의 얼굴인지, 무엇을 따르고 무엇을 버리는지.
  * 옷은 원본 그림이 아니라 시트(와 이 쪽 장면 글)에서 — 예전 책의 시트는 옷이 원본과 다를 수 있다. 얼굴·머리는 원본이 이긴다.
+ * cards — 원본을 얼굴 카드(lib/sheet-compose composePortraitCard: 왼쪽 전신 + 오른쪽 키운 얼굴)로 붙인 사람. 한 장에 같은 사람이
+ * 두 번 보이니 '한 사람'이라고 못 박는다(두 사람으로 읽으면 쌍둥이가 그려진다). 비어 있으면 글은 예전 그대로다.
  */
-export function portraitBindingLines(order: readonly string[], names: readonly string[]): string[] {
+export function portraitBindingLines(
+  order: readonly string[],
+  names: readonly string[],
+  cards: ReadonlySet<string> = new Set(),
+): string[] {
   if (names.length === 0) return [];
+  const anyCard = names.some((n) => cards.has(n));
   return [
     "FIXED FACE PORTRAITS — the ORIGINAL approved portraits of the fixed family members on this page are attached:",
     ...names.map(
       (name) =>
-        `- The ${refOrdinal(order, portraitKey(name))} attached image is "${name}" — ${name}'s exact face and hair. Copy exactly: face shape, eyes, eyebrows, nose, mouth, skin tone, hairstyle, hair length, fringe or parting, hair colour and texture, glasses (only if the portrait shows glasses), beard, build and apparent age. The reference sheet shows the same person.`,
+        `- The ${refOrdinal(order, portraitKey(name))} attached image is "${name}" — ${name}'s exact face and hair.${
+          cards.has(name)
+            ? ` It shows ONE person, ${name}, twice: the whole figure on the left and the same face enlarged on the right — read the face from the enlarged close-up.`
+            : ""
+        } Copy exactly: face shape, eyes, eyebrows, nose, mouth, skin tone, hairstyle, hair length, fringe or parting, hair colour and texture, glasses (only if the portrait shows glasses), beard, build and apparent age. The reference sheet shows the same person.`,
     ),
-    "Each portrait is one of the people in CAST LOCK below — never an additional person and never a second copy of anyone. Ignore each portrait's white background, standing pose and framing: draw the person inside this scene, in this scene's action and camera angle.",
+    `Each portrait is one of the people in CAST LOCK below — never an additional person and never a second copy of anyone. Ignore each portrait's white background, standing pose and framing${
+      anyCard ? " (and the side-by-side layout of a two-panel portrait)" : ""
+    }: draw the person inside this scene, in this scene's action and camera angle.`,
     // 승인 쪽도 얼굴을 옮겨 올 수 있다(그림체 기준 줄이 'facial construction'을 따르라 한다) — 검수를 지난 쪽에도
     // 작은 흐름이 남아 있으면 쪽에서 쪽으로 번진다. 얼굴·머리는 원본이 늘 이긴다(검토 2026-09-29).
     "Clothing comes from the reference sheet (and this page's scene text), not from the portrait. Face and hair come from the portrait: if the reference sheet, an approved page or any description disagrees with a portrait about face or hair, the PORTRAIT wins — take only the rendering style from an approved page, never a face.",
   ];
+}
+
+/**
+ * 붙이는 그림마다 바로 앞에 끼우는 이름표(lib/gemini generateImage referenceLabels) — order 와 같은 길이·같은 순서.
+ * 2026-10-01 사장님 "아바타와 너무 달라": 이름과 그림을 묶는 끈이 프롬프트 끝쪽의 '몇 번째' 한 줄뿐이라, 사람이 여럿이면
+ * 얼굴이 남의 이름에 붙었다. 그림 바로 앞에 "이 그림은 누구"를 한 번 더 둔다. 고정 얼굴을 붙인 쪽에서만 쓴다(부르는 쪽이 정한다).
+ * cards — 얼굴 카드로 붙인 사람(portraitBindingLines 와 같다).
+ */
+export function pageReferenceLabels(order: readonly string[], cards: ReadonlySet<string> = new Set()): string[] {
+  return order.map((key, i) => {
+    const head = `[${ordinalWord(i)} attached image]`;
+    if (key === "sheet") return `${head} The CHARACTER REFERENCE SHEET — every person in this book, one column each.`;
+    if (key === "location") return `${head} The LOCATION REFERENCE SHEET — this page's place, with no people.`;
+    if (key === "style") return `${head} A previously APPROVED page of this book — use it for the rendering style only, never for a face.`;
+    if (key.startsWith("portrait:")) {
+      const name = key.slice("portrait:".length);
+      return cards.has(name)
+        ? `${head} ${name} — ONLY ${name}: the original approved portrait of ${name}, whole figure on the left and the same face enlarged on the right (one person). Copy ${name}'s face and hair from it.`
+        : `${head} ${name} — ONLY ${name}: the original approved portrait of ${name}. Copy ${name}'s face and hair from it.`;
+    }
+    return head;
+  });
+}
+
+/**
+ * 고정 가족이 나오는 쪽의 구도 — 얼굴을 크게.
+ *  · 넷 이상(2026-10-01 ⑤): 전신이 작게 그려져 얼굴이 손톱만 해지고, 원본과 견줄 수도 없었다(검수가 "너무 작으면 판단하지 말라"로 넘긴다).
+ *    허리 위로 가까이 모인 장면으로.
+ *  · 셋 이하(2026-10-01 같은 날 사장님 "머리 스타일은 가져오는데 이목구비가 약하다"): 시험 책의 얼굴이 그림 세로의 50~80px 이라
+ *    그림 모델이 점 눈·짧은 입선밖에 못 그렸다. 머리처럼 큰 모양은 따라오고 작은 이목구비는 평균 얼굴로 뭉개진다.
+ *    허리 위 구도를 기본으로, 전신은 다리를 꼭 보여야 하는 동작일 때만.
+ * 고정 가족이 없으면 빈 목록 — 글은 예전 그대로다.
+ */
+export function familyFramingLines(people: number, fixedOnPage: number): string[] {
+  if (fixedOnPage <= 0 || people <= 0) return [];
+  if (people >= 4) {
+    return [
+      `GROUP FRAMING — ${people} people are on this page. Frame them as a close, warm group: a medium shot from about the hips up, everyone gathered close together across the width of the picture, faces in the upper half of the picture, every face large and clearly readable (front or three-quarter view). Never a wide shot with small full-body figures in a big landscape.`,
+      "Keep the lower part of the picture simple (a table top, laps, the floor or a blanket) so text can sit there.",
+    ];
+  }
+  return [
+    `FAMILY CLOSE FRAMING — the family member${people > 1 ? "s" : ""} on this page must be recognisable by their face. Use a medium shot from about the waist up as the default, with the camera close so each face is large and clearly readable (front or three-quarter view); faces sit in the upper half of the picture.`,
+    "Show a whole body only when the action truly needs the legs (running, jumping, crouching, climbing), and even then keep the camera close rather than drawing small figures in a wide landscape. Keep enough of the place visible behind them to recognise it.",
+  ];
+}
+
+/**
+ * 검수 줄 — 가족 쪽을 일부러 가깝게 찍었을 때(familyFramingLines 가 줄을 냈을 때만). 다리가 잘리거나 장소의 넓은 모습이 덜 보인다고
+ * 떨어뜨리면 다시 그리기 예산(권당 2장)을 헛되이 쓴다. 보이는 만큼으로 장소를 판단하게 한다. 구도 줄이 없으면 빈 목록.
+ */
+export function familyFramingCheckLines(framing: readonly string[]): string[] {
+  if (framing.length === 0) return [];
+  return [
+    "This page is deliberately framed close (from about the waist up) so that faces are large. Judge the place from what is visible behind the people — a partly visible landmark, ground, wall or colours is fine as long as nothing contradicts the expected place. Do not fail because legs or feet are cropped or because a wide view of the place is missing.",
+  ];
+}
+
+/**
+ * 이목구비 줄(2026-10-01 사장님 "이목구비가 약하다") — 고정 가족 원본을 붙인 쪽에서만. 얼굴 카드(키운 얼굴)의 눈·눈썹·코·입을
+ * 그 모양 그대로, 카드보다 단순하게 그리지 말라고 한다. "점 눈으로 바꾸지 말라"만 말하면 원래 단순한 아바타 얼굴에 없던 쌍꺼풀을
+ * 더할 수 있어서, 기준을 "카드와 같은 모양·같은 정도의 그림"으로 둔다. 원본을 안 붙인 쪽은 빈 목록 — 글은 예전 그대로다.
+ */
+export function facialFeatureLines(names: readonly string[], cards: ReadonlySet<string> = new Set()): string[] {
+  if (names.length === 0) return [];
+  const from = names.some((n) => cards.has(n)) ? "the enlarged face close-up in their attached portrait" : "their attached portrait";
+  return [
+    `FACIAL FEATURES — for ${names.join(", ")}, copy the features from ${from}: eye shape and size (single or double eyelid, round or narrow, how far apart), eyebrow shape and thickness, nose shape, mouth and lip shape, face shape and cheeks, and marks such as freckles or a mole. Draw them at the same level of detail as the portrait, never simpler — do not turn anyone's eyes into generic dots or their face into a standard cute face. These features are what make each person recognisable; keep them even in this painting style and at this camera distance.`,
+    /*
+     * 머리 — 2쪽 시험(2026-10-01 사장님 "아들래미 머리스타일이 다르다"): 숱 많고 삐죽한 갈색 머리에 한쪽으로 쏠린 앞머리가
+     * 단정한 둥근 짧은 머리·일자 앞머리·짙은 색으로 '정리'됐다. 모양·길이만 말해서 숱·결·쏠림·색 농도가 빠졌다.
+     */
+    `HAIR — for ${names.join(", ")}, the hair is as much a part of who they are as the face: copy from the same portrait its outline and volume, whether it is tousled and spiky or neat and smooth, the direction the fringe falls and how much forehead and ear it covers, and the exact shade (a brown-haired child stays brown, not black). Never tidy, smooth, flatten or restyle anyone's hair into a standard neat cut.`,
+  ];
+}
+
+/**
+ * 요청 portraits 칸에서 한 사람의 키·머리 비율(만들기 화면이 가족에서 읽어 보낸 값) — 없으면 빈 칸.
+ * 인물 시트(api/character-sheet)는 원본으로 시트를 짤 때, 쪽 그림(api/illustrate-page)은 얼굴 카드를 오릴 때 쓴다.
+ * 값은 lib/sheet-compose sheetFigureMeta 가 다시 거른다.
+ */
+export function readPortraitFigure(raw: unknown, name: string): { heightCm?: unknown; headRatio?: unknown } {
+  if (!Array.isArray(raw)) return {};
+  const hit = raw
+    .slice(0, 12)
+    .find((o) => o && typeof o === "object" && typeof (o as { name?: unknown }).name === "string" && (o as { name: string }).name.trim() === name);
+  return hit && typeof hit === "object" ? (hit as { heightCm?: unknown; headRatio?: unknown }) : {};
 }

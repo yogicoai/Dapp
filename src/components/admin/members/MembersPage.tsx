@@ -41,7 +41,7 @@ import {
   type Column,
 } from "@/components/admin/kit";
 import { useAdmin } from "@/components/admin/shell/AdminContext";
-import { rememberMembersList, VoiceBadges } from "./member-ui";
+import { PlanBadge, rememberMembersList, VoiceBadges } from "./member-ui";
 
 export function MembersPage() {
   const router = useRouter();
@@ -124,6 +124,7 @@ export function MembersPage() {
     { key: "books", header: "동화", align: "right", cell: (r) => `동화 ${groupDigits(r.books)}권` },
     { key: "tokens", header: "토큰", align: "right", cell: (r) => `${groupDigits(r.tokens)}토큰` },
     { key: "voices", header: "목소리", cell: (r) => <VoiceBadges voices={r.voices} /> },
+    { key: "plan", header: "요금제", cell: (r) => <PlanBadge plan={r.plan} endsAt={r.planEndsAt} now={clock} /> },
     {
       key: "feedback",
       header: "남은 의견",
@@ -166,7 +167,7 @@ export function MembersPage() {
 
       {q.data?.partial.length ? (
         <Banner tone="warn" title="일부 숫자를 못 읽었어요">
-          {q.data.partial.map((p) => ({ books: "동화 수", feedback: "남은 의견", voices: "목소리" })[p]).join(" · ")}는 실제보다 적게
+          {q.data.partial.map((p) => ({ books: "동화 수", feedback: "남은 의견", voices: "목소리", plans: "요금제" })[p]).join(" · ")}는 실제보다 적게
           보일 수 있어요.
         </Banner>
       ) : null}

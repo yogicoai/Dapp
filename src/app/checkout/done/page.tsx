@@ -1,4 +1,5 @@
 import { DoneDemo, PgNotConnected } from "@/components/pay/DoneDemo";
+import { getOfferView } from "@/lib/offer-settings-server";
 import { isDemoOrderId, parseMethod, parsePlan } from "@/lib/pay-demo";
 
 /**
@@ -17,5 +18,6 @@ export default async function CheckoutDonePage({
   const sp = await searchParams;
   if (sp.paymentKey !== undefined) return <PgNotConnected />;
   const orderId = isDemoOrderId(sp.orderId) ? sp.orderId : null;
-  return <DoneDemo orderId={orderId} plan={parsePlan(sp.plan)} method={parseMethod(sp.method)} />;
+  const offer = await getOfferView();
+  return <DoneDemo orderId={orderId} plan={parsePlan(sp.plan)} method={parseMethod(sp.method)} terms={offer.plans} />;
 }

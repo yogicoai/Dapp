@@ -63,6 +63,8 @@ const ALLOWED = new Set([
   "@/lib/auth", // 아래에서 모양을 따로 본다(loadSession 하나만)
   "@/lib/site-info-client", // 사업자 정보·약관 링크는 관리실에서 바꾼다 — 공개 정보 GET 하나뿐인 읽기 전용 훅만 허용
   "@/lib/scroll-lock", // 처리 가림막이 떠 있는 동안 뒤 화면 잠금 — 브라우저 모양만 바꾸고 서버·돈과 무관
+  // 무료·스타트팩 권수와 크레딧 값은 관리실에서 바꾼다 — 요금제 서버 화면이 공개 값을 읽기만 하는 파일(G-T7 이 모양을 지킨다)
+  "@/lib/offer-settings-server",
 ]);
 const IMPORT_RE = /\bfrom\s*["']([^"']+)["']|\bimport\s*\(\s*["']([^"']+)["']\s*\)|\bimport\s+["']([^"']+)["']/g;
 
@@ -136,10 +138,12 @@ describe("G-T2 시연 파일에 서버·DB·잔액·결제사로 가는 글자�
   }
 });
 
-describe("새 화면은 '권'으로만 — 내부 화폐 이름이 없다", () => {
+describe("새 화면은 '권'으로 — 앱 안의 내부 화폐 이름이 없다", () => {
   for (const f of DEMO_FILES) {
     it(f, () => {
-      assert.doesNotMatch(read(f), /토큰|쿠키|크레딧/, f);
+      // 고객에게 보이는 단위 이름은 "가족 그리기 토큰"과 "크레딧"(단품 구매) 둘뿐이다(2026-10-01 사장님 확정).
+      // 앱 안의 옛 내부 단위(토큰)·쿠키는 여전히 쓰지 않는다 — 동화는 "권"으로 센다.
+      assert.doesNotMatch(read(f).replace(/가족 그리기 토큰/g, ""), /토큰|쿠키/, f);
     });
   }
 });
@@ -258,6 +262,54 @@ describe("G-T6 사이트 정보 훅은 공개 정보 GET 하나만", () => {
     const footer = read("components/pay/SiteFooter.tsx");
     assert.ok(footer.includes("useSiteInfo("));
     assert.ok(!footer.includes("BUSINESS_INFO"));
+  });
+});
+
+/* ── G7 요금제 서버 화면이 읽는 관리실 설정 ── */
+describe("G-T7 요금제 설정 읽기는 공개 값 읽기 하나만", () => {
+  const src = read("lib/offer-settings-server.ts");
+  it("서버 page 넷만 가져온다(브라우저 쪽 시연 파일은 값을 넘겨받기만)", () => {
+    const users = DEMO_FILES.filter((f) => read(f).includes("@/lib/offer-settings-server")).sort();
+    assert.deepEqual(users, ["app/billing/page.tsx", "app/checkout/done/page.tsx", "app/checkout/page.tsx", "app/plans/page.tsx"]);
+    for (const f of users) assert.ok(!read(f).startsWith('"use client"'), `${f}: 서버 page 여야 해요`);
+  });
+  it("표 하나를 select 로만 읽는다", () => {
+    assert.equal(src.match(/\.from\(/g)?.length ?? 0, 1);
+    assert.match(src, /\.from\("app_offer_settings"\)/);
+    assert.equal(src.match(/\.select\(/g)?.length ?? 0, 1);
+  });
+  it("바꾸는 호출·로그인·비밀 값이 없다", () => {
+    for (const w of [
+      ".rpc(",
+      ".insert(",
+      ".upsert(",
+      ".update(",
+      ".delete(",
+      "authedFetch",
+      "getSupabase",
+      "@/lib/supabase",
+      "fetch(",
+      "localStorage",
+      "sessionStorage",
+      "SERVICE_ROLE",
+      "SECRET",
+      "Authorization",
+    ]) {
+      assert.ok(!src.includes(w), `offer-settings-server: 금지 글자 "${w}"`);
+    }
+  });
+  it("비회원 열쇠(anon)만 쓴다", () => {
+    assert.match(src, /NEXT_PUBLIC_SUPABASE_ANON_KEY/);
+    assert.equal(src.match(/process\.env\.\w+/g)?.filter((e) => !/NEXT_PUBLIC_SUPABASE_(URL|ANON_KEY)$/.test(e)).length ?? 0, 0);
+  });
+  it("가져오는 것은 정해 둔 다섯 가지뿐", () => {
+    assert.deepEqual(specifiers(src).sort(), [
+      "./library-catalog.ts",
+      "./offer-settings.ts",
+      "./plans.ts",
+      "@supabase/supabase-js",
+      "react",
+    ]);
   });
 });
 

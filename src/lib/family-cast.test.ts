@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { castPortraits } from "./family-cast.ts";
+import { castPortraits, storyFamilyLookLines, storyFamilyLooks } from "./family-cast.ts";
 import type { FamilyMember, FamilyPortrait } from "./family.ts";
 
 /*
@@ -274,18 +274,20 @@ describe("castPortraits — 고정한 그림만 · 한 사람 한 번 · 상한"
     ]);
   });
 
-  it("주인공 먼저 등장인물 순서로 최대 4명(상한을 주면 그만큼)", () => {
+  it("주인공 먼저 등장인물 순서로 시트의 6명 모두(상한을 주면 그만큼)", () => {
+    // 2026-10-01 — 예전 4명 상한에선 6명 가족의 할머니·할아버지가 고정 얼굴 없이 그려졌다.
     const grandma = fixed({ id: "m-grandma0001", role: "grandma", callName: "할머니" });
     const grandpa = fixed({ id: "m-grandpa0001", role: "grandpa", callName: "할아버지" });
-    const family = [grandpa, grandma, dad, mom, child];
-    const names = ["하온", "엄마", "아빠", "할머니", "할아버지"];
+    const siwoo = fixed({ id: "m-sibling0001", role: "sibling", callName: "형", name: "시우" });
+    const family = [grandpa, grandma, dad, mom, siwoo, child];
+    const names = ["하온", "시우", "엄마", "아빠", "할머니", "할아버지"];
     assert.deepEqual(
       pick(names, family).map(([name]) => name),
-      ["하온", "엄마", "아빠", "할머니"],
+      ["하온", "시우", "엄마", "아빠", "할머니", "할아버지"],
     );
     assert.deepEqual(
       pick(names, family, 2).map(([name]) => name),
-      ["하온", "엄마"],
+      ["하온", "시우"],
     );
   });
 
@@ -299,5 +301,75 @@ describe("castPortraits — 고정한 그림만 · 한 사람 한 번 · 상한"
     assert.deepEqual(castPortraits(chars("하온"), []), []);
     assert.deepEqual(castPortraits([], [child]), []);
     assert.deepEqual(castPortraits(undefined, [child]), []);
+  });
+});
+
+/* ─────────── 이야기에 건네는 가족 생김새(2026-10-01 사장님 "아바타와 너무 달라" ④) ─────────── */
+
+describe("storyFamilyLooks — 할머니·할아버지·형제·단짝 친구 생김새를 이야기에", () => {
+  it("고른 생김새는 옷 빼고 그대로, 그림이 고정됐으면 fixed 표시", () => {
+    const grandma: FamilyMember = {
+      id: "m-grandma0001",
+      role: "grandma",
+      callName: "할머니",
+      looks: { hair: "짧은 파마머리", hairColor: "희끗희끗", color: "보라", outfit: "카디건" },
+      portrait: pic("m-grandma0001"),
+    };
+    const [g] = storyFamilyLooks([grandma]);
+    assert.equal(g.who, "할머니");
+    assert.equal(g.fixed, true);
+    assert.match(g.line ?? "", /파마/);
+    assert.match(g.line ?? "", /안경을 쓰지 않는다/);
+    assert.doesNotMatch(g.line ?? "", /카디건|보라/); // 옷은 책마다 이야기가 정한다
+  });
+
+  it("사진으로 그린 고정 그림은 칩을 건네지 않고 '그림 그대로'만", () => {
+    const grandpa: FamilyMember = {
+      id: "m-grandpa0001",
+      role: "grandpa",
+      callName: "외할아버지",
+      looks: { hair: "대머리" },
+      portrait: { ...pic("m-grandpa0001"), fromPhoto: true },
+    };
+    assert.deepEqual(storyFamilyLooks([grandpa]), [{ who: "외할아버지", fixed: true }]);
+  });
+
+  it("형제는 '이름(호칭)', 단짝 친구는 '이름(단짝 친구)' — 이름 없는 형제·친구는 건네지 않는다", () => {
+    const siwoo: FamilyMember = { id: "m-sib01", role: "sibling", callName: "형", name: "시우", portrait: pic("m-sib01") };
+    const nameless: FamilyMember = { id: "m-sib02", role: "sibling", callName: "동생", portrait: pic("m-sib02") };
+    const seoyeon: FamilyMember = { id: "m-fr01", role: "friend", callName: "친구", name: "서연", looks: { hair: "양갈래" } };
+    const friendNoName: FamilyMember = { id: "m-fr02", role: "friend", callName: "친구", looks: { hair: "단발" } };
+    const got = storyFamilyLooks([siwoo, nameless, seoyeon, friendNoName]);
+    assert.deepEqual(got.map((l) => l.who), ["시우(형)", "서연(단짝 친구)"]);
+    assert.equal(got[1].fixed, undefined);
+  });
+
+  it("아이·엄마·아빠는 따로 가니 빼고, 생김새도 그림도 없는 사람도 뺀다", () => {
+    const bare: FamilyMember = { id: "m-grandma0002", role: "grandma", callName: "친할머니" };
+    assert.deepEqual(storyFamilyLooks([child, mom, dad, bare]), []);
+    assert.deepEqual(storyFamilyLooks(undefined), []);
+  });
+});
+
+describe("storyFamilyLookLines — 이야기 프롬프트 줄", () => {
+  it("고른 생김새는 엄마·아빠와 같은 말로, 이/가는 받침대로", () => {
+    const lines = storyFamilyLookLines([
+      { who: "할머니", line: "짧은 파마머리", fixed: true },
+      { who: "하준(형)", line: "스포츠머리" },
+    ]);
+    assert.equal(lines[0], "할머니가 이야기에 나오면 생김새는 이대로 쓴다(부모가 직접 고름, 여기 없는 것은 지어내지 않는다): 짧은 파마머리");
+    assert.match(lines[1], /^하준\(형\)이 이야기에 나오면/);
+  });
+
+  it("그림만 고정된 사람은 '가족 그림 그대로'라고만 적게 한다", () => {
+    const lines = storyFamilyLookLines([
+      { who: "외할아버지", fixed: true },
+      { who: "시우(형)", fixed: true },
+    ]);
+    assert.deepEqual(lines, [
+      "가족 그림이 정해져 있는 사람: 외할아버지, 시우(형). 이 사람이 이야기에 나오면 @@CHARACTER@@ 생김새 칸에 머리·얼굴을 지어내지 말고 '가족 그림 그대로'라고만 쓴다.",
+    ]);
+    assert.deepEqual(storyFamilyLookLines(undefined), []);
+    assert.deepEqual(storyFamilyLookLines([]), []);
   });
 });
