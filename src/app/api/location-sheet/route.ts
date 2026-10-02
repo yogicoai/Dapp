@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import backgrounds from "@/data/backgrounds.json";
 import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
+import { findLocationBackground, type LocationBg } from "@/lib/location-bg";
 import { GeminiError, generateImage, loadReferenceImage, shrinkForReference, toDataUrl } from "@/lib/gemini";
 import { pageVehicle, vehicleInteriorLines } from "@/lib/illustration-rules";
 import { isIndoorPlace, placeVehicleKind, schoolShuttleName } from "@/lib/story-quality";
@@ -82,18 +84,43 @@ export async function POST(request: Request) {
   const styleSample = style.image
     ? await loadReferenceImage(new URL(style.image, request.url).toString()).catch(() => null)
     : null;
+  /*
+   * 배경 창고(src/data/backgrounds.json, 269곳) — 이름이 맞으면 그 그림을 참조로 붙인다(2026-10-02 사장님
+   * "저장한 배경이 장소 만들 때 반영되는지 더블 체크" — 전엔 사진관만 쓰고 여긴 글만 보고 상상했다).
+   * 그래서 '거실'이 아파트 복도로 그려졌고(나트랑 책 1쪽), 이 시트는 검수가 없어 그 장소의 모든 쪽이 복도를 따랐다.
+   * 짝이 없거나 그림을 못 받으면 예전처럼 없이 그린다(lib/location-bg — 보수적 짝짓기).
+   */
+  const bgMatch = findLocationBackground(name, backgrounds as LocationBg[]);
+  const placeRef = bgMatch ? await loadReferenceImage(bgMatch.url).catch(() => null) : null;
+  console.log("[location-sheet]", JSON.stringify(name), "배경:", bgMatch ? (placeRef ? bgMatch.slug : bgMatch.slug + "(못 받음)") : "없음");
+  const refs = [...(styleSample ? [styleSample] : []), ...(placeRef ? [placeRef] : [])];
+  const styleNth = styleSample && placeRef ? "FIRST " : styleSample ? "" : "";
+  const placeNth = placeRef ? (styleSample ? "SECOND" : "FIRST") : "";
+  // '방 안'인데 복도·현관으로 그리는 버릇 막이 — 장소 자체가 복도·현관이면 걸지 않는다.
+  const corridorish = /복도|현관|로비|계단|골목|통로/.test(name);
 
   const prompt = [
     `Children's picture book BACKGROUND illustration (an establishing shot of a place), ${style.prompt}.`,
     styleSample
       ? [
-          "The attached image is the STYLE SAMPLE for this whole book. Copy its rendering exactly: medium, brush or line quality, edge softness, colour palette and saturation, shading method, paper/texture and finish.",
+          `The ${styleNth}attached image is the STYLE SAMPLE for this whole book. Copy its rendering exactly: medium, brush or line quality, edge softness, colour palette and saturation, shading method, paper/texture and finish.`,
           "It is a style reference ONLY — do NOT draw the fox or any animal, do NOT copy its subject or composition. Draw the place described below in that painting style.",
         ].join("\n")
       : "",
     "ABSOLUTE RULE — THIS IS A WORDLESS PICTURE. Draw ZERO writing of any kind: no captions, no letters, no numbers, no signs, no labels, no logos, no watermarks, in any script.",
     `STYLE LOCK — render the entire page ONLY as: ${style.prompt}. This image will be the reference for every page set in this place, so the medium, line quality, texture, saturation and finish must be the book's style exactly.`,
     `THIS IS A LOCATION REFERENCE SHEET for the place called "${name}".`,
+    /*
+     * 우리 배경 그림을 이 장소의 기준으로 — 무엇이 있는 곳인지(거실=소파·창·마루)를 그림이 정해 줘서
+     * '여행 가방 → 현관 복도' 같은 글 연상으로 장소가 바뀌지 않는다. 그림체는 견본이 정한다(배경 그림체는 섞임).
+     */
+    placeRef && bgMatch
+      ? [
+          `The ${placeNth} attached image is OUR SAVED PICTURE of this very place ("${bgMatch.ko}") — the PLACE REFERENCE.`,
+          "Rebuild the SAME place from it: the same kind of room or ground, the same furniture or landmark in the same arrangement, the same colours and overall mood. Repaint it in this book's painting style (the STYLE SAMPLE decides the rendering, never this picture's own finish), and you may adjust the camera a little for a clean establishing shot.",
+          "It contains no people — likewise draw none. Never swap it for a different kind of room, a hallway or a corridor.",
+        ].join("\n")
+      : "",
     description
       ? `Fixed features that MUST be clearly visible: ${description}.`
       : "",
@@ -125,6 +152,12 @@ export async function POST(request: Request) {
       ? [
           `INDOOR PLACE — "${name}" is INSIDE a building. Draw only the interior: floor, walls, ceiling or ceiling lights, shelves, furniture and fixtures, from inside the room.`,
           "No street, no sidewalk, no shop front, no building exterior, no sky and no outdoor ground — except, at most, a small view through a window. Never combine the inside and the outside of a building.",
+          // '거실'을 아파트 복도로 그린 사고(2026-10-02 나트랑 책) — 방 자체가 화면을 채우게 못박는다.
+          ...(corridorish
+            ? []
+            : [
+                "Draw the ROOM ITSELF filling the picture — never a hallway, corridor, staircase, lobby or entrance standing in for it.",
+              ]),
           "PRESENT-DAY KOREA — the interior is modern: bright floors, plain walls, glass doors, modern fixtures.",
         ].join("\n")
       : "PRESENT-DAY KOREA — this book is set in Korea today. Backgrounds are modern: apartment blocks, concrete and paved walkways, metal or wooden fences, glass windows, ordinary city trees and lawns.",
@@ -142,7 +175,7 @@ export async function POST(request: Request) {
   try {
     const image = await generateImage({
       prompt,
-      references: styleSample ? [styleSample] : undefined,
+      references: refs.length ? refs : undefined,
       aspectRatio: phone ? "3:4" : "4:3",
     });
     // 쪽마다 참조로 다시 올라가는 그림이라 작게 줄여 보낸다(요청 4.5MB 한도).
