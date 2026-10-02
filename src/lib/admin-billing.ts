@@ -14,7 +14,7 @@
  */
 import { isUuid, parseOptionalNote, type Parsed } from "./admin.ts";
 import { clampLimit, formatKstDateTime, isPeriodPreset, kstDayKey, kstRange, parseAdminId, withParams, type PeriodPreset } from "./admin-console.ts";
-import { PLANS, isPlanId } from "./plans.ts";
+import { isPlanId, productName } from "./plans.ts";
 
 /* ── 상태 목록(SQL 과 같은 순서·값) ─────────────────────────────────────── */
 
@@ -190,7 +190,7 @@ export const REFUND_STATUS_CHIPS: readonly { value: string; label: string }[] = 
 
 /** 상품(요금제 코드) → 고객이 보는 이름. 모르는 코드는 그대로 보여 준다(없는 이름을 지어내지 않는다). */
 export function planLabel(code: string): string {
-  return isPlanId(code) ? PLANS[code].name : code || "–";
+  return isPlanId(code) ? productName(code) : code || "–";
 }
 
 /* ── 거르기(주소 → 서버 · 시연 줄) ─────────────────────────────────────── */

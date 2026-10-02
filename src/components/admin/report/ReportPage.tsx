@@ -7,7 +7,7 @@
  * ⚠️ 이 화면 코드에는 숫자가 없다 — 내용은 서버(/api/admin/report, 관리자만)가 만들어 보낸다. 누구나 받을 수 있는
  *    자바스크립트 묶음에 내부 비용 숫자가 실리지 않게(관리실 원문 검사가 이 낱말들을 막는다). 보고가 끝나면 메뉴·화면·서버 경로를 함께 지운다.
  */
-import type { AdminReport, ReportTable } from "@/lib/admin-report";
+import type { AdminReport, ReportFigure, ReportTable } from "@/lib/admin-report";
 import { Banner, Card, CardTitle, ErrorState, PageHeader, PageSkeleton, useAdminQuery } from "@/components/admin/kit";
 
 export function ReportPage() {
@@ -34,6 +34,9 @@ export function ReportPage() {
                 {(s.tables ?? []).map((t) => (
                   <ReportTableView key={t.caption} table={t} />
                 ))}
+                {(s.figures ?? []).map((f) => (
+                  <FigureView key={f.src} figure={f} />
+                ))}
               </div>
               {s.points?.length ? (
                 <ul className="mt-4 flex list-disc flex-col gap-1.5 pl-5">
@@ -53,6 +56,41 @@ export function ReportPage() {
         <PageSkeleton />
       )}
     </>
+  );
+}
+
+/** 고객 화면 사진 한 장 + 번호 설명(사진 위 빨간 번호와 같은 순서). 사진을 누르면 새 창에서 크게 본다. */
+function FigureView({ figure }: { figure: ReportFigure }) {
+  return (
+    <figure className="flex flex-col gap-4 rounded-2xl bg-[#f9fafb] p-4 sm:flex-row sm:items-start">
+      <a
+        href={figure.src}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${figure.title} — 크게 보기`}
+        className="block w-full max-w-[320px] shrink-0 self-center rounded-xl focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#3182f6] sm:w-[300px] sm:self-start"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- 관리실 안 고객 화면 사진(public/admin-report) — 이미지 최적화 경로를 거치지 않는다 */}
+        <img src={figure.src} alt={figure.title} loading="lazy" className="w-full rounded-xl ring-1 ring-[#e5e8eb]" />
+      </a>
+      <figcaption className="flex min-w-0 flex-1 flex-col gap-2.5">
+        <span className="break-keep text-[14px] font-bold text-[#191f28]">{figure.title}</span>
+        <ol className="flex flex-col gap-2">
+          {figure.legend.map((line, i) => (
+            <li key={i} className="flex gap-2.5 break-keep text-[13px] font-medium leading-relaxed text-[#4e5968]">
+              <span
+                aria-hidden
+                className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#e8345a] text-[11px] font-bold text-white"
+              >
+                {i + 1}
+              </span>
+              <span>{line}</span>
+            </li>
+          ))}
+        </ol>
+        <span className="text-[12px] font-medium text-[#8b95a1]">그림을 누르면 크게 볼 수 있어요.</span>
+      </figcaption>
+    </figure>
   );
 }
 

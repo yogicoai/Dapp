@@ -127,7 +127,16 @@ export type ReportTable = {
   foot?: string[];
   note?: string;
 };
-export type ReportSection = { id: string; title: string; lead?: string; tables?: ReportTable[]; points?: string[] };
+/** 고객 화면 그림 한 장 — 그림 위 빨간 번호와 legend 의 순서가 같다(public/admin-report/ 에 둔 화면 사진) */
+export type ReportFigure = { src: string; title: string; legend: string[] };
+export type ReportSection = {
+  id: string;
+  title: string;
+  lead?: string;
+  tables?: ReportTable[];
+  figures?: ReportFigure[];
+  points?: string[];
+};
 export type AdminReport = {
   /** 맨 위 붉은 띠 — 지울 화면이라는 것 */
   banner: string[];
@@ -206,7 +215,7 @@ export function buildAdminReport(offer: OfferView, app: AppTokenInfo, source: "d
         head: ["무엇", "관리실 어디", "어디에 쓰이나"],
         rows: [
           ["가족 패스(월간·연간)·스타트팩 값과 구성", "요금제·가격 › 요금제", "요금제 화면 · 시연 결제 · 내 결제 · 회원 요금제의 한도"],
-          ["크레딧 묶음(값 → 크레딧) · 쓰는 곳별 크레딧", "요금제·가격 › 크레딧", "요금제 화면의 크레딧 카드 · 자주 묻는 질문"],
+          ["크레딧 묶음(값 → 크레딧) · 쓰는 곳별 크레딧", "요금제·가격 › 크레딧", "요금제 화면의 크레딧 카드 · 시연 결제 · 자주 묻는 질문"],
           ["회원 종류별로 보여 줄 세계명작·전래동화", "운영 › 공개 동화", "요금제 화면 권수 · 책장('책장에 적용'을 켰을 때)"],
           ["회원 한 명 한 명의 요금제(결제 전 베타)", "운영 › 회원 › 회원 화면 › 요금제", "그 회원 책장 · 한도 표시"],
           [
@@ -227,8 +236,59 @@ export function buildAdminReport(offer: OfferView, app: AppTokenInfo, source: "d
   });
 
   sections.push({
+    id: "screens",
+    title: "3. 고객 화면에서 보이는 모습",
+    lead: "요금제 값이 고객 화면 어디에 어떻게 나오는지예요. 그림 위 빨간 번호가 아래 설명 번호와 같아요.",
+    figures: [
+      {
+        src: "/admin-report/plans-monthly.jpg",
+        title: "요금제 화면 · 가족 패스 ('매달 결제'를 골랐을 때)",
+        legend: [
+          "결제 주기 고르기 — 매달 결제 / 1년 한 번에. 값은 '요금제' 탭의 월간·연간 값이에요.",
+          `'${pctOff > 0 ? `${pctOff}% 할인` : "할인"}' 스티커 — 연간이 월간 12달보다 싼 만큼 저절로 계산해 붙어요. 싸지 않으면 붙지 않아요.`,
+          "'추천' 스티커 — 가족 패스 카드 오른쪽 위에 늘 붙어요(글자는 고정).",
+          "가족 패스 값 — 고른 결제 주기의 값(부가세 포함)이에요.",
+          "구성 줄 — 매달 동화 권수 · 가족 캐릭터 · 가족 목소리 · 가족 그리기 토큰은 '요금제' 탭에서, 명작·전래 권수는 서가에서 세요.",
+          "시작 단추 — 결제를 붙이기 전에는 시연 결제로 이어지거나 '결제는 곧 열려요'로 잠겨요.",
+        ],
+      },
+      {
+        src: "/admin-report/plans-yearly.jpg",
+        title: "요금제 화면 · '1년 한 번에'를 골랐을 때",
+        legend: [
+          "연 값과 월로 나눈 값 · 할인율 — 연간 값에서 저절로 계산해요.",
+          `연간 구성 — 월간과 다른 칸(가족 캐릭터 ${y.familyCharacters}명 · 가족 목소리 ${y.voices}명)이 바로 바뀌어 보여요.`,
+        ],
+      },
+      {
+        src: "/admin-report/plans-cards.jpg",
+        title: "요금제 화면 아래쪽 · 스타트팩 · 무료 · 크레딧 · 자주 묻는 질문",
+        legend: [
+          "스타트팩 — 값과 구성은 '요금제' 탭, 명작·전래 권수는 '공개 동화'에서 와요. 결제를 붙이기 전에는 시연 결제로 이어져요(처음 한 번만 살 수 있어요).",
+          "무료로 듣기 — '공개 동화'에서 무료로 고른 책의 권수와 제목이에요. 무료로 고른 책이 없으면 이 카드는 안 보여요.",
+          "크레딧 — '크레딧' 탭의 가격별 묶음과 쓰는 곳별 크레딧이에요. 묶음 한 줄을 누르면 그 묶음으로 결제하기(시연)로 가요.",
+          "자주 묻는 질문 — 크레딧 값 · 무료 권수 · 스타트팩 구성이 저절로 들어가요.",
+        ],
+      },
+      {
+        src: "/admin-report/shelf-guest.jpg",
+        title: "비회원 책장 · '공개 동화'에서 '책장에 적용'을 켰을 때",
+        legend: [
+          "서가 탭 — 우리 가족 책장 · 세계명작 · 전래동화.",
+          "무료로 고른 동화만 보여요(지금 기본값: 세계명작 5권 · 전래동화 5권). 나머지는 감춰요.",
+          "더 있다는 한 줄 — 누르면 요금제 화면으로 가요. 요금제를 지정한 회원은 그 요금제의 동화까지 보여요.",
+        ],
+      },
+    ],
+    points: [
+      "2026-10-02에 찍은 화면이에요. 값을 바꾸면 고객 화면은 바로 바뀌지만, 이 그림은 다시 찍어야 바뀌어요.",
+      "비회원 책장 그림은 '책장에 적용'을 켠 모습을 미리 보여 드리려고 찍었어요(지금 실제 사이트에서는 꺼져 있어요).",
+    ],
+  });
+
+  sections.push({
     id: "book",
-    title: "3. 동화 1권에 실제로 나가는 돈",
+    title: "4. 동화 1권에 실제로 나가는 돈",
     lead: `6쪽 그림동화 한 권을 만들 때 부르는 AI 를 하나씩 셌어요. 평균 약 ${won(BOOK_COST.avg)} (다시 그리기가 없으면 약 ${won(
       BOOK_COST.low,
     )}, 많으면 약 ${won(BOOK_COST.high)}).`,
@@ -255,7 +315,7 @@ export function buildAdminReport(offer: OfferView, app: AppTokenInfo, source: "d
 
   sections.push({
     id: "fixed",
-    title: "4. 매달 나가는 고정비 (호스팅 등)",
+    title: "5. 매달 나가는 고정비 (호스팅 등)",
     lead: "그림(Gemini)과 대본(Claude)은 쓴 만큼 내는 값이라 동화 1권 원가에 들어 있어요. 아래는 쓰든 안 쓰든 매달 나가는 돈이에요.",
     tables: [
       {
@@ -270,7 +330,7 @@ export function buildAdminReport(offer: OfferView, app: AppTokenInfo, source: "d
 
   sections.push({
     id: "fees",
-    title: "5. 결제 수수료",
+    title: "6. 결제 수수료",
     // 사장님 2026-10-02: "목표 1차가 웹출시 … 문제가 발생 안 된다면 안드로이드 → 최종이 아이폰, 아이폰은 영문/일문"
     lead: "출시 순서는 1차 웹 → 2차 안드로이드(구글 플레이) → 3차 아이폰(영문·일문)이에요. 결제 길마다 떼는 돈이 달라요.",
     tables: [
@@ -307,7 +367,7 @@ export function buildAdminReport(offer: OfferView, app: AppTokenInfo, source: "d
   });
   sections.push({
     id: "profit",
-    title: "6. 요금제별로 남는 돈",
+    title: "7. 요금제별로 남는 돈",
     lead: `손에 남는 돈(수수료·부가세를 뺀 돈)에서 변동원가를 뺀 값이에요(공헌이익). 권수·목소리·토큰을 다 쓴다고 넉넉히 잡았어요. 1차 출시가 웹이라 웹 칸을 먼저 두었어요. 손익분기는 권장 고정비(약 ${won(
       allFixed,
     )})를 갚는 데 필요한 구독자 수예요.`,
@@ -338,7 +398,7 @@ export function buildAdminReport(offer: OfferView, app: AppTokenInfo, source: "d
 
   sections.push({
     id: "check",
-    title: "7. 더 확인할 것",
+    title: "8. 더 확인할 것",
     points: [
       "실제 청구서로 2주 실측 — 구글·Anthropic 청구 금액을 만든 권수로 나눠 권당 원가를 확정해요(지금 숫자는 넉넉하게 잡은 값).",
       "Typecast 가족 목소리 50칸 한계 · 상업 이용 조건 — 부모 목소리를 쓰는 가족이 50곳을 넘기 전에 정해야 해요.",

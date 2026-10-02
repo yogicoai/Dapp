@@ -1,12 +1,14 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { DEFAULT_PLAN_TERMS, PLANS, formatDateKo } from "./plans.ts";
+import { DEFAULT_CREDIT_PACKS, DEFAULT_PLAN_TERMS, PLANS, creditPlanOf, formatDateKo, plansOf } from "./plans.ts";
 import {
   CONSENTS,
   EMPTY_DEMO,
   PAY_METHODS,
   applyDemoOrder,
   canBuyExtra,
+  canBuyStarter,
+  checkoutHref,
   checkParentAnswer,
   clearDemoState,
   demoKey,
@@ -17,10 +19,13 @@ import {
   isDemoOrderId,
   parentQuestion,
   parseFailCode,
+  parseCreditPack,
   parseMethod,
+  parsePackPrice,
   parsePlan,
   payDemoMode,
   readDemoState,
+  receiptName,
   writeDemoState,
   type DemoPass,
   type DemoPending,
@@ -45,7 +50,7 @@ function pending(over: Partial<DemoPending> = {}): DemoPending {
   return { orderId: OID, plan: "monthly", method: "card", amountWon: 19_900, at: NOW.toISOString(), ...over };
 }
 function state(over: Partial<DemoState> = {}): DemoState {
-  return { v: 1, pending: null, pass: null, receipts: [], ...over };
+  return { v: 1, pending: null, pass: null, starter: null, credits: 0, receipts: [], ...over };
 }
 function pass(over: Partial<DemoPass> = {}): DemoPass {
   return { plan: "monthly", startedAt: NOW.toISOString(), nextBillingAt: new Date(2026, 9, 30).toISOString(), booksLeft: 6, ...over };
@@ -66,7 +71,9 @@ describe("주소 값 정리", () => {
     assert.equal(parsePlan("monthly"), "monthly");
     assert.equal(parsePlan("yearly"), "yearly");
     assert.equal(parsePlan("extra3"), "extra3");
-    for (const v of ["MONTHLY", ["monthly"], "weekly", 1, undefined, null]) assert.equal(parsePlan(v), null, String(v));
+    assert.equal(parsePlan("starter"), "starter");
+    assert.equal(parsePlan("credit"), "credit");
+    for (const v of ["MONTHLY", ["monthly"], "weekly", "credits", 1, undefined, null]) assert.equal(parsePlan(v), null, String(v));
   });
   it("parseMethod — 휴대폰 결제 없음", () => {
     assert.equal(parseMethod("kakaopay"), "kakaopay");
@@ -130,6 +137,20 @@ describe("동의", () => {
     assert.ok(CONSENTS[0].sheetBody(PLANS.monthly).join(" ").includes("19,900원"));
     assert.ok(CONSENTS[0].sheetBody(PLANS.yearly).join(" ").includes("199,000원"));
     assert.ok(CONSENTS[0].sheetBody(PLANS.extra3).join(" ").includes("9,900원"));
+  });
+  it("스타트팩·크레딧 — 한 번 결제, 크레딧은 '쓰기 시작하면'으로", () => {
+    const credit = creditPlanOf({ priceWon: 9_900, credits: 105 });
+    for (const p of [PLANS.starter, credit]) {
+      assert.doesNotMatch(CONSENTS[0].label(p), /자동 결제/);
+      assert.ok(CONSENTS[0].sheetBody(p).join(" ").includes("자동으로 다시 결제되지 않아요"), p.id);
+    }
+    assert.ok(CONSENTS[0].sheetBody(PLANS.starter).join(" ").startsWith("스타트팩은 4,900원(부가세 포함)이에요."));
+    assert.ok(CONSENTS[0].sheetBody(PLANS.starter).join(" ").includes("처음 한 번만"));
+    assert.ok(CONSENTS[0].sheetBody(credit).join(" ").startsWith("105크레딧은 9,900원(부가세 포함)이에요."));
+    assert.match(CONSENTS[1].label(credit), /^크레딧을 쓰기 시작하면/);
+    assert.match(CONSENTS[1].label(PLANS.starter), /^동화를 만들기 시작하면/);
+    assert.ok(CONSENTS[1].sheetBody(credit).join(" ").includes("크레딧을 하나도 쓰지 않았다면"));
+    assert.ok(CONSENTS[1].sheetBody(PLANS.monthly).join(" ").includes("새 동화를 한 권도 만들지 않았다면"));
   });
 });
 
@@ -263,6 +284,108 @@ describe("applyDemoOrder", () => {
   it("대기 주문이 없으면 그대로", () => {
     const s = state({ pass: pass() });
     assert.equal(applyDemoOrder(s, NOW), s);
+  });
+});
+
+describe("스타트팩 · 크레딧 시연 결제(2026-10-02)", () => {
+  const CID = "DEMO-20260930-CR3D7T";
+  const creditPending = (credits = 50, over: Partial<DemoPending> = {}) =>
+    pending({ orderId: CID, plan: "credit", amountWon: 4_900, credits, ...over });
+
+  it("주소 값 — 묶음 값은 숫자 3~7자리, 관리실 묶음 목록에 있는 것만", () => {
+    assert.equal(isDemoOrderId(CID), true);
+    assert.equal(parsePackPrice("4900"), 4900);
+    for (const v of ["49", "4,900", "4900원", " 4900", "12345678", ["4900"], 4900, undefined]) {
+      assert.equal(parsePackPrice(v), null, String(v));
+    }
+    assert.deepEqual(parseCreditPack(DEFAULT_CREDIT_PACKS, "9900"), { priceWon: 9_900, credits: 105 });
+    assert.equal(parseCreditPack(DEFAULT_CREDIT_PACKS, "5000"), null);
+    assert.equal(parseCreditPack([], "4900"), null);
+  });
+
+  it("결제하기 주소 — 크레딧은 묶음 값이 있어야, 없으면 요금제 화면", () => {
+    assert.equal(checkoutHref("monthly"), "/checkout?plan=monthly");
+    assert.equal(checkoutHref("starter"), "/checkout?plan=starter");
+    assert.equal(checkoutHref("credit", 9_900), "/checkout?plan=credit&pack=9900");
+    assert.equal(checkoutHref("credit"), "/plans");
+    assert.equal(checkoutHref("credit", null), "/plans");
+  });
+
+  it("옛 기록(스타트팩·크레딧 칸 없음)도 그대로 읽고 빈 값으로 채운다", () => {
+    const kv = memKV();
+    kv.setItem(demoKey("u1"), JSON.stringify({ v: 1, pending: null, pass: pass(), receipts: [] }));
+    const s = readDemoState("u1", kv);
+    assert.equal(s.starter, null);
+    assert.equal(s.credits, 0);
+    assert.deepEqual(s.pass, pass());
+  });
+
+  it("크레딧 수가 없는 크레딧 주문 · 모양이 틀린 칸은 버린다", () => {
+    const kv = memKV();
+    kv.setItem(
+      demoKey("u1"),
+      JSON.stringify({
+        v: 1,
+        pending: { ...creditPending(), credits: undefined },
+        pass: null,
+        starter: { boughtAt: "x", booksLeft: 1 },
+        credits: -5,
+        receipts: [{ ...creditPending(), credits: 0 }],
+      }),
+    );
+    assert.deepEqual(readDemoState("u1", kv), EMPTY_DEMO);
+  });
+
+  it("스타트팩 — 남은 동화는 관리실 스타트팩 권수, 처음 한 번만", () => {
+    assert.equal(canBuyStarter(state()), true);
+    const sp = pending({ plan: "starter", amountWon: 4_900 });
+    assert.equal(doneEligibility(state({ pending: sp }), OID, "starter"), "fresh");
+    const terms = { ...DEFAULT_PLAN_TERMS, starter: { ...DEFAULT_PLAN_TERMS.starter, books: 2 } };
+    const s = applyDemoOrder(state({ pending: sp }), NOW, terms);
+    assert.deepEqual(s.starter, { boughtAt: NOW.toISOString(), booksLeft: 2 });
+    assert.equal(s.pass, null);
+    assert.equal(s.pending, null);
+    assert.equal(s.receipts[0].plan, "starter");
+    assert.equal(s.receipts[0].credits, undefined);
+    assert.equal(canBuyStarter(s), false);
+    assert.equal(doneEligibility(s, OID, "starter"), "again");
+    // 이미 산 뒤 새 스타트팩 주문 → 완료로 그리지 않고 기록도 그대로
+    const again = { ...s, pending: pending({ orderId: CID, plan: "starter", amountWon: 4_900 }) };
+    assert.equal(doneEligibility(again, CID, "starter"), "no");
+    assert.deepEqual(applyDemoOrder(again, NOW), again);
+  });
+
+  it("크레딧 — 잔액에 더하고, 영수증에 크레딧 수, 같은 번호는 한 번만", () => {
+    const s0 = state({ pending: creditPending(105, { amountWon: 9_900 }), credits: 20 });
+    assert.equal(doneEligibility(s0, CID, "credit"), "fresh");
+    const s = applyDemoOrder(s0, NOW);
+    assert.equal(s.credits, 125);
+    assert.equal(s.receipts[0].credits, 105);
+    assert.equal(s.receipts[0].amountWon, 9_900);
+    assert.equal(s.pass, null);
+    const twice = applyDemoOrder({ ...s, pending: creditPending(105, { amountWon: 9_900 }) }, NOW);
+    assert.equal(twice.credits, 125);
+    assert.equal(twice.receipts.length, 1);
+    // 다른 번호로 한 번 더 사면 또 더한다
+    const more = applyDemoOrder({ ...s, pending: creditPending(50, { orderId: OID }) }, NOW);
+    assert.equal(more.credits, 175);
+    assert.equal(more.receipts.length, 2);
+  });
+
+  it("한 바퀴 — 스타트팩·크레딧 칸도 저장했다 그대로 읽힌다", () => {
+    const kv = memKV();
+    const s = applyDemoOrder(state({ pending: creditPending() }), NOW);
+    const full = { ...s, starter: { boughtAt: NOW.toISOString(), booksLeft: 1 } };
+    writeDemoState("u1", full, kv);
+    assert.deepEqual(readDemoState("u1", kv), full);
+  });
+
+  it("결제 내역 줄 이름 — 크레딧은 그 주문의 크레딧 수, 나머지는 요금제 이름(관리실 값)", () => {
+    const at = NOW.toISOString();
+    assert.equal(receiptName({ orderId: CID, plan: "credit", amountWon: 9_900, method: "card", at, credits: 105 }), "105크레딧");
+    assert.equal(receiptName({ orderId: OID, plan: "starter", amountWon: 4_900, method: "card", at }), "스타트팩");
+    assert.equal(receiptName({ orderId: OID, plan: "monthly", amountWon: 19_900, method: "card", at }), "가족 패스 (월간)");
+    assert.equal(plansOf(DEFAULT_PLAN_TERMS).credit.name, "50크레딧");
   });
 });
 

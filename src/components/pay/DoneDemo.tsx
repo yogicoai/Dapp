@@ -6,8 +6,9 @@
  * 자격 확인(doneEligibility)을 통과한 뒤에만 완료 화면을 그린다 — 주소를 붙여 넣었거나 다른 탭이면 '결제를 마친 뒤에만'.
  *  fresh : 대기 주문과 번호·요금제가 같다 → 시연 기록에 **한 번** 반영한다.
  *  again : 이미 반영한 번호(새로고침) → 다시 쓰지 않고 그리기만.
- * 보이는 값(요금제·금액·수단·남은 책)은 주소가 아니라 이 탭의 시연 기록에서 읽는다.
- * "남은 책"은 앱의 잔액·만들기 권한과 아무 관계가 없다 — 화면이 그 사실을 꼭 보이게 말한다.
+ * 보이는 값(요금제·금액·수단·남은 책·크레딧)은 주소가 아니라 이 탭의 시연 기록에서 읽는다.
+ * "남은 책"·"내 크레딧"은 앱의 잔액·만들기 권한과 아무 관계가 없다 — 화면이 그 사실을 꼭 보이게 말한다.
+ * 큰 숫자: 가족 패스·추가 3권 = 이번 달 남은 책 · 스타트팩 = 만들 수 있는 동화 · 크레딧 = 내 크레딧(잔액).
  *
  * TODO(PG-HOOK-2) 진짜 PG: 결제사가 붙여 준 값으로 결제 확인 서버 경로(api/payments/confirm)를 한 번 부른다.
  *  서버가 주문 확인(본인·금액·상태) → 결제사 승인(비밀 키는 서버에서만) → 책 지급 SQL 함수(서버 전용 권한,
@@ -24,12 +25,22 @@ import {
   doneEligibility,
   methodLabel,
   readDemoState,
+  receiptName,
   writeDemoState,
-  type DemoPass,
   type DemoReceipt,
+  type DemoState,
   type PayMethodId,
 } from "@/lib/pay-demo";
-import { DEFAULT_PLAN_TERMS, booksText, formatDateKo, plansOf, won, type PlanId, type PlanTerms } from "@/lib/plans";
+import {
+  DEFAULT_PLAN_TERMS,
+  booksText,
+  creditsText,
+  formatDateKo,
+  plansOf,
+  won,
+  type PlanId,
+  type PlanTerms,
+} from "@/lib/plans";
 import { useSiteInfo } from "@/lib/site-info-client";
 import {
   BigLink,
@@ -51,7 +62,7 @@ type View =
   | { kind: "soon" }
   | { kind: "login" }
   | { kind: "no" }
-  | { kind: "ok"; receipt: DemoReceipt; pass: DemoPass | null };
+  | { kind: "ok"; receipt: DemoReceipt; state: DemoState };
 
 export function DoneDemo({
   orderId,
@@ -95,7 +106,7 @@ export function DoneDemo({
           setView({ kind: "no" });
           return;
         }
-        setView({ kind: "ok", receipt, pass: state.pass });
+        setView({ kind: "ok", receipt, state });
       })
       .catch(() => {
         if (alive) setView({ kind: "login" });
@@ -138,19 +149,25 @@ export function DoneDemo({
     );
   }
 
-  const { receipt, pass } = view;
-  const p = plansOf(terms)[receipt.plan];
-  const isSub = p.kind === "subscription";
-  const booksLeft = pass?.booksLeft ?? 0;
-  const next = isSub && pass ? new Date(pass.nextBillingAt) : null;
+  const { receipt, state } = view;
+  const kind = plansOf(terms)[receipt.plan].kind;
+  const isSub = kind === "subscription";
+  const name = receiptName(receipt, terms);
+  const next = isSub && state.pass ? new Date(state.pass.nextBillingAt) : null;
+  const title = isSub ? "가족 패스를 시작했어요" : kind === "addon" ? `${name}을 더했어요` : `${name}을 샀어요`;
+  // 큰 숫자 한 칸 — 크레딧은 잔액, 스타트팩은 만들 수 있는 동화, 나머지는 이번 달 남은 책
+  const big =
+    kind === "credit"
+      ? { label: "내 크레딧", value: creditsText(state.credits), books: null }
+      : kind === "starter"
+        ? { label: "만들 수 있는 동화", value: booksText(state.starter?.booksLeft ?? 0), books: state.starter?.booksLeft ?? 0 }
+        : { label: "이번 달 남은 책", value: booksText(state.pass?.booksLeft ?? 0), books: state.pass?.booksLeft ?? 0 };
 
   return (
     <PayShell demo>
       <Card className="flex flex-col items-center text-center">
         <StatusCircle tone="ok" />
-        <h1 className="mt-3 break-keep text-[21px] font-extrabold text-neutral-800">
-          {isSub ? "가족 패스를 시작했어요" : `${p.name}을 더했어요`}
-        </h1>
+        <h1 className="mt-3 break-keep text-[21px] font-extrabold text-neutral-800">{title}</h1>
         {/* 제목을 뒤집는 부정문("~더해지지 않았어요") 대신, 시연이 어디까지인지를 말한다. */}
         <p className="mt-1.5 break-keep text-[13px] font-bold leading-relaxed text-amber-800">
           시연 화면이라 실제 결제와
@@ -161,16 +178,21 @@ export function DoneDemo({
 
       <Card>
         <div className="flex flex-col gap-1.5 border-b border-stone-200/70 pb-4">
-          <span className="text-[13px] font-bold text-neutral-500">이번 달 남은 책</span>
+          <span className="text-[13px] font-bold text-neutral-500">{big.label}</span>
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-[36px] font-extrabold leading-none" style={{ color: colors.accentDark }}>
-              {booksText(booksLeft)}
+              {big.value}
             </span>
-            <BookDots n={booksLeft} color={colors.accent} />
+            {big.books !== null && <BookDots n={big.books} color={colors.accent} />}
           </div>
         </div>
         <InfoBox className="mt-4">
-          <Row label="요금제">{p.name}</Row>
+          <Row label={isSub ? "요금제" : "주문"}>{name}</Row>
+          {kind === "starter" && (
+            <Row label="들어 있는 것">
+              가족 캐릭터 {terms.starter.familyCharacters}명 · 가족 목소리 {terms.starter.voices}명
+            </Row>
+          )}
           <Row label="결제 금액">{won(receipt.amountWon)}</Row>
           <Row label="결제 수단">{methodLabel(receipt.method)}</Row>
           {next && <Row label="다음 결제일">{formatDateKo(next)}</Row>}

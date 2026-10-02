@@ -11,7 +11,7 @@
  */
 import { refundLabel } from "./admin.ts";
 import { kstDaysAgoStart, withParams } from "./admin-console.ts";
-import { isPlanId, PLANS } from "./plans.ts";
+import { isPlanId, productName } from "./plans.ts";
 import type { MemberPlanKey } from "./member-plan.ts";
 
 /* ── 부모 목소리 ───────────────────────────────────────────────────────── */
@@ -331,7 +331,7 @@ export function paymentStatusBrief(s: string): { label: string; tone: SimpleTone
 
 /** 요금제 코드 → 이름(요금제 목록 plans.ts). 모르는 코드는 그대로. */
 export function productLabel(code: string): string {
-  return isPlanId(code) ? PLANS[code].name : code;
+  return isPlanId(code) ? productName(code) : code;
 }
 
 /**

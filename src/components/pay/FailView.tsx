@@ -11,11 +11,12 @@
  */
 
 import { useTheme } from "@/components/ThemeProvider";
-import { PAY_DEMO, failCopy, type FailCode } from "@/lib/pay-demo";
+import { PAY_DEMO, checkoutHref, failCopy, type FailCode } from "@/lib/pay-demo";
 import type { PlanId } from "@/lib/plans";
 import { BigLink, NoticeCard, PayShell, SoftLink, SoonCard } from "./pay-ui";
 
-export function FailView({ code, plan }: { code: FailCode; plan: PlanId }) {
+/** pack — 크레딧 묶음 값(크레딧일 때만). 없으면 '다시 해 볼게요'가 요금제 화면으로 간다. */
+export function FailView({ code, plan, pack = null }: { code: FailCode; plan: PlanId; pack?: number | null }) {
   const { theme } = useTheme();
   const colors = theme.colors;
 
@@ -40,7 +41,7 @@ export function FailView({ code, plan }: { code: FailCode; plan: PlanId }) {
         }
       >
         {/* replace — 실패 화면을 기록에 남기지 않아, 결제하기의 ← 가 실패 화면이 아니라 온 곳으로 간다 */}
-        <BigLink href={`/checkout?plan=${plan}`} colors={colors} replace>
+        <BigLink href={checkoutHref(plan, pack)} colors={colors} replace>
           다시 해 볼게요
         </BigLink>
         <SoftLink href="/plans" replace>

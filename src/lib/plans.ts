@@ -13,23 +13,27 @@
  * 동화는 "권"으로 센다. 고객에게 보이는 단위 이름은 '가족 그리기 토큰'과 '크레딧' 둘뿐이다(2026-10-01 사장님 확정).
  */
 
-export type PlanId = "monthly" | "yearly" | "extra3";
+/** starter·credit 은 결제 시연에 2026-10-02 더함(사장님 "스타트팩도 결제하는 쪽에 · 크레딧 구매 틀만이라도") */
+export type PlanId = "monthly" | "yearly" | "extra3" | "starter" | "credit";
 export type PlanPeriod = "month" | "year" | "once";
 
 export type Plan = {
   id: PlanId;
-  kind: "subscription" | "addon";
-  /** "가족 패스 (월간)" · "가족 패스 (연간)" · "추가 3권" */
+  /** subscription: 가족 패스 · addon: 추가 3권 · starter: 스타트팩(처음 한 번) · credit: 크레딧 묶음 */
+  kind: "subscription" | "addon" | "starter" | "credit";
+  /** "가족 패스 (월간)" · "가족 패스 (연간)" · "추가 3권" · "스타트팩" · "50크레딧" */
   name: string;
-  /** "가족 패스" · "추가 3권" */
+  /** "가족 패스" · "추가 3권" · "스타트팩" · "크레딧" */
   shortName: string;
   /** 부가세 포함 */
   priceWon: number;
   period: PlanPeriod;
-  /** monthly/yearly: 매달 새 책 수 · extra3: 더해지는 책 수 */
+  /** monthly/yearly: 매달 새 책 수 · extra3: 더해지는 책 수 · starter: 만들 수 있는 책 수 · credit: 0 */
   books: number;
   /** extra3 만 true — 가족 패스를 쓰는 분만 살 수 있다 */
   subscriberOnly: boolean;
+  /** credit 만 — 이 묶음으로 받는 크레딧 */
+  credits?: number;
 };
 
 /** 가족 패스(월간)에 드리는 '우리 가족 캐릭터' 수 — 2026-10-01 확정(결정 D1). 더 만들려면 크레딧으로. */
@@ -97,7 +101,7 @@ export const FREE = { classics: 5, folk: 5 } as const;
 
 /**
  * 스타트팩 — 처음 한 번만 사는 단품(2026-10-01). 명작·전래는 기본 10권씩(관리실 '공개 동화'에서 고른다).
- * 값 4,900원은 사장님 확인 전 자리 표시.
+ * 값 4,900원 — 2026-10-02 사장님 확정("이대로").
  */
 export const STARTER = { priceWon: 4_900, books: 1, voices: 1, familyCharacters: 1, classics: 10, folk: 10 } as const;
 
@@ -141,7 +145,7 @@ export const DEFAULT_PLAN_TERMS: PlanTerms = {
 /*
  * 크레딧 — 단품으로 사서 플랜에 든 몫을 넘는 것에 쓴다(2026-10-01 사장님 "단품 크레딧 구매").
  * 가족 그리기 토큰(패스에 매달 들어오는 몫)과 따로 센다.
- * 가격별 묶음 · 쓰는 곳별 크레딧은 관리실 '요금제·가격'에서 바꾼다 — 아래는 바꾸기 전의 기본값(사장님 확인 전 자리 표시).
+ * 가격별 묶음 · 쓰는 곳별 크레딧은 관리실 '요금제·가격'에서 바꾼다 — 아래는 바꾸기 전의 기본값(2026-10-02 사장님 확정, "이대로").
  */
 export type CreditPack = { priceWon: number; credits: number };
 export type CreditUse = "book" | "character" | "voice" | "draw";
@@ -184,8 +188,26 @@ export type OfferView = {
  */
 export const EXTRA = { books: 3, priceWon: 9_900 } as const;
 
-/** 요금제 값(관리실) → 결제 화면이 쓰는 요금제 목록. 이름·주기·종류는 고정이고 값·권수만 terms 에서 온다. */
-export function plansOf(terms: PlanTerms): Record<PlanId, Plan> {
+/** 크레딧 묶음 하나 → 결제 화면이 쓰는 모양(한 번 결제). 이름은 "50크레딧" */
+export function creditPlanOf(pack: CreditPack): Plan {
+  return {
+    id: "credit",
+    kind: "credit",
+    name: creditsText(pack.credits),
+    shortName: "크레딧",
+    priceWon: pack.priceWon,
+    period: "once",
+    books: 0,
+    subscriberOnly: false,
+    credits: pack.credits,
+  };
+}
+
+/**
+ * 요금제 값(관리실) → 결제 화면이 쓰는 요금제 목록. 이름·주기·종류는 고정이고 값·권수만 terms 에서 온다.
+ * 크레딧은 묶음마다 값이 달라 고른 묶음(creditPack)으로 만든다 — 안 주면 첫 기본 묶음.
+ */
+export function plansOf(terms: PlanTerms, creditPack: CreditPack = DEFAULT_CREDIT_PACKS[0]): Record<PlanId, Plan> {
   return {
     monthly: {
       id: "monthly",
@@ -217,13 +239,29 @@ export function plansOf(terms: PlanTerms): Record<PlanId, Plan> {
       books: EXTRA.books,
       subscriberOnly: true,
     },
+    starter: {
+      id: "starter",
+      kind: "starter",
+      name: "스타트팩",
+      shortName: "스타트팩",
+      priceWon: terms.starter.priceWon,
+      period: "once",
+      books: terms.starter.books,
+      subscriberOnly: false,
+    },
+    credit: creditPlanOf(creditPack),
   };
 }
 
 /** 기본값 요금제 목록 — 관리실 값을 못 읽었을 때 · 이름 찾기 · 시험 */
 export const PLANS: Record<PlanId, Plan> = plansOf(DEFAULT_PLAN_TERMS);
 
-export const PLAN_IDS: readonly PlanId[] = ["monthly", "yearly", "extra3"];
+export const PLAN_IDS: readonly PlanId[] = ["monthly", "yearly", "extra3", "starter", "credit"];
+
+/** 상품 코드 → 이름(관리실 표 · 결제 내역 줄). 크레딧은 묶음마다 크레딧 수가 달라 코드만으로는 '크레딧'이라고만 한다. */
+export function productName(id: PlanId): string {
+  return id === "credit" ? PLANS.credit.shortName : PLANS[id].name;
+}
 
 /** 관리실 값을 못 읽었을 때(또는 고르기 전) 요금제 화면이 그리는 값 */
 export const DEFAULT_OFFER_VIEW: OfferView = {
@@ -333,7 +371,7 @@ function addMonthsClamped(from: Date, n: number): Date {
   );
 }
 
-/** 다음 결제일 — 월간은 한 달 뒤, 연간은 한 해 뒤. 한 번 결제(추가 3권)는 null. */
+/** 다음 결제일 — 월간은 한 달 뒤, 연간은 한 해 뒤. 한 번 결제(추가 3권 · 스타트팩 · 크레딧)는 null. */
 export function nextBillingDate(from: Date, p: Plan): Date | null {
   if (p.period === "month") return addMonthsClamped(from, 1);
   if (p.period === "year") return addMonthsClamped(from, 12);

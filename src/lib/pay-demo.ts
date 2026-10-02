@@ -3,7 +3,8 @@
  *
  * 이 파일은 **아무 데도 쓰지 않는다**(서버·DB·잔액 모두). 시연 기록은 이 탭의 sessionStorage 에만 남고,
  * 그 기록을 읽는 화면은 /checkout/done 과 /billing 두 곳뿐이다(pay-demo.guard.test 가 지킨다).
- * 그래서 시연의 "남은 책 6권"은 앱의 만들기 권한·잔액과 아무 관계가 없다.
+ * 그래서 시연의 "남은 책"·"내 크레딧"·스타트팩은 앱의 만들기 권한·잔액과 아무 관계가 없다.
+ * 시연으로 사는 것: 가족 패스(월간·연간) · 추가 3권 · 스타트팩 · 크레딧 묶음(스타트팩·크레딧은 2026-10-02 더함).
  *
  * 나중에 진짜 PG 를 붙이면: CheckoutLive 와 결제 서버 경로(api/payments/…)를 **옆에 새로** 만들고,
  * 이 파일과 components/pay 의 *Demo* 파일은 통째로 지운다. 진짜 결제는 이 파일의 값을 쓰지 않는다.
@@ -16,10 +17,12 @@ import {
   EXTRA,
   PLANS,
   REFUND_DAYS,
+  creditsText,
   isPlanId,
   nextBillingDate,
   plansOf,
   won,
+  type CreditPack,
   type Plan,
   type PlanId,
   type PlanTerms,
@@ -92,6 +95,20 @@ export const CONSENTS: readonly [ConsentDef, ConsentDef] = [
           CANCEL_LINE,
         ];
       }
+      if (p.kind === "starter") {
+        return [
+          `${p.name}은 ${price}(부가세 포함)이에요.`,
+          `한 번만 결제되고, 자동으로 다시 결제되지 않아요. 우리 아이 동화 ${p.books}권을 만들 수 있고, 만든 책은 계속 남아요.`,
+          "스타트팩은 처음 한 번만 살 수 있어요.",
+        ];
+      }
+      if (p.kind === "credit") {
+        return [
+          `${p.name}은 ${price}(부가세 포함)이에요.`,
+          "한 번만 결제되고, 자동으로 다시 결제되지 않아요. 가족 패스·스타트팩에 든 몫을 다 쓴 뒤 동화·가족 캐릭터·가족 목소리를 더할 때 써요.",
+          "크레딧을 쓸 수 있는 기간은 약관이 나오면 여기에 적어요.",
+        ];
+      }
       return [
         `${p.name}은 ${price}(부가세 포함)이에요.`,
         `한 번만 결제되고, 자동으로 다시 결제되지 않아요. 지금 쓰는 가족 패스에 동화책 ${p.books}권이 더해져요.`,
@@ -100,13 +117,24 @@ export const CONSENTS: readonly [ConsentDef, ConsentDef] = [
   },
   {
     id: "withdrawal",
-    label: () => "동화를 만들기 시작하면 디지털 콘텐츠라 청약철회(환불)가 제한될 수 있다는 것을 확인했어요",
+    // 크레딧은 '만드는 것'이 아니라 '쓰는 것'이라 문장이 다르다(기준 날짜는 같다)
+    label: (p) =>
+      p.kind === "credit"
+        ? "크레딧을 쓰기 시작하면 디지털 콘텐츠라 청약철회(환불)가 제한될 수 있다는 것을 확인했어요"
+        : "동화를 만들기 시작하면 디지털 콘텐츠라 청약철회(환불)가 제한될 수 있다는 것을 확인했어요",
     sheetTitle: "청약철회(환불) 제한 안내",
-    sheetBody: () => [
-      "동화책은 주문을 받아 새로 만드는 디지털 콘텐츠예요.",
-      `결제하고 ${REFUND_DAYS}일 안에 새 동화를 한 권도 만들지 않았다면 전액 돌려드려요.`,
-      "동화를 만들기 시작하면 만든 만큼은 돌려드리기 어려워요.",
-    ],
+    sheetBody: (p) =>
+      p.kind === "credit"
+        ? [
+            "크레딧은 결제하면 바로 쓸 수 있는 디지털 콘텐츠예요.",
+            `결제하고 ${REFUND_DAYS}일 안에 크레딧을 하나도 쓰지 않았다면 전액 돌려드려요.`,
+            "크레딧을 쓰기 시작하면 쓴 만큼은 돌려드리기 어려워요.",
+          ]
+        : [
+            "동화책은 주문을 받아 새로 만드는 디지털 콘텐츠예요.",
+            `결제하고 ${REFUND_DAYS}일 안에 새 동화를 한 권도 만들지 않았다면 전액 돌려드려요.`,
+            "동화를 만들기 시작하면 만든 만큼은 돌려드리기 어려워요.",
+          ],
   },
 ];
 
@@ -124,6 +152,23 @@ export function parsePlan(v: unknown): PlanId | null {
 
 export function parseMethod(v: unknown): PayMethodId | null {
   return typeof v === "string" && PAY_METHODS.some((m) => m.id === v) ? (v as PayMethodId) : null;
+}
+
+/** 크레딧 묶음 값(pack=원) — 숫자만 3~7자리(관리실 묶음 값 범위 500원~1,000,000원). 목록에 있는지는 보지 않는다. */
+export function parsePackPrice(v: unknown): number | null {
+  return typeof v === "string" && /^\d{3,7}$/.test(v) ? Number(v) : null;
+}
+
+/** 고른 크레딧 묶음 — 값이 관리실 묶음 목록(packs)에 있을 때만. 금액·크레딧 수는 주소가 아니라 목록에서 온다. */
+export function parseCreditPack(packs: readonly CreditPack[], v: unknown): CreditPack | null {
+  const price = parsePackPrice(v);
+  return price === null ? null : (packs.find((p) => p.priceWon === price) ?? null);
+}
+
+/** 결제하기 주소 — 크레딧은 고른 묶음 값이 있어야 한다(없으면 요금제 화면으로). */
+export function checkoutHref(plan: PlanId, packPrice?: number | null): string {
+  if (plan !== "credit") return `/checkout?plan=${plan}`;
+  return packPrice ? `/checkout?plan=credit&pack=${packPrice}` : "/plans";
 }
 
 /** 코드 이름은 흔한 결제사 이름을 빌렸다 — 진짜 연결 때 계약한 PG 문서에 맞춘다. */
@@ -182,14 +227,38 @@ export function checkParentAnswer(q: ParentQ, input: string): boolean {
 /* ─────────────────────────── 시연 기록 — 이 탭의 sessionStorage 에만 ─────────────────────────── */
 /* 서버로 보내지 않는다. /checkout/done · /billing 만 읽는다. */
 
-export type DemoPending = { orderId: string; plan: PlanId; method: PayMethodId; amountWon: number; at: string };
+/** credits — 크레딧 주문만(받는 크레딧 수). 다른 주문에는 없다. */
+export type DemoPending = { orderId: string; plan: PlanId; method: PayMethodId; amountWon: number; at: string; credits?: number };
 export type DemoPass = { plan: "monthly" | "yearly"; startedAt: string; nextBillingAt: string; booksLeft: number };
-export type DemoReceipt = { orderId: string; plan: PlanId; amountWon: number; method: PayMethodId; at: string };
-export type DemoState = { v: 1; pending: DemoPending | null; pass: DemoPass | null; receipts: DemoReceipt[] };
+/** 스타트팩(시연) — 산 날과 남은 동화 */
+export type DemoStarter = { boughtAt: string; booksLeft: number };
+export type DemoReceipt = { orderId: string; plan: PlanId; amountWon: number; method: PayMethodId; at: string; credits?: number };
+/**
+ * starter · credits 는 2026-10-02 더했다(스타트팩·크레딧 시연 결제). 그 전에 적힌 기록에는 없어서
+ * 읽을 때 null · 0 으로 채운다 — 그래서 v 는 1 그대로다.
+ */
+export type DemoState = {
+  v: 1;
+  pending: DemoPending | null;
+  pass: DemoPass | null;
+  starter: DemoStarter | null;
+  /** 크레딧 잔액(시연) */
+  credits: number;
+  receipts: DemoReceipt[];
+};
 
-export const EMPTY_DEMO: DemoState = Object.freeze({ v: 1, pending: null, pass: null, receipts: [] }) as DemoState;
+export const EMPTY_DEMO: DemoState = Object.freeze({
+  v: 1,
+  pending: null,
+  pass: null,
+  starter: null,
+  credits: 0,
+  receipts: [],
+}) as DemoState;
 
 const RECEIPTS_MAX = 10;
+/** 크레딧 칸(주문 하나 · 잔액)의 끝 — 모양 확인용 */
+const CREDITS_MAX = 99_999_999;
 
 type KV = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
@@ -208,7 +277,7 @@ function defaultKV(): KV | null {
 }
 
 function emptyDemo(): DemoState {
-  return { v: 1, pending: null, pass: null, receipts: [] };
+  return { v: 1, pending: null, pass: null, starter: null, credits: 0, receipts: [] };
 }
 
 function isObj(v: unknown): v is Record<string, unknown> {
@@ -220,13 +289,19 @@ function isIsoDate(v: unknown): v is string {
 function isAmount(v: unknown): v is number {
   return typeof v === "number" && Number.isFinite(v) && v >= 0;
 }
+function isIntIn(v: unknown, min: number, max: number): v is number {
+  return typeof v === "number" && Number.isInteger(v) && v >= min && v <= max;
+}
 
 function toPending(v: unknown): DemoPending | null {
   if (!isObj(v)) return null;
   const plan = parsePlan(v.plan);
   const method = parseMethod(v.method);
   if (!isDemoOrderId(v.orderId) || !plan || !method || !isAmount(v.amountWon) || !isIsoDate(v.at)) return null;
-  return { orderId: v.orderId, plan, method, amountWon: v.amountWon, at: v.at };
+  const base = { orderId: v.orderId, plan, method, amountWon: v.amountWon, at: v.at };
+  if (plan !== "credit") return base;
+  // 크레딧 주문은 받는 크레딧 수가 꼭 있어야 한다
+  return isIntIn(v.credits, 1, CREDITS_MAX) ? { ...base, credits: v.credits } : null;
 }
 
 function toPass(v: unknown): DemoPass | null {
@@ -234,13 +309,20 @@ function toPass(v: unknown): DemoPass | null {
   const plan = v.plan === "monthly" || v.plan === "yearly" ? v.plan : null;
   const books = v.booksLeft;
   if (!plan || !isIsoDate(v.startedAt) || !isIsoDate(v.nextBillingAt)) return null;
-  if (typeof books !== "number" || !Number.isInteger(books) || books < 0 || books > 999) return null;
+  if (!isIntIn(books, 0, 999)) return null;
   return { plan, startedAt: v.startedAt, nextBillingAt: v.nextBillingAt, booksLeft: books };
 }
 
+function toStarter(v: unknown): DemoStarter | null {
+  if (!isObj(v) || !isIsoDate(v.boughtAt) || !isIntIn(v.booksLeft, 0, 999)) return null;
+  return { boughtAt: v.boughtAt, booksLeft: v.booksLeft };
+}
+
 function toReceipt(v: unknown): DemoReceipt | null {
-  const p = toPending(v); // 같은 칸(주문번호·요금제·금액·수단·시각)
-  return p ? { orderId: p.orderId, plan: p.plan, amountWon: p.amountWon, method: p.method, at: p.at } : null;
+  const p = toPending(v); // 같은 칸(주문번호·요금제·금액·수단·시각 · 크레딧 주문은 크레딧 수까지)
+  if (!p) return null;
+  const r: DemoReceipt = { orderId: p.orderId, plan: p.plan, amountWon: p.amountWon, method: p.method, at: p.at };
+  return p.credits ? { ...r, credits: p.credits } : r;
 }
 
 /** 모양이 틀리거나 저장소가 던지면 빈 기록. */
@@ -253,7 +335,14 @@ export function readDemoState(uid: string, kv?: KV | null): DemoState {
     const j: unknown = JSON.parse(raw);
     if (!isObj(j) || j.v !== 1 || !Array.isArray(j.receipts)) return emptyDemo();
     const receipts = j.receipts.map(toReceipt).filter((r): r is DemoReceipt => r !== null).slice(0, RECEIPTS_MAX);
-    return { v: 1, pending: toPending(j.pending), pass: toPass(j.pass), receipts };
+    return {
+      v: 1,
+      pending: toPending(j.pending),
+      pass: toPass(j.pass),
+      starter: toStarter(j.starter),
+      credits: isIntIn(j.credits, 0, CREDITS_MAX) ? j.credits : 0,
+      receipts,
+    };
   } catch {
     return emptyDemo();
   }
@@ -284,6 +373,17 @@ export function canBuyExtra(s: DemoState): boolean {
   return s.pass !== null;
 }
 
+/** 스타트팩은 처음 한 번만 — 이 탭의 시연 기록에 산 적이 없을 때만. */
+export function canBuyStarter(s: DemoState): boolean {
+  return s.starter === null;
+}
+
+/** 결제 내역 줄 이름 — 크레딧은 그 주문의 크레딧 수("50크레딧"), 나머지는 요금제 이름(관리실 값 terms) */
+export function receiptName(r: DemoReceipt, terms: PlanTerms = DEFAULT_PLAN_TERMS): string {
+  if (r.plan === "credit") return r.credits ? creditsText(r.credits) : PLANS.credit.shortName;
+  return plansOf(terms)[r.plan].name;
+}
+
 /**
  * 완료 화면을 그려도 되는가.
  *  fresh : 이 탭에서 대기 중인 주문과 번호·요금제(·수단)가 같다 → 한 번 반영한다.
@@ -304,6 +404,8 @@ export function doneEligibility(
   if (p && p.orderId === orderId && p.plan === plan && sameMethod(p.method)) {
     // 추가 3권은 가족 패스가 있어야 반영된다 — 없으면 완료로 그리지 않는다.
     if (PLANS[plan].subscriberOnly && !s.pass) return "no";
+    // 스타트팩은 처음 한 번만 — 이미 샀으면 완료로 그리지 않는다.
+    if (plan === "starter" && s.starter) return "no";
     return "fresh";
   }
   return "no";
@@ -313,6 +415,8 @@ export function doneEligibility(
  * 대기 주문을 기록에 반영한다(순수 — 저장은 부르는 쪽이).
  *  구독: pass = { plan, startedAt, nextBillingAt, booksLeft: 그 주기의 매달 권수(관리실 요금제 값 terms) }
  *  추가 3권: pass 가 있으면 booksLeft + 3, 없으면 그대로
+ *  스타트팩: starter = { boughtAt, booksLeft: 스타트팩 권수(terms) } — 이미 샀으면 그대로
+ *  크레딧: 잔액 + 주문에 적힌 크레딧 수(결제하기 화면이 관리실 묶음 목록에서 고른 값)
  *  영수증을 앞에 하나 더한다(같은 번호는 한 번만, 최대 10개). pending 은 비운다.
  */
 export function applyDemoOrder(s: DemoState, now: Date, terms: PlanTerms = DEFAULT_PLAN_TERMS): DemoState {
@@ -321,7 +425,7 @@ export function applyDemoOrder(s: DemoState, now: Date, terms: PlanTerms = DEFAU
   // 이미 반영한 번호 — 대기만 비운다(두 번 반영하지 않는다).
   if (s.receipts.some((r) => r.orderId === p.orderId)) return { ...s, pending: null };
   const plan = plansOf(terms)[p.plan];
-  let pass: DemoPass | null;
+  let { pass, starter, credits } = s;
   if (plan.kind === "subscription") {
     const next = nextBillingDate(now, plan) ?? now;
     pass = {
@@ -330,10 +434,17 @@ export function applyDemoOrder(s: DemoState, now: Date, terms: PlanTerms = DEFAU
       nextBillingAt: next.toISOString(),
       booksLeft: (p.plan === "yearly" ? terms.yearly : terms.monthly).booksPerMonth,
     };
-  } else {
+  } else if (plan.kind === "addon") {
     if (!s.pass) return s;
     pass = { ...s.pass, booksLeft: s.pass.booksLeft + EXTRA.books };
+  } else if (plan.kind === "starter") {
+    if (s.starter) return s;
+    starter = { boughtAt: now.toISOString(), booksLeft: terms.starter.books };
+  } else {
+    if (!p.credits) return s;
+    credits = Math.min(s.credits + p.credits, CREDITS_MAX);
   }
   const receipt: DemoReceipt = { orderId: p.orderId, plan: p.plan, amountWon: p.amountWon, method: p.method, at: now.toISOString() };
-  return { v: 1, pending: null, pass, receipts: [receipt, ...s.receipts].slice(0, RECEIPTS_MAX) };
+  if (plan.kind === "credit" && p.credits) receipt.credits = p.credits;
+  return { v: 1, pending: null, pass, starter, credits, receipts: [receipt, ...s.receipts].slice(0, RECEIPTS_MAX) };
 }

@@ -29,8 +29,10 @@ import {
   planFaq,
   starterFeatures,
   booksText,
+  creditPlanOf,
   formatDateKo,
   isPlanId,
+  productName,
   monthlyEquivalent,
   nextBillingDate,
   passFeatures,
@@ -84,8 +86,48 @@ describe("요금제 값 — 권고안 4장 구조 + 사장님 최종안(2026-10-
 
   it("isPlanId", () => {
     assert.equal(isPlanId("monthly"), true);
+    assert.equal(isPlanId("starter"), true);
+    assert.equal(isPlanId("credit"), true);
     assert.equal(isPlanId("weekly"), false);
     assert.equal(isPlanId(1), false);
+  });
+});
+
+describe("스타트팩 · 크레딧도 결제 목록에(2026-10-02 시연 결제)", () => {
+  it("스타트팩 — 한 번 결제, 값·권수는 terms", () => {
+    assert.deepEqual(PLANS.starter, {
+      id: "starter",
+      kind: "starter",
+      name: "스타트팩",
+      shortName: "스타트팩",
+      priceWon: 4_900,
+      period: "once",
+      books: 1,
+      subscriberOnly: false,
+    });
+    const p = plansOf({ ...DEFAULT_PLAN_TERMS, starter: { ...DEFAULT_PLAN_TERMS.starter, priceWon: 3_900, books: 2 } });
+    assert.equal(p.starter.priceWon, 3_900);
+    assert.equal(p.starter.books, 2);
+    assert.equal(nextBillingDate(new Date(2026, 8, 30), p.starter), null);
+    assert.equal(priceLabel(p.starter), "3,900원");
+  });
+
+  it("크레딧 — 고른 묶음으로(안 주면 첫 기본 묶음), 이름은 '50크레딧'", () => {
+    assert.deepEqual(PLANS.credit, creditPlanOf(DEFAULT_CREDIT_PACKS[0]));
+    const c = plansOf(DEFAULT_PLAN_TERMS, { priceWon: 19_900, credits: 220 }).credit;
+    assert.equal(c.name, "220크레딧");
+    assert.equal(c.shortName, "크레딧");
+    assert.equal(c.priceWon, 19_900);
+    assert.equal(c.credits, 220);
+    assert.equal(c.period, "once");
+    assert.equal(c.books, 0);
+    assert.equal(nextBillingDate(new Date(2026, 8, 30), c), null);
+  });
+
+  it("상품 이름 — 크레딧은 코드만으로는 '크레딧'", () => {
+    assert.equal(productName("monthly"), "가족 패스 (월간)");
+    assert.equal(productName("starter"), "스타트팩");
+    assert.equal(productName("credit"), "크레딧");
   });
 });
 

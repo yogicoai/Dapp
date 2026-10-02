@@ -1,7 +1,8 @@
 "use client";
 
 /**
- * /billing 내 결제·구독 (시연) — 지금 요금제, 남은 책, 다음 결제일, 크레딧 안내, 잠긴 해지, 결제 내역.
+ * /billing 내 결제·구독 (시연) — 지금 요금제, 남은 책, 다음 결제일, 크레딧 안내, 잠긴 해지,
+ * 스타트팩(산 뒤에만) · 내 크레딧(시연 잔액) · 결제 내역.
  * 요금제 값(값·책 수)은 관리실 값(terms) — 서버 page 가 읽어 넘긴다.
  * 화면 갈래: loading → login(비회원) → soon(스위치 off — 시연 기록을 읽지 않는다) → ready.
  * 값은 이 탭의 시연 기록에서만 읽는다. 앱의 잔액·만들기 권한과 아무 관계가 없다.
@@ -17,10 +18,11 @@ import { useTheme } from "@/components/ThemeProvider";
 import { LockIcon } from "@/components/family/icons";
 import { TopBar } from "@/components/family/ui";
 import { loadSession } from "@/lib/auth";
-import { PAY_DEMO, clearDemoState, readDemoState, type DemoState } from "@/lib/pay-demo";
+import { PAY_DEMO, clearDemoState, readDemoState, receiptName, type DemoState } from "@/lib/pay-demo";
 import {
   DEFAULT_PLAN_TERMS,
   booksText,
+  creditsText,
   formatDateKo,
   formatShortDateKo,
   plansOf,
@@ -118,7 +120,8 @@ export function BillingDemo({ terms = DEFAULT_PLAN_TERMS }: { terms?: PlanTerms 
   const { uid, state } = view;
   const pass = state.pass;
   const passPlan = pass ? plans[pass.plan] : null;
-  const hasRecord = !!(pass || state.receipts.length || state.pending);
+  const starter = state.starter;
+  const hasRecord = !!(pass || starter || state.credits || state.receipts.length || state.pending);
 
   function clearRecord() {
     clearDemoState(uid);
@@ -150,8 +153,8 @@ export function BillingDemo({ terms = DEFAULT_PLAN_TERMS }: { terms?: PlanTerms 
             </Row>
           </InfoBox>
           <div className="mt-4 flex flex-col gap-3">
-            {/* 추가 3권은 크레딧으로 바뀌었다(2026-10-01) — 크레딧은 결제가 열리면 산다 */}
-            <SoftLink href="/plans">책이 더 필요하면 크레딧 · 요금제 보기</SoftLink>
+            {/* 추가 3권은 크레딧으로 바뀌었다(2026-10-01) — 요금제 화면의 크레딧 칸으로 바로 */}
+            <SoftLink href="/plans#credits">책이 더 필요하면 크레딧 보기</SoftLink>
             <Link
               href="/plans"
               className={`mx-auto inline-flex min-h-11 items-center rounded-full px-3 text-sm font-extrabold underline underline-offset-2 ${FOCUS}`}
@@ -182,7 +185,11 @@ export function BillingDemo({ terms = DEFAULT_PLAN_TERMS }: { terms?: PlanTerms 
       ) : (
         <Card labelledBy="no-plan">
           <CardTitle id="no-plan">아직 쓰는 요금제가 없어요</CardTitle>
-          <p className="break-keep text-[13px] font-medium text-neutral-500">처음이라면 스타트팩({won(terms.starter.priceWon)})으로 동화 {booksText(terms.starter.books)}부터 만들어 볼 수 있어요.</p>
+          <p className="break-keep text-[13px] font-medium text-neutral-500">
+            {starter
+              ? `가족 패스로 매달 새 동화책 ${booksText(terms.monthly.booksPerMonth)}을 만들 수 있어요.`
+              : `처음이라면 스타트팩(${won(terms.starter.priceWon)})으로 동화 ${booksText(terms.starter.books)}부터 만들어 볼 수 있어요.`}
+          </p>
           <div className="mt-4">
             <BigLink href="/plans" colors={colors}>
               요금제 보기
@@ -190,6 +197,47 @@ export function BillingDemo({ terms = DEFAULT_PLAN_TERMS }: { terms?: PlanTerms 
           </div>
         </Card>
       )}
+
+      {/* 스타트팩 — 산 뒤에만(처음 한 번만 산다) */}
+      {starter && (
+        <Card labelledBy="starter-now">
+          <CardTitle id="starter-now" right={<DemoPill />}>
+            스타트팩
+          </CardTitle>
+          <InfoBox>
+            <Row label="만들 수 있는 동화">
+              <span className="flex flex-wrap items-center justify-end gap-2">
+                <span className="text-[17px]" style={{ color: colors.accentDark }}>
+                  {booksText(starter.booksLeft)}
+                </span>
+                <BookDots n={starter.booksLeft} color={colors.accent} />
+              </span>
+            </Row>
+            <Row label="산 날">{formatDateKo(new Date(starter.boughtAt))}</Row>
+          </InfoBox>
+        </Card>
+      )}
+
+      {/* 내 크레딧 — 시연 잔액. 사는 곳은 요금제 화면의 크레딧 칸 */}
+      <Card labelledBy="credit-now">
+        <CardTitle id="credit-now" right={<DemoPill />}>
+          내 크레딧
+        </CardTitle>
+        <p
+          className={`text-[28px] font-extrabold leading-tight tabular-nums ${state.credits ? "" : "text-neutral-400"}`}
+          style={state.credits ? { color: colors.accentDark } : undefined}
+        >
+          {creditsText(state.credits)}
+        </p>
+        <p className="mt-1 break-keep text-[13px] font-medium text-neutral-500">
+          {state.credits
+            ? "가족 패스·스타트팩에 든 몫을 다 쓴 뒤 동화·가족 캐릭터·가족 목소리를 더할 때 써요."
+            : "아직 크레딧이 없어요. 더 필요할 때 요금제 화면에서 살 수 있어요."}
+        </p>
+        <div className="mt-4">
+          <SoftLink href="/plans#credits">크레딧 보기</SoftLink>
+        </div>
+      </Card>
 
       <Card labelledBy="receipts">
         <CardTitle id="receipts">결제 내역</CardTitle>
@@ -200,7 +248,7 @@ export function BillingDemo({ terms = DEFAULT_PLAN_TERMS }: { terms?: PlanTerms 
                 <span className="w-12 shrink-0 text-[13px] font-bold tabular-nums text-neutral-500">
                   {formatShortDateKo(new Date(r.at))}
                 </span>
-                <span className="min-w-0 flex-1 truncate text-sm font-extrabold text-neutral-800">{plans[r.plan].name}</span>
+                <span className="min-w-0 flex-1 truncate text-sm font-extrabold text-neutral-800">{receiptName(r, terms)}</span>
                 <span className="shrink-0 text-sm font-extrabold text-neutral-800">{won(r.amountWon)}</span>
                 <DemoPill />
               </li>

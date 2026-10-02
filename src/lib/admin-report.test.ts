@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import {
   BOOK_COST_LINES,
@@ -44,11 +44,11 @@ describe("가격정책 확인 데이터 계산 — 넉넉한 가정, 각 회사 
 describe("보고 화면 내용", () => {
   const app = { signupBonus: 200, tokensPerBook: 12, tokenWon: 100 };
 
-  it("일곱 갈래 · 맨 위에 지울 화면이라는 띠", () => {
+  it("여덟 갈래 · 맨 위에 지울 화면이라는 띠", () => {
     const r = buildAdminReport(DEFAULT_OFFER_VIEW, app, "db");
     assert.deepEqual(
       r.sections.map((s) => s.id),
-      ["now", "how", "book", "fixed", "fees", "profit", "check"],
+      ["now", "how", "screens", "book", "fixed", "fees", "profit", "check"],
     );
     assert.ok(r.banner.join(" ").includes("지워요"));
     assert.equal(r.source, "db");
@@ -75,6 +75,20 @@ describe("보고 화면 내용", () => {
     const r = buildAdminReport(DEFAULT_OFFER_VIEW, null, "fallback");
     assert.ok(r.basis.includes("기본값으로 계산"));
     assert.ok(!JSON.stringify(r).includes("지금 가입하면"));
+  });
+});
+
+describe("고객 화면 그림", () => {
+  it("그림 파일이 public/admin-report 에 있고, 설명이 붙어 있다", () => {
+    const r = buildAdminReport(DEFAULT_OFFER_VIEW, { signupBonus: 200, tokensPerBook: 12, tokenWon: 100 }, "db");
+    const figs = r.sections.find((s) => s.id === "screens")?.figures ?? [];
+    assert.equal(figs.length, 4);
+    for (const f of figs) {
+      assert.match(f.src, /^\/admin-report\/[a-z-]+\.jpg$/);
+      assert.ok(existsSync(new URL(`../../public${f.src}`, import.meta.url)), f.src);
+      assert.ok(f.legend.length >= 2, f.title);
+    }
+    assert.ok(figs[0].legend[1].includes("17% 할인"));
   });
 });
 

@@ -6,12 +6,14 @@
  * 가격·구성은 lib/plans 한 곳에서만 온다(숫자를 손으로 적지 않는다). 동화는 "권"으로 센다.
  * 무료·스타트팩 권수와 크레딧 값은 관리실 설정이라 서버 화면(app/plans/page)이 읽어 offer 로 넘긴다 — 이 파일은 받기만 한다.
  * 시연 스위치가 off 여도 가격은 그대로 보이고, 시작 단추만 '결제는 곧 열려요'로 잠긴다.
- * 스타트팩·크레딧은 아직 시연 결제가 없다 — 늘 '곧 열려요'로 잠근다(2026-10-01 구성 확정, 결제 연결 전).
+ * 스타트팩·크레딧도 가족 패스처럼 시연 결제로 이어진다(2026-10-02 사장님 "스타트팩도 결제하는 쪽에 · 크레딧 구매 틀만이라도").
+ *  크레딧은 묶음 한 줄을 누르면 그 묶음으로 결제하기(/checkout?plan=credit&pack=값)로 간다.
  */
 
+import Link from "next/link";
 import { useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
-import { PAY_DEMO } from "@/lib/pay-demo";
+import { PAY_DEMO, checkoutHref } from "@/lib/pay-demo";
 import {
   CREDIT_USES,
   CREDIT_USE_LABEL,
@@ -154,7 +156,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
             {PAY_DEMO === "off" ? (
               <LockedButton describedBy="pass-soon">결제는 곧 열려요</LockedButton>
             ) : (
-              <BigLink href={`/checkout?plan=${period}`} colors={colors}>
+              <BigLink href={checkoutHref(period)} colors={colors}>
                 가족 패스 시작하기
               </BigLink>
             )}
@@ -174,7 +176,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
         </div>
       </section>
 
-      {/* 스타트팩 — 처음 한 번만. 결제 연결 전이라 늘 잠근다 */}
+      {/* 스타트팩 — 처음 한 번만(이미 샀는지는 결제하기 화면이 본다) */}
       <Card labelledBy="starter-title">
         <CardTitle
           id="starter-title"
@@ -187,11 +189,21 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
         </p>
         <CheckList items={starterFeatures(offer)} />
         <div className="mt-5">
-          <LockedButton describedBy="starter-soon">곧 열려요</LockedButton>
+          {PAY_DEMO === "off" ? (
+            <LockedButton describedBy="starter-soon">곧 열려요</LockedButton>
+          ) : (
+            <BigLink href={checkoutHref("starter")} colors={colors}>
+              스타트팩으로 시작하기
+            </BigLink>
+          )}
         </div>
-        <p id="starter-soon" className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
-          스타트팩은 결제가 열리면 살 수 있어요.
-        </p>
+        {PAY_DEMO === "off" ? (
+          <p id="starter-soon" className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
+            스타트팩은 결제가 열리면 살 수 있어요.
+          </p>
+        ) : (
+          <DemoPayNote />
+        )}
       </Card>
 
       {/* 무료로 듣기 — 비회원도. 무료로 연 동화가 없으면 감춘다 */}
@@ -212,21 +224,41 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
         </Card>
       )}
 
-      {/* 크레딧 — 플랜에 든 몫을 다 쓴 뒤 더할 때. 값은 관리실 설정 */}
-      <Card labelledBy="credit-title">
+      {/* 크레딧 — 플랜에 든 몫을 다 쓴 뒤 더할 때. 값은 관리실 설정. 시연 중에는 묶음 한 줄이 결제하기로 가는 링크 */}
+      <Card id="credits" labelledBy="credit-title" className="scroll-mt-16">
         <CardTitle id="credit-title">더 필요할 때는 크레딧</CardTitle>
         <ul className="flex flex-col gap-2">
-          {offer.creditPacks.map((p) => (
-            <li
-              key={p.priceWon}
-              className="flex items-center justify-between gap-2 rounded-[20px] bg-stone-50 px-4 py-3 shadow-[inset_0_0_0_1px_#f0ede8]"
-            >
-              <span className="text-[15px] font-extrabold text-neutral-800">{creditsText(p.credits)}</span>
-              <span className="text-[15px] font-extrabold tabular-nums" style={{ color: colors.accentDark }}>
-                {won(p.priceWon)}
-              </span>
-            </li>
-          ))}
+          {offer.creditPacks.map((p) => {
+            const inner = (
+              <>
+                <span className="text-[15px] font-extrabold text-neutral-800">{creditsText(p.credits)}</span>
+                <span className="flex items-center gap-1.5 text-[15px] font-extrabold tabular-nums" style={{ color: colors.accentDark }}>
+                  {won(p.priceWon)}
+                  {PAY_DEMO !== "off" && (
+                    <span aria-hidden className="text-[17px] leading-none">
+                      ›
+                    </span>
+                  )}
+                </span>
+              </>
+            );
+            const row = "flex min-h-[52px] items-center justify-between gap-2 rounded-[20px] bg-stone-50 px-4 py-3 shadow-[inset_0_0_0_1px_#f0ede8]";
+            return (
+              <li key={p.priceWon}>
+                {PAY_DEMO === "off" ? (
+                  <div className={row}>{inner}</div>
+                ) : (
+                  <Link
+                    href={checkoutHref("credit", p.priceWon)}
+                    className={`${row} transition hover:bg-stone-100 active:translate-y-[2px] ${FOCUS}`}
+                  >
+                    {inner}
+                    <span className="sr-only">결제하러 가기</span>
+                  </Link>
+                )}
+              </li>
+            );
+          })}
         </ul>
         <p className="mt-4 text-[13px] font-extrabold text-neutral-700">이렇게 써요</p>
         <ul className="mt-1.5 flex flex-col gap-1">
@@ -238,8 +270,10 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
           ))}
         </ul>
         <p className="mt-2.5 break-keep text-[13px] font-medium leading-relaxed text-neutral-500">
-          가족 패스·스타트팩에 든 몫을 다 쓴 뒤에 더할 때 써요. 크레딧은 결제가 열리면 살 수 있어요.
+          가족 패스·스타트팩에 든 몫을 다 쓴 뒤에 더할 때 써요.{" "}
+          {PAY_DEMO === "off" ? "크레딧은 결제가 열리면 살 수 있어요." : "묶음을 누르면 결제하기로 가요."}
         </p>
+        {PAY_DEMO !== "off" && <DemoPayNote />}
       </Card>
 
       {/* 자주 묻는 질문 — details/summary 라 키보드·화면 읽기가 기본으로 된다 */}
@@ -285,5 +319,16 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
 
       <SiteFooter />
     </PayShell>
+  );
+}
+
+/** 시연 스위치가 켜져 있는 동안 스타트팩·크레딧 단추 아래 — 누르기 전에 시연 결제라는 것을 알린다(가족 패스 카드와 같은 문장). */
+function DemoPayNote() {
+  return (
+    <p className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
+      <span className="font-extrabold text-amber-800">지금은 시연 결제로 이어져요 · 실제로 결제되지 않아요</span>
+      <br />
+      결제 전에 로그인이 필요해요
+    </p>
   );
 }

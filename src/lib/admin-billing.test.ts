@@ -147,6 +147,8 @@ describe("상태 이름·색", () => {
     assert.equal(planLabel("monthly"), "가족 패스 (월간)");
     assert.equal(planLabel("yearly"), "가족 패스 (연간)");
     assert.equal(planLabel("extra3"), "추가 3권");
+    assert.equal(planLabel("starter"), "스타트팩");
+    assert.equal(planLabel("credit"), "크레딧");
     assert.equal(planLabel("weekly"), "weekly");
     assert.equal(planLabel(""), "–");
   });

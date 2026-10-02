@@ -6,7 +6,9 @@
  * 이 화면은 **아무 데도 쓰지 않는다**. 읽는 것은 loadSession(내 프로필) 하나, 적는 것은 이 탭의 시연 기록(대기 주문)뿐이다.
  * 앱의 잔액·만들기 권한은 그대로다. 마스터(fe·yogico)도 같은 갈래를 지나간다 — 사장님이 fe 로 시연할 수 있게.
  *
- * 화면 갈래: loading → soon(스위치 off) / login(비회원) / extra-no(패스 없이 추가 3권) / already(이미 패스) / ready
+ * 화면 갈래: loading → soon(스위치 off) / login(비회원) / extra-no(패스 없이 추가 3권) / already(이미 패스)
+ *           / starter-again(스타트팩을 이미 삼) / ready
+ * 사는 것: 가족 패스(월간·연간) · 추가 3권 · 스타트팩 · 크레딧 묶음(creditPack — 서버 page 가 관리실 묶음 목록에서 고른다).
  * 날짜는 모두 브라우저에서 계산한다(서버 HTML 과 어긋나지 않게) — ready 로 갈 때 now 를 state 에 넣는다.
  * Math.random · new Date() 는 이벤트 안에서만 부른다(렌더 중에 부르면 순수성 규칙에 걸린다).
  */
@@ -25,6 +27,7 @@ import {
   PAY_DEMO,
   PAY_METHODS,
   canBuyExtra,
+  canBuyStarter,
   demoOrderId,
   initialConsents,
   parentQuestion,
@@ -40,6 +43,7 @@ import {
   nextBillingDate,
   plansOf,
   won,
+  type CreditPack,
   type PlanId,
   type PlanTerms,
 } from "@/lib/plans";
@@ -70,20 +74,33 @@ type View =
   | { kind: "login" }
   | { kind: "extra-no" }
   | { kind: "already" }
+  | { kind: "starter-again" }
   | { kind: "ready"; uid: string; now: Date };
 
 /** 가짜 처리 가림막 단계 */
 type Busy = null | "open" | "confirm";
 
-/** terms — 관리실 요금제 값(서버 page 가 읽어 넘긴다). 값·권수·목소리 수가 요금제 화면과 같게. */
-export function CheckoutDemo({ plan: planId, terms = DEFAULT_PLAN_TERMS }: { plan: PlanId; terms?: PlanTerms }) {
+/**
+ * terms — 관리실 요금제 값(서버 page 가 읽어 넘긴다). 값·권수·목소리 수가 요금제 화면과 같게.
+ * creditPack — plan 이 credit 일 때 고른 묶음(서버 page 가 관리실 묶음 목록에서 찾아 넘긴다 — 주소의 값을 그대로 믿지 않는다).
+ */
+export function CheckoutDemo({
+  plan: planId,
+  terms = DEFAULT_PLAN_TERMS,
+  creditPack,
+}: {
+  plan: PlanId;
+  terms?: PlanTerms;
+  creditPack?: CreditPack;
+}) {
   const router = useRouter();
   const { theme } = useTheme();
   const colors = theme.colors;
-  const plan = plansOf(terms)[planId];
+  const plan = plansOf(terms, creditPack)[planId];
   // 아래 확인 효과는 값(글자·참거짓)에만 기대게 한다 — 요금제 묶음은 그릴 때마다 새로 만들어져서
   const planSubscriberOnly = plan.subscriberOnly;
   const planIsSub = plan.kind === "subscription";
+  const planIsStarter = plan.kind === "starter";
   const passVoices = (planId === "yearly" ? terms.yearly : terms.monthly).voices;
 
   const [view, setView] = useState<View>(PAY_DEMO === "off" ? { kind: "soon" } : { kind: "loading" });
@@ -118,6 +135,10 @@ export function CheckoutDemo({ plan: planId, terms = DEFAULT_PLAN_TERMS }: { pla
           setView({ kind: "already" });
           return;
         }
+        if (planIsStarter && !canBuyStarter(state)) {
+          setView({ kind: "starter-again" });
+          return;
+        }
         setView({ kind: "ready", uid: s.uid, now: new Date() });
       })
       .catch(() => {
@@ -126,7 +147,7 @@ export function CheckoutDemo({ plan: planId, terms = DEFAULT_PLAN_TERMS }: { pla
     return () => {
       alive = false;
     };
-  }, [planSubscriberOnly, planIsSub]);
+  }, [planSubscriberOnly, planIsSub, planIsStarter]);
 
   // 화면을 떠나면 가짜 처리 시계를 멈춘다.
   useEffect(() => {
@@ -189,12 +210,38 @@ export function CheckoutDemo({ plan: planId, terms = DEFAULT_PLAN_TERMS }: { pla
       </PayShell>
     );
   }
+  if (view.kind === "starter-again") {
+    return (
+      <PayShell demo>
+        <NoticeCard
+          title="스타트팩은 이미 샀어요"
+          body="스타트팩은 처음 한 번만 살 수 있어요. 동화를 더 만들려면 가족 패스나 크레딧을 봐 주세요."
+        >
+          <BigLink href="/plans" colors={colors} replace>
+            요금제 보기
+          </BigLink>
+          <SoftLink href="/billing" replace>
+            내 결제·구독 보기
+          </SoftLink>
+        </NoticeCard>
+      </PayShell>
+    );
+  }
 
   const { uid, now } = view;
   const next = nextBillingDate(now, plan);
   const isSub = plan.kind === "subscription";
   const canPay = consents[0] && consents[1] && !!method && !busy;
   const payLabel = `${won(plan.priceWon)} 결제하기 · 시연`;
+  const orderLine = isSub
+    ? `매달 새 동화책 ${plan.books}권 · 가족 목소리 ${passVoices}명 · 다시 듣기 무제한`
+    : plan.kind === "starter"
+      ? `우리 아이 동화 ${plan.books}권 · 가족 캐릭터 ${terms.starter.familyCharacters}명 · 가족 목소리 ${terms.starter.voices}명`
+      : plan.kind === "credit"
+        ? "동화·가족 캐릭터·가족 목소리를 더할 때 써요"
+        : `지금 쓰는 가족 패스에 동화책 ${plan.books}권을 더해요`;
+  // 실패 화면의 '다시 해 볼게요'가 같은 묶음으로 돌아오게 크레딧은 묶음 값도 싣는다
+  const failHref = `/checkout/fail?plan=${plan.id}${plan.kind === "credit" ? `&pack=${plan.priceWon}` : ""}&code=REJECT_CARD_COMPANY`;
 
   function toggleConsent(i: 0 | 1, on: boolean) {
     setConsents((c) => (i === 0 ? [on, c[1]] : [c[0], on]));
@@ -227,15 +274,23 @@ export function CheckoutDemo({ plan: planId, terms = DEFAULT_PLAN_TERMS }: { pla
     const orderId = demoOrderId(at, Math.random);
     /*
      * TODO(PG-HOOK-1) 진짜 PG 를 붙일 자리 — 이 함수가 CheckoutLive 에서는 이렇게 바뀐다.
-     *  ① 주문 만들기 서버 경로(api/payments/orders)에 **요금제 id 만** 보낸다. 서버가 서버 쪽 가격표로 금액을 정하고,
-     *     주문 줄(ready)을 만들어 주문번호·금액·주문명을 돌려준다(브라우저가 보낸 금액은 믿지 않는다).
-     *  ② 구독(월·연)은 결제사의 자동결제(빌링키) 등록 창을, 추가 3권은 한 번 결제 창을 연다.
+     *  ① 주문 만들기 서버 경로(api/payments/orders)에 **요금제 id 만**(크레딧은 묶음 값까지) 보낸다. 서버가 서버 쪽 가격표·
+     *     묶음표로 금액·크레딧 수를 정하고, 주문 줄(ready)을 만들어 주문번호·금액·주문명을 돌려준다(브라우저가 보낸 금액은 믿지 않는다).
+     *     스타트팩은 서버가 '처음 한 번'인지 다시 본다.
+     *  ② 구독(월·연)은 결제사의 자동결제(빌링키) 등록 창을, 추가 3권·스타트팩·크레딧은 한 번 결제 창을 연다.
      *     성공하면 결제사가 /checkout/done 으로, 실패하면 /checkout/fail 로 돌려보낸다.
      * 시연에서는 이 탭의 시연 기록에 대기 주문만 적고, 가림막을 보인 뒤 done 으로 간다.
      */
     writeDemoState(uid, {
       ...readDemoState(uid),
-      pending: { orderId, plan: plan.id, method, amountWon: plan.priceWon, at: at.toISOString() },
+      pending: {
+        orderId,
+        plan: plan.id,
+        method,
+        amountWon: plan.priceWon,
+        at: at.toISOString(),
+        ...(plan.kind === "credit" && plan.credits ? { credits: plan.credits } : {}),
+      },
     });
     timers.current.push(setTimeout(() => setBusy("confirm"), 900));
     timers.current.push(
@@ -261,11 +316,7 @@ export function CheckoutDemo({ plan: planId, terms = DEFAULT_PLAN_TERMS }: { pla
         <Card labelledBy="order-title">
           <CardTitle id="order-title">주문 내용</CardTitle>
           <p className="text-[17px] font-extrabold text-neutral-800">{plan.name}</p>
-          <p className="mt-0.5 break-keep text-[13px] font-medium text-neutral-500">
-            {isSub
-              ? `매달 새 동화책 ${plan.books}권 · 가족 목소리 ${passVoices}명 · 다시 듣기 무제한`
-              : `지금 쓰는 가족 패스에 동화책 ${plan.books}권을 더해요`}
-          </p>
+          <p className="mt-0.5 break-keep text-[13px] font-medium text-neutral-500">{orderLine}</p>
           <InfoBox className="mt-3">
             <Row label="결제 주기">{plan.period === "month" ? "매달 자동 결제" : plan.period === "year" ? "매년 자동 결제" : "한 번만 결제"}</Row>
             <Row label="이번 결제">오늘 {formatDateKo(now)}</Row>
@@ -386,7 +437,7 @@ export function CheckoutDemo({ plan: planId, terms = DEFAULT_PLAN_TERMS }: { pla
         </Card>
 
         <Link
-          href={`/checkout/fail?plan=${plan.id}&code=REJECT_CARD_COMPANY`}
+          href={failHref}
           replace
           className={`mx-auto inline-flex min-h-11 items-center rounded-full px-3 text-xs font-bold text-neutral-600 underline underline-offset-2 ${FOCUS}`}
         >

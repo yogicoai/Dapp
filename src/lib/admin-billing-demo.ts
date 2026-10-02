@@ -86,7 +86,7 @@ export function demoBilling(now: Date): BillingDemoData {
     }),
   ];
 
-  /* ── 결제 14 — 상태마다 하나 이상 ── */
+  /* ── 결제 16 — 상태마다 하나 이상 · 상품마다 하나 이상 ── */
   type PayInput = {
     n: string;
     who: { owner: string | null; ownerUsername: string };
@@ -152,6 +152,9 @@ export function demoBilling(now: Date): BillingDemoData {
     pay({ n: "11", who: member("02"), product: "yearly", status: "paid", created: at(40, 21, 10), method: "카드", subscriptionId: "demo-s02" }),
     pay({ n: "12", who: member("05"), product: "monthly", status: "paid", created: at(50, 14, 0), method: "카드", subscriptionId: "demo-s05" }),
     pay({ n: "13", who: LEFT_MEMBER, product: "monthly", status: "paid", created: at(63, 18, 45), method: "휴대폰" }),
+    // 스타트팩 → 가족 패스로 넘어간 모습(시연회원03) · 이번 달 책을 다 쓰고 크레딧을 산 모습(시연회원01) — 2026-10-02
+    pay({ n: "15", who: member("03"), product: "starter", status: "paid", created: at(6, 19, 12), method: "카드" }),
+    pay({ n: "16", who: member("01"), product: "credit", status: "paid", created: at(1, 21, 30), method: "간편결제" }),
     pay({
       n: "14", who: member("06"), product: "yearly", status: "partial_refunded", created: at(400, 11, 0), method: "카드", subscriptionId: "demo-s06",
       refunded: 59_500, cancelledAt: at(380, 10, 0),
