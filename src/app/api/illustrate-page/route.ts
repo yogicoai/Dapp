@@ -492,7 +492,7 @@ export async function POST(request: Request) {
           `LOCATION LOCK — this page takes place at "${currentLocation.name}". Fixed features that MUST be visible: ${currentLocation.description}.`,
           "The place is as important as the characters. Draw exactly this kind of place with exactly these features — never a generic forest, park, hanok, classroom, street or a different house in its place, and never a prettier substitute.",
           locationSheet
-            ? `The ${nth("location")} attached image is the LOCATION REFERENCE SHEET (the place with no people). It is the authoritative picture of this place: keep its ground, its big landmark, its architecture, its wall/floor colours and their arrangement. You may change the camera angle and crop; you may not change what the place is made of. Put the characters INTO this place.`
+            ? `The ${nth("location")} attached image is the LOCATION REFERENCE SHEET (the place with no people). It is the ONLY correct interpretation of this page's place — the author provided it. Keep its ground, its big landmark, its architecture, its wall/floor colours and their arrangement. You may change the camera angle and crop; you may not change what the place is made of, and no prop or story association may turn it into a different kind of room (never a hallway, corridor or entrance unless this image shows one). Put the characters INTO this place.`
             : "",
         ]
           .filter(Boolean)

@@ -116,9 +116,9 @@ export async function POST(request: Request) {
      */
     placeRef && bgMatch
       ? [
-          `The ${placeNth} attached image is OUR SAVED PICTURE of this very place ("${bgMatch.ko}") — the PLACE REFERENCE.`,
+          `TOP PRIORITY — the ${placeNth} attached image is OUR OWN SAVED PICTURE of this very place ("${bgMatch.ko}"), provided by the author. It DECIDES what this place is. Nothing may override it: not the place name's other possible meanings, not any prop or story association (a suitcase does NOT turn a living room into a hallway), not your own idea of such a place.`,
           "Rebuild the SAME place from it: the same kind of room or ground, the same furniture or landmark in the same arrangement, the same colours and overall mood. Repaint it in this book's painting style (the STYLE SAMPLE decides the rendering, never this picture's own finish), and you may adjust the camera a little for a clean establishing shot.",
-          "It contains no people — likewise draw none. Never swap it for a different kind of room, a hallway or a corridor.",
+          "It contains no people — likewise draw none. Never swap it for a different kind of room, a hallway or a corridor. If anything written below seems to disagree with this picture about what the place IS, follow this picture and use the words only for small details.",
         ].join("\n")
       : "",
     description
