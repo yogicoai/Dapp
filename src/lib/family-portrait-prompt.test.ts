@@ -890,13 +890,16 @@ describe("MUST KEEP·ADULT FACE — 카드에 있는 특징이 흔히 어긋나�
     assert.ok(!buildPrompt(person("dad"), PHOTO, "- gender: man\n- hair: short straight black hair\n- glasses: none\n- build: slim\n- clothing: navy").includes("MUST KEEP"));
   });
 
-  it("아이 — 앞머리·가르마·얼굴·턱·주근깨만(눈·코·입은 부드러운 그림책 얼굴 그대로), ADULT FACE·견본 얼굴 말·흉터는 없다", () => {
+  it("아이 — 앞머리·가르마·얼굴·턱·눈·주근깨(2026-10-02 눈은 아이도), KID FACE 줄이 붙고 ADULT FACE·견본 얼굴 말·흉터는 없다", () => {
     const kid = person("child", { callName: "하온", age: 6, gender: "girl" });
     for (const refs of [PHOTO, NO_PHOTO]) {
       const p = buildPrompt(kid, refs, KID_CARD);
       const must = p.split("\n").find((l) => l.startsWith(G_MUST));
-      assert.equal(must, `${G_MUST}${[G_FRINGE, G_CENTRE, G_FACE, G_CHIN, G_FRECKLES].join("; ")}.`);
+      assert.equal(must, `${G_MUST}${[G_FRINGE, G_CENTRE, G_FACE, G_CHIN, G_EYES, G_FRECKLES].join("; ")}.`);
       assert.ok(!p.includes("ADULT FACE"));
+      // 아이 닮음 줄(2026-10-02 사장님 "보자마자 '어 우리 아이다'") — 사진·카드 갈래 모두
+      assert.ok(p.includes("THIS CHILD'S OWN FACE"));
+      assert.ok(p.includes("never swapped for generic big round eyes"));
       assert.ok(!p.includes(SAMPLE_NO_FACE));
       assert.ok(!/\bscar/i.test(p), "아이 그림의 흉터 말은 뺀다(아이 나이 줄 옆의 상처 말 — 안전 검사)");
       assert.ok(p.includes("- skin marks: a few freckles across the nose"));
@@ -1073,6 +1076,8 @@ describe("redrawLikeness — 사진(카드)으로 그렸으면 머리 비율 다
     assert.ok(!/\bscar|ADULT FACE|\bphoto/i.test(l));
     assert.equal(CHILD_FRAMING.exec(l), null);
     assert.ok(!/\bbaby/i.test(l));
+    // 아이 닮음 줄의 다시 그리기 판(2026-10-02) — 아이 쪽 말 없이(위 CHILD_FRAMING 검사가 함께 지킨다)
+    assert.ok(l.includes("THIS PERSON'S OWN FACE"));
   });
 
   it("어른 카드의 아이 쪽 말은 빼고, 남는 칸이 없으면 null(예전 그대로 다시 그린다)", () => {

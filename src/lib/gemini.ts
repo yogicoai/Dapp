@@ -361,6 +361,23 @@ export function imageRequestParts(
   ];
 }
 
+/**
+ * 그림 모델 이름 — 안 적으면 3.1. 기본값이 2.5 이던 때 Vercel 에 값이 빠져 운영이 조용히 2.5 로 그렸고(2026-10-02),
+ * 2.x 는 참고 그림을 적게 따라(쪽당 얼굴 1장) 가족 얼굴 닮음이 통째로 떨어졌다. 일부러 2.x 를 적은 게 아니면
+ * 알아차리게 한 번은 경고를 남긴다. lib/sheet-prompt maxPortraitRefs 의 기본값과 같게 간다.
+ */
+let warnedOldImageModel = false;
+function imageModelName(): string {
+  const model = (process.env.GEMINI_IMAGE_MODEL ?? "gemini-3.1-flash-image").trim();
+  if (!warnedOldImageModel && /^gemini-2(?:[.-]|$)/i.test(model)) {
+    warnedOldImageModel = true;
+    console.warn(
+      `[gemini] 그림 모델이 ${model} — 2.x는 참고 그림(가족 얼굴)을 적게 따라 닮음이 떨어져요. GEMINI_IMAGE_MODEL 을 확인하세요.`,
+    );
+  }
+  return model;
+}
+
 export async function generateImage(input: {
   prompt: string;
   /** 참조 이미지(캐릭터 시트 등). 인물 일관성의 핵심이라 매 쪽 재주입한다. */
@@ -401,7 +418,7 @@ export async function generateImage(input: {
     );
   }
 
-  const model = process.env.GEMINI_IMAGE_MODEL ?? "gemini-2.5-flash-image";
+  const model = imageModelName();
 
   const parts = imageRequestParts(input.references ?? [], input.referenceLabels, input.prompt);
 

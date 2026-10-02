@@ -27,7 +27,8 @@ export function sheetReferences<T>(sample: T | null, portraits: readonly T[], dr
  * 고정 얼굴을 몇 장까지 붙일까.
  * gemini-2.x 그림 모델(2.5-flash-image …)은 참고 그림 3장 이하에서 가장 잘 따른다 — 견본 1 + 얼굴 2.
  * 3.x 그림 모델·OpenAI(gpt-image /edits, 16장까지)는 견본 1 + 얼굴 4.
- * 안 적으면 gemini.ts 와 같이 gemini + gemini-2.5-flash-image 로 본다.
+ * 안 적으면 3.1 로 본다(gemini.ts 기본값과 같게, 2026-10-02) — 기본값이 2.5 이던 때 Vercel 에 값이 빠져
+ * 운영이 조용히 2.5 로 그렸다(쪽당 얼굴 1장 — 닮음이 통째로 떨어졌다).
  */
 export function maxPortraitRefs(env: {
   IMAGE_PROVIDER?: string;
@@ -35,7 +36,7 @@ export function maxPortraitRefs(env: {
   [key: string]: string | undefined;
 }): number {
   if (env.IMAGE_PROVIDER?.trim().toLowerCase() === "openai") return 4;
-  const model = (env.GEMINI_IMAGE_MODEL ?? "gemini-2.5-flash-image").trim().toLowerCase();
+  const model = (env.GEMINI_IMAGE_MODEL ?? "gemini-3.1-flash-image").trim().toLowerCase();
   return /^gemini-2(?:[.-]|$)/.test(model) ? 2 : 4;
 }
 

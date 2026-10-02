@@ -537,6 +537,8 @@ export function cardFor(input: PortraitInput, card: string | null): string | nul
  *  ① MUST KEEP 줄(driftGuards) — 카드에 그 특징이 **있을 때만** 그 특징이 흔히 어긋나는 쪽을 한 마디씩 막는다. 특징 말은 카드
  *     에서만 오고, 없는 사람에게는 그 말을 적지 않는다(예시 낱말이 옮겨 그려지는 버릇 — 없는 주근깨·앞머리를 얹지 않게).
  *     눈·코·입은 어른만 — 아이는 오늘의 부드러운 그림책 얼굴 그대로 두고, 앞머리·얼굴형·턱·주근깨·점만 지킨다.
+ *     (2026-10-02 사장님 "보자마자 '어 우리 아이다'가 약하다" — 눈은 아이도 지키고, 아이 전용 KID FACE 줄을 더했다.
+ *      코·입 과장 막이는 여전히 어른만 — 아이 코·입은 그림책 수준으로 작게 그려도 닮음을 해치지 않는다.)
  *  ② ADULT FACE 줄(adultFace) — 어른 얼굴을 그림책의 귀여운 얼굴(둥근 얼굴·큰 둥근 눈·점 코·볼 터치)로 바꾸지 않게. 이 당김은
  *     글이 아니라 붙인 그림체 견본(style_01, 점 눈·벌린 입·분홍 볼의 여우)에서 온다 — 견본 줄에도 '얼굴 양식은 가져오지 말 것'을
  *     어른에게만 덧붙인다. 아이·칩 갈래는 그대로.
@@ -665,7 +667,8 @@ function driftGuards(spec: string, adult: boolean): string {
       ? "the face keeps the shape and length the spec gives it — never rounded off into a short, round face"
       : "",
     CHIN_NARROW.test(chin) && !CHIN_BROAD.test(chin) ? "the chin stays as narrow as the spec gives it — never widened into a broad jaw" : "",
-    adult && EYES_NARROW.test(eyes) && !EYES_BIG.test(eyes)
+    // 눈 — 아이도 지킨다(2026-10-02): 홑꺼풀·가는 눈이 큰 둥근 눈으로 바뀌는 것이 '내 아이' 느낌을 가장 크게 깬다.
+    EYES_NARROW.test(eyes) && !EYES_BIG.test(eyes)
       ? "the eyes keep the eyelids, shape and size the spec gives them — NOT big round picture-book eyes, and never exaggerated into slits"
       : "",
     adult && NOSE_BRIDGE.test(nose) && !NOSE_LOW.test(nose)
@@ -696,6 +699,25 @@ function adultFace(source: "photo" | "card"): string {
   const rosy = source === "photo" ? "the photo shows rosy cheeks" : "the LIKENESS SPEC gives rosy cheeks";
   return `ADULT FACE: paint a grown-up's real face, not the generic cute picture-book face — keep the real eye shape and eye size (never enlarged into big round eyes), face length and chin (never shortened or rounded off into a younger-looking face), nose bridge (never shrunk to a tiny dot nose), mouth size and apparent age (never younger-looking). No pink blush circles on the cheeks unless ${rosy}. The picture-book look comes only from the rendering — soft washes and the thin pencil contour.`;
 }
+
+/**
+ * KID FACE 줄(2026-10-02 사장님 "이미지가 보자마자 '어 우리 아이다' 느낌이 나야") — 사진·카드 갈래의 아이만.
+ * 09-30엔 아이 얼굴을 그림책 얼굴 그대로 뒀는데, 아이야말로 큰 둥근 눈·표준 귀여운 얼굴로의 평균화가 가장 세다 —
+ * 닮음이 귀여움보다 먼저다(사장님 09-30 "보자마자 내 얼굴"). 어른 줄과 달리 코·입은 '이 그림체의 보통 수준으로 작게'를
+ * 허락하되 자리·모양을 바꾸지 말라고만 하고, 나이는 '더 나이 들어 보이게'를 막는다(아이 쪽은 어려 보이는 게 문제가 아니다).
+ */
+function kidFace(source: "photo" | "card", closeUp: boolean): string {
+  const from = source === "photo" ? (closeUp ? "the photo and its face close-up" : "the photo") : "the LIKENESS SPEC";
+  const rosy = source === "photo" ? "the photo shows rosy cheeks" : "the LIKENESS SPEC gives rosy cheeks";
+  return `THIS CHILD'S OWN FACE: paint this child's own face, not the standard cute picture-book child. Copy from ${from}: the eye shape and eyelids (single or double), the eye size and spacing — never swapped for generic big round eyes; the real face shape and cheeks — never rounded off into the standard cute face; the nose and mouth where they are and shaped as shown (drawing them small and simple in this painting style is fine — moving or reshaping them is not); and every freckle, mole and dimple it shows. No pink blush circles unless ${rosy}. Apparent age stays the same — never older-looking. The picture-book charm comes from the soft watercolour rendering, never from changing whose face it is.`;
+}
+
+/**
+ * KID FACE 의 다시 그리기 판 — 다시 그리기 글에는 아이 쪽 말을 쓰지 않는다(redrawLikeness 머리글, CHILD_WORDS).
+ * 사진이 없어 눈·코·입·나이는 처음 그림(FIRST image)을 기준으로 적는다.
+ */
+const KID_FACE_REDRAW =
+  "THIS PERSON'S OWN FACE: paint this person's own face, not the standard cute picture-book face — keep the eye shape, eyelids (single or double), eye size and spacing exactly as in the FIRST image, never swapped for generic big round eyes; keep the face shape and cheeks the spec gives — never rounded off into the standard cute face; keep the nose and mouth where they are and shaped as in the FIRST image (small and simple in this painting style is fine — moving or reshaping them is not); keep every freckle, mole and dimple the spec gives. No pink blush circles unless the spec gives rosy cheeks. The apparent age stays as in the FIRST image — never older-looking. The picture-book charm comes from the soft watercolour rendering, never from changing whose face it is.";
 
 /**
  * 그림체 견본 줄 끝 — 사진·카드 갈래의 어른만(머리글 '어긋나기 쉬운 쪽 막기' ②). 견본(style_01 여우)의 얼굴 양식을 가져오지 않게.
@@ -821,7 +843,7 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
     spec && source !== "chips" ? cardBlock(spec, source) : "",
     // 카드 바로 뒤 — 카드에 있는 특징만 '흔히 어긋나는 쪽'을 막는다(아이는 눈·코·입 빼고). 사진 규칙보다 앞.
     spec && source !== "chips" ? driftGuards(spec, !kid) : "",
-    realAdultFace ? adultFace(source) : "",
+    realAdultFace ? adultFace(source) : kid && source !== "chips" ? kidFace(source, has("closeUp")) : "",
     ...(source === "photo" ? photoRules(Boolean(spec), ageFromWho, has("closeUp")) : []),
     source === "card"
       ? "Keep the face shape and proportions the LIKENESS SPEC describes — face shape, eye shape and size, eyebrows, nose, mouth, cheeks and jaw — rather than a generic picture-book face; never exaggerate or caricature a feature."
@@ -911,7 +933,7 @@ export function redrawLikeness(input: PortraitInput, card: string | null): strin
     notes,
     SIDE_WORD.test(notes) ? SIDE_LINE : "",
     driftGuards(notes, !kid),
-    kid ? "" : adultFace("card"),
+    kid ? KID_FACE_REDRAW : adultFace("card"),
   ]
     .filter(Boolean)
     .join("\n");

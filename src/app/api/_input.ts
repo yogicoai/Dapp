@@ -42,6 +42,14 @@ export function parseChild(value: unknown): ChildProfile {
   const parentLooks = { mom: one(pl?.mom), dad: one(pl?.dad) };
   const familyLooks = parseFamilyLooks(c?.familyLooks);
 
+  // 고정 그림이 있는 주인공·엄마·아빠(2026-10-02 칩 차단) — true 만 받는다(남이 보낸 값).
+  const fx = c?.fixedLooks as { hero?: unknown; mom?: unknown; dad?: unknown } | undefined;
+  const fixedLooks = {
+    ...(fx?.hero === true ? { hero: true as const } : {}),
+    ...(fx?.mom === true ? { mom: true as const } : {}),
+    ...(fx?.dad === true ? { dad: true as const } : {}),
+  };
+
   return {
     name,
     age,
@@ -56,6 +64,7 @@ export function parseChild(value: unknown): ChildProfile {
         }
       : {}),
     ...(familyLooks.length ? { familyLooks } : {}),
+    ...(Object.keys(fixedLooks).length ? { fixedLooks } : {}),
   };
 }
 

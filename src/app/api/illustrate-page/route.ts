@@ -843,6 +843,18 @@ export async function POST(request: Request) {
       /\b(text|texts|writing|caption|captions|letter|letters|word|words|subtitle|subtitles|script|signage|label|labels|watermark|signature)\b/i.test(
         check.issues,
       );
+    /*
+     * 고정 가족 얼굴 지적(2026-10-02) — 부르는 쪽(만들기 화면)이 얼굴 전용 다시 그리기 1장을 따로 쓴다.
+     * 검수 FAIL 글이 얼굴·머리 낱말을 짚고 이 쪽에 고정 가족이 있을 때만. 글자·테두리가 먼저다(언제나 잘못이라).
+     */
+    const faceIssue =
+      !check.ok &&
+      !textIssue &&
+      !borderLeft &&
+      fixedOnPage.length > 0 &&
+      /\b(face|facial|hair|hairstyle|fringe|parting|eyes?|eyebrows?|nose|mouth|glasses|beard|freckles?|mole|older|younger)\b/i.test(
+        check.issues,
+      );
     return NextResponse.json({
       image: toDataUrl(image),
       corrected: Boolean(borderIssue),
@@ -850,7 +862,12 @@ export async function POST(request: Request) {
       qualityChecked: check.checked,
       qualityPassed: check.ok,
       // border — 흰 여백이 남았다. 부르는 쪽이 다시 그린 그림에 흰 여백만 없으면 다른 지적이 있어도 그쪽을 쓴다.
-      ...(check.ok ? {} : { qualityWarning: check.issues, qualityIssue: textIssue ? "text" : borderLeft ? "border" : "other" }),
+      ...(check.ok
+        ? {}
+        : {
+            qualityWarning: check.issues,
+            qualityIssue: textIssue ? "text" : borderLeft ? "border" : faceIssue ? "face" : "other",
+          }),
     });
   } catch (e) {
     /*

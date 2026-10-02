@@ -98,6 +98,12 @@ export type ChildProfile = {
    * line = 부모가 고른 생김새(옷 빼고), fixed = 가족 화면에 그림이 고정된 사람(line 이 없으면 생김새를 적지 말라고만 한다).
    */
   familyLooks?: { who: string; line?: string; fixed?: boolean }[];
+  /**
+   * 고정 그림이 있는 주인공·엄마·아빠(2026-10-02 사장님 "칩 차단") — 이 사람의 머리·얼굴은 칩 글이 아니라 고정 그림이
+   * 정한다. @@CHARACTER@@ 생김새 칸에 '가족 그림 그대로'라고만 쓰게 한다(할머니·형제의 familyLooks.fixed 와 같은 규칙).
+   * 쪽 그림은 어차피 원본 그림을 붙이지만, 글에 다른 머리·얼굴이 적혀 있으면 그림을 끌어당긴다(2026-10-01 시험).
+   */
+  fixedLooks?: { hero?: boolean; mom?: boolean; dad?: boolean };
 };
 
 /**
@@ -184,16 +190,23 @@ function describeChild(child: ChildProfile): string {
      * 여기 적힌 것과 다르게 @@CHARACTER@@를 쓰면, 그림 단계에서 두 설명이
      * 부딪혀 아이가 자기 모습으로 못 알아본다.
      */
-    child.looks
-      ? `주인공의 생김새는 부모가 직접 고른 것이다. @@CHARACTER@@의 첫 줄에 이 내용을 **그대로** 쓰고, 여기 없는 머리 모양·머리결·눈매·피부를 새로 지어내지 않는다: ${child.looks}`
-      : "",
-    // 엄마·아빠도 부모가 알려 준 대로만 적는다. 안 알려 준 항목은 지어내지 않는다.
-    child.parentLooks?.mom
-      ? `엄마가 이야기에 나오면 생김새는 이대로 쓴다(부모가 직접 고름, 여기 없는 것은 지어내지 않는다): ${child.parentLooks.mom}`
-      : "",
-    child.parentLooks?.dad
-      ? `아빠가 이야기에 나오면 생김새는 이대로 쓴다(부모가 직접 고름, 여기 없는 것은 지어내지 않는다): ${child.parentLooks.dad}`
-      : "",
+    // 고정 그림이 있는 주인공 — 머리·얼굴은 그림이 정한다. 칩 글을 적으면 그림 단계에서 원본을 끌어당긴다(2026-10-02).
+    child.fixedLooks?.hero
+      ? `주인공의 얼굴·머리는 부모가 고정한 가족 캐릭터 그림이 정한다. @@CHARACTER@@ 첫 줄의 생김새는 '가족 그림 그대로'라고 쓰고, 머리 모양·머리 색·머리결·눈매·피부·안경을 지어내지 않는다.${child.looks ? ` 그 밖에 부모가 고른 것은 그대로 쓴다: ${child.looks}` : ""}`
+      : child.looks
+        ? `주인공의 생김새는 부모가 직접 고른 것이다. @@CHARACTER@@의 첫 줄에 이 내용을 **그대로** 쓰고, 여기 없는 머리 모양·머리결·눈매·피부를 새로 지어내지 않는다: ${child.looks}`
+        : "",
+    // 엄마·아빠도 부모가 알려 준 대로만 적는다. 안 알려 준 항목은 지어내지 않는다. 고정 그림이 있으면 그림이 정한다.
+    child.fixedLooks?.mom
+      ? `엄마가 이야기에 나오면 @@CHARACTER@@ 생김새 칸에는 '가족 그림 그대로'라고만 쓴다 — 머리·얼굴·안경을 지어내지 않는다(부모가 고정한 가족 그림이 정한다).`
+      : child.parentLooks?.mom
+        ? `엄마가 이야기에 나오면 생김새는 이대로 쓴다(부모가 직접 고름, 여기 없는 것은 지어내지 않는다): ${child.parentLooks.mom}`
+        : "",
+    child.fixedLooks?.dad
+      ? `아빠가 이야기에 나오면 @@CHARACTER@@ 생김새 칸에는 '가족 그림 그대로'라고만 쓴다 — 머리·얼굴·안경을 지어내지 않는다(부모가 고정한 가족 그림이 정한다).`
+      : child.parentLooks?.dad
+        ? `아빠가 이야기에 나오면 생김새는 이대로 쓴다(부모가 직접 고름, 여기 없는 것은 지어내지 않는다): ${child.parentLooks.dad}`
+        : "",
     // 할머니·할아버지·형제·단짝 친구 — 우리 가족 캐릭터에 넣은 사람(2026-10-01). 엄마·아빠와 같은 규칙이다(lib/family-cast).
     ...storyFamilyLookLines(child.familyLooks),
   ]

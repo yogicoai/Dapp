@@ -287,15 +287,18 @@ export function parentLooksToPrompt(
 /**
  * 아이 생김새 한 줄(한국어) — 이야기(describeChild)와 쪽 그림 설명에 간다.
  * opts.clothes=false 면 '좋아하는 옷 색'을 뺀다 — 옷은 책마다 이야기가 정한다(@@CHARACTER@@ 이 책의 옷 칸, 2026-09-29~).
+ * opts.identity=false 면 머리·눈·피부·체형·안경·특징(주근깨…)을 뺀다 — 고정 그림이 있는 주인공은 그 그림이
+ * 누구인지를 정하므로, 칩 글이 그림·이야기를 끌어당기지 않게(2026-10-02 사장님 "칩 차단"). 옷 색·늘 지니는 것·메모만 남는다.
  * 안 주면 예전 그대로(옛 대본을 이어 그릴 때).
  */
-export function looksToPrompt(looks: ChildLooks | undefined, opts: { clothes?: boolean } = {}): string {
+export function looksToPrompt(looks: ChildLooks | undefined, opts: { clothes?: boolean; identity?: boolean } = {}): string {
   if (!looks) return "";
+  const identity = opts.identity !== false;
   const parts: string[] = [];
   // 머리 — 색·모양·앞머리를 한 덩어리로 묶어야 그림이 헷갈리지 않는다.
-  const hair = [looks.hairColor, looks.hair].filter(Boolean).join(" ");
+  const hair = identity ? [looks.hairColor, looks.hair].filter(Boolean).join(" ") : "";
   if (hair) parts.push(hair);
-  if (looks.hairTexture) {
+  if (identity && looks.hairTexture) {
     const texture = {
       "곧은 생머리": "머리결은 곧은 생머리이며 웨이브·곱슬·파마가 전혀 없다",
       "살짝 웨이브": "머리결은 끝부분에만 부드러운 웨이브가 살짝 있다",
@@ -304,14 +307,14 @@ export function looksToPrompt(looks: ChildLooks | undefined, opts: { clothes?: b
     }[looks.hairTexture] ?? `머리결은 ${looks.hairTexture}`;
     parts.push(texture);
   }
-  if (looks.bangs) parts.push(`앞머리는 ${looks.bangs}`);
-  if (looks.eyes) parts.push(`눈은 ${looks.eyes}`);
-  if (looks.skin) parts.push(`피부는 ${looks.skin}`);
-  if (looks.build) parts.push(looks.build);
-  if (looks.glasses) parts.push("안경을 썼다");
+  if (identity && looks.bangs) parts.push(`앞머리는 ${looks.bangs}`);
+  if (identity && looks.eyes) parts.push(`눈은 ${looks.eyes}`);
+  if (identity && looks.skin) parts.push(`피부는 ${looks.skin}`);
+  if (identity && looks.build) parts.push(looks.build);
+  if (identity && looks.glasses) parts.push("안경을 썼다");
   if (looks.color && opts.clothes !== false) parts.push(`${looks.color} 옷을 즐겨 입는다`);
   if (looks.items?.length) parts.push(`늘 ${looks.items.join("·")}을(를) 지니고 다닌다`);
-  if (looks.marks?.length) parts.push(looks.marks.join("·"));
+  if (identity && looks.marks?.length) parts.push(looks.marks.join("·"));
   if (looks.note) parts.push(looks.note); // 부모가 직접 적은 것 — 맨 뒤에 그대로 얹는다
   return parts.join(", ");
 }

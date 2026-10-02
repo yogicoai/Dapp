@@ -96,24 +96,30 @@ export function wearableItems(items: string[] | undefined): string[] {
  * 그림 모델에 줄 영어 한 줄. 고르지 않은 항목은 빠지고, 대응표에 없는 값은 한국어 그대로
  * 남긴다(Gemini가 대체로 읽는다). 아무것도 없으면 빈 문자열.
  * opts.clothes=false 면 좋아하는 옷 색을 뺀다 — 이 책의 옷(@@CHARACTER@@ 셋째 칸)과 부딪치지 않게(2026-09-29~).
+ * opts.identity=false 면 머리·눈·피부·체형·안경·몸에 붙는 것·특징(주근깨…)을 뺀다 — 고정 그림이 있는 주인공은
+ * 그 그림이 누구인지를 정하므로, 칩 글이 그림을 끌어당기지 않게(2026-10-02 사장님 "칩 차단"). 남는 것: 옷 색·메모.
  */
-export function looksToDrawingPrompt(looks: ChildLooks | undefined, opts: { clothes?: boolean } = {}): string {
+export function looksToDrawingPrompt(
+  looks: ChildLooks | undefined,
+  opts: { clothes?: boolean; identity?: boolean } = {},
+): string {
   if (!looks) return "";
+  const identity = opts.identity !== false;
   const parts: string[] = [];
-  const hair = [en(HAIR_COLOR, looks.hairColor), en(HAIR, looks.hair)].filter(Boolean).join(", ");
+  const hair = identity ? [en(HAIR_COLOR, looks.hairColor), en(HAIR, looks.hair)].filter(Boolean).join(", ") : "";
   if (hair) parts.push(hair);
-  if (looks.hairTexture) parts.push(en(HAIR_TEXTURE, looks.hairTexture)!);
-  if (looks.bangs) parts.push(en(BANGS, looks.bangs)!);
-  if (looks.eyes) parts.push(en(EYES, looks.eyes)!);
-  if (looks.skin) parts.push(en(SKIN, looks.skin)!);
-  if (looks.build) parts.push(en(BUILD, looks.build)!);
-  if (looks.glasses) parts.push("wears glasses");
+  if (identity && looks.hairTexture) parts.push(en(HAIR_TEXTURE, looks.hairTexture)!);
+  if (identity && looks.bangs) parts.push(en(BANGS, looks.bangs)!);
+  if (identity && looks.eyes) parts.push(en(EYES, looks.eyes)!);
+  if (identity && looks.skin) parts.push(en(SKIN, looks.skin)!);
+  if (identity && looks.build) parts.push(en(BUILD, looks.build)!);
+  if (identity && looks.glasses) parts.push("wears glasses");
   if (looks.color && opts.clothes !== false) {
     const c = en(COLOR, looks.color)!;
     parts.push(`favourite clothing colour is ${c} — their everyday outfit is mainly ${c}`);
   }
-  for (const item of wearableItems(looks.items)) parts.push(WEARABLE[item]);
-  for (const mark of looks.marks ?? []) parts.push(en(MARKS, mark)!);
+  if (identity) for (const item of wearableItems(looks.items)) parts.push(WEARABLE[item]);
+  if (identity) for (const mark of looks.marks ?? []) parts.push(en(MARKS, mark)!);
   if (looks.note) parts.push(`parent's own note (Korean, follow it): ${looks.note}`);
   return parts.join("; ");
 }

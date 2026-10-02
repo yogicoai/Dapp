@@ -408,7 +408,7 @@ type PageImageReply = {
     qualityChecked?: boolean;
     qualityPassed?: boolean;
     qualityWarning?: string;
-    qualityIssue?: "text" | "border" | "other";
+    qualityIssue?: "text" | "border" | "face" | "other";
   };
 };
 
@@ -1925,19 +1925,40 @@ export default function CreatePage() {
    * 평소 옷(좋아하는 옷 색·엄마 아빠 평소 옷)은 이야기에 주지 않는다(clothes:false, 2026-09-29 저녁 사장님 "옷은 그 주제안에서
    * 랜덤으로 교체되게") — 주면 클로드가 그 옷을 책마다 그대로 옮겨 적는다. 옷은 이야기가 책마다 정한다(이 책의 옷 칸).
    */
+  /*
+   * 고정 그림이 있는 주인공·엄마·아빠(2026-10-02 사장님 "칩 차단") — 생김새 칩 글을 이야기에 보내지 않는다.
+   * 칩과 고정 그림이 다르면(사진으로 그림 · 바꾸고 '나중에') 글이 매 쪽 그림을 끌어당겼다(2026-10-01 양갈래→단발).
+   * 이 기기 가족 기준이다 — 다른 기기에서 방금 고정한 것은 시트 단계의 서버 가족이 잡지만, 이야기 글은 그 전에 쓰인다.
+   */
+  const famNow = loadChild()?.family;
+  const fixedNow = (role: "child" | "mom" | "dad") => famNow?.some((m) => m.role === role && m.portrait?.ref) === true;
+  const heroFixedNow = fixedNow("child");
+  const momFixedNow = fixedNow("mom");
+  const dadFixedNow = fixedNow("dad");
   const child = {
     name: name.trim(),
     age: age ?? 0,
     gender,
-    looks: looksToPrompt(loadChild()?.looks, { clothes: false }) || undefined,
-    // 엄마·아빠 생김새(선택) — 안 주면 모델이 안경·수염을 지어낸다.
+    // 주인공이 고정이면 머리·얼굴 칩은 빼고(identity:false — 옷 색·늘 지니는 것·메모만) 보낸다.
+    looks: looksToPrompt(loadChild()?.looks, { clothes: false, ...(heroFixedNow ? { identity: false } : {}) }) || undefined,
+    // 엄마·아빠 생김새(선택) — 안 주면 모델이 안경·수염을 지어낸다. 고정이면 보내지 않는다(아래 fixedLooks 가 '그림 그대로'로).
     parentLooks: {
       // 역할을 넘긴다 — 수염은 아빠만(가족 그림·설정 미리보기와 같은 문장).
-      mom: parentLooksToPrompt(loadChild()?.parents?.mom, "mom", { clothes: false }) || undefined,
-      dad: parentLooksToPrompt(loadChild()?.parents?.dad, "dad", { clothes: false }) || undefined,
+      mom: momFixedNow ? undefined : parentLooksToPrompt(loadChild()?.parents?.mom, "mom", { clothes: false }) || undefined,
+      dad: dadFixedNow ? undefined : parentLooksToPrompt(loadChild()?.parents?.dad, "dad", { clothes: false }) || undefined,
     },
     // 할머니·할아버지·형제·단짝 친구 생김새(2026-10-01) — 예전엔 안 가서 클로드가 지어냈고, 고정 그림과 부딪쳤다(lib/family-cast).
     familyLooks: storyFamilyLooks(loadChild()?.family),
+    // 고정 그림이 있는 사람 — 생김새 칸에 '가족 그림 그대로'라고 쓰게 한다(lib/anthropic describeChild).
+    ...(heroFixedNow || momFixedNow || dadFixedNow
+      ? {
+          fixedLooks: {
+            ...(heroFixedNow ? { hero: true } : {}),
+            ...(momFixedNow ? { mom: true } : {}),
+            ...(dadFixedNow ? { dad: true } : {}),
+          },
+        }
+      : {}),
   };
 
   // '누구랑' 칩 — 아이 성별에 맞는 형제 호칭을 끼워 만든다.
@@ -2876,6 +2897,16 @@ export default function CreatePage() {
       const heroLooks = looksToPrompt(child?.looks, { clothes: !outfitStory });
       // 그림 모델에는 영어로 — 영어 규칙 사이에 한국어 한 줄이 끼는 것보다 확실히 읽힌다.
       const heroLooksEn = looksToDrawingPrompt(child?.looks, { clothes: !outfitStory });
+      /*
+       * 주인공이 고정 그림이면(이 기기 가족 기준) 머리·얼굴 칩을 뺀 판 — 얼굴을 붙여 그릴 때는 이쪽을 쓴다
+       * (칩 글이 원본 그림을 끌어당기지 않게, 2026-10-02 사장님 "칩 차단"). 그림 AI 가 얼굴을 거절해 얼굴 없이
+       * 다시 그릴 때는 칩이 유일한 기준이라 원래 판(heroLooks·heroLooksEn)을 그대로 쓴다.
+       */
+      const heroFixedHere = (child?.family ?? []).some((m) => m.role === "child" && m.portrait?.ref);
+      const heroLooksStripped = heroFixedHere ? looksToPrompt(child?.looks, { clothes: !outfitStory, identity: false }) : heroLooks;
+      const heroLooksEnStripped = heroFixedHere
+        ? looksToDrawingPrompt(child?.looks, { clothes: !outfitStory, identity: false })
+        : heroLooksEn;
       let sheet = saved?.sheet ?? null;
       // 이어 그리기면 그 시트에 고정 얼굴이 붙었던 이름 그대로(옛 보관본엔 없다 = 고정 얼굴 없이 그린 시트).
       fixedCastRef.current = new Set(sheet ? (saved?.sheetFixed ?? []) : []);
@@ -2922,8 +2953,9 @@ export default function CreatePage() {
               artStyleId: artStyle,
               drawing, // 아이가 그린 주인공(선택) — 있으면 이 그림에서 캐릭터를 따온다
               // 설정에 저장해 둔 아이 특징(머리·안경·옷 색·주근깨…) — 주인공을 "우리 애 같게".
-              looks: heroLooks,
-              looksEn: heroLooksEn,
+              // 고정 얼굴을 붙여 그릴 때는 머리·얼굴 칩을 뺀 판(위 heroLooksStripped) — 글이 그림을 끌어당기지 않게.
+              looks: withPortraits ? heroLooksStripped : heroLooks,
+              looksEn: withPortraits ? heroLooksEnStripped : heroLooksEn,
               // 나이·성별은 이야기에만 가고 시트에는 안 갔다 — 다섯 살이 여덟 살 얼굴로 나오던 구멍.
               heroAge: age ?? child?.age ?? null,
               heroGender: gender !== "unspecified" ? gender : child?.gender,
@@ -3196,7 +3228,14 @@ export default function CreatePage() {
        * 부모가 책에서 그 쪽만 무료로 다시 그릴 수 있다(BookViewer FREE_REDRAWS_PER_BOOK).
        */
       const MAX_REDRAWS_PER_BOOK = 2;
+      /*
+       * 얼굴 전용 1장(2026-10-02 사장님 승인) — "보자마자 내 얼굴"이 핵심이라, 글자·테두리 지적이 공용 예산을
+       * 먼저 다 써도 고정 가족 얼굴이 틀린 쪽은 한 장은 꼭 다시 그린다. 얼굴 지적(qualityIssue "face")에만 쓰고,
+       * 남아 있으면 공용보다 먼저 쓴다(공용 2장은 글자·테두리 몫으로 남게).
+       */
+      const FACE_REDRAWS_PER_BOOK = 1;
       let redrawsUsed = 0;
+      let faceRedrawsUsed = 0;
       // 원본 얼굴을 붙인 쪽이 그림 모델에 두 번 거절되면 이 책의 남은 쪽은 얼굴 없이(시트만) — 쪽마다 거절·다시 그리기로 늦어지지 않게.
       let portraitRefusals = 0;
       const nextUnclaimedPage = (): number | null => {
@@ -3242,6 +3281,13 @@ export default function CreatePage() {
                 sameLocationReference?.scene ??
                 (styleFallback && styleSeed >= 0 ? s.pages[styleSeed].imagePrompt : "");
               await pace();
+              /*
+               * 주인공 칩 줄 — 고정 얼굴이 시트에 실제로 섰으면(fixedCastRef) 머리·얼굴 칩을 뺀 판을 쓴다
+               * (2026-10-01 시험: 고정 주인공에도 칩 글이 덧붙어 양갈래가 단발로 끌려갔다). 얼굴 없이 그린 책은 예전 그대로.
+               */
+              const heroChipLine = fixedCastRef.current.has(s.characters[0]?.name ?? "")
+                ? heroLooksEnStripped || heroLooksStripped
+                : heroLooksEn || heroLooks;
               const r = await authedFetch("/api/illustrate-page", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
@@ -3267,22 +3313,16 @@ export default function CreatePage() {
                   // 책 전체 인물을 보내되 서버가 장면에 이름이 있는 인물만 골라 잠근다.
                   cast: s.characters.map((c, characterIndex) => ({
                     name: c.name,
-                    // 주인공 머리결 선택을 페이지 QA에도 넣어 시트 이후 다시 곱슬로 변하지 않게 한다.
+                    // 주인공 머리결 선택을 페이지 QA에도 넣어 시트 이후 다시 곱슬로 변하지 않게 한다(고정 주인공은 칩을 뺀 판).
                     description:
-                      characterIndex === 0 && (heroLooksEn || heroLooks)
-                        ? `${c.description}, ${heroLooksEn || heroLooks}`
-                        : c.description,
+                      characterIndex === 0 && heroChipLine ? `${c.description}, ${heroChipLine}` : c.description,
                     // 고정 얼굴로 시트를 그린 사람 — 얼굴·머리는 설명 글보다 시트를 따르게(api/illustrate-page).
                     ...(fixedCastRef.current.has(c.name) ? { fixed: true } : {}),
                     // 이 책의 옷 — 옷 카드로 입은 고정 가족 줄이 이 글을 쓴다.
                     ...(c.outfit ? { outfit: c.outfit } : {}),
                   })),
                   // 주인공 성별·생김새 — 시트에만 가고 쪽 그림엔 안 가서 남자아이가 단발·꽃핀으로 나왔다.
-                  hero: heroFromStory(
-                    s.characters,
-                    gender !== "unspecified" ? gender : child?.gender,
-                    heroLooksEn || heroLooks,
-                  ),
+                  hero: heroFromStory(s.characters, gender !== "unspecified" ? gender : child?.gender, heroChipLine),
                   // 고정 가족 원본 그림 주소·시트에 선 순서 — 얼굴이 시트를 거쳐 또 흐르지 않게(api/illustrate-page).
                   ...(faces.length ? { portraits: faces } : {}),
                   ...(sheetOrderRef.current.length ? { sheetOrder: sheetOrderRef.current } : {}),
@@ -3355,12 +3395,15 @@ export default function CreatePage() {
              * 그려져 나왔다). 예산은 다른 지적과 같이 쓴다(위 MAX_REDRAWS_PER_BOOK, 2026-10-01).
              */
             const isTextIssue = first.data.qualityIssue === "text";
-            const canRedraw = redrawsUsed < MAX_REDRAWS_PER_BOOK;
+            // 얼굴 지적은 전용 예산 먼저(위 FACE_REDRAWS_PER_BOOK) — 다 썼으면 공용 예산으로.
+            const useFaceBudget = first.data.qualityIssue === "face" && faceRedrawsUsed < FACE_REDRAWS_PER_BOOK;
+            const canRedraw = useFaceBudget || redrawsUsed < MAX_REDRAWS_PER_BOOK;
 
             // 검사를 못 한 그림으로 다시 그리기 예산을 태우지 않는다 — 잘못이 있는지조차 모른다.
             if (image && !ok && first.data.qualityChecked !== false && canRedraw) {
               // 증분은 await 전에 동기적으로 실행돼 동시 worker끼리도 예산을 넘기지 않는다.
-              redrawsUsed++;
+              if (useFaceBudget) faceRedrawsUsed++;
+              else redrawsUsed++;
               const second = await requestImage(
                 isTextIssue
                   ? "The previous attempt drew readable words inside the picture. Draw the same scene with absolutely no writing of any kind."

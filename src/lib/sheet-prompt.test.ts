@@ -299,7 +299,7 @@ describe("pickSheetPortraits — 요청의 고정 얼굴 고르기", () => {
 
 describe("maxPortraitRefs — 모델마다 붙일 얼굴 수", () => {
   it("gemini-2.x 는 2장, 3.x·OpenAI 는 4장", () => {
-    assert.equal(maxPortraitRefs({}), 2);
+    assert.equal(maxPortraitRefs({}), 4); // 안 적으면 3.1 — 2026-10-02 기본값(운영에서 값이 빠져 2.5 로 그리던 사고 막이)
     assert.equal(maxPortraitRefs({ GEMINI_IMAGE_MODEL: "gemini-2.5-flash-image" }), 2);
     assert.equal(maxPortraitRefs({ GEMINI_IMAGE_MODEL: "gemini-3.1-flash-image" }), 4);
     assert.equal(maxPortraitRefs({ GEMINI_IMAGE_MODEL: "gemini-3-pro-image-preview" }), 4);

@@ -78,7 +78,7 @@ describe("arrangePageReferences — 시트 → 고정 얼굴 → 장소 → 승�
 
 describe("maxPagePortraits — 모델마다 한 쪽에 붙일 얼굴 수", () => {
   it("gemini-2.x 는 1장(참고 그림이 많으면 흐려진다), 3.x·OpenAI 는 시트의 6명까지", () => {
-    assert.equal(maxPagePortraits({}), 1);
+    assert.equal(maxPagePortraits({}), 6); // 안 적으면 3.1 — 2026-10-02 기본값
     assert.equal(maxPagePortraits({ GEMINI_IMAGE_MODEL: "gemini-2.5-flash-image" }), 1);
     assert.equal(maxPagePortraits({ GEMINI_IMAGE_MODEL: "gemini-3.1-flash-image" }), 6);
     assert.equal(maxPagePortraits({ IMAGE_PROVIDER: "openai" }), 6);

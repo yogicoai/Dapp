@@ -59,3 +59,33 @@ describe("heroIdentity", () => {
     assert.equal(heroIdentity(null, "unspecified"), "a young Korean child");
   });
 });
+
+describe("identity:false — 고정 그림이 있는 주인공의 칩 차단(2026-10-02)", () => {
+  const looks = {
+    hair: "양갈래",
+    hairTexture: "곱슬머리",
+    bangs: "있어요",
+    hairColor: "까만색",
+    eyes: "크고 동그래요",
+    skin: "밝은 편",
+    build: "통통해요",
+    glasses: true,
+    color: "파랑",
+    items: ["모자", "곰인형"],
+    marks: ["주근깨"],
+    note: "늘 공룡 티셔츠",
+  };
+  it("머리·눈·피부·체형·안경·몸에 붙는 것·특징이 빠지고 옷 색·메모만 남는다", () => {
+    const s = looksToDrawingPrompt(looks, { identity: false });
+    assert.doesNotMatch(s, /pigtail|curly|fringe|black hair|round eyes|fair skin|chubby|glasses|hat|freckle/);
+    assert.match(s, /blue/);
+    assert.match(s, /공룡 티셔츠/);
+  });
+  it("clothes:false 까지 겹치면 메모만 남는다", () => {
+    const s = looksToDrawingPrompt(looks, { identity: false, clothes: false });
+    assert.equal(s, "parent's own note (Korean, follow it): 늘 공룡 티셔츠");
+  });
+  it("identity 를 안 주면 예전과 한 글자도 다르지 않다", () => {
+    assert.equal(looksToDrawingPrompt(looks), looksToDrawingPrompt(looks, { identity: true }));
+  });
+});
