@@ -3415,7 +3415,7 @@
     "voice": "tc-siwoo",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "'…나도 그냥 놀까?'"
+    "text": "'나도 놀고 싶긴 한데…'"
   },
   "classic/threepigs/seg-tc-minjung-p6-1.mp3": {
     "voice": "tc-minjung",
@@ -3495,7 +3495,7 @@
     "voice": "tc-dukgu",
     "emotion": "toneup",
     "intensity": 0.35,
-    "text": "\"어? 우리 엄마 아닌데?\""
+    "text": "\"어? 우리 엄마 아닌 것 같은데, 넌 누구야?\""
   },
   "classic/threepigs/seg-tc-minjung-p9-6.mp3": {
     "voice": "tc-minjung",
@@ -3520,7 +3520,7 @@
     "voice": "tc-dukgu",
     "emotion": "toneup",
     "intensity": 0.45,
-    "text": "\"둘째야! 문 열어 줘, 늑대가 나타났어!\"",
+    "text": "\"둘째야! 늑대가 나타났어, 문 좀 열어 줘!\"",
     "tempo": 1.1
   },
   "classic/threepigs/seg-tc-minjung-p10-2.mp3": {
@@ -3552,7 +3552,7 @@
     "voice": "tc-dukgu",
     "emotion": "toneup",
     "intensity": 0.45,
-    "text": "\"막내야! 늑대가 나타났어, 문 열어 줘!\"",
+    "text": "\"막내야! 늑대가, 늑대가 나타났어! 문 좀 열어 줘!\"",
     "tempo": 1.1
   },
   "classic/threepigs/seg-tc-minjung-p12-1.mp3": {
@@ -3583,7 +3583,7 @@
     "voice": "tc-shotgun",
     "emotion": "toneup",
     "intensity": 0.35,
-    "text": "\"어? 왜 안 넘어가는 거지?\"",
+    "text": "\"어? 이상하네. 왜 안 넘어가는 거지?\"",
     "tempo": 1.15
   },
   "classic/threepigs/seg-tc-minjung-p13-2.mp3": {
@@ -3608,7 +3608,7 @@
     "voice": "tc-shotgun",
     "emotion": "happy",
     "intensity": 0.45,
-    "text": "\"굴뚝으로 들어가면 되겠다!\"",
+    "text": "\"오, 굴뚝으로 들어가면 되겠다!\"",
     "tempo": 1.15
   },
   "classic/threepigs/seg-tc-minjung-p14-2.mp3": {
@@ -3677,7 +3677,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "막내는 대답 대신 형들을 벽난로 앞에 앉혔어요."
+    "text": "막내는 늑대에 놀란 형들을 진정시키고 벽난로 앞에 앉혔어요."
   },
   "classic/threepigs/seg-tc-minjung-p18-0.mp3": {
     "voice": "tc-minjung",
@@ -3695,7 +3695,7 @@
     "voice": "tc-dukgu",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"응! 막내가 가르쳐 줬어.\""
+    "text": "\"네! 막내가 가르쳐 줬어요.\""
   },
   "classic/threepigs/seg-tc-minjung-p18-3.mp3": {
     "voice": "tc-minjung",
@@ -3769,13 +3769,13 @@
     "voice": "tc-dukgu",
     "emotion": "toneup",
     "intensity": 0.35,
-    "text": "어? 우리 엄마 아닌데?"
+    "text": "어? 우리 엄마 아닌 것 같은데, 넌 누구야?"
   },
   "classic/threepigs/say-p10-pig1.mp3": {
     "voice": "tc-dukgu",
     "emotion": "toneup",
     "intensity": 0.45,
-    "text": "둘째야! 문 열어 줘, 늑대가 나타났어!",
+    "text": "둘째야! 늑대가 나타났어, 문 좀 열어 줘!",
     "tempo": 1.1
   },
   "classic/threepigs/say-p11-wolf.mp3": {
@@ -3789,7 +3789,7 @@
     "voice": "tc-dukgu",
     "emotion": "toneup",
     "intensity": 0.45,
-    "text": "막내야! 늑대가 나타났어, 문 열어 줘!",
+    "text": "막내야! 늑대가, 늑대가 나타났어! 문 좀 열어 줘!",
     "tempo": 1.1
   },
   "classic/threepigs/say-p12-pig3.mp3": {
@@ -3802,14 +3802,14 @@
     "voice": "tc-shotgun",
     "emotion": "toneup",
     "intensity": 0.35,
-    "text": "어? 왜 안 넘어가는 거지?",
+    "text": "어? 이상하네. 왜 안 넘어가는 거지?",
     "tempo": 1.15
   },
   "classic/threepigs/say-p14-wolf.mp3": {
     "voice": "tc-shotgun",
     "emotion": "happy",
     "intensity": 0.45,
-    "text": "굴뚝으로 들어가면 되겠다!",
+    "text": "오, 굴뚝으로 들어가면 되겠다!",
     "tempo": 1.15
   },
   "classic/threepigs/say-p15-wolf.mp3": {
@@ -3841,7 +3841,7 @@
     "voice": "tc-dukgu",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "응! 막내가 가르쳐 줬어."
+    "text": "네! 막내가 가르쳐 줬어요."
   },
   "classic/uglyduckling/seg-tc-minjung-p1-0.mp3": {
     "voice": "tc-minjung",
@@ -14989,7 +14989,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 어느 왕국에, 마음씨 고운 아이가 살았어요.\n아이에게는 새어머니와 두 언니가 있었지요.\n하지만 세 사람은 아이를 식구로 여기지 않고,\n아침부터 밤까지 집안일만 시켰답니다."
+    "text": "옛날 어느 왕국에, 마음씨 고운 아이가 살았어요.\n아이에게는 새어머니와 두 언니가 있었지요.\n아버지가 돌아가신 뒤부터,\n세 사람은 아이를 식구로 여기지 않고,\n아침부터 밤까지 집안일만 시켰답니다."
   },
   "classic/cinderella/seg-tc-minjung-p2-0.mp3": {
     "voice": "tc-minjung",
@@ -14998,20 +14998,19 @@
     "text": "아이는 날마다 부엌 아궁이 곁에서 잠이 들었어요.\n그래서 옷에도 볼에도 늘 재가 묻어 있었지요.\n언니들은 그런 아이를 이렇게 불렀어요."
   },
   "classic/cinderella/seg-cast-p2-1.mp3": {
-    "voice": "tc-gahee",
+    "voice": "tc-minju",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"재투성이, 신데렐라!\"",
-    "tempo": 0.88
+    "text": "\"얘, 재투성이 신데렐라야!\""
   },
   "classic/cinderella/seg-tc-minjung-p3-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그래도 신데렐라는 노래를 흥얼거렸어요."
+    "text": "신데렐라는 힘들어도 웃음을 잃지 않았어요."
   },
   "classic/cinderella/seg-cast-p3-1.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-najin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"언젠가 좋은 일이 생길 거야!\""
@@ -15020,7 +15019,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "부엌 생쥐들과 창가의 작은 새들만이,\n그 노래를 가만히 들어 주었답니다."
+    "text": "부엌 생쥐들과 창가의 작은 새들만이,\n그 말을 가만히 들어 주었답니다."
   },
   "classic/cinderella/seg-tc-minjung-p4-0.mp3": {
     "voice": "tc-minjung",
@@ -15029,10 +15028,10 @@
     "text": "신데렐라는 빵 부스러기를 모아 두었다가,\n생쥐 친구들에게 나누어 주었어요."
   },
   "classic/cinderella/seg-cast-p4-1.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-najin",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"자, 오늘 몫이야. 천천히 먹으렴.\""
+    "text": "\"천천히 먹으렴.\""
   },
   "classic/cinderella/seg-tc-minjung-p4-2.mp3": {
     "voice": "tc-minjung",
@@ -15047,9 +15046,9 @@
     "text": "어느 날, 왕궁에서 초대장이 도착했어요."
   },
   "classic/cinderella/seg-cast-p5-1.mp3": {
-    "voice": "tc-daejin",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-taesung",
+    "emotion": "toneup",
+    "intensity": 0.5,
     "text": "\"왕자님의 무도회에 온 나라 아가씨를 초대합니다!\""
   },
   "classic/cinderella/seg-tc-minjung-p5-2.mp3": {
@@ -15065,42 +15064,41 @@
     "text": "언니들은 온종일 드레스를 고르고 또 골랐어요."
   },
   "classic/cinderella/seg-cast-p6-1.mp3": {
-    "voice": "tc-gahee",
+    "voice": "tc-minju",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이 리본을 달아 줘!\"",
-    "tempo": 0.88
+    "text": "\"신데렐라야, 이 리본이 마음에 드는데 이걸로 달아 줄래?\""
   },
   "classic/cinderella/seg-cast-p6-2.mp3": {
     "voice": "tc-gahee",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"머리를 다시 빗겨 줘!\"",
+    "text": "\"신데렐라야! 신데렐라야! 내 머리 좀 다시 빗겨 줘!\"",
     "tempo": 0.88
   },
   "classic/cinderella/seg-tc-minjung-p6-3.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "신데렐라는 하루 내내 이리 뛰고 저리 뛰었지요."
+    "text": "신데렐라는 이리 뛰고 저리 뛰느라 숨 돌릴 틈도 없었지요."
   },
   "classic/cinderella/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "밤이 되자 신데렐라는 어머니가 남긴 낡은 드레스를 꺼냈어요.\n생쥐들이 실을 물어다 주고, 새들이 단추를 날라 주었지요."
+    "text": "왕자님의 무도회에 가고 싶던 신데렐라는,\n어머니가 남기신 낡은 드레스를 꺼내 한 땀 한 땀 고쳤어요.\n그 모습을 본 생쥐들과 새들이,\n드레스에 어울리는 실과 단추를 물어다 주었지요."
   },
   "classic/cinderella/seg-cast-p7-1.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-najin",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"고마워, 얘들아. 이만하면 갈 수 있겠지?\""
+    "text": "\"고마워, 얘들아. 이만하면 나도 무도회장에 갈 수 있을 거야!\""
   },
   "classic/cinderella/seg-cast-p8-0.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-najin",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"저도 무도회에 가고 싶어요.\""
+    "text": "\"어머님, 저도 무도회에 가고 싶어요.\""
   },
   "classic/cinderella/seg-tc-minjung-p8-1.mp3": {
     "voice": "tc-minjung",
@@ -15124,25 +15122,25 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "텅 빈 집에 혼자 남은 신데렐라는,\n아궁이 곁에 주저앉아 눈물을 뚝뚝 흘렸어요.\n그때 부엌 안이 환해지더니,\n반짝이는 빛과 함께 요정 대모님이 나타났지요."
+    "text": "텅 빈 집에 혼자 남은 신데렐라는,\n아궁이 곁에 주저앉아 눈물을 뚝뚝 흘렸어요.\n그때 부엌 안이 환해지더니,\n반짝이는 빛과 함께 요정님이 나타났지요."
   },
   "classic/cinderella/seg-cast-p9-1.mp3": {
-    "voice": "tc-jiwoo",
+    "voice": "tc-juha",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"울지 마렴, 신데렐라야. 너도 무도회에 갈 수 있단다!\""
+    "text": "\"울지 마렴, 신데렐라야. 무도회에 갈 수 있게 내가 도와주겠단다.\""
   },
   "classic/cinderella/seg-tc-minjung-p10-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "요정 대모님이 요술봉을 휘두르자 — 얍!\n마당에 굴러다니던 커다란 호박이,\n바퀴가 달린 황금 마차로 변했어요!\n신데렐라는 입을 다물지 못했답니다."
+    "text": "요정님이 마당으로 나가 요술봉을 휘두르자,\n굴러다니던 커다란 호박이,\n바퀴가 달린 황금 마차로 변했어요!\n신데렐라는 입을 다물지 못했답니다."
   },
   "classic/cinderella/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "이번에는 생쥐 친구들 차례였어요.\n얍! 하고 요술봉이 반짝이자,\n생쥐 넷이 늠름한 백마 네 마리로 변했지요.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다."
+    "text": "이번에는 생쥐 친구들 차례였어요.\n요술봉이 반짝이자,\n생쥐 넷이 늠름한 백마 네 마리로 변했지요.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다."
   },
   "classic/cinderella/seg-tc-minjung-p12-0.mp3": {
     "voice": "tc-minjung",
@@ -15151,28 +15149,28 @@
     "text": "마지막으로 신데렐라의 발 앞에,\n반짝이는 유리구두 한 켤레가 나타났어요."
   },
   "classic/cinderella/seg-cast-p12-1.mp3": {
-    "voice": "tc-jiwoo",
+    "voice": "tc-juha",
     "emotion": "normal",
     "intensity": null,
     "text": "\"기억하렴! 밤 12시가 되면 마법이 풀린단다.\""
   },
   "classic/cinderella/seg-cast-p12-2.mp3": {
-    "voice": "tc-minju",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"네, 대모님! 고맙습니다!\""
+    "voice": "tc-najin",
+    "emotion": "happy",
+    "intensity": 0.6,
+    "text": "\"요정님! 고맙습니다!\""
   },
   "classic/cinderella/seg-tc-minjung-p13-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "황금 마차가 왕궁 앞에 멈췄어요.\n신데렐라가 커다란 계단을 올라,\n무도회장 문을 열고 들어서자,\n음악이 뚝 그치고 모두가 숨을 멈췄지요."
+    "text": "황금 마차가 왕궁 앞에 멈췄어요.\n신데렐라가 커다란 계단을 올라 무도회장에 들어서자,\n음악이 뚝 그치고 모두의 눈길이 신데렐라에게 쏠렸지요.\n사람들이 소곤소곤 속삭였어요."
   },
   "classic/cinderella/seg-cast-p13-1.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"저 아가씨는 어느 나라에서 오셨을까?\""
+    "text": "\"어머, 저 아가씨는 어느 나라 공주님이지?\""
   },
   "classic/cinderella/seg-tc-minjung-p14-0.mp3": {
     "voice": "tc-minjung",
@@ -15217,22 +15215,23 @@
     "text": "신데렐라가 막 대답하려던 그때 —\n댕! 댕! 커다란 시계가 12시를 알렸어요."
   },
   "classic/cinderella/seg-cast-p17-0.mp3": {
-    "voice": "tc-minju",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"앗, 이제 가야 해요!\""
+    "voice": "tc-najin",
+    "emotion": "toneup",
+    "intensity": 0.6,
+    "text": "\"앗, 전 이제 가야 해요!\"",
+    "tempo": 1.1
   },
   "classic/cinderella/seg-tc-minjung-p17-1.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n왕자님이 뒤따라왔지만 이미 늦었지요.\n그만 유리구두 한 짝이 벗겨진 줄도 모르고요!"
+    "text": "신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n그만 유리구두 한 짝이 벗겨진 줄도 모르고요!\n왕자님이 뒤따라왔지만 이미 늦었지요."
   },
   "classic/cinderella/seg-tc-minjung-p18-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "계단에 홀로 남은 유리구두를,\n왕자님이 두 손으로 소중히 주워 들었어요."
+    "text": "계단에 홀로 남은 유리구두를,\n왕자님이 두 손으로 소중히 주워 들었어요.\n이튿날부터 신하들이 유리구두를 들고,\n온 나라의 집을 하나하나 찾아다녔답니다."
   },
   "classic/cinderella/seg-cast-p18-1.mp3": {
     "voice": "tc-taewoo",
@@ -15253,7 +15252,7 @@
     "text": "드디어 신데렐라의 집에도 신하가 찾아왔어요.\n첫째 언니가 발을 밀어 넣고, 둘째 언니가 애를 써 봤지만,\n유리구두는 도무지 맞지 않았지요."
   },
   "classic/cinderella/seg-cast-p19-1.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-najin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"저… 저도 신어 봐도 될까요?\""
@@ -15268,7 +15267,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "신데렐라가 발을 내밀자,\n유리구두가 사르르 — 꼭 맞았어요!\n주머니에서 남은 한 짝까지 꺼내 놓자,\n온 집 안이 조용해졌답니다."
+    "text": "신데렐라가 발을 내밀자,\n유리구두가 사르르 — 꼭 맞았어요!\n온 집 안이 조용해졌어요.\n뒤따라온 왕자님의 눈이 동그래졌답니다."
   },
   "classic/cinderella/seg-tc-minjung-p21-0.mp3": {
     "voice": "tc-minjung",
@@ -15277,11 +15276,10 @@
     "text": "언니들은 얼굴이 빨개져 고개를 푹 숙였어요."
   },
   "classic/cinderella/seg-cast-p21-1.mp3": {
-    "voice": "tc-gahee",
+    "voice": "tc-minju",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "\"그동안… 우리가 너무 못되게 굴었어. 미안해.\"",
-    "tempo": 0.88
+    "text": "\"그동안… 우리가 너무 못되게 굴었어. 미안해.\""
   },
   "classic/cinderella/seg-tc-minjung-p21-2.mp3": {
     "voice": "tc-minjung",
@@ -15290,7 +15288,7 @@
     "text": "신데렐라는 한참 언니들을 바라보다가,\n두 손을 가만히 잡아 주었어요."
   },
   "classic/cinderella/seg-cast-p21-3.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-najin",
     "emotion": "normal",
     "intensity": null,
     "text": "\"괜찮아요. 이제 우리 사이좋게 지내요.\""
@@ -15670,5 +15668,41 @@
     "emotion": "normal",
     "intensity": null,
     "text": "성에는 다시 봄이 찾아왔어요.\n아버지와 두 언니도 성으로 와서,\n이제는 온 가족이 함께 살게 되었지요.\n봄볕 드는 정원에서 장미를 가꾸며,\n다 같이 오래오래 행복하게 살았답니다."
+  },
+  "classic/cinderella/seg-cast-p21-2.mp3": {
+    "voice": "tc-najin",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "\"아니에요, 괜찮아요. 이제 우리 사이좋게 지내요.\""
+  },
+  "classic/cinderella/seg-tc-minjung-p8-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "무도회 날 저녁, 신데렐라는 용기를 내어 말했어요."
+  },
+  "classic/cinderella/seg-cast-p8-1.mp3": {
+    "voice": "tc-najin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"어머님, 저도 무도회에 같이 갈 수 있을까요?\""
+  },
+  "classic/cinderella/seg-tc-minjung-p8-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하지만 새어머니는 차갑게 고개를 저었어요."
+  },
+  "classic/cinderella/seg-cast-p8-3.mp3": {
+    "voice": "tc-sookhee",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"흥, 넌 할 일이 산더미잖니!\""
+  },
+  "classic/cinderella/seg-tc-minjung-p8-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "세 사람은 마차를 타고 떠나 버렸답니다."
   }
 }

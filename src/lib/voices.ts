@@ -240,6 +240,8 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   // 혹부리 영감 캐스팅 (2026-09-01 사장님 지정).
   { kind: "tc", id: "tc-changbae", label: "창배", emoji: "🎵", voiceId: "tc_60ad08c829e878c3c7d73965", model: "ssfm-v30", desc: "남자 목소리", sample: "같이 나누면 기쁨이 두 배가 된다오." },
   { kind: "tc", id: "tc-younggil", label: "영길", emoji: "🎩", voiceId: "tc_5ebea13564afaf00087fc2e7", model: "ssfm-v30", desc: "남자 목소리", sample: "옳거니! 나도 혹을 팔아서 부자가 되어야지!" },
+  // 신데렐라 · 신하 역 (2026-10-12 사장님이 검토대 배역 탭에서 고름, Typecast 이름 Han Taesung Caster).
+  { kind: "tc", id: "tc-taesung", label: "한태성", emoji: "📯", voiceId: "tc_66f4ecd1e386a91199bb0bf1", model: "ssfm-v30", desc: "남자 · 힘차게 알리는 캐스터 목소리", sample: "왕자님의 무도회에 온 나라 아가씨를 초대합니다!" },
 ];
 
 /**

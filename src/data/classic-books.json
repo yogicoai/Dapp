@@ -8,22 +8,22 @@
     "pages": [
       {
         "n": 1,
-        "text": "옛날 어느 왕국에, 마음씨 고운 아이가 살았어요.\n아이에게는 새어머니와 두 언니가 있었지요.\n하지만 세 사람은 아이를 식구로 여기지 않고\n아침부터 밤까지 집안일만 시켰답니다.",
+        "text": "옛날 어느 왕국에, 마음씨 고운 아이가 살았어요.\n아이에게는 새어머니와 두 언니가 있었지요.\n아버지가 돌아가신 뒤부터,\n세 사람은 아이를 식구로 여기지 않고\n아침부터 밤까지 집안일만 시켰답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p1.webp?v=2",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p1-0.mp3",
-            "text": "옛날 어느 왕국에, 마음씨 고운 아이가 살았어요.\n아이에게는 새어머니와 두 언니가 있었지요.\n하지만 세 사람은 아이를 식구로 여기지 않고\n아침부터 밤까지 집안일만 시켰답니다."
+            "text": "옛날 어느 왕국에, 마음씨 고운 아이가 살았어요.\n아이에게는 새어머니와 두 언니가 있었지요.\n아버지가 돌아가신 뒤부터,\n세 사람은 아이를 식구로 여기지 않고\n아침부터 밤까지 집안일만 시켰답니다."
           }
         ]
       },
       {
         "n": 2,
-        "text": "아이는 날마다 부엌 아궁이 곁에서 잠이 들었어요.\n그래서 옷에도 볼에도 늘 재가 묻어 있었지요.\n언니들은 그런 아이를 이렇게 불렀어요.\n\"재투성이, 신데렐라!\"",
+        "text": "아이는 날마다 부엌 아궁이 곁에서 잠이 들었어요.\n그래서 옷에도 볼에도 늘 재가 묻어 있었지요.\n언니들은 그런 아이를 이렇게 불렀어요.\n\"얘, 재투성이 신데렐라야!\"",
         "lines": [
           {
-            "text": "재투성이, 신데렐라!",
+            "text": "얘, 재투성이 신데렐라야!",
             "who": "sister"
           }
         ],
@@ -37,13 +37,13 @@
           {
             "who": "sister",
             "src": "/classic/cinderella/seg-cast-p2-1.mp3",
-            "text": "\"재투성이, 신데렐라!\""
+            "text": "\"얘, 재투성이 신데렐라야!\""
           }
         ]
       },
       {
         "n": 3,
-        "text": "그래도 신데렐라는 노래를 흥얼거렸어요.\n\"언젠가 좋은 일이 생길 거야!\"\n부엌 생쥐들과 창가의 작은 새들만이\n그 노래를 가만히 들어 주었답니다.",
+        "text": "신데렐라는 힘들어도 웃음을 잃지 않았어요.\n\"언젠가 좋은 일이 생길 거야!\"\n부엌 생쥐들과 창가의 작은 새들만이\n그 말을 가만히 들어 주었답니다.",
         "lines": [
           {
             "text": "언젠가 좋은 일이 생길 거야!",
@@ -55,7 +55,7 @@
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p3-0.mp3",
-            "text": "그래도 신데렐라는 노래를 흥얼거렸어요.\n"
+            "text": "신데렐라는 힘들어도 웃음을 잃지 않았어요.\n"
           },
           {
             "who": "cinderella",
@@ -65,16 +65,16 @@
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p3-2.mp3",
-            "text": "\n부엌 생쥐들과 창가의 작은 새들만이\n그 노래를 가만히 들어 주었답니다."
+            "text": "\n부엌 생쥐들과 창가의 작은 새들만이\n그 말을 가만히 들어 주었답니다."
           }
         ]
       },
       {
         "n": 4,
-        "text": "신데렐라는 빵 부스러기를 모아 두었다가\n생쥐 친구들에게 나누어 주었어요.\n\"자, 오늘 몫이야. 천천히 먹으렴.\"\n생쥐들은 신데렐라의 손바닥 위에서 쫑긋쫑긋했지요.",
+        "text": "신데렐라는 빵 부스러기를 모아 두었다가\n생쥐 친구들에게 나누어 주었어요.\n\"천천히 먹으렴.\"\n생쥐들은 신데렐라의 손바닥 위에서 쫑긋쫑긋했지요.",
         "lines": [
           {
-            "text": "자, 오늘 몫이야. 천천히 먹으렴.",
+            "text": "천천히 먹으렴.",
             "who": "cinderella"
           }
         ],
@@ -88,7 +88,7 @@
           {
             "who": "cinderella",
             "src": "/classic/cinderella/seg-cast-p4-1.mp3",
-            "text": "\"자, 오늘 몫이야. 천천히 먹으렴.\""
+            "text": "\"천천히 먹으렴.\""
           },
           {
             "who": "narration",
@@ -103,7 +103,9 @@
         "lines": [
           {
             "text": "왕자님의 무도회에 온 나라 아가씨를 초대합니다!",
-            "who": "servant"
+            "who": "servant",
+            "feel": "toneup",
+            "intensity": 0.5
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p5.webp?v=2",
@@ -127,15 +129,15 @@
       },
       {
         "n": 6,
-        "text": "언니들은 온종일 드레스를 고르고 또 골랐어요.\n\"이 리본을 달아 줘!\" \"머리를 다시 빗겨 줘!\"\n신데렐라는 하루 내내 이리 뛰고 저리 뛰었지요.",
+        "text": "언니들은 온종일 드레스를 고르고 또 골랐어요.\n\"신데렐라야, 이 리본이 마음에 드는데 이걸로 달아 줄래?\"\n\"신데렐라야! 신데렐라야! 내 머리 좀 다시 빗겨 줘!\"\n신데렐라는 이리 뛰고 저리 뛰느라 숨 돌릴 틈도 없었지요.",
         "lines": [
           {
-            "text": "이 리본을 달아 줘!",
+            "text": "신데렐라야, 이 리본이 마음에 드는데 이걸로 달아 줄래?",
             "who": "sister"
           },
           {
-            "text": "머리를 다시 빗겨 줘!",
-            "who": "sister"
+            "text": "신데렐라야! 신데렐라야! 내 머리 좀 다시 빗겨 줘!",
+            "who": "sister2"
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p6.webp?v=2",
@@ -148,26 +150,26 @@
           {
             "who": "sister",
             "src": "/classic/cinderella/seg-cast-p6-1.mp3",
-            "text": "\"이 리본을 달아 줘!\" "
+            "text": "\"신데렐라야, 이 리본이 마음에 드는데 이걸로 달아 줄래?\"\n"
           },
           {
-            "who": "sister",
+            "who": "sister2",
             "src": "/classic/cinderella/seg-cast-p6-2.mp3",
-            "text": "\"머리를 다시 빗겨 줘!\""
+            "text": "\"신데렐라야! 신데렐라야! 내 머리 좀 다시 빗겨 줘!\""
           },
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p6-3.mp3",
-            "text": "\n신데렐라는 하루 내내 이리 뛰고 저리 뛰었지요."
+            "text": "\n신데렐라는 이리 뛰고 저리 뛰느라 숨 돌릴 틈도 없었지요."
           }
         ]
       },
       {
         "n": 7,
-        "text": "밤이 되자 신데렐라는 어머니가 남긴 낡은 드레스를 꺼냈어요.\n생쥐들이 실을 물어다 주고, 새들이 단추를 날라 주었지요.\n\"고마워, 얘들아. 이만하면 갈 수 있겠지?\"",
+        "text": "왕자님의 무도회에 가고 싶던 신데렐라는\n어머니가 남기신 낡은 드레스를 꺼내 한 땀 한 땀 고쳤어요.\n그 모습을 본 생쥐들과 새들이\n드레스에 어울리는 실과 단추를 물어다 주었지요.\n\"고마워, 얘들아. 이만하면 나도 무도회장에 갈 수 있을 거야!\"",
         "lines": [
           {
-            "text": "고마워, 얘들아. 이만하면 갈 수 있겠지?",
+            "text": "고마워, 얘들아. 이만하면 나도 무도회장에 갈 수 있을 거야!",
             "who": "cinderella"
           }
         ],
@@ -176,21 +178,21 @@
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p7-0.mp3",
-            "text": "밤이 되자 신데렐라는 어머니가 남긴 낡은 드레스를 꺼냈어요.\n생쥐들이 실을 물어다 주고, 새들이 단추를 날라 주었지요.\n"
+            "text": "왕자님의 무도회에 가고 싶던 신데렐라는\n어머니가 남기신 낡은 드레스를 꺼내 한 땀 한 땀 고쳤어요.\n그 모습을 본 생쥐들과 새들이\n드레스에 어울리는 실과 단추를 물어다 주었지요.\n"
           },
           {
             "who": "cinderella",
             "src": "/classic/cinderella/seg-cast-p7-1.mp3",
-            "text": "\"고마워, 얘들아. 이만하면 갈 수 있겠지?\""
+            "text": "\"고마워, 얘들아. 이만하면 나도 무도회장에 갈 수 있을 거야!\""
           }
         ]
       },
       {
         "n": 8,
-        "text": "\"저도 무도회에 가고 싶어요.\"\n하지만 새어머니는 고개를 저었어요.\n\"흥, 넌 할 일이 산더미잖니!\"\n세 사람은 마차를 타고 떠나 버렸답니다.",
+        "text": "무도회 날 저녁, 신데렐라는 용기를 내어 말했어요.\n\"어머님, 저도 무도회에 같이 갈 수 있을까요?\"\n하지만 새어머니는 차갑게 고개를 저었어요.\n\"흥, 넌 할 일이 산더미잖니!\"\n세 사람은 마차를 타고 떠나 버렸답니다.",
         "lines": [
           {
-            "text": "저도 무도회에 가고 싶어요.",
+            "text": "어머님, 저도 무도회에 같이 갈 수 있을까요?",
             "who": "cinderella"
           },
           {
@@ -201,33 +203,38 @@
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p8.webp?v=2",
         "segments": [
           {
+            "who": "narration",
+            "src": "/classic/cinderella/seg-p8-0.mp3",
+            "text": "무도회 날 저녁, 신데렐라는 용기를 내어 말했어요.\n"
+          },
+          {
             "who": "cinderella",
-            "src": "/classic/cinderella/seg-cast-p8-0.mp3",
-            "text": "\"저도 무도회에 가고 싶어요.\""
+            "src": "/classic/cinderella/seg-cast-p8-1.mp3",
+            "text": "\"어머님, 저도 무도회에 같이 갈 수 있을까요?\""
           },
           {
             "who": "narration",
-            "src": "/classic/cinderella/seg-p8-1.mp3",
-            "text": "\n하지만 새어머니는 고개를 저었어요.\n"
+            "src": "/classic/cinderella/seg-p8-2.mp3",
+            "text": "\n하지만 새어머니는 차갑게 고개를 저었어요.\n"
           },
           {
             "who": "stepmom",
-            "src": "/classic/cinderella/seg-cast-p8-2.mp3",
+            "src": "/classic/cinderella/seg-cast-p8-3.mp3",
             "text": "\"흥, 넌 할 일이 산더미잖니!\""
           },
           {
             "who": "narration",
-            "src": "/classic/cinderella/seg-p8-3.mp3",
+            "src": "/classic/cinderella/seg-p8-4.mp3",
             "text": "\n세 사람은 마차를 타고 떠나 버렸답니다."
           }
         ]
       },
       {
         "n": 9,
-        "text": "텅 빈 집에 혼자 남은 신데렐라는\n아궁이 곁에 주저앉아 눈물을 뚝뚝 흘렸어요.\n그때 부엌 안이 환해지더니,\n반짝이는 빛과 함께 요정 대모님이 나타났지요.\n\"울지 마렴, 신데렐라야. 너도 무도회에 갈 수 있단다!\"",
+        "text": "텅 빈 집에 혼자 남은 신데렐라는\n아궁이 곁에 주저앉아 눈물을 뚝뚝 흘렸어요.\n그때 부엌 안이 환해지더니,\n반짝이는 빛과 함께 요정님이 나타났지요.\n\"울지 마렴, 신데렐라야. 무도회에 갈 수 있게 내가 도와주겠단다.\"",
         "lines": [
           {
-            "text": "울지 마렴, 신데렐라야. 너도 무도회에 갈 수 있단다!",
+            "text": "울지 마렴, 신데렐라야. 무도회에 갈 수 있게 내가 도와주겠단다.",
             "who": "fairy"
           }
         ],
@@ -236,51 +243,53 @@
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p9-0.mp3",
-            "text": "텅 빈 집에 혼자 남은 신데렐라는\n아궁이 곁에 주저앉아 눈물을 뚝뚝 흘렸어요.\n그때 부엌 안이 환해지더니,\n반짝이는 빛과 함께 요정 대모님이 나타났지요.\n"
+            "text": "텅 빈 집에 혼자 남은 신데렐라는\n아궁이 곁에 주저앉아 눈물을 뚝뚝 흘렸어요.\n그때 부엌 안이 환해지더니,\n반짝이는 빛과 함께 요정님이 나타났지요.\n"
           },
           {
             "who": "fairy",
             "src": "/classic/cinderella/seg-cast-p9-1.mp3",
-            "text": "\"울지 마렴, 신데렐라야. 너도 무도회에 갈 수 있단다!\""
+            "text": "\"울지 마렴, 신데렐라야. 무도회에 갈 수 있게 내가 도와주겠단다.\""
           }
         ]
       },
       {
         "n": 10,
-        "text": "요정 대모님이 요술봉을 휘두르자 — 얍!\n마당에 굴러다니던 커다란 호박이\n바퀴가 달린 황금 마차로 변했어요!\n신데렐라는 입을 다물지 못했답니다.",
+        "text": "요정님이 마당으로 나가 요술봉을 휘두르자,\n굴러다니던 커다란 호박이\n바퀴가 달린 황금 마차로 변했어요!\n신데렐라는 입을 다물지 못했답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p10.webp?v=2",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p10-0.mp3",
-            "text": "요정 대모님이 요술봉을 휘두르자 — 얍!\n마당에 굴러다니던 커다란 호박이\n바퀴가 달린 황금 마차로 변했어요!\n신데렐라는 입을 다물지 못했답니다."
+            "text": "요정님이 마당으로 나가 요술봉을 휘두르자,\n굴러다니던 커다란 호박이\n바퀴가 달린 황금 마차로 변했어요!\n신데렐라는 입을 다물지 못했답니다."
           }
         ]
       },
       {
         "n": 11,
-        "text": "이번에는 생쥐 친구들 차례였어요.\n얍! 하고 요술봉이 반짝이자\n생쥐 넷이 늠름한 백마 네 마리로 변했지요.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다.",
+        "text": "이번에는 생쥐 친구들 차례였어요.\n요술봉이 반짝이자\n생쥐 넷이 늠름한 백마 네 마리로 변했지요.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p11.webp?v=2",
         "video": "/classic/cinderella/p11.mp4",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p11-0.mp3",
-            "text": "이번에는 생쥐 친구들 차례였어요.\n얍! 하고 요술봉이 반짝이자\n생쥐 넷이 늠름한 백마 네 마리로 변했지요.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다."
+            "text": "이번에는 생쥐 친구들 차례였어요.\n요술봉이 반짝이자\n생쥐 넷이 늠름한 백마 네 마리로 변했지요.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다."
           }
         ]
       },
       {
         "n": 12,
-        "text": "마지막으로 신데렐라의 발 앞에\n반짝이는 유리구두 한 켤레가 나타났어요.\n\"기억하렴! 밤 12시가 되면 마법이 풀린단다.\"\n\"네, 대모님! 고맙습니다!\"",
+        "text": "마지막으로 신데렐라의 발 앞에\n반짝이는 유리구두 한 켤레가 나타났어요.\n\"기억하렴! 밤 12시가 되면 마법이 풀린단다.\"\n\"요정님! 고맙습니다!\"",
         "lines": [
           {
             "text": "기억하렴! 밤 12시가 되면 마법이 풀린단다.",
             "who": "fairy"
           },
           {
-            "text": "네, 대모님! 고맙습니다!",
-            "who": "cinderella"
+            "text": "요정님! 고맙습니다!",
+            "who": "cinderella",
+            "feel": "happy",
+            "intensity": 0.6
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p12.webp?v=2",
@@ -298,17 +307,17 @@
           {
             "who": "cinderella",
             "src": "/classic/cinderella/seg-cast-p12-2.mp3",
-            "text": "\"네, 대모님! 고맙습니다!\""
+            "text": "\"요정님! 고맙습니다!\""
           }
         ],
         "video": "/classic/cinderella/p12.mp4"
       },
       {
         "n": 13,
-        "text": "황금 마차가 왕궁 앞에 멈췄어요.\n신데렐라가 커다란 계단을 올라\n무도회장 문을 열고 들어서자,\n음악이 뚝 그치고 모두가 숨을 멈췄지요.\n\"저 아가씨는 어느 나라에서 오셨을까?\"",
+        "text": "황금 마차가 왕궁 앞에 멈췄어요.\n신데렐라가 커다란 계단을 올라 무도회장에 들어서자,\n음악이 뚝 그치고 모두의 눈길이 신데렐라에게 쏠렸지요.\n사람들이 소곤소곤 속삭였어요.\n\"어머, 저 아가씨는 어느 나라 공주님이지?\"",
         "lines": [
           {
-            "text": "저 아가씨는 어느 나라에서 오셨을까?",
+            "text": "어머, 저 아가씨는 어느 나라 공주님이지?",
             "who": "crowd"
           }
         ],
@@ -317,12 +326,12 @@
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p13-0.mp3",
-            "text": "황금 마차가 왕궁 앞에 멈췄어요.\n신데렐라가 커다란 계단을 올라\n무도회장 문을 열고 들어서자,\n음악이 뚝 그치고 모두가 숨을 멈췄지요.\n"
+            "text": "황금 마차가 왕궁 앞에 멈췄어요.\n신데렐라가 커다란 계단을 올라 무도회장에 들어서자,\n음악이 뚝 그치고 모두의 눈길이 신데렐라에게 쏠렸지요.\n사람들이 소곤소곤 속삭였어요.\n"
           },
           {
             "who": "crowd",
             "src": "/classic/cinderella/seg-cast-p13-1.mp3",
-            "text": "\"저 아가씨는 어느 나라에서 오셨을까?\""
+            "text": "\"어머, 저 아가씨는 어느 나라 공주님이지?\""
           }
         ]
       },
@@ -397,11 +406,14 @@
       },
       {
         "n": 17,
-        "text": "\"앗, 이제 가야 해요!\"\n신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n왕자님이 뒤따라왔지만 이미 늦었지요.\n그만 유리구두 한 짝이 벗겨진 줄도 모르고요!",
+        "text": "\"앗, 전 이제 가야 해요!\"\n신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n그만 유리구두 한 짝이 벗겨진 줄도 모르고요!\n왕자님이 뒤따라왔지만 이미 늦었지요.",
         "lines": [
           {
-            "text": "앗, 이제 가야 해요!",
-            "who": "cinderella"
+            "text": "앗, 전 이제 가야 해요!",
+            "who": "cinderella",
+            "feel": "toneup",
+            "intensity": 0.6,
+            "tempo": 1.1
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p17.webp?v=2",
@@ -409,40 +421,24 @@
           {
             "who": "cinderella",
             "src": "/classic/cinderella/seg-cast-p17-0.mp3",
-            "text": "\"앗, 이제 가야 해요!\""
+            "text": "\"앗, 전 이제 가야 해요!\""
           },
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p17-1.mp3",
-            "text": "\n신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n왕자님이 뒤따라왔지만 이미 늦었지요.\n그만 유리구두 한 짝이 벗겨진 줄도 모르고요!"
+            "text": "\n신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n그만 유리구두 한 짝이 벗겨진 줄도 모르고요!\n왕자님이 뒤따라왔지만 이미 늦었지요."
           }
         ]
       },
       {
         "n": 18,
-        "text": "계단에 홀로 남은 유리구두를\n왕자님이 두 손으로 소중히 주워 들었어요.\n\"이 구두의 주인을 꼭 찾고 말겠어!\"\n이튿날부터 신하들이 유리구두를 들고\n온 나라의 집을 하나하나 찾아다녔답니다.",
-        "lines": [
-          {
-            "text": "이 구두의 주인을 꼭 찾고 말겠어!",
-            "who": "prince"
-          }
-        ],
+        "text": "계단에 홀로 남은 유리구두를\n왕자님이 두 손으로 소중히 주워 들었어요.\n이튿날부터 신하들이 유리구두를 들고\n온 나라의 집을 하나하나 찾아다녔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p18.webp?v=2",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p18-0.mp3",
-            "text": "계단에 홀로 남은 유리구두를\n왕자님이 두 손으로 소중히 주워 들었어요.\n"
-          },
-          {
-            "who": "prince",
-            "src": "/classic/cinderella/seg-cast-p18-1.mp3",
-            "text": "\"이 구두의 주인을 꼭 찾고 말겠어!\""
-          },
-          {
-            "who": "narration",
-            "src": "/classic/cinderella/seg-p18-2.mp3",
-            "text": "\n이튿날부터 신하들이 유리구두를 들고\n온 나라의 집을 하나하나 찾아다녔답니다."
+            "text": "계단에 홀로 남은 유리구두를\n왕자님이 두 손으로 소중히 주워 들었어요.\n이튿날부터 신하들이 유리구두를 들고\n온 나라의 집을 하나하나 찾아다녔답니다."
           }
         ]
       },
@@ -476,27 +472,29 @@
       },
       {
         "n": 20,
-        "text": "신데렐라가 발을 내밀자\n유리구두가 사르르 — 꼭 맞았어요!\n주머니에서 남은 한 짝까지 꺼내 놓자\n온 집 안이 조용해졌답니다.",
+        "text": "신데렐라가 발을 내밀자\n유리구두가 사르르 — 꼭 맞았어요!\n온 집 안이 조용해졌어요.\n뒤따라온 왕자님의 눈이 동그래졌답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p20.webp?v=2",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p20-0.mp3",
-            "text": "신데렐라가 발을 내밀자\n유리구두가 사르르 — 꼭 맞았어요!\n주머니에서 남은 한 짝까지 꺼내 놓자\n온 집 안이 조용해졌답니다."
+            "text": "신데렐라가 발을 내밀자\n유리구두가 사르르 — 꼭 맞았어요!\n온 집 안이 조용해졌어요.\n뒤따라온 왕자님의 눈이 동그래졌답니다."
           }
         ]
       },
       {
         "n": 21,
-        "text": "언니들은 얼굴이 빨개져 고개를 푹 숙였어요.\n\"그동안… 우리가 너무 못되게 굴었어. 미안해.\"\n신데렐라는 한참 언니들을 바라보다가\n두 손을 가만히 잡아 주었어요.\n\"괜찮아요. 이제 우리 사이좋게 지내요.\"",
+        "text": "언니들은 얼굴이 빨개져 고개를 푹 숙였어요.\n\"그동안… 우리가 너무 못되게 굴었어. 미안해.\"\n\"아니에요, 괜찮아요. 이제 우리 사이좋게 지내요.\"",
         "lines": [
           {
             "text": "그동안… 우리가 너무 못되게 굴었어. 미안해.",
             "who": "sister"
           },
           {
-            "text": "괜찮아요. 이제 우리 사이좋게 지내요.",
-            "who": "cinderella"
+            "text": "아니에요, 괜찮아요. 이제 우리 사이좋게 지내요.",
+            "who": "cinderella",
+            "feel": "happy",
+            "intensity": 0.3
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p21.webp?v=2",
@@ -509,17 +507,12 @@
           {
             "who": "sister",
             "src": "/classic/cinderella/seg-cast-p21-1.mp3",
-            "text": "\"그동안… 우리가 너무 못되게 굴었어. 미안해.\""
-          },
-          {
-            "who": "narration",
-            "src": "/classic/cinderella/seg-p21-2.mp3",
-            "text": "\n신데렐라는 한참 언니들을 바라보다가\n두 손을 가만히 잡아 주었어요.\n"
+            "text": "\"그동안… 우리가 너무 못되게 굴었어. 미안해.\"\n"
           },
           {
             "who": "cinderella",
-            "src": "/classic/cinderella/seg-cast-p21-3.mp3",
-            "text": "\"괜찮아요. 이제 우리 사이좋게 지내요.\""
+            "src": "/classic/cinderella/seg-cast-p21-2.mp3",
+            "text": "\"아니에요, 괜찮아요. 이제 우리 사이좋게 지내요.\""
           }
         ]
       },
@@ -543,7 +536,7 @@
       "언니": "sister",
       "언니들": "sister",
       "첫째 언니": "sister",
-      "둘째 언니": "sister",
+      "둘째 언니": "sister2",
       "요정 대모": "fairy",
       "대모님": "fairy",
       "요정": "fairy",
@@ -557,11 +550,12 @@
     "voiceCast": {
       "narration": "tc-minjung",
       "cinderella": "tc-najin",
-      "sister": "tc-gahee",
+      "sister": "tc-minju",
+      "sister2": "tc-gahee",
       "stepmom": "tc-sookhee",
-      "fairy": "tc-jiwoo",
+      "fairy": "tc-juha",
       "prince": "tc-taewoo",
-      "servant": "tc-sullock",
+      "servant": "tc-taesung",
       "crowd": "tc-minjung"
     },
     "style": "THE TWO THINGS THAT MATTER MOST, before anything else. (1) FACES: every face is a children's-picture-book face — a big round head, full round cheeks that push the eyes into soft curves, a tiny simple nose, large dark dot eyes with one white highlight, and a small curved mouth. Heads are drawn LARGE relative to the body, about one quarter of the total height. Never a small realistic face, never flat blank features, never a doll face, never an adult face on a child. (2) INK LINE: every shape is closed with a CLEARLY VISIBLE brush-drawn outline in warm soot-brown — a confident line that swells and tapers, a little dry and broken at its ends. The line must read plainly at a glance. Never a faint pencil line, never an outline that melts into the colour, never a soft airbrushed edge. Then the rest: transparent watercolour on cream paper, matte, the paper tooth breathing through every wash. Colour is laid broad and flat, two or three tones to an object, always kept inside the ink line. Keep it simple — a few big shapes make the picture and the rest of the frame stays calm. Pigments: warm ochre, raw sienna and soot grey for the kitchen and hearth; cerulean and pale indigo for night; rose, buttercup yellow and plum for the sisters and stepmother; chalk white with a faint silver-blue for the ball gown; gold ochre for the coach and candlelight. Even the night pages stay luminous. Flat hand-drawn 2D — NOT 3D, not CGI, not a glossy render, not anime or manga, not a Disney film still, not a muted flat-vector or mid-century poster look, no sparkles and no digital glow.",
@@ -954,7 +948,7 @@
       },
       {
         "n": 6,
-        "text": "'…나도 그냥 놀까?'\n막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n아주 반듯했어요.\n\"그래도 난, 튼튼한 집을 짓고 싶어.\"",
+        "text": "'나도 놀고 싶긴 한데…'\n막내는 한참 동안 앉아 있었어요.\n그러다 아까 쌓아 둔 벽돌 한 줄을 쓰다듬어 보았지요.\n아주 반듯했어요.\n\"그래도 난, 튼튼한 집을 짓고 싶어.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p6.webp?v=4",
         "lines": [
           {
@@ -962,7 +956,7 @@
             "who": "pig3"
           },
           {
-            "text": "…나도 그냥 놀까?",
+            "text": "나도 놀고 싶긴 한데…",
             "who": "pig3",
             "feel": "tonedown",
             "intensity": 0.35
@@ -985,7 +979,7 @@
           {
             "who": "pig3",
             "src": "/classic/threepigs/seg-cast-p6-0.mp3",
-            "text": "'…나도 그냥 놀까?'"
+            "text": "'나도 놀고 싶긴 한데…'"
           },
           {
             "who": "narration",
@@ -1092,7 +1086,7 @@
       },
       {
         "n": 9,
-        "text": "똑, 똑, 똑. 지푸라기 집 문을 누가 두드렸어요.\n\"누구세요?\"\n늑대는 목소리를 가늘게 꾸몄지요.\n\"…엄마야.\"\n\"어? 우리 엄마 아닌데?\"\n늑대는 머리를 긁적였어요.\n\"들켰구나.\"",
+        "text": "똑, 똑, 똑. 지푸라기 집 문을 누가 두드렸어요.\n\"누구세요?\"\n늑대는 목소리를 가늘게 꾸몄지요.\n\"…엄마야.\"\n\"어? 우리 엄마 아닌 것 같은데, 넌 누구야?\"\n늑대는 머리를 긁적였어요.\n\"들켰구나.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p9.webp?v=4",
         "lines": [
           {
@@ -1107,7 +1101,7 @@
             "tempo": 1.15
           },
           {
-            "text": "어? 우리 엄마 아닌데?",
+            "text": "어? 우리 엄마 아닌 것 같은데, 넌 누구야?",
             "who": "pig1",
             "feel": "toneup",
             "intensity": 0.35
@@ -1141,7 +1135,7 @@
           {
             "who": "pig1",
             "src": "/classic/threepigs/seg-cast-p9-5.mp3",
-            "text": "\"어? 우리 엄마 아닌데?\""
+            "text": "\"어? 우리 엄마 아닌 것 같은데, 넌 누구야?\""
           },
           {
             "who": "narration",
@@ -1169,7 +1163,7 @@
           },
           {
             "label": "pig1",
-            "line": "어? 우리 엄마 아닌데?",
+            "line": "어? 우리 엄마 아닌 것 같은데, 넌 누구야?",
             "box": [
               260,
               700,
@@ -1184,11 +1178,11 @@
       },
       {
         "n": 10,
-        "text": "늑대는 숨을 크게 들이마셨어요. 후욱! 후우욱!\n지푸라기가 눈처럼 날리고, 집이 폭삭 주저앉았어요.\n첫째는 넘어질 듯 언덕을 달려 내려갔지요.\n\"둘째야! 문 열어 줘, 늑대가 나타났어!\"\n첫째가 뛰어들자 나무 집 문이 쾅 닫혔답니다.",
+        "text": "늑대는 숨을 크게 들이마셨어요. 후욱! 후우욱!\n지푸라기가 눈처럼 날리고, 집이 폭삭 주저앉았어요.\n첫째는 넘어질 듯 언덕을 달려 내려갔지요.\n\"둘째야! 늑대가 나타났어, 문 좀 열어 줘!\"\n첫째가 뛰어들자 나무 집 문이 쾅 닫혔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p10.webp?v=2",
         "lines": [
           {
-            "text": "둘째야! 문 열어 줘, 늑대가 나타났어!",
+            "text": "둘째야! 늑대가 나타났어, 문 좀 열어 줘!",
             "who": "pig1",
             "feel": "toneup",
             "intensity": 0.45,
@@ -1204,7 +1198,7 @@
           {
             "who": "pig1",
             "src": "/classic/threepigs/seg-cast-p10-1.mp3",
-            "text": "\"둘째야! 문 열어 줘, 늑대가 나타났어!\""
+            "text": "\"둘째야! 늑대가 나타났어, 문 좀 열어 줘!\""
           },
           {
             "who": "narration",
@@ -1215,7 +1209,7 @@
         "hotspots": [
           {
             "label": "pig1",
-            "line": "둘째야! 문 열어 줘, 늑대가 나타났어!",
+            "line": "둘째야! 늑대가 나타났어, 문 좀 열어 줘!",
             "box": [
               403,
               540,
@@ -1278,12 +1272,12 @@
       },
       {
         "n": 12,
-        "text": "\"막내야! 늑대가 나타났어, 문 열어 줘!\"\n첫째가 문을 쾅쾅 두드렸어요.\n막내는 벌떡 일어나 문을 열었어요.\n\"빨리 들어와!\"\n형들이 뛰어 들어오자 문이 쿵 닫혔답니다.",
+        "text": "\"막내야! 늑대가, 늑대가 나타났어! 문 좀 열어 줘!\"\n첫째가 문을 쾅쾅 두드렸어요.\n막내는 벌떡 일어나 문을 열었어요.\n\"빨리 들어와!\"\n형들이 뛰어 들어오자 문이 쿵 닫혔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p12.webp?v=4",
         "video": "/classic/threepigs/p12.mp4",
         "lines": [
           {
-            "text": "막내야! 늑대가 나타났어, 문 열어 줘!",
+            "text": "막내야! 늑대가, 늑대가 나타났어! 문 좀 열어 줘!",
             "who": "pig1",
             "feel": "toneup",
             "intensity": 0.45,
@@ -1300,7 +1294,7 @@
           {
             "who": "pig1",
             "src": "/classic/threepigs/seg-cast-p12-0.mp3",
-            "text": "\"막내야! 늑대가 나타났어, 문 열어 줘!\""
+            "text": "\"막내야! 늑대가, 늑대가 나타났어! 문 좀 열어 줘!\""
           },
           {
             "who": "narration",
@@ -1321,7 +1315,7 @@
         "hotspots": [
           {
             "label": "pig1",
-            "line": "막내야! 늑대가 나타났어, 문 열어 줘!",
+            "line": "막내야! 늑대가, 늑대가 나타났어! 문 좀 열어 줘!",
             "box": [
               330,
               330,
@@ -1350,11 +1344,11 @@
       },
       {
         "n": 13,
-        "text": "늑대는 벽돌집 앞에서 숨을 크게 들이마셨어요.\n후욱! 후우욱! 후우욱!\n창문이 조금 떨렸을 뿐, 벽돌집은 꿈쩍도 하지 않았지요.\n늑대는 어지러워 비틀거렸어요.\n\"어? 왜 안 넘어가는 거지?\"",
+        "text": "늑대는 벽돌집 앞에서 숨을 크게 들이마셨어요.\n후욱! 후우욱! 후우욱!\n창문이 조금 떨렸을 뿐, 벽돌집은 꿈쩍도 하지 않았지요.\n늑대는 어지러워 비틀거렸어요.\n\"어? 이상하네. 왜 안 넘어가는 거지?\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p13.webp?v=4",
         "lines": [
           {
-            "text": "어? 왜 안 넘어가는 거지?",
+            "text": "어? 이상하네. 왜 안 넘어가는 거지?",
             "who": "wolf",
             "feel": "toneup",
             "intensity": 0.35,
@@ -1370,13 +1364,13 @@
           {
             "who": "wolf",
             "src": "/classic/threepigs/seg-cast-p13-1.mp3",
-            "text": "\"어? 왜 안 넘어가는 거지?\""
+            "text": "\"어? 이상하네. 왜 안 넘어가는 거지?\""
           }
         ],
         "hotspots": [
           {
             "label": "wolf",
-            "line": "어? 왜 안 넘어가는 거지?",
+            "line": "어? 이상하네. 왜 안 넘어가는 거지?",
             "box": [
               150,
               130,
@@ -1391,11 +1385,11 @@
       },
       {
         "n": 14,
-        "text": "그때 늑대 눈에 굴뚝이 보였어요.\n\"굴뚝으로 들어가면 되겠다!\"\n늑대가 지붕으로 기어오르는 소리를 듣고\n막내는 벽난로에 장작을 한 아름 넣었지요.\n불꽃이 활활 타올랐답니다.",
+        "text": "그때 늑대 눈에 굴뚝이 보였어요.\n\"오, 굴뚝으로 들어가면 되겠다!\"\n늑대가 지붕으로 기어오르는 소리를 듣고\n막내는 벽난로에 장작을 한 아름 넣었지요.\n불꽃이 활활 타올랐답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p14.webp?v=4",
         "lines": [
           {
-            "text": "굴뚝으로 들어가면 되겠다!",
+            "text": "오, 굴뚝으로 들어가면 되겠다!",
             "who": "wolf",
             "feel": "happy",
             "intensity": 0.45,
@@ -1411,7 +1405,7 @@
           {
             "who": "wolf",
             "src": "/classic/threepigs/seg-cast-p14-1.mp3",
-            "text": "\"굴뚝으로 들어가면 되겠다!\""
+            "text": "\"오, 굴뚝으로 들어가면 되겠다!\""
           },
           {
             "who": "narration",
@@ -1422,7 +1416,7 @@
         "hotspots": [
           {
             "label": "wolf",
-            "line": "굴뚝으로 들어가면 되겠다!",
+            "line": "오, 굴뚝으로 들어가면 되겠다!",
             "box": [
               50,
               180,
@@ -1493,7 +1487,7 @@
       },
       {
         "n": 17,
-        "text": "한참 뒤, 방 안이 조용해졌어요.\n첫째가 먼저 입을 열었지요.\n\"막내야… 아까 놀려서 미안해.\"\n\"우리가 게을렀어. 정말 고마워.\"\n막내는 대답 대신 형들을 벽난로 앞에 앉혔어요.",
+        "text": "한참 뒤, 방 안이 조용해졌어요.\n첫째가 먼저 입을 열었지요.\n\"막내야… 아까 놀려서 미안해.\"\n\"우리가 게을렀어. 정말 고마워.\"\n막내는 늑대에 놀란 형들을 진정시키고 벽난로 앞에 앉혔어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p17.webp?v=4",
         "lines": [
           {
@@ -1526,7 +1520,7 @@
           {
             "who": "narration",
             "src": "/classic/threepigs/seg-p17-3.mp3",
-            "text": "\n막내는 대답 대신 형들을 벽난로 앞에 앉혔어요."
+            "text": "\n막내는 늑대에 놀란 형들을 진정시키고 벽난로 앞에 앉혔어요."
           }
         ],
         "hotspots": [
@@ -1558,7 +1552,7 @@
       },
       {
         "n": 18,
-        "text": "며칠 뒤, 엄마 돼지가 언덕에 올라왔어요.\n벽돌집 세 채가 나란히 서 있었지요.\n\"어머, 셋이 같이 지었구나?\"\n\"응! 막내가 가르쳐 줬어.\"\n엄마는 셋을 폭 안아 주었답니다.",
+        "text": "며칠 뒤, 엄마 돼지가 언덕에 올라왔어요.\n벽돌집 세 채가 나란히 서 있었지요.\n\"어머, 셋이 같이 지었구나?\"\n\"네! 막내가 가르쳐 줬어요.\"\n엄마는 셋을 폭 안아 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p18.webp?v=4",
         "lines": [
           {
@@ -1568,7 +1562,7 @@
             "intensity": 0.4
           },
           {
-            "text": "응! 막내가 가르쳐 줬어.",
+            "text": "네! 막내가 가르쳐 줬어요.",
             "who": "pig1",
             "feel": "happy",
             "intensity": 0.4
@@ -1588,7 +1582,7 @@
           {
             "who": "pig1",
             "src": "/classic/threepigs/seg-cast-p18-2.mp3",
-            "text": "\"응! 막내가 가르쳐 줬어.\""
+            "text": "\"네! 막내가 가르쳐 줬어요.\""
           },
           {
             "who": "narration",
@@ -1612,7 +1606,7 @@
           },
           {
             "label": "pig1",
-            "line": "응! 막내가 가르쳐 줬어.",
+            "line": "네! 막내가 가르쳐 줬어요.",
             "box": [
               420,
               640,
