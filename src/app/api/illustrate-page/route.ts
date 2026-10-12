@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { pageScale, readScaleKind, scaleCheckLines, scaleLockLines } from "@/lib/scale-lock";
 import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
 import { pickLocationDetail } from "@/lib/scene-edit";
@@ -336,7 +337,9 @@ export async function POST(request: Request) {
   const cast = castRaw
     .map((c) => {
       if (typeof c === "string") return { name: c.trim(), description: "", fixed: false };
-      const o = c as { name?: unknown; description?: unknown; fixed?: unknown; outfit?: unknown };
+      const o = c as { name?: unknown; description?: unknown; fixed?: unknown; outfit?: unknown; scale?: unknown };
+      // 크기 표시(거인·소인) — 화면이 책 전체 글에서 찾아 보낸다(lib/scale-lock withBookScale). 없으면 아래에서 설명 글로 찾는다.
+      const scale = readScaleKind(o?.scale);
       // 이 책의 옷(@@CHARACTER@@ 셋째 칸) — 옷 카드로 입은 고정 가족 줄에만 쓴다(설명 글에도 이미 들어 있다).
       const outfit = typeof o?.outfit === "string" ? o.outfit.trim().slice(0, 200) : "";
       return {
@@ -346,6 +349,7 @@ export async function POST(request: Request) {
         // 가족 캐릭터의 고정 얼굴로 시트를 그린 인물 — 얼굴·머리는 설명 글보다 시트를 따른다(아래 CAST LOCK).
         fixed: o?.fixed === true,
         ...(outfit ? { outfit } : {}),
+        ...(scale ? { scale } : {}),
       };
     })
     .filter((c) => c.name)
@@ -448,8 +452,17 @@ export async function POST(request: Request) {
    */
   const refs = arrangePageReferences({ sheet, portraits, location: locationSheet, style: usedStyleReference });
   const nth = (kind: string) => refOrdinal(refs.order, kind);
+  /*
+   * 크기 잠금(2026-10-12 사장님 "한 장면이 잘못 나왔다, 크기가") — 거인·소인이 보통 크기 사람과 함께 보이는 쪽.
+   * 거인국 책 5쪽에서 거인 아이가 그냥 큰 형으로 그려졌다: 그 쪽 글엔 크기 단서가 없었고, 아래 두 줄은 반대로 밀었다.
+   * 잠금이 걸린 쪽에서는 SCALE LOCK 줄을 넣고(주인공 고정 바로 뒤), '허리 위 가까이' 구도 줄과 시트 줄의
+   * '나이에 맞는 자연스러운 키'를 물린다. 보통 책은 scale 이 null 이라 프롬프트가 예전 그대로다(lib/scale-lock).
+   */
+  const scale = pageScale(sceneCast, hero?.name ?? cast[0]?.name ?? null, [sceneBody, storyText]);
+  const scaleLock = scaleLockLines(scale);
   /** 가족 얼굴이 나오는 쪽의 구도 줄(lib/page-refs familyFramingLines) — 검수도 이 쪽은 가까운 구도를 받아들이게 한다(아래 extraRules). */
-  const familyFraming = familyFramingLines(sceneCast.length, fixedOnPage.length);
+  // 크기 잠금 쪽은 뺀다 — '얼굴이 크게 보이게 가까이'는 작아야 할 사람을 키운다.
+  const familyFraming = scale ? [] : familyFramingLines(sceneCast.length, fixedOnPage.length);
 
   const prompt = [
     knownStyle
@@ -503,6 +516,8 @@ export async function POST(request: Request) {
      * 뒤쪽 긴 안전·구도 문장 사이에 끼면 묽어진다. 성별·머리는 이 책에서 가장 눈에 띄는 약속이다.
      */
     heroOnPage ? heroLockLines(heroFixed && hero ? { ...hero, looks: undefined } : hero, storyText).join("\n") : "",
+    // 크기 잠금 — 장면 문장보다 앞에(뒤에 두면 '단추를 건넨다' 같은 장면 글이 평범한 두 아이로 읽힌다).
+    scaleLock.join("\n"),
     `Scene: ${drawnScene}`,
     /*
      * 구도 — 아래가 텅 비지 않게.
@@ -614,7 +629,7 @@ export async function POST(request: Request) {
           // 누가 몇째 칸인지 — 원본 픽셀로 짠 시트만 보낸다(이야기 순서와 다를 수 있다). 옛 책은 줄이 없다.
           // 섞인 시트면 AI 가 따로 그린 사람은 키가 제 비율이 아니라고 덧붙인다(친구가 엄마만큼 크게 서 있다).
           // 옷 카드로 입은 고정 가족은 칸 위가 사람 없는 옷이라고 — 그 옷을 입히고 물건처럼 늘어놓지 말라고.
-          ...(sheetOrder ? [sheetOrderLine(sheetOrder, notToScale, dressed)] : []),
+          ...(sheetOrder ? [sheetOrderLine(sheetOrder, notToScale, dressed, Boolean(scale))] : []),
           "Do NOT copy the sheet's layout. The sheet lines characters up side by side on a blank background; this page is a real scene with its own composition.",
           "Each character exists exactly ONCE in this world. NEVER draw the same character twice in one picture — no twins, no repeated faces, no duplicated family members, no mirrored copies.",
           // 시트의 '정면 차렷 자세'까지 베껴 와서, 장면 한가운데 인물만 오려 붙인 것처럼
@@ -821,6 +836,8 @@ export async function POST(request: Request) {
       extraRules: [
         ...checkRuleLines({ hero: heroOnPage ? hero : null, page: vehicleInfo, storyText }),
         ...familyFramingCheckLines(familyFraming),
+        // 크기가 무너진 그림(거인이 큰 형으로)은 떨어뜨려 다시 그리게 한다.
+        ...scaleCheckLines(scale),
       ],
     });
     const check = borderLeft

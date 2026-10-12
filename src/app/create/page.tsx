@@ -22,6 +22,7 @@ import {
 import { ART_STYLES } from "@/lib/art-styles";
 import { bestFriend, heightFor, type FamilyMember } from "@/lib/family";
 import { castPortraits, storyFamilyLooks } from "@/lib/family-cast";
+import { detectBookScale } from "@/lib/scale-lock";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
 import {
@@ -3234,6 +3235,14 @@ export default function CreatePage() {
        * 남아 있으면 공용보다 먼저 쓴다(공용 2장은 글자·테두리 몫으로 남게).
        */
       const FACE_REDRAWS_PER_BOOK = 1;
+      /*
+       * 크기가 다른 인물(거인·소인) — 책 전체 글에서 한 번 찾아 쪽마다 등장인물 줄에 싣는다(lib/scale-lock).
+       * 쪽 글에 크기 단서가 없는 쪽에서도 같은 크기로 그리게(2026-10-12 거인국 책 5쪽 — 거인이 큰 형으로 그려졌다).
+       */
+      const bookScale = detectBookScale(
+        s.characters,
+        s.pages.map((p) => `${p.text}\n${p.imagePrompt}`),
+      );
       let redrawsUsed = 0;
       let faceRedrawsUsed = 0;
       // 원본 얼굴을 붙인 쪽이 그림 모델에 두 번 거절되면 이 책의 남은 쪽은 얼굴 없이(시트만) — 쪽마다 거절·다시 그리기로 늦어지지 않게.
@@ -3320,6 +3329,8 @@ export default function CreatePage() {
                     ...(fixedCastRef.current.has(c.name) ? { fixed: true } : {}),
                     // 이 책의 옷 — 옷 카드로 입은 고정 가족 줄이 이 글을 쓴다.
                     ...(c.outfit ? { outfit: c.outfit } : {}),
+                    // 거인·소인 — 서버가 이 사람과 보통 크기 사람이 함께 보이는 쪽에 크기 잠금을 건다.
+                    ...(bookScale.has(c.name) ? { scale: bookScale.get(c.name) } : {}),
                   })),
                   // 주인공 성별·생김새 — 시트에만 가고 쪽 그림엔 안 가서 남자아이가 단발·꽃핀으로 나왔다.
                   hero: heroFromStory(s.characters, gender !== "unspecified" ? gender : child?.gender, heroChipLine),

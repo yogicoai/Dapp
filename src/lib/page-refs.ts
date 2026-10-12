@@ -149,14 +149,19 @@ export function readSheetOutfits(
  * dressed — 옷 카드로 이 책의 옷을 입은 고정 가족(readSheetOutfits). 그 칸 위는 사람 없는 옷뿐이라, 그 옷을 입히고
  * 장면에 따로 놓인 물건으로 그리지 말라고 한다. 비어 있으면 글은 예전 그대로다.
  * 얼굴은 얼굴 칸에서만 — 옷 카드에 AI 가 사람·얼굴을 몰래 그려 넣어도(검사로 다 못 거른다) 그 얼굴을 따라가지 않게(검토 2026-09-29).
+ * scaleLocked — 이 쪽에 크기 잠금(lib/scale-lock)이 걸렸다. '나이에 맞는 자연스러운 키'는 거인을 큰 형으로 줄여 버리므로
+ * (2026-10-12 거인국 책 5쪽) 그 말 대신 '크기는 SCALE LOCK 이 정한다'로 바꾼다. 안 주면 글은 예전 그대로다.
  */
 export function sheetOrderLine(
   order: readonly string[],
   notToScale: readonly string[] = [],
   dressed: readonly string[] = [],
+  scaleLocked = false,
 ): string {
   const scale = notToScale.length
-    ? ` ${notToScale.join(", ")} ${notToScale.length > 1 ? "were" : "was"} painted separately at a different scale — heights on this sheet are NOT to scale between people. Draw every person at the natural height for their age.`
+    ? ` ${notToScale.join(", ")} ${notToScale.length > 1 ? "were" : "was"} painted separately at a different scale — heights on this sheet are NOT to scale between people. ${
+        scaleLocked ? "How big each person is on this page is decided by the SCALE LOCK above, never by this sheet." : "Draw every person at the natural height for their age."
+      }`
     : "";
   const worn = dressed.filter((n) => order.includes(n));
   const everyone = order.every((n) => worn.includes(n));

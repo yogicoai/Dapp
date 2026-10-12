@@ -38,6 +38,7 @@ import { loadLibraryAccess } from "@/lib/library-access";
 import { viewerTierOf } from "@/lib/member-plan";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
 import { libraryLock, OPEN_LIBRARY } from "@/lib/offer-settings";
+import { withBookScale } from "@/lib/scale-lock";
 import { authedFetch, currentUid } from "@/lib/supabase";
 import { loadPrivatePageVideos } from "@/lib/private-media";
 import { fitScale } from "@/lib/fit-text";
@@ -699,7 +700,11 @@ export function BookViewer({
             styleReference: sibling?.image ?? "",
             styleReferenceScene: sibling?.imagePrompt ?? "",
             shape: book.shape,
-            cast: book.cast ?? [],
+            // 거인·소인 표시를 책 전체 글에서 찾아 싣는다 — 다시 그린 쪽도 같은 크기로(lib/scale-lock, 2026-10-12).
+            cast: withBookScale(
+              book.cast ?? [],
+              book.pages.map((p) => `${p.text}\n${p.imagePrompt ?? ""}`),
+            ),
             // 주인공 성별·생김새 — 옛 책엔 없어서 서버가 cast 첫 사람과 그 설명으로 물러선다.
             hero: book.hero,
             // 만들 때 부모가 적어 둔 장소 — 이게 있어야 다시 그린 쪽도 같은 곳이 된다.

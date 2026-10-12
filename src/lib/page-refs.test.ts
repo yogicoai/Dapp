@@ -437,3 +437,16 @@ describe("readPortraitFigure — 요청 portraits 칸에서 키·머리 비율",
     assert.deepEqual(readPortraitFigure([null, 3, "할머니"], "할머니"), {});
   });
 });
+
+describe("sheetOrderLine — 크기 잠금 쪽(2026-10-12 거인국 책 5쪽)", () => {
+  it("크기 잠금이 걸리면 '나이에 맞는 자연스러운 키' 대신 SCALE LOCK 을 가리킨다", () => {
+    const plain = sheetOrderLine(["하온", "포포"], ["포포"]);
+    const locked = sheetOrderLine(["하온", "포포"], ["포포"], [], true);
+    assert.ok(plain.includes("Draw every person at the natural height for their age."));
+    assert.ok(!locked.includes("natural height"));
+    assert.ok(locked.includes("decided by the SCALE LOCK above, never by this sheet"));
+  });
+  it("따로 그린 사람이 없으면(모두 고정) 잠금이 걸려도 글은 예전 그대로다", () => {
+    assert.equal(sheetOrderLine(["하온", "엄마"], [], [], true), sheetOrderLine(["하온", "엄마"]));
+  });
+});
