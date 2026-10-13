@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { geminiUsageRow, reportAiUsage } from "./ai-usage.ts";
 
 /**
  * Gemini 2.5 Flash Image ("Nano Banana") — 삽화 생성.
@@ -484,6 +485,8 @@ export async function generateImage(input: {
       candidates?: { content?: { parts?: Part[] }; finishReason?: string }[];
       promptFeedback?: { blockReason?: string };
     };
+    // 구글이 답을 준 호출은 그림이 없어도 값이 나간다 — 모델·토큰·금액을 남긴다(lib/ai-usage).
+    reportAiUsage(geminiUsageRow(model, "image", json));
 
     if (json.promptFeedback?.blockReason) {
       // 아동 콘텐츠 안전필터. 프롬프트에 wholesome 계열 순화 문구를 넣어 예방하지만,
@@ -762,6 +765,7 @@ export async function validateIllustration(input: IllustrationCheckInput): Promi
       const json = (await res.json()) as {
         candidates?: { content?: { parts?: Part[] }; finishReason?: string }[];
       };
+      reportAiUsage(geminiUsageRow(model, "check", json));
       const candidate = json.candidates?.[0];
       // 안전필터 등으로 잘린 답은 판정으로 쓸 수 없다.
       if (candidate?.finishReason && candidate.finishReason !== "STOP") {

@@ -13,6 +13,7 @@
  *
  * 값(2026-09 기준, quality=medium): 장당 약 $0.04~0.07 ≈ 60~100원. Gemini(≈54원)보다 조금 비싸다.
  */
+import { openaiImageUsageRow, reportAiUsage } from "./ai-usage.ts";
 import { GeminiError, type GeneratedImage } from "./gemini.ts";
 
 /** 앱의 비율 → gpt-image-1 이 받는 크기. */
@@ -109,6 +110,8 @@ export async function generateImageOpenAI(input: {
   }
 
   const json = (await res.json()) as { data?: { b64_json?: string }[] };
+  // Gemini 대신 그린 것도 남긴다 — 토큰만(금액은 OpenAI 사용량 화면이 기준, lib/ai-usage).
+  reportAiUsage(openaiImageUsageRow(model, json));
   const b64 = json.data?.[0]?.b64_json;
   if (!b64) throw new GeminiError("응답에 이미지가 없습니다. (OpenAI)", 502);
   return { mimeType: "image/png", data: b64 };

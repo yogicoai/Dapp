@@ -9,6 +9,7 @@
  */
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
+import { logScriptGemini } from "../ai-usage.mts";
 
 const arg = (k: string) => {
   const i = process.argv.indexOf(`--${k}`);
@@ -60,6 +61,8 @@ if (!res.ok) {
   process.exit(1);
 }
 const json: any = await res.json();
+// 모델·토큰·금액을 앱과 같은 표(ai_usage)에 남긴다
+await logScriptGemini("bg_gen", "gemini-2.5-flash-image", json);
 const part = json.candidates?.[0]?.content?.parts?.find((p: any) => p.inlineData);
 if (!part) {
   console.error("그림이 안 왔다", JSON.stringify(json).slice(0, 500));

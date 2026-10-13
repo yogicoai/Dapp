@@ -474,3 +474,94 @@ describe("비유·미래 표현으로 장소를 바꾸지 않는다 — 자동�
     assert.ok(/거실|집/.test(r.pages[1].imagePrompt), r.pages[1].imagePrompt);
   });
 });
+
+describe("키즈카페는 카페가 아니라 실내 놀이 공간이다(2026-10-13 my-mv6elzcs — 커피집에 구름다리, 미끄럼틀 쪽은 바깥 놀이터)", () => {
+  // 사장님이 만든 책의 본문 그대로
+  const TEXTS = [
+    "오늘은 어린이집 소풍 가는 날이에요. 하온이는 늘 쓰고 다니는 모자를 쓰고, 신이 나서 창밖을 내다보았어요.\n그런데 비가 주룩주룩 쏟아지고 있었어요. 하온이는 속상해서 입이 삐죽 나왔어요.\n엄마가 하온이 옆에 앉아 고개를 끄덕이며 말했어요.\n\"소풍 못 가서 속상했구나.\"\n엄마가 마음을 알아주니 하온이 가슴이 조금 풀렸어요. 그래서 소풍 대신 키즈카페에 가기로 했어요.",
+    "키즈카페에는 어린이집 친구들도 엄마와 함께 와 있었어요. 하온이는 친구들을 보고 손을 흔들었어요.\n그러고는 엄마 옆에 딱 붙어 섰어요.\n하온이가 엄마를 올려다보며 말했어요.\n\"오늘은 엄마랑 둘이 놀래요.\"\n엄마가 하온이 손을 꼭 잡아 주자, 하온이 마음이 포근포근 따뜻해졌어요.",
+    "먼저 하온이는 엄마와 긴 미끄럼틀 꼭대기에 올라갔어요. 가슴이 콩닥콩닥 뛰었어요.\n엄마와 하온이가 함께 외쳤어요.\n\"하나, 둘, 셋!\"\n슈우웅! 둘이 미끄럼틀을 타고 내려오자, 바람이 하온이 얼굴을 간질간질 스쳐 갔어요.\n하온이가 활짝 웃으며 엄마를 보고 말했어요.\n\"또 타고 싶어요!\"",
+    "다음은 흔들흔들 구름다리예요. 하온이가 한 걸음 내딛자, 다리가 출렁출렁 흔들렸어요.\n다리가 후들후들, 하온이는 조금 무서웠어요.\n엄마가 손을 내밀며 말했어요.\n\"무서워도 괜찮아. 엄마가 옆에 있어.\"\n하온이는 숨을 한 번 고르고, 엄마 손을 꼭 잡았어요.",
+    "한 걸음, 또 한 걸음. 하온이는 엄마 손을 잡고 끝까지 걸어갔어요.\n드디어 다리 끝에 쿵! 두 발이 닿았어요.\n하온이는 후유, 숨을 내쉬고 어깨를 쭉 폈어요.\n\"나 건넜어요! 무서웠는데 끝까지 건넜어요!\"\n엄마가 웃으면서 하온이를 꼭 안아 주었어요.",
+    "마지막으로 하온이는 오락 코너에서 엄마와 나란히 앉았어요. 둘이 겨루는 대결 게임이에요.\n하온이가 두 손으로 버튼을 꾹꾹 누르자, 엄마도 눈을 동그랗게 뜨고 버튼을 눌렀어요.\n창밖에는 아직 비가 토독토독 내렸지만, 하온이는 엄마 옆에서 조금도 쓸쓸하지 않았어요.\n하온이가 엄마를 보고 웃으며 말했어요.\n\"엄마, 비 오는 날도 좋아요. 엄마랑 같이 있으니까요.\"",
+  ];
+  const HOME = "장소: 거실 — 크림색 벽과 밝은 나무 마루, 비 오는 큰 창.";
+  const KIDS = "장소: 키즈카페 — 알록달록한 매트 바닥, 긴 실내 미끄럼틀과 그물 구름다리, 밝은 조명.";
+  /** places[i] 가 i 쪽에 클로드가 적은 장소 줄 */
+  function book(places: string[]): ParsedStory {
+    return {
+      title: "비 오는 날, 하온이와 엄마의 키즈카페",
+      summary: "소풍 대신 키즈카페에 간 날.",
+      characters: [
+        { name: "하온", description: "가족 그림 그대로" },
+        { name: "엄마", description: "가족 그림 그대로" },
+      ],
+      pages: TEXTS.map((text, i) => ({
+        pageNo: i + 1,
+        text,
+        imagePrompt: `등장인물 2명: 하온, 엄마. ${places[i]} 하온이와 엄마가 함께 있다.`,
+        voiceDirection: direction,
+      })),
+    };
+  }
+
+  it("책 그대로 — 1쪽은 집, 2~6쪽은 모두 같은 키즈카페(카페도 바깥 놀이터도 아니다)", () => {
+    const r = repairStoryContinuity(book([HOME, KIDS, KIDS, KIDS, KIDS, KIDS]));
+    // 1쪽: '어린이집 소풍 가는 날'·'키즈카페에 가기로 했어요'는 서 있는 곳이 아니다
+    assert.ok(r.pages[0].imagePrompt.includes(HOME), r.pages[0].imagePrompt);
+    for (const page of r.pages.slice(1)) {
+      assert.ok(page.imagePrompt.includes(KIDS), `${page.pageNo}쪽: ${page.imagePrompt}`);
+      assert.ok(!/나무 식탁|모래밭|나무 벤치/.test(page.imagePrompt), `${page.pageNo}쪽: ${page.imagePrompt}`);
+    }
+  });
+
+  it("클로드가 미끄럼틀 쪽에 놀이기구 이름만 적어도 키즈카페 안으로 남긴다", () => {
+    const slide = "장소: 미끄럼틀 — 긴 노란 미끄럼틀과 푹신한 매트.";
+    const r = repairStoryContinuity(book([HOME, KIDS, slide, KIDS, KIDS, KIDS]));
+    const place = /장소:\s*([^—]+?)\s*—\s*([^.]+)/.exec(r.pages[2].imagePrompt);
+    assert.ok(place, r.pages[2].imagePrompt);
+    assert.match(place[1], /키즈카페/, r.pages[2].imagePrompt);
+    assert.match(place[2], /키즈카페 안/, r.pages[2].imagePrompt);
+    // 장소 기준 그림도 키즈카페 것을 쓰고, 실내로 본다
+    assert.equal(locationKeyOf(place[1]), "playroom");
+    assert.equal(isIndoorPlace(place[1], place[2]), true);
+    // 뒤쪽은 그대로 키즈카페
+    assert.ok(r.pages[3].imagePrompt.includes(KIDS), r.pages[3].imagePrompt);
+  });
+
+  it("장소 열쇠 — 키즈카페·실내 놀이터는 한 계열, 진짜 카페·놀이터·집 놀이방은 예전 그대로", () => {
+    for (const name of ["키즈카페", "키즈 카페", "동네 키즈카페", "실내 놀이터", "키즈파크", "키즈카페 미끄럼틀", "키즈카페 오락 코너"]) {
+      assert.equal(locationKeyOf(name), "playroom", name);
+    }
+    assert.equal(locationKeyOf("카페"), "restaurant");
+    assert.equal(locationKeyOf("북카페"), "restaurant");
+    assert.equal(locationKeyOf("동네 놀이터"), "playground");
+    assert.equal(locationKeyOf("놀이방"), "home:room");
+  });
+
+  it("실내·실외 — 키즈카페와 실내 놀이터는 실내, 놀이터는 실외", () => {
+    assert.equal(isIndoorPlace("키즈카페", "알록달록한 매트 바닥과 실내 미끄럼틀"), true);
+    assert.equal(isIndoorPlace("실내 놀이터"), true);
+    assert.equal(isIndoorPlace("키즈파크"), true);
+    assert.equal(isIndoorPlace("놀이터"), false);
+  });
+
+  it("진짜 카페에 간 이야기와 바깥 놀이터 이야기는 예전처럼 본문을 따른다", () => {
+    const cafe = repairStoryContinuity({
+      ...book([HOME, HOME]),
+      pages: [
+        { pageNo: 1, text: "하온이는 엄마와 집을 나섰어요.", imagePrompt: `등장인물 2명: 하온, 엄마. ${HOME} 둘이 나선다.`, voiceDirection: direction },
+        { pageNo: 2, text: "하온이와 엄마는 카페에 도착했어요. 따뜻한 코코아를 마셨어요.", imagePrompt: `등장인물 2명: 하온, 엄마. ${HOME} 둘이 마신다.`, voiceDirection: direction },
+      ],
+    });
+    assert.match(cafe.pages[1].imagePrompt, /장소: 카페 — 나무 식탁/, cafe.pages[1].imagePrompt);
+    const park = repairStoryContinuity({
+      ...book([HOME, HOME]),
+      pages: [
+        { pageNo: 1, text: "하온이는 엄마와 집을 나섰어요.", imagePrompt: `등장인물 2명: 하온, 엄마. ${HOME} 둘이 나선다.`, voiceDirection: direction },
+        { pageNo: 2, text: "놀이터에 도착한 하온이는 미끄럼틀을 탔어요.", imagePrompt: `등장인물 2명: 하온, 엄마. ${HOME} 하온이가 탄다.`, voiceDirection: direction },
+      ],
+    });
+    assert.match(park.pages[1].imagePrompt, /장소: (?:놀이터|미끄럼틀) — 노란 미끄럼틀과 둥근 모래밭/, park.pages[1].imagePrompt);
+  });
+});

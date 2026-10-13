@@ -1,5 +1,13 @@
 import { NextResponse } from "next/server";
-import { pageScale, readScaleKind, scaleCheckLines, scaleLockLines } from "@/lib/scale-lock";
+import {
+  heroShrunkOnPage,
+  pageScale,
+  readScaleKind,
+  scaleCheckLines,
+  scaleLockLines,
+  tinyHeroCheckLines,
+  tinyHeroLines,
+} from "@/lib/scale-lock";
 import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
 import { pickLocationDetail } from "@/lib/scene-edit";
@@ -22,6 +30,8 @@ import {
   validateIllustration,
   type GeneratedImage,
 } from "@/lib/gemini";
+import { bindAiUsageSink, withAiUsage } from "@/lib/ai-usage";
+import { dbUsageSink } from "@/lib/ai-usage-db";
 import { familyFolderOf, familyUrlPrefix, fetchFamilyRefRetry } from "@/lib/family-ref";
 import {
   arrangePageReferences,
@@ -98,11 +108,17 @@ async function portraitCard(url: string, image: GeneratedImage, headRatio: numbe
  * 첫 화면의 만들기 단추도 비회원이면 /login 으로 간다.
  * 굽기 스크립트도 이 경로를 부르지 않는다(/api/tts 만 쓴다).
  */
-export async function POST(request: Request) {
+// 이 요청 안의 AI 호출(그림·검수)을 모델·토큰·금액으로 남긴다(lib/ai-usage) — 답을 돌려주기 전에 다 적는다.
+export function POST(request: Request) {
+  return withAiUsage("illustrate-page", () => handlePost(request));
+}
+
+async function handlePost(request: Request) {
   const caller = await callerOf(request);
   if (!caller) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
+  bindAiUsageSink(dbUsageSink(caller.db));
   let body: unknown;
   try {
     body = await request.json();
@@ -125,6 +141,10 @@ export async function POST(request: Request) {
     locationSheet?: unknown;
     /** 주인공 이름·성별·생김새 — 쪽마다 "주인공은 남자아이"를 못 박는다. 옛 책은 없다. */
     hero?: unknown;
+    /** 이 쪽에서 주인공이 개미만큼 작아진 채인가 — 화면이 책 흐름으로 알아내 보낸다(lib/scale-lock shrunkPages). 없으면 이 쪽 글만으로 본다. */
+    heroTiny?: unknown;
+    /** styleReference 로 보낸 승인 쪽도 주인공이 작아진 쪽인가 — 작아진 쪽은 이럴 때만 그 그림을 기준으로 받는다. */
+    styleReferenceTiny?: unknown;
     /**
      * 고정 가족 원본 그림 [{ name, ref, memberId }] — 이 쪽에 보이는 고정 인물의 원본을 참고로 함께 붙인다(2026-09-29~).
      * 시트와 같은 주소 규칙(이 회원 폴더의 참고용 JPEG 만, lib/page-refs pickPagePortraits). 옛 책·가족 없는 책은 없다.
@@ -386,6 +406,29 @@ export async function POST(request: Request) {
         (cast.length === 0 && `${scene} ${storyText}`.includes(hero.name))),
   );
   /*
+   * 작아진 주인공 쪽(2026-10-13 사장님 "장소의 변화가 전혀 없어" — 개미만큼 작아지는 책의 3~5쪽이 1쪽과 같은 마당 그림 위에
+   * 보통 크기 하온이로 그려졌다). 장소 기준 그림을 '이 쪽의 유일한 정답'으로 따르게 한 줄이 같은 마당을 사람 눈높이로 다시 그리게
+   * 했고, 크기 잠금은 사람끼리만 견줘서 혼자 작아진 쪽에는 걸리지 않았다. 이 쪽에서는 장소 기준 그림·장소 잠금 줄·실내외 줄을
+   * 내려놓고 '개미 눈높이' 연출 줄을 넣는다(lib/scale-lock tinyHeroLines). 어느 쪽이 작아진 쪽인지는 화면이 책 흐름으로 알아내
+   * 보낸다(heroTiny) — 안 보낸 요청은 이 쪽 글만으로 본다.
+   */
+  const heroTiny = Boolean(
+    hero &&
+      heroOnPage &&
+      (typeof input.heroTiny === "boolean" ? input.heroTiny : heroShrunkOnPage(hero.name, [sceneBody, storyText])),
+  );
+  /** 이 쪽에 붙일 장소 기준 그림 — 작아진 쪽에는 붙이지 않는다 */
+  const placeSheet = heroTiny ? null : locationSheet;
+  /*
+   * 이 쪽에 붙일 승인 쪽 그림 — 작아진 쪽은 '같은 작은 세상'을 그린 쪽(화면이 styleReferenceTiny 로 알린다)만 받는다.
+   * 같은 장소라고 보통 크기 마당 그림을 붙이면 글로 아무리 말해도 그 마당이 다시 그려진다(위 '다른 장소의 그림' 설명과 같은 까닭).
+   * 그림체를 모르는 옛 책은 그림체를 잡을 것이 이것뿐이라 그대로 붙이고, 구도·크기는 따르지 말라고 적는다.
+   */
+  const referenceTiny = input.styleReferenceTiny === true;
+  // 거꾸로도 같다 — 깨어난 뒤의 보통 쪽이 작은 세상 그림을 기준으로 받지 않게.
+  const pageStyleReference = knownStyle && heroTiny !== referenceTiny ? null : usedStyleReference;
+
+  /*
    * 주인공 얼굴을 고정했으면(우리 가족 캐릭터) 주인공 고정 줄에 설정 생김새 글을 싣지 않는다 — 얼굴·머리는 시트가 정한다.
    * 설정 칩을 바꾸고 '나중에'를 눌렀거나 사진으로 그린 그림이면 글과 그림이 다르고, 앞쪽에 크게 적힌 글이 시트를 이긴다.
    */
@@ -450,7 +493,7 @@ export async function POST(request: Request) {
    * "몇 번째 그림"을 말하는지 여기서 정한다. 넷이 다 있으면 '첨부된 그림'이라는 말만으로는 어느 것인지 모델이 헷갈린다.
    * 얼굴을 앞에 둔다(모델은 앞 그림을 더 세게 따른다). 고정 얼굴이 없으면 예전 순서 그대로.
    */
-  const refs = arrangePageReferences({ sheet, portraits, location: locationSheet, style: usedStyleReference });
+  const refs = arrangePageReferences({ sheet, portraits, location: placeSheet, style: pageStyleReference });
   const nth = (kind: string) => refOrdinal(refs.order, kind);
   /*
    * 크기 잠금(2026-10-12 사장님 "한 장면이 잘못 나왔다, 크기가") — 거인·소인이 보통 크기 사람과 함께 보이는 쪽.
@@ -458,11 +501,21 @@ export async function POST(request: Request) {
    * 잠금이 걸린 쪽에서는 SCALE LOCK 줄을 넣고(주인공 고정 바로 뒤), '허리 위 가까이' 구도 줄과 시트 줄의
    * '나이에 맞는 자연스러운 키'를 물린다. 보통 책은 scale 이 null 이라 프롬프트가 예전 그대로다(lib/scale-lock).
    */
-  const scale = pageScale(sceneCast, hero?.name ?? cast[0]?.name ?? null, [sceneBody, storyText]);
-  const scaleLock = scaleLockLines(scale);
+  // 작아진 쪽에서는 주인공을 '아주 작은 사람'으로 견준다 — 보통 크기 사람이 함께 보이면 그 사람 손보다 작게.
+  const scale = pageScale(
+    heroTiny && hero ? sceneCast.map((c) => (c.name === hero.name ? { ...c, scale: "tiny" as const } : c)) : sceneCast,
+    hero?.name ?? cast[0]?.name ?? null,
+    [sceneBody, storyText],
+  );
+  const scaleLock = [
+    ...(heroTiny && hero
+      ? tinyHeroLines(hero.name, currentLocation ? { name: currentLocation.name, description: currentLocation.description } : null, indoor)
+      : []),
+    ...scaleLockLines(scale),
+  ];
   /** 가족 얼굴이 나오는 쪽의 구도 줄(lib/page-refs familyFramingLines) — 검수도 이 쪽은 가까운 구도를 받아들이게 한다(아래 extraRules). */
-  // 크기 잠금 쪽은 뺀다 — '얼굴이 크게 보이게 가까이'는 작아야 할 사람을 키운다.
-  const familyFraming = scale ? [] : familyFramingLines(sceneCast.length, fixedOnPage.length);
+  // 크기 잠금 쪽·작아진 쪽은 뺀다 — '얼굴이 크게 보이게 가까이'는 작아야 할 사람을 키운다.
+  const familyFraming = scale || heroTiny ? [] : familyFramingLines(sceneCast.length, fixedOnPage.length);
 
   const prompt = [
     knownStyle
@@ -500,11 +553,12 @@ export async function POST(request: Request) {
      * 장소는 한 번 — 긴 프롬프트에서 모델은 앞·뒤·반복되는 것을 지키고 중간 한 줄은
      * 흘린다. 장소가 쪽마다 바뀌던 이유 중 하나다. 앞에 두고 끝에서 한 번 더 확인시킨다.
      */
-    currentLocation
+    // 작아진 쪽은 장소 잠금을 넣지 않는다 — 같은 곳을 바닥에서 본 모습은 아래 TINY HERO 줄이 말한다.
+    currentLocation && !heroTiny
       ? [
           `LOCATION LOCK — this page takes place at "${currentLocation.name}". Fixed features that MUST be visible: ${currentLocation.description}.`,
           "The place is as important as the characters. Draw exactly this kind of place with exactly these features — never a generic forest, park, hanok, classroom, street or a different house in its place, and never a prettier substitute.",
-          locationSheet
+          placeSheet
             ? `The ${nth("location")} attached image is the LOCATION REFERENCE SHEET (the place with no people). It is the ONLY correct interpretation of this page's place — the author provided it. Keep its ground, its big landmark, its architecture, its wall/floor colours and their arrangement. You may change the camera angle and crop; you may not change what the place is made of, and no prop or story association may turn it into a different kind of room (never a hallway, corridor or entrance unless this image shows one). Put the characters INTO this place.`
             : "",
         ]
@@ -549,7 +603,10 @@ export async function POST(request: Request) {
      * 그대로 들어가면 마트 진열대가 보도 위에 나오고 뒤에 아파트가 섰다(실제로 났다).
      * 실내면 안쪽만 그리라고 하고 바깥 목록은 뺀다.
      */
-    vehicleRoom
+    // 작아진 쪽은 실내외 줄도 뺀다 — '천장·벽을 그려라', '아파트·보도' 목록은 사람 눈높이 그림을 부른다(TINY HERO 줄이 대신한다).
+    heroTiny
+      ? ""
+      : vehicleRoom
       ? vehicleInteriorLines(vehicleRoom, currentLocation?.name ?? "", vehicleInfo.schoolBus).join("\n")
       : indoor === true
       ? [
@@ -629,7 +686,7 @@ export async function POST(request: Request) {
           // 누가 몇째 칸인지 — 원본 픽셀로 짠 시트만 보낸다(이야기 순서와 다를 수 있다). 옛 책은 줄이 없다.
           // 섞인 시트면 AI 가 따로 그린 사람은 키가 제 비율이 아니라고 덧붙인다(친구가 엄마만큼 크게 서 있다).
           // 옷 카드로 입은 고정 가족은 칸 위가 사람 없는 옷이라고 — 그 옷을 입히고 물건처럼 늘어놓지 말라고.
-          ...(sheetOrder ? [sheetOrderLine(sheetOrder, notToScale, dressed, Boolean(scale))] : []),
+          ...(sheetOrder ? [sheetOrderLine(sheetOrder, notToScale, dressed, Boolean(scale) || heroTiny)] : []),
           "Do NOT copy the sheet's layout. The sheet lines characters up side by side on a blank background; this page is a real scene with its own composition.",
           "Each character exists exactly ONCE in this world. NEVER draw the same character twice in one picture — no twins, no repeated faces, no duplicated family members, no mirrored copies.",
           // 시트의 '정면 차렷 자세'까지 베껴 와서, 장면 한가운데 인물만 오려 붙인 것처럼
@@ -646,11 +703,16 @@ export async function POST(request: Request) {
     portraits.length ? portraitBindingLines(refs.order, [...portraitNames], cardNames).join("\n") : "",
     // 이목구비 — 카드의 눈·눈썹·코·입을 같은 모양·같은 정도로, 카드보다 단순하게 그리지 않게(lib/page-refs facialFeatureLines).
     portraits.length ? facialFeatureLines([...portraitNames], cardNames).join("\n") : "",
-    usedStyleReference
+    pageStyleReference
       ? [
           `The ${nth("style")} attached image is a previously APPROVED page from this same book.`,
           "Use that approved page as the book-wide rendering reference: identical medium, dimensionality (2D versus 3D), line/edge treatment, textures, facial construction, lighting softness, colour strength and finish.",
-          sameReferenceLocation
+          // 작아진 쪽 — 같은 작은 세상을 그린 쪽이면 풀·땅·개미 모습을 잇고, 보통 크기 쪽이면(옛 책) 구도·크기를 따르지 않는다
+          heroTiny
+            ? referenceTiny
+              ? "SAME TINY WORLD — the approved page shows this same ant's-eye world. Keep the same grass, ground and colours and the same look of the ants and other small creatures. Change the camera angle, the pose and what happens."
+              : "Do not copy its composition, camera height or scale: that page shows the place at ordinary human size, and this page is seen from ant height (see TINY HERO)."
+            : sameReferenceLocation
             ? `SAME LOCATION LOCK — the approved page and this page are both "${currentLocation?.name}". Preserve the same room/outdoor identity, architecture, wall and floor colours, windows, large furniture or play equipment and their stable arrangement. Change only camera angle, character pose and small story props.`
             : "Do not copy its composition or location because this scene uses a different place.",
           "Never change a 3D/clay-like book into a flat 2D drawing, or a flat drawing into 3D.",
@@ -701,8 +763,12 @@ export async function POST(request: Request) {
       "Every named character — children AND adults such as a parent, teacher or shopkeeper — must be drawn with the face and hair the reference sheet gives them. An adult whose face changes from page to page reads as a different person to a child.",
       "Before drawing, assign each named character one position and one action from the Scene. Do not swap who performs an action, who has stopped, who leads, who follows, or which side of an object each person occupies.",
       "FINAL CHECK before you finish: look at every face you drew. If two figures share the same face, the same hair and the same clothes, that is the duplication error — remove one of them or redraw that figure as the correct, visibly different character.",
-      currentLocation
+      currentLocation && !heroTiny
         ? `Then check the PLACE: is this unmistakably "${currentLocation.name}" with ${currentLocation.description}? If the ground, the landmark or the colours are different, the page is wrong — fix the place before anything else.`
+        : "",
+      // 작아진 쪽은 장소 대신 크기를 끝에서 한 번 더 확인시킨다(앞·뒤에 반복한 것을 모델이 지킨다).
+      heroTiny && hero
+        ? `Then check the SIZE: is ${hero.name} as small as an ant, seen from the ground, with the grass or the furniture towering overhead? If ${hero.name} stands at ordinary child size in an ordinary-looking place, the page is wrong — fix the size before anything else.`
         : "",
     ]
       .filter(Boolean)
@@ -807,11 +873,12 @@ export async function POST(request: Request) {
       sheetOrder,
       // 옷 카드로 입은 고정 가족 — 그 칸 위의 옷과 견주게(옛 책은 빈다 = 예전 글).
       sheetOutfits: dressed,
-      styleReference: usedStyleReference,
-      locationReference: locationSheet,
-      indoor,
+      styleReference: pageStyleReference,
+      // 작아진 쪽은 장소 기준 그림·장소 표지·실내외로 떨어뜨리지 않는다(개미 눈높이라 나무·울타리·천장이 안 보이는 게 맞다)
+      locationReference: placeSheet,
+      indoor: heroTiny ? null : indoor,
       scene: storyText ? `${drawnScene}\nStory text: ${storyText}` : drawnScene,
-      expectedLocation: currentLocation
+      expectedLocation: currentLocation && !heroTiny
         ? `${currentLocation.name}: ${currentLocation.description}`
         : "",
       // 고정 얼굴은 설명 글이 아니라 시트와 견주게 한다 — 글과 다르다고 맞게 그린 쪽을 떨어뜨리지 않게.
@@ -838,6 +905,8 @@ export async function POST(request: Request) {
         ...familyFramingCheckLines(familyFraming),
         // 크기가 무너진 그림(거인이 큰 형으로)은 떨어뜨려 다시 그리게 한다.
         ...scaleCheckLines(scale),
+        // 작아진 쪽인데 보통 크기 아이를 보통 마당에 그린 그림도.
+        ...(heroTiny && hero ? tinyHeroCheckLines(hero.name) : []),
       ],
     });
     const check = borderLeft

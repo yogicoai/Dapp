@@ -36,8 +36,12 @@ const NAMED_LOCK = /^(?:장소|물건)\s*:\s*([^—\-\n]+?)\s*[—-]\s*([^\n]+?)
  * 같은 계열만 남기고, 물건 부분(장소가 아닌 것)은 그대로 둔다.
  *
  * ' · '로 나뉘어 있지 않은 자유 문장은 손대지 않고 그대로 준다.
+ *
+ * placeOnly — 장소 기준 그림(인물 없는 빈 무대)에 넘길 때 쓴다. 물건 부분("모자는 파란 야구 모자")을 뺀다.
+ * 넣으면 빈 장소 한가운데 그 물건이 그려지고, 쪽마다 그 그림을 기준으로 따르니 늘 쓰는 모자가 탁자·의자 위에 놓인 채
+ * 아이가 맨머리로 나온다(2026-10-13 my-mv6elzcs — 장소 그림 탁자 위에 파란 모자, 2·5·6쪽에서 모자를 벗고 있었다).
  */
-export function pickLocationDetail(detail: string, locationName: string): string {
+export function pickLocationDetail(detail: string, locationName: string, placeOnly = false): string {
   const parts = detail.split(/\s*·\s*/).map((s) => s.trim()).filter(Boolean);
   const here = locationName ? locationKeyOf(locationName) : "";
   const hereCompact = squash(locationName);
@@ -68,6 +72,8 @@ export function pickLocationDetail(detail: string, locationName: string): string
     const subject = m[1].trim();
     // 이 쪽의 장소와 같은 곳이면 남긴다.
     if (samePlace(subject)) return true;
+    // 장소 기준 그림에는 이 장소 말고는 아무것도 넘기지 않는다(다른 곳도, 물건도).
+    if (placeOnly) return false;
     const subjectCompact = squash(subject);
     /*
      * 다른 탈것·다른 이름난 곳은 뺀다.

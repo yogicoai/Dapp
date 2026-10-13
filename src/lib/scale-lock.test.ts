@@ -2,10 +2,14 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   detectBookScale,
+  heroShrunkOnPage,
   pageScale,
   readScaleKind,
   scaleCheckLines,
   scaleLockLines,
+  shrunkPages,
+  tinyHeroCheckLines,
+  tinyHeroLines,
   withBookScale,
 } from "./scale-lock.ts";
 
@@ -138,5 +142,96 @@ describe("이름에 조사가 붙어도 잡고, 한 글자 이름은 본문으�
   it("한 글자 이름 — 본문으로는 안 잡고 설명 글로만", () => {
     assert.equal(detectBookScale([HAON, { name: "곰", description: "" }], ["거인 곰이 나타났어요."]).size, 0);
     assert.equal(detectBookScale([HAON, { name: "곰", description: "거인 곰" }], []).get("곰"), "giant");
+  });
+});
+
+describe("작아진 주인공 — 쪽마다(2026-10-13 개미 책: 작아진 쪽이 마당 그림 그대로 그려졌다)", () => {
+  // 사장님이 만든 책의 글(여섯 쪽으로 나뉜 것)
+  const ANT_BOOK = [
+    "하온이는 마당에서 개미집을 발견했어요. 물뿌리개로 물을 쏟아붓고 발을 쿵쿵 구르자 개미들이 허둥지둥 달아났어요. 그러다 나무 그늘에서 깜빡 잠이 들었지요.",
+    "눈을 떠 보니 풀잎이 나무보다 높고, 돌멩이가 바위만 했어요. 하온이가 개미만큼 작아진 거예요!",
+    "조그만 하온이가 두리번거리는데, 쿵! 쿵! 땅이 흔들렸어요. 하늘에서 집채만 한 운동화가 내려오고 있었어요.",
+    "이번에는 커다란 물뿌리개에서 물이 폭포처럼 쏟아졌어요. 개미 한 마리가 풀잎을 내밀어 주었어요.",
+    "하온이는 개미들을 따라 돌 밑으로 숨었어요. \"개미들도 아까 이렇게 무서웠겠구나… 미안해, 얘들아.\"",
+    "그때 번쩍 눈이 떠졌어요. 꿈이었어요! 하온이는 개미집 앞에 쪼그려 앉아 과자 부스러기를 살며시 놓아 주었어요.",
+  ];
+
+  it("작아진 쪽부터 깨어난 쪽 앞까지 — 단서가 없는 쪽도 앞 쪽을 잇는다", () => {
+    assert.deepEqual(shrunkPages("하온", ANT_BOOK), [false, true, true, true, true, false]);
+  });
+
+  it("작아지는 말의 여러 꼴", () => {
+    for (const t of [
+      "하온이가 개미만큼 작아진 거예요!",
+      "하온이는 엄지만 하게 작아졌어요.",
+      "개미만 한 하온이가 풀숲을 걸었어요.",
+      "작아진 하온이는 깜짝 놀랐어요.",
+      "하온이가 점점 작아졌어요.",
+      "하온이의 몸이 스르르 줄어들었어요.",
+      "하온이 몸이 점점 작아졌어요.",
+      "하온이는 몸이 작아져 있었어요.",
+      "하온이는 개미처럼 작아졌어요.",
+      "어느새 몸이 콩알만큼 줄어들었어요. 하온이는 깜짝 놀랐어요.",
+      "하온이는 개미만 해졌어요.",
+      "하온이는 아주 조그매졌어요.",
+    ]) {
+      assert.equal(heroShrunkOnPage("하온", [t]), true, t);
+    }
+  });
+
+  it("작아진 게 아닌 말은 잡지 않는다 — 소리·옷·다른 것", () => {
+    for (const t of [
+      "하온이는 목소리가 작아졌어요.",
+      "하온이는 작아진 옷을 동생에게 주었어요.",
+      "풍선이 점점 작아졌어요. 하온이는 깔깔 웃었어요.",
+      "하온이는 개미를 가만히 바라보았어요.",
+      "개미만 한 과자 부스러기를 하온이가 놓아 주었어요.",
+      "하온이는 키가 쑥쑥 컸어요.",
+      "하온이는 개미처럼 열심히 일했어요.",
+      "하온이 몸에 묻은 흙이 툭툭 떨어졌어요.",
+    ]) {
+      assert.equal(heroShrunkOnPage("하온", [t]), false, t);
+    }
+  });
+
+  it("한 쪽에 작아졌다가 깨어나면 뒤에 나온 말을 따른다 · 돌아왔다는 말의 여러 꼴", () => {
+    assert.equal(heroShrunkOnPage("하온", ["하온이가 개미만큼 작아졌어요. 그런데 꿈이었어요!"]), false);
+    assert.equal(heroShrunkOnPage("하온", ["꿈이었을까요? 아니에요. 하온이는 개미만큼 작아진 채였어요."]), true);
+    for (const off of [
+      "하온이는 잠에서 깼어요.",
+      "하온이는 원래 크기로 돌아왔어요.",
+      "하온이는 다시 커졌어요.",
+      "하온이는 원래대로 돌아왔어요.",
+      "하온이의 몸이 쑥쑥 커졌어요.",
+    ]) {
+      assert.deepEqual(shrunkPages("하온", ["하온이가 개미만큼 작아졌어요.", "풀숲을 걸었어요.", off]), [true, true, false], off);
+    }
+  });
+
+  it("보통 책은 한 쪽도 걸리지 않는다 · 주인공 이름이 없으면 아무 쪽도", () => {
+    assert.deepEqual(shrunkPages("하온", ["하온이는 놀이터에 갔어요.", "미끄럼틀을 탔어요."]), [false, false]);
+    assert.deepEqual(shrunkPages(null, ANT_BOOK), [false, false, false, false, false, false]);
+  });
+
+  it("연출 줄 — 개미 눈높이, 장소는 같은 곳을 바닥에서, 개미는 주인공만 하게, 보통 세상 것은 일부만", () => {
+    const l = tinyHeroLines("하온", { name: "마당", description: "큰 나무와 초록 울타리가 있는 마당" }, false).join("\n");
+    assert.ok(l.includes("하온 has shrunk to the size of an ant"));
+    assert.ok(l.includes("ant height"));
+    assert.ok(l.includes('still in "마당"'));
+    assert.ok(l.includes("NEVER show the whole place at ordinary scale"));
+    assert.ok(l.includes("an ant is about as long as 하온 is tall"));
+    assert.ok(l.includes("only a part fits in the frame"));
+    assert.ok(l.includes("Blades of grass tower over 하온"));
+    // 실내면 풀잎 대신 방바닥
+    const indoor = tinyHeroLines("하온", { name: "거실", description: "소파가 있는 거실" }, true).join("\n");
+    assert.ok(indoor.includes("furniture legs rise like towers") && !indoor.includes("Blades of grass"));
+    // 장소를 모르면 장소 줄만 빠진다
+    assert.ok(!tinyHeroLines("하온", null, null).join("\n").includes("PLACE:"));
+  });
+
+  it("검수 줄 — 보통 크기로 그리면 떨어뜨리고, 장소 표지가 안 보인다고 떨어뜨리지는 않는다", () => {
+    const c = tinyHeroCheckLines("하온")[0];
+    assert.ok(c.includes("FAIL if 하온 looks like an ordinary-size child"));
+    assert.ok(c.includes("Do not fail because the place's landmark is missing"));
   });
 });

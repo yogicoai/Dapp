@@ -41,6 +41,7 @@
 
 import { readBox, type Box } from "./family-head.ts";
 import type { PortraitPhoto } from "./family-photo.ts";
+import { geminiUsageRow, reportAiUsage } from "./ai-usage.ts";
 import { geminiBlocked } from "./gemini.ts";
 
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
@@ -345,6 +346,8 @@ export async function describePhoto(photo: PortraitPhoto, opts: { timeoutMs: num
       candidates?: { content?: { parts?: Part[] }; finishReason?: string }[];
       promptFeedback?: { blockReason?: string };
     };
+    // 모델·토큰·금액 기록(lib/ai-usage) — 토큰 수만 남는다(사진·카드·구글 답 글은 넣지 않는다).
+    reportAiUsage(geminiUsageRow(model, "photo-card", json));
     const block = json.promptFeedback?.blockReason;
     if (block) return done(null, `blocked ${String(block).slice(0, 40)}`);
     const candidate = json.candidates?.[0];

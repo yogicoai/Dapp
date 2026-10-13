@@ -22,7 +22,7 @@ import {
 import { ART_STYLES } from "@/lib/art-styles";
 import { bestFriend, heightFor, type FamilyMember } from "@/lib/family";
 import { castPortraits, storyFamilyLooks } from "@/lib/family-cast";
-import { detectBookScale } from "@/lib/scale-lock";
+import { detectBookScale, shrunkPages } from "@/lib/scale-lock";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
 import {
@@ -3144,8 +3144,9 @@ export default function CreatePage() {
               description: want.description,
               artStyleId: artStyle,
               shape: screenShape,
-              // 부모가 적은 장소 칸에서 이 장소 부분만 — 다른 장소 설명이 섞이지 않게.
-              detail: pickLocationDetail(locationDetail.trim(), want.name),
+              // 부모가 적은 장소 칸에서 이 장소 부분만 — 다른 장소 설명도, 물건(모자·가방)도 섞이지 않게.
+              // 물건이 섞이면 빈 장소 그림에 그 물건이 놓이고 쪽마다 그걸 따라 그린다.
+              detail: pickLocationDetail(locationDetail.trim(), want.name, true),
             }),
             signal: ac.signal,
           });
@@ -3206,6 +3207,23 @@ export default function CreatePage() {
       let done = 0;
       let cursor = 0;
       const claimedPages = new Set<number>();
+      /*
+       * 주인공이 개미만큼 작아진 쪽 — 책 흐름으로 한 번 찾는다(작아진 쪽부터 깨어나거나 돌아온 쪽 앞까지).
+       * 그 쪽은 서버가 장소 기준 그림을 내려놓고 개미 눈높이로 그린다(2026-10-13 작아진 쪽이 1쪽과 같은 마당으로 그려졌다).
+       * 장면 글을 앞에, 본문을 뒤에 둔다 — 깨어나는 쪽 본문의 '꿈이었어요'가 그 쪽의 마지막 말이 되게.
+       */
+      const tinyPages = shrunkPages(
+        s.characters[0]?.name,
+        s.pages.map((p) => `${p.imagePrompt}\n${p.text}`),
+      );
+      /*
+       * 같은 장소 기준 그림을 찾는 열쇠 — 작아진 쪽은 같은 마당이어도 따로 묶는다.
+       * 보통 크기 마당 그림을 기준으로 주면 작아진 쪽에도 그 마당이 다시 그려지고, 거꾸로 깨어난 쪽이 풀숲 그림을 따라간다.
+       */
+      const referenceKeyOf = (index: number): string => {
+        const key = locationKeyFromImagePrompt(s.pages[index].imagePrompt);
+        return key && tinyPages[index] ? `${key}|tiny` : key;
+      };
       // 이어 그리기 — 지난번에 그린 쪽은 그대로 쓰고 건너뛴다.
       if (saved?.images?.length === s.pages.length) {
         saved.images.forEach((im, i) => {
@@ -3215,7 +3233,7 @@ export default function CreatePage() {
           claimedPages.add(i);
           done++;
           if (passed[i]) {
-            const key = locationKeyFromImagePrompt(s.pages[i].imagePrompt);
+            const key = referenceKeyOf(i);
             if (key && !locationReferences.has(key)) locationReferences.set(key, { image: im, scene: s.pages[i].imagePrompt });
           }
         });
@@ -3271,7 +3289,8 @@ export default function CreatePage() {
               // 고정 가족 원본 얼굴 — 시트에 얼굴이 붙은 사람의 원본 주소(서버가 이 쪽에 보이는 사람만 골라 붙인다).
               const faces = withFaces && portraitRefusals < 2 ? sheetPortraitsRef.current : [];
               const locationKey = locationKeyFromImagePrompt(s.pages[i].imagePrompt);
-              const sameLocationReference = locationKey ? locationReferences.get(locationKey) : undefined;
+              // 작아진 쪽은 작아진 쪽끼리, 보통 쪽은 보통 쪽끼리(referenceKeyOf)
+              const sameLocationReference = locationKey ? locationReferences.get(referenceKeyOf(i)) : undefined;
               // 그림체 기준은 '검사를 통과한' 그림에서만 가져온다. 떨어진 그림을 기준으로
               // 삼으면 그 어긋남이 뒤 쪽으로 번진다.
               const styleSeed = passed[0] ? 0 : passed.findIndex(Boolean);
@@ -3334,6 +3353,12 @@ export default function CreatePage() {
                   })),
                   // 주인공 성별·생김새 — 시트에만 가고 쪽 그림엔 안 가서 남자아이가 단발·꽃핀으로 나왔다.
                   hero: heroFromStory(s.characters, gender !== "unspecified" ? gender : child?.gender, heroChipLine),
+                  // 이 쪽에서 주인공이 작아진 채인가 — 서버가 개미 눈높이로 그린다(장소 기준 그림은 이 쪽에 안 쓴다).
+                  heroTiny: tinyPages[i] === true,
+                  // 기준으로 보낸 승인 쪽이 같은 작은 세상 그림인가 — 그럴 때만 작아진 쪽이 그 그림을 받는다.
+                  styleReferenceTiny: sameLocationReference
+                    ? tinyPages[i] === true
+                    : styleSeed >= 0 && tinyPages[styleSeed] === true,
                   // 고정 가족 원본 그림 주소·시트에 선 순서 — 얼굴이 시트를 거쳐 또 흐르지 않게(api/illustrate-page).
                   ...(faces.length ? { portraits: faces } : {}),
                   ...(sheetOrderRef.current.length ? { sheetOrder: sheetOrderRef.current } : {}),
@@ -3450,9 +3475,9 @@ export default function CreatePage() {
             else failedPages.add(i);
             persist(); // 한 장 그릴 때마다 보관 — 여기서 나가도 이 장은 남는다
             if (image && ok) {
-              const locationKey = locationKeyFromImagePrompt(s.pages[i].imagePrompt);
-              if (locationKey && !locationReferences.has(locationKey)) {
-                locationReferences.set(locationKey, { image, scene: s.pages[i].imagePrompt });
+              const referenceKey = referenceKeyOf(i);
+              if (referenceKey && !locationReferences.has(referenceKey)) {
+                locationReferences.set(referenceKey, { image, scene: s.pages[i].imagePrompt });
               }
             }
           } catch (e) {
@@ -3477,8 +3502,9 @@ export default function CreatePage() {
       await drawWorker(true, 0);
       const seededLocations = new Set<string>();
       const locationSeedPages: number[] = [];
-      s.pages.forEach((page, index) => {
-        const key = locationKeyFromImagePrompt(page.imagePrompt);
+      s.pages.forEach((_page, index) => {
+        // 작아진 쪽의 첫 장도 따로 먼저 그린다 — 뒤의 작아진 쪽들이 같은 풀숲·같은 개미를 잇게.
+        const key = referenceKeyOf(index);
         if (!key || seededLocations.has(key)) return;
         seededLocations.add(key);
         if (index !== 0) locationSeedPages.push(index);

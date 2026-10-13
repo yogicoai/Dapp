@@ -1,5 +1,7 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import sharp from "sharp";
+import { bindAiUsageSink, settleAiUsage, withAiUsage } from "@/lib/ai-usage";
+import { dbUsageSink } from "@/lib/ai-usage-db";
 import { callerOf, type Caller } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
 import { ftpErrorCode, uploadHitDeadline, uploadManyToCafe24 } from "@/lib/cafe24";
@@ -309,7 +311,17 @@ function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
  * (몰림·서버 오류 뒤 다시 걸기)을 시작하지 않게 한다. 이미 나간 요청은 멈추지 못한다(그 구글 값은 나갈 수 있다).
  */
 function drawWithin(input: Parameters<typeof generateImage>[0], ms: number): Promise<GeneratedImage> {
-  return withTimeout(generateImage({ ...input, until: Date.now() + ms }), ms);
+  const job = generateImage({ ...input, until: Date.now() + ms });
+  /*
+   * 기다림을 끊어도 이미 나간 요청은 구글이 끝까지 그리고 값을 받는다. 답을 보낸 뒤에도 그 그림이 돌아와
+   * 모델·토큰·금액이 기록될 때까지(lib/ai-usage) 서버를 잡아 둔다 — 안 그러면 버린 그림의 값이 기록에서 빠진다.
+   */
+  try {
+    after(() => job.then(settleAiUsage, settleAiUsage));
+  } catch {
+    // 요청 밖에서는 after 를 쓸 수 없다 — 기록만 놓칠 뿐 그리기는 같다
+  }
+  return withTimeout(job, ms);
 }
 
 /** 제한 시간 안에 안 오면 null — 참고 그림처럼 없어도 되는 것에 쓴다. */
@@ -568,7 +580,12 @@ async function finishDraw(caller: Caller, memberId: string, charge: Charge, pic:
 
 /* ─────────────────────────────── 경로 ─────────────────────────────── */
 
-export async function POST(request: Request) {
+// 이 요청 안의 AI 호출(그림·사진 특징표·머리 비율)을 모델·토큰·금액으로 남긴다(lib/ai-usage) — 답을 돌려주기 전에 다 적는다.
+export function POST(request: Request) {
+  return withAiUsage("family-portrait", () => handlePost(request));
+}
+
+async function handlePost(request: Request) {
   const startedAt = Date.now();
   // 단계마다 걸린 ms — 배포에서 어디가 느렸는지 가리려고 성공·실패 로그에 한 줄로 싣는다(단계 이름과 숫자만).
   const clock = stageClock(startedAt);
@@ -576,6 +593,7 @@ export async function POST(request: Request) {
   // ① 로그인
   const caller = await callerOf(request);
   if (!caller) return fail(401, "로그인이 필요합니다.", "login");
+  bindAiUsageSink(dbUsageSink(caller.db));
   clock.mark("auth");
 
   // ② 입력 — 사진이 든 본문이 너무 크면 읽기 전에 막는다(화면은 1024px JPEG 로 줄여 보내 보통 0.5MB 안팎).

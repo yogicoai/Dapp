@@ -34,6 +34,7 @@ import {
   type HeadFix,
   type HeadVerdict,
 } from "./family-head.ts";
+import { geminiUsageRow, reportAiUsage } from "./ai-usage.ts";
 import { geminiBlocked, shrinkForReference, type GeneratedImage } from "./gemini.ts";
 
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
@@ -158,6 +159,8 @@ export async function measureHeadRatio(image: GeneratedImage, opts: { timeoutMs:
       candidates?: { content?: { parts?: Part[] }; finishReason?: string }[];
       promptFeedback?: { blockReason?: string };
     };
+    // 모델·토큰·금액 기록(lib/ai-usage) — 토큰 수만 남는다(그림·구글 답 글은 넣지 않는다).
+    reportAiUsage(geminiUsageRow(model, "head-check", json));
     const block = json.promptFeedback?.blockReason;
     if (block) return done(null, `blocked ${String(block).slice(0, 40)}`);
     const candidate = json.candidates?.[0];

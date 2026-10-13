@@ -22,6 +22,7 @@ import path from "node:path";
 import sharp from "sharp";
 import { generateImage, type GeneratedImage } from "../src/lib/gemini.ts";
 import { pageVehicle, safetyRuleLines } from "../src/lib/illustration-rules.ts";
+import { recordScriptAiUsage, settleAiUsage } from "./ai-usage.mts";
 
 type Page = { text?: string; image?: string; hotspots?: { label: string; line: string }[] };
 
@@ -56,6 +57,8 @@ const SHEET_ONLY = process.argv.includes("--sheet");
 // ?? "" 로 받아야 함수 안에서도 string 으로 좁혀진다(throw 로 좁힌 건 클로저 안까지 안 간다).
 const TITLE = arg("book") ?? "";
 if (!TITLE) throw new Error('--book "책 제목" 이 필요합니다');
+// 실제로 그릴 때는 모델·토큰·금액을 앱과 같은 표(ai_usage)에 남긴다(scripts/ai-usage.mts).
+if (!DRY) recordScriptAiUsage("draw-book-pages");
 
 /** 책이 어느 파일에 있는지 찾는다. */
 /**
@@ -286,6 +289,7 @@ if (SHEET_ONLY) {
     await sharp(Buffer.from(img.data, "base64")).webp({ quality: 82 }).toFile(sheetPath);
     console.log("저장:", sheetPath);
   }
+  await settleAiUsage();
   process.exit(0);
 }
 
@@ -323,4 +327,5 @@ for (const n of pages) {
     .toFile(out);
   console.log(`  저장 ${out}  ${(fs.statSync(out).size / 1024).toFixed(0)}KB`);
 }
+await settleAiUsage();
 console.log(DRY ? "\n[리허설] 실제로 그리지 않았습니다." : "\n다 그렸습니다. 확인 후 cafe24에 올리세요.");

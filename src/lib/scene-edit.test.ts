@@ -28,6 +28,17 @@ describe("pickLocationDetail — 이 쪽 장소에 해당하는 부분만", () =
     const out = pickLocationDetail("캠핑장은 초록 텐트 · 손전등은 노란색", "거실");
     assert.ok(out.includes("손전등"), out);
   });
+
+  it("장소 기준 그림용(placeOnly) — 이 장소만 남기고 물건은 뺀다(빈 장소 그림에 모자가 놓이지 않게)", () => {
+    const kids = "키즈카페는 알록달록한 매트 바닥과 실내 미끄럼틀 · 거실은 밝은 나무 마루 · 모자는 파란색 동그란 야구 모자, 아이 머리에 맞는 크기";
+    assert.equal(pickLocationDetail(kids, "키즈카페", true), "키즈카페는 알록달록한 매트 바닥과 실내 미끄럼틀");
+    assert.equal(pickLocationDetail(kids, "거실", true), "거실은 밝은 나무 마루");
+    // 쪽 그림에는 예전처럼 물건이 남는다 — 쪽마다 같은 모자를 그리게
+    assert.ok(pickLocationDetail(kids, "키즈카페").includes("모자는"));
+    // 나뉘지 않은 자유 문장은 장소 그림에도 그대로
+    const free = "우리 동네 놀이터는 파란 미끄럼틀이 있고 바닥이 고무예요";
+    assert.equal(pickLocationDetail(free, "놀이터", true), free);
+  });
 });
 
 describe("suggestLocationDetail", () => {

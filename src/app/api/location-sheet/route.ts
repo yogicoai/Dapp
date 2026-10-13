@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import backgrounds from "@/data/backgrounds.json";
+import { bindAiUsageSink, withAiUsage } from "@/lib/ai-usage";
+import { dbUsageSink } from "@/lib/ai-usage-db";
 import { callerOf } from "@/lib/api-auth";
 import { ART_STYLES } from "@/lib/art-styles";
 import { findLocationBackground, type LocationBg } from "@/lib/location-bg";
@@ -37,11 +39,17 @@ export const maxDuration = 60;
  * 첫 화면의 만들기 단추도 비회원이면 /login 으로 간다.
  * 굽기 스크립트도 이 경로를 부르지 않는다(/api/tts 만 쓴다).
  */
-export async function POST(request: Request) {
+// 이 요청 안의 AI 호출(장소 그림)을 모델·토큰·금액으로 남긴다(lib/ai-usage) — 답을 돌려주기 전에 다 적는다.
+export function POST(request: Request) {
+  return withAiUsage("location-sheet", () => handlePost(request));
+}
+
+async function handlePost(request: Request) {
   const caller = await callerOf(request);
   if (!caller) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
+  bindAiUsageSink(dbUsageSink(caller.db));
   let body: unknown;
   try {
     body = await request.json();

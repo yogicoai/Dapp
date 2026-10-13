@@ -38,7 +38,7 @@ import { loadLibraryAccess } from "@/lib/library-access";
 import { viewerTierOf } from "@/lib/member-plan";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
 import { libraryLock, OPEN_LIBRARY } from "@/lib/offer-settings";
-import { withBookScale } from "@/lib/scale-lock";
+import { shrunkPages, withBookScale } from "@/lib/scale-lock";
 import { authedFetch, currentUid } from "@/lib/supabase";
 import { loadPrivatePageVideos } from "@/lib/private-media";
 import { fitScale } from "@/lib/fit-text";
@@ -672,9 +672,23 @@ export function BookViewer({
       };
       // 고친 장면으로 — 저장된 '자동차 안'이 아니라 교실 열쇠로 장소 시트·같은 곳 옆 쪽·통학 버스를 고른다.
       const here = placeOf(scene);
-      const others = book.pages.filter((p, i) => i !== index && p.image);
-      const sibling =
-        (here ? others.find((p) => placeOf(p.imagePrompt) === here) : undefined) ?? others[0];
+      /*
+       * 주인공이 개미만큼 작아진 쪽(책 흐름으로, lib/scale-lock) — 작아진 쪽은 작아진 쪽끼리, 보통 쪽은 보통 쪽끼리 기준을 고른다.
+       * 같은 마당이라고 보통 크기 마당 그림을 기준으로 주면 작아진 쪽에도 그 마당이 다시 그려진다(2026-10-13).
+       */
+      const tinyPages = shrunkPages(
+        book.hero?.name ?? book.cast?.[0]?.name,
+        book.pages.map((p) => `${p.imagePrompt ?? ""}\n${p.text}`),
+      );
+      const tinyHere = tinyPages[index] === true;
+      const others = book.pages
+        .map((p, i) => ({ p, tiny: tinyPages[i] === true, i }))
+        .filter((o) => o.i !== index && o.p.image);
+      const siblingEntry =
+        (here ? others.find((o) => o.tiny === tinyHere && placeOf(o.p.imagePrompt) === here) : undefined) ??
+        others.find((o) => o.tiny === tinyHere) ??
+        others[0];
+      const sibling = siblingEntry?.p;
       // 만들 때 그린 장소 시트가 있으면 그것이 장소의 기준이다.
       // 옛 책은 열쇠 규칙이 바뀌기 전에 저장했다 — 이름으로도 맞춰 본다(sheetMatchesKey).
       const sheetEntry = here ? book.locationSheets?.find((s) => sheetMatchesKey(s, here)) : undefined;
@@ -707,6 +721,10 @@ export function BookViewer({
             ),
             // 주인공 성별·생김새 — 옛 책엔 없어서 서버가 cast 첫 사람과 그 설명으로 물러선다.
             hero: book.hero,
+            // 이 쪽에서 주인공이 작아진 채인가(책 흐름으로) — 다시 그린 쪽도 개미 눈높이로(lib/scale-lock, 2026-10-13).
+            heroTiny: tinyHere,
+            // 기준으로 보낸 옆 쪽도 작아진 쪽인가 — 서버는 크기가 같은 쪽의 그림만 기준으로 붙인다.
+            styleReferenceTiny: siblingEntry?.tiny === true,
             // 만들 때 부모가 적어 둔 장소 — 이게 있어야 다시 그린 쪽도 같은 곳이 된다.
             locationDetail: book.locationDetail ?? "",
             locationSheet,

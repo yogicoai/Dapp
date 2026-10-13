@@ -155,7 +155,7 @@ function locationHints(text: string, forText = false): (LocationHint & { score: 
        * 방(room)으로 읽어, 주방 장면이 거실로 되돌려졌다(실제로 시험에서 잡혔다).
        * 그래서 방 앞에 다른 한글이 붙어 있으면 제외한다(안방·건넌방은 따로 적는다).
        */
-      re: /([가-힣]{1,8}네\s*집|우리\s*집|집\s*(?:안|에서|으로|에)|거실|놀이방|침실|안방|건넌방|(?<![가-힣])방\s*(?:안|에서|으로|에))/g,
+      re: /([가-힣]{1,8}네\s*집|우리\s*집|집\s*(?:안|에서|으로|에)|거실|(?<!실내\s?)놀이방|침실|안방|건넌방|(?<![가-힣])방\s*(?:안|에서|으로|에))/g,
       /*
        * 요즘 아이가 사는 집으로 못박는다. '친구 집에 놀러 간다'는 동화에 제일 자주
        * 나오는 장면인데, 설명이 비어 있으면 거기서 툇마루와 대문이 튀어나왔다.
@@ -166,7 +166,19 @@ function locationHints(text: string, forText = false): (LocationHint & { score: 
     { family: "entrance", re: /(현관|신발장)/g, description: "신발장과 낮은 문턱, 밝은 타일 바닥의 좁은 아파트 현관" },
     { family: "veranda", re: /(베란다|발코니)/g, description: "큰 유리창과 빨래 건조대, 화분 몇 개가 놓인 베란다" },
     { family: "corridor", re: /(복도|엘리베이터|계단참)/g, description: "밝은 조명과 회색 타일 바닥의 아파트 복도" },
-    { family: "playground", re: /(놀이터|공원|모래밭|그네|미끄럼틀)/g, description: "노란 미끄럼틀과 둥근 모래밭, 나무 벤치" },
+    /*
+     * 키즈카페는 카페가 아니라 실내 놀이 공간이다(사장님 2026-10-13 "키즈카페는 놀이방이라고 생각하면 될 듯").
+     *
+     * 실제 사고(my-mv6elzcs) — '키즈카페'의 뒷글자 '카페'를 식당·카페 계열로 읽어 책의 장소가 "카페 — 나무 식탁과
+     * 의자"가 됐고(커피집 한가운데 구름다리와 게임기가 놓인 그림), 미끄럼틀 쪽은 '미끄럼틀' 낱말 하나로 바깥
+     * 놀이터(모래밭·벤치·아파트)가 됐다. 그래서 따로 한 계열로 세우고, 아래 카페·놀이터 줄은 이 이름을 피해 간다.
+     */
+    {
+      family: "playroom",
+      re: /(키즈\s*카페|키즈\s*파크|키즈\s*랜드|놀이\s*카페|실내\s*놀이터|실내\s*놀이방|볼풀장|트램펄린\s*파크)/g,
+      description: "알록달록한 푹신한 매트 바닥, 낮은 실내 미끄럼틀과 볼풀, 그물 놀이 구조물, 밝은 조명이 켜진 실내 놀이 공간",
+    },
+    { family: "playground", re: /((?<!실내\s?)놀이터|공원|모래밭|그네|미끄럼틀)/g, description: "노란 미끄럼틀과 둥근 모래밭, 나무 벤치" },
     /*
      * '길'은 조심한다 — "물감이 흘러가는 길을 따라가"의 '가는 길'을 길거리로 읽어 교실 장면이
      * 아스팔트 길이 됐다(실제로 났다). '가는 길'은 앞에 다른 한글이 없을 때만(집으로 가는 길),
@@ -180,7 +192,8 @@ function locationHints(text: string, forText = false): (LocationHint & { score: 
     { family: "school", re: /(유치원|어린이집|학교|교실)/g, description: "밝은 벽과 큰 창문, 낮은 책상과 장난감 수납장" },
     { family: "library", re: /(도서관|서점)/g, description: "키 큰 나무 책장과 큰 창문, 낮은 열람 책상" },
     { family: "shop", re: /(마트|가게|시장|편의점)/g, description: "정돈된 진열대와 넓은 통로, 밝은 실내 조명" },
-    { family: "restaurant", re: /(식당|고깃집|분식집|카페)/g, description: "나무 식탁과 의자, 따뜻한 조명이 걸린 실내" },
+    // '키즈카페'·'놀이 카페'의 카페는 여기가 아니다(위 playroom).
+    { family: "restaurant", re: /(식당|고깃집|분식집|(?<!키즈\s?|놀이\s?)카페)/g, description: "나무 식탁과 의자, 따뜻한 조명이 걸린 실내" },
     { family: "hospital", re: /(병원|진료실|치과)/g, description: "밝은 벽과 의자, 정돈된 진료 공간" },
     { family: "zoo", re: /(동물원|수족관)/g, description: "울타리와 넓은 관람 통로, 푸른 나무" },
     { family: "pool", re: /(수영장|물놀이장)/g, description: "파란 물과 흰 타일 바닥, 알록달록한 튜브" },
@@ -266,8 +279,12 @@ function locationHints(text: string, forText = false): (LocationHint & { score: 
  * '있는 곳' 후보에서만 뺀다(점수 -1). 건물 단서(이 신발장은 어디의 신발장인가)로는 그대로 남긴다.
  * 방·반 이름은 소속이 아니라 그 건물 안의 자리다 — 선생님 방, 형님반·동생반, 차고, 가방 걸이는 빼지 않는다.
  */
+/*
+ * 행사도 같다 — "오늘은 어린이집 소풍 가는 날"의 어린이집은 누구의 소풍인지이지 서 있는 곳이 아니다
+ * (2026-10-13: 집 창가에서 비를 보는 1쪽이 이 낱말로 어린이집 교실이 될 뻔했다).
+ */
 const AFFILIATION_AFTER =
-  /^\s*(?:친구|선생님(?!\s*방)|(?:형|누나|언니|오빠|동생)(?!님?\s*반)|버스|차(?![고례])|가방(?!\s*걸이)|원복|체육복|모자)/;
+  /^\s*(?:친구|선생님(?!\s*방)|(?:형|누나|언니|오빠|동생)(?!님?\s*반)|버스|차(?![고례])|가방(?!\s*걸이)|원복|체육복|모자|소풍|운동회|발표회|재롱\s*잔치|방학|숙제)/;
 
 /*
  * 실내인가 — 프롬프트의 배경 지시를 가르는 기준.
@@ -283,9 +300,9 @@ const AFFILIATION_AFTER =
  * 실제로 마트 계산대 장면이 실외로 판정돼 길거리 배경 지시가 들어갔다.
  */
 const INDOOR_WORDS =
-  /(마트|가게|상점|편의점|백화점|코너|매장|계산대|진열대|거실|안방|침실|놀이방|부엌|주방|식탁|욕실|화장실|현관|복도|교실|어린이집|유치원|학교|도서관|서점|식당|카페|병원|진료실|치과|(?<!야외\s?)수영장|수족관|실내|방\s*(?:안|에서)|(?<![가-힣])방(?![가-힣])|집\s*안|안에서|차\s*안|버스\s*안|지하철|엘리베이터|목욕탕|찜질방|극장|영화관|박물관|미술관|체육관|사무실|공항|기차\s*안|침대|옷장|책상|소파|커튼|천장|벽지)/;
+  /(마트|가게|상점|편의점|백화점|코너|매장|계산대|진열대|거실|안방|침실|놀이방|실내\s*놀이터|키즈\s*(?:파크|랜드)|볼풀|부엌|주방|식탁|욕실|화장실|현관|복도|교실|어린이집|유치원|학교|도서관|서점|식당|카페|병원|진료실|치과|(?<!야외\s?)수영장|수족관|실내|방\s*(?:안|에서)|(?<![가-힣])방(?![가-힣])|집\s*안|안에서|차\s*안|버스\s*안|지하철|엘리베이터|목욕탕|찜질방|극장|영화관|박물관|미술관|체육관|사무실|공항|기차\s*안|침대|옷장|책상|소파|커튼|천장|벽지)/;
 const OUTDOOR_WORDS =
-  /(야외|옥외|바깥|놀이터|공원|마당|운동장|골목|길가|(?<![가-힣])거리(?![가-힣])|바닷가|해변|바다|계곡|숲|뒷산|앞산|산속|산길|등산|(?<![가-힣])산(?![가-힣])|들판|논밭|(?<![가-힣])논(?![가-힣])|텃밭|(?<![가-힣])밭(?![가-힣])|강가|호숫가|캠핑장|정류장|횡단보도|주차장|옥상|베란다|하늘(?!색)|눈밭)/;
+  /(야외|옥외|바깥|(?<!실내\s?)놀이터|공원|마당|운동장|골목|길가|(?<![가-힣])거리(?![가-힣])|바닷가|해변|바다|계곡|숲|뒷산|앞산|산속|산길|등산|(?<![가-힣])산(?![가-힣])|들판|논밭|(?<![가-힣])논(?![가-힣])|텃밭|(?<![가-힣])밭(?![가-힣])|강가|호숫가|캠핑장|정류장|횡단보도|주차장|옥상|베란다|하늘(?!색)|눈밭)/;
 
 /** 장소 이름과 설명을 보고 실내인지 정한다. 둘 다 아니면 null(모름). */
 export function isIndoorPlace(name: string, description = ""): boolean | null {
@@ -1099,7 +1116,13 @@ export function sheetMatchesKey(sheet: { key: string; name?: string }, key: stri
  * 같은 **건물 이름**이 함께 있으면 그쪽을 먼저 세우고, 부분은 그 건물 안의 말로
  * 바꿔 적는다.
  */
-const VENUE_FAMILIES = new Set(["school", "library", "shop", "restaurant", "hospital", "zoo", "pool"]);
+const VENUE_FAMILIES = new Set(["school", "library", "shop", "restaurant", "hospital", "zoo", "pool", "playroom"]);
+/**
+ * 실내 놀이 공간(키즈카페) 안의 놀이기구 낱말인가 — 미끄럼틀·그네는 그 안에도 있다. 이 낱말 하나로 바깥 놀이터가 되지 않게.
+ */
+function insidePlayroom(venueFamily: string | null | undefined, family: string | null | undefined): boolean {
+  return venueFamily === "playroom" && family === "playground";
+}
 const HOME_PART_FAMILIES = new Set(["home", "entrance", "corridor", "yard", "veranda", "kitchen"]);
 /** 여기로 옮기면 앞의 큰 장소를 떠난 것이다. */
 const LEAVES_VENUE = new Set(["car", "transit", "tourbus", "home", "street"]);
@@ -1122,6 +1145,8 @@ function inVenue(
   if (!venue) return best;
   const override = VENUE_PART[venue.family]?.[best.family];
   if (override) return { ...best, name: `${venue.name} ${best.name}`.trim(), description: override };
+  // 키즈카페의 미끄럼틀은 키즈카페다 — 바깥 놀이터가 아니다.
+  if (insidePlayroom(venue.family, best.family)) return venue;
   // 그 건물 안의 말이 마련돼 있지 않으면, 집 기본값으로 떨어지느니 건물 자체를 쓴다.
   return HOME_PART_FAMILIES.has(best.family) ? venue : best;
 }
@@ -1147,7 +1172,8 @@ function locusScore(after: string): number {
    * 그림이 이미 놀이터였다. 다음 쪽 첫 문장이 "놀이터에 도착하자"인데도 그렇다.
    * 조르는 말·가자는 말 속의 장소는 **다음에 갈 곳**이지 지금 서 있는 곳이 아니다.
    */
-  if (/^[^.!?\n]{0,8}(?:가면|가자|갈까|갈래|가고\s*싶|가 볼|가 보자|갈\s*거|갈게|가야)/.test(after)) return -3;
+  // '가기로 했어요'·'가려고' — 가기로 정했을 뿐 아직 떠나지 않았다("소풍 대신 키즈카페에 가기로 했어요"의 집 창가 쪽이 키즈카페가 됐다).
+  if (/^[^.!?\n]{0,8}(?:가면|가자|갈까|갈래|가고\s*싶|가 볼|가 보자|갈\s*거|갈게|가야|가기로|가려고)/.test(after)) return -3;
   // "집에 가져 갈거예요" — 물건을 보낼 곳이지 서 있는 곳이 아니다(실제로 교실이 거실이 됐다).
   if (/^\s*(?:가져|갖다|가지고|보내|데려|두고)/.test(after)) return -3;
   // "집으로 가는 길" — 집이 아니라 길 위에 있다.
@@ -1251,6 +1277,12 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
       VEHICLE_FAMILIES.has(textLocation.family) &&
       claudeVehicle === null &&
       !claimsRide(`${page.text} ${sceneSentences(imagePrompt)}`);
+    /*
+     * 클로드가 키즈카페(실내 놀이 공간)를 적었는데 본문 낱말이 놀이기구(미끄럼틀·그네)뿐이면 클로드가 맞다 —
+     * 그 놀이기구는 키즈카페 안에 있다. 갈아 끼우면 그 쪽만 바깥 놀이터가 된다(2026-10-13, my-mv6elzcs 3쪽).
+     * 앞 쪽들이 키즈카페 안이었는데(venue) 클로드가 놀이기구 이름만 적은 쪽도 같다.
+     */
+    const equipmentInPlayroom = insidePlayroom(claudeFamily, textLocation?.family);
     if (
       location &&
       textLocation &&
@@ -1258,6 +1290,7 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
       claudeFamily !== textLocation.family &&
       !ridingThere &&
       !vehicleWordOnly &&
+      !equipmentInPlayroom &&
       !(sameAsPrevious && !moved)
     ) {
       const correctedClause = `장소: ${textLocation.name} — ${textLocation.description}`;
@@ -1306,12 +1339,23 @@ export function repairStoryContinuity(story: ParsedStory): ParsedStory {
       clause = canonical;
     } else {
       // 장소 줄이 탈것이면 탈것 쪽이다 — 본문 낱말(어린이집 앞에서 버스에 탔어요)로 '어린이집 안'을 기억하지 않는다.
-      const family = placeVehicleKind(location[1]) ?? textLocation?.family ?? locationFamily(location[1]);
+      // 키즈카페를 적은 쪽은 본문에 놀이기구 낱말이 있어도 키즈카페다(위 equipmentInPlayroom).
+      const family =
+        placeVehicleKind(location[1]) ??
+        (equipmentInPlayroom ? claudeFamily : null) ??
+        textLocation?.family ??
+        locationFamily(location[1]);
       if (VENUE_FAMILIES.has(family)) {
-        venue = textLocation ?? { family, name, description: "", index: 0 };
+        // 본문이 그 건물을 부르지 않으면 클로드가 적은 이름으로 기억한다(열쇠 글자 'zoo'·'playroom'을 장소 줄에 붙이지 않게).
+        venue = textLocation && VENUE_FAMILIES.has(textLocation.family) ? textLocation : { family, name: location[1].trim(), description: "", index: 0 };
       } else if (LEAVES_VENUE.has(family)) {
         venue = null;
-      } else if (venue && !movesPlace(page.text) && !clause.includes(venue.name)) {
+      } else if (
+        venue &&
+        !clause.includes(venue.name) &&
+        // 미끄럼틀에 '올라갔어요'는 키즈카페를 떠난 게 아니다 — 놀이기구 쪽은 옮긴 말이 있어도 그 안이다.
+        (!movesPlace(page.text) || insidePlayroom(venue.family, family))
+      ) {
         // 이 쪽에서 자리를 옮기는 말이 없으면 아직 그 건물 안이다.
         // 큰 장소 안의 작은 자리다 — 이름과 설명 양쪽에 그 건물을 남긴다.
         const withVenue = clause
