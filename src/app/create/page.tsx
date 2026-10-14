@@ -173,7 +173,7 @@ const THEME_GROUPS = [
       { t: "공주님 이야기", e: "👑" },
       { t: "왕자님 이야기", e: "🤴" },
       { t: "이솝우화처럼", e: "🦊" },
-      { t: "일상 이야기", e: "🏠" },
+      // '일상 이야기'는 뺐다(사장님 2026-10-14 "동화나라 이야기에 일상 이야기가 있어서 이상해") — 일상은 '오늘의 이야기'가 맡는다.
     ],
   },
   {
@@ -205,6 +205,8 @@ const WHO_OPTIONS = [
   { t: "엄마 아빠랑", e: "👨‍👩‍👧" },
   { t: "할머니랑", e: "👵" },
   { t: "할아버지랑", e: "👴" },
+  // 두 분 함께(사장님 2026-10-14 "할머니 할아버지랑도 있게 해 줄래") — '엄마 아빠랑'과 같은 꼴
+  { t: "할머니 할아버지랑", e: "👵" },
   { t: "동물 친구랑", e: "🐶" },
 ];
 const HAPPENING_OPTIONS = [
@@ -241,6 +243,7 @@ const TODAY_WHO = [
   { t: "엄마 아빠랑", e: "👨‍👩‍👧" },
   { t: "할머니랑", e: "👵" },
   { t: "할아버지랑", e: "👴" },
+  { t: "할머니 할아버지랑", e: "👵" },
   { t: "혼자서", e: "🧒" },
 ];
 
@@ -448,6 +451,14 @@ function companionTerm(who: string): string {
 }
 
 /**
+ * 이름을 묻지 않는 동행 — 호칭이 곧 그 사람이다(사장님 2026-10-14 "엄마 아빠 골랐을 때는 '이름은요?'는 안 나와도 되지 않겠니").
+ * 아이는 엄마를 '엄마'라고 부르고 동화에도 그렇게 나온다. "함께 나오는 엄마 아빠 이름은요?"는 답할 것이 없는 질문이었다.
+ * 할머니·할아버지도 같다(사장님 "엄마 아빠 할머니 할아버지의 경우에는 그냥 바로 넘어가게"). 친구·형제·선생님·동물 친구는
+ * 이름이 이야기에 쓰이므로 그대로 묻는다.
+ */
+const NO_NAME_COMPANIONS = new Set(["엄마", "아빠", "엄마 아빠", "할머니", "할아버지", "할머니 할아버지"]);
+
+/**
  * '누구랑'에 직접 적은 말 → who 값. 칩 값("친구랑"·"선생님이랑")과 같은 꼴로 조사를 붙여 둔다 —
  * 요약 줄·답 칩에 "사촌 형이랑"으로 나오고, companionTerm(이 화면)·whoLine(서버, 같은 식)이 떼면 적은 말이 그대로 남는다.
  *
@@ -471,7 +482,7 @@ function ownWho(typed: string): string {
  * 남는 건 친구·선생님 — 이름만으로는 알 수 없어 모델이 짐작하다 틀리는 자리다.
  */
 const GENDER_KNOWN = new Set([
-  "혼자서", "엄마", "아빠", "엄마 아빠", "할머니", "할아버지",
+  "혼자서", "엄마", "아빠", "엄마 아빠", "할머니", "할아버지", "할머니 할아버지",
   "형", "오빠", "누나", "언니", "남동생", "여동생", "동물 친구",
 ]);
 
@@ -1122,6 +1133,12 @@ export default function CreatePage() {
    */
   const [placeOwn, setPlaceOwn] = useState<string | null>(null);
   const [whoOwn, setWhoOwn] = useState<string | null>(null);
+  /*
+   * 그 밖의 칩 장(갈래·세부 이야기·무슨 일·기분·결말·마음·언제)의 '직접 입력' 칸이 열려 있는지 — 장 id → 열림.
+   * 사장님 2026-10-14 "모든 탭마다 직접입력 칸은 마지막에". 값은 그 장의 칩과 같은 자리(theme·happening·feeling …)에 적힌다.
+   * 여기 없는 장은 값으로 정한다(칩에 없는 글이 적혀 있으면 열린 것) — 그래서 임시저장에는 담지 않아도 이어서 만들 때 그대로 열린다.
+   */
+  const [ownOpen, setOwnOpen] = useState<Record<string, boolean>>({});
   /*
    * 가족 캐릭터에 넣어 둔 단짝 친구(없으면 null) — 친구 칸의 '단짝 친구 불러오기' 칩.
    * 이 기기 값(loadChild)으로 먼저 채우고, 계정 값(loadChildRemote)이 오면 다시 채운다.
@@ -1837,6 +1854,8 @@ export default function CreatePage() {
     // '직접 입력' 칸 — 골라져 있었으면 적던 글 그대로 다시 연다(값은 위 place·who 에 이미 있다).
     setPlaceOwn(typeof draft.placeOwn === "string" ? draft.placeOwn.slice(0, 20) : null);
     setWhoOwn(typeof draft.whoOwn === "string" ? draft.whoOwn.slice(0, 20) : null);
+    // 그 밖의 장은 되살린 값으로 정한다(칩에 없는 글이면 '직접 입력'이 열린다 — storyQuestions ownQuestion).
+    setOwnOpen({});
     setTodayEvent(draft.todayEvent);
     setFeeling(draft.feeling);
     setEnding(draft.ending);
@@ -2038,9 +2057,78 @@ export default function CreatePage() {
   function storyQuestions(): FlowQuestion[] {
     const textClass =
       "w-full rounded-2xl border-2 border-neutral-200 bg-white text-neutral-900 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400";
-    /** 칩과 글 칸이 같은 값을 쓰는 장 — 칸에 직접 적은 글이 있으면 칩을 눌러도 넘기지 않는다(덮인 것을 보고 고치게). */
+    /** 칩에 없는 글이 적혀 있나 — 그 장은 '직접 입력'으로 적은 것이다. */
     const typedOwn = (value: string, options: FlowOption[]) =>
       value.trim() !== "" && !options.some((o) => o.t === value);
+    /*
+     * 칩 장 맨 끝에 '직접 입력'을 붙인다(사장님 2026-10-14 "이런 식으로 모든 탭마다 직접입력 칸은 마지막에 넣어줘").
+     * 어디서·누구랑 장과 같은 틀이다: 누르면 그 장에 글 칸이 열리고(바로 넘기지 않는다 — holdOn), 적은 글이 칩을 고른 것과
+     * 똑같이 그 장의 값이 된다. 다시 누르면 닫고 비운다. 칩을 고르면 적은 글은 지워진다.
+     * 열렸는지는 ownOpen[id], 없으면 값으로 정한다(칩에 없는 글이 적혀 있으면 열림 — 이어서 만들 때도 그대로 열린다).
+     * 서버는 이 값들을 글로 받는다(api/_input parseMaterial — 200자까지). 칩 글자에 묶인 처리는 없다.
+     */
+    const ownQuestion = (q: {
+      id: string;
+      title: string;
+      value: string;
+      set: (v: string) => void;
+      options: FlowOption[];
+      max: number;
+      placeholder: string;
+      layout?: FlowQuestion["layout"];
+      hidden?: boolean;
+      /** 여러 줄 글 칸(말로 입력도 함께) — 문장으로 적는 장 */
+      long?: boolean;
+    }): FlowQuestion => {
+      const open = ownOpen[q.id] ?? typedOwn(q.value, q.options);
+      const setOpen = (on: boolean) => setOwnOpen((s) => ({ ...s, [q.id]: on }));
+      return {
+        id: q.id,
+        title: q.title,
+        hidden: q.hidden,
+        answer: q.value.trim(),
+        options: [...q.options, OWN_INPUT],
+        value: open ? OWN_INPUT.t : q.value,
+        onPick: (t) => {
+          if (t === OWN_INPUT.t) {
+            // 열 때는 고른 칩을 풀고, 닫을 때는 적은 글을 지운다 — 어느 쪽이든 값은 비운다.
+            setOpen(!open);
+            q.set("");
+            return;
+          }
+          setOpen(false);
+          q.set(!open && q.value === t ? "" : t);
+        },
+        holdOn: (t) => t === OWN_INPUT.t,
+        layout: q.layout,
+        children:
+          open &&
+          (q.long ? (
+            <>
+              <VoiceInput onResult={(t) => q.set(t.slice(0, q.max))} />
+              <textarea
+                value={q.value}
+                onChange={(e) => q.set(e.target.value.slice(0, q.max))}
+                rows={2}
+                autoFocus
+                aria-label={`${q.title} 직접 적기`}
+                placeholder={q.placeholder}
+                className={textClass}
+              />
+            </>
+          ) : (
+            <input
+              value={q.value}
+              onChange={(e) => q.set(e.target.value.slice(0, q.max))}
+              maxLength={q.max}
+              autoFocus
+              aria-label={`${q.title} 직접 적기`}
+              placeholder={q.placeholder}
+              className={textClass}
+            />
+          )),
+      };
+    };
     /*
      * 누구랑 — 두 장으로 나눈다. 동행 칩은 누르면 바로 넘어가고, 이름·성별·친구 칸은 바로 뒤 장에 따로 둔다.
      * (한 장에 두면 13개 칩 아래 이름 칸이 폰 화면 밖에 떠서, 눌러도 아무 일 없는 것처럼 보였다.)
@@ -2090,7 +2178,8 @@ export default function CreatePage() {
         {
           id: "whoName",
           title: `함께 나오는 ${term} 이름은요?`,
-          hidden: !who || who === "혼자서" || whoOwn !== null,
+          // 엄마·아빠·할머니·할아버지는 호칭이 곧 그 사람이라 이름을 묻지 않는다(NO_NAME_COMPANIONS).
+          hidden: !who || who === "혼자서" || whoOwn !== null || NO_NAME_COMPANIONS.has(term),
           answer: nameAnswer,
           children: (
             <WhoNameInput
@@ -2157,73 +2246,55 @@ export default function CreatePage() {
             </>
           ),
         },
-        {
+        ownQuestion({
           id: "feeling",
           title: "그때 기분이 어땠어요?",
-          answer: feeling,
-          options: FEELINGS,
           value: feeling,
-          onPick: (t) => setFeeling(feeling === t ? "" : t),
-        },
+          set: setFeeling,
+          options: FEELINGS,
+          max: 40,
+          placeholder: "예: 조금 떨렸지만 재미있었어요",
+        }),
         /*
          * 어떻게 끝났나 — 이게 있어야 실제와 다른 결말(혼난 일을 칭찬으로 등)이 안 나온다.
          * 칩으로 고르거나 직접 적는다. 칩만 두면 네 가지 결말만 돌고 돌아 "또 같은 마무리"가 된다.
+         * 글 칸은 다른 장과 같이 맨 끝 '직접 입력'을 눌러 연다(예전엔 칩 아래 늘 열려 있었다).
          */
-        {
+        ownQuestion({
           id: "ending",
           title: "일이 어떻게 끝났어요?",
-          answer: ending.trim(),
-          options: TODAY_ENDINGS,
           value: ending,
-          onPick: (t) => setEnding(ending === t ? "" : t),
-          holdOn: () => typedOwn(ending, TODAY_ENDINGS),
-          children: (
-            <input
-              value={ending}
-              onChange={(e) => setEnding(e.target.value.slice(0, 120))}
-              placeholder="있었던 그대로 적어도 돼요 · 예: 결국 사과하고 다시 같이 놀았어요"
-              aria-label="일이 어떻게 끝났어요? 직접 적기"
-              className={textClass}
-            />
-          ),
-        },
+          set: setEnding,
+          options: TODAY_ENDINGS,
+          max: 120,
+          placeholder: "있었던 그대로 적어도 돼요 · 예: 결국 사과하고 다시 같이 놀았어요",
+        }),
       ];
     }
 
     if (storyMode === "emotion") {
       return [
-        {
+        ownQuestion({
           id: "emotion",
           title: "어떤 마음이 들었어요?",
-          answer: emotion,
-          options: EMOTIONS,
           value: emotion,
-          onPick: (t) => setEmotion(emotion === t ? "" : t),
-        },
-        {
-          // 언제 그런 마음이 들었나 — 흔한 상황 칩(백지 공포 제거)을 누르거나 말·글로 적는다.
+          set: setEmotion,
+          options: EMOTIONS,
+          max: 30,
+          placeholder: "예: 억울해요, 떨려요",
+        }),
+        // 언제 그런 마음이 들었나 — 흔한 상황 칩(백지 공포 제거)을 누르거나, 맨 끝 '직접 입력'으로 말·글로 적는다.
+        ownQuestion({
           id: "situation",
           title: "언제 그런 마음이 들었어요?",
-          answer: situation.trim(),
-          options: EMOTION_TIMES,
           value: situation,
-          onPick: (t) => setSituation(situation === t ? "" : t),
-          holdOn: () => typedOwn(situation, EMOTION_TIMES),
+          set: setSituation,
+          options: EMOTION_TIMES,
+          max: 200,
+          placeholder: "예: 동생이 내 장난감을 가져갔을 때",
           layout: "wide",
-          children: (
-            <>
-              <VoiceInput onResult={(t) => setSituation(t)} />
-              <textarea
-                value={situation}
-                onChange={(e) => setSituation(e.target.value.slice(0, 200))}
-                rows={2}
-                aria-label="언제 그런 마음이 들었어요? 직접 적기"
-                placeholder="직접 적어도 돼요 · 예: 동생이 내 장난감을 가져갔을 때"
-                className={textClass}
-              />
-            </>
-          ),
-        },
+          long: true,
+        }),
         ...whoQuestions("누구랑 있었어요?", todayWho),
       ];
     }
@@ -2238,35 +2309,67 @@ export default function CreatePage() {
      * (서버 anthropic.ts 는 상상·감정의 ending 을 이미 받을 줄 안다).
      */
     const group = THEME_GROUPS.find((g) => g.label === themeGroup);
+    /*
+     * 갈래 장의 '직접 입력' — 세 갈래에 없는 이야기(로봇·기차 여행 …)를 바로 적는다. 적은 글은 세부 이야기와 같은 자리(theme —
+     * 서버의 '이야기 소재')에 들어가고 갈래는 비운다. 그래서 다음 장('그중에서 무엇으로')은 건너뛴다(갈래가 없으면 숨는다).
+     * 열렸는지는 ownOpen.group, 없으면 값으로(갈래 없이 소재만 적혀 있으면 열림 — 이어서 만들 때).
+     */
+    const groupOwn = ownOpen.group ?? (!group && theme.trim() !== "");
     return [
       {
         id: "group",
         title: `${name}의 동화, 무슨 이야기로 할까요?`,
-        answer: themeGroup ?? "",
-        options: THEME_GROUPS.map((g) => ({ t: g.label, icon: g.icon })),
-        value: themeGroup ?? "",
-        onPick: pickThemeGroup,
+        answer: themeGroup ?? (groupOwn ? theme.trim() : ""),
+        options: [...THEME_GROUPS.map((g) => ({ t: g.label, icon: g.icon })), OWN_INPUT],
+        value: groupOwn ? OWN_INPUT.t : (themeGroup ?? ""),
+        onPick: (t) => {
+          if (t === OWN_INPUT.t) {
+            // 열 때는 고른 갈래를 풀고, 닫을 때는 적은 글을 지운다.
+            setOwnOpen((s) => ({ ...s, group: !groupOwn }));
+            setThemeGroup(null);
+            setTheme("");
+            return;
+          }
+          setOwnOpen((s) => ({ ...s, group: false }));
+          // 직접 적어 둔 소재는 갈래를 고르면 지운다(그 갈래의 칩이 아니다 — pickThemeGroup 이 다른 갈래로 바꿀 때 비운다).
+          if (groupOwn) setTheme("");
+          pickThemeGroup(t);
+        },
+        holdOn: (t) => t === OWN_INPUT.t,
         layout: "cards",
+        children: groupOwn && (
+          <input
+            value={theme}
+            onChange={(e) => setTheme(e.target.value.slice(0, 40))}
+            maxLength={40}
+            autoFocus
+            aria-label="무슨 이야기로 할까요? 직접 적기"
+            placeholder="예: 로봇, 기차 여행, 눈사람"
+            className={textClass}
+          />
+        ),
       },
-      {
+      ownQuestion({
         id: "theme",
         title: "그중에서 무엇으로 할까요?",
         hidden: !group,
-        answer: theme,
-        options: group?.items ?? [],
         value: theme,
-        onPick: (t) => setTheme(theme === t ? "" : t),
-      },
+        set: setTheme,
+        options: group?.items ?? [],
+        max: 40,
+        placeholder: "예: 용감한 기사, 인어 이야기",
+      }),
       ...whoQuestions("누구랑 함께할까요?", imagineWho),
-      {
+      ownQuestion({
         id: "happening",
         title: "무슨 일이 생길까요?",
-        answer: happening,
-        options: HAPPENING_OPTIONS,
         value: happening,
-        onPick: (t) => setHappening(happening === t ? "" : t),
+        set: setHappening,
+        options: HAPPENING_OPTIONS,
+        max: 80,
+        placeholder: "예: 잃어버린 별을 찾아 줘요",
         layout: "wide",
-      },
+      }),
       {
         id: "extra",
         title: "더 넣고 싶은 이야기가 있나요?",

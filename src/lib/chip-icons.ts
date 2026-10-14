@@ -49,6 +49,8 @@ const CHIP_ICON_NAME: Record<string, string> = {
   "엄마 아빠랑": "mom-dad",
   할머니랑: "grandma",
   할아버지랑: "grandpa",
+  // 두 분 함께(2026-10-14) — 새로 뽑지 않고 위 두 스티커를 나란히 붙여 만든 그림(grandparents.webp)
+  "할머니 할아버지랑": "grandparents",
   "동물 친구랑": "puppy",
   형이랑: "older-brother",
   오빠랑: "older-brother",

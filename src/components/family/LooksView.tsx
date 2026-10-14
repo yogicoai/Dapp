@@ -31,7 +31,7 @@
  */
 
 import { useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode } from "react";
-import { isKidRole, isPhotoFixed, lookRowsFor, type FamilyLooks, type FamilyMember } from "@/lib/family";
+import { isKidRole, isPhotoFixed, lookRowsFor, pictureDecidesLooks, type FamilyLooks, type FamilyMember } from "@/lib/family";
 import { PHOTO_PROMISE } from "@/lib/family-photo";
 import {
   CHILD_MULTI_MAX,
@@ -278,7 +278,9 @@ export function LooksView({
           {/* 사진으로 고정한 사람은 칩을 쓰지 않는다(lib/family dropPhotoFixedLooks) — 여기서 고르면 특징으로 다시 그린다는 뜻 */}
           {isPhotoFixed(m)
             ? "사진으로 그린 얼굴이라 예전에 고른 특징은 비웠어요 — 여기서 고르면 사진 대신 이 특징으로 다시 그릴지 여쭤볼게요"
-            : "얼굴을 고정했어요 — 여기를 바꾸면 다시 그릴지 여쭤볼게요"}
+            : pictureDecidesLooks(m)
+              ? "예전 그림으로 돌아간 얼굴이라 고른 특징은 비웠어요 — 여기서 고르면 이 특징으로 다시 그릴지 여쭤볼게요"
+              : "얼굴을 고정했어요 — 여기를 바꾸면 다시 그릴지 여쭤볼게요"}
         </p>
       )}
       {lock.map((r) => (

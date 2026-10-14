@@ -32,6 +32,7 @@ import {
   normalizeLooksFor,
   normalizeRemovals,
   ourChildrenNames,
+  pictureDecidesLooks,
   portraitLooksChanged,
   ROLE_ORDER,
   showsLooksChanged,
@@ -375,6 +376,39 @@ describe("사진으로 고정한 사람의 칩은 비운다(2026-10-14 사장님
   it("특징으로 다시 그려 고정하면(fromPhoto 가 아닌 그림) 그때 고른 칩은 남는다", () => {
     const redrawn = { ...BASE, looks: KID_LOOKS, family: [{ id: "child", role: "child" as const, callName: "하온", portrait: P }] };
     assert.equal(dropPhotoFixedLooks(redrawn).looks, KID_LOOKS);
+  });
+});
+
+describe("예전 그림으로 되돌린 사람(restored) — 그림이 모습을 정한다(2026-10-14 '이전 캐릭터로 돌아가기')", () => {
+  const RESTORED = { ...P, restored: true };
+  const BASE = { name: "하온", age: 5, gender: "boy" as const };
+
+  it("저장·불러오기를 지나도 표시가 남는다", () => {
+    const fam = normalizeFamily([{ id: "child", role: "child", callName: "하온", portrait: { ...RESTORED, opaque: true } }]);
+    assert.equal(fam?.[0].portrait?.restored, true);
+    assert.equal(fam?.[0].portrait?.opaque, true);
+    // true 가 아닌 값은 버린다
+    assert.equal("restored" in (normalizeFamily([{ id: "child", role: "child", callName: "하온", portrait: { ...P, restored: "yes" } }])?.[0].portrait ?? {}), false);
+  });
+
+  it("그릴 때의 칩을 모른다 — 지금 칩은 쓰지 않고 비운다(사진 그림과 같다)", () => {
+    const member: FamilyMember = { id: "child", role: "child", callName: "하온", portrait: RESTORED };
+    assert.equal(pictureDecidesLooks(member), true);
+    assert.equal(isPhotoFixed(member), false);
+    const out = dropPhotoFixedLooks({ ...BASE, looks: { hair: "아주 짧은 머리", items: ["모자"] }, family: [member] });
+    assert.equal(out.looks, undefined);
+  });
+
+  it("'모습이 바뀌었어요'를 띄우지 않는다 — 견줄 칩이 없다", () => {
+    const member: FamilyMember = { id: "m-g", role: "grandma", callName: "할머니", looks: { hair: "파마" }, portrait: { ...RESTORED, lockKey: "[]" } };
+    assert.equal(portraitLooksChanged(member, null), false);
+    assert.equal(showsLooksChanged(member, null), false);
+  });
+
+  it("칩으로 그린 그림·그림이 없는 사람은 그림이 모습을 정한 것이 아니다", () => {
+    assert.equal(pictureDecidesLooks({ portrait: P }), false);
+    assert.equal(pictureDecidesLooks({}), false);
+    assert.equal(pictureDecidesLooks({ portrait: { ...P, fromPhoto: true } }), true);
   });
 });
 

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * 모아 보기에서 사람 카드를 눌렀을 때 — 다시 그리기 · 생김새 고치기 · 켜기 두 개 · 빼기.
+ * 모아 보기에서 사람 카드를 눌렀을 때 — 다시 그리기 · 생김새 고치기 · 예전 그림으로 돌아가기 · 켜기 두 개 · 빼기.
  * 고정 안 된 사람은 '얼굴 고정하기'가 맨 위. 아이(주인공)는 뺄 수 없다.
  * '그림 없이 특징만 저장'한 사람(looksOnly)은 '특징만 저장됨 · 동화마다 이 특징으로 그려요'로 알리고,
  * 같은 '얼굴 고정하기'(쿠키)로 나중에 그릴 수 있다.
@@ -37,6 +37,7 @@ export function MemberSheet({
   onRedraw,
   onFix,
   onEditLooks,
+  onHistory,
   onShowOnHome,
   onOurChild,
   onRename,
@@ -56,6 +57,8 @@ export function MemberSheet({
   onRedraw: () => void;
   onFix: () => void;
   onEditLooks: () => void;
+  /** '예전 그림으로 돌아가기' — 그 사람을 그린 예전 그림 목록을 연다(사장님 2026-10-14) */
+  onHistory: () => void;
   /** '홈 가족 사진에 보이기' 켜기·끄기 */
   onShowOnHome: (on: boolean) => void;
   /** '우리 아이예요' 켜기·끄기(형제자매만) */
@@ -224,6 +227,10 @@ export function MemberSheet({
             />
           )}
           <Action icon="/icons/func-edit.webp" label="생김새 고치기" onClick={onEditLooks} colors={colors} />
+          {/* 한 번이라도 그린 사람 — 예전에 그린 얼굴이 더 마음에 들면 그리로 돌아간다(쿠키 0개, HistorySheet) */}
+          {fixedOrDrawn && (
+            <Action icon="/icons/func-cleanup.webp" label="예전 그림으로 돌아가기" right="쿠키 0개" onClick={onHistory} colors={colors} />
+          )}
           <SwitchRow
             on={onHome}
             onChange={onShowOnHome}

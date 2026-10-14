@@ -65,6 +65,7 @@ import {
   seasonLabel,
   type Job,
 } from "@/components/family/family-ui";
+import { HistorySheet, type RestoredPicture } from "@/components/family/HistorySheet";
 import { LooksChangedSheet } from "@/components/family/LooksChangedSheet";
 import { LooksView } from "@/components/family/LooksView";
 import { MembersView } from "@/components/family/MembersView";
@@ -86,6 +87,7 @@ import {
   FIXED_ID_ROLES,
   homeMembers,
   isPhotoFixed,
+  pictureDecidesLooks,
   lockChanges,
   lockedLooksChanged,
   lockKeyChanged,
@@ -101,6 +103,7 @@ import {
   type FamilyRole,
 } from "@/lib/family";
 import { cleanBodyStretch, cleanHeadRatio } from "@/lib/family-head";
+import { historyFloor } from "@/lib/family-history";
 import { withOutfit, type MemberOutfit, type OutfitThemeId } from "@/lib/family-outfit";
 import { PHOTO_FALLBACK_NOTE, PHOTO_TOO_BIG_MESSAGE, readPhotoFallback } from "@/lib/family-photo";
 import { newerStudio, type FamilyStudio } from "@/lib/family-studio";
@@ -139,6 +142,8 @@ type Overlay =
   | { kind: "add"; role?: FamilyRole; mode: From; key: number }
   /** fromAlbum: 모아 보기의 '모습이 바뀌었어요' 카드에서 열었다 — 다른 메뉴로 갈 길을 둔다 */
   | { kind: "changed"; id: string; diff: string[]; fromAlbum?: boolean }
+  /** 예전 그림으로 돌아가기 — 그 사람을 그린 예전 그림 목록(HistorySheet) */
+  | { kind: "history"; id: string }
   /** 가족 사진 꾸미기(가족 사진관 — 배경·스티커) */
   | { kind: "studio" }
   /** 옷 갈아입기(꾸미기 시트에서) */
@@ -629,22 +634,24 @@ export default function FamilyPage() {
     const drawnLooks = drawnKey !== undefined ? lockKeyLooks(drawnKey) : before;
     const anyChanged = looksKey(before) !== looksKey(after);
     /*
-     * 사진으로 그린 그림은 사진이 모습을 정했고, 그 사람의 칩은 쓰지 않는다(lib/family dropPhotoFixedLooks, 2026-10-14).
-     * 그래서 여기서 특징을 골랐다면 '사진 대신 이 특징으로 다시 그리겠다'는 뜻일 때만 쓸모가 있다 — 무엇을 골랐든
-     * 다시 그릴지 묻는다. 안 그리면 사진으로 그린 모습 그대로이고 고른 특징은 쓰이지 않는다(아래 '나중에' 알림).
+     * 사진으로 그렸거나 예전 그림으로 되돌린 그림은 그림이 모습을 정했고, 그 사람의 칩은 쓰지 않는다
+     * (lib/family dropPhotoFixedLooks, 2026-10-14). 그래서 여기서 특징을 골랐다면 '그 그림 대신 이 특징으로 다시 그리겠다'는
+     * 뜻일 때만 쓸모가 있다 — 무엇을 골랐든 다시 그릴지 묻는다. 안 그리면 지금 모습 그대로이고 고른 특징은 쓰이지 않는다
+     * (아래 '나중에' 알림).
      */
-    const lockChanged = drawn?.fromPhoto
+    const fromPicture = drawn?.fromPhoto === true || drawn?.restored === true;
+    const lockChanged = fromPicture
       ? anyChanged
       : drawnKey !== undefined
         ? lockKeyChanged(drawnKey, m, c)
         : lockedLooksChanged(before, after, m.role);
     if (m.portrait || m.draft) {
       if (lockChanged) {
-        const diff = lockChanges(m.role, drawn?.fromPhoto ? before : drawnLooks, after);
+        const diff = lockChanges(m.role, fromPicture ? before : drawnLooks, after);
         setOverlay({
           kind: "changed",
           id: m.id,
-          diff: diff.length > 0 ? diff : [drawn?.fromPhoto ? "사진 대신 고른 특징으로" : "생김새가 바뀌었어요"],
+          diff: diff.length > 0 ? diff : [fromPicture ? "지금 그림 대신 고른 특징으로" : "생김새가 바뀌었어요"],
         });
       } else if (anyChanged) {
         showToast("다시 그리지 않아도 돼요 — 옷은 이야기마다 바뀌어요");
@@ -1222,6 +1229,34 @@ export default function FamilyPage() {
     advance(round.ids.indexOf(id));
   }
 
+  /**
+   * 예전 그림으로 돌아가기(사장님 2026-10-14) — 고른 예전 그림을 고정 그림으로 되돌린다. 새로 그리지 않으니 쿠키가 들지 않는다.
+   * 지금 들고 있는 그림(고정·확인 전·견주던 앞 그림)과 같은 그림이면 그 기록(머리 비율·사진 표시 …)을 그대로 쓴다.
+   * 폴더에서 되찾은 그림은 그릴 때의 특징을 모른다 — restored 표시를 달아 그림이 모습을 정하게 하고, 지금 칩은 비운다
+   * (clearPhotoFixedLooks — 칩이 그 그림과 다르면 동화에서 어긋난다). 확인 전 그림은 치운다(목록에서 다시 고를 수 있다).
+   */
+  function restorePicture(id: string, pic: RestoredPicture) {
+    const m = findMember(id);
+    if (!m) return;
+    const known = [m.portrait, m.draft, m.prevDraft].find((p) => p?.url === pic.url);
+    const portrait: FamilyPortrait = known ?? {
+      url: pic.url,
+      ref: pic.ref,
+      at: pic.at,
+      ...(pic.transparent ? {} : { opaque: true }),
+      restored: true,
+    };
+    const at = new Date().toISOString();
+    const next = familyRef.current.map((cur) =>
+      cur.id === id ? { ...cur, portrait, draft: undefined, prevDraft: undefined, looksOnly: undefined, picAt: at } : cur,
+    );
+    commit(clearPhotoFixedLooks(next), "now");
+    // 이번 방문에 골라 둔 사진은 할 일이 없다 — 메모리에서 버린다.
+    setPhoto(id, null);
+    setOverlay(null);
+    showToast("예전 그림으로 돌아갔어요 — 다음 동화부터 이 모습으로 그려요");
+  }
+
   function acceptAll() {
     const ids = new Set(round.ids);
     const at = new Date().toISOString();
@@ -1258,7 +1293,10 @@ export default function FamilyPage() {
     overlay?.kind === "confirm"
       ? overlay.ids.map((id) => family.find((m) => m.id === id)).filter((m): m is FamilyMember => Boolean(m))
       : [];
-  const sheetMember = overlay?.kind === "member" || overlay?.kind === "changed" ? family.find((m) => m.id === overlay.id) : undefined;
+  const sheetMember =
+    overlay?.kind === "member" || overlay?.kind === "changed" || overlay?.kind === "history"
+      ? family.find((m) => m.id === overlay.id)
+      : undefined;
   const roundMembers = round.ids.map((id) => family.find((m) => m.id === id)).filter((m): m is FamilyMember => Boolean(m));
   const looksMembers = looks ? looks.ids.map((id) => family.find((m) => m.id === id)).filter((m): m is FamilyMember => Boolean(m)) : [];
   // 명패 — 아이와 '우리 아이예요'를 켠 형제(하온·하린이네 가족). 단짝 친구는 안 든다.
@@ -1490,10 +1528,23 @@ export default function FamilyPage() {
           onRedraw={() => redraw(sheetMember.id, false)}
           onFix={() => startLooks([sheetMember.id], "fix", "album")}
           onEditLooks={() => startLooks([sheetMember.id], "edit", "album")}
+          onHistory={() => setOverlay({ kind: "history", id: sheetMember.id })}
           onShowOnHome={(on) => setShowOnHome(sheetMember.id, on)}
           onOurChild={(on) => setOurChild(sheetMember.id, on)}
           onRename={(name, ourChild) => renameMember(sheetMember.id, name, ourChild)}
           onRemove={() => removeMember(sheetMember.id)}
+        />
+      )}
+
+      {overlay?.kind === "history" && sheetMember && (
+        <HistorySheet
+          key={sheetMember.id}
+          colors={colors}
+          member={sheetMember}
+          // 뺐다가 다시 넣은 사람에게 예전 사람의 그림은 보이지 않는다(뺄 때 "그린 그림도 같이 지워져요"라고 알렸다)
+          since={historyFloor(sheetMember, child?.familyRemoved)}
+          onClose={() => setOverlay({ kind: "member", id: sheetMember.id })}
+          onRestore={(pic) => restorePicture(sheetMember.id, pic)}
         />
       )}
 
@@ -1522,8 +1573,15 @@ export default function FamilyPage() {
           onRedraw={() => setOverlay({ kind: "confirm", ids: [sheetMember.id], variant: "redraw", from: "album" })}
           onLater={() => {
             setOverlay(null);
-            // 사진으로 그린 사람은 다시 그리지 않으면 고른 특징이 쓰이지 않는다 — 말없이 사라진 것처럼 보이지 않게 알린다.
-            if (isPhotoFixed(sheetMember)) showToast("사진으로 그린 모습 그대로 둘게요 — 고른 특징은 쓰지 않아요");
+            // 사진으로 그렸거나 예전 그림으로 되돌린 사람은 다시 그리지 않으면 고른 특징이 쓰이지 않는다 —
+            // 말없이 사라진 것처럼 보이지 않게 알린다.
+            if (pictureDecidesLooks(sheetMember)) {
+              showToast(
+                isPhotoFixed(sheetMember)
+                  ? "사진으로 그린 모습 그대로 둘게요 — 고른 특징은 쓰지 않아요"
+                  : "지금 그림 그대로 둘게요 — 고른 특징은 쓰지 않아요",
+              );
+            }
           }}
           onMore={overlay.fromAlbum ? () => setOverlay({ kind: "member", id: sheetMember.id }) : undefined}
           onCharge={() => router.push("/plans")}

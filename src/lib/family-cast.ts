@@ -25,7 +25,7 @@
  * 브라우저에서 돈다(이 기기 가족이 서버보다 새 그림을 들고 있을 수 있다). 서버는 주소만 다시 검사한다(lib/family-ref).
  * 순수 함수만 둔다 — node --test 로 시험한다(family-cast.test.ts).
  */
-import { familyLooksToPrompt, type FamilyMember, type FamilyRole } from "./family.ts";
+import { familyLooksToPrompt, pictureDecidesLooks, type FamilyMember, type FamilyRole } from "./family.ts";
 
 /** 인물 시트에 물릴 고정 얼굴 한 사람 */
 export type CastPortrait = {
@@ -271,7 +271,8 @@ export function storyFamilyLooks(family: readonly FamilyMember[] | undefined): S
               : name;
     if (!who) continue;
     const fixed = Boolean(m.portrait?.ref);
-    const line = m.portrait?.fromPhoto ? "" : familyLooksToPrompt(m.looks, m.role, { clothes: false });
+    // 사진으로 그렸거나 예전 그림으로 되돌린 사람 — 그림이 모습을 정한다(칩은 쓰지 않는다)
+    const line = pictureDecidesLooks(m) ? "" : familyLooksToPrompt(m.looks, m.role, { clothes: false });
     if (line) out.push({ who, line, ...(fixed ? { fixed: true } : {}) });
     else if (fixed) out.push({ who, fixed: true });
     if (out.length >= STORY_FAMILY_MAX) break;

@@ -83,6 +83,12 @@ export type FamilyPortrait = {
    */
   fromPhoto?: boolean;
   /**
+   * 예전에 그린 그림으로 되돌린 그림(사장님 2026-10-14 "이전에 생성했던 캐릭터로 돌아가게" — 가족 화면 '예전 그림으로
+   * 돌아가기', api/family/portrait/history). 그릴 때의 특징(칩)도, 사진으로 그렸는지도 모른다 — 그림 자체가 모습을 정한다.
+   * 그래서 사진 그림과 똑같이 칩을 쓰지 않고(pictureDecidesLooks), '모습이 바뀌었어요'도 띄우지 않는다. true 만 저장한다.
+   */
+  restored?: boolean;
+  /**
    * 그린 뒤 잰 머리 비율 — 키 ÷ 머리(머리카락 맨 위~턱 : 머리 위~신발 바닥), 0.01 단위(사장님 2026-09-29 "아빠만 머리가
    * 너무 크게 나와", lib/family-head). 서버(api/family/portrait)가 그린 그림을 값싼 글 모델로 재서 그림과 함께 건넨다.
    * 단체 사진(FamilyGroupPhoto)이 이 값으로 턱선을 찾아 그림을 머리·몸·발 칸으로 나눠, 키는 실제 키·얼굴은 얼굴 크기표
@@ -851,13 +857,22 @@ export function portraitLooksChanged(
   member: Pick<FamilyMember, "role" | "looks" | "portrait">,
   child: Pick<ChildPrefs, "looks" | "parents"> | null | undefined,
 ): boolean {
-  if (member.portrait?.fromPhoto) return false;
+  // 사진으로 그렸거나 예전 그림으로 되돌린 그림 — 그림이 모습을 정했다(칩과 견줄 것이 없다).
+  if (pictureDecidesLooks(member)) return false;
   return lockKeyChanged(member.portrait?.lockKey, member, child);
 }
 
 /** 사진으로 그려 고정한 사람인가 — 이 사람의 모습은 칩이 아니라 사진이 정했다 */
 export function isPhotoFixed(member: Pick<FamilyMember, "portrait"> | null | undefined): boolean {
   return member?.portrait?.fromPhoto === true;
+}
+
+/**
+ * 고정한 그림이 모습을 정한 사람인가 — 사진으로 그렸거나(fromPhoto), 예전 그림으로 되돌렸다(restored).
+ * 이런 사람은 '특징 고르기' 값을 쓰지 않는다(dropPhotoFixedLooks) — 칩이 그림과 다를 수 있고, 함께 쓰면 그림·동화가 어긋난다.
+ */
+export function pictureDecidesLooks(member: Pick<FamilyMember, "portrait"> | null | undefined): boolean {
+  return member?.portrait?.fromPhoto === true || member?.portrait?.restored === true;
 }
 
 /**
@@ -879,8 +894,9 @@ export function isPhotoFixed(member: Pick<FamilyMember, "portrait"> | null | und
  */
 export function dropPhotoFixedLooks<T extends Pick<ChildPrefs, "looks" | "parents" | "family">>(child: T): T {
   const family = child.family ?? [];
-  const fixed = (role: FamilyRole) => family.some((m) => m.role === role && isPhotoFixed(m));
-  const others = (m: FamilyMember) => m.role !== "child" && m.role !== "mom" && m.role !== "dad" && isPhotoFixed(m);
+  // 예전 그림으로 되돌린 사람도 같다 — 그 그림을 그릴 때의 칩을 모르니 지금 칩은 그림과 다를 수 있다(pictureDecidesLooks).
+  const fixed = (role: FamilyRole) => family.some((m) => m.role === role && pictureDecidesLooks(m));
+  const others = (m: FamilyMember) => m.role !== "child" && m.role !== "mom" && m.role !== "dad" && pictureDecidesLooks(m);
 
   const dropChild = fixed("child") && child.looks !== undefined;
   const dropMom = fixed("mom") && child.parents?.mom !== undefined;
@@ -999,6 +1015,7 @@ function normalizePortrait(raw: unknown): FamilyPortrait | undefined {
     ...(p.opaque === true ? { opaque: true } : {}),
     ...(lockKey !== undefined ? { lockKey } : {}),
     ...(p.fromPhoto === true ? { fromPhoto: true } : {}),
+    ...(p.restored === true ? { restored: true } : {}),
     ...(headRatio !== undefined ? { headRatio } : {}),
     ...(bodyStretch !== undefined ? { bodyStretch } : {}),
   };

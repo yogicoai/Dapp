@@ -166,6 +166,32 @@ export async function listCafe24(dir = "/"): Promise<string[]> {
 }
 
 /**
+ * 기준 폴더 아래 한 폴더의 **파일 이름**을 읽는다(읽기만) — 가족 캐릭터의 예전 그림 목록(api/family/portrait/history)이 쓴다.
+ * remoteDir 은 올릴 때와 같은 규칙(기준 폴더 아래 상대 경로, 예 "family/<회원 폴더>"). 폴더가 없으면 빈 목록.
+ * timeoutMs 가 지나면 연결을 끊는다. 실패는 그대로 던진다 — 부르는 쪽이 ftpErrorCode 로 짧은 코드만 남긴다.
+ */
+export async function listCafe24Files(remoteDir: string, timeoutMs = 12_000): Promise<string[]> {
+  const client = new Client(timeoutMs);
+  const timer = setTimeout(() => client.close(), timeoutMs);
+  try {
+    await client.access(accessOptions());
+    const home = (await client.pwd()).replace(/\/+$/, "");
+    const dir = `${home}/${relPathOf(remoteDir)}`;
+    try {
+      const list = await client.list(dir);
+      return list.filter((f) => !f.isDirectory).map((f) => f.name);
+    } catch (e) {
+      // 550 — 폴더가 없다(아직 한 장도 안 그린 회원)
+      if (e instanceof FTPError && e.code === 550) return [];
+      throw e;
+    }
+  } finally {
+    clearTimeout(timer);
+    client.close();
+  }
+}
+
+/**
  * 홈(웹 루트) 기준 상대 경로 조립. 앞 슬래시를 떼야 FTP 홈 아래에 만들어져 웹에 보인다.
  * CAFE24_UPLOAD_DIR(예: "storybook")를 접두로 붙인다.
  */
