@@ -384,7 +384,8 @@ export function AdultLooksEditor({
         {picked > 0 ? (
           <LooksPreview
             key={role}
-            text={`이렇게 그려요 — ${parentLooksToPrompt(p, role)}`}
+            // 캐릭터 그림에는 늘 하는 것(모자·귀걸이 …)을 그리지 않는다(2026-10-14) — 그리는 대로 보이게 빼고 보인다
+            text={`이렇게 그려요 — ${parentLooksToPrompt(p, role, { wear: false })}`}
             textClass="text-[12px]"
             action={
               <button

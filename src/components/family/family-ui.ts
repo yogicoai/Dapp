@@ -294,13 +294,15 @@ export function hasPickedLooks(m: FamilyMember, child: ChildPrefs | null): boole
 /**
  * 미리보기 '이렇게 그려요 — …' 와 서버에 보내는 생김새 한 줄(한국어).
  * 역할을 넘겨 수염은 아빠·할아버지만, 예전 글자는 새 글자로 적힌다(lib/family familyLooksToPrompt).
+ * 늘 하는 것·늘 지니는 것(모자·머리핀·귀걸이·인형 …)은 넣지 않는다 — 캐릭터 그림에는 액세서리를 그리지 않는다
+ * (사장님 2026-10-14 "모자 정도는 빠져야", "악세사리가 차 있으면 안 되는 거임"). 옷은 그대로.
  */
 export function looksLine(m: FamilyMember, child: ChildPrefs | null): string {
   // 아이도 형제와 같은 문장 규칙으로(을/를·칩 글자 풀기·이런 점도 문장) — 한 가족 그림 안에서 말투가 갈리지 않게.
   // (이야기로 가는 줄 describeChild 는 만들기 화면의 looksToPrompt 를 그대로 쓴다.)
-  if (m.role === "child") return familyLooksToPrompt(child?.looks, "child");
-  if (m.role === "mom" || m.role === "dad") return parentLooksToPrompt(child?.parents?.[m.role], m.role);
-  return familyLooksToPrompt(m.looks, m.role);
+  if (m.role === "child") return familyLooksToPrompt(child?.looks, "child", { wear: false });
+  if (m.role === "mom" || m.role === "dad") return parentLooksToPrompt(child?.parents?.[m.role], m.role, { wear: false });
+  return familyLooksToPrompt(m.looks, m.role, { wear: false });
 }
 
 /* ─────────────────────────── 서버 요청 ─────────────────────────── */

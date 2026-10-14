@@ -700,9 +700,9 @@ describe("cardFor — 특징 카드를 이 사람에게 맞게 거른다", () =>
     assert.equal(cardFor(kid, "- clothing: burnt orange T-shirt"), "- clothing: burnt orange T-shirt");
     const p = buildPrompt(kid, PHOTO, "- distinctive: healed burn mark on the image-left hand; round cheeks\n- skin marks: mole on the image-left upper arm\n- hair: black bob");
     assert.ok(!/burn|upper arm/i.test(p), p);
-    // 몸 쪽 점이 빠지면 점 막기 줄도 없고 DO NOT 줄은 예전 글('… bag, mole, freckles or tattoo …') 그대로
+    // 몸 쪽 점이 빠지면 점 막기 줄도 없고 DO NOT 줄은 점·주근깨까지 적힌 글(… stubble, mole, freckles or tattoo …) 그대로
     assert.ok(!p.includes(G_MOLE) && !p.includes("- skin marks:"));
-    assert.ok(p.includes("bag, mole, freckles or tattoo unless it is clearly there."));
+    assert.ok(p.includes("stubble, mole, freckles or tattoo unless it is clearly there."));
   });
 
   it("남는 줄이 없으면 null — 그때는 칩 갈래로 그린다", () => {
@@ -816,7 +816,7 @@ const SAMPLE_BASE =
   "image = painting-style sample only (never copy its people, animals, subject, pose or composition). Copy only HOW it is painted: medium, brush and line quality, edge softness, colour palette, shading and paper finish.";
 const SAMPLE_NO_FACE = " Never copy how it draws faces either — not its dot eyes, open-mouthed grin or pink cheek blush.";
 const DO_NOT_OLD_PHOTO =
-  "DO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag, mole, freckles or tattoo unless it is clearly there. One invented accessory and the portrait no longer looks like them.";
+  "DO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, mole, freckles or tattoo unless it is clearly there. One invented detail and the portrait no longer looks like them.";
 
 describe("MUST KEEP·ADULT FACE — 카드에 있는 특징이 흔히 어긋나는 쪽을 막는다(2026-09-30 엄마 사진)", () => {
   const mom = person("mom", { callName: "엄마" });
@@ -843,13 +843,13 @@ describe("MUST KEEP·ADULT FACE — 카드에 있는 특징이 흔히 어긋나�
     const photo = buildPrompt(mom, PHOTO, MOM_CARD);
     assert.match(
       photo,
-      /\nDO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag or tattoo unless it is clearly there, and no freckles or moles beyond those the LIKENESS SPEC gives\. One invented accessory and the portrait no longer looks like them\.\n/,
+      /\nDO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble or tattoo unless it is clearly there, and no freckles or moles beyond those the LIKENESS SPEC gives\. One invented detail and the portrait no longer looks like them\.\n/,
     );
-    assert.ok(!photo.includes("bag, mole, freckles or tattoo"));
+    assert.ok(!photo.includes("stubble, mole, freckles or tattoo"));
     const card = buildPrompt(mom, NO_PHOTO, MOM_CARD);
     assert.match(
       card,
-      /\nDO NOT invent anything that is neither in the LIKENESS SPEC nor written above: no glasses, sunglasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag or tattoo unless it is written, and no freckles or moles beyond those the LIKENESS SPEC gives\. One invented accessory and the portrait no longer looks like them\.\n/,
+      /\nDO NOT invent anything that is neither in the LIKENESS SPEC nor written above: no glasses, beard, moustache, stubble or tattoo unless it is written, and no freckles or moles beyond those the LIKENESS SPEC gives\. One invented detail and the portrait no longer looks like them\.\n/,
     );
     // 주근깨가 두드러진 특징 줄에만 있어도 같다
     const onlyDistinctive = `${CARD.replace("- distinctive: long narrow face, deep-set eyes", "- distinctive: long narrow face; freckles across the nose")}`;
@@ -947,7 +947,7 @@ describe("MUST KEEP·ADULT FACE — 카드에 있는 특징이 흔히 어긋나�
       const p = buildPrompt(who, NO_PHOTO);
       assert.ok(!p.includes("MUST KEEP") && !p.includes("ADULT FACE"), who.role);
       assert.ok(p.split("\n").includes(`FIRST ${SAMPLE_BASE}`));
-      assert.match(p, /bag, mole, freckles or tattoo unless that exact item is written\./);
+      assert.match(p, /stubble, mole, freckles or tattoo unless that exact item is written\./);
     }
   });
 
@@ -1178,5 +1178,24 @@ describe("photoFallbackPlan — 사진 거절 뒤 대신 그릴지·무엇으로
     assert.equal(photoFallbackPlan({ card: CARD, looks: "x", msLeft: PHOTO_FALLBACK_MIN_MS - 1 }), null);
     assert.equal(photoFallbackPlan({ card: CARD, looks: "x", msLeft: Number.NaN }), null);
     assert.equal(photoFallbackPlan({ card: CARD, looks: "x", msLeft: PHOTO_FALLBACK_MIN_MS }), "features");
+  });
+});
+
+describe("모자·액세서리는 그리지 않는다 — 사진·특징표·칩 어느 갈래든(사장님 2026-10-14 '모자 정도는 빠져야')", () => {
+  const NO_ACC = /\nNO HEADWEAR OR ACCESSORIES — this portrait is their base look in every book: never draw a hat, cap, beanie, hood, helmet, hair clip/;
+
+  it("사진·특징표·칩 갈래 모두 금지 줄이 있고, '생김새 줄이 원하면 그린다'는 예외가 없다 — 옛 화면이 모자를 보내도", () => {
+    const mom = person("mom", { callName: "엄마", looks: "평소에 모자를 즐겨 한다" });
+    for (const p of [buildPrompt(mom, PHOTO), buildPrompt(mom, NO_PHOTO, CARD), buildPrompt(mom, NO_PHOTO)]) {
+      assert.match(p, NO_ACC);
+      assert.ok(!p.includes("unless the appearance line asks for them"), "사진 규칙의 예외가 없다");
+      assert.ok(!/DO NOT invent[^\n]*\bhat\b/.test(p), "DO NOT 줄에 '있으면 그린다'는 모자가 남지 않는다");
+    }
+  });
+
+  it("안경은 금지 목록에 없다 — 얼굴이라 안경 규칙을 따른다", () => {
+    const line = buildPrompt(person("dad"), PHOTO).split("\n").find((l) => l.startsWith("NO HEADWEAR OR ACCESSORIES"));
+    assert.ok(line && /glasses are part of the face, not an accessory/.test(line), line);
+    assert.ok(line && !/\bglasses,/.test(line.replace(/sunglasses/g, "")), "평범한 안경은 빼라는 목록에 없다");
   });
 });

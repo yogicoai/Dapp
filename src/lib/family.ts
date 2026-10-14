@@ -671,11 +671,14 @@ function glassesPhrase(l: Pick<FamilyLooks, "glasses" | "glassesType">): string 
  * 머리 색은 꾸밈말로 머리 앞에 붙이고(까만 단발머리), 명사가 아닌 머리 칩은 문장으로 푼다(머리가 아주 짧다).
  * 머리 모양이 머리결·앞머리까지 정하는 칩(곱슬 파마·앞머리 내린 머리 …)이면 그 칸은 적지 않는다.
  * opts.clothes=false 면 평소 옷·늘 하는 것을 뺀다(이야기가 책마다 옷을 정한다). 안 주면 예전 그대로.
+ * opts.wear=false 면 늘 하는 것(시계·귀걸이·모자 …)·늘 지니는 것(모자·머리핀·인형 …)을 뺀다 — 가족 캐릭터 그림용
+ * (사장님 2026-10-14 "캐릭터 생성할 때 모자를 쓰고 있다고 해서 모자를 생성해 주면 안 돼", "악세사리가 차 있으면 안 되는 거임",
+ * "의상은 똑같이 해도 상관없지만 모자 정도는 빠져야"). 캐릭터 그림은 모든 동화에 그대로 쓰이므로 옷만 남긴다.
  */
 export function familyLooksToPrompt(
   l: FamilyLooks | undefined,
   who?: LookWho,
-  opts: { clothes?: boolean } = {},
+  opts: { clothes?: boolean; wear?: boolean } = {},
 ): string {
   if (!l) return "";
   const parts: string[] = [];
@@ -710,7 +713,8 @@ export function familyLooksToPrompt(
   // 늘 하는 것은 '평소 옷' 묶음이다(동화마다 바뀔 수 있다) — 옷과 같은 말투로('평소에 … 즐겨 한다').
   // '늘 착용한다'로 적으면 이야기 인물 줄(@@CHARACTER@@ · 인물 시트 'Follow it literally')이 앞치마·모자를
   // 모든 쪽에 붙인다.
-  const acc = words(l.accessories).join("·");
+  const wear = opts.wear !== false;
+  const acc = wear ? words(l.accessories).join("·") : "";
   /*
    * opts.clothes=false — 평소 옷·늘 하는 것을 뺀다. 옷은 책마다 이야기가 정한다(@@CHARACTER@@ 이 책의 옷 칸, 2026-09-29~
    * 사장님 "옷은 그 주제안에서 랜덤으로"). 평소 옷을 이야기에 주면 클로드가 그 옷을 책마다 그대로 옮겨 적는다.
@@ -720,7 +724,7 @@ export function familyLooksToPrompt(
     else if (clothes) push(`평소에 ${eulReul(clothes)} 즐겨 입는다`);
     else if (acc) push(`평소에 ${eulReul(acc)} 즐겨 한다`);
   }
-  const items = words(l.items);
+  const items = wear ? words(l.items) : [];
   if (items.length) push(`늘 ${eulReul(items.join("·"))} 지니고 다닌다`);
   if (typeof l.note === "string" && l.note.trim()) push(l.note.trim());
   return parts.join(", ");

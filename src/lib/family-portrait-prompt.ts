@@ -409,6 +409,26 @@ const CLOTHES_CARD =
   "CLOTHES: always ordinary everyday clothes — a top with trousers, a skirt or a dress, and shoes — in the colours the appearance line or the LIKENESS SPEC gives, or in soft colours if neither gives any.";
 
 /**
+ * 캐릭터 그림에는 모자·머리 장식·액세서리를 그리지 않는다 — 사진에 있어도, 생김새 줄에 있어도(사장님 2026-10-14 "캐릭터 생성할 때
+ * 모자를 쓰고 있다고 해서 모자를 생성해 주면 안 돼", "악세사리가 차 있으면 안 되는 거임", "의상은 똑같이 해도 상관없지만 모자 정도는
+ * 빠져야"). 이 그림이 모든 동화의 기준이라 모자를 쓴 사진이면 모든 쪽에 모자가 따라다닌다. 옷은 그대로, 안경은 얼굴이라 그대로.
+ * 화면도 생김새 줄에서 늘 하는 것·늘 지니는 것을 빼고 보낸다(components/family/family-ui looksLine).
+ * 그 그림에 실제로 있는 근거만 부른다 — 카드가 없는 그림에 'LIKENESS SPEC' 말을 넣지 않는다. 'scarf' 는 쓰지 않는다
+ * (아이 그림의 흉터 말 거르기 /\bscar/ 에 걸린다 — neckerchief·muffler 로).
+ */
+function noAccessories(source: Source, spec: boolean): string {
+  const from =
+    source === "photo"
+      ? spec
+        ? "the photo, the LIKENESS SPEC or the appearance line"
+        : "the photo or the appearance line"
+      : source === "card"
+        ? "the LIKENESS SPEC or the appearance line"
+        : "the appearance line";
+  return `NO HEADWEAR OR ACCESSORIES — this portrait is their base look in every book: never draw a hat, cap, beanie, hood, helmet, hair clip, hair pin, hair band, headband, ribbon or bow, earrings, necklace, bracelet, ring, watch, neckerchief or muffler, sunglasses, face mask, headphones or bag, even if ${from} shows or mentions one. If a hat or hood hides the hair, paint simple natural hair in the hair colour and length that can be seen. Ordinary everyday glasses are part of the face, not an accessory — they follow the glasses rule.`;
+}
+
+/**
  * 사진으로 그릴 때의 규칙 — 닮게 할 것(얼굴·머리·안경·수염·피부·나이·옷 색 + 얼굴 비율)과 가져오지 말 것(배경·빛·다른 사람·
  * 물건·마스크·선글라스·모자)을 가른다. 얼굴 비율은 일반 그림책 얼굴로 바꾸지 않고 사진 그대로 — 단순하게 하는 건 붓질뿐.
  * ageFromWho — 아이 나이를 부모가 알려 줬다: 나이는 사진에서 따르지 않는다(세 살 때 사진으로 일곱 살을 그리는 일이 흔하다).
@@ -426,7 +446,7 @@ function photoRules(withCard: boolean, ageFromWho: boolean, closeUp: boolean): s
       : "",
     // 사진 그대로는 '얼굴' 비율만 — 머리:키는 표(PROPORTIONS 줄)를 따른다. 실제 다섯 살 사진은 1:5 쯤인데 표는 1:4 다.
     `Keep the face proportions faithful to the photo${closeUp ? " and its face close-up" : ""} — face length and width, jaw and chin, cheek fullness, eye size, shape and spacing, eyebrow shape, nose and mouth size — rather than a generic picture-book face. Simplify only the rendering (clean contour, soft washes), never the face proportions, and never exaggerate or caricature a feature. The head-to-height ratio of the whole figure follows the PROPORTIONS line, not the photo.`,
-    `From the photo${closeUp ? " and the close-up" : ""} NEVER copy: the background or place, the lighting, shadows or colour cast, the camera angle, crop or pose, any other person or animal, objects, text or logos, or anything held in the hands. Leave out temporary things too — face masks, sunglasses, hats or caps, headphones, bags — unless the appearance line asks for them.`,
+    `From the photo${closeUp ? " and the close-up" : ""} NEVER copy: the background or place, the lighting, shadows or colour cast, the camera angle, crop or pose, any other person or animal, objects, text or logos, or anything held in the hands. Leave out temporary things too — face masks, sunglasses, headphones, bags — and every hat or accessory (NO HEADWEAR OR ACCESSORIES).`,
     "Even if the photo shows only the face or upper body — a selfie or tight shot where the face fills most of the picture — paint the whole figure at the PROPORTIONS head-to-height ratio: a face-filling photo does NOT mean a big head, and the photo's crop or camera distance never sets the head size. Complete the rest simply: everyday clothes in the colours that are visible, plain simple shoes. If more than one person is in the photo, draw only the main person in the middle.",
     CLOTHES_PHOTO,
   ].filter(Boolean);
@@ -799,8 +819,9 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
             : "",
           "Glasses follow the PHOTO: draw ordinary glasses only if the person wears them in the photo (never sunglasses), whatever the appearance line says about 안경.",
           marks
-            ? "DO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag or tattoo unless it is clearly there, and no freckles or moles beyond those the LIKENESS SPEC gives. One invented accessory and the portrait no longer looks like them."
-            : "DO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag, mole, freckles or tattoo unless it is clearly there. One invented accessory and the portrait no longer looks like them.",
+            ? "DO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble or tattoo unless it is clearly there, and no freckles or moles beyond those the LIKENESS SPEC gives. One invented detail and the portrait no longer looks like them."
+            : "DO NOT invent anything that is neither in the photo nor written above: no glasses, beard, moustache, stubble, mole, freckles or tattoo unless it is clearly there. One invented detail and the portrait no longer looks like them.",
+          noAccessories(source, Boolean(spec)),
         ]
       : source === "card"
         ? [
@@ -809,8 +830,9 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
               : "",
             "Glasses follow the LIKENESS SPEC: a described frame means ordinary glasses (never sunglasses); none means no glasses. Only if the spec has no glasses line, draw glasses when the appearance line says 안경을 썼다.",
             marks
-              ? "DO NOT invent anything that is neither in the LIKENESS SPEC nor written above: no glasses, sunglasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag or tattoo unless it is written, and no freckles or moles beyond those the LIKENESS SPEC gives. One invented accessory and the portrait no longer looks like them."
-              : "DO NOT invent anything that is neither in the LIKENESS SPEC nor written above: no glasses, sunglasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag, mole, freckles or tattoo unless it is written. One invented accessory and the portrait no longer looks like them.",
+              ? "DO NOT invent anything that is neither in the LIKENESS SPEC nor written above: no glasses, beard, moustache, stubble or tattoo unless it is written, and no freckles or moles beyond those the LIKENESS SPEC gives. One invented detail and the portrait no longer looks like them."
+              : "DO NOT invent anything that is neither in the LIKENESS SPEC nor written above: no glasses, beard, moustache, stubble, mole, freckles or tattoo unless it is written. One invented detail and the portrait no longer looks like them.",
+            noAccessories(source, Boolean(spec)),
           ]
         : [
             input.looks
@@ -819,7 +841,8 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
             input.looks
               ? "If it says 안경을 쓰지 않는다 they do NOT wear glasses; draw glasses only when it says 안경을 썼다."
               : "",
-            "DO NOT invent anything that is not written above: no glasses, sunglasses, beard, moustache, stubble, hat, cap, hair clip, hair band, earrings, necklace, bag, mole, freckles or tattoo unless that exact item is written. This is the child's real family — one invented accessory and the child no longer recognises them.",
+            "DO NOT invent anything that is not written above: no glasses, beard, moustache, stubble, mole, freckles or tattoo unless that exact item is written. This is the child's real family — one invented detail and the child no longer recognises them.",
+            noAccessories(source, Boolean(spec)),
           ];
 
   return [

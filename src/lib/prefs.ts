@@ -281,7 +281,7 @@ export function normalizeParents(raw: unknown): ChildPrefs["parents"] {
 export function parentLooksToPrompt(
   p: ParentLooks | undefined,
   role?: "mom" | "dad",
-  opts: { clothes?: boolean } = {},
+  opts: { clothes?: boolean; wear?: boolean } = {},
 ): string {
   if (!p) return "";
   return familyLooksToPrompt(p, role, opts);

@@ -660,6 +660,14 @@ describe("생김새 한 줄 — 새 칸", () => {
     assert.ok(!/즐겨 입|즐겨 한다|카키|카디건|치마|앞치마/.test(out), out);
     assert.equal(familyLooksToPrompt(l, "mom", {}), familyLooksToPrompt(l, "mom"));
   });
+  it("wear:false — 캐릭터 그림용: 옷은 두고 늘 하는 것·늘 지니는 것(모자·머리핀·귀걸이·인형 …)만 뺀다(2026-10-14)", () => {
+    const l = { hair: "단발", color: "카키", outfit: "카디건", accessories: ["모자", "귀걸이"], items: ["머리핀", "곰인형"], note: "메모" };
+    const out = familyLooksToPrompt(l, "mom", { wear: false });
+    assert.equal(out, "단발머리, 안경을 쓰지 않는다, 평소에 카키 카디건을 즐겨 입는다, 메모");
+    assert.ok(!/모자|귀걸이|머리핀|곰인형|즐겨 한다|지니고 다닌다/.test(out), out);
+    // 아이 '늘 지니는 것'의 모자도
+    assert.ok(!familyLooksToPrompt({ items: ["모자"] }, "child", { wear: false }).includes("모자"));
+  });
 });
 
 describe("'늘 그대로' 견주기 — lockKey", () => {
