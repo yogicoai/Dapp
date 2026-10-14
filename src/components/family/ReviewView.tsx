@@ -226,7 +226,8 @@ export function ReviewView({
             <LockIcon />
           </span>
           <span className="break-keep">
-            <b className="font-extrabold">늘 그대로</b> — {sum.lock || (fromPhoto ? "사진을 보고 그렸어요" : "알아서 그렸어요")}
+            {/* 사진으로 그린 그림은 칩을 같이 보내지 않았다 — 예전에 골라 둔 칩이 남아 있어도 '사진을 보고'(2026-10-14) */}
+            <b className="font-extrabold">늘 그대로</b> — {fromPhoto ? "사진을 보고 그렸어요" : sum.lock || "알아서 그렸어요"}
           </span>
         </div>
         <div className="flex items-center gap-2.5 text-sm font-semibold text-neutral-700">
@@ -234,7 +235,7 @@ export function ReviewView({
             <HangerIcon />
           </span>
           <span className="break-keep">
-            <b className="font-extrabold">평소 옷</b> — {sum.outfit || (fromPhoto ? "사진을 보고 골랐어요" : "알아서 골랐어요")}{" "}
+            <b className="font-extrabold">평소 옷</b> — {fromPhoto ? "사진을 보고 골랐어요" : sum.outfit || "알아서 골랐어요"}{" "}
             <span className="text-xs text-neutral-500">(동화마다 바뀔 수 있어요)</span>
           </span>
         </div>

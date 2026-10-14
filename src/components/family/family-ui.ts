@@ -328,7 +328,11 @@ function pickStyleRef(family: FamilyMember[], selfId: string): string | undefine
   return (kid ?? others[0])?.portrait?.ref;
 }
 
-/** photo — 이 사람 사진(data URL, 메모리에만 있던 것). 없으면 칩(생김새 줄)으로만 그린다. */
+/**
+ * photo — 이 사람 사진(data URL, 메모리에만 있던 것). 없으면 칩(생김새 줄)으로만 그린다.
+ * 사진이 있으면 칩은 보내지 않는다(사장님 2026-10-14 "중복 설정으로 인한 오류") — 예전엔 먼저 골라 둔 칩이 '옷 안내'로
+ * 사진과 함께 갔고, 칩의 모자·안경·옷이 사진과 달라 사진으로 그린 그림에 섞여 들어갔다. 사진으로 그릴 때는 사진만 본다.
+ */
 export function portraitRequest(
   m: FamilyMember,
   child: ChildPrefs,
@@ -355,7 +359,7 @@ export function portraitRequest(
     ...(gender ? { gender } : {}),
     ...(typeof age === "number" ? { age } : {}),
     // 서버가 받는 길이(PORTRAIT_LOOKS_MAX, 600자)까지 — 어른 칸을 다 채워도 약 320자라 잘리지 않는다.
-    looks: looksLine(m, child).slice(0, PORTRAIT_LOOKS_MAX),
+    looks: photo ? "" : looksLine(m, child).slice(0, PORTRAIT_LOOKS_MAX),
     ...(styleRef ? { styleRef } : {}),
     ...(photo ? { photo } : {}),
   };

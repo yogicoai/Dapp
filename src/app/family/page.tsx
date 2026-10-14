@@ -31,6 +31,9 @@
  *    (그 사진이 거절돼 서버가 대신 그렸으면 다시 그리기는 skipPhotoDraw 로 사진 그리기를 건너뛴다 — photoSkipRef, 메모리만).
  *    사진을 고르면 칩 없이 곧바로 다음 사람, 마지막이면 쿠키 확인 창 — 값은 그 창의 버튼을 눌러야 나간다.
  *    사진으로 그린 그림에는 fromPhoto 표시만 남는다('모습이 바뀌었어요'를 띄우지 않는다). 값은 칩과 같다.
+ *    사진과 칩은 겹치지 않는다(사장님 2026-10-14 "중복 설정으로 인한 오류"): 사진으로 그릴 때는 칩을 함께 보내지 않고
+ *    (portraitRequest), 사진 그림을 고정하면 그 사람이 예전에 고른 칩을 비운다(clearPhotoFixedLooks — 읽을 때도
+ *    lib/family dropPhotoFixedLooks 가 비운다). 그 뒤 칩을 고르면 '사진 대신 특징으로 다시 그릴지'를 묻는다(finishEdit).
  *  - 쿠키 확인 창의 '그림 없이 특징만 저장할게요'(saveLooksOnly)는 쿠키 0개 — 그리기 서버를 부르지 않는다.
  *    생김새는 고를 때마다 이미 저장됐고, 그 사람들에게 looksOnly 표시만 달아(생김새와 같은 saveChild) 모아 보기로 간다.
  *  - 그리기 응답을 잃으면(끊김·75초 초과·함수 잘림) 다시 그리기 전에 서버에 결과를 묻는다(recover).
@@ -77,10 +80,12 @@ import {
   canAddRole,
   currentLockKey,
   currentLooksOf,
+  dropPhotoFixedLooks,
   FAMILY_MAX_MEMBERS,
   familyTitle,
   FIXED_ID_ROLES,
   homeMembers,
+  isPhotoFixed,
   lockChanges,
   lockedLooksChanged,
   lockKeyChanged,
@@ -622,23 +627,27 @@ export default function FamilyPage() {
     const drawn = m.draft ?? m.portrait;
     const drawnKey = drawn?.lockKey;
     const drawnLooks = drawnKey !== undefined ? lockKeyLooks(drawnKey) : before;
-    // 사진으로 그린 그림은 칩이 모습을 정한 게 아니다 — 칩을 바꿔도 다시 그릴지 묻지 않는다(lib/family fromPhoto).
+    const anyChanged = looksKey(before) !== looksKey(after);
+    /*
+     * 사진으로 그린 그림은 사진이 모습을 정했고, 그 사람의 칩은 쓰지 않는다(lib/family dropPhotoFixedLooks, 2026-10-14).
+     * 그래서 여기서 특징을 골랐다면 '사진 대신 이 특징으로 다시 그리겠다'는 뜻일 때만 쓸모가 있다 — 무엇을 골랐든
+     * 다시 그릴지 묻는다. 안 그리면 사진으로 그린 모습 그대로이고 고른 특징은 쓰이지 않는다(아래 '나중에' 알림).
+     */
     const lockChanged = drawn?.fromPhoto
-      ? false
+      ? anyChanged
       : drawnKey !== undefined
         ? lockKeyChanged(drawnKey, m, c)
         : lockedLooksChanged(before, after, m.role);
-    const anyChanged = looksKey(before) !== looksKey(after);
     if (m.portrait || m.draft) {
       if (lockChanged) {
-        const diff = lockChanges(m.role, drawnLooks, after);
-        setOverlay({ kind: "changed", id: m.id, diff: diff.length > 0 ? diff : ["생김새가 바뀌었어요"] });
+        const diff = lockChanges(m.role, drawn?.fromPhoto ? before : drawnLooks, after);
+        setOverlay({
+          kind: "changed",
+          id: m.id,
+          diff: diff.length > 0 ? diff : [drawn?.fromPhoto ? "사진 대신 고른 특징으로" : "생김새가 바뀌었어요"],
+        });
       } else if (anyChanged) {
-        showToast(
-          drawn?.fromPhoto
-            ? "특징을 저장했어요 — 사진으로 그린 얼굴은 그대로예요"
-            : "다시 그리지 않아도 돼요 — 옷은 이야기마다 바뀌어요",
-        );
+        showToast("다시 그리지 않아도 돼요 — 옷은 이야기마다 바뀌어요");
       }
     } else if (anyChanged) {
       showToast("생김새를 저장했어요");
@@ -1172,13 +1181,42 @@ export default function FamilyPage() {
     finishRound();
   }
 
+  /**
+   * 사진으로 그린 그림을 고정했다 — 그 사람이 예전에 고른 특징(칩)을 비운다(lib/family dropPhotoFixedLooks,
+   * 사장님 2026-10-14 "사진으로 나온 게 있다면 이전 선택창은 초기화"). 사진과 칩이 함께 남으면 그림·동화에 둘 다 들어가 어긋난다.
+   * 아이·엄마·아빠 칩은 여기서 화면과 저장을 바로 비우고, 그 밖의 사람 칩을 비운 가족 목록을 돌려준다(부르는 쪽이 저장한다).
+   * 고정된 사진 그림이 없거나 비울 칩이 없으면 받은 목록 그대로.
+   */
+  function clearPhotoFixedLooks(fam: FamilyMember[]): FamilyMember[] {
+    const c = childRef.current;
+    if (!c) return fam;
+    const next = dropPhotoFixedLooks({ looks: c.looks, parents: c.parents, family: fam });
+    if (next.looks !== c.looks || next.parents !== c.parents) {
+      const cleaned: ChildPrefs = { ...c, looks: next.looks, parents: next.parents };
+      childRef.current = cleaned;
+      setChild(cleaned);
+      // 이 화면에서 고친 칸 기억도 지운다 — 서버 값이 뒤늦게 와도 비운 칩을 되살리지 않게(absorbRemote).
+      const edits = { ...looksEdits.current };
+      if (next.looks !== c.looks) delete edits.child;
+      if (next.parents?.mom !== c.parents?.mom) delete edits.mom;
+      if (next.parents?.dad !== c.parents?.dad) delete edits.dad;
+      looksEdits.current = edits;
+      saveChild({ name: c.name, looks: next.looks, parents: next.parents });
+    }
+    return next.family ?? fam;
+  }
+
   function accept(id: string, which: "draft" | "prev") {
     const m = findMember(id);
     const chosen = which === "prev" ? m?.prevDraft : m?.draft;
     if (!m || !chosen) return;
     // picAt — 고른 때를 적는다. 다른 기기의 옛 확인 전 그림이 합치기에서 이 선택을 이기지 않게.
     const at = new Date().toISOString();
-    patchMember(id, (cur) => ({ ...cur, portrait: chosen, draft: undefined, prevDraft: undefined, picAt: at }), "now");
+    const fixed = familyRef.current.map((cur) =>
+      cur.id === id ? { ...cur, portrait: chosen, draft: undefined, prevDraft: undefined, picAt: at } : cur,
+    );
+    // 사진으로 그린 그림을 골랐으면 예전에 고른 특징은 비운다.
+    commit(clearPhotoFixedLooks(fixed), "now");
     // 얼굴을 고정했다 — 사진은 할 일을 다 했다. 메모리에서도 바로 버린다.
     setPhoto(id, null);
     advance(round.ids.indexOf(id));
@@ -1191,8 +1229,11 @@ export default function FamilyPage() {
       ids.has(m.id) && Boolean(m.draft) && jobs[m.id]?.status !== "drawing" && jobs[m.id]?.status !== "wait";
     const fixed = familyRef.current.filter(fixing).map((m) => m.id);
     commit(
-      familyRef.current.map((m) =>
-        fixing(m) ? { ...m, portrait: m.draft, draft: undefined, prevDraft: undefined, picAt: at } : m,
+      // 사진으로 그린 그림을 고정한 사람은 예전에 고른 특징을 비운다(clearPhotoFixedLooks).
+      clearPhotoFixedLooks(
+        familyRef.current.map((m) =>
+          fixing(m) ? { ...m, portrait: m.draft, draft: undefined, prevDraft: undefined, picAt: at } : m,
+        ),
       ),
       "now",
     );
@@ -1479,7 +1520,11 @@ export default function FamilyPage() {
           master={master}
           tokens={tokens}
           onRedraw={() => setOverlay({ kind: "confirm", ids: [sheetMember.id], variant: "redraw", from: "album" })}
-          onLater={() => setOverlay(null)}
+          onLater={() => {
+            setOverlay(null);
+            // 사진으로 그린 사람은 다시 그리지 않으면 고른 특징이 쓰이지 않는다 — 말없이 사라진 것처럼 보이지 않게 알린다.
+            if (isPhotoFixed(sheetMember)) showToast("사진으로 그린 모습 그대로 둘게요 — 고른 특징은 쓰지 않아요");
+          }}
           onMore={overlay.fromAlbum ? () => setOverlay({ kind: "member", id: sheetMember.id }) : undefined}
           onCharge={() => router.push("/plans")}
         />

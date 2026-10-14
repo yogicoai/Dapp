@@ -855,6 +855,58 @@ export function portraitLooksChanged(
   return lockKeyChanged(member.portrait?.lockKey, member, child);
 }
 
+/** 사진으로 그려 고정한 사람인가 — 이 사람의 모습은 칩이 아니라 사진이 정했다 */
+export function isPhotoFixed(member: Pick<FamilyMember, "portrait"> | null | undefined): boolean {
+  return member?.portrait?.fromPhoto === true;
+}
+
+/**
+ * 사진으로 고정한 사람의 '특징 고르기' 값을 비운다(사장님 2026-10-14 "사진으로 나온 게 있다면 이전에 선택했던 선택창은
+ * 초기화되게 해서 설정이 안 되게 — 중복 설정으로 인한 오류").
+ *
+ * 예전엔 특징을 고른 뒤 '사진으로 할게요'로 바꿔 고정해도 칩이 그대로 남았다. 그 칩이 그림 요청·이야기·시트·쪽 그림에
+ * 사진과 함께 들어가 서로 부딪쳤다 — 사진으로 그린 하온이는 앞머리가 있고 모자가 없는데, 남아 있던 칩('앞머리 없음',
+ * '늘 모자를 써요')이 동화에 들어가 모자 쓴 아이가 그려지고 본문에도 '늘 쓰고 다니는 모자'가 적혔다(my-mv6elzcs).
+ *
+ * 저장소에서 읽을 때마다(lib/prefs normalizeChild·mergeRemoteChild) 이 함수를 거친다 — 이미 저장된 옛 칩, 다른 기기가
+ * 올린 칩도 쓰이지 않는다. 가족 화면은 사진 그림을 고정하는 순간에도 불러 화면과 저장을 바로 비운다.
+ *  · 아이 → looks, 엄마·아빠 → parents[역할], 그 밖 → member.looks
+ *  · 고정한 그림(portrait)이 사진일 때만. 확인 전 그림(draft)은 아직 고른 게 아니다.
+ *  · 특징으로 다시 그려 고정하면(fromPhoto 가 아닌 그림) 그때 고른 칩은 예전처럼 남는다.
+ *  · 한 칸도 남기지 않는다(키도) — 사진 쪽은 칩을 아예 안 고르는 길이라 키는 처음부터 '보통'이고, 한 칸이라도 남기면
+ *    생김새 줄이 '안경을 쓰지 않는다'까지 덧붙여 적어(안경은 늘 적는 규칙) 사진과 또 부딪친다.
+ * 바꿀 것이 없으면 받은 값을 그대로 돌려준다.
+ */
+export function dropPhotoFixedLooks<T extends Pick<ChildPrefs, "looks" | "parents" | "family">>(child: T): T {
+  const family = child.family ?? [];
+  const fixed = (role: FamilyRole) => family.some((m) => m.role === role && isPhotoFixed(m));
+  const others = (m: FamilyMember) => m.role !== "child" && m.role !== "mom" && m.role !== "dad" && isPhotoFixed(m);
+
+  const dropChild = fixed("child") && child.looks !== undefined;
+  const dropMom = fixed("mom") && child.parents?.mom !== undefined;
+  const dropDad = fixed("dad") && child.parents?.dad !== undefined;
+  const dropOthers = family.some((m) => others(m) && m.looks !== undefined);
+  if (!dropChild && !dropMom && !dropDad && !dropOthers) return child;
+
+  const mom = dropMom ? undefined : child.parents?.mom;
+  const dad = dropDad ? undefined : child.parents?.dad;
+  return {
+    ...child,
+    ...(dropChild ? { looks: undefined } : {}),
+    ...(dropMom || dropDad ? { parents: mom || dad ? { ...(mom ? { mom } : {}), ...(dad ? { dad } : {}) } : undefined } : {}),
+    ...(dropOthers
+      ? {
+          family: family.map((m) => {
+            if (!others(m) || m.looks === undefined) return m;
+            const { looks: _old, ...rest } = m;
+            void _old;
+            return rest;
+          }),
+        }
+      : {}),
+  };
+}
+
 /**
  * '모습이 바뀌었어요'를 보일까 — 고정된 사람 가운데 확인 전 새 그림(draft)이 없고, 고정한 뒤 '늘 그대로'가
  * 바뀐 사람. 확인 전 그림이 있으면 그걸 먼저 볼 차례라(모아 보기 '새 그림이 있어요') 다시 그릴지 묻지 않는다.

@@ -9,6 +9,7 @@ import { acctKey, currentUid, getSupabase } from "./supabase.ts";
 import type { Book } from "./types.ts";
 import { interpretBookSave, type SaveBookResult } from "./book-jobs.ts";
 import {
+  dropPhotoFixedLooks,
   familyLooksToPrompt,
   mergeFamily,
   mergeRemovals,
@@ -227,7 +228,7 @@ function normalizeChild(raw: unknown): ChildPrefs | null {
   const c = v as Partial<ChildPrefs> | null;
   if (!c || typeof c.name !== "string") return null;
   const familyRemoved = normalizeRemovals((c as { familyRemoved?: unknown }).familyRemoved);
-  return {
+  const child: ChildPrefs = {
     name: c.name,
     age: typeof c.age === "number" ? c.age : null,
     gender: c.gender === "girl" || c.gender === "boy" ? c.gender : "unspecified",
@@ -249,6 +250,8 @@ function normalizeChild(raw: unknown): ChildPrefs | null {
     familyStudio: normalizeStudio((c as { familyStudio?: unknown }).familyStudio),
     schema: typeof (c as { schema?: unknown }).schema === "number" ? (c as { schema: number }).schema : undefined,
   };
+  // 사진으로 고정한 사람의 칩은 읽을 때 비운다 — 저장소에 남은 옛 칩이 그림·이야기에 사진과 겹쳐 들어가지 않게(lib/family).
+  return dropPhotoFixedLooks(child);
 }
 
 /**
@@ -506,7 +509,11 @@ export function mergeRemoteChild(
   // 그림이 서버의 옛 목록에 덮여 사라지지 않게. 사람은 합집합, 빼기는 뺀 기록(familyRemoved)으로만 전한다.
   const fam = mergeFamily(familySide(remote), familySide(local));
   const oldWriter = remote.schema === undefined && local?.schema !== undefined;
-  return {
+  /*
+   * 합친 뒤에 한 번 더 비운다 — 이 기기에서 방금 사진 그림을 고정했는데 서버 값은 아직 옛 가족이면, 서버 쪽 칩은
+   * 읽을 때 안 비워진 채 여기로 온다(그쪽 가족에는 사진 그림이 없으니). 합친 가족에는 사진 그림이 있으므로 여기서 비운다.
+   */
+  return dropPhotoFixedLooks<ChildPrefs>({
     ...remote,
     looks: remote.looks ?? local?.looks,
     parents: oldWriter ? healParents(remote.parents, local?.parents) : (remote.parents ?? local?.parents),
@@ -516,7 +523,7 @@ export function mergeRemoteChild(
     // 값이 더 새것(서버에 못 올라간 꾸미기)이면 이 기기 값을 지키고, 아래 loadChildRemote 가 서버에 다시 올린다.
     familyStudio: newerStudio(remote.familyStudio, local?.familyStudio),
     schema: remote.schema ?? local?.schema,
-  };
+  });
 }
 
 /** 옛 화면(가족 캐릭터 전 판)도 아는 엄마·아빠 칸 — 이 칸들은 서버(옛 화면이 쓴) 값을 따른다 */

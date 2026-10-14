@@ -7,7 +7,8 @@
  *  - 특징 고르기: '늘 그대로 / 이야기마다' 안내 두 칸, 아래 칩 두 묶음(지금까지와 같다).
  *  - 사진으로 할게요: 큰 사진 고르기 칸(폰에서는 사진첩·카메라), 미리보기, '다른 사진'·'사진 빼기', 사진 팁, 약속
  *    "사진은 저장하지 않고, 그림을 그리는 데 한 번 쓰고 바로 지워요". 사진이면 칩은 숨긴다 — 사진이 얼굴을 정한다
- *    (예전에 고른 칩이 있으면 그대로 옷 안내로 같이 간다). 사진을 고르면 곧바로 다음 사람, 마지막이면 쿠키 확인 창
+ *    (예전에 고른 칩은 사진과 함께 보내지 않고, 사진 그림을 고정하면 비운다 — 사장님 2026-10-14 "중복 설정으로 인한 오류",
+ *    lib/family dropPhotoFixedLooks). 사진을 고르면 곧바로 다음 사람, 마지막이면 쿠키 확인 창
  *    (onPhotoReady — page 가 정한다. 값은 그 창의 버튼을 눌러야 나간다).
  *    사진은 여기서 줄여(components/family/photo.ts) page 의 메모리(React state)로만 올려 보낸다 — 저장하지 않는다.
  * 회원의 아이·엄마·아빠 특징은 여기서만 고른다 — 설정의 '아이 특징'·'엄마·아빠 특징' 칸은 회원에게서 걷었다
@@ -30,7 +31,7 @@
  */
 
 import { useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode } from "react";
-import { isKidRole, lookRowsFor, type FamilyLooks, type FamilyMember } from "@/lib/family";
+import { isKidRole, isPhotoFixed, lookRowsFor, type FamilyLooks, type FamilyMember } from "@/lib/family";
 import { PHOTO_PROMISE } from "@/lib/family-photo";
 import {
   CHILD_MULTI_MAX,
@@ -274,7 +275,10 @@ export function LooksView({
       </p>
       {m.portrait && (
         <p className="mt-1 break-keep text-xs font-semibold" style={{ color: colors.accentDark }}>
-          얼굴을 고정했어요 — 여기를 바꾸면 다시 그릴지 여쭤볼게요
+          {/* 사진으로 고정한 사람은 칩을 쓰지 않는다(lib/family dropPhotoFixedLooks) — 여기서 고르면 특징으로 다시 그린다는 뜻 */}
+          {isPhotoFixed(m)
+            ? "사진으로 그린 얼굴이라 예전에 고른 특징은 비웠어요 — 여기서 고르면 사진 대신 이 특징으로 다시 그릴지 여쭤볼게요"
+            : "얼굴을 고정했어요 — 여기를 바꾸면 다시 그릴지 여쭤볼게요"}
         </p>
       )}
       {lock.map((r) => (

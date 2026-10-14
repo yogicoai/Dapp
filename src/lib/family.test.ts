@@ -6,6 +6,7 @@ import {
   byRoleOrder,
   canAddRole,
   currentLockKey,
+  dropPhotoFixedLooks,
   familyLooksToPrompt,
   familyMembersOnly,
   familyTitle,
@@ -17,6 +18,7 @@ import {
   homeGreeting,
   homeMembers,
   isKidRole,
+  isPhotoFixed,
   isYoungerThanChild,
   lockChanges,
   lockedLooksChanged,
@@ -268,6 +270,111 @@ describe("mergeRemoteChild — 가족", () => {
   it("홈 액자 접힘 값 — 서버 값(false 도)이 이기고, 서버에 없으면 이 기기 값을 지킨다", () => {
     assert.equal(mergeRemoteChild({ ...BASE, homeFamilyFolded: false }, { ...BASE, homeFamilyFolded: true }).homeFamilyFolded, false);
     assert.equal(mergeRemoteChild({ ...BASE }, { ...BASE, homeFamilyFolded: true }).homeFamilyFolded, true);
+  });
+  it("이 기기에서 방금 사진 그림을 고정했으면 — 서버에 남은 옛 칩은 합친 뒤에 비운다", () => {
+    const photoFixed: FamilyMember[] = [
+      { id: "child", role: "child", callName: "하온", portrait: { ...P, fromPhoto: true }, picAt: "2026-10-14T01:00:00Z" },
+    ];
+    const out = mergeRemoteChild(
+      // 서버: 아직 옛 가족(사진 그림 없음)과 예전에 고른 칩
+      { ...BASE, looks: { hair: "아주 짧은 머리", items: ["모자"] }, family: [{ id: "child", role: "child", callName: "하온" }] },
+      // 이 기기: 사진 그림을 고정했고 칩은 비웠다
+      { ...BASE, family: photoFixed },
+    );
+    assert.equal(out.family?.[0].portrait?.fromPhoto, true);
+    assert.equal(out.looks, undefined);
+  });
+});
+
+describe("사진으로 고정한 사람의 칩은 비운다(2026-10-14 사장님 — 사진과 칩이 겹쳐 동화에 모자 쓴 아이가 나왔다)", () => {
+  const PHOTO = { ...P, fromPhoto: true };
+  const BASE = { name: "하온", age: 5, gender: "boy" as const };
+  const KID_LOOKS = { hair: "아주 짧은 머리", bangs: "없어요", items: ["모자"], color: "초록" };
+  const MOM_LOOKS = { hair: "단발", glassesType: "뿔테", height: "큰 편", outfit: "원피스" };
+
+  it("사진으로 고정한 아이 — 고른 특징이 통째로 비워진다", () => {
+    const child = { ...BASE, looks: KID_LOOKS, family: [{ id: "child", role: "child" as const, callName: "하온", portrait: PHOTO }] };
+    const out = dropPhotoFixedLooks(child);
+    assert.equal(out.looks, undefined);
+    assert.equal(isPhotoFixed(out.family[0]), true);
+    // 이야기·그림으로 가는 줄도 비어 있다
+    assert.equal(familyLooksToPrompt(out.looks, "child"), "");
+  });
+
+  it("칩으로 그려 고정한 사람·그림이 없는 사람·확인 전 사진 그림(draft)만 있는 사람은 그대로", () => {
+    const chips = { ...BASE, looks: KID_LOOKS, family: [{ id: "child", role: "child" as const, callName: "하온", portrait: P }] };
+    assert.equal(dropPhotoFixedLooks(chips), chips);
+    const none = { ...BASE, looks: KID_LOOKS, family: [{ id: "child", role: "child" as const, callName: "하온" }] };
+    assert.equal(dropPhotoFixedLooks(none), none);
+    // 사진으로 그렸지만 아직 '마음에 들어요'를 안 눌렀다 — 고정한 그림은 칩으로 그린 것
+    const draft = { ...BASE, looks: KID_LOOKS, family: [{ id: "child", role: "child" as const, callName: "하온", portrait: P, draft: PHOTO }] };
+    assert.equal(dropPhotoFixedLooks(draft), draft);
+  });
+
+  it("엄마만 사진으로 고정 — 엄마 칩만 비우고(키도 남기지 않는다) 아빠·아이는 그대로", () => {
+    const child = {
+      ...BASE,
+      looks: KID_LOOKS,
+      parents: { mom: MOM_LOOKS, dad: { hair: "짧은 머리", beard: "없어요" } },
+      family: [
+        { id: "child", role: "child" as const, callName: "하온", portrait: P },
+        { id: "mom", role: "mom" as const, callName: "엄마", portrait: PHOTO },
+        { id: "dad", role: "dad" as const, callName: "아빠", portrait: P },
+      ],
+    };
+    const out = dropPhotoFixedLooks(child);
+    assert.equal(out.parents?.mom, undefined);
+    assert.deepEqual(out.parents?.dad, { hair: "짧은 머리", beard: "없어요" });
+    assert.equal(out.looks, KID_LOOKS);
+    // 키는 '보통'으로 선다(사진 쪽은 처음부터 칩을 안 고르는 길이다) — 한 칸도 남지 않아 생김새 줄이 비어 있다
+    assert.equal(heightFor(out.family[1], out), heightFor({ role: "mom" }, { age: 5 }));
+    assert.equal(familyLooksToPrompt(out.parents?.mom, "mom"), "");
+  });
+
+  it("엄마·아빠 둘 다 사진이면 parents 칸 자체가 없어진다", () => {
+    const out = dropPhotoFixedLooks({
+      ...BASE,
+      parents: { mom: { hair: "단발" }, dad: { hair: "짧은 머리" } },
+      family: [
+        { id: "mom", role: "mom" as const, callName: "엄마", portrait: PHOTO },
+        { id: "dad", role: "dad" as const, callName: "아빠", portrait: PHOTO },
+      ],
+    });
+    assert.equal(out.parents, undefined);
+  });
+
+  it("할머니·형제 — member.looks 를 비운다, 다른 사람은 건드리지 않는다", () => {
+    const grandpa: FamilyMember = { id: "m-p", role: "grandpa", callName: "할아버지", looks: { hair: "백발", beard: "턱수염" }, portrait: P };
+    const out = dropPhotoFixedLooks({
+      ...BASE,
+      family: [
+        { id: "m-g", role: "grandma" as const, callName: "할머니", looks: { hair: "파마", height: "작은 편", glassesType: "동그란 안경" }, portrait: PHOTO },
+        { id: "m-s", role: "sibling" as const, callName: "누나", name: "하린", looks: { hair: "양갈래", items: ["머리핀"] }, portrait: PHOTO },
+        grandpa,
+      ],
+    });
+    assert.equal("looks" in out.family[0], false);
+    assert.equal("looks" in out.family[1], false);
+    assert.equal(out.family[2], grandpa);
+    // 그림은 그대로다
+    assert.equal(out.family[0].portrait, PHOTO);
+  });
+
+  it("이미 비어 있으면 받은 값을 그대로 돌려준다(읽을 때마다 새 값을 만들지 않는다)", () => {
+    const clean = {
+      ...BASE,
+      parents: { dad: { hair: "짧은 머리" } },
+      family: [
+        { id: "mom", role: "mom" as const, callName: "엄마", portrait: PHOTO },
+        { id: "dad", role: "dad" as const, callName: "아빠", portrait: P },
+      ],
+    };
+    assert.equal(dropPhotoFixedLooks(clean), clean);
+  });
+
+  it("특징으로 다시 그려 고정하면(fromPhoto 가 아닌 그림) 그때 고른 칩은 남는다", () => {
+    const redrawn = { ...BASE, looks: KID_LOOKS, family: [{ id: "child", role: "child" as const, callName: "하온", portrait: P }] };
+    assert.equal(dropPhotoFixedLooks(redrawn).looks, KID_LOOKS);
   });
 });
 
