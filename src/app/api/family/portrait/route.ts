@@ -578,6 +578,19 @@ async function finishDraw(caller: Caller, memberId: string, charge: Charge, pic:
   return null;
 }
 
+/**
+ * 마스터의 그림을 예전 그림 기록에 적는다(DB record_master_family_picture, 2026-10-14). 마스터는 값을 안 내 '받았음'
+ * (finish_family_portrait — 회원은 거기서 적힌다)을 안 거친다. 실패해도 그림은 준다 — 목록에서 그 한 장이 빠질 뿐이다.
+ */
+async function recordMasterPicture(caller: Caller, memberId: string, pic: Pic): Promise<void> {
+  try {
+    const { error } = await caller.db.rpc("record_master_family_picture", { p_member: memberId, p_pic: pic });
+    if (error) console.warn("[family/portrait] 마스터 그림 기록", memberId, error.code);
+  } catch (e) {
+    console.warn("[family/portrait] 마스터 그림 기록", memberId, e instanceof Error ? e.name : "error");
+  }
+}
+
 /* ─────────────────────────────── 경로 ─────────────────────────────── */
 
 // 이 요청 안의 AI 호출(그림·사진 특징표·머리 비율)을 모델·토큰·금액으로 남긴다(lib/ai-usage) — 답을 돌려주기 전에 다 적는다.
@@ -957,6 +970,9 @@ async function handlePost(request: Request) {
         });
       }
     }
+  } else if (caller.isMaster) {
+    // 마스터는 값을 안 내 '받았음'을 안 거친다 — 예전 그림 목록(DB 기록)에 보이게 이름만 적는다. 실패해도 그림은 준다.
+    await recordMasterPicture(caller, input.memberId, pic);
   }
   clock.mark("finish");
   // 단계마다 걸린 ms(단계 이름과 숫자만) — 느려지는 단계를 실패하기 전에 본다.

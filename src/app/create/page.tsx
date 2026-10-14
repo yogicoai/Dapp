@@ -22,6 +22,7 @@ import {
 import { ART_STYLES } from "@/lib/art-styles";
 import { bestFriend, heightFor, type FamilyMember } from "@/lib/family";
 import { castPortraits, storyFamilyLooks } from "@/lib/family-cast";
+import { placeVisits } from "@/lib/page-camera";
 import { detectBookScale, shrunkPages } from "@/lib/scale-lock";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
@@ -3327,6 +3328,11 @@ export default function CreatePage() {
         const key = locationKeyFromImagePrompt(s.pages[index].imagePrompt);
         return key && tinyPages[index] ? `${key}|tiny` : key;
       };
+      /*
+       * 쪽마다 그 장소를 몇 번째로 그리는가(0 = 처음) — 둘째부터 서버가 카메라를 바꾼다(lib/page-camera, 사장님 2026-10-14
+       * "같은 장소의 둘째 쪽은 더 가깝게 찍거나 다른 각도로"). 장소별 첫 쪽은 아래에서 먼저 그려 기준이 된다(locationSeedPages).
+       */
+      const visits = placeVisits(s.pages.map((_, index) => referenceKeyOf(index)));
       // 이어 그리기 — 지난번에 그린 쪽은 그대로 쓰고 건너뛴다.
       if (saved?.images?.length === s.pages.length) {
         saved.images.forEach((im, i) => {
@@ -3458,6 +3464,8 @@ export default function CreatePage() {
                   hero: heroFromStory(s.characters, gender !== "unspecified" ? gender : child?.gender, heroChipLine),
                   // 이 쪽에서 주인공이 작아진 채인가 — 서버가 개미 눈높이로 그린다(장소 기준 그림은 이 쪽에 안 쓴다).
                   heroTiny: tinyPages[i] === true,
+                  // 이 장소를 몇 번째로 그리는가 — 둘째부터 앞 쪽과 다른 카메라로(lib/page-camera).
+                  placeVisit: visits[i] ?? 0,
                   // 기준으로 보낸 승인 쪽이 같은 작은 세상 그림인가 — 그럴 때만 작아진 쪽이 그 그림을 받는다.
                   styleReferenceTiny: sameLocationReference
                     ? tinyPages[i] === true

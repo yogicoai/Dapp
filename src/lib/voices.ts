@@ -242,6 +242,14 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-younggil", label: "영길", emoji: "🎩", voiceId: "tc_5ebea13564afaf00087fc2e7", model: "ssfm-v30", desc: "남자 목소리", sample: "옳거니! 나도 혹을 팔아서 부자가 되어야지!" },
   // 신데렐라 · 신하 역 (2026-10-12 사장님이 검토대 배역 탭에서 고름, Typecast 이름 Han Taesung Caster).
   { kind: "tc", id: "tc-taesung", label: "한태성", emoji: "📯", voiceId: "tc_66f4ecd1e386a91199bb0bf1", model: "ssfm-v30", desc: "남자 · 힘차게 알리는 캐스터 목소리", sample: "왕자님의 무도회에 온 나라 아가씨를 초대합니다!" },
+  // 미운오리새끼 · 백조 역 (2026-10-14 사장님이 검토대 배역 탭에서 고름, Typecast 이름 Seolhwa).
+  { kind: "tc", id: "tc-seolhwa", label: "설화", emoji: "🦢", voiceId: "tc_6731b307df12333201d12b94", model: "ssfm-v30", desc: "여자 · 젊은 어른 목소리", sample: "어서 와! 우리랑 같이 헤엄칠래?" },
+  // 빨간 모자 · 늑대 역 (2026-10-14 사장님이 검토대 배역 탭에서 고름, Typecast 이름 Hades — 표시는 남자 중년·게임용).
+  { kind: "tc", id: "tc-hades", label: "하데스", emoji: "🌑", voiceId: "tc_6a867e6bd49b8f6a07db59da", model: "ssfm-v30", desc: "남자 · 중년 목소리", sample: "할머니, 나야. 빨간 모자야. 문 좀 열어 줘요." },
+  // 브레멘 음악대 · 고양이 역 (2026-10-14 사장님이 검토대 배역 탭에서 고름, Typecast 이름 Lala — 표시는 여자 젊은 어른).
+  { kind: "tc", id: "tc-lala", label: "라라", emoji: "🐈", voiceId: "tc_61f084d860b9b6b40388f868", model: "ssfm-v30", desc: "여자 · 젊은 어른 목소리", sample: "나쁜 도둑들이야. 우리가 쫓아내자!" },
+  // 신데렐라 · 새어머니 역 (2026-10-14 사장님 채팅 "새어머님 조여사로 변경", Typecast 이름 Lady Cho — 표시는 여자 중년).
+  { kind: "tc", id: "tc-ladycho", label: "조 여사", emoji: "👒", voiceId: "tc_602bd483b1837361b08c1ab6", model: "ssfm-v30", desc: "여자 · 중년 목소리", sample: "흥, 넌 할 일이 산더미잖니!" },
 ];
 
 /**

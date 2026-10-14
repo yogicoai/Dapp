@@ -65,6 +65,55 @@ export function picturesSince(pics: readonly PastPicture[], since: string | null
   return pics.filter((p) => Date.parse(p.at) >= floor);
 }
 
+/**
+ * 서버가 적어 둔 건넨 그림(DB family_pictures, 2026-10-14) — since 는 적기 시작한 때(ISO), names 는 건넨 그림 파일 이름.
+ * 폴더에는 다 그려 올렸는데 '받았음'을 못 적어 쿠키를 되돌린 그림도 남는다 — 그 그림을 예전 그림으로 공짜로 고르지 못하게 거른다.
+ */
+export type DeliveredRecord = { since: string | null; names: readonly string[] };
+
+/** 주소의 파일 이름(마지막 '/' 뒤) */
+export function fileNameOf(url: string): string {
+  return url.slice(url.lastIndexOf("/") + 1);
+}
+
+/**
+ * 값을 내고 건넨 그림인가. 적기 시작하기 전에 그린 그림은 적힌 게 없으므로 건넨 것으로 본다.
+ * 기록이 없으면(표를 아직 안 만들었거나 DB 를 못 읽음) 예전처럼 모두 건넨 것으로 본다 — 기능을 막지 않는다.
+ */
+export function wasDelivered(pic: PastPicture, record: DeliveredRecord | null): boolean {
+  if (!record) return true;
+  const since = record.since ? Date.parse(record.since) : NaN;
+  if (!Number.isFinite(since)) return true;
+  const at = Date.parse(pic.at);
+  if (Number.isFinite(at) && at < since) return true;
+  return record.names.includes(fileNameOf(pic.url));
+}
+
+/** 건넨 그림만 — wasDelivered */
+export function deliveredOnly(pics: readonly PastPicture[], record: DeliveredRecord | null): PastPicture[] {
+  return pics.filter((p) => wasDelivered(p, record));
+}
+
+/**
+ * DB 에 적힌 그림 이름(family_pictures names — 화면용 .png)으로 목록을 만든다. 참고용 JPEG 는 같은 이름 규칙으로 붙인다
+ * (두 장을 한 세션으로 올리고, 다 올라간 뒤에야 적는다 — api/family/portrait).
+ * 배포 서버가 cafe24 폴더 목록을 못 읽어도(2026-10-14 502) 이 기록으로 보여 준다.
+ */
+export function recordedPictures(names: readonly string[], memberId: string, prefix: string): PastPicture[] {
+  const pairs = names.filter((n) => n.endsWith(".png")).flatMap((n) => [n, `${n.slice(0, -".png".length)}-ref.jpg`]);
+  return pastPictures(pairs, memberId, prefix, Infinity);
+}
+
+/** 두 목록을 합친다 — 같은 그림(파일 이름)은 한 번, 새것부터, max 장까지 */
+export function mergePictures(a: readonly PastPicture[], b: readonly PastPicture[], max: number = HISTORY_MAX): PastPicture[] {
+  const byName = new Map<string, PastPicture>();
+  for (const p of [...a, ...b]) {
+    const name = fileNameOf(p.url);
+    if (!byName.has(name)) byName.set(name, p);
+  }
+  return [...byName.values()].sort((x, y) => Date.parse(y.at) - Date.parse(x.at)).slice(0, Math.max(0, max));
+}
+
 /** 넣은 때와 뺀 기록 가운데 가장 나중 — picturesSince 의 since */
 export function historyFloor(
   member: { id: string; addedAt?: string },

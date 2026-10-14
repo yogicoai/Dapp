@@ -71,7 +71,7 @@
       },
       {
         "n": 4,
-        "text": "신데렐라는 빵 부스러기를 모아 두었다가\n생쥐 친구들에게 나누어 주었어요.\n\"천천히 먹으렴.\"\n생쥐들은 신데렐라의 손바닥 위에서 쫑긋쫑긋했지요.",
+        "text": "신데렐라는 빵 부스러기를 모아 두었다가\n생쥐 친구들에게 나누어 주었어요.\n\"천천히 먹으렴.\"\n생쥐들은 신데렐라의 손바닥에 옹기종기 모여 냠냠 맛있게 먹었답니다.",
         "lines": [
           {
             "text": "천천히 먹으렴.",
@@ -93,7 +93,7 @@
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p4-2.mp3",
-            "text": "\n생쥐들은 신데렐라의 손바닥 위에서 쫑긋쫑긋했지요."
+            "text": "\n생쥐들은 신데렐라의 손바닥에 옹기종기 모여 냠냠 맛있게 먹었답니다."
           }
         ]
       },
@@ -129,7 +129,7 @@
       },
       {
         "n": 6,
-        "text": "언니들은 온종일 드레스를 고르고 또 골랐어요.\n\"신데렐라야, 이 리본이 마음에 드는데 이걸로 달아 줄래?\"\n\"신데렐라야! 신데렐라야! 내 머리 좀 다시 빗겨 줘!\"\n신데렐라는 이리 뛰고 저리 뛰느라 숨 돌릴 틈도 없었지요.",
+        "text": "언니들은 온종일 드레스를 고르고 또 골랐어요.\n\"신데렐라야, 이 리본이 마음에 드는데 이걸로 달아 줄래?\"\n\"신데렐라야! 신데렐라야! 내 머리 좀 다시 빗겨 줘!\"\n신데렐라는 이리 뛰고 저리 뛰느라 숨 돌릴 틈도 없었답니다.",
         "lines": [
           {
             "text": "신데렐라야, 이 리본이 마음에 드는데 이걸로 달아 줄래?",
@@ -160,7 +160,7 @@
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p6-3.mp3",
-            "text": "\n신데렐라는 이리 뛰고 저리 뛰느라 숨 돌릴 틈도 없었지요."
+            "text": "\n신데렐라는 이리 뛰고 저리 뛰느라 숨 돌릴 틈도 없었답니다."
           }
         ]
       },
@@ -231,10 +231,10 @@
       },
       {
         "n": 9,
-        "text": "텅 빈 집에 혼자 남은 신데렐라는\n아궁이 곁에 주저앉아 눈물을 뚝뚝 흘렸어요.\n그때 부엌 안이 환해지더니,\n반짝이는 빛과 함께 요정님이 나타났지요.\n\"울지 마렴, 신데렐라야. 무도회에 갈 수 있게 내가 도와주겠단다.\"",
+        "text": "텅 빈 집에 혼자 남은 신데렐라는\n아궁이 곁에 주저앉아 눈물을 뚝뚝 흘렸어요.\n그때 부엌 안이 환해지더니,\n반짝이는 빛과 함께 요정님이 나타났지요.\n\"무도회에 갈 수 있도록 내가 도와줄게. 울지 마렴.\"",
         "lines": [
           {
-            "text": "울지 마렴, 신데렐라야. 무도회에 갈 수 있게 내가 도와주겠단다.",
+            "text": "무도회에 갈 수 있도록 내가 도와줄게. 울지 마렴.",
             "who": "fairy"
           }
         ],
@@ -248,7 +248,7 @@
           {
             "who": "fairy",
             "src": "/classic/cinderella/seg-cast-p9-1.mp3",
-            "text": "\"울지 마렴, 신데렐라야. 무도회에 갈 수 있게 내가 도와주겠단다.\""
+            "text": "\"무도회에 갈 수 있도록 내가 도와줄게. 울지 마렴.\""
           }
         ]
       },
@@ -266,30 +266,24 @@
       },
       {
         "n": 11,
-        "text": "이번에는 생쥐 친구들 차례였어요.\n요술봉이 반짝이자\n생쥐 넷이 늠름한 백마 네 마리로 변했지요.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다.",
+        "text": "이번에는 생쥐 친구들 차례였어요.\n요술봉이 반짝이자\n생쥐 넷이 늠름한 백마 네 마리로 변했답니다.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p11.webp?v=2",
         "video": "/classic/cinderella/p11.mp4",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p11-0.mp3",
-            "text": "이번에는 생쥐 친구들 차례였어요.\n요술봉이 반짝이자\n생쥐 넷이 늠름한 백마 네 마리로 변했지요.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다."
+            "text": "이번에는 생쥐 친구들 차례였어요.\n요술봉이 반짝이자\n생쥐 넷이 늠름한 백마 네 마리로 변했답니다.\n낡은 드레스도 눈부시게 하얀 드레스가 되었답니다."
           }
         ]
       },
       {
         "n": 12,
-        "text": "마지막으로 신데렐라의 발 앞에\n반짝이는 유리구두 한 켤레가 나타났어요.\n\"기억하렴! 밤 12시가 되면 마법이 풀린단다.\"\n\"요정님! 고맙습니다!\"",
+        "text": "마지막으로 신데렐라의 발 앞에\n반짝이는 유리구두 한 켤레가 나타났어요.\n\"기억하렴, 신데렐라야.\n밤 12시가 되면 모든 마법이 풀린단다.\n그전에 꼭 돌아와야 한다.\"",
         "lines": [
           {
-            "text": "기억하렴! 밤 12시가 되면 마법이 풀린단다.",
+            "text": "기억하렴, 신데렐라야.\n밤 12시가 되면 모든 마법이 풀린단다.\n그전에 꼭 돌아와야 한다.",
             "who": "fairy"
-          },
-          {
-            "text": "요정님! 고맙습니다!",
-            "who": "cinderella",
-            "feel": "happy",
-            "intensity": 0.6
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p12.webp?v=2",
@@ -302,19 +296,14 @@
           {
             "who": "fairy",
             "src": "/classic/cinderella/seg-cast-p12-1.mp3",
-            "text": "\"기억하렴! 밤 12시가 되면 마법이 풀린단다.\"\n"
-          },
-          {
-            "who": "cinderella",
-            "src": "/classic/cinderella/seg-cast-p12-2.mp3",
-            "text": "\"요정님! 고맙습니다!\""
+            "text": "\"기억하렴, 신데렐라야.\n밤 12시가 되면 모든 마법이 풀린단다.\n그전에 꼭 돌아와야 한다.\""
           }
         ],
         "video": "/classic/cinderella/p12.mp4"
       },
       {
         "n": 13,
-        "text": "황금 마차가 왕궁 앞에 멈췄어요.\n신데렐라가 커다란 계단을 올라 무도회장에 들어서자,\n음악이 뚝 그치고 모두의 눈길이 신데렐라에게 쏠렸지요.\n사람들이 소곤소곤 속삭였어요.\n\"어머, 저 아가씨는 어느 나라 공주님이지?\"",
+        "text": "황금 마차가 왕궁 앞에 멈췄어요.\n신데렐라가 커다란 계단을 올라 무도회장에 들어서자,\n음악이 뚝 그치고 모두의 눈길이 신데렐라에게 쏠렸어요.\n사람들은 소곤소곤 속삭였어요.\n\"어머, 저 아가씨는 어느 나라 공주님이지?\"",
         "lines": [
           {
             "text": "어머, 저 아가씨는 어느 나라 공주님이지?",
@@ -326,7 +315,7 @@
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p13-0.mp3",
-            "text": "황금 마차가 왕궁 앞에 멈췄어요.\n신데렐라가 커다란 계단을 올라 무도회장에 들어서자,\n음악이 뚝 그치고 모두의 눈길이 신데렐라에게 쏠렸지요.\n사람들이 소곤소곤 속삭였어요.\n"
+            "text": "황금 마차가 왕궁 앞에 멈췄어요.\n신데렐라가 커다란 계단을 올라 무도회장에 들어서자,\n음악이 뚝 그치고 모두의 눈길이 신데렐라에게 쏠렸어요.\n사람들은 소곤소곤 속삭였어요.\n"
           },
           {
             "who": "crowd",
@@ -337,7 +326,7 @@
       },
       {
         "n": 14,
-        "text": "왕자님이 사람들 사이를 지나 다가왔어요.\n그러고는 허리를 굽혀 정중히 손을 내밀었지요.\n\"저와 춤을 추시겠어요?\"\n신데렐라는 살며시 그 손을 잡았답니다.",
+        "text": "왕자님이 사람들 사이를 지나 다가왔어요.\n그러고는 허리를 굽혀 정중히 손을 내밀었답니다.\n\"저와 춤을 추시겠어요?\"\n신데렐라는 살며시 그 손을 잡았답니다.",
         "lines": [
           {
             "text": "저와 춤을 추시겠어요?",
@@ -349,7 +338,7 @@
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p14-0.mp3",
-            "text": "왕자님이 사람들 사이를 지나 다가왔어요.\n그러고는 허리를 굽혀 정중히 손을 내밀었지요.\n"
+            "text": "왕자님이 사람들 사이를 지나 다가왔어요.\n그러고는 허리를 굽혀 정중히 손을 내밀었답니다.\n"
           },
           {
             "who": "prince",
@@ -365,23 +354,23 @@
       },
       {
         "n": 15,
-        "text": "둘은 밤이 깊도록 빙글빙글 춤을 추었어요.\n샹들리에 불빛이 별처럼 쏟아지고\n드레스 자락이 둥글게 퍼졌지요.\n신데렐라는 태어나서 처음으로 마음껏 웃었답니다.",
+        "text": "둘은 밤이 깊도록 빙글빙글 춤을 추었어요.\n샹들리에 불빛이 별처럼 쏟아지고\n드레스 자락이 둥글게 퍼졌지요.\n신데렐라도 오랜만에 마음껏 웃을 수 있었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/cinderella/p15.webp?v=2",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p15-0.mp3",
-            "text": "둘은 밤이 깊도록 빙글빙글 춤을 추었어요.\n샹들리에 불빛이 별처럼 쏟아지고\n드레스 자락이 둥글게 퍼졌지요.\n신데렐라는 태어나서 처음으로 마음껏 웃었답니다."
+            "text": "둘은 밤이 깊도록 빙글빙글 춤을 추었어요.\n샹들리에 불빛이 별처럼 쏟아지고\n드레스 자락이 둥글게 퍼졌지요.\n신데렐라도 오랜만에 마음껏 웃을 수 있었답니다."
           }
         ],
         "video": "/classic/cinderella/p15.mp4"
       },
       {
         "n": 16,
-        "text": "춤을 멈추고 둘은 달빛 드는 정원으로 나왔어요.\n\"당신 이름을 알려 주시겠어요?\"\n신데렐라가 막 대답하려던 그때 —\n댕! 댕! 커다란 시계가 12시를 알렸어요.",
+        "text": "춤을 멈추고 둘은 달빛 드는 정원으로 나왔어요.\n\"아직 당신의 이름도 모르네요. 이름을 알려 주시겠어요?\"\n신데렐라가 막 대답하려던 그때 —\n댕! 댕! 커다란 시계가 12시를 알렸어요.",
         "lines": [
           {
-            "text": "당신 이름을 알려 주시겠어요?",
+            "text": "아직 당신의 이름도 모르네요. 이름을 알려 주시겠어요?",
             "who": "prince"
           }
         ],
@@ -395,7 +384,7 @@
           {
             "who": "prince",
             "src": "/classic/cinderella/seg-cast-p16-1.mp3",
-            "text": "\"당신 이름을 알려 주시겠어요?\""
+            "text": "\"아직 당신의 이름도 모르네요. 이름을 알려 주시겠어요?\""
           },
           {
             "who": "narration",
@@ -406,7 +395,7 @@
       },
       {
         "n": 17,
-        "text": "\"앗, 전 이제 가야 해요!\"\n신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n그만 유리구두 한 짝이 벗겨진 줄도 모르고요!\n왕자님이 뒤따라왔지만 이미 늦었지요.",
+        "text": "\"앗, 전 이제 가야 해요!\"\n신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n얼마나 급했던지 유리구두 한 짝이 벗겨진 줄도 몰랐지요.\n왕자님이 뒤따라왔지만, 이미 신데렐라는 사라진 후였어요.",
         "lines": [
           {
             "text": "앗, 전 이제 가야 해요!",
@@ -426,7 +415,7 @@
           {
             "who": "narration",
             "src": "/classic/cinderella/seg-p17-1.mp3",
-            "text": "\n신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n그만 유리구두 한 짝이 벗겨진 줄도 모르고요!\n왕자님이 뒤따라왔지만 이미 늦었지요."
+            "text": "\n신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n얼마나 급했던지 유리구두 한 짝이 벗겨진 줄도 몰랐지요.\n왕자님이 뒤따라왔지만, 이미 신데렐라는 사라진 후였어요."
           }
         ]
       },
@@ -552,7 +541,7 @@
       "cinderella": "tc-najin",
       "sister": "tc-minju",
       "sister2": "tc-gahee",
-      "stepmom": "tc-sookhee",
+      "stepmom": "tc-ladycho",
       "fairy": "tc-juha",
       "prince": "tc-taewoo",
       "servant": "tc-taesung",
@@ -707,11 +696,11 @@
     "pages": [
       {
         "n": 1,
-        "text": "옛날 옛적, 아기 돼지 삼 형제가 살았어요.\n어느 봄날 아침, 엄마 돼지가 셋을 불러 모았지요.\n\"이제 너희도 다 컸구나. 각자 집을 지어 보렴.\"\n셋은 신이 나서 언덕을 내려갔답니다.",
+        "text": "옛날 옛적, 아기 돼지 삼 형제가 살았어요.\n어느 봄날 아침, 엄마 돼지가 셋을 불러 모았지요.\n\"이제 너희도 다 컸으니, 각자 집을 지어 보는 건 어떻겠니?\"\n셋은 신이 나서 언덕을 내려갔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/threepigs/p1.webp?v=2",
         "lines": [
           {
-            "text": "이제 너희도 다 컸구나. 각자 집을 지어 보렴.",
+            "text": "이제 너희도 다 컸으니, 각자 집을 지어 보는 건 어떻겠니?",
             "who": "mompig"
           }
         ],
@@ -724,7 +713,7 @@
           {
             "who": "mompig",
             "src": "/classic/threepigs/seg-cast-p1-1.mp3",
-            "text": "\"이제 너희도 다 컸구나. 각자 집을 지어 보렴.\""
+            "text": "\"이제 너희도 다 컸으니, 각자 집을 지어 보는 건 어떻겠니?\""
           },
           {
             "who": "narration",
@@ -735,7 +724,7 @@
         "hotspots": [
           {
             "label": "mompig",
-            "line": "이제 너희도 다 컸구나. 각자 집을 지어 보렴.",
+            "line": "이제 너희도 다 컸으니, 각자 집을 지어 보는 건 어떻겠니?",
             "box": [
               61,
               85,
@@ -1700,52 +1689,19 @@
       },
       {
         "n": 2,
-        "text": "톡, 토독! 알들이 하나씩 깨어났어요.\n노랗고 보송보송한 아기 오리들 사이에서\n마지막 큰 알에서는 잿빛 아기가 나왔지요.\n\"안녕! 나도 나왔어요!\"\n엄마 오리는 그 아이도 꼭 안아 주었답니다.",
+        "text": "알들이 하나씩 깨어났어요.\n노랗고 보송보송한 아기 오리들 사이에서\n마지막 큰 알에서는 잿빛 아기가 나왔지요.\n엄마 오리는 그 아이도 꼭 안아 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p2.webp?v=2",
-        "lines": [
-          {
-            "text": "안녕! 나도 나왔어요!",
-            "who": "duckling",
-            "feel": "happy",
-            "intensity": 0.4
-          }
-        ],
-        "hotspots": [
-          {
-            "label": "duckling",
-            "line": "안녕! 나도 나왔어요!",
-            "box": [
-              478,
-              297,
-              838,
-              532
-            ],
-            "audio": "/classic/uglyduckling/say-p2-duckling.mp3",
-            "feel": "happy",
-            "intensity": 0.4
-          }
-        ],
         "segments": [
           {
             "who": "narration",
             "src": "/classic/uglyduckling/seg-p2-0.mp3",
-            "text": "톡, 토독! 알들이 하나씩 깨어났어요.\n노랗고 보송보송한 아기 오리들 사이에서\n마지막 큰 알에서는 잿빛 아기가 나왔지요.\n"
-          },
-          {
-            "who": "duckling",
-            "src": "/classic/uglyduckling/seg-cast-p2-1.mp3",
-            "text": "\"안녕! 나도 나왔어요!\""
-          },
-          {
-            "who": "narration",
-            "src": "/classic/uglyduckling/seg-p2-2.mp3",
-            "text": "\n엄마 오리는 그 아이도 꼭 안아 주었답니다."
+            "text": "알들이 하나씩 깨어났어요.\n노랗고 보송보송한 아기 오리들 사이에서\n마지막 큰 알에서는 잿빛 아기가 나왔지요.\n엄마 오리는 그 아이도 꼭 안아 주었답니다."
           }
         ]
       },
       {
         "n": 3,
-        "text": "\"쟤는 왜 우리랑 다르게 생겼지?\"\n\"회색이잖아. 미운 오리 새끼야!\"\n형제들은 잿빛 아기 오리를 자꾸만 놀렸어요.\n아기 오리는 고개를 푹 숙였어요.\n아무 말도 나오지 않았지요.",
+        "text": "\"쟤는 왜 우리랑 다르게 생겼지?\"\n\"털색도 이상해, 회색이잖아. 미운 오리 새끼야!\"\n형제들은 잿빛 아기 오리를 자꾸만 놀렸어요.\n아기 오리는 고개를 푹 숙였어요.\n아무 말도 나오지 않았지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p3.webp?v=2",
         "lines": [
           {
@@ -1753,7 +1709,7 @@
             "who": "siblings"
           },
           {
-            "text": "회색이잖아. 미운 오리 새끼야!",
+            "text": "털색도 이상해, 회색이잖아. 미운 오리 새끼야!",
             "who": "siblings",
             "feel": "toneup",
             "intensity": 0.4
@@ -1762,7 +1718,7 @@
         "hotspots": [
           {
             "label": "siblings",
-            "line": "회색이잖아. 미운 오리 새끼야!",
+            "line": "털색도 이상해, 회색이잖아. 미운 오리 새끼야!",
             "box": [
               327,
               41,
@@ -1783,7 +1739,7 @@
           {
             "who": "siblings",
             "src": "/classic/uglyduckling/seg-cast-p3-1.mp3",
-            "text": "\"회색이잖아. 미운 오리 새끼야!\""
+            "text": "\"털색도 이상해, 회색이잖아. 미운 오리 새끼야!\""
           },
           {
             "who": "narration",
@@ -1839,14 +1795,15 @@
       },
       {
         "n": 5,
-        "text": "어느 날 밤, 아기 오리는 조용히 둥지를 떠났어요.\n'내가 떠나면 다들 편해질 거야.'\n달빛 아래 홀로 뒤뚱뒤뚱 걸어갔지요.\n뒤도 한 번 돌아보지 않았답니다.",
+        "text": "어느 날 밤, 아기 오리는 조용히 둥지를 떠났어요.\n'내가 떠나면… 다들 편해질 거야.'\n달빛 아래 홀로 뒤뚱뒤뚱 걸어갔지요.\n뒤도 한 번 돌아보지 않았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p5.webp?v=2",
         "lines": [
           {
-            "text": "'내가 떠나면 다들 편해질 거야.'",
+            "text": "'내가 떠나면… 다들 편해질 거야.'",
             "who": "duckling",
             "feel": "sad",
-            "intensity": 0.35
+            "intensity": 0.65,
+            "tempo": 0.9
           }
         ],
         "segments": [
@@ -1858,7 +1815,7 @@
           {
             "who": "duckling",
             "src": "/classic/uglyduckling/seg-cast-p5-1.mp3",
-            "text": "'내가 떠나면 다들 편해질 거야.'"
+            "text": "'내가 떠나면… 다들 편해질 거야.'"
           },
           {
             "who": "narration",
@@ -1976,46 +1933,13 @@
       },
       {
         "n": 9,
-        "text": "그래도 아기 오리는 물속에서 발을 멈추지 않았어요.\n얼음이 얼려 하면 그 자리를 빙빙 돌았지요.\n동그란 물구멍 하나가 밤새 얼지 않았어요.\n\"여기는… 내가 지킬 거야.\"\n그렇게 긴 겨울을 하루씩 건넜답니다.",
+        "text": "그래도 아기 오리는 물속에서 발을 멈추지 않았어요.\n얼음이 얼려 하면 그 자리를 빙빙 돌았지요.\n동그란 물구멍 하나가 밤새 얼지 않았어요.\n그렇게 긴 겨울을 하루씩 건넜답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/uglyduckling/p9.webp?v=2",
-        "lines": [
-          {
-            "text": "여기는… 내가 지킬 거야.",
-            "who": "duckling",
-            "feel": "tonedown",
-            "intensity": 0.35
-          }
-        ],
-        "hotspots": [
-          {
-            "label": "duckling",
-            "line": "여기는… 내가 지킬 거야.",
-            "box": [
-              355,
-              338,
-              677,
-              628
-            ],
-            "audio": "/classic/uglyduckling/say-p9-duckling.mp3",
-            "feel": "tonedown",
-            "intensity": 0.35
-          }
-        ],
         "segments": [
           {
             "who": "narration",
             "src": "/classic/uglyduckling/seg-p9-0.mp3",
-            "text": "그래도 아기 오리는 물속에서 발을 멈추지 않았어요.\n얼음이 얼려 하면 그 자리를 빙빙 돌았지요.\n동그란 물구멍 하나가 밤새 얼지 않았어요.\n"
-          },
-          {
-            "who": "duckling",
-            "src": "/classic/uglyduckling/seg-cast-p9-1.mp3",
-            "text": "\"여기는… 내가 지킬 거야.\""
-          },
-          {
-            "who": "narration",
-            "src": "/classic/uglyduckling/seg-p9-2.mp3",
-            "text": "\n그렇게 긴 겨울을 하루씩 건넜답니다."
+            "text": "그래도 아기 오리는 물속에서 발을 멈추지 않았어요.\n얼음이 얼려 하면 그 자리를 빙빙 돌았지요.\n동그란 물구멍 하나가 밤새 얼지 않았어요.\n그렇게 긴 겨울을 하루씩 건넜답니다."
           }
         ]
       },
@@ -2220,10 +2144,10 @@
     "voiceCast": {
       "narration": "tc-minjung",
       "duckmom": "tc-najin",
-      "duckling": "tc-sua",
-      "siblings": "tc-gahee",
+      "duckling": "tc-mongsil",
+      "siblings": "tc-hamchu",
       "goose": "tc-yubin",
-      "swan": "tc-jiyoung",
+      "swan": "tc-seolhwa",
       "children": "tc-siwoo"
     },
     "roleOf": {
@@ -2514,46 +2438,13 @@
       },
       {
         "n": 6,
-        "text": "빨간 모자가 꽃을 고르는 사이,\n늑대는 지름길로 쌩 달려갔어요.\n나뭇가지를 헤치고, 개울을 폴짝 뛰어넘고!\n\"할머니가 혼자 있겠지? 잘됐다, 잘됐어.\"\n늑대는 오두막 문을 똑똑 두드렸답니다.",
+        "text": "빨간 모자가 꽃을 고르는 사이,\n늑대는 지름길로 쌩 달려갔어요.\n나뭇가지를 헤치고, 개울을 폴짝 뛰어넘고!\n늑대는 오두막 문을 똑똑 두드렸답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p6.webp?v=2",
-        "lines": [
-          {
-            "text": "할머니가 혼자 있겠지? 잘됐다, 잘됐어.",
-            "who": "wolf",
-            "feel": "happy",
-            "intensity": 0.35
-          }
-        ],
-        "hotspots": [
-          {
-            "label": "wolf",
-            "line": "할머니가 혼자 있겠지? 잘됐다, 잘됐어.",
-            "box": [
-              346,
-              428,
-              809,
-              898
-            ],
-            "audio": "/classic/redridinghood/say-p6-wolf.mp3",
-            "feel": "happy",
-            "intensity": 0.35
-          }
-        ],
         "segments": [
           {
             "who": "narration",
             "src": "/classic/redridinghood/seg-p6-0.mp3",
-            "text": "빨간 모자가 꽃을 고르는 사이,\n늑대는 지름길로 쌩 달려갔어요.\n나뭇가지를 헤치고, 개울을 폴짝 뛰어넘고!\n"
-          },
-          {
-            "who": "wolf",
-            "src": "/classic/redridinghood/seg-cast-p6-1.mp3",
-            "text": "\"할머니가 혼자 있겠지? 잘됐다, 잘됐어.\""
-          },
-          {
-            "who": "narration",
-            "src": "/classic/redridinghood/seg-p6-2.mp3",
-            "text": "\n늑대는 오두막 문을 똑똑 두드렸답니다."
+            "text": "빨간 모자가 꽃을 고르는 사이,\n늑대는 지름길로 쌩 달려갔어요.\n나뭇가지를 헤치고, 개울을 폴짝 뛰어넘고!\n늑대는 오두막 문을 똑똑 두드렸답니다."
           }
         ]
       },
@@ -2839,7 +2730,7 @@
       },
       {
         "n": 12,
-        "text": "\"아니, 배가 저렇게 빵빵한 늑대라니!\"\n사냥꾼 아저씨가 늑대의 배를 살살 열어 보니 —\n할머니와 빨간 모자가 폴짝 뛰어나왔어요!\n\"아이고, 살았다! 고맙습니다!\"",
+        "text": "\"아니, 배가 저렇게 빵빵한 늑대라니!\"\n사냥꾼 아저씨가 늑대의 배를 살살 열어 보니 —\n할머니와 빨간 모자가 폴짝 뛰어나왔어요!",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p12.webp?v=2",
         "lines": [
           {
@@ -2847,12 +2738,6 @@
             "who": "hunter",
             "feel": "toneup",
             "intensity": 0.45
-          },
-          {
-            "text": "아이고, 살았다! 고맙습니다!",
-            "who": "granny",
-            "feel": "happy",
-            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -2868,19 +2753,6 @@
             "audio": "/classic/redridinghood/say-p12-hunter.mp3",
             "feel": "toneup",
             "intensity": 0.45
-          },
-          {
-            "label": "granny",
-            "line": "아이고, 살았다! 고맙습니다!",
-            "box": [
-              242,
-              428,
-              942,
-              698
-            ],
-            "audio": "/classic/redridinghood/say-p12-granny.mp3",
-            "feel": "happy",
-            "intensity": 0.4
           }
         ],
         "segments": [
@@ -2892,31 +2764,26 @@
           {
             "who": "narration",
             "src": "/classic/redridinghood/seg-p12-1.mp3",
-            "text": "\n사냥꾼 아저씨가 늑대의 배를 살살 열어 보니 —\n할머니와 빨간 모자가 폴짝 뛰어나왔어요!\n"
-          },
-          {
-            "who": "granny",
-            "src": "/classic/redridinghood/seg-cast-p12-2.mp3",
-            "text": "\"아이고, 살았다! 고맙습니다!\""
+            "text": "\n사냥꾼 아저씨가 늑대의 배를 살살 열어 보니 —\n할머니와 빨간 모자가 폴짝 뛰어나왔어요!"
           }
         ]
       },
       {
         "n": 13,
-        "text": "잠에서 깬 늑대는 깜짝 놀라 달아났어요.\n\"다시는 이 숲에 나타나지 마라!\"\n사냥꾼 아저씨의 큰 목소리가 쩌렁쩌렁 울렸지요.\n늑대는 산 너머로 사라져 버렸답니다.",
+        "text": "잠에서 깬 늑대는 깜짝 놀라 달아났어요.\n\"다시는 이 숲에 얼씬도 하지 마라!\"\n사냥꾼 아저씨의 큰 목소리가 쩌렁쩌렁 울렸지요.\n늑대는 산 너머로 사라져 버렸답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/redridinghood/p13.webp?v=2",
         "lines": [
           {
-            "text": "다시는 이 숲에 나타나지 마라!",
+            "text": "다시는 이 숲에 얼씬도 하지 마라!",
             "who": "hunter",
             "feel": "angry",
-            "intensity": 0.45
+            "intensity": 0.65
           }
         ],
         "hotspots": [
           {
             "label": "hunter",
-            "line": "다시는 이 숲에 나타나지 마라!",
+            "line": "다시는 이 숲에 얼씬도 하지 마라!",
             "box": [
               62,
               104,
@@ -2925,7 +2792,7 @@
             ],
             "audio": "/classic/redridinghood/say-p13-hunter.mp3",
             "feel": "angry",
-            "intensity": 0.45
+            "intensity": 0.65
           }
         ],
         "segments": [
@@ -2937,7 +2804,7 @@
           {
             "who": "hunter",
             "src": "/classic/redridinghood/seg-cast-p13-1.mp3",
-            "text": "\"다시는 이 숲에 나타나지 마라!\""
+            "text": "\"다시는 이 숲에 얼씬도 하지 마라!\""
           },
           {
             "who": "narration",
@@ -2995,9 +2862,9 @@
     "voiceCast": {
       "narration": "tc-minjung",
       "girl": "tc-arin",
-      "mother": "tc-najin",
+      "mother": "tc-aeran",
       "granny": "tc-juha",
-      "wolf": "tc-homun",
+      "wolf": "tc-hades",
       "hunter": "tc-gunseok"
     },
     "roleOf": {
@@ -3019,20 +2886,20 @@
     "pages": [
       {
         "n": 1,
-        "text": "옛날 어느 마을에 늙은 당나귀가 살았어요.\n오랫동안 짐을 날랐지만, 주인은 늙었다며 내쫓았지요.\n당나귀는 귀를 쫑긋 세우고 말했어요.\n\"흥! 그럼 브레멘에 가서 음악가가 될 테야!\"",
+        "text": "옛날 어느 마을에 늙은 당나귀가 살았어요.\n오랫동안 짐을 날랐지만, 주인은 늙었다며 내쫓았지요.\n당나귀는 오랫동안 꿈꿔 왔던 꿈을 좇아 떠나기로 했어요.\n\"그래, 난 브레멘에 가서 음악가가 될 거야!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p1.webp?v=3",
         "lines": [
           {
-            "text": "흥! 그럼 브레멘에 가서 음악가가 될 테야!",
+            "text": "그래, 난 브레멘에 가서 음악가가 될 거야!",
             "who": "donkey",
-            "feel": "toneup",
+            "feel": "happy",
             "intensity": 0.4
           }
         ],
         "hotspots": [
           {
             "label": "donkey",
-            "line": "흥! 그럼 브레멘에 가서 음악가가 될 테야!",
+            "line": "그래, 난 브레멘에 가서 음악가가 될 거야!",
             "box": [
               147,
               186,
@@ -3040,7 +2907,7 @@
               698
             ],
             "audio": "/classic/bremen/say-p1-donkey.mp3",
-            "feel": "toneup",
+            "feel": "happy",
             "intensity": 0.4
           }
         ],
@@ -3048,18 +2915,18 @@
           {
             "who": "narration",
             "src": "/classic/bremen/seg-p1-0.mp3",
-            "text": "옛날 어느 마을에 늙은 당나귀가 살았어요.\n오랫동안 짐을 날랐지만, 주인은 늙었다며 내쫓았지요.\n당나귀는 귀를 쫑긋 세우고 말했어요.\n"
+            "text": "옛날 어느 마을에 늙은 당나귀가 살았어요.\n오랫동안 짐을 날랐지만, 주인은 늙었다며 내쫓았지요.\n당나귀는 오랫동안 꿈꿔 왔던 꿈을 좇아 떠나기로 했어요.\n"
           },
           {
             "who": "donkey",
             "src": "/classic/bremen/seg-cast-p1-1.mp3",
-            "text": "\"흥! 그럼 브레멘에 가서 음악가가 될 테야!\""
+            "text": "\"그래, 난 브레멘에 가서 음악가가 될 거야!\""
           }
         ]
       },
       {
         "n": 2,
-        "text": "길을 가다 축 처진 사냥개를 만났어요.\n\"나는 늙어서 사냥을 못 한다고 쫓겨났어…\"\n\"잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!\"\n개의 꼬리가 살랑살랑 움직이기 시작했지요.",
+        "text": "길을 가다 축 처진 사냥개를 만났어요.\n\"나는 늙어서 사냥을 못 한다고 쫓겨났어…\"\n\"그럼 나랑 같이 브레멘에 가서 음악을 할래?\n너는 북을 치면 될 것 같은데?\"\n개의 꼬리가 살랑살랑 움직이기 시작했지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p2.webp?v=3",
         "lines": [
           {
@@ -3069,16 +2936,16 @@
             "intensity": 0.4
           },
           {
-            "text": "잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!",
+            "text": "그럼 나랑 같이 브레멘에 가서 음악을 할래?\n너는 북을 치면 될 것 같은데?",
             "who": "donkey",
             "feel": "happy",
-            "intensity": 0.4
+            "intensity": 0.3
           }
         ],
         "hotspots": [
           {
             "label": "donkey",
-            "line": "잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!",
+            "line": "그럼 나랑 같이 브레멘에 가서 음악을 할래?\n너는 북을 치면 될 것 같은데?",
             "box": [
               62,
               297,
@@ -3087,7 +2954,7 @@
             ],
             "audio": "/classic/bremen/say-p2-donkey.mp3",
             "feel": "happy",
-            "intensity": 0.4
+            "intensity": 0.3
           },
           {
             "label": "dog",
@@ -3116,7 +2983,7 @@
           {
             "who": "donkey",
             "src": "/classic/bremen/seg-cast-p2-2.mp3",
-            "text": "\"잘됐다! 나랑 브레멘 가서 음악 하자.\n너는 북을 치면 되겠어!\""
+            "text": "\"그럼 나랑 같이 브레멘에 가서 음악을 할래?\n너는 북을 치면 될 것 같은데?\""
           },
           {
             "who": "narration",
@@ -3127,7 +2994,7 @@
       },
       {
         "n": 3,
-        "text": "담벼락 위에는 시무룩한 고양이가 있었어요.\n\"쥐를 못 잡는다고 집에서 쫓겨났어…\"\n\"우리랑 같이 가자! 너는 노래를 하면 되겠어!\"\n고양이가 폴짝 뛰어내려 셋이 되었답니다.",
+        "text": "담벼락 위에서 시무룩한 고양이의 울음소리가 들렸어요.\n\"쥐를 못 잡는다고 집에서 쫓겨났어…\"\n\"너도 우리와 함께 브레멘에 갈래?\n너의 아름다운 목소리로 노래를 불러 주면 좋겠어.\"\n고양이가 폴짝 뛰어내려 셋이 되었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p3.webp?v=3",
         "lines": [
           {
@@ -3137,10 +3004,10 @@
             "intensity": 0.4
           },
           {
-            "text": "우리랑 같이 가자! 너는 노래를 하면 되겠어!",
+            "text": "너도 우리와 함께 브레멘에 갈래?\n너의 아름다운 목소리로 노래를 불러 주면 좋겠어.",
             "who": "donkey",
             "feel": "happy",
-            "intensity": 0.4
+            "intensity": 0.35
           }
         ],
         "hotspots": [
@@ -3158,7 +3025,7 @@
           },
           {
             "label": "donkey",
-            "line": "우리랑 같이 가자! 너는 노래를 하면 되겠어!",
+            "line": "너도 우리와 함께 브레멘에 갈래?\n너의 아름다운 목소리로 노래를 불러 주면 좋겠어.",
             "box": [
               242,
               138,
@@ -3167,14 +3034,14 @@
             ],
             "audio": "/classic/bremen/say-p3-donkey.mp3",
             "feel": "happy",
-            "intensity": 0.4
+            "intensity": 0.35
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/classic/bremen/seg-p3-0.mp3",
-            "text": "담벼락 위에는 시무룩한 고양이가 있었어요.\n"
+            "text": "담벼락 위에서 시무룩한 고양이의 울음소리가 들렸어요.\n"
           },
           {
             "who": "cat",
@@ -3184,7 +3051,7 @@
           {
             "who": "donkey",
             "src": "/classic/bremen/seg-cast-p3-2.mp3",
-            "text": "\"우리랑 같이 가자! 너는 노래를 하면 되겠어!\""
+            "text": "\"너도 우리와 함께 브레멘에 갈래?\n너의 아름다운 목소리로 노래를 불러 주면 좋겠어.\""
           },
           {
             "who": "narration",
@@ -3195,17 +3062,17 @@
       },
       {
         "n": 4,
-        "text": "농장 앞에서는 수탉이 목청껏 울고 있었어요.\n\"내일이면 나를 잡아서 국을 끓인대!\"\n\"그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 음악대의 나팔이야!\"\n그렇게 넷이 되었지요.",
+        "text": "농장 앞에서는 수탉이 목청껏 울고 있었어요.\n\"흑, 내가 더 이상 필요 없다고\n나를 잡아서 국을 끓인대. 흑…\"\n\"그럴 순 없어! 우리랑 같이 브레멘에 가서 음악을 하자.\n너의 우렁찬 목소리는 우리 음악대의 훌륭한 나팔이 될 거야!\"\n그렇게 넷이 되었지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p4.webp?v=3",
         "lines": [
           {
-            "text": "내일이면 나를 잡아서 국을 끓인대!",
+            "text": "흑, 내가 더 이상 필요 없다고\n나를 잡아서 국을 끓인대. 흑…",
             "who": "rooster",
             "feel": "sad",
-            "intensity": 0.45
+            "intensity": 0.55
           },
           {
-            "text": "그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 음악대의 나팔이야!",
+            "text": "그럴 순 없어! 우리랑 같이 브레멘에 가서 음악을 하자.\n너의 우렁찬 목소리는 우리 음악대의 훌륭한 나팔이 될 거야!",
             "who": "donkey",
             "feel": "happy",
             "intensity": 0.4
@@ -3214,7 +3081,7 @@
         "hotspots": [
           {
             "label": "rooster",
-            "line": "내일이면 나를 잡아서 국을 끓인대!",
+            "line": "흑, 내가 더 이상 필요 없다고\n나를 잡아서 국을 끓인대. 흑…",
             "box": [
               43,
               497,
@@ -3223,11 +3090,11 @@
             ],
             "audio": "/classic/bremen/say-p4-rooster.mp3",
             "feel": "sad",
-            "intensity": 0.45
+            "intensity": 0.55
           },
           {
             "label": "donkey",
-            "line": "그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 음악대의 나팔이야!",
+            "line": "그럴 순 없어! 우리랑 같이 브레멘에 가서 음악을 하자.\n너의 우렁찬 목소리는 우리 음악대의 훌륭한 나팔이 될 거야!",
             "box": [
               119,
               166,
@@ -3248,12 +3115,12 @@
           {
             "who": "rooster",
             "src": "/classic/bremen/seg-cast-p4-1.mp3",
-            "text": "\"내일이면 나를 잡아서 국을 끓인대!\"\n"
+            "text": "\"흑, 내가 더 이상 필요 없다고\n나를 잡아서 국을 끓인대. 흑…\"\n"
           },
           {
             "who": "donkey",
             "src": "/classic/bremen/seg-cast-p4-2.mp3",
-            "text": "\"그럴 순 없지! 우리랑 브레멘 가자.\n네 목소리는 우리 음악대의 나팔이야!\""
+            "text": "\"그럴 순 없어! 우리랑 같이 브레멘에 가서 음악을 하자.\n너의 우렁찬 목소리는 우리 음악대의 훌륭한 나팔이 될 거야!\""
           },
           {
             "who": "narration",
@@ -3309,11 +3176,11 @@
       },
       {
         "n": 6,
-        "text": "불빛을 따라가니 작은 오두막이 나왔어요.\n창문으로 들여다보니 — 세상에!\n무섭게 생긴 도둑들이 훔친 보따리를 쌓아 놓고\n음식을 잔뜩 차려 먹고 있었지요.\n\"나쁜 도둑들이야. 우리가 쫓아내자!\"",
+        "text": "불빛을 따라가니 작은 오두막이 나왔어요.\n창문으로 들여다보니 — 세상에!\n무섭게 생긴 도둑들이 훔친 보따리를 쌓아 놓고\n음식을 잔뜩 차려 먹고 있지 뭐예요.\n\"도둑들인 것 같아. 우리가 혼쭐내 주자!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p6.webp?v=3",
         "lines": [
           {
-            "text": "나쁜 도둑들이야. 우리가 쫓아내자!",
+            "text": "도둑들인 것 같아. 우리가 혼쭐내 주자!",
             "who": "cat",
             "feel": "toneup",
             "intensity": 0.4
@@ -3322,7 +3189,7 @@
         "hotspots": [
           {
             "label": "cat",
-            "line": "나쁜 도둑들이야. 우리가 쫓아내자!",
+            "line": "도둑들인 것 같아. 우리가 혼쭐내 주자!",
             "box": [
               431,
               269,
@@ -3338,29 +3205,29 @@
           {
             "who": "narration",
             "src": "/classic/bremen/seg-p6-0.mp3",
-            "text": "불빛을 따라가니 작은 오두막이 나왔어요.\n창문으로 들여다보니 — 세상에!\n무섭게 생긴 도둑들이 훔친 보따리를 쌓아 놓고\n음식을 잔뜩 차려 먹고 있었지요.\n"
+            "text": "불빛을 따라가니 작은 오두막이 나왔어요.\n창문으로 들여다보니 — 세상에!\n무섭게 생긴 도둑들이 훔친 보따리를 쌓아 놓고\n음식을 잔뜩 차려 먹고 있지 뭐예요.\n"
           },
           {
             "who": "cat",
             "src": "/classic/bremen/seg-cast-p6-1.mp3",
-            "text": "\"나쁜 도둑들이야. 우리가 쫓아내자!\""
+            "text": "\"도둑들인 것 같아. 우리가 혼쭐내 주자!\""
           }
         ],
         "video": "/classic/bremen/p6.mp4"
       },
       {
         "n": 7,
-        "text": "도둑들을 쫓아낼 꾀를 당나귀가 냈어요.\n\"우리 다 같이 무대에 서는 거야!\"\n당나귀 위에 개가, 개 위에 고양이가,\n고양이 위에 수탉이 차곡차곡 올라탔지요.\n\"자, 브레멘 음악대 첫 공연이다!\"",
+        "text": "도둑들을 쫓아낼 꾀를 당나귀가 냈어요.\n\"우리가 다 같이 공연을 하는 건 어떨까?\"\n당나귀 위에 개가, 개 위에 고양이가,\n고양이 위에 수탉이 차곡차곡 올라탔어요.\n\"자, 다들! 하나, 둘, 셋!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p7.webp?v=3",
         "lines": [
           {
-            "text": "우리 다 같이 무대에 서는 거야!",
+            "text": "우리가 다 같이 공연을 하는 건 어떨까?",
             "who": "donkey",
             "feel": "happy",
             "intensity": 0.4
           },
           {
-            "text": "자, 브레멘 음악대 첫 공연이다!",
+            "text": "자, 다들! 하나, 둘, 셋!",
             "who": "donkey",
             "feel": "toneup",
             "intensity": 0.45
@@ -3369,7 +3236,7 @@
         "hotspots": [
           {
             "label": "donkey",
-            "line": "자, 브레멘 음악대 첫 공연이다!",
+            "line": "자, 다들! 하나, 둘, 셋!",
             "box": [
               488,
               193,
@@ -3390,40 +3257,40 @@
           {
             "who": "donkey",
             "src": "/classic/bremen/seg-cast-p7-1.mp3",
-            "text": "\"우리 다 같이 무대에 서는 거야!\""
+            "text": "\"우리가 다 같이 공연을 하는 건 어떨까?\""
           },
           {
             "who": "narration",
             "src": "/classic/bremen/seg-p7-2.mp3",
-            "text": "\n당나귀 위에 개가, 개 위에 고양이가,\n고양이 위에 수탉이 차곡차곡 올라탔지요.\n"
+            "text": "\n당나귀 위에 개가, 개 위에 고양이가,\n고양이 위에 수탉이 차곡차곡 올라탔어요.\n"
           },
           {
             "who": "donkey",
             "src": "/classic/bremen/seg-cast-p7-3.mp3",
-            "text": "\"자, 브레멘 음악대 첫 공연이다!\""
+            "text": "\"자, 다들! 하나, 둘, 셋!\""
           }
         ]
       },
       {
         "n": 8,
-        "text": "하나, 둘, 셋!\n히호! 멍멍! 야옹! 꼬끼오!\n넷이 한꺼번에 목청껏 노래하며\n창문을 와장창 뚫고 뛰어들었어요!\n접시가 튀고 촛불이 흔들리고,\n오두막이 쩌렁쩌렁 울렸지요.",
+        "text": "넷이 한꺼번에 목청껏 노래하며\n창문을 와장창 뚫고 뛰어들었어요!\n접시가 튀고 촛불이 흔들리고,\n오두막이 쩌렁쩌렁 울렸지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p8.webp?v=3",
         "segments": [
           {
             "who": "narration",
             "src": "/classic/bremen/seg-p8-0.mp3",
-            "text": "하나, 둘, 셋!\n히호! 멍멍! 야옹! 꼬끼오!\n넷이 한꺼번에 목청껏 노래하며\n창문을 와장창 뚫고 뛰어들었어요!\n접시가 튀고 촛불이 흔들리고,\n오두막이 쩌렁쩌렁 울렸지요."
+            "text": "넷이 한꺼번에 목청껏 노래하며\n창문을 와장창 뚫고 뛰어들었어요!\n접시가 튀고 촛불이 흔들리고,\n오두막이 쩌렁쩌렁 울렸지요."
           }
         ],
         "video": "/classic/bremen/p8.mp4"
       },
       {
         "n": 9,
-        "text": "도둑들은 깜짝 놀라 펄쩍 뛰었어요.\n\"으악! 괴물이다! 도망쳐라!\"\n도둑 두목이 제일 먼저 문을 박차고 달아났지요.\n도둑들은 신발도 못 신고\n깜깜한 숲으로 사라져 버렸답니다.",
+        "text": "도둑들은 깜짝 놀라 펄쩍 뛰었어요.\n\"으악! 괴물이다!\"\n도둑 두목이 제일 먼저 문을 박차고 달아났지요.\n도둑들은 신발도 못 신고\n깜깜한 숲으로 사라져 버렸답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p9.webp?v=3",
         "lines": [
           {
-            "text": "으악! 괴물이다! 도망쳐라!",
+            "text": "으악! 괴물이다!",
             "who": "thief",
             "feel": "toneup",
             "intensity": 0.4
@@ -3432,7 +3299,7 @@
         "hotspots": [
           {
             "label": "thief",
-            "line": "으악! 괴물이다! 도망쳐라!",
+            "line": "으악! 괴물이다!",
             "box": [
               100,
               428,
@@ -3452,7 +3319,7 @@
           {
             "who": "thief",
             "src": "/classic/bremen/seg-cast-p9-1.mp3",
-            "text": "\"으악! 괴물이다! 도망쳐라!\""
+            "text": "\"으악! 괴물이다!\""
           },
           {
             "who": "narration",
@@ -3463,7 +3330,7 @@
       },
       {
         "n": 10,
-        "text": "\"공연 대성공!\"\n도둑들이 도망간 식탁에는\n맛있는 음식이 그대로 남아 있었어요.\n넷은 둘러앉아 배가 빵빵해지도록 먹었지요.\n\"이렇게 배부른 건 정말 오랜만이야.\"",
+        "text": "\"공연 대성공!\"\n도둑들이 도망간 식탁에는\n맛있는 음식이 그대로 남아 있었어요.\n넷은 둘러앉아 배가 빵빵해지도록 맛있게 먹었답니다.\n\"이렇게 배부른 건 정말 오랜만이야.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p10.webp?v=3",
         "lines": [
           {
@@ -3516,7 +3383,7 @@
           {
             "who": "narration",
             "src": "/classic/bremen/seg-p10-1.mp3",
-            "text": "\n도둑들이 도망간 식탁에는\n맛있는 음식이 그대로 남아 있었어요.\n넷은 둘러앉아 배가 빵빵해지도록 먹었지요.\n"
+            "text": "\n도둑들이 도망간 식탁에는\n맛있는 음식이 그대로 남아 있었어요.\n넷은 둘러앉아 배가 빵빵해지도록 맛있게 먹었답니다.\n"
           },
           {
             "who": "dog",
@@ -3670,11 +3537,11 @@
       },
       {
         "n": 15,
-        "text": "아침 해가 뜨자 넷은 마당에 모였어요.\n햇살에 오두막이 반짝반짝 빛났지요.\n\"얘들아, 우리 여기서 사는 건 어떨 것 같아?\"\n\"좋아!\" \"좋아!\" 다들 끄덕였어요.\n수탉이 울타리 위에서 힘차게 울었답니다.",
+        "text": "아침 해가 뜨자 넷은 마당에 모였어요.\n햇살에 오두막이 반짝반짝 빛났지요.\n\"얘들아, 우리 여기서 같이 사는 건 어떨까?\"\n\"좋아!\" \"좋아!\"\n수탉은 기쁜 마음에 울타리 위에서 힘차게 울었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p15.webp?v=3",
         "lines": [
           {
-            "text": "얘들아, 우리 여기서 사는 건 어떨 것 같아?",
+            "text": "얘들아, 우리 여기서 같이 사는 건 어떨까?",
             "who": "donkey",
             "feel": "happy",
             "intensity": 0.35
@@ -3706,7 +3573,7 @@
           },
           {
             "label": "donkey",
-            "line": "얘들아, 우리 여기서 사는 건 어떨 것 같아?",
+            "line": "얘들아, 우리 여기서 같이 사는 건 어떨까?",
             "box": [
               71,
               318,
@@ -3740,7 +3607,7 @@
           {
             "who": "donkey",
             "src": "/classic/bremen/seg-cast-p15-1.mp3",
-            "text": "\"얘들아, 우리 여기서 사는 건 어떨 것 같아?\"\n"
+            "text": "\"얘들아, 우리 여기서 같이 사는 건 어떨까?\"\n"
           },
           {
             "who": "dog",
@@ -3755,26 +3622,26 @@
           {
             "who": "narration",
             "src": "/classic/bremen/seg-p15-4.mp3",
-            "text": " 다들 끄덕였어요.\n수탉이 울타리 위에서 힘차게 울었답니다."
+            "text": "\n수탉은 기쁜 마음에 울타리 위에서 힘차게 울었답니다."
           }
         ]
       },
       {
         "n": 16,
-        "text": "그날부터 저녁마다 오두막 앞은 무대가 되었어요.\n히호! 멍멍! 야옹! 꼬끼오!\n숲속 동물들이 모여들어 손뼉을 쳤지요.\n당나귀가 씩 웃으며 말했답니다.\n\"여기가 우리의 브레멘이야.\"",
+        "text": "그날부터 저녁마다 오두막 앞은 무대가 되었어요.\n숲속 동물들이 모여들어 손뼉을 쳤지요.\n당나귀가 씩 웃으며 말했답니다.\n\"여기가 우리들의 브레멘이다!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/classic/bremen/p16.webp?v=3",
         "lines": [
           {
-            "text": "여기가 우리의 브레멘이야.",
+            "text": "여기가 우리들의 브레멘이다!",
             "who": "donkey",
             "feel": "happy",
-            "intensity": 0.35
+            "intensity": 0.45
           }
         ],
         "hotspots": [
           {
             "label": "donkey",
-            "line": "여기가 우리의 브레멘이야.",
+            "line": "히호!",
             "box": [
               440,
               290,
@@ -3783,19 +3650,58 @@
             ],
             "audio": "/classic/bremen/say-p16-donkey.mp3",
             "feel": "happy",
-            "intensity": 0.35
+            "intensity": 0.45
+          },
+          {
+            "label": "dog",
+            "line": "멍멍!",
+            "box": [
+              305,
+              370,
+              585,
+              600
+            ],
+            "audio": "/classic/bremen/say-p16-dog.mp3",
+            "feel": "happy",
+            "intensity": 0.45
+          },
+          {
+            "label": "cat",
+            "line": "야옹!",
+            "box": [
+              220,
+              395,
+              415,
+              555
+            ],
+            "audio": "/classic/bremen/say-p16-cat.mp3",
+            "feel": "happy",
+            "intensity": 0.45
+          },
+          {
+            "label": "rooster",
+            "line": "꼬끼오!",
+            "box": [
+              20,
+              360,
+              228,
+              560
+            ],
+            "audio": "/classic/bremen/say-p16-rooster.mp3",
+            "feel": "happy",
+            "intensity": 0.45
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/classic/bremen/seg-p16-0.mp3",
-            "text": "그날부터 저녁마다 오두막 앞은 무대가 되었어요.\n히호! 멍멍! 야옹! 꼬끼오!\n숲속 동물들이 모여들어 손뼉을 쳤지요.\n당나귀가 씩 웃으며 말했답니다.\n"
+            "text": "그날부터 저녁마다 오두막 앞은 무대가 되었어요.\n숲속 동물들이 모여들어 손뼉을 쳤지요.\n당나귀가 씩 웃으며 말했답니다.\n"
           },
           {
             "who": "donkey",
             "src": "/classic/bremen/seg-cast-p16-1.mp3",
-            "text": "\"여기가 우리의 브레멘이야.\""
+            "text": "\"여기가 우리들의 브레멘이다!\""
           }
         ],
         "video": "/classic/bremen/p16.mp4"
@@ -3808,7 +3714,7 @@
       "narration": "tc-minjung",
       "donkey": "tc-dukgu",
       "dog": "tc-homun",
-      "cat": "tc-hamchu",
+      "cat": "tc-lala",
       "rooster": "tc-guri",
       "thief": "tc-hakchul"
     },

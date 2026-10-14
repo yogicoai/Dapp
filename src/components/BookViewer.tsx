@@ -38,6 +38,7 @@ import { loadLibraryAccess } from "@/lib/library-access";
 import { viewerTierOf } from "@/lib/member-plan";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
 import { libraryLock, OPEN_LIBRARY } from "@/lib/offer-settings";
+import { placeVisits } from "@/lib/page-camera";
 import { shrunkPages, withBookScale } from "@/lib/scale-lock";
 import { authedFetch, currentUid } from "@/lib/supabase";
 import { loadPrivatePageVideos } from "@/lib/private-media";
@@ -725,6 +726,8 @@ export function BookViewer({
             heroTiny: tinyHere,
             // 기준으로 보낸 옆 쪽도 작아진 쪽인가 — 서버는 크기가 같은 쪽의 그림만 기준으로 붙인다.
             styleReferenceTiny: siblingEntry?.tiny === true,
+            // 이 장소를 이 책에서 몇 번째로 그리는가 — 둘째부터 앞 쪽과 다른 카메라로(lib/page-camera, 2026-10-14).
+            placeVisit: placeVisits(book.pages.map((p, i) => (i === index ? here : placeOf(p.imagePrompt))))[index] ?? 0,
             // 만들 때 부모가 적어 둔 장소 — 이게 있어야 다시 그린 쪽도 같은 곳이 된다.
             locationDetail: book.locationDetail ?? "",
             locationSheet,

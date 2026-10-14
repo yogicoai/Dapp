@@ -1,6 +1,17 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { acceptPastPicture, HISTORY_MAX, historyFloor, pastPictures, picturesSince } from "./family-history.ts";
+import {
+  acceptPastPicture,
+  deliveredOnly,
+  fileNameOf,
+  HISTORY_MAX,
+  historyFloor,
+  mergePictures,
+  pastPictures,
+  picturesSince,
+  recordedPictures,
+  wasDelivered,
+} from "./family-history.ts";
 
 const PREFIX = "https://cdn.example.com/app/family/99f8932a-c8dc-4e5a-84f3-2311fc189a93/";
 const H1 = "a".repeat(32);
@@ -109,5 +120,51 @@ describe("뺐다가 다시 넣은 사람 — 그 앞의 그림은 감춘다", ()
     assert.equal(historyFloor({ id: "mom", addedAt: added }, []), added);
     // 처음부터 있던 사람(옛 값 — 넣은 때 없음)은 모두 보인다
     assert.equal(historyFloor({ id: "child" }, undefined), undefined);
+  });
+});
+
+describe("건넨 그림만 — 쿠키를 되돌린(건네지 못한) 그림은 예전 그림으로 고를 수 없다", () => {
+  const names = [
+    `child-${T1}-${H1}.png`, `child-${T1}-${H1}-ref.jpg`,
+    `child-${T2}-${H2}.png`, `child-${T2}-${H2}-ref.jpg`,
+    `child-${T3}-${H3}.png`, `child-${T3}-${H3}-ref.jpg`,
+  ];
+  const pics = pastPictures(names, "child", PREFIX);
+  // 기록은 T2 와 T3 사이에 시작했다. T3 그림은 건넸다고 적혀 있다.
+  const between = new Date((T2 + T3) / 2).toISOString();
+
+  it("적기 시작한 뒤에 그린 그림은 적힌 것만 · 그 전에 그린 그림은 그대로", () => {
+    const record = { since: between, names: [`child-${T3}-${H3}.png`] };
+    assert.deepEqual(deliveredOnly(pics, record).map((p) => p.at), [T3, T2, T1].map((t) => new Date(t).toISOString()));
+    // T3 그림이 적혀 있지 않으면(받았음을 못 적고 쿠키를 되돌림) 빠진다
+    const refunded = { since: between, names: [] };
+    assert.deepEqual(deliveredOnly(pics, refunded).map((p) => p.at), [T2, T1].map((t) => new Date(t).toISOString()));
+    assert.equal(wasDelivered(pics[0], refunded), false);
+  });
+
+  it("기록을 못 읽었거나(null) 시작한 때가 없으면 예전처럼 모두 보인다", () => {
+    assert.equal(deliveredOnly(pics, null).length, 3);
+    assert.equal(deliveredOnly(pics, { since: null, names: [] }).length, 3);
+    assert.equal(deliveredOnly(pics, { since: "언젠가", names: [] }).length, 3);
+  });
+
+  it("DB 기록 이름만으로 목록을 만든다 — 폴더를 못 읽어도(배포 502) 참고용 주소까지 붙는다", () => {
+    const pics2 = recordedPictures([`child-${T3}-${H3}.png`, `mom-${T2}-${H2}.png`, `child-${T1}-${H1}.png`, "엉뚱.png"], "child", PREFIX);
+    assert.deepEqual(pics2.map((p) => p.url), [`${PREFIX}child-${T3}-${H3}.png`, `${PREFIX}child-${T1}-${H1}.png`]);
+    assert.equal(pics2[0].ref, `${PREFIX}child-${T3}-${H3}-ref.jpg`);
+  });
+
+  it("기록과 폴더를 합친다 — 같은 그림은 한 번, 새것부터, 최대 장수까지", () => {
+    const a = recordedPictures([`child-${T3}-${H3}.png`, `child-${T1}-${H1}.png`], "child", PREFIX);
+    const merged = mergePictures(a, pics);
+    assert.deepEqual(merged.map((p) => p.at), [T3, T2, T1].map((t) => new Date(t).toISOString()));
+    assert.equal(mergePictures(a, pics, 2).length, 2);
+    assert.deepEqual(mergePictures([], []), []);
+  });
+
+  it("주소가 아니라 파일 이름으로 견준다 — 공개 주소의 앞부분이 바뀌어도 그대로", () => {
+    const moved = { url: `https://other-cdn.example.com/x/child-${T3}-${H3}.png`, ref: "", at: new Date(T3).toISOString() };
+    assert.equal(wasDelivered(moved, { since: between, names: [`child-${T3}-${H3}.png`] }), true);
+    assert.equal(fileNameOf(`${PREFIX}child-${T3}-${H3}.png`), `child-${T3}-${H3}.png`);
   });
 });

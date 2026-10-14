@@ -31,6 +31,7 @@ import {
   type GeneratedImage,
 } from "@/lib/gemini";
 import { bindAiUsageSink, withAiUsage } from "@/lib/ai-usage";
+import { cameraCheckLines, cameraLines } from "@/lib/page-camera";
 import { dbUsageSink } from "@/lib/ai-usage-db";
 import { familyFolderOf, familyUrlPrefix, fetchFamilyRefRetry } from "@/lib/family-ref";
 import {
@@ -145,6 +146,8 @@ async function handlePost(request: Request) {
     heroTiny?: unknown;
     /** styleReference 로 보낸 승인 쪽도 주인공이 작아진 쪽인가 — 작아진 쪽은 이럴 때만 그 그림을 기준으로 받는다. */
     styleReferenceTiny?: unknown;
+    /** 이 쪽의 장소를 이 책에서 몇 번째로 그리는가(0 = 처음) — 둘째부터 카메라를 바꾼다(lib/page-camera placeVisits). 옛 화면은 없다. */
+    placeVisit?: unknown;
     /**
      * 고정 가족 원본 그림 [{ name, ref, memberId }] — 이 쪽에 보이는 고정 인물의 원본을 참고로 함께 붙인다(2026-09-29~).
      * 시트와 같은 주소 규칙(이 회원 폴더의 참고용 JPEG 만, lib/page-refs pickPagePortraits). 옛 책·가족 없는 책은 없다.
@@ -425,6 +428,11 @@ async function handlePost(request: Request) {
    * 그림체를 모르는 옛 책은 그림체를 잡을 것이 이것뿐이라 그대로 붙이고, 구도·크기는 따르지 말라고 적는다.
    */
   const referenceTiny = input.styleReferenceTiny === true;
+  /** 이 장소를 몇 번째로 그리는가 — 0~20 정수만(이상하면 처음처럼) */
+  const placeVisit =
+    typeof input.placeVisit === "number" && Number.isInteger(input.placeVisit) && input.placeVisit >= 0 && input.placeVisit <= 20
+      ? input.placeVisit
+      : 0;
   // 거꾸로도 같다 — 깨어난 뒤의 보통 쪽이 작은 세상 그림을 기준으로 받지 않게.
   const pageStyleReference = knownStyle && heroTiny !== referenceTiny ? null : usedStyleReference;
 
@@ -589,6 +597,8 @@ async function handlePost(request: Request) {
       // 가족 얼굴이 나오는 쪽은 허리 위 구도가 기본, 넷 이상이면 가까이 모인 구도 — 얼굴이 작으면 이목구비가 뭉개진다(lib/page-refs familyFramingLines).
       ...familyFraming,
     ].join("\n"),
+    // 같은 장소를 두 번째 이후로 그리는 쪽 — 앞 쪽과 같은 카메라로 그리지 않게(lib/page-camera, 2026-10-14). 작아진 쪽은 제 카메라가 있다.
+    heroTiny ? "" : cameraLines(placeVisit).join("\n"),
     /*
      * 배경을 채울 때 한국 = 전통이라고 읽지 않게 한다.
      *
@@ -907,6 +917,8 @@ async function handlePost(request: Request) {
         ...scaleCheckLines(scale),
         // 작아진 쪽인데 보통 크기 아이를 보통 마당에 그린 그림도.
         ...(heroTiny && hero ? tinyHeroCheckLines(hero.name) : []),
+        // 같은 장소 둘째 쪽부터 일부러 바꾼 구도 — 장소 표지가 덜 보인다고 떨어뜨리지 않게.
+        ...(heroTiny ? [] : cameraCheckLines(placeVisit)),
       ],
     });
     const check = borderLeft
