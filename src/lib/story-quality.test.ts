@@ -475,6 +475,47 @@ describe("비유·미래 표현으로 장소를 바꾸지 않는다 — 자동�
   });
 });
 
+describe("물건을 산 곳은 지금 있는 곳이 아니다(2026-10-14 my-mv7jelju 6쪽 — 거실 쪽이 시장으로 잡혔다)", () => {
+  const HOME = "장소: 거실 — 크림색 벽과 밝은 나무 마루, 큰 창.";
+  const MARKET = "장소: 재래시장 — 회색 시멘트 바닥, 양옆에 늘어선 과일과 생선 가게 진열대.";
+  const page = (pageNo: number, text: string, place: string) => ({
+    pageNo,
+    text,
+    imagePrompt: `등장인물 3명: 하온, 엄마, 아빠. ${place} 셋이 함께 있다.`,
+    voiceDirection: direction,
+  });
+  const book = (pages: ReturnType<typeof page>[]): ParsedStory => ({
+    title: "시장 나들이",
+    summary: "시장에 다녀온 날.",
+    characters: [{ name: "하온", description: "가족 그림 그대로" }],
+    pages,
+  });
+
+  it("'집으로 돌아와 거실에서 … 시장에서 산 딸기' — 거실 그대로", () => {
+    const r = repairStoryContinuity(
+      book([
+        page(1, "버스에서 내려 재래시장에 도착했어요. 시장에는 빨간 사과가 가득했어요.", MARKET),
+        page(2, "해가 지자 세 식구는 집으로 돌아왔어요. 거실에 둘러앉아 시장에서 산 딸기를 나눠 먹었어요.", HOME),
+      ]),
+    );
+    assert.ok(r.pages[1].imagePrompt.includes(HOME), r.pages[1].imagePrompt);
+    assert.ok(!r.pages[1].imagePrompt.includes("재래시장"), r.pages[1].imagePrompt);
+  });
+
+  it("산 것·사 온 것·받은 것 모두 · 그래도 '시장에서 산책'·'시장에 도착'은 지금 있는 곳", () => {
+    for (const text of [
+      "집에 돌아왔어요. 거실에서 가게에서 사 온 빵을 먹었어요.",
+      "집으로 돌아왔어요. 거실에서 마트에서 받은 풍선을 흔들었어요.",
+    ]) {
+      const r = repairStoryContinuity(book([page(1, "시장에 도착했어요.", MARKET), page(2, text, HOME)]));
+      assert.ok(r.pages[1].imagePrompt.includes(HOME), `${text} → ${r.pages[1].imagePrompt}`);
+    }
+    // 정말 그곳에 있는 말은 예전처럼 장소가 된다
+    const walk = repairStoryContinuity(book([page(1, "거실에서 놀았어요.", HOME), page(2, "엄마랑 공원에 갔어요. 공원에서 산책했어요.", HOME)]));
+    assert.match(walk.pages[1].imagePrompt, /장소: (?:공원|놀이터)/, walk.pages[1].imagePrompt);
+  });
+});
+
 describe("키즈카페는 카페가 아니라 실내 놀이 공간이다(2026-10-13 my-mv6elzcs — 커피집에 구름다리, 미끄럼틀 쪽은 바깥 놀이터)", () => {
   // 사장님이 만든 책의 본문 그대로
   const TEXTS = [

@@ -119,7 +119,12 @@ function inferLocationFromText(text: string, forText = false): LocationHint | nu
   // 점수가 높은 곳이 '지금 있는 곳'. 같으면 뒤에 나온 것을 쓴다(가다가 도착한 곳).
   // 음수는 '아직 안 간 곳'이나 '물건을 보낼 곳'이라 있는 곳이 아니다 — 고르지 않는다.
   const best = hints.filter((h) => h.score >= 0).sort((a, b) => b.score - a.score || b.index - a.index)[0] ?? null;
-  return best ? inVenue(best, hints) : null;
+  /*
+   * '어느 건물 안인가'의 단서(inVenue)로는 -1(소속 — '어린이집 친구들'의 어린이집)까지만 쓴다. -2 아래는 그 건물이 지금
+   * 있는 곳이 아니라는 말이다('시장에서 산 딸기', '마트에는', '가는 길', '가면') — 그걸 건물로 쓰면 "거실에 둘러앉아 시장에서
+   * 산 딸기"의 거실이 '시장 안의 방'으로 읽혀 시장이 된다(2026-10-14 my-mv7jelju 6쪽).
+   */
+  return best ? inVenue(best, hints.filter((h) => h.score > -2)) : null;
 }
 
 /** 글에 나오는 장소 낱말을 전부 찾는다(점수 포함). 고르는 일은 부르는 쪽이 한다. */
@@ -1179,6 +1184,12 @@ function locusScore(after: string): number {
   // "집으로 가는 길" — 집이 아니라 길 위에 있다.
   if (/^\s*(?:가는|오는|가던|오던)\s*길/.test(after)) return -3;
   if (/^(?:에는|에도)/.test(after)) return -2; // 그곳을 '설명'하는 말
+  /*
+   * "시장에서 산 딸기"·"가게에서 사 온 빵" — 물건을 산(가져온·받은) 곳이지 지금 서 있는 곳이 아니다.
+   * 실제 사고(2026-10-14 my-mv7jelju 6쪽) — "집으로 돌아왔어요. 거실에 둘러앉아 시장에서 산 딸기를 나눠 먹었어요"가
+   * 뒤에 나온 '시장'으로 잡혀 거실 쪽이 시장 그림이 될 뻔했다. '산책'의 '산'은 아니다(낱말 끝만 본다).
+   */
+  if (/^\s*에서\s*(?:산|사\s*온|가져온|가지고\s*온|받은|만든|따\s*온|딴|주운|캔|본|배운|찍은)(?=\s|[.,!?…]|$)/.test(after)) return -2;
   if (/^(?:에\s*도착|에\s*들어|으로\s*가|로\s*가|에\s*갔|으로\s*나|에서\s*나)/.test(after)) return 2;
   if (/^(?:에서|에)/.test(after)) return 1; // 그 자리에서 무언가 한다
   return 0;
