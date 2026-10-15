@@ -9806,7 +9806,7 @@
     "text": "바람이 세게 불수록, 나그네는 외투를 더 꽉 여몄어요."
   },
   "classic/northwind/seg-cast-p4-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "\"어이쿠, 바람이 정말 세게 부는걸!\""
@@ -9818,7 +9818,7 @@
     "text": "옷깃을 세우고 단추를 하나 더 잠갔지요.\n북풍은 볼이 홀쭉해지도록 불다가, 그만 지치고 말았어요."
   },
   "classic/northwind/say-p4-traveller.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "어이쿠, 바람이 정말 세게 부는걸!"
@@ -9836,9 +9836,9 @@
     "text": "걷던 나그네의 이마에 땀이 송골송골 맺혔어요."
   },
   "classic/northwind/seg-cast-p6-1.mp3": {
-    "voice": "tc-hosun",
-    "emotion": "tonedown",
-    "intensity": 0.35,
+    "voice": "tc-gunseok",
+    "emotion": "sad",
+    "intensity": 0.4,
     "text": "\"아이고, 더워라.\""
   },
   "classic/northwind/seg-tc-minjung-p6-2.mp3": {
@@ -9848,9 +9848,9 @@
     "text": "나그네는 단추를 하나씩 풀더니, 외투를 스르르 벗었지요.\n그러고는 나무 그늘에 앉아 시원한 바람을 기다렸답니다."
   },
   "classic/northwind/say-p6-traveller.mp3": {
-    "voice": "tc-hosun",
-    "emotion": "tonedown",
-    "intensity": 0.35,
+    "voice": "tc-gunseok",
+    "emotion": "sad",
+    "intensity": 0.4,
     "text": "아이고, 더워라."
   },
   "classic/northwind/seg-tc-minjung-p7-0.mp3": {
@@ -10735,7 +10735,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "걸리버가 입을 벌려,\n배가 고프다고 알렸어요.\n그러자 작은 사람들이,\n빵이며 고기를 수레에 실어 날라,\n입속에 가득가득 넣어 주었지요.\n걸리버는 허겁지겁 삼켰답니다."
+    "text": "걸리버가 입을 벌려,\n배가 고프다고 말했더니,\n작은 사람들은 빵이며 고기를 수레에 실어,\n입속에 가득 넣어 주었어요.\n걸리버는 허겁지겁 삼켰답니다."
   },
   "classic/gulliver1/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
@@ -10814,7 +10814,7 @@
     "voice": "tc-wangkwon",
     "emotion": "happy",
     "intensity": 0.45,
-    "text": "\"무엇이든 상으로 주겠노라. 소원을 말해 보아라.\""
+    "text": "\"걸리버, 무엇이든지 내게 이야기해 주시오. 어떤 소원이라도 다 들어주겠소.\""
   },
   "classic/gulliver1/seg-tc-minjung-p10-2.mp3": {
     "voice": "tc-minjung",
@@ -10838,7 +10838,7 @@
     "voice": "tc-wangkwon",
     "emotion": "happy",
     "intensity": 0.45,
-    "text": "무엇이든 상으로 주겠노라. 소원을 말해 보아라."
+    "text": "걸리버, 무엇이든지 내게 이야기해 주시오. 어떤 소원이라도 다 들어주겠소."
   },
   "classic/gulliver1/say-p10-gulliver.mp3": {
     "voice": "tc-kangil",
@@ -10850,7 +10850,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그러던 어느 날 밤, 왕궁에 불이 났어요.\n물통은 너무 작고 불길은 너무 빨랐지요.\n급한 마음에 걸리버는,\n쉬이— 오줌을 누어 불을 껐답니다.\n작은 사람들은 코를 막으면서도,\n고맙다며 모자를 흔들었어요."
+    "text": "그러던 어느 날 밤, 왕궁에 불이 났어요.\n물통은 너무 작고, 불길은 너무 빨리 번져 버렸어요.\n급한 마음에 걸리버는,\n오줌을 누어 불을 껐답니다.\n작은 사람들은 코를 막으면서도,\n고맙다며 모자를 흔들었어요."
   },
   "classic/gulliver1/seg-tc-minjung-p12-0.mp3": {
     "voice": "tc-minjung",
@@ -10880,7 +10880,7 @@
     "voice": "tc-kangil",
     "emotion": "toneup",
     "intensity": 0.3,
-    "text": "\"그런데 말이야, 그다음에 닿은 나라에서는,\n내가 저 작은 사람들처럼 조그마해지고 말았단다.\n그 이야기는 다음에!\""
+    "text": "\"그런데 말이야, 그다음에 닿은 나라에서는,\n내가 저 작은 사람들처럼 조그마해지고 말았단다.\n그 이야기는 다음에 계속해서 들려줄게. 안녕!\""
   },
   "classic/gulliver1/say-p14-gulliver.mp3": {
     "voice": "tc-kangil",
