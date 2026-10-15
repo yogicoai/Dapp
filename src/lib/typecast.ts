@@ -136,6 +136,11 @@ export async function synthesize(input: {
    * 실제 길이를 바꿨다(1.3에서 -19%). 배역별 연출용: 늑대는 말이 빨라야 산다.
    */
   tempo?: number;
+  /**
+   * 목소리 높이(반음, -12~12 · 0 = 그대로). API 의 output.audio_pitch 로 간다.
+   * 미리 굽는 제공 동화에서 한 줄만 더 굵게(낮게) 읽힐 때 쓴다 — 빨간 모자 10쪽 늑대(2026-10-15).
+   */
+  pitch?: number;
 }): Promise<{ audio: ArrayBuffer; contentType: string }> {
   // 과금 자동 차단 — 안전선(19만 자)에 닿으면 합성하지 않는다(무료 음성으로 폴백).
   const used = await usedCreditsThisMonth();
@@ -154,6 +159,7 @@ export async function synthesize(input: {
     output: {
       audio_format: input.format ?? "mp3",
       ...(input.tempo && input.tempo !== 1 ? { audio_tempo: input.tempo } : {}),
+      ...(input.pitch ? { audio_pitch: input.pitch } : {}),
     },
   };
   if (input.emotion && input.emotion !== "normal") {

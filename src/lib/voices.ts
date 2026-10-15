@@ -250,6 +250,10 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-lala", label: "라라", emoji: "🐈", voiceId: "tc_61f084d860b9b6b40388f868", model: "ssfm-v30", desc: "여자 · 젊은 어른 목소리", sample: "나쁜 도둑들이야. 우리가 쫓아내자!" },
   // 신데렐라 · 새어머니 역 (2026-10-14 사장님 채팅 "새어머님 조여사로 변경", Typecast 이름 Lady Cho — 표시는 여자 중년).
   { kind: "tc", id: "tc-ladycho", label: "조 여사", emoji: "👒", voiceId: "tc_602bd483b1837361b08c1ab6", model: "ssfm-v30", desc: "여자 · 중년 목소리", sample: "흥, 넌 할 일이 산더미잖니!" },
+  // 잭과 콩나무 · 거인 아내 역 (2026-10-15 사장님 채팅 "거인아내 국희로 변경할게", Typecast 이름 Kukhee — 표시는 여자 중년).
+  { kind: "tc", id: "tc-kukhee", label: "국희", emoji: "🍲", voiceId: "tc_5c789c31dabcfa0008b0a38c", model: "ssfm-v30", desc: "여자 · 중년 목소리", sample: "얘야, 여기는 거인의 성이란다. 우리 남편이 오면 큰일 나!" },
+  // 헨젤과 그레텔 · 마녀 역 (2026-10-15 사장님 채팅 "마녀는 마녀 사브리나로 변경해줘", Typecast 이름 Sabrina the Witch — 표시는 여자 중년).
+  { kind: "tc", id: "tc-sabrina", label: "마녀 사브리나", emoji: "🧙", voiceId: "tc_634f8ec12e351d8a3d548e61", model: "ssfm-v30", desc: "여자 · 중년 마녀 목소리", sample: "배가 고팠구나. 어서 들어오렴. 따뜻한 수프가 있단다." },
 ];
 
 /**

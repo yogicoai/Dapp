@@ -56,6 +56,11 @@ export type CastLine = {
    * 그래서 줄 단위로 준다.
    */
   intensity?: number;
+  /**
+   * 이 줄만의 목소리 높이(반음, -6~6 · 0 = 그대로). Typecast output.audio_pitch 로 간다.
+   * (2026-10-15 사장님: 빨간 모자 10쪽 늑대 "그야 너를 꿀꺽 삼키려고 그렇지!"를 더 굵은 목소리로)
+   */
+  pitch?: number;
 };
 
 export type PlannedSegment = {
@@ -72,6 +77,8 @@ export type PlannedSegment = {
   tempo?: number;
   /** 이 줄만의 연기 세기(대사집의 intensity). 없으면 배역 세기를 따른다. */
   intensity?: number;
+  /** 이 줄만의 목소리 높이(대사집의 pitch, 반음). 없으면 그대로. */
+  pitch?: number;
 };
 
 /** 대사집과 견주기 위해 따옴표·공백·문장부호를 털어낸다. */
@@ -117,7 +124,7 @@ export function planPageVoices(input: {
     }
     const told = script.get(normalize(segment.text));
     if (told) {
-      planned.push({ who: told.who, text: segment.text, dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo, intensity: told.intensity });
+      planned.push({ who: told.who, text: segment.text, dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo, intensity: told.intensity, pitch: told.pitch });
       return;
     }
     const name = guessed[i];
@@ -152,7 +159,7 @@ function splitByScript(text: string, script: Script, fallback: string): PlannedS
     hit = true;
     const start = match.index ?? 0;
     if (start > at) push({ who: fallback, text: text.slice(at, start), dialogue: true });
-    push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo, intensity: told.intensity });
+    push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo, intensity: told.intensity, pitch: told.pitch });
     at = start + match[0].length;
   }
   if (!hit) return [whole];
@@ -210,7 +217,7 @@ function rescueShortLines(text: string, script: Script): PlannedSegment[] {
     if (!told) continue;
     const start = match.index ?? 0;
     if (start > at) out.push({ who: NARRATION, text: text.slice(at, start), dialogue: false });
-    out.push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo, intensity: told.intensity });
+    out.push({ who: told.who, text: match[0], dialogue: true, say: told.say, feel: told.feel, tempo: told.tempo, intensity: told.intensity, pitch: told.pitch });
     at = start + match[0].length;
   }
   if (out.length === 0) return [{ who: NARRATION, text, dialogue: false }];

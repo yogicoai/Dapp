@@ -3485,7 +3485,7 @@
     "text": "늑대는 목소리를 가늘게 꾸몄지요."
   },
   "classic/threepigs/seg-cast-p9-3.mp3": {
-    "voice": "tc-shotgun",
+    "voice": "tc-hades",
     "emotion": "whisper",
     "intensity": 0.4,
     "text": "\"…엄마야.\"",
@@ -3759,11 +3759,10 @@
     "tempo": 1.15
   },
   "classic/threepigs/say-p9-wolf.mp3": {
-    "voice": "tc-shotgun",
+    "voice": "tc-hades",
     "emotion": "whisper",
     "intensity": 0.4,
-    "text": "…엄마야.",
-    "tempo": 1.15
+    "text": "…엄마야."
   },
   "classic/threepigs/say-p9-pig1.mp3": {
     "voice": "tc-dukgu",
@@ -4195,7 +4194,7 @@
     "text": "숲길을 걷던 빨간 모자 앞에,\n커다란 늑대가 스윽 나타났어요."
   },
   "classic/redridinghood/seg-cast-p4-1.mp3": {
-    "voice": "tc-hades",
+    "voice": "tc-shotgun",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "\"안녕, 꼬마야. 어디 가는 길이니?\""
@@ -4213,7 +4212,7 @@
     "text": "늑대의 눈이 반짝 빛났지요."
   },
   "classic/redridinghood/say-p4-wolf.mp3": {
-    "voice": "tc-hades",
+    "voice": "tc-shotgun",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "안녕, 꼬마야. 어디 가는 길이니?"
@@ -4225,7 +4224,7 @@
     "text": "숲 건너 할머니 댁에 가요."
   },
   "classic/redridinghood/seg-cast-p5-0.mp3": {
-    "voice": "tc-hades",
+    "voice": "tc-shotgun",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "\"저기 예쁜 꽃이 많던데,\n할머니께 꽃다발도 만들어 가면 어떠니?\""
@@ -4249,7 +4248,7 @@
     "text": "\"조금만… 조금만 꺾어 갈게요!\""
   },
   "classic/redridinghood/say-p5-wolf.mp3": {
-    "voice": "tc-hades",
+    "voice": "tc-shotgun",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "저기 예쁜 꽃이 많던데,\n할머니께 꽃다발도 만들어 가면 어떠니?"
@@ -4375,10 +4374,11 @@
     "text": "\"그런데… 입은 왜 이렇게 커요?\""
   },
   "classic/redridinghood/seg-cast-p10-3.mp3": {
-    "voice": "tc-hades",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"그야 너를 꿀꺽 삼키려고 그렇지!\""
+    "voice": "tc-shotgun",
+    "emotion": "angry",
+    "intensity": 0.5,
+    "text": "\"그야 너를 꿀꺽 삼키려고 그렇지!\"",
+    "tempo": 1.2
   },
   "classic/redridinghood/seg-tc-jiyoung-p10-4.mp3": {
     "voice": "tc-jiyoung",
@@ -4387,10 +4387,11 @@
     "text": "늑대가 벌떡 일어나, 빨간 모자도 꿀꺽 삼켜 버렸어요!"
   },
   "classic/redridinghood/say-p10-wolf.mp3": {
-    "voice": "tc-hades",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "그야 너를 꿀꺽 삼키려고 그렇지!"
+    "voice": "tc-shotgun",
+    "emotion": "angry",
+    "intensity": 0.5,
+    "text": "그야 너를 꿀꺽 삼키려고 그렇지!",
+    "tempo": 1.2
   },
   "classic/redridinghood/say-p10-girl.mp3": {
     "voice": "tc-arin",
@@ -4870,7 +4871,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "쨍쨍한 여름날, 개미들은 부지런히 일했어요.\n영차, 영차. 줄지어 낟알을 나르고,\n땀을 뻘뻘 흘리며 곳간을 채웠지요.\n제일 작은 꼬마 개미도 제 몫을 날랐답니다."
+    "text": "쨍쨍한 여름날, 개미들은 부지런히 일했어요.\n영차, 영차. 줄지어 낟알을 나르고,\n땀을 뻘뻘 흘리며 곳간을 채웠지요.\n제일 작은 꼬마 개미도 제 몫을 다했답니다."
   },
   "classic/antgrasshopper/seg-tc-minjung-p2-0.mp3": {
     "voice": "tc-minjung",
@@ -4954,13 +4955,15 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "베짱이는 눈길을 헤치고 개미집을 찾아갔어요.\n똑, 똑, 똑."
+    "text": "베짱이는 눈길을 헤치고 개미집을 찾아갔어요."
   },
   "classic/antgrasshopper/seg-cast-p6-1.mp3": {
     "voice": "tc-guri",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?\""
+    "intensity": 0.5,
+    "text": "\"개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?\"",
+    "tempo": 0.85,
+    "pitch": -2
   },
   "classic/antgrasshopper/seg-tc-minjung-p6-2.mp3": {
     "voice": "tc-minjung",
@@ -4971,8 +4974,10 @@
   "classic/antgrasshopper/say-p6-grasshopper.mp3": {
     "voice": "tc-guri",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?"
+    "intensity": 0.5,
+    "text": "개미야… 너무 춥고 배가 고파.\n하룻밤만 재워 줄 수 있니?",
+    "tempo": 0.85,
+    "pitch": -2
   },
   "classic/antgrasshopper/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
@@ -4982,21 +4987,23 @@
   },
   "classic/antgrasshopper/seg-cast-p7-1.mp3": {
     "voice": "tc-siwoo",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!\""
+    "emotion": "sad",
+    "intensity": 0.35,
+    "text": "\"어서 들어와, 베짱이야. 몸이 꽁꽁 얼었구나…\"",
+    "tempo": 0.95
   },
   "classic/antgrasshopper/seg-tc-minjung-p7-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "개미들은 따뜻한 수프를 끓여 주고,\n난롯가 제일 좋은 자리를 내주었지요.\n난롯불이 탁탁 소리를 냈답니다."
+    "text": "개미들은 따뜻한 수프를 끓여 주고,\n난롯가 제일 좋은 자리를 내주었어요."
   },
   "classic/antgrasshopper/say-p7-ant.mp3": {
     "voice": "tc-siwoo",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "어서 들어와, 베짱이야! 몸이 꽁꽁 얼었네!"
+    "emotion": "sad",
+    "intensity": 0.35,
+    "text": "어서 들어와, 베짱이야. 몸이 꽁꽁 얼었구나…",
+    "tempo": 0.95
   },
   "classic/antgrasshopper/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
@@ -5009,12 +5016,6 @@
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"너희가 일할 때 나는 놀기만 했는걸…\n이 수프를 먹기가 너무 미안해.\""
-  },
-  "classic/antgrasshopper/seg-tc-minjung-p8-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "수프에서 김이 모락모락 올라왔지요.\n개미들은 가만히 기다려 주었어요."
   },
   "classic/antgrasshopper/say-p8-grasshopper.mp3": {
     "voice": "tc-guri",
@@ -5032,19 +5033,19 @@
     "voice": "tc-hamchu",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"무슨 소리야! 여름에 낟알을 나를 때,\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?\""
+    "text": "\"무슨 소리야! 여름에 낟알을 나를 때,\n네 노래를 들으면 힘이 절로 났는걸.\n이번엔 우리를 위해 연주해 줄래?\""
   },
   "classic/antgrasshopper/seg-tc-minjung-p9-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "베짱이가 천천히 고개를 들었지요."
+    "text": "베짱이가 천천히 고개를 들었어요."
   },
   "classic/antgrasshopper/say-p9-littleant.mp3": {
     "voice": "tc-hamchu",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "무슨 소리야! 여름에 낟알을 나를 때,\n네 노래 덕분에 힘이 났는걸?\n우리를 위해 연주해 줄래?"
+    "text": "무슨 소리야! 여름에 낟알을 나를 때,\n네 노래를 들으면 힘이 절로 났는걸.\n이번엔 우리를 위해 연주해 줄래?"
   },
   "classic/antgrasshopper/seg-tc-minjung-p10-0.mp3": {
     "voice": "tc-minjung",
@@ -5062,37 +5063,37 @@
     "voice": "tc-guri",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘.\""
+    "text": "\"올해는 나도 너희와 같이 열심히 일을 할 거야. 나에게도 일하는 법을 가르쳐 줄래?\""
   },
   "classic/antgrasshopper/seg-tc-minjung-p11-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "개미들과 베짱이는 함께 낟알을 나르고,\n쉬는 시간이면 다 같이 노래를 불렀지요."
+    "text": "개미들과 베짱이는 함께 낟알을 나르고,\n쉬는 시간이면 다 같이 노래를 부르며 즐겁게 일했답니다."
   },
   "classic/antgrasshopper/say-p11-grasshopper.mp3": {
     "voice": "tc-guri",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "올해는 나도 같이 모을래! 일하는 법을 가르쳐 줘."
+    "text": "올해는 나도 너희와 같이 열심히 일을 할 거야. 나에게도 일하는 법을 가르쳐 줄래?"
   },
   "classic/antgrasshopper/seg-tc-minjung-p12-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "다음 겨울, 베짱이의 작은 곳간에도 낟알이 쌓였어요.\n그리고 개미집에서는 밤마다,\n따뜻한 수프 냄새와 즐거운 바이올린 소리가 흘러나왔답니다."
+    "text": "다음 겨울, 베짱이의 곳간에도 낟알이 쌓였어요.\n그 겨울 개미와 베짱이의 집에서는,\n따뜻한 수프 냄새와 즐거운 바이올린 소리가 흘러나왔답니다."
   },
   "classic/twomice/seg-cast-p1-1.mp3": {
     "voice": "tc-dukgu",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"사촌아, 놀러 와! 맛있는 저녁을 차려 줄게.\""
+    "text": "\"안녕, 잘 지내지?\n혹시 시간이 된다면 우리 집에 놀러 올래? 맛있는 식사를 대접해 줄게.\""
   },
   "classic/twomice/say-p1-country.mp3": {
     "voice": "tc-dukgu",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "사촌아, 놀러 와! 맛있는 저녁을 차려 줄게."
+    "text": "안녕, 잘 지내지?\n혹시 시간이 된다면 우리 집에 놀러 올래? 맛있는 식사를 대접해 줄게."
   },
   "classic/twomice/seg-cast-p2-1.mp3": {
     "voice": "tc-dukgu",
@@ -5108,15 +5109,15 @@
   },
   "classic/twomice/seg-cast-p3-1.mp3": {
     "voice": "tc-siwoo",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 맛있는 게 가득한데!\n나랑 같이 가 보자!\""
+    "emotion": "happy",
+    "intensity": 0.35,
+    "text": "\"넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 맛있는 게 가득한데!\n나랑 같이 도시에 가 보는 건 어때?\""
   },
   "classic/twomice/say-p3-city.mp3": {
     "voice": "tc-siwoo",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 맛있는 게 가득한데!\n나랑 같이 가 보자!"
+    "emotion": "happy",
+    "intensity": 0.35,
+    "text": "넌 매일 이런 심심한 음식만 먹니?\n도시에 가면 케이크에 치즈에, 맛있는 게 가득한데!\n나랑 같이 도시에 가 보는 건 어때?"
   },
   "classic/twomice/seg-cast-p4-1.mp3": {
     "voice": "tc-dukgu",
@@ -5196,13 +5197,13 @@
     "voice": "tc-dukgu",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "\"사촌아, 초대해 줘서 정말 고마워.\n그런데 나는 마음 편히 먹는 보리죽이 더 좋아.\n우리 집 별빛이 그리워졌어.\""
+    "text": "\"사촌아, 초대해 줘서 고마워.\n그런데 나는 화려한 음식보단 마음 편히 먹을 수 있는 보리죽이 더 좋은 것 같아.\n우리 집 별빛이 그리워졌어.\""
   },
   "classic/twomice/say-p10-country.mp3": {
     "voice": "tc-dukgu",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "사촌아, 초대해 줘서 정말 고마워.\n그런데 나는 마음 편히 먹는 보리죽이 더 좋아.\n우리 집 별빛이 그리워졌어."
+    "text": "사촌아, 초대해 줘서 고마워.\n그런데 나는 화려한 음식보단 마음 편히 먹을 수 있는 보리죽이 더 좋은 것 같아.\n우리 집 별빛이 그리워졌어."
   },
   "classic/twomice/seg-cast-p11-1.mp3": {
     "voice": "tc-dukgu",
@@ -5244,7 +5245,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "보리밭 옆 아늑한 굴속에 시골 쥐가 살았어요.\n어느 날 도시에 사는 사촌에게 편지를 썼지요."
+    "text": "보리밭 옆 아늑한 굴속에 시골 쥐가 살았어요.\n어느 날 도시에 사는 사촌에게 편지를 썼어요."
   },
   "classic/twomice/seg-tc-minjung-p1-2.mp3": {
     "voice": "tc-minjung",
@@ -5256,7 +5257,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "도시 쥐가 시골에 도착했어요.\n시골 쥐는 정성껏 밥상을 차렸지요.\n고소한 도토리, 따끈한 보리죽, 달콤한 산딸기.\n숟가락도 제일 예쁜 것으로 놓았지요."
+    "text": "편지를 받은 도시 쥐가 시골 쥐네 집에 놀러 왔어요.\n도시 쥐를 반갑게 맞이한 시골 쥐는 사촌을 위해 정성껏 밥상을 차렸어요.\n고소한 도토리, 따끈한 보리죽, 달콤한 산딸기.\n숟가락도 제일 예쁜 것으로 놓았지요."
   },
   "classic/twomice/seg-tc-minjung-p3-0.mp3": {
     "voice": "tc-minjung",
@@ -5268,25 +5269,19 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "둘은 함께 도시로 갔어요.\n마차 바퀴 소리가 덜컹덜컹 울렸지요."
+    "text": "둘은 도시 쥐가 사는 도시에 도착했어요.\n도시 쥐가 사는 집은 반짝반짝 불빛이 가득한 커다란 집이었어요."
   },
   "classic/twomice/seg-tc-minjung-p4-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "반짝반짝 불빛이 가득한 커다란 집!\n시골 쥐의 눈이 휘둥그레졌지요."
+    "text": "시골 쥐의 눈이 휘둥그레졌지요."
   },
   "classic/twomice/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "식탁 위에는 정말 잔칫상이 차려져 있었어요.\n폭신한 케이크, 노란 치즈, 보랏빛 포도!"
-  },
-  "classic/twomice/seg-tc-minjung-p5-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "냄새만으로도 배가 부를 것 같았어요.\n시골 쥐는 침이 꼴깍 넘어갔답니다."
+    "text": "식탁 위에는 도시 쥐 말대로 정말 잔칫상이 차려져 있었어요.\n폭신한 케이크, 노란 치즈, 보랏빛 포도!\n냄새만 맡아도 배가 부를 것 같았어요.\n시골 쥐는 침을 꼴깍 삼켰어요.\n도시 쥐가 어깨를 으쓱하며 말했어요."
   },
   "classic/twomice/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
@@ -5316,7 +5311,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "도시 쥐는 아무렇지 않게 수염을 다듬었답니다."
+    "text": "도시 쥐는 대수롭지 않다는 듯 하품을 쩍 했어요."
   },
   "classic/twomice/seg-tc-minjung-p9-0.mp3": {
     "voice": "tc-minjung",
@@ -5403,7 +5398,7 @@
     "text": "산 아래 마을에 양을 치는 소년이 살았어요.\n날마다 넓은 풀밭에서 양들을 돌보았지요.\n구름이 흘러가고, 양들이 풀을 뜯고…\n하루하루가 너무나 심심했답니다."
   },
   "classic/shepherdboy/say-p1-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
     "text": "아아, 심심해…"
@@ -5415,7 +5410,7 @@
     "text": "어느 날 소년의 머릿속에 장난이 떠올랐어요."
   },
   "classic/shepherdboy/seg-cast-p2-1.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.3,
     "text": "'내가 늑대가 나타났다고 하면 어떻게 될까?'"
@@ -5427,13 +5422,13 @@
     "text": "생각만 해도 웃음이 새어 나왔지요.\n소년은 씩 웃으며 크게 숨을 들이마셨어요."
   },
   "classic/shepherdboy/say-p2-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.3,
     "text": "내가 늑대가 나타났다고 하면 어떻게 될까?"
   },
   "classic/shepherdboy/seg-cast-p3-0.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"늑대다! 늑대가 나타났어요!\""
@@ -5445,7 +5440,7 @@
     "text": "마을 사람들이 몽둥이를 들고, 헐레벌떡 달려왔어요.\n맨 앞에는 이장 아저씨가 있었지요.\n하지만 풀밭에는, 양들만 한가로이 풀을 뜯고 있었답니다."
   },
   "classic/shepherdboy/say-p3-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "늑대다! 늑대가 나타났어요!"
@@ -5457,10 +5452,10 @@
     "text": "소년은 배를 잡고 깔깔 웃었어요."
   },
   "classic/shepherdboy/seg-cast-p4-1.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"속았죠? 그냥 장난이었어요!\""
+    "text": "\"속았죠? 장난이었어요!\""
   },
   "classic/shepherdboy/seg-tc-minjung-p4-2.mp3": {
     "voice": "tc-minjung",
@@ -5472,7 +5467,7 @@
     "voice": "tc-gunseok",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "\"장난이라니! 우리는 일하다 말고 달려왔단 말이다.\""
+    "text": "\"장난이라고? 우리는 늑대가 온 줄 알고 일하다가 달려왔잖니!\""
   },
   "classic/shepherdboy/seg-tc-minjung-p4-4.mp3": {
     "voice": "tc-minjung",
@@ -5481,16 +5476,16 @@
     "text": "사람들은 투덜거리며 마을로 돌아갔답니다."
   },
   "classic/shepherdboy/say-p4-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "속았죠? 그냥 장난이었어요!"
+    "text": "속았죠? 장난이었어요!"
   },
   "classic/shepherdboy/say-p4-villager.mp3": {
     "voice": "tc-gunseok",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "장난이라니! 우리는 일하다 말고 달려왔단 말이다."
+    "text": "장난이라고? 우리는 늑대가 온 줄 알고 일하다가 달려왔잖니!"
   },
   "classic/shepherdboy/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
@@ -5499,10 +5494,10 @@
     "text": "며칠 뒤, 소년은 또 심심해졌어요."
   },
   "classic/shepherdboy/seg-cast-p5-1.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"늑대다! 이번엔 진짜예요!\""
+    "text": "\"늑대다! 진짜 늑대가 나타났어요! 도와주세요!\n늑대가 나타났어요, 이번엔 진짜예요!\""
   },
   "classic/shepherdboy/seg-tc-minjung-p5-2.mp3": {
     "voice": "tc-minjung",
@@ -5514,7 +5509,7 @@
     "voice": "tc-gunseok",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "\"두 번이나 속이다니! 다시는 안 믿을 테다!\""
+    "text": "\"이 녀석, 두 번이나 우릴 속이다니! 다시는 네 말을 믿지 않을 테다!\""
   },
   "classic/shepherdboy/seg-tc-minjung-p5-4.mp3": {
     "voice": "tc-minjung",
@@ -5523,16 +5518,16 @@
     "text": "소년은 아무렇지도 않게 생각했답니다."
   },
   "classic/shepherdboy/say-p5-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "늑대다! 이번엔 진짜예요!"
+    "text": "늑대다! 진짜 늑대가 나타났어요! 도와주세요!\n늑대가 나타났어요, 이번엔 진짜예요!"
   },
   "classic/shepherdboy/say-p5-villager.mp3": {
     "voice": "tc-gunseok",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "두 번이나 속이다니! 다시는 안 믿을 테다!"
+    "text": "이 녀석, 두 번이나 우릴 속이다니! 다시는 네 말을 믿지 않을 테다!"
   },
   "classic/shepherdboy/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
@@ -5541,37 +5536,31 @@
     "text": "그런데 며칠 뒤, 풀숲이 스스슥 흔들렸어요.\n번쩍이는 눈, 뾰족한 이빨 — 진짜 늑대였어요!\n소년은 온몸이 얼어붙었지요.\n지팡이를 쥔 손이 덜덜 떨렸답니다."
   },
   "classic/shepherdboy/say-p6-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "sad",
     "intensity": 0.3,
     "text": "지, 진짜 늑대다…"
   },
   "classic/shepherdboy/seg-cast-p7-0.mp3": {
-    "voice": "tc-toby",
-    "emotion": "angry",
-    "intensity": 0.4,
-    "text": "\"늑대다! 이번엔 진짜 늑대예요!\""
-  },
-  "classic/shepherdboy/seg-tc-minjung-p7-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "소년은 목이 터져라 외치고 또 외쳤어요.\n하지만 마을 쪽에서는 아무도 오지 않았지요.\n바람 소리만 휭 하고 지나갔답니다."
+    "voice": "tc-siwoo",
+    "emotion": "toneup",
+    "intensity": 0.55,
+    "text": "\"늑대다!\""
   },
   "classic/shepherdboy/say-p7-boy.mp3": {
-    "voice": "tc-toby",
-    "emotion": "angry",
-    "intensity": 0.4,
+    "voice": "tc-siwoo",
+    "emotion": "toneup",
+    "intensity": 0.6,
     "text": "늑대다! 이번엔 진짜 늑대예요!"
   },
   "classic/shepherdboy/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "늑대가 양 떼 한가운데로 뛰어들었어요.\n양들은 뿔뿔이 흩어져 달아나 버렸지요.\n소년은 두 팔을 벌려 막아 보았지만,\n늑대는 양들을 쫓아 언덕 너머로 사라졌답니다."
+    "text": "늑대가 양 떼 한가운데로 뛰어들어 양 떼를 쫓아갔어요.\n소년은 두 팔을 벌려 막아 보려 했지만,\n늑대는 양들을 쫓아 언덕 너머로 사라졌답니다."
   },
   "classic/shepherdboy/say-p8-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "안 돼! 내 양들!"
@@ -5583,34 +5572,28 @@
     "text": "해가 지고 겨우 양들을 모아 보니,\n두 마리가 보이지 않았어요.\n소년은 텅 빈 풀밭에 주저앉아 엉엉 울었지요."
   },
   "classic/shepherdboy/seg-cast-p9-1.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "'내가 장난만 치지 않았어도…'"
-  },
-  "classic/shepherdboy/seg-tc-minjung-p9-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "노을이 풀밭을 붉게 물들였답니다."
+    "text": "'내가 장난만 치지 않았어도… 양들은 무사했을 텐데…'"
   },
   "classic/shepherdboy/say-p9-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "내가 장난만 치지 않았어도…"
+    "text": "내가 장난만 치지 않았어도… 양들은 무사했을 텐데…"
   },
   "classic/shepherdboy/seg-tc-minjung-p10-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "이튿날, 소년은 마을로 내려가 어른들 앞에 섰어요."
+    "text": "날이 밝자, 소년은 마을로 내려가 어른들 앞에 섰어요."
   },
   "classic/shepherdboy/seg-cast-p10-1.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "\"제가 거짓말을 했어요. 정말 잘못했어요.\""
+    "text": "\"정말 죄송합니다. 제가 거짓말을 해서 양들을 잃었어요.\""
   },
   "classic/shepherdboy/seg-tc-minjung-p10-2.mp3": {
     "voice": "tc-minjung",
@@ -5622,19 +5605,19 @@
     "voice": "tc-gunseok",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "\"잘못했다고 먼저 말하러 온 건, 참 용감한 일이란다.\""
+    "text": "\"그래, 잘못을 솔직하게 말하는 건 아무나 못 하는 용감한 일이란다.\""
   },
   "classic/shepherdboy/say-p10-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "제가 거짓말을 했어요. 정말 잘못했어요."
+    "text": "정말 죄송합니다. 제가 거짓말을 해서 양들을 잃었어요."
   },
   "classic/shepherdboy/say-p10-villager.mp3": {
     "voice": "tc-gunseok",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "잘못했다고 먼저 말하러 온 건, 참 용감한 일이란다."
+    "text": "그래, 잘못을 솔직하게 말하는 건 아무나 못 하는 용감한 일이란다."
   },
   "classic/shepherdboy/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
@@ -5643,7 +5626,7 @@
     "text": "다음 날, 새끼 양 한 마리가 개울에 빠졌어요!"
   },
   "classic/shepherdboy/seg-cast-p11-1.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "sad",
     "intensity": 0.3,
     "text": "'또 안 믿어 주시면 어떡하지…'"
@@ -5655,7 +5638,7 @@
     "text": "그래도 소년은 있는 힘껏 외쳤어요."
   },
   "classic/shepherdboy/seg-cast-p11-3.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "\"도와주세요! 개울에 양이 빠졌어요!\""
@@ -5667,7 +5650,7 @@
     "text": "그러자 언덕 너머에서 발소리가 들려왔어요."
   },
   "classic/shepherdboy/say-p11-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "도와주세요! 개울에 양이 빠졌어요!"
@@ -5676,22 +5659,10 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "이장 아저씨와 사람들이 달려와, 새끼 양을 건져 주었어요."
-  },
-  "classic/shepherdboy/seg-cast-p12-1.mp3": {
-    "voice": "tc-gunseok",
-    "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "\"네가 어제 스스로 찾아와 사실대로 말했잖니. 그래서 오늘은 바로 달려왔단다.\""
-  },
-  "classic/shepherdboy/seg-tc-minjung-p12-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "소년의 눈에서 눈물이 뚝 떨어졌지요.\n소년은 마음속으로 생각했답니다."
+    "text": "이장 아저씨와 사람들이 달려와, 새끼 양을 건져 주었어요.\n어른들이 양을 구해 주는 모습에 소년의 눈에서 눈물이 뚝뚝 떨어졌어요.\n그리고 마음속으로 굳게 다짐했어요.\n다시는 거짓말을 하지 않겠다고요."
   },
   "classic/shepherdboy/say-p12-boy.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-siwoo",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "이장 아저씨…"
@@ -5736,13 +5707,7 @@
     "voice": "tc-goat",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "\"저희는 세상에서 가장 아름다운 옷을 짓습니다.\n어리석은 사람 눈에는 보이지 않는 신기한 옷이지요.\""
-  },
-  "classic/emperor/seg-tc-minjung-p2-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "임금님의 귀가 쫑긋 세워졌답니다."
+    "text": "\"저희는 세상에서 가장 아름다운 옷을 만드는 재단사입니다.\n어리석은 사람 눈에는 보이지 않는 신기한 옷을 만들 수 있습니다.\""
   },
   "classic/emperor/say-p2-emperor.mp3": {
     "voice": "tc-jongdae",
@@ -5772,19 +5737,19 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "임금님은 금화 주머니를 내주며 말했지요."
+    "text": "임금님은 금화를 내어 주며 이야기했어요."
   },
   "classic/emperor/seg-cast-p3-3.mp3": {
     "voice": "tc-jongdae",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"어서 지어 오너라. 세상에서 제일 멋지게!\""
+    "text": "\"어서 그 옷을 만들어 오너라. 세상에서 가장 아름다운 옷을 말이다!\""
   },
   "classic/emperor/say-p3-emperor.mp3": {
     "voice": "tc-jongdae",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "어서 지어 오너라. 세상에서 제일 멋지게!"
+    "text": "어서 그 옷을 만들어 오너라. 세상에서 가장 아름다운 옷을 말이다!"
   },
   "classic/emperor/say-p3-swindler.mp3": {
     "voice": "tc-goat",
@@ -5796,25 +5761,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "두 사람은 빈 베틀 앞에 앉았어요.\n실도 없고 천도 없는데 손만 부지런히 움직였지요."
-  },
-  "classic/emperor/seg-cast-p4-1.mp3": {
-    "voice": "tc-goat",
-    "emotion": "happy",
-    "intensity": 0.35,
-    "text": "\"실이 아주 곱지요? 만져 보시겠어요?\""
-  },
-  "classic/emperor/seg-tc-minjung-p4-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "달그락달그락, 밤늦도록 소리만 났답니다."
-  },
-  "classic/emperor/say-p4-swindler.mp3": {
-    "voice": "tc-goat",
-    "emotion": "happy",
-    "intensity": 0.35,
-    "text": "실이 아주 곱지요? 만져 보시겠어요?"
+    "text": "두 사람은 빈 베틀 앞에 앉았어요.\n실도 없고 천도 없는데 손만 부지런히 움직였답니다.\n달그락달그락, 밤늦도록 소리만 났답니다."
   },
   "classic/emperor/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
@@ -5832,19 +5779,19 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "신하는 얼른 말했어요."
+    "text": "신하는 얼른 대답했어요."
   },
   "classic/emperor/seg-cast-p5-3.mp3": {
     "voice": "tc-homun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"참으로 훌륭합니다! 이런 천은 처음 봅니다.\""
+    "text": "\"참으로 훌륭합니다! 이런 천은 처음 보네요.\""
   },
   "classic/emperor/say-p5-minister.mp3": {
     "voice": "tc-homun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "참으로 훌륭합니다! 이런 천은 처음 봅니다."
+    "text": "참으로 훌륭합니다! 이런 천은 처음 보네요."
   },
   "classic/emperor/say-p5-swindler.mp3": {
     "voice": "tc-goat",
@@ -5856,43 +5803,43 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "다음에 간 신하도 똑같았어요.\n텅 빈 베틀만 보이는데 안 보인다고 말할 수가 없었지요."
+    "text": "두 번째 신하의 눈에도 텅 빈 베틀만 보였어요.\n하지만 안 보인다고 말할 수는 없어서, 이렇게 얘기했어요."
   },
   "classic/emperor/seg-cast-p6-1.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-seungjae",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"빛깔이 곱기도 하지요!\""
+    "text": "\"아이고, 정말 빛깔이 곱기도 하네요!\""
   },
   "classic/emperor/seg-tc-minjung-p6-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "땀을 닦으며 서둘러 돌아 나왔지요.\n그렇게 거짓말이 하나씩 쌓여 갔답니다."
+    "text": "그러고는 서둘러 돌아갔답니다.\n그렇게 거짓말이 하나씩 하나씩 쌓여 갔답니다."
   },
   "classic/emperor/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "드디어 임금님이 옷을 보러 갔어요.\n아무것도, 정말 아무것도 보이지 않았지요."
+    "text": "임금님은 옷이 완성되었다는 소식에 한걸음에 옷을 구경하러 갔어요.\n그러나 임금님 눈에도 아무것도 보이지 않았어요.\n임금님은 속으로 생각했어요."
   },
   "classic/emperor/seg-cast-p7-1.mp3": {
     "voice": "tc-jongdae",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "'설마 내가… 어리석은 걸까?'"
+    "text": "'아… 내가 어리석은 사람인 걸까?'"
   },
   "classic/emperor/seg-tc-minjung-p7-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "임금님은 깜짝 놀랐지만 이렇게 말했답니다."
+    "text": "하지만 재단사들에게는 이렇게 말할 수밖에 없었답니다."
   },
   "classic/emperor/seg-cast-p7-3.mp3": {
     "voice": "tc-jongdae",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"오, 참으로 멋지구나!\""
+    "text": "\"참으로 멋진 옷이구나!\""
   },
   "classic/emperor/say-p7-swindler.mp3": {
     "voice": "tc-goat",
@@ -5904,7 +5851,7 @@
     "voice": "tc-jongdae",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "오, 참으로 멋지구나!"
+    "text": "참으로 멋진 옷이구나!"
   },
   "classic/emperor/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
@@ -6039,10 +5986,10 @@
     "text": "그럼! 우리 아이 말이 맞고말고."
   },
   "classic/emperor/say-p6-minister2.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-seungjae",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "빛깔이 곱기도 하지요!"
+    "text": "아이고, 정말 빛깔이 곱기도 하네요!"
   },
   "folk/brothers/seg-tc-minjung-p1-0.mp3": {
     "voice": "tc-minjung",
@@ -6373,13 +6320,6 @@
     "emotion": "happy",
     "intensity": 0.4,
     "text": "네, 형님!"
-  },
-  "classic/shepherdboy/seg-cast-p12-3.mp3": {
-    "voice": "tc-toby",
-    "emotion": "happy",
-    "intensity": 0.3,
-    "text": "'이제 다시는 거짓말 안 할 거야.'",
-    "tempo": 0.9
   },
   "folk/heungbu/seg-tc-minjung-p1-0.mp3": {
     "voice": "tc-minjung",
@@ -7244,7 +7184,7 @@
     "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"주인님, 저만 믿으세요. 저에게 장화 한 켤레와 자루 하나만 주세요.\n후회하지 않으실 거예요. 약속해요.\""
+    "text": "\"주인님, 저에게 장화 한 켤레와 자루 한 자루만 주시겠어요?\n후회하지 않으실 거예요. 약속해요.\""
   },
   "classic/puss/seg-cast-p2-2.mp3": {
     "voice": "tc-hosun",
@@ -7268,25 +7208,25 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "장화를 신은 고양이는 거울 앞에서 빙그르르 돌았어요."
+    "text": "장화를 신은 고양이는 어깨를 쭉 펴고 씩 웃었어요."
   },
   "classic/puss/seg-cast-p3-1.mp3": {
     "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "\"음, 제법 근사한걸?\""
+    "text": "\"자, 이제 주인님을 위해 일해 볼까?\""
   },
   "classic/puss/seg-tc-minjung-p3-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "고양이는 자루에 싱싱한 상추를 담아, 풀숲에 놓아두었어요.\n토실토실한 토끼가 폴짝 들어가자 — 자루 끈을 쓱!"
+    "text": "고양이는 자루에 싱싱한 상추를 담아 풀숲에 놓아두고 꼼짝 않고 기다렸어요.\n토끼가 상추 냄새를 맡고 자루 속으로 쏙 들어가자, 고양이는 재빨리 끈을 당겼어요."
   },
   "classic/puss/seg-cast-p3-3.mp3": {
     "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"선물, 완성!\""
+    "text": "\"됐다! 임금님께 드릴 선물이야.\""
   },
   "classic/puss/seg-tc-minjung-p4-0.mp3": {
     "voice": "tc-minjung",
@@ -7389,7 +7329,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "막내는 얼떨결에 공주님 곁에 앉았어요.\n그사이, 고양이는 마차보다 먼저 들판 길을 내달렸답니다.\n장화가 반짝반짝, 바람처럼 빨랐지요."
+    "text": "막내는 얼떨결에 공주님 곁에 앉았어요.\n그사이, 고양이는 마차보다 먼저 들판 길을 내달렸답니다."
   },
   "classic/puss/seg-cast-p8-2.mp3": {
     "voice": "tc-hosun",
@@ -7437,13 +7377,13 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "가는 곳마다, 농부들은 카라바 후작님의 땅이라고 대답했어요.\n밭을 지나도, 과수원을 지나도 똑같은 대답이었지요.\n임금님의 눈이 점점 휘둥그레졌답니다."
+    "text": "농부들은 카라바 후작님의 땅이라고 대답해 주었어요.\n밭을 지나 과수원을 지나도 똑같은 대답을 해 주었답니다.\n임금님의 눈이 점점 휘둥그레졌어요."
   },
   "classic/puss/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "사실 그 밀밭의 주인은 무시무시한 괴물이었어요.\n무엇으로든 변신하는 마법을 부릴 수 있는 괴물이었지요.\n고양이는 무서웠지만 꿀꺽 침을 삼키고, 괴물이 살고 있는 성의 문을 두드렸어요."
+    "text": "사실 그 밀밭의 주인은 무시무시한 괴물이었어요.\n무엇으로든 변신하는 마법을 부릴 수 있는 괴물이었답니다.\n고양이는 무서웠지만 꿀꺽 침을 삼키고, 괴물이 살고 있는 성의 문을 두드렸어요."
   },
   "classic/puss/seg-cast-p11-1.mp3": {
     "voice": "tc-siwoo",
@@ -7479,7 +7419,7 @@
     "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.35,
-    "text": "\"정말 대단해요! 그런데… 큰 걸로 변하는 건 누구나 하지요.\n설마 조그만 생쥐처럼 작아지는 건 못 하시죠?\""
+    "text": "\"정말 대단해요! 사자처럼 큰 동물로 변하는 건 쉬운 것 같은데,\n조그만 생쥐로 변하는 건 못 하시겠죠?\""
   },
   "classic/puss/seg-cast-p13-1.mp3": {
     "voice": "tc-shotgun",
@@ -7491,13 +7431,13 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "괴물이 발끈해서 조그만 생쥐로 변하는 순간 —\n고양이가 폴짝! 꿀꺽!"
+    "text": "괴물이 발끈해서 조그만 생쥐로 변하는 순간,\n고양이가 번개처럼 폴짝 뛰어올라 생쥐를 꿀꺽 삼켜 버렸어요!"
   },
   "classic/puss/seg-cast-p13-3.mp3": {
     "voice": "tc-siwoo",
     "emotion": "happy",
-    "intensity": 0.4,
-    "text": "\"냠! 생쥐가 고양이를 이길 수는 없지요.\""
+    "intensity": 0.35,
+    "text": "\"후후, 이제 이 성은 우리 주인님 거예요.\""
   },
   "classic/puss/seg-tc-minjung-p14-0.mp3": {
     "voice": "tc-minjung",
@@ -7944,11 +7884,11 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 어느 마을 끝자락에, 잭이 엄마와 단둘이 살았어요.\n집은 낡고 밭은 메말라, 가진 거라곤 젖소 얼룩이 한 마리뿐이었지요.\n그래도 잭은 씩씩했고, 얼룩이를 동생처럼 아꼈답니다."
+    "text": "옛날 어느 마을 끝자락에, 잭이 엄마와 단둘이 살았어요.\n집은 낡고 밭은 메말라, 가진 거라곤 젖소 얼룩이 한 마리뿐이었답니다.\n그래도 잭은 씩씩했고, 얼룩이를 동생처럼 아꼈답니다."
   },
   "classic/jack/say-p1-jack.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "happy",
+    "voice": "tc-toby",
+    "emotion": "toneup",
     "intensity": 0.35,
     "text": "얼룩아, 우리 오래오래 같이 살자!"
   },
@@ -7956,13 +7896,13 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그런데 어느 날부터 얼룩이가 젖을 한 방울도 내지 않았어요.\n엄마는 한숨을 푹 쉬며 말했지요."
+    "text": "그런데 어느 날부터 얼룩이가 젖을 한 방울도 내지 못했어요.\n엄마는 한숨을 푹 쉬며 말했지요."
   },
   "classic/jack/seg-cast-p2-1.mp3": {
     "voice": "tc-aeran",
     "emotion": "sad",
     "intensity": 0.35,
-    "text": "\"잭, 이제 어쩔 수 없구나. 장에 가서 얼룩이를 팔고 오렴.\""
+    "text": "\"잭, 이제 어쩔 수가 없을 것 같구나. 장에 가서 얼룩이를 팔고 오렴.\""
   },
   "classic/jack/seg-tc-minjung-p2-2.mp3": {
     "voice": "tc-minjung",
@@ -7971,7 +7911,7 @@
     "text": "잭은 얼룩이 목을 꼭 끌어안고 한참을 서 있었답니다."
   },
   "classic/jack/say-p2-jack.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "얼룩이랑 헤어지기 싫은데…"
@@ -7996,16 +7936,10 @@
     "text": "할아버지의 손바닥에는 알록달록한 콩 다섯 알이 놓여 있었지요."
   },
   "classic/jack/seg-cast-p3-3.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"마법의 콩이요? 좋아요!\""
-  },
-  "classic/jack/seg-tc-minjung-p3-4.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "잭은 얼룩이를 건네고 콩을 꼭 쥐었답니다."
   },
   "classic/jack/say-p3-old_man.mp3": {
     "voice": "tc-changbae",
@@ -8015,7 +7949,7 @@
     "tempo": 0.9
   },
   "classic/jack/say-p3-jack.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "마법의 콩이요? 좋아요!"
@@ -8051,16 +7985,16 @@
     "text": "이튿날 아침, 방 안이 이상하게 어둑어둑했어요.\n창밖을 내다본 잭은 입이 딱 벌어졌지요.\n밤사이 콩나무가 쑥쑥 자라, 구름을 뚫고 하늘까지 뻗어 있었거든요!"
   },
   "classic/jack/seg-cast-p5-1.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"우아! 정말 마법의 콩이었어!\""
+    "text": "\"정말 마법의 콩이었어!\""
   },
   "classic/jack/say-p5-jack.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "우아! 콩나무가 하늘까지 자랐어!"
+    "text": "콩나무가 하늘까지 자랐어!"
   },
   "classic/jack/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
@@ -8069,7 +8003,7 @@
     "text": "잭은 콩나무 줄기를 붙잡고 오르고, 또 올랐어요.\n구름 위에 올라서자, 반짝이는 요정이 잭을 기다리고 있었지요.\n요정은 잭의 가족을 오래오래 지켜보고 있었어요.\n요정은 저 멀리 커다란 성을 가리켰어요. 그 성의 거인이 오래전에 잭 아버지의 보물을 몽땅 빼앗아 갔다고 알려 주었지요."
   },
   "classic/jack/seg-cast-p6-1.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "'그게 우리 아버지 보물이었구나… 내가 꼭 되찾을 거야.'"
@@ -8081,7 +8015,7 @@
     "text": "잭은 주먹을 꼭 쥐고 성을 향해 걸어갔답니다."
   },
   "classic/jack/say-p6-jack.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "저 성까지 올라가 볼 거예요!"
@@ -8093,14 +8027,14 @@
     "text": "성 앞에 오자, 잭의 배에서 꼬르륵 소리가 났어요.\n잭은 용기를 내어 커다란 성문을 쿵쿵 두드렸지요.\n문을 열어 준 건 산처럼 커다란 거인 아내였어요."
   },
   "classic/jack/seg-cast-p7-1.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-kukhee",
     "emotion": "sad",
     "intensity": 0.35,
     "text": "\"얘야, 여기는 거인의 성이란다. 우리 남편이 오면 큰일 나!\"",
     "tempo": 0.85
   },
   "classic/jack/seg-cast-p7-2.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"죄송해요, 아주머니. 어젯밤부터 아무것도 못 먹었어요. 빵 한 조각만 먹고 갈게요.\""
@@ -8112,13 +8046,13 @@
     "text": "마음 약한 거인 아내는 잭을 식탁 위로 올려 주고, 빵을 떼어 주었답니다."
   },
   "classic/jack/say-p7-giant_wife.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-kukhee",
     "emotion": "sad",
     "intensity": 0.35,
     "text": "얘야, 남편이 오면 큰일 나!"
   },
   "classic/jack/say-p7-jack.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "빵 한 조각만 먹고 갈게요."
@@ -8130,13 +8064,13 @@
     "text": "쿵! 쿵! 쿵! 성이 흔들렸어요.\n거인 아내는 잭을 얼른 커다란 화덕 속에 숨겼지요."
   },
   "classic/jack/seg-cast-p8-1.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "\"킁킁… 어디서 사람 냄새가 나는 것 같은데?\""
   },
   "classic/jack/seg-cast-p8-2.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-kukhee",
     "emotion": "normal",
     "intensity": null,
     "text": "\"사람은 무슨요. 아침에 구운 양고기 냄새겠지요.\""
@@ -8148,13 +8082,13 @@
     "text": "거인은 고개를 갸웃하더니 식탁에 털썩 앉았답니다."
   },
   "classic/jack/say-p8-giant.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-homun",
     "emotion": "normal",
     "intensity": null,
     "text": "킁킁, 사람 냄새가 나는걸?"
   },
   "classic/jack/say-p8-giant_wife.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-kukhee",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "쉿, 얼른 화덕에 숨으렴!"
@@ -8163,43 +8097,25 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "밥을 다 먹은 거인은 금화가 가득 든 자루들을 꺼내 왔어요."
-  },
-  "classic/jack/seg-cast-p9-1.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "하냥, 두냥, 세냥…"
-  },
-  "classic/jack/seg-tc-minjung-p9-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "금화를 세던 거인은 이내 드르렁 코를 골며 잠이 들었지요.\n잭은 화덕에서 살금살금 나와, 금화 자루 하나를 번쩍 들었어요.\n그리고 콩나무를 타고 쭉쭉 내려갔답니다."
-  },
-  "classic/jack/say-p9-giant.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "하냥, 두냥, 세냥…"
+    "text": "밥을 다 먹은 거인은 금화가 가득 든 자루들을 꺼내 왔어요.\n금화를 세던 거인은 이내 드르렁 코를 골며 잠이 들었답니다.\n잭은 화덕에서 살금살금 나와, 금화 자루 하나를 번쩍 들었어요.\n그리고 콩나무를 타고 집으로 돌아왔어요."
   },
   "classic/jack/say-p9-jack.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "tonedown",
-    "intensity": 0.4,
+    "intensity": 0.3,
     "text": "금화 자루 하나만 살짝…"
   },
   "classic/jack/seg-cast-p10-0.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "happy",
+    "voice": "tc-toby",
+    "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"엄마! 아버지의 금화를 되찾아 왔어요!\""
+    "text": "\"아버지의 금화를 되찾아 왔어요!\""
   },
   "classic/jack/seg-tc-minjung-p10-1.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "엄마는 잭을 꼭 안고 기뻐했어요.\n금화 덕분에 두 사람은 한동안 배불리 지냈지요.\n하지만 금화는 쓰다 보니 어느새 다 떨어지고 말았어요.\n잭은 다시 콩나무를 타고 구름 위로 올라갔답니다."
+    "text": "엄마는 잭을 꼭 안고 기뻐했어요.\n금화 덕분에 두 사람은 한동안 배불리 지낼 수 있게 되었어요.\n하지만 잭은 요정이 말해 준, 아버지가 남기신 보물들이 생각났어요.\n그래서 다시 한번 콩나무를 타고 구름 위로 올라가기로 마음먹었답니다."
   },
   "classic/jack/say-p10-mother.mp3": {
     "voice": "tc-aeran",
@@ -8208,10 +8124,10 @@
     "text": "우리 잭, 정말 장하구나!"
   },
   "classic/jack/say-p10-jack.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "happy",
+    "voice": "tc-toby",
+    "emotion": "toneup",
     "intensity": 0.4,
-    "text": "엄마, 금화를 되찾아 왔어요!"
+    "text": "금화를 되찾아 왔어요!"
   },
   "classic/jack/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
@@ -8220,13 +8136,13 @@
     "text": "성문을 연 거인 아내는 잭을 보고 고개를 갸웃했어요."
   },
   "classic/jack/seg-cast-p11-1.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-kukhee",
     "emotion": "normal",
     "intensity": null,
     "text": "\"너, 지난번 그 아이 아니니? 그날 금화 자루 하나가 없어졌는데…\""
   },
   "classic/jack/seg-cast-p11-2.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "normal",
     "intensity": null,
     "text": "\"그것 참 이상한 일이네요. 그 얘기라면 저도 뭔가 알 것 같은데… 배가 너무 고파서, 뭘 좀 먹어야 생각이 날 것 같아요.\""
@@ -8238,13 +8154,13 @@
     "text": "그 이야기가 궁금해진 거인 아내는 잭에게 빵을 내주었어요.\n그리고 거인의 발소리가 들리자, 이번에도 잭을 얼른 화덕에 숨겨 주었지요."
   },
   "classic/jack/say-p11-giant_wife.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-kukhee",
     "emotion": "normal",
     "intensity": null,
     "text": "너, 지난번 그 아이 아니니?"
   },
   "classic/jack/say-p11-jack.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "normal",
     "intensity": null,
     "text": "배가 고파서 또 왔어요."
@@ -8253,28 +8169,28 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "쿵! 쿵! 쿵! 밥을 다 먹은 거인은 식탁에 암탉 한 마리를 올려놓았어요."
+    "text": "밥을 다 먹은 거인이 식탁 위에 암탉 한 마리를 올려놓았어요.\n그러자 얼마 지나지 않아, 암탉이 번쩍이는 황금알을 톡 낳는 게 아니겠어요?\n거인은 그 모습을 흐뭇하게 지켜보다가, 이내 드르렁 코를 골며 잠이 들었어요."
   },
   "classic/jack/seg-cast-p12-1.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "toneup",
-    "intensity": 0.5,
-    "text": "\"자, 황금알을 낳아 보아라!\""
+    "voice": "tc-toby",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "'저 암탉도 요정이 말한 아버지의 보물 중 하나구나!'"
   },
   "classic/jack/seg-tc-minjung-p12-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그러자 암탉이 번쩍이는 황금알을 톡 낳았어요. 거인은 흐뭇하게 바라보다가, 이내 드르렁 코를 골며 잠이 들었지요.\n잭은 암탉을 꼭 안고, 살금살금 콩나무를 타고 내려갔답니다."
+    "text": "잭은 황금알을 낳는 암탉을 안고 집으로 돌아왔어요."
   },
   "classic/jack/say-p12-giant.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "toneup",
-    "intensity": 0.5,
-    "text": "자, 황금알을 낳아 보아라!"
+    "voice": "tc-homun",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "아이고, 우리 예쁜 암탉아!"
   },
   "classic/jack/seg-cast-p13-0.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"엄마, 이것 보세요! 황금알을 낳는 암탉이에요!\""
@@ -8298,150 +8214,10 @@
     "text": "잭은 세 번째로 콩나무를 타고 올라갔답니다."
   },
   "classic/jack/say-p13-jack.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "황금알을 낳는 암탉이에요!"
-  },
-  "classic/jack/seg-tc-minjung-p14-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "이번에 잭은 거인 아내에게 들키지 않으려고, 살그머니 부엌으로 숨어들었어요.\n그리고 커다란 구리 솥 안에 몸을 웅크렸지요.\n쿵! 쿵! 쿵!"
-  },
-  "classic/jack/seg-cast-p14-1.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"킁킁, 또 사람 냄새다! 이번엔 틀림없어!\""
-  },
-  "classic/jack/seg-cast-p14-2.mp3": {
-    "voice": "tc-minju",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"지난번 그 녀석이면 화덕에 있겠지요.\""
-  },
-  "classic/jack/seg-tc-minjung-p14-3.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "거인 아내가 화덕을 열어 보았지만, 아무도 없었답니다."
-  },
-  "classic/jack/say-p14-giant.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "킁킁, 또 사람 냄새다!"
-  },
-  "classic/jack/seg-tc-minjung-p15-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "거인은 황금 하프를 식탁에 올려놓고 소리쳤어요."
-  },
-  "classic/jack/seg-cast-p15-1.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "toneup",
-    "intensity": 0.5,
-    "text": "\"어디, 고운 노래를 불러 보아라!\""
-  },
-  "classic/jack/seg-tc-minjung-p15-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "하프는 저 혼자 줄을 튕기며 고운 노래를 불렀지요.\n고운 노래에 거인은 스르르 눈이 감기더니, 이내 드르렁 코를 골았어요."
-  },
-  "classic/jack/seg-cast-p15-3.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "'아버지의 하프야. 이번이 마지막이야!'"
-  },
-  "classic/jack/say-p15-giant.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "toneup",
-    "intensity": 0.5,
-    "text": "어디, 고운 노래를 불러 보아라!"
-  },
-  "classic/jack/say-p15-jack.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "이번이 마지막이야!"
-  },
-  "classic/jack/seg-tc-minjung-p16-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "잭은 솥에서 나와 하프를 살며시 안아 들었어요.\n그런데 하프가 갑자기 주인님, 주인님! 하고 소리치는 게 아니겠어요?\n거인이 번쩍 눈을 떴어요."
-  },
-  "classic/jack/seg-cast-p16-1.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "angry",
-    "intensity": 0.4,
-    "text": "\"이놈! 게 섰거라!\""
-  },
-  "classic/jack/seg-tc-minjung-p16-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "잭은 하프를 안고 문 쪽으로 쏜살같이 뛰었답니다."
-  },
-  "classic/jack/say-p16-giant.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "angry",
-    "intensity": 0.4,
-    "text": "이놈, 게 섰거라!"
-  },
-  "classic/jack/seg-tc-minjung-p17-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "잭은 콩나무를 타고 쭉쭉 미끄러져 내려갔어요.\n쿵! 쿵! 거인도 콩나무를 붙잡고 뒤따라 내려왔지요."
-  },
-  "classic/jack/seg-cast-p17-1.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "toneup",
-    "intensity": 0.45,
-    "text": "\"엄마! 도끼요, 도끼 좀 주세요!\"",
-    "tempo": 1.1
-  },
-  "classic/jack/seg-tc-minjung-p17-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "땅에 내려선 잭은 엄마가 건넨 도끼로 콩나무를 힘껏 찍었어요.\n한 번, 두 번 — 우지끈! 콩나무가 기우뚱 쓰러지자, 붙잡고 있던 거인도 쿵! 하고 굴러떨어졌지요.\n거인은 저 멀리 산 너머로 데굴데굴 굴러가더니, 그 뒤로 두 번 다시 마을에 나타나지 않았답니다."
-  },
-  "classic/jack/say-p17-jack.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "toneup",
-    "intensity": 0.45,
-    "text": "엄마, 도끼 좀 주세요!",
-    "tempo": 1.1
-  },
-  "classic/jack/seg-tc-minjung-p18-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "황금알을 낳는 암탉과 노래하는 하프 덕분에,\n잭과 엄마는 다시는 굶지 않았어요."
-  },
-  "classic/jack/seg-cast-p18-1.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "happy",
-    "intensity": 0.35,
-    "text": "\"엄마, 이제 우리도 나눌 수 있어요. 마을 사람들이랑 같이 먹어요.\""
-  },
-  "classic/jack/seg-tc-minjung-p18-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "잭은 마을 사람들과 빵과 노래를 나누었지요.\n쓰러진 콩나무 자리에서는 다음 해 봄, 조그만 새싹이 돋아났답니다."
-  },
-  "classic/jack/say-p18-jack.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "happy",
-    "intensity": 0.4,
-    "text": "모두 함께 나눠 먹어요!"
   },
   "folk/patjuk-halmae-tiger/seg-tc-minjung-p1-0.mp3": {
     "voice": "tc-minjung",
@@ -8765,31 +8541,26 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 어느 나라에 예쁜 공주가 살았어요.\n공주에게는 세상에서 제일 아끼는 황금 공이 하나 있었지요.\n햇빛을 받으면 반짝반짝 빛나는 공이었어요.\n공주는 날마다 궁궐 뜰 우물가에서, 그 공을 높이 던지며 놀았답니다."
+    "text": "옛날 어느 나라에 예쁜 공주가 살았어요.\n공주에게는 세상에서 제일 아끼는 황금 공이 하나 있었답니다.\n햇빛을 받으면 반짝반짝 빛나는 공이었어요.\n공주는 날마다 궁궐 뜰 우물가에서, 그 공을 높이 던지며 놀았답니다."
   },
   "classic/frogprince/seg-tc-minjung-p2-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그런데 어느 날, 공을 너무 높이 던지고 말았어요.\n황금 공은 손끝을 스치더니, 우물 속으로 풍덩 빠져 버렸지요.\n우물은 바닥이 보이지 않을 만큼 깊었어요.\n공주는 우물가에 주저앉아 엉엉 울었답니다."
-  },
-  "classic/frogprince/seg-cast-p2-1.mp3": {
-    "voice": "tc-arin",
-    "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"내 황금 공… 이제 어떡해.\""
+    "text": "그런데 어느 날, 공을 너무 높이 던지고 말았어요.\n황금 공은 손끝을 스치더니, 우물 속으로 풍덩 빠져 버렸답니다.\n우물은 바닥이 보이지 않을 만큼 깊었어요.\n공주는 우물가에 주저앉아 엉엉 울었답니다."
   },
   "classic/frogprince/seg-tc-minjung-p3-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그때 우물 속에서 첨벙, 하는 소리가 났어요.\n초록빛 개구리 한 마리가 물 위로 얼굴을 쏙 내밀었지요."
+    "text": "그때 우물 속에서 첨벙, 하는 소리가 났어요.\n초록빛 개구리 한 마리가 물 위로 얼굴을 쏙 내밀었답니다."
   },
   "classic/frogprince/seg-cast-p3-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-seojoon",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "\"공주님, 왜 그리 슬피 우세요?\""
+    "text": "\"공주님, 왜 그리 슬피 우세요?\"",
+    "tempo": 0.83
   },
   "classic/frogprince/seg-tc-minjung-p3-2.mp3": {
     "voice": "tc-minjung",
@@ -8801,46 +8572,48 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "공주는 황금 공을 빠뜨렸다고 이야기했어요.\n개구리는 잠시 생각하더니 조용히 말했지요."
+    "text": "공주는 황금 공을 빠뜨렸다고 이야기했어요.\n개구리는 잠시 생각하더니 조용히 말했답니다."
   },
   "classic/frogprince/seg-cast-p4-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-seojoon",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "\"제가 꺼내 드릴게요. 그 대신 저와 친구가 되어 주세요.\n같은 밥상에서 밥을 먹고, 같은 방에서 지내게 해 주세요.\""
+    "text": "\"제가 꺼내 드릴게요. 그 대신 저와 친구가 되어 주세요.\n같은 밥상에서 밥을 먹고, 같은 방에서 지내게 해 주세요.\"",
+    "tempo": 0.83
   },
   "classic/frogprince/seg-tc-minjung-p4-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "공주는 공만 찾으면 된다는 생각에, 얼른 고개를 끄덕였답니다."
+    "text": "공주는 공만 찾으면 된다는 생각에, 얼른 고개를 끄덕였어요."
   },
   "classic/frogprince/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "개구리는 우물 속으로 쏙 들어갔어요.\n한참 뒤, 개구리가 황금 공을 물고 올라왔지요.\n공주는 공을 받아 들자마자, 뒤도 돌아보지 않고 궁궐로 달려갔어요.\n개구리가 뒤에서 부르는 소리는 들리지도 않았답니다."
+    "text": "개구리는 우물 속으로 쏙 들어갔어요.\n한참 뒤, 개구리가 황금 공을 물고 올라왔어요.\n공주는 공을 받아 들자마자, 뒤도 돌아보지 않고 궁궐로 달려갔어요.\n개구리가 뒤에서 부르는 소리는 들리지도 않았답니다."
   },
   "classic/frogprince/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그날 저녁, 궁궐 문에서 똑똑 소리가 났어요.\n문틈으로 초록빛 개구리가 폴짝 뛰어 들어왔지요.\n공주는 깜짝 놀라 접시를 떨어뜨릴 뻔했어요."
+    "text": "그날 저녁, 궁궐 문에서 똑똑 소리가 났어요.\n문틈으로 초록빛 개구리가 폴짝 뛰어 들어왔어요.\n공주는 깜짝 놀라 접시를 떨어뜨릴 뻔했어요."
   },
   "classic/frogprince/seg-cast-p6-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-seojoon",
     "emotion": "sad",
     "intensity": 0.35,
-    "text": "\"공주님, 약속하셨잖아요.\""
+    "text": "\"공주님, 약속하셨잖아요.\"",
+    "tempo": 0.83
   },
   "classic/frogprince/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "공주는 아무 말도 못 하고 고개를 푹 숙였어요.\n그 모습을 지켜보던 임금님이 무슨 일이냐고 조용히 물으셨지요.\n공주는 우물가에서 있었던 일을, 하나도 빠짐없이 이야기했어요."
+    "text": "공주는 아무 말도 못 하고 고개를 푹 숙였어요.\n그 모습을 지켜보던 임금님이 무슨 일이냐고 조용히 물으셨답니다.\n공주는 우물가에서 있었던 일을, 하나도 빠짐없이 이야기했어요."
   },
   "classic/frogprince/seg-cast-p7-1.mp3": {
-    "voice": "tc-jongdae",
+    "voice": "tc-changbae",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "\"한 번 한 약속은 지키는 것이란다. 작은 개구리와 한 약속이라도 말이다.\"",
@@ -8850,19 +8623,20 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "공주는 마지못해 개구리를 밥상 위에 올려 주었어요.\n개구리는 공주의 접시에서 밥알을 조금씩 집어 먹었지요.\n공주는 입맛이 뚝 떨어져 숟가락만 만지작거렸어요."
+    "text": "공주는 마지못해 개구리를 밥상 위에 올려 주었어요.\n개구리는 공주의 접시에서 밥알을 조금씩 집어 먹었답니다.\n공주는 입맛이 뚝 떨어져 숟가락만 만지작거렸어요."
   },
   "classic/frogprince/seg-cast-p8-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-seojoon",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "\"저는 공주님과 같이 먹는 이 밥이 참 맛있어요.\""
+    "text": "\"저는 공주님과 같이 먹는 이 밥이 참 맛있어요.\"",
+    "tempo": 0.83
   },
   "classic/frogprince/seg-tc-minjung-p9-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "밤이 되자, 개구리가 방문 앞에서 기다리고 있었어요.\n공주는 한숨을 쉬며, 개구리를 방 안 창가에 놓아 주었지요.\n달빛 아래 개구리는 아주 작고 외로워 보였어요.\n공주는 그제야 개구리를 가만히 들여다보았답니다."
+    "text": "밤이 되자, 개구리가 방문 앞에서 기다리고 있었어요.\n공주는 한숨을 쉬며, 개구리를 방 안 창가에 놓아 주었답니다.\n달빛 아래 개구리는 아주 작고 외로워 보였어요.\n공주는 그제야 개구리를 가만히 들여다보았어요."
   },
   "classic/frogprince/seg-tc-minjung-p10-0.mp3": {
     "voice": "tc-minjung",
@@ -8871,29 +8645,29 @@
     "text": "개구리는 조그만 목소리로 이야기를 꺼냈어요."
   },
   "classic/frogprince/seg-cast-p10-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-seojoon",
     "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "\"저는 사실 마법에 걸린 왕자랍니다.\n마음을 알아주는 사람을 만나야 마법이 풀린대요.\"",
-    "tempo": 0.9
+    "intensity": 0.35,
+    "text": "\"공주님, 저는 우물 속에서 늘 저 달을 올려다봤어요.\n달을 보고 있으면 마음이 편안해지거든요.\"",
+    "tempo": 0.83
   },
   "classic/frogprince/seg-tc-minjung-p10-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "공주는, 그동안 개구리를 밀어내기만 했던 자신이 부끄러워졌어요."
+    "text": "공주는 깜짝 놀랐어요. 공주도 밤마다 달을 보며 잠들곤 했거든요.\n이야기를 나눌수록, 겉모습과 달리 개구리와 잘 맞는 게 참 많았어요.\n공주는 그동안 개구리를 밀어내기만 했던 자신이 부끄러워졌어요."
   },
   "classic/frogprince/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "공주는 두 손으로 개구리를 조심스럽게 감싸 안았어요.\n그러고는 진심을 담아 말했지요."
+    "text": "공주는 두 손으로 개구리를 조심스럽게 감싸 안았어요.\n그러고는 진심을 담아 말했답니다."
   },
   "classic/frogprince/seg-cast-p11-1.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-seolhwa",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "\"미안해. 약속을 지키지 않아서, 그리고 네 마음을 몰라줘서.\""
+    "text": "\"미안해. 내가 네 생김새만 보고 너를 판단했어. 약속도 지키지 않고… 정말 미안해.\""
   },
   "classic/frogprince/seg-tc-minjung-p11-2.mp3": {
     "voice": "tc-minjung",
@@ -8905,57 +8679,55 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "다음 날 아침, 왕자는 공주에게 고개를 깊이 숙여 고맙다고 인사했어요.\n임금님도 두 사람을 보며 껄껄 웃으셨지요.\n그날부터 공주는 황금 공보다 소중한 것을 알게 되었답니다.\n작은 약속을 지키는 마음, 그리고 남의 마음을 알아주는 마음이었어요."
-  },
-  "classic/frogprince/say-p2-princess.mp3": {
-    "voice": "tc-arin",
-    "emotion": "sad",
-    "intensity": 0.4,
-    "text": "내 황금 공… 이제 어떡해."
+    "text": "다음 날 아침, 왕자는 공주에게 고개를 깊이 숙여 고맙다고 인사했어요.\n임금님도 두 사람을 보며 껄껄 웃으셨답니다.\n그날부터 공주는 황금 공보다 소중한 것을 알게 되었답니다.\n작은 약속을 지키는 마음, 그리고 남의 마음을 알아주는 마음이었어요."
   },
   "classic/frogprince/say-p3-frog.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-seojoon",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "공주님, 왜 그리 슬피 우세요?"
+    "text": "공주님, 왜 그리 슬피 우세요?",
+    "tempo": 0.83
   },
   "classic/frogprince/say-p4-frog.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-seojoon",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "제가 꺼내 드릴게요. 그 대신 저와 친구가 되어 주세요.\n같은 밥상에서 밥을 먹고, 같은 방에서 지내게 해 주세요."
+    "text": "제가 꺼내 드릴게요. 그 대신 저와 친구가 되어 주세요.\n같은 밥상에서 밥을 먹고, 같은 방에서 지내게 해 주세요.",
+    "tempo": 0.83
   },
   "classic/frogprince/say-p6-frog.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-seojoon",
     "emotion": "sad",
     "intensity": 0.35,
-    "text": "공주님, 약속하셨잖아요."
+    "text": "공주님, 약속하셨잖아요.",
+    "tempo": 0.83
   },
   "classic/frogprince/say-p7-king.mp3": {
-    "voice": "tc-jongdae",
+    "voice": "tc-changbae",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "한 번 한 약속은 지키는 것이란다. 작은 개구리와 한 약속이라도 말이다.",
     "tempo": 0.9
   },
   "classic/frogprince/say-p8-frog.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-seojoon",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "저는 공주님과 같이 먹는 이 밥이 참 맛있어요."
+    "text": "저는 공주님과 같이 먹는 이 밥이 참 맛있어요.",
+    "tempo": 0.83
   },
   "classic/frogprince/say-p10-frog.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-seojoon",
     "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "저는 사실 마법에 걸린 왕자랍니다.\n마음을 알아주는 사람을 만나야 마법이 풀린대요.",
-    "tempo": 0.9
+    "intensity": 0.35,
+    "text": "공주님, 저는 우물 속에서 늘 저 달을 올려다봤어요.\n달을 보고 있으면 마음이 편안해지거든요.",
+    "tempo": 0.83
   },
   "classic/frogprince/say-p11-princess.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-seolhwa",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "미안해. 약속을 지키지 않아서, 그리고 네 마음을 몰라줘서."
+    "text": "미안해. 내가 네 생김새만 보고 너를 판단했어. 약속도 지키지 않고… 정말 미안해."
   },
   "folk/samnyeon/seg-tc-minjung-p1-0.mp3": {
     "voice": "tc-minjung",
@@ -9402,13 +9174,13 @@
     "text": "그 뒤로 낮에는 동생 해님이 세상을 따뜻하게 비추고,\n밤에는 오빠 달님이 어두운 길을 밝혀 주어요.\n어머니는 포근한 저녁노을이 되어 두 아이를 지켜본답니다.\n오늘 밤 달님을 보면 손을 흔들어 주세요. 오빠가 웃고 있을 거예요."
   },
   "classic/jack/seg-cast-p4-2.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "sad",
     "intensity": 0.35,
     "text": "'엄마 말이 맞아. 내가 바보 같았어…'"
   },
   "classic/jack/seg-cast-p13-2.mp3": {
-    "voice": "tc-siwoo",
+    "voice": "tc-toby",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "'딱 한 번만 더 올라가자.'"
@@ -9426,22 +9198,22 @@
     "text": "그해 겨울은 유난히 길고 배가 고팠어요.\n저녁상에 오른 것은 딱딱한 빵 한 조각뿐이었지요.\n아버지가 힘겹게 말했어요."
   },
   "classic/hansel/seg-cast-p2-1.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-daejin",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "\"내일 아침 숲으로 가자. 먹을 것을 찾아보자꾸나.\""
+    "text": "\"내일 아침에 숲으로 가서 먹을 것을 찾아보자꾸나.\""
   },
   "classic/hansel/seg-tc-minjung-p2-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "헨젤은 제 몫의 빵을 다 먹지 않고, 절반을 슬며시 주머니에 넣었어요.\n숲은 넓어서, 길을 잃기 쉬우니까요."
+    "text": "헨젤은 제 몫의 빵을 다 먹지 않고, 절반을 슬며시 주머니에 넣었어요."
   },
   "classic/hansel/say-p2-father.mp3": {
-    "voice": "tc-hosun",
+    "voice": "tc-daejin",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "내일 아침 숲으로 가자. 먹을 것을 찾아보자꾸나."
+    "text": "내일 아침에 숲으로 가서 먹을 것을 찾아보자꾸나."
   },
   "classic/hansel/seg-tc-minjung-p3-0.mp3": {
     "voice": "tc-minjung",
@@ -9450,7 +9222,7 @@
     "text": "다음 날 아침, 숲으로 들어가는 동안 헨젤은 빵을 조금씩 뜯어 떨어뜨렸어요.\n그레텔이 작은 소리로 물었지요."
   },
   "classic/hansel/seg-cast-p3-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-sua",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "\"오빠, 그건 왜 떨어뜨려?\""
@@ -9462,7 +9234,7 @@
     "text": "\"돌아갈 때 길을 찾으려고. 걱정 마, 내가 다 표시해 뒀어.\""
   },
   "classic/hansel/say-p3-gretel.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-sua",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "오빠, 그건 왜 떨어뜨려?"
@@ -9480,10 +9252,10 @@
     "text": "숲 깊은 곳까지 들어오자, 아버지가 걸음을 멈추고 힘겹게 말했어요."
   },
   "classic/hansel/seg-cast-p4-1.mp3": {
-    "voice": "tc-hosun",
-    "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"미안하다. 먹을 것을 구해 올 동안 여기서 잠깐만 기다리렴.\""
+    "voice": "tc-daejin",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"먹을 것을 구해 올 테니, 여기서 잠깐만 기다리고 있으렴.\""
   },
   "classic/hansel/seg-tc-minjung-p4-2.mp3": {
     "voice": "tc-minjung",
@@ -9492,7 +9264,7 @@
     "text": "해가 기울도록 기다려도, 아버지는 돌아오지 않았어요.\n아무리 불러도 대답이 없고, 나무들만 우뚝우뚝 서 있었지요."
   },
   "classic/hansel/seg-cast-p4-3.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-sua",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"오빠… 아버지가 우리를 잊어버린 걸까?\""
@@ -9504,7 +9276,7 @@
     "text": "그레텔의 눈에 눈물이 그렁그렁 맺혔어요."
   },
   "classic/hansel/say-p4-gretel.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-sua",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "오빠… 아버지가 우리를 잊어버린 걸까?"
@@ -9546,25 +9318,25 @@
     "text": "날이 밝을 무렵, 남매는 나무 사이에서 이상한 집을 발견했어요.\n지붕은 초콜릿, 창틀은 사탕, 담장은 알록달록한 과자로 되어 있었지요.\n밤새 아무것도 먹지 못한 두 아이는 눈이 휘둥그레졌어요."
   },
   "classic/hansel/seg-cast-p7-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-sua",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"오빠, 이 집… 먹을 수 있는 거야?\""
+    "text": "\"오빠, 과자집이야!\""
   },
   "classic/hansel/say-p7-gretel.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-sua",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "오빠, 이 집… 먹을 수 있는 거야?"
+    "text": "오빠, 과자집이야!"
   },
   "classic/hansel/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "아이들이 과자를 한 조각 떼어 먹는 순간, 문이 삐걱 열렸어요.\n허리가 굽은 할머니가 지팡이를 짚고 나와, 다정하게 웃었지요."
+    "text": "아이들이 과자를 한 조각 떼어 먹는 순간, 문이 삐걱 열렸어요.\n허리가 굽은 마녀가 지팡이를 짚고 나타나, 다정하게 웃으며 이야기했어요."
   },
   "classic/hansel/seg-cast-p8-1.mp3": {
-    "voice": "tc-gahee",
+    "voice": "tc-sabrina",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "\"배가 고팠구나. 어서 들어오렴. 따뜻한 수프가 있단다.\"",
@@ -9577,7 +9349,7 @@
     "text": "그 웃음 뒤에 무엇이 숨어 있는지, 아이들은 알지 못했답니다."
   },
   "classic/hansel/say-p8-witch.mp3": {
-    "voice": "tc-gahee",
+    "voice": "tc-sabrina",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "배가 고팠구나. 어서 들어오렴. 따뜻한 수프가 있단다.",
@@ -9587,102 +9359,49 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "할머니는 사실 아이들을 잡아먹는 마녀였어요.\n마녀는 헨젤을 작은 방에 넣고 문을 잠가 버렸지요.\n날마다 헨젤의 손가락을 만져 보며 살이 쪘는지 살피고,\n그레텔에게는 부엌일을 시켰답니다."
-  },
-  "classic/hansel/seg-cast-p9-1.mp3": {
-    "voice": "tc-gahee",
-    "emotion": "angry",
-    "intensity": 0.35,
-    "text": "\"오빠를 살찌워야 하니 너는 부지런히 일해라!\"",
-    "tempo": 0.88
-  },
-  "classic/hansel/say-p9-witch.mp3": {
-    "voice": "tc-gahee",
-    "emotion": "angry",
-    "intensity": 0.35,
-    "text": "오빠를 살찌워야 하니 너는 부지런히 일해라!",
-    "tempo": 0.88
+    "text": "마녀는 헨젤을 작은 쇠창살 안에 가둬 놓고 문을 잠가 버렸어요.\n그 후 날마다 헨젤의 손가락을 만져 보며 살이 쪘는지 살폈고,\n그레텔에게는 부엌일을 돕게 했어요."
   },
   "classic/hansel/seg-tc-minjung-p10-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "마녀는 눈이 몹시 나빠, 코앞에 있는 것도 흐릿하게만 보였어요.\n그것을 알아챈 헨젤은, 손가락 대신 가느다란 나뭇가지를 내밀었지요."
-  },
-  "classic/hansel/seg-cast-p10-1.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"이것 보세요. 아직도 이렇게 말랐어요.\""
-  },
-  "classic/hansel/seg-tc-minjung-p10-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "마녀는 몇 날 며칠이 지나도, 고개를 갸웃할 뿐이었어요."
-  },
-  "classic/hansel/say-p10-hansel.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "이것 보세요. 아직도 이렇게 말랐어요."
+    "text": "마녀는 눈이 몹시 나빠, 코앞에 있는 것도 흐릿하게만 보였어요.\n그것을 알아챈 헨젤은, 손가락 대신 가느다란 나뭇가지를 내밀었지요.\n마녀는 몇 날 며칠이 지나도 그대로인 헨젤의 손을 보며 고개를 갸웃할 수밖에 없었어요."
   },
   "classic/hansel/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "참다못한 마녀가 화덕에 불을 피우며, 그레텔을 불렀어요."
+    "text": "참다못한 마녀가 화덕에 불을 피우며 말했어요."
   },
   "classic/hansel/seg-cast-p11-1.mp3": {
-    "voice": "tc-gahee",
-    "emotion": "tonedown",
-    "intensity": 0.35,
-    "text": "\"안이 뜨거운지 네가 먼저 들여다보아라.\"",
-    "tempo": 0.88
-  },
-  "classic/hansel/seg-tc-minjung-p11-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "그레텔은 겁이 났지만 침착하게 대답했지요."
-  },
-  "classic/hansel/seg-cast-p11-3.mp3": {
-    "voice": "tc-hamchu",
-    "emotion": "tonedown",
-    "intensity": 0.35,
-    "text": "\"저는 키가 작아서 잘 안 보여요. 할머니가 보여 주세요.\""
-  },
-  "classic/hansel/seg-tc-minjung-p11-4.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "마녀가 허리를 굽혀 화덕 앞으로 몸을 기울였어요.\n바로 그 옆에는, 문이 활짝 열린 캄캄한 창고가 있었답니다."
+    "voice": "tc-sabrina",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "\"그레텔, 화덕 안이 뜨거운지 네가 확인해 보거라.\""
   },
   "classic/hansel/say-p11-witch.mp3": {
-    "voice": "tc-gahee",
-    "emotion": "tonedown",
-    "intensity": 0.35,
-    "text": "안이 뜨거운지 네가 먼저 들여다보아라.",
-    "tempo": 0.88
+    "voice": "tc-sabrina",
+    "emotion": "angry",
+    "intensity": 0.4,
+    "text": "그레텔, 화덕 안이 뜨거운지 네가 확인해 보거라."
   },
   "classic/hansel/say-p11-gretel.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-sua",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "저는 키가 작아서 잘 안 보여요. 할머니가 보여 주세요."
+    "text": "저는 키가 작아서 잘 안 보여요. 마녀님이 안을 봐 주시겠어요?"
   },
   "classic/hansel/seg-tc-minjung-p12-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그레텔은 있는 힘을 다해 마녀를 창고 안으로 밀어 넣고, 문을 철컥 잠갔어요.\n그러고는 얼른 달려가, 오빠의 방문을 열어 주었지요."
+    "text": "그레텔은 있는 힘을 다해 마녀를 창고 안으로 밀어 넣고, 문을 철컥 잠갔어요.\n그러고는 얼른 달려가, 오빠의 쇠창살 문을 열어 주었어요."
   },
   "classic/hansel/seg-cast-p12-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-sua",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"오빠, 어서 나와! 우리 집으로 가자!\"",
-    "tempo": 1.1
+    "intensity": 0.5,
+    "text": "\"오빠, 어서 나와! 우리 집으로 가자!\""
   },
   "classic/hansel/seg-tc-minjung-p12-2.mp3": {
     "voice": "tc-minjung",
@@ -9691,17 +9410,16 @@
     "text": "남매는 손을 꼭 잡고 과자 집을 빠져나왔답니다."
   },
   "classic/hansel/say-p12-gretel.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-sua",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "오빠, 어서 나와! 우리 집으로 가자!",
-    "tempo": 1.1
+    "intensity": 0.5,
+    "text": "오빠, 어서 나와! 우리 집으로 가자!"
   },
   "classic/hansel/seg-tc-minjung-p13-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "남매는 해가 뜨는 쪽으로 걷고 또 걸었어요.\n숲을 빠져나오자, 저만치서 아버지가 아이들을 찾아 헤매고 있었지요.\n세 식구는 서로를 껴안고 한참을 울었어요.\n그날 밤 식탁에는 빵 한 조각뿐이었지만, 세상에서 제일 맛있었답니다.\n이제 아버지는 두 번 다시 아이들의 손을 놓지 않았어요.\n창밖에는 여전히 깜깜한 숲이 서 있었지만,\n세 식구가 함께 있는 방 안은 조금도 무섭지 않았답니다."
+    "text": "남매는 해가 뜨는 쪽으로 걷고 또 걸었어요.\n숲을 빠져나오자, 저만치서 아버지가 아이들을 찾아 헤매고 있었지요.\n세 식구는 서로를 껴안고 한참을 울었어요.\n그날 밤 식탁에는 빵 한 조각뿐이었지만, 세상에서 제일 맛있었답니다.\n아버지는 다시는 아이들의 손을 놓지 않겠다고 약속했어요.\n창밖에는 여전히 깜깜한 숲이 서 있었지만,\n세 식구가 함께 있는 방 안은 조금도 무섭지 않았답니다."
   },
   "sample/haon-bubble/seg-tc-minjung-p1-0.mp3": {
     "voice": "tc-minjung",
@@ -10031,7 +9749,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "높은 하늘 구름 위에서 북풍과 태양이 만났어요.\n북풍은 씽씽 바람을 불며 어깨를 으쓱했지요."
+    "text": "높은 하늘 구름 위에서 북풍과 태양이 만났어요.\n북풍은 씽씽 바람을 불며 어깨를 으쓱하며 이야기했어요."
   },
   "classic/northwind/seg-cast-p1-1.mp3": {
     "voice": "tc-siwoo",
@@ -10061,7 +9779,7 @@
     "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.35,
-    "text": "\"좋아, 내기하자! 저 사람 외투를 먼저 벗기는 쪽이 이기는 거야.\""
+    "text": "\"그럼 우리 내기 한번 할까? 저 사람 외투를 먼저 벗기는 쪽이 이기는 거야.\""
   },
   "classic/northwind/seg-tc-minjung-p2-2.mp3": {
     "voice": "tc-minjung",
@@ -10073,13 +9791,13 @@
     "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.35,
-    "text": "좋아, 내기하자! 저 사람 외투를 먼저 벗기는 쪽이 이기는 거야."
+    "text": "그럼 우리 내기 한번 할까? 저 사람 외투를 먼저 벗기는 쪽이 이기는 거야."
   },
   "classic/northwind/seg-tc-minjung-p3-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "북풍이 크게 숨을 들이쉬었어요.\n그리고 온 힘을 다해 바람을 불었지요.\n후욱! 후우욱!\n나뭇잎이 우수수 날리고, 나그네의 옷자락이 펄럭였어요."
+    "text": "북풍이 숨을 크게 들이쉬고,\n온 힘을 다해 바람을 불었지요.\n나뭇잎이 우수수 날리고, 나그네의 옷자락이 펄럭였어요."
   },
   "classic/northwind/seg-tc-minjung-p4-0.mp3": {
     "voice": "tc-minjung",
@@ -10091,7 +9809,7 @@
     "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"어이쿠, 바람이 정말 차구나.\""
+    "text": "\"어이쿠, 바람이 정말 세게 부는걸!\""
   },
   "classic/northwind/seg-tc-minjung-p4-2.mp3": {
     "voice": "tc-minjung",
@@ -10103,7 +9821,7 @@
     "voice": "tc-hosun",
     "emotion": "normal",
     "intensity": null,
-    "text": "어이쿠, 바람이 정말 차구나."
+    "text": "어이쿠, 바람이 정말 세게 부는걸!"
   },
   "classic/northwind/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
@@ -15648,5 +15366,145 @@
     "emotion": "happy",
     "intensity": 0.45,
     "text": "꼬끼오!"
+  },
+  "classic/twomice/seg-tc-minjung-p3-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "시골 쥐는 잠깐 생각하다가 대답했어요."
+  },
+  "classic/twomice/seg-cast-p3-3.mp3": {
+    "voice": "tc-dukgu",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그럴까?\""
+  },
+  "classic/shepherdboy/seg-cast-p7-1.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "toneup",
+    "intensity": 0.6,
+    "text": "\"이번엔 진짜 늑대예요!\""
+  },
+  "classic/shepherdboy/seg-tc-minjung-p7-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "소년은 목이 터져라 외쳤지만 아무도 오지 않았어요."
+  },
+  "classic/jack/seg-cast-p3-4.mp3": {
+    "voice": "tc-toby",
+    "emotion": "sad",
+    "intensity": 0.3,
+    "text": "\"할아버지, 우리 얼룩이를 잘 부탁드려요.\""
+  },
+  "classic/jack/seg-tc-minjung-p3-5.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 얼룩이를 건네고 콩을 꼭 쥐었답니다."
+  },
+  "classic/jack/say-p14-jack.mp3": {
+    "voice": "tc-toby",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "이번이 마지막이야!"
+  },
+  "classic/jack/seg-cast-p14-1.mp3": {
+    "voice": "tc-toby",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "'저게 요정이 말한 아버지의 하프구나!'"
+  },
+  "classic/jack/seg-tc-minjung-p14-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "이번에 잭은 거인 아내 몰래, 살그머니 성 안으로 들어갔어요.\n그때 어디선가 아름다운 노랫소리가 들려왔어요.\n소리를 따라가 보니, 황금 하프가 저 혼자 줄을 튕기며 노래하고 있었어요.\n그 곁에서 거인은 드르렁 코를 골며 자고 있었답니다."
+  },
+  "classic/jack/say-p15-giant.mp3": {
+    "voice": "tc-homun",
+    "emotion": "toneup",
+    "intensity": 0.5,
+    "text": "이놈, 게 섰거라!"
+  },
+  "classic/jack/seg-cast-p15-1.mp3": {
+    "voice": "tc-homun",
+    "emotion": "toneup",
+    "intensity": 0.5,
+    "text": "\"이놈! 게 섰거라!\""
+  },
+  "classic/jack/seg-tc-minjung-p15-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 하프를 살며시 안아 들었어요.\n그런데 하프가 갑자기 주인님, 주인님! 하고 소리치는 게 아니겠어요?\n거인이 번쩍 눈을 떴어요."
+  },
+  "classic/jack/seg-tc-minjung-p15-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 하프를 안고 문 쪽으로 쏜살같이 뛰었답니다."
+  },
+  "classic/jack/say-p16-jack.mp3": {
+    "voice": "tc-toby",
+    "emotion": "toneup",
+    "intensity": 0.45,
+    "text": "엄마, 도끼 좀 주세요!",
+    "tempo": 1.1
+  },
+  "classic/jack/seg-cast-p16-1.mp3": {
+    "voice": "tc-toby",
+    "emotion": "toneup",
+    "intensity": 0.45,
+    "text": "\"엄마! 도끼요, 도끼 좀 주세요!\"",
+    "tempo": 1.1
+  },
+  "classic/jack/seg-tc-minjung-p16-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 콩나무를 타고 쭉쭉 미끄러져 내려갔어요.\n거인도 콩나무를 붙잡고 뒤따라 내려왔지요."
+  },
+  "classic/jack/seg-tc-minjung-p16-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "땅에 내려선 잭은 엄마가 건넨 도끼로 콩나무를 힘껏 찍었어요.\n한 번, 두 번 — 우지끈! 콩나무가 기우뚱 쓰러지자, 붙잡고 있던 거인도 쿵! 하고 굴러떨어졌답니다.\n거인은 저 멀리 산 너머로 데굴데굴 굴러가더니, 그 뒤로 두 번 다시 마을에 나타나지 않았답니다."
+  },
+  "classic/jack/say-p17-jack.mp3": {
+    "voice": "tc-toby",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "모두 함께 나눠 먹어요!"
+  },
+  "classic/jack/seg-cast-p17-1.mp3": {
+    "voice": "tc-toby",
+    "emotion": "toneup",
+    "intensity": 0.35,
+    "text": "\"엄마, 이제 우리도 나눌 수 있어요. 마을 사람들이랑 같이 먹어요.\""
+  },
+  "classic/jack/seg-tc-minjung-p17-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "황금알을 낳는 암탉과 노래하는 하프 덕분에,\n잭과 엄마는 다시는 굶지 않았어요."
+  },
+  "classic/jack/seg-tc-minjung-p17-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "잭은 마을 사람들과 빵과 노래를 나누었답니다.\n쓰러진 콩나무 자리에서는 다음 해 봄, 조그만 새싹이 돋아났답니다."
+  },
+  "classic/hansel/seg-cast-p11-2.mp3": {
+    "voice": "tc-sua",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "\"저는 키가 작아서 잘 안 보여요. 마녀님이 안을 봐 주시겠어요?\""
+  },
+  "classic/hansel/seg-tc-minjung-p11-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "마녀가 허리를 굽혀 화덕 앞으로 몸을 기울였어요."
   }
 }

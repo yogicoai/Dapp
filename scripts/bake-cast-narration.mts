@@ -50,7 +50,7 @@ const MANIFEST = "scripts/bake-manifest.json";
  * 읽고 멀쩡한 조각을 다시 굽는다(실제로 흥부에서 21개·450자가 그렇게 잡혔다).
  */
 const keyOf = (file: string) => `${SPEC.root ?? "folk"}/${SPEC.dir}/${file}`;
-type Recipe = { voice: string; emotion: string; intensity: number | null; text: string; tempo?: number };
+type Recipe = { voice: string; emotion: string; intensity: number | null; text: string; tempo?: number; pitch?: number };
 const recorded: Record<string, Recipe> = fs.existsSync(MANIFEST)
   ? JSON.parse(fs.readFileSync(MANIFEST, "utf8"))
   : {};
@@ -61,6 +61,7 @@ const same = (a: Recipe | undefined, b: Recipe) =>
   a!.emotion === b.emotion &&
   a!.intensity === b.intensity &&
   (a!.tempo ?? 1) === (b.tempo ?? 1) &&
+  (a!.pitch ?? 0) === (b.pitch ?? 0) &&
   a!.text === b.text;
 const BASE = process.env.BAKE_BASE ?? "http://localhost:3000";
 
@@ -683,6 +684,8 @@ async function bake(
   role?: string,
   /** 이 줄만의 연기 세기(대사집·말풍선의 intensity). 있으면 배역 세기보다 앞선다. */
   lineIntensity?: number,
+  /** 이 줄만의 목소리 높이(대사집·말풍선의 pitch, 반음 -6~6). 없으면 그대로. */
+  linePitch?: number,
 ) {
   const table = voiceTable();
   const v = table[voice];
@@ -703,6 +706,7 @@ async function bake(
     intensity: emotion === "normal" ? null : strength,
     text,
     ...(tempo && tempo !== 1 ? { tempo } : {}),
+    ...(linePitch ? { pitch: linePitch } : {}),
   };
   fresh[keyOf(file)] = recipe;
   // 기록만 남기는 모드 — 지금 파일을 그대로 인정하고 넘어간다.
@@ -724,7 +728,7 @@ async function bake(
   spent += text.length;
   if (DRY) {
     made += 1;
-    console.log(`  [리허설] ${file}  ${voice}/${emotion}  ${text.length}자  ${text.slice(0, 30)}`);
+    console.log(`  [리허설] ${file}  ${voice}/${emotion}${linePitch ? ` 높이${linePitch}` : ""}  ${text.length}자  ${text.slice(0, 30)}`);
     return;
   }
   const res = await fetch(`${BASE}/api/tts`, {
@@ -738,6 +742,7 @@ async function bake(
       emotion,
       intensity: emotion === "normal" ? undefined : strength,
       tempo,
+      ...(linePitch ? { pitch: linePitch } : {}),
     }),
   });
   if (!res.ok) {
@@ -871,6 +876,7 @@ for (const [i, page] of book.pages.entries()) {
         seg.tempo ?? book.voiceTempo?.[seg.who],
         seg.who,
         seg.intensity,
+        seg.pitch,
       );
       segments.push({ who: seg.who, src: `${URL_DIR}/seg-cast-p${n}-${j}.mp3`, text: seg.text });
     }
@@ -879,7 +885,10 @@ for (const [i, page] of book.pages.entries()) {
 
   // 말풍선(그림 속 캐릭터를 눌렀을 때) — 배역 목소리로 다시 굽는다.
   for (const h of page.hotspots ?? []) {
-    const voice = cast[h.label];
+    // 말풍선 배역 — 보통은 누른 캐릭터(label) 목소리, h.who 가 있으면 그 배역 목소리.
+    // 같은 캐릭터가 목소리를 둘 쓰는 책용(빨간 모자 늑대: 흉내 낼 땐 하데스 wolfMimic, 본래 목소리는 샷건 wolf — 2026-10-15).
+    const role = typeof h.who === "string" && h.who ? h.who : h.label;
+    const voice = cast[role];
     if (!voice) {
       console.log(`  (건너뜀) 말풍선 ${h.label} — 배역에 성우가 없음`);
       continue;
@@ -890,7 +899,7 @@ for (const [i, page] of book.pages.entries()) {
     const spoken = breathe(typeof h.say === "string" && h.say.trim() ? h.say.trim() : line);
     // 말풍선도 대사집처럼 연기를 못 박을 수 있다(h.feel) — 자동 판정이 틀리는 줄용.
     // 말풍선도 줄 단위 빠르기(h.tempo)가 배역 빠르기보다 앞선다 — 대사 조각과 같은 규칙.
-    await bake(file, spoken, voice, h.feel ?? emotionOf(line), !ONLY_CHANGED, h.tempo ?? book.voiceTempo?.[h.label], h.label, h.intensity);
+    await bake(file, spoken, voice, h.feel ?? emotionOf(line), !ONLY_CHANGED, h.tempo ?? book.voiceTempo?.[role], role, h.intensity, h.pitch);
   }
 }
 

@@ -27,6 +27,7 @@ export async function POST(request: Request) {
     emotion?: unknown;
     intensity?: unknown;
     tempo?: unknown;
+    pitch?: unknown;
   };
   const text = typeof input.text === "string" ? input.text.trim() : "";
   const voiceId = typeof input.voiceId === "string" ? input.voiceId.trim() : "";
@@ -36,6 +37,9 @@ export async function POST(request: Request) {
   const rawTempo = Number(input.tempo);
   // 0.5~2 밖은 말이 아니라 사고다 — 조용히 무시한다.
   const tempo = Number.isFinite(rawTempo) && rawTempo >= 0.5 && rawTempo <= 2 ? rawTempo : undefined;
+  // 목소리 높이(반음) — 정수 -6~6 만(그 밖은 성우 목소리가 아니게 된다). 0·잘못된 값은 그대로.
+  const rawPitch = Number(input.pitch);
+  const pitch = Number.isInteger(rawPitch) && rawPitch >= -6 && rawPitch <= 6 && rawPitch !== 0 ? rawPitch : undefined;
   const rawIntensity = Number(input.intensity);
   const intensity = Number.isFinite(rawIntensity)
     ? Math.min(1.2, Math.max(0.3, rawIntensity))
@@ -64,7 +68,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { audio, contentType } = await synthesize({ text, voiceId, model, emotion, intensity, tempo });
+    const { audio, contentType } = await synthesize({ text, voiceId, model, emotion, intensity, tempo, pitch });
     return new Response(audio, {
       headers: { "Content-Type": contentType, "Cache-Control": "no-store" },
     });
