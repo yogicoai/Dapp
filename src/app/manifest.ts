@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { READ_ALOUD_VOICE } from "@/lib/plans";
 
 /**
  * PWA manifest. TWA로 Play 스토어에 올리면 여기 orientation이 그대로 먹혀서
@@ -9,7 +10,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "우리 가족 보이스 동화",
     short_name: "보이스 동화",
-    description: "아이가 주인공인 그림동화를 엄마·아빠 목소리로 읽어줍니다.",
+    description: `아이가 주인공인 그림동화를 ${READ_ALOUD_VOICE}로 읽어줍니다.`,
     start_url: "/",
     display: "standalone",
     orientation: "landscape",

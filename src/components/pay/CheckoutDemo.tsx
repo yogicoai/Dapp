@@ -37,7 +37,9 @@ import {
   type PayMethodId,
 } from "@/lib/pay-demo";
 import {
+  CREDIT_EXTRAS_TEXT,
   DEFAULT_PLAN_TERMS,
+  PARENT_VOICE_OPEN,
   billingDayText,
   formatDateKo,
   nextBillingDate,
@@ -101,7 +103,9 @@ export function CheckoutDemo({
   const planSubscriberOnly = plan.subscriberOnly;
   const planIsSub = plan.kind === "subscription";
   const planIsStarter = plan.kind === "starter";
-  const passVoices = (planId === "yearly" ? terms.yearly : terms.monthly).voices;
+  const passTerms = planId === "yearly" ? terms.yearly : terms.monthly;
+  // 가족 목소리를 열기 전에는 그 자리에 가족 캐릭터 수를 적는다(lib/plans PARENT_VOICE_OPEN)
+  const passExtra = PARENT_VOICE_OPEN ? `가족 목소리 ${passTerms.voices}명` : `가족 캐릭터 ${passTerms.familyCharacters}명까지`;
 
   const [view, setView] = useState<View>(PAY_DEMO === "off" ? { kind: "soon" } : { kind: "loading" });
   const [method, setMethod] = useState<PayMethodId>("card");
@@ -234,11 +238,11 @@ export function CheckoutDemo({
   const canPay = consents[0] && consents[1] && !!method && !busy;
   const payLabel = `${won(plan.priceWon)} 결제하기 · 시연`;
   const orderLine = isSub
-    ? `매달 새 동화책 ${plan.books}권 · 가족 목소리 ${passVoices}명 · 다시 듣기 무제한`
+    ? `매달 새 동화책 ${plan.books}권 · ${passExtra} · 다시 듣기 무제한`
     : plan.kind === "starter"
-      ? `우리 아이 동화 ${plan.books}권 · 가족 캐릭터 ${terms.starter.familyCharacters}명 · 가족 목소리 ${terms.starter.voices}명`
+      ? `우리 아이 동화 ${plan.books}권 · 가족 캐릭터 ${terms.starter.familyCharacters}명${PARENT_VOICE_OPEN ? ` · 가족 목소리 ${terms.starter.voices}명` : ""}`
       : plan.kind === "credit"
-        ? "동화·가족 캐릭터·가족 목소리를 더할 때 써요"
+        ? `${CREDIT_EXTRAS_TEXT}를 더할 때 써요`
         : `지금 쓰는 가족 패스에 동화책 ${plan.books}권을 더해요`;
   // 실패 화면의 '다시 해 볼게요'가 같은 묶음으로 돌아오게 크레딧은 묶음 값도 싣는다
   const failHref = `/checkout/fail?plan=${plan.id}${plan.kind === "credit" ? `&pack=${plan.priceWon}` : ""}&code=REJECT_CARD_COMPANY`;

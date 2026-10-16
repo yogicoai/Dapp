@@ -156,6 +156,20 @@ export const CREDIT_USE_LABEL: Readonly<Record<CreditUse, string>> = {
   voice: "가족 목소리 1명 더",
   draw: "가족 그리기 1번 더",
 };
+
+/**
+ * 가족(부모) 목소리를 고객 화면에 보이는지 — 2026-10-16 사장님: 웹 오픈 때는 숨기고 추가 개발 뒤에 연다.
+ * false 면 요금제·결제·자주 묻는 질문·홈 소개 문구에서 '가족 목소리'를 뺀다. 관리실 값(목소리 수·크레딧)은 그대로 둔다.
+ * 녹음·만들기·읽기는 원래부터 개발자 모드(fe)에서만 보인다(lib/dev-mode).
+ */
+export const PARENT_VOICE_OPEN = false;
+/** 고객 화면에 보이는 크레딧 쓰는 곳 — 가족 목소리가 닫혀 있으면 뺀다(관리실은 CREDIT_USES 전부) */
+export const CUSTOMER_CREDIT_USES: readonly CreditUse[] = CREDIT_USES.filter((k) => PARENT_VOICE_OPEN || k !== "voice");
+/** 크레딧으로 더하는 것 — "동화·가족 캐릭터(·가족 목소리)" */
+export const CREDIT_EXTRAS_TEXT = PARENT_VOICE_OPEN ? "동화·가족 캐릭터·가족 목소리" : "동화·가족 캐릭터";
+/** 앱 소개 문구의 '누구 목소리로' — 가족 목소리를 열기 전에는 성우 목소리라고 말한다 */
+export const READ_ALOUD_VOICE = PARENT_VOICE_OPEN ? "엄마·아빠 목소리" : "생생한 성우 목소리";
+
 /** 가격별 묶음 — 큰 묶음일수록 크레딧을 조금 더 준다. 첫 묶음 = 동화 1권 값. */
 export const DEFAULT_CREDIT_PACKS: readonly CreditPack[] = [
   { priceWon: 4_900, credits: 50 },
@@ -278,7 +292,7 @@ export function passFeatures(p: PassTerms = PASS, libraryBooks: number = PASS.li
   return [
     `매달 새 동화책 ${p.booksPerMonth}권`,
     `우리 가족 캐릭터 ${p.familyCharacters}명까지`,
-    `가족 목소리 ${p.voices}명 (한 달에 ${p.voiceRemakesPerMonth}번 다시 만들기)`,
+    ...(PARENT_VOICE_OPEN ? [`가족 목소리 ${p.voices}명 (한 달에 ${p.voiceRemakesPerMonth}번 다시 만들기)`] : []),
     `가족 그리기 토큰 매달 ${p.drawTokensPerMonth}개 (첫 달 ${p.drawTokensFirstMonth}개)`,
     `세계명작·전래동화 ${libraryBooks}권 마음껏 듣기`,
     "다시 듣기 무제한",
@@ -310,7 +324,7 @@ export function starterFeatures(offer: OfferView = DEFAULT_OFFER_VIEW): string[]
   return [
     `우리 아이 동화 ${offer.plans.starter.books}권 만들기`,
     `우리 가족 캐릭터 ${offer.plans.starter.familyCharacters}명`,
-    `가족 목소리 ${offer.plans.starter.voices}명`,
+    ...(PARENT_VOICE_OPEN ? [`가족 목소리 ${offer.plans.starter.voices}명`] : []),
     ...(books ? [`${books} 듣기`] : []),
     "처음 한 번만 살 수 있어요",
   ];
@@ -427,14 +441,14 @@ export function planFaq(offer: OfferView = DEFAULT_OFFER_VIEW): { q: string; a: 
     },
     {
       q: "가족 그리기 토큰과 크레딧은 뭐가 달라요?",
-      a: `가족 그리기 토큰은 가족 패스에 매달 ${offer.plans.monthly.drawTokensPerMonth}개(첫 달은 ${offer.plans.monthly.drawTokensFirstMonth}개) 들어오는 몫이에요. 우리 가족 캐릭터를 새로 그리거나 다시 그릴 때 한 번에 1개씩 쓰고, 남은 개수는 다음 달로 넘어가지 않아요. 크레딧은 따로 사서 동화·가족 캐릭터·가족 목소리를 더할 때 써요.`,
+      a: `가족 그리기 토큰은 가족 패스에 매달 ${offer.plans.monthly.drawTokensPerMonth}개(첫 달은 ${offer.plans.monthly.drawTokensFirstMonth}개) 들어오는 몫이에요. 우리 가족 캐릭터를 새로 그리거나 다시 그릴 때 한 번에 1개씩 쓰고, 남은 개수는 다음 달로 넘어가지 않아요. 크레딧은 따로 사서 ${CREDIT_EXTRAS_TEXT}를 더할 때 써요.`,
     },
     ...(freeBooks
       ? [{ q: "가입하지 않아도 들을 수 있나요?", a: `네. ${freeBooks}은 가입하지 않아도 들을 수 있어요.` }]
       : []),
     {
       q: "스타트팩은 무엇인가요?",
-      a: `처음 한 번만 살 수 있는 ${won(offer.plans.starter.priceWon)} 꾸러미예요. 우리 아이 동화 ${offer.plans.starter.books}권, 가족 캐릭터 ${offer.plans.starter.familyCharacters}명, 가족 목소리 ${offer.plans.starter.voices}명이 들어 있어요.${starterBooks ? ` ${starterBooks}도 들을 수 있어요.` : ""} 만든 책은 계속 남아요.`,
+      a: `처음 한 번만 살 수 있는 ${won(offer.plans.starter.priceWon)} 꾸러미예요. 우리 아이 동화 ${offer.plans.starter.books}권, 가족 캐릭터 ${offer.plans.starter.familyCharacters}명${PARENT_VOICE_OPEN ? `, 가족 목소리 ${offer.plans.starter.voices}명` : ""}이 들어 있어요.${starterBooks ? ` ${starterBooks}도 들을 수 있어요.` : ""} 만든 책은 계속 남아요.`,
     },
   ];
 }

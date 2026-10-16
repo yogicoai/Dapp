@@ -20,6 +20,7 @@ import { TopBar } from "@/components/family/ui";
 import { loadSession } from "@/lib/auth";
 import { PAY_DEMO, clearDemoState, readDemoState, receiptName, type DemoState } from "@/lib/pay-demo";
 import {
+  CREDIT_EXTRAS_TEXT,
   DEFAULT_PLAN_TERMS,
   booksText,
   creditsText,
@@ -231,7 +232,7 @@ export function BillingDemo({ terms = DEFAULT_PLAN_TERMS }: { terms?: PlanTerms 
         </p>
         <p className="mt-1 break-keep text-[13px] font-medium text-neutral-500">
           {state.credits
-            ? "가족 패스·스타트팩에 든 몫을 다 쓴 뒤 동화·가족 캐릭터·가족 목소리를 더할 때 써요."
+            ? `가족 패스·스타트팩에 든 몫을 다 쓴 뒤 ${CREDIT_EXTRAS_TEXT}를 더할 때 써요.`
             : "아직 크레딧이 없어요. 더 필요할 때 요금제 화면에서 살 수 있어요."}
         </p>
         <div className="mt-4">

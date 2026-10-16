@@ -33,6 +33,7 @@ import {
 } from "@/lib/pay-demo";
 import {
   DEFAULT_PLAN_TERMS,
+  PARENT_VOICE_OPEN,
   booksText,
   creditsText,
   formatDateKo,
@@ -190,7 +191,8 @@ export function DoneDemo({
           <Row label={isSub ? "요금제" : "주문"}>{name}</Row>
           {kind === "starter" && (
             <Row label="들어 있는 것">
-              가족 캐릭터 {terms.starter.familyCharacters}명 · 가족 목소리 {terms.starter.voices}명
+              가족 캐릭터 {terms.starter.familyCharacters}명
+              {PARENT_VOICE_OPEN && ` · 가족 목소리 ${terms.starter.voices}명`}
             </Row>
           )}
           <Row label="결제 금액">{won(receipt.amountWon)}</Row>

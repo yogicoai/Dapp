@@ -15,11 +15,12 @@ import { useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 import { PAY_DEMO, checkoutHref } from "@/lib/pay-demo";
 import {
-  CREDIT_USES,
   CREDIT_USE_LABEL,
+  CUSTOMER_CREDIT_USES,
   DEFAULT_OFFER_VIEW,
   PASS_TAG,
   PLANS_PREVIEW_NOTE,
+  READ_ALOUD_VOICE,
   REFUND_SUMMARY,
   creditsText,
   freeFeatures,
@@ -72,7 +73,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
         <p className="mt-1 break-keep text-[13px] font-medium leading-relaxed text-neutral-500">
           우리 아이가 주인공인 그림동화를
           <br />
-          엄마·아빠 목소리로 들려주세요.
+          {READ_ALOUD_VOICE}로 들려주세요.
         </p>
         {PLANS_PREVIEW_NOTE && (
           <p className="mt-3 break-keep rounded-2xl bg-neutral-100 px-4 py-2 text-xs font-bold leading-snug text-neutral-600">
@@ -262,7 +263,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
         </ul>
         <p className="mt-4 text-[13px] font-extrabold text-neutral-700">이렇게 써요</p>
         <ul className="mt-1.5 flex flex-col gap-1">
-          {CREDIT_USES.map((k) => (
+          {CUSTOMER_CREDIT_USES.map((k) => (
             <li key={k} className="flex items-center justify-between gap-2 text-[13px] font-medium text-neutral-600">
               <span className="break-keep">{CREDIT_USE_LABEL[k]}</span>
               <span className="shrink-0 font-bold tabular-nums text-neutral-800">{creditsText(offer.creditCosts[k])}</span>

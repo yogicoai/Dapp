@@ -33,6 +33,7 @@ import { loadLibraryAccess } from "@/lib/library-access";
 import { viewerTierOf, type MemberPlanKey } from "@/lib/member-plan";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
 import { libraryLock, OPEN_LIBRARY, type LibraryAccess } from "@/lib/offer-settings";
+import { READ_ALOUD_VOICE } from "@/lib/plans";
 import { acctKey, currentUid } from "@/lib/supabase";
 import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
@@ -413,7 +414,7 @@ export default function Home() {
           {/* 밝은 하늘 배경 위라 흰 글자는 묻힌다 — 불투명 흰 알약 + 짙은 글자로 */}
           {guest && (
             <p className="mt-1.5 max-w-full break-keep rounded-2xl bg-white/95 px-4 py-1.5 text-center text-sm font-extrabold text-neutral-700 shadow-md sm:rounded-full">
-              내가 주인공인 동화, 엄마·아빠 목소리로 들어요
+              내가 주인공인 동화, {READ_ALOUD_VOICE}로 들어요
             </p>
           )}
         </header>

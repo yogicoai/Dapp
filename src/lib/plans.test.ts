@@ -17,7 +17,11 @@ import {
   PASS,
   PASS_FEATURES,
   PASS_YEARLY,
+  PARENT_VOICE_OPEN,
   PLANS,
+  CUSTOMER_CREDIT_USES,
+  CREDIT_EXTRAS_TEXT,
+  READ_ALOUD_VOICE,
   PLANS_PREVIEW_NOTE,
   REFUND_SUMMARY,
   STARTER,
@@ -190,7 +194,7 @@ describe("구성 줄", () => {
     assert.deepEqual([...PASS_FEATURES], [
       "매달 새 동화책 4권",
       "우리 가족 캐릭터 4명까지",
-      "가족 목소리 1명 (한 달에 1번 다시 만들기)",
+      ...(PARENT_VOICE_OPEN ? ["가족 목소리 1명 (한 달에 1번 다시 만들기)"] : []),
       "가족 그리기 토큰 매달 5개 (첫 달 10개)",
       "세계명작·전래동화 40권 마음껏 듣기",
       "다시 듣기 무제한",
@@ -201,7 +205,7 @@ describe("구성 줄", () => {
   it("연간은 캐릭터 6명 · 목소리 2명, 마음껏 듣는 권수는 관리실 값(offer)을 따른다", () => {
     const yearly = passFeaturesFor("yearly");
     assert.ok(yearly.includes("우리 가족 캐릭터 6명까지"));
-    assert.ok(yearly.includes("가족 목소리 2명 (한 달에 1번 다시 만들기)"));
+    assert.equal(yearly.includes("가족 목소리 2명 (한 달에 1번 다시 만들기)"), PARENT_VOICE_OPEN);
     assert.deepEqual(passFeaturesFor("monthly"), [...PASS_FEATURES]);
     assert.ok(passFeaturesFor("monthly", { ...DEFAULT_OFFER_VIEW, libraryBooks: 41 }).includes("세계명작·전래동화 41권 마음껏 듣기"));
   });
@@ -211,7 +215,7 @@ describe("구성 줄", () => {
     assert.deepEqual(starterFeatures(), [
       "우리 아이 동화 1권 만들기",
       "우리 가족 캐릭터 1명",
-      "가족 목소리 1명",
+      ...(PARENT_VOICE_OPEN ? ["가족 목소리 1명"] : []),
       "세계명작 10권 · 전래동화 10권 듣기",
       "처음 한 번만 살 수 있어요",
     ]);
@@ -294,7 +298,7 @@ describe("요금제 값(관리실) — 화면은 넘겨받은 값으로 그린�
 
   it("구성 줄 · 스타트팩 · 자주 묻는 질문이 관리실 값을 따른다", () => {
     assert.ok(passFeaturesFor("monthly", offer).includes("매달 새 동화책 5권"));
-    assert.ok(passFeaturesFor("yearly", offer).includes("가족 목소리 3명 (한 달에 1번 다시 만들기)"));
+    assert.equal(passFeaturesFor("yearly", offer).includes("가족 목소리 3명 (한 달에 1번 다시 만들기)"), PARENT_VOICE_OPEN);
     assert.ok(starterFeatures(offer).includes("우리 아이 동화 2권 만들기"));
     const starterQ = planFaq(offer).find((f) => f.q === "스타트팩은 무엇인가요?");
     assert.ok(starterQ?.a.startsWith("처음 한 번만 살 수 있는 3,900원 꾸러미예요. 우리 아이 동화 2권"), starterQ?.a);
@@ -330,4 +334,26 @@ describe("대외비 — 권고안의 비용 숫자·낱말이 시연 코드에 �
       assert.doesNotMatch(src, /원가|마진|공헌|실수령|수수료|고정비|770|4,?950/);
     });
   }
+});
+
+describe("가족 목소리 숨김(2026-10-16 웹 오픈) — 닫혀 있으면 고객 화면 글에 '가족 목소리'가 없다", () => {
+  it("구성 줄 · 자주 묻는 질문 · 크레딧 쓰는 곳", () => {
+    const texts = [
+      ...passFeaturesFor("monthly"),
+      ...passFeaturesFor("yearly"),
+      ...starterFeatures(),
+      ...planFaq().flatMap((f) => [f.q, f.a]),
+      ...CUSTOMER_CREDIT_USES.map((k) => CREDIT_USE_LABEL[k]),
+      CREDIT_EXTRAS_TEXT,
+      READ_ALOUD_VOICE,
+    ];
+    if (PARENT_VOICE_OPEN) {
+      assert.ok(CUSTOMER_CREDIT_USES.includes("voice"));
+    } else {
+      assert.deepEqual(texts.filter((t) => /가족 목소리|엄마·아빠 목소리/.test(t)), []);
+      assert.ok(!CUSTOMER_CREDIT_USES.includes("voice"));
+      // 관리실은 목소리 값을 그대로 다룬다
+      assert.ok(CREDIT_USES.includes("voice"));
+    }
+  });
 });

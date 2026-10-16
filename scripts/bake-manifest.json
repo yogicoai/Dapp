@@ -450,7 +450,7 @@
     "voice": "tc-byunghun",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "\"이 집도 논밭도 다 내 거야. 당장 나가!\""
+    "text": "\"이 집도 논밭도 모두 내 거니까, 당장 나가거라!\""
   },
   "folk/heungbu/seg-tc-kwonil-p2-2.mp3": {
     "voice": "tc-kwonil",
@@ -510,13 +510,13 @@
     "voice": "tc-seungjae",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "\"형수님, 밥 한 술만 주세요. 아이들이 사흘을 굶었어요.\""
+    "text": "\"형수님, 밥 한 술만 주실 수 있을까요? 아이들이 사흘을 굶었어요.\""
   },
   "folk/heungbu/seg-cast-p6-1.mp3": {
     "voice": "tc-chungah",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "\"흥, 밥 한 술도 아까워! 썩 물러가라!\""
+    "text": "\"흥, 너희한텐 밥 한 술도 아까워! 썩 물러가!\""
   },
   "folk/heungbu/seg-tc-kwonil-p6-2.mp3": {
     "voice": "tc-kwonil",
@@ -552,7 +552,7 @@
     "voice": "tc-seungjae",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "'이만하면 우리 아이들 저녁은 먹이겠구나.'"
+    "text": "'이만하면 우리 아이들에게 저녁을 먹일 수 있겠어.'"
   },
   "folk/heungbu/seg-tc-kwonil-p7-5.mp3": {
     "voice": "tc-kwonil",
@@ -570,7 +570,7 @@
     "voice": "tc-seungjae",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "\"어서 오렴, 제비들아. 우리 집이 좁아도 함께 지내자꾸나.\""
+    "text": "\"어서 오렴, 제비들아.\""
   },
   "folk/heungbu/seg-tc-kwonil-p8-2.mp3": {
     "voice": "tc-kwonil",
@@ -630,19 +630,13 @@
     "voice": "tc-seungjae",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "\"곧 나을 거야. 걱정하지 말렴.\""
+    "text": "\"곧 나을 거야. 걱정하지 마렴.\""
   },
   "folk/heungbu/seg-tc-kwonil-p13-0.mp3": {
     "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
     "text": "흥부네 아이들은 날마다 아기 제비에게 좁쌀을 물어다 주었어요.\n다리가 나은 제비는 마당을 한 바퀴, 두 바퀴 돌며 날갯짓을 익혔지요.\n가을바람이 불자 제비들은 먼 길을 떠날 채비를 했어요."
-  },
-  "folk/heungbu/seg-cast-p13-1.mp3": {
-    "voice": "tc-sua",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"짹짹! 짹짹!\""
   },
   "folk/heungbu/seg-tc-kwonil-p13-2.mp3": {
     "voice": "tc-kwonil",
@@ -756,7 +750,7 @@
     "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"흥부는 다친 제비를 고쳐 주고 부자가 됐다지?\n그럼 나도 다친 제비만 있으면 되겠구나!\""
+    "text": "\"흥부는 다친 제비를 고쳐 주고 부자가 됐다지?\n그럼 나도 다친 제비만 있으면 되겠는데!\""
   },
   "folk/heungbu/seg-tc-kwonil-p19-0.mp3": {
     "voice": "tc-kwonil",
@@ -765,10 +759,10 @@
     "text": "놀부는 처마 밑 제비를 잡아 다리를 뚝 부러뜨리고는,\n대충 싸매 주며 히죽 웃었어요."
   },
   "folk/heungbu/seg-cast-p19-1.mp3": {
-    "voice": "tc-sua",
-    "emotion": "sad",
+    "voice": "tc-byunghun",
+    "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"짹… 왜 일부러 아프게 하는 거예요…\""
+    "text": "\"이제 나도 부자가 되겠어, 부자가!\""
   },
   "folk/heungbu/seg-tc-kwonil-p20-0.mp3": {
     "voice": "tc-kwonil",
@@ -835,12 +829,6 @@
     "emotion": "normal",
     "intensity": null,
     "text": "도깨비들은 놀부네 곳간을 탈탈 털고 기와집까지 몽땅 가져가 버렸어요."
-  },
-  "folk/heungbu/seg-cast-p23-1.mp3": {
-    "voice": "tc-byunghun",
-    "emotion": "sad",
-    "intensity": 0.5,
-    "text": "\"아이고, 나는 망했구나!\""
   },
   "folk/heungbu/seg-tc-kwonil-p23-2.mp3": {
     "voice": "tc-kwonil",
@@ -3150,7 +3138,7 @@
     "voice": "tc-byunghun",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "이 집도 논밭도 다 내 거야. 당장 나가!"
+    "text": "이 집도 논밭도 모두 내 거니까, 당장 나가거라!"
   },
   "folk/heungbu/say-p4-kids.mp3": {
     "voice": "tc-arin",
@@ -3174,13 +3162,13 @@
     "voice": "tc-chungah",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "흥, 밥 한 술도 아까워! 썩 물러가라!"
+    "text": "흥, 너희한텐 밥 한 술도 아까워! 썩 물러가!"
   },
   "folk/heungbu/say-p6-heungbu.mp3": {
     "voice": "tc-seungjae",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "형수님, 밥 한 술만 주세요. 아이들이 사흘을 굶었어요."
+    "text": "형수님, 밥 한 술만 주실 수 있을까요? 아이들이 사흘을 굶었어요."
   },
   "folk/heungbu/say-p7-nolbuwife.mp3": {
     "voice": "tc-chungah",
@@ -3198,7 +3186,7 @@
     "voice": "tc-seungjae",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "어서 오렴, 제비들아. 우리 집이 좁아도 함께 지내자꾸나."
+    "text": "어서 오렴, 제비들아."
   },
   "folk/heungbu/say-p9-kids.mp3": {
     "voice": "tc-arin",
@@ -3217,12 +3205,6 @@
     "emotion": "sad",
     "intensity": 0.4,
     "text": "저런, 다리가 부러졌구나!"
-  },
-  "folk/heungbu/say-p13-swallow.mp3": {
-    "voice": "tc-sua",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "짹짹! 짹짹!"
   },
   "folk/heungbu/say-p14-swallow.mp3": {
     "voice": "tc-sua",
@@ -3264,7 +3246,7 @@
     "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "그럼 나도 다친 제비만 있으면 되겠구나!"
+    "text": "그럼 나도 다친 제비만 있으면 되겠는데!"
   },
   "folk/heungbu/say-p19-swallow.mp3": {
     "voice": "tc-sua",
@@ -3295,12 +3277,6 @@
     "emotion": "angry",
     "intensity": 0.4,
     "text": "이놈, 욕심쟁이 놀부야! 방망이 맛 좀 봐라!"
-  },
-  "folk/heungbu/say-p23-nolbu.mp3": {
-    "voice": "tc-byunghun",
-    "emotion": "sad",
-    "intensity": 0.5,
-    "text": "아이고, 나는 망했구나!"
   },
   "folk/heungbu/say-p24-nolbu.mp3": {
     "voice": "tc-byunghun",
@@ -6409,13 +6385,13 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "알에서 깬 아기 제비들은 노래하듯 지저귀며, 무럭무럭 자랐어요.\n아이들은 날마다 둥지를 올려다보며 인사했지요."
+    "text": "알에서 깬 아기 제비들은 노래하듯 지저귀며, 무럭무럭 자랐어요.\n아이들은 날마다 둥지를 올려다보며 제비들에게 인사를 했어요."
   },
   "folk/heungbu/seg-tc-minjung-p10-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그러던 어느 날, 커다란 구렁이가 담을 타고 스르륵 올라왔어요.\n혀를 날름거리며 둥지 쪽으로 조금씩, 조금씩 다가갔지요.\n아기 제비들은 둥지 안에서 부들부들 떨었어요."
+    "text": "그러던 어느 날, 커다란 구렁이가 담을 타고 스르륵 올라오는 게 아니겠어요?\n혀를 날름거리며 둥지 쪽으로 조금씩 다가왔어요.\n아기 제비들은 둥지 안에서 부들부들 떨었어요."
   },
   "folk/heungbu/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
@@ -6427,7 +6403,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "소리를 듣고 흥부가 달려 나오자, 구렁이는 스르륵 달아났지요."
+    "text": "소리를 듣고 흥부가 달려 나오자, 구렁이는 스르륵 달아났어요."
   },
   "folk/heungbu/seg-tc-minjung-p12-1.mp3": {
     "voice": "tc-minjung",
@@ -6439,13 +6415,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "흥부네 아이들은 날마다 아기 제비에게 좁쌀을 가져다주었어요.\n다리가 나은 제비는 마당을 한 바퀴, 두 바퀴 돌며 날갯짓을 익혔지요.\n가을바람이 불자, 제비들은 먼 길을 떠날 준비를 했어요."
-  },
-  "folk/heungbu/seg-tc-minjung-p13-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "아기 제비는 흥부네 지붕 위를 몇 번이고 맴돌다, 날아갔답니다."
+    "text": "흥부네 아이들은 날마다 아기 제비에게 좁쌀을 가져다주었어요.\n다리가 나은 제비는 마당을 한 바퀴, 두 바퀴 돌며 날갯짓을 익혔지요.\n가을바람이 불자, 제비들은 먼 길을 떠날 준비를 했어요.\n아기 제비는 흥부네 지붕 위를 몇 번이고 맴돌다, 날아갔답니다."
   },
   "folk/heungbu/seg-tc-minjung-p14-0.mp3": {
     "voice": "tc-minjung",
@@ -6541,13 +6511,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "도깨비들은 놀부네 곳간을 탈탈 털고, 기와집까지 몽땅 가져가 버렸어요."
-  },
-  "folk/heungbu/seg-tc-minjung-p23-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "텅 빈 마당에 주저앉은 놀부 앞으로, 제비 한 마리가 포르르 날아갔어요.\n놀부는 다리를 부러뜨렸던 그 제비가 떠올랐지요."
+    "text": "도깨비들은 놀부네 곳간을 탈탈 털고, 기와집까지 몽땅 가져가 버렸어요.\n텅 빈 마당에 주저앉은 놀부 앞으로, 제비 한 마리가 포르르 날아갔어요.\n놀부는 다리를 부러뜨렸던 그 제비가 떠올랐지요."
   },
   "folk/heungbu/seg-tc-minjung-p24-0.mp3": {
     "voice": "tc-minjung",
@@ -10705,49 +10669,15 @@
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "\"얘들아, 안녕? 내 이름은 걸리버란다.\n젊었을 때 나는 커다란 배에서 의사로 일했지.\n내가 배를 타고 다니며 겪은,\n신기한 이야기, 한번 들어 볼래?\""
+    "text": "\"얘들아, 안녕? 내 이름은 걸리버란다.\n젊었을 때 나는 커다란 배에서 의사로 일했지.\n내가 배를 타고 다니며 겪은,\n신기한 이야기, 한번 들어 볼래?\"",
+    "tempo": 0.88
   },
   "classic/gulliver1/say-p1-gulliver.mp3": {
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "얘들아, 안녕? 내 이름은 걸리버란다. 젊었을 때 나는 커다란 배에서 의사로 일했지. 내가 배를 타고 다니며 겪은 신기한 이야기, 한번 들어 볼래?"
-  },
-  "classic/gulliver1/seg-tc-minjung-p2-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "오래전 어느 날, 우르르 쾅쾅!\n사나운 폭풍우에 배가 뒤집히고 말았어요.\n걸리버는 부서진 배 조각에 매달려,\n밤새도록 떠다녔지요.\n겨우 모래밭에 닿자,\n그대로 정신을 잃고 말았답니다."
-  },
-  "classic/gulliver1/seg-tc-minjung-p3-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "눈을 떠 보니 이상했어요.\n손가락 하나 움직일 수가 없는 거예요.\n온몸이 가느다란 실로 칭칭 묶여 있었지요.\n겨우 고개를 들어 보니,\n손가락만 한 작은 사람들이,\n온몸 위를 오르내리고 있었답니다!"
-  },
-  "classic/gulliver1/seg-tc-minjung-p4-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버가 몸을 들썩이자,\n작은 사람들이 화살을 쏘았어요.\n따끔따끔했지만 다치지는 않았지요.\n작은 사람 하나가 귀에 대고 소리쳤지만,\n걸리버에게는 모깃소리처럼 앵앵 들릴 뿐이었답니다."
-  },
-  "classic/gulliver1/seg-tc-minjung-p5-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버가 입을 벌려,\n배가 고프다고 말했더니,\n작은 사람들은 빵이며 고기를 수레에 실어,\n입속에 가득 넣어 주었어요.\n걸리버는 허겁지겁 삼켰답니다."
-  },
-  "classic/gulliver1/seg-tc-minjung-p6-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "작은 사람들은 커다란 수레를 만들어,\n걸리버를 성안으로 옮겼어요.\n하루가 가고, 이틀이 가고…\n걸리버는 그 나라 말을 하나씩 배웠지요.\n어느새 사람들은 걸리버를 묶은 실을 풀어 주고,\n손바닥에 올라와 함께 놀게 되었답니다."
-  },
-  "classic/gulliver1/seg-tc-minjung-p7-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "임금님이 걸리버를 보러 왔어요."
+    "text": "얘들아, 안녕? 내 이름은 걸리버란다. 젊었을 때 나는 커다란 배에서 의사로 일했지. 내가 배를 타고 다니며 겪은 신기한 이야기, 한번 들어 볼래?",
+    "tempo": 0.88
   },
   "classic/gulliver1/seg-cast-p7-1.mp3": {
     "voice": "tc-wangkwon",
@@ -10759,13 +10689,7 @@
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "\"물론이죠, 임금님.\n어떤 걸 도와드리면 될까요?\""
-  },
-  "classic/gulliver1/seg-tc-minjung-p7-3.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "그날부터 사람들은,\n걸리버를 더욱 좋아하게 되었답니다."
+    "text": "\"물론이죠, 임금님.\n무엇이든 말씀해 주세요.\""
   },
   "classic/gulliver1/say-p7-king.mp3": {
     "voice": "tc-wangkwon",
@@ -10777,13 +10701,7 @@
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "물론이죠, 임금님.\n어떤 걸 도와드리면 될까요?"
-  },
-  "classic/gulliver1/seg-tc-minjung-p8-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "어느 날, 이웃 나라 병사들이,\n배를 타고 쳐들어왔어요.\n걸리버가 성큼성큼 바다로 걸어 들어가자"
+    "text": "물론이죠, 임금님.\n무엇이든 말씀해 주세요."
   },
   "classic/gulliver1/seg-cast-p8-1.mp3": {
     "voice": "tc-minjung",
@@ -10792,89 +10710,35 @@
     "text": "\"으악, 괴물이다!\"",
     "tempo": 1.1
   },
-  "classic/gulliver1/seg-tc-minjung-p8-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "병사들이 허둥대기 시작했지요."
-  },
-  "classic/gulliver1/seg-tc-minjung-p9-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버는 배마다 밧줄을 묶어,\n두 손으로 꽉 움켜쥐었어요.\n화살이 따끔따끔 날아왔지만,\n걸리버는 배들을 모두 끌고,\n작은 나라로 돌아왔답니다."
-  },
-  "classic/gulliver1/seg-tc-minjung-p10-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "임금님이 크게 기뻐하며 말했어요."
-  },
   "classic/gulliver1/seg-cast-p10-1.mp3": {
     "voice": "tc-wangkwon",
     "emotion": "happy",
     "intensity": 0.45,
-    "text": "\"걸리버, 무엇이든지 내게 이야기해 주시오. 어떤 소원이라도 다 들어주겠소.\""
-  },
-  "classic/gulliver1/seg-tc-minjung-p10-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버는 잠시 생각하다 대답했지요."
+    "text": "\"고맙소, 걸리버! 무엇이든 소원을 말해 보시오.\""
   },
   "classic/gulliver1/seg-cast-p10-3.mp3": {
     "voice": "tc-kangil",
     "emotion": "tonedown",
     "intensity": 0.3,
-    "text": "\"저는 집에 돌아가고 싶습니다.\n저에게 맞는 배 한 척만 만들어 주세요.\""
-  },
-  "classic/gulliver1/seg-tc-minjung-p10-4.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "임금님은 그러겠다고 약속했답니다."
+    "text": "\"저는 이제 집으로 돌아가고 싶어요.\n저에게 맞는 배 한 척을 만들어 주실 수 있을까요?\""
   },
   "classic/gulliver1/say-p10-king.mp3": {
     "voice": "tc-wangkwon",
     "emotion": "happy",
     "intensity": 0.45,
-    "text": "걸리버, 무엇이든지 내게 이야기해 주시오. 어떤 소원이라도 다 들어주겠소."
+    "text": "고맙소, 걸리버! 무엇이든 소원을 말해 보시오."
   },
   "classic/gulliver1/say-p10-gulliver.mp3": {
     "voice": "tc-kangil",
     "emotion": "tonedown",
     "intensity": 0.3,
-    "text": "저는 집에 돌아가고 싶습니다.\n저에게 맞는 배 한 척만 만들어 주세요."
-  },
-  "classic/gulliver1/seg-tc-minjung-p11-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "그러던 어느 날 밤, 왕궁에 불이 났어요.\n물통은 너무 작고, 불길은 너무 빨리 번져 버렸어요.\n급한 마음에 걸리버는,\n오줌을 누어 불을 껐답니다.\n작은 사람들은 코를 막으면서도,\n고맙다며 모자를 흔들었어요."
-  },
-  "classic/gulliver1/seg-tc-minjung-p12-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "다음 날부터 온 나라가 배를 만드느라 바빠졌어요.\n수백 명이 달라붙어 나무를 나르고,\n못을 박고, 돛을 꿰맸지요.\n걸리버도 손가락 하나로,\n널빤지를 잡아 주며 도왔답니다."
-  },
-  "classic/gulliver1/seg-tc-minjung-p13-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "며칠이 지나자 배가 조금씩 만들어져 갔어요.\n돛을 달고, 밧줄을 매고,\n먹을 것과 물통까지 가득 실었지요.\n드디어 걸리버의 몸에 꼭 맞는,\n커다란 배가 다 지어졌답니다."
+    "text": "저는 이제 집으로 돌아가고 싶어요.\n저에게 맞는 배 한 척을 만들어 주실 수 있을까요?"
   },
   "classic/gulliver1/seg-cast-p14-0.mp3": {
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "\"잘 있어요! 정말 고마웠어요.\""
-  },
-  "classic/gulliver1/seg-tc-minjung-p14-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "작은 사람들이 모자를 흔들며 인사했어요.\n걸리버는 다시 넓은 바다로 나아갔지요."
   },
   "classic/gulliver1/seg-cast-p14-2.mp3": {
     "voice": "tc-kangil",
@@ -10919,13 +10783,13 @@
     "text": "그런데 갑자기 번쩍번쩍, 우르릉 쾅쾅!\n천둥 번개가 치고 사나운 폭풍우가 몰아쳤어요.\n커다란 배가 눈 깜짝할 사이에 기울어졌지요."
   },
   "classic/mermaid/seg-cast-p5-1.mp3": {
-    "voice": "tc-minjung",
+    "voice": "tc-jian",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"앗! 왕자님이 물에 빠졌어!\""
   },
   "classic/mermaid/say-p5-mermaid.mp3": {
-    "voice": "tc-minjung",
+    "voice": "tc-jian",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "앗! 왕자님이 물에 빠졌어!"
@@ -10943,15 +10807,15 @@
     "text": "그때 누군가 다가오는 소리가 들렸어요.\n인어 공주는 얼른 바위 뒤로 숨었지요.\n다가온 사람은 이웃 나라 공주였어요.\n스르르 눈을 뜬 왕자가 말했어요."
   },
   "classic/mermaid/seg-cast-p7-1.mp3": {
-    "voice": "tc-kangil",
+    "voice": "tc-taewoo",
     "emotion": "happy",
-    "intensity": 0.35,
+    "intensity": 0.5,
     "text": "\"당신이 나를 구해 주었군요!\""
   },
   "classic/mermaid/say-p7-prince.mp3": {
-    "voice": "tc-kangil",
+    "voice": "tc-taewoo",
     "emotion": "happy",
-    "intensity": 0.35,
+    "intensity": 0.5,
     "text": "당신이 나를 구해 주었군요!"
   },
   "classic/mermaid/seg-tc-minjung-p8-0.mp3": {
@@ -10967,13 +10831,13 @@
     "text": "마침내 인어 공주는,\n무서운 바다 마녀를 찾아갔어요."
   },
   "classic/mermaid/seg-cast-p9-1.mp3": {
-    "voice": "tc-minjung",
+    "voice": "tc-jian",
     "emotion": "sad",
     "intensity": 0.35,
     "text": "\"저를 사람이 되게 해 주세요.\""
   },
   "classic/mermaid/say-p9-mermaid.mp3": {
-    "voice": "tc-minjung",
+    "voice": "tc-jian",
     "emotion": "sad",
     "intensity": 0.35,
     "text": "저를 사람이 되게 해 주세요."
@@ -11002,13 +10866,13 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "바다 위로 올라간 인어 공주는,\n마녀가 준 물약을 꿀꺽 마셨어요.\n온몸이 아파 그만 정신을 잃었지요.\n눈을 떠 보니 왕자가 서 있었어요."
+    "text": "바다 위로 올라간 인어 공주는,\n마녀가 준 물약을 꿀꺽 마셨어요.\n온몸이 아파 그만 정신을 잃고 말았답니다.\n눈을 떠 보니 왕자가 서 있었어요."
   },
   "classic/mermaid/seg-cast-p11-1.mp3": {
-    "voice": "tc-kangil",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"당신은 누구죠? 어디서 왔나요?\""
+    "voice": "tc-taewoo",
+    "emotion": "toneup",
+    "intensity": 0.5,
+    "text": "\"괜찮아요?\""
   },
   "classic/mermaid/seg-tc-minjung-p11-2.mp3": {
     "voice": "tc-minjung",
@@ -11017,16 +10881,16 @@
     "text": "하지만 목소리를 잃은 인어 공주는 대답할 수 없었답니다."
   },
   "classic/mermaid/say-p11-prince.mp3": {
-    "voice": "tc-kangil",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "당신은 누구죠? 어디서 왔나요?"
+    "voice": "tc-taewoo",
+    "emotion": "toneup",
+    "intensity": 0.5,
+    "text": "괜찮아요?"
   },
   "classic/mermaid/seg-tc-minjung-p12-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "왕자는 인어 공주를 성으로 데려가,\n여동생처럼 아껴 주었어요.\n함께 말도 타고, 노래도 듣고, 산에도 올랐지요.\n인어 공주는 참 행복했답니다."
+    "text": "왕자는 인어 공주를 성으로 데려가,\n여동생처럼 아껴 주었어요.\n함께 말도 타고, 노래도 듣고, 산에도 오르는 등,\n인어 공주와 행복한 시간을 보냈답니다."
   },
   "classic/mermaid/seg-tc-minjung-p13-0.mp3": {
     "voice": "tc-minjung",
@@ -11035,7 +10899,7 @@
     "text": "그러던 어느 날,\n왕자가 기쁜 얼굴로 말했어요.\n목숨을 구해 준 이웃 나라 공주와,\n결혼하게 되었다고요."
   },
   "classic/mermaid/seg-cast-p13-1.mp3": {
-    "voice": "tc-minjung",
+    "voice": "tc-jian",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "'왕자님을 구한 건 저예요!'"
@@ -11048,9 +10912,10 @@
   },
   "classic/mermaid/seg-tc-minjung-p14-0.mp3": {
     "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "얼마 뒤, 배 위에서 결혼식이 열렸어요.\n등불이 반짝이고 노랫소리가 울려 퍼졌지요.\n인어 공주는 혼자 배 가장자리에 서서,\n까만 바다를 내려다보았답니다."
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "얼마 뒤, 배 위에서 결혼식이 열렸어요.\n등불이 반짝이고 노랫소리가 울려 퍼졌지요.\n인어 공주는 혼자 배 가장자리에 서서,\n까만 바다를 내려다보았답니다.",
+    "tempo": 0.92
   },
   "classic/mermaid/seg-tc-minjung-p15-0.mp3": {
     "voice": "tc-minjung",
@@ -11077,9 +10942,9 @@
     "text": "인어 공주는 왕자가 잠든 방 앞까지 갔어요.\n하지만 차마 문을 열 수 없었지요."
   },
   "classic/mermaid/seg-cast-p16-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "tonedown",
-    "intensity": 0.4,
+    "voice": "tc-jian",
+    "emotion": "sad",
+    "intensity": 0.6,
     "text": "'사랑하는 왕자님, 부디 행복하세요.'"
   },
   "classic/mermaid/seg-tc-minjung-p16-2.mp3": {
@@ -11098,31 +10963,31 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그 순간, 바다 위로 해가 떠올랐어요.\n빛나는 햇살이 물거품을 비추자,\n인어 공주의 몸이 둥실둥실 떠올랐지요.\n착한 인어 공주는,\n온 세상을 날아다니는 공기 요정이 되어,\n장밋빛 구름을 향해 높이, 더 높이 날아올랐답니다."
+    "text": "그 순간, 바다 위로 해가 떠올랐어요.\n빛나는 햇살이 물거품을 비추자,\n인어 공주의 몸이 둥실둥실 떠올랐답니다.\n착한 인어 공주는,\n온 세상을 날아다니는 공기 요정이 되어,\n장밋빛 구름을 향해 높이, 더 높이 날아올랐답니다."
   },
   "classic/oz/seg-tc-minjung-p1-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "캔자스의 드넓은 초원,\n작은 농장에 도로시가 살고 있었어요.\n헨리 아저씨와 엠 아주머니는,\n늘 일하느라 바빴지요.\n그래서 도로시의 친구는,\n강아지 토토뿐이었답니다."
+    "text": "캔자스의 드넓은 초원,\n작은 농장에 도로시가 살고 있었어요.\n헨리 아저씨와 엠 아주머니는,\n늘 일하느라 바빠,\n도로시와 함께할 수 있는 친구는,\n강아지 토토뿐이었어요."
   },
   "classic/oz/seg-tc-minjung-p2-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "어느 날, 하늘이 시커메지더니,\n거대한 회오리바람이 몰려왔어요.\n집이 흔들흔들, 창문이 덜컹덜컹!\n도로시는 토토를 꼭 안고,\n바닥에 납작 엎드렸답니다."
+    "text": "어느 날, 하늘이 시커메지더니,\n거대한 회오리바람이 몰려왔어요.\n집이 흔들흔들, 창문이 덜컹덜컹!\n도로시는 토토를 안고,\n바닥에 납작 엎드렸어요."
   },
   "classic/oz/seg-tc-minjung-p3-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그 순간, 집이 통째로,\n하늘로 붕 떠올랐어요.\n빙글빙글, 구름 사이를 날아갔지요.\n도로시는 눈을 꼭 감았어요."
+    "text": "그 순간, 집이 통째로,\n하늘로 붕 떠올랐어요.\n빙글빙글, 구름 사이로 날아가 버렸어요.\n도로시는 눈을 꼭 감았어요."
   },
   "classic/oz/seg-tc-minjung-p4-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "쿵!\n집이 낯선 땅에 내려앉았어요.\n그런데 그 바람에,\n오랫동안 이 나라를 괴롭히던,\n나쁜 동쪽 마녀가 사라져 버린 거예요!\n문을 열자 작은 사람들과 착한 북쪽 마녀가,\n고맙다며 절을 했답니다."
+    "text": "쿵!\n집이 낯선 땅에 내려앉았어요.\n도로시가 살며시 문을 열자,\n작은 사람들과 착한 북쪽 마녀가 다가와,\n고개를 숙여 인사했어요.\n집이 떨어지면서 오랫동안 이 나라를 괴롭히던,\n나쁜 동쪽 마녀가 사라졌다며 고마워했지요."
   },
   "classic/oz/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
@@ -11131,9 +10996,9 @@
     "text": "도로시가 훌쩍이며 물었어요."
   },
   "classic/oz/seg-cast-p5-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "sad",
-    "intensity": 0.35,
+    "intensity": 0.6,
     "text": "\"저는 어떻게 집에 돌아가나요?\""
   },
   "classic/oz/seg-tc-minjung-p5-2.mp3": {
@@ -11143,33 +11008,33 @@
     "text": "북쪽 마녀는 노란 벽돌 길을 가리켰어요.\n저 길 끝 에메랄드 성에 사는 오즈의 마법사라면,\n도와줄 수 있을 거라면서요.\n그러고는 동쪽 마녀가 신던 은빛 구두를 건넸어요.\n아주 큰 마법이 담긴 구두라고 했지요."
   },
   "classic/oz/say-p5-dorothy.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "sad",
-    "intensity": 0.35,
+    "intensity": 0.6,
     "text": "저는 어떻게 집에 돌아가나요?"
   },
   "classic/oz/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "도로시는 토토와 함께,\n노란 길을 따라 걸었어요.\n얼마쯤 가니 옥수수밭이 나왔지요.\n까마귀들이 허수아비를 놀리고 있었어요."
+    "text": "도로시는 토토와 함께,\n노란 길을 따라 걸었어요.\n얼마쯤 가니 옥수수밭이 나왔답니다.\n까마귀들이 허수아비를 놀리고 있었어요."
   },
   "classic/oz/seg-cast-p6-1.mp3": {
     "voice": "tc-kangil",
     "emotion": "sad",
-    "intensity": 0.3,
+    "intensity": 0.6,
     "text": "\"나도 생각할 수 있는 뇌가 있었으면…\""
   },
   "classic/oz/say-p6-scarecrow.mp3": {
     "voice": "tc-kangil",
     "emotion": "sad",
-    "intensity": 0.3,
+    "intensity": 0.6,
     "text": "나도 생각할 수 있는 뇌가 있었으면…"
   },
   "classic/oz/seg-cast-p7-0.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"그럼 우리랑 같이 가요!\n오즈의 마법사에게 부탁해 봐요.\""
   },
   "classic/oz/seg-tc-minjung-p7-1.mp3": {
@@ -11179,9 +11044,9 @@
     "text": "도로시가 허수아비를 장대에서 내려 주었어요.\n허수아비는 다리가 휘청휘청,\n그래도 신이 나서 따라나섰답니다."
   },
   "classic/oz/say-p7-dorothy.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "그럼 우리랑 같이 가요!\n오즈의 마법사에게 부탁해 봐요."
   },
   "classic/oz/seg-tc-minjung-p8-0.mp3": {
@@ -11191,15 +11056,15 @@
     "text": "숲으로 들어서니 도끼를 든 양철 나무꾼이,\n뻣뻣하게 굳은 채 서 있었어요.\n도로시가 기름을 칠해 주자, 삐걱삐걱 몸이 풀렸지요."
   },
   "classic/oz/seg-cast-p8-1.mp3": {
-    "voice": "tc-jinhyuk",
-    "emotion": "tonedown",
-    "intensity": 0.4,
+    "voice": "tc-seungjae",
+    "emotion": "sad",
+    "intensity": 0.6,
     "text": "\"고마워요. 나는 따뜻한 마음이 갖고 싶어요.\""
   },
   "classic/oz/seg-cast-p8-2.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"그럼 우리랑 같이 가요!\""
   },
   "classic/oz/seg-tc-minjung-p8-3.mp3": {
@@ -11209,15 +11074,15 @@
     "text": "양철 나무꾼도 기쁜 얼굴로 따라나섰답니다."
   },
   "classic/oz/say-p8-tinman.mp3": {
-    "voice": "tc-jinhyuk",
-    "emotion": "tonedown",
-    "intensity": 0.4,
+    "voice": "tc-seungjae",
+    "emotion": "sad",
+    "intensity": 0.6,
     "text": "고마워요. 나는 따뜻한 마음이 갖고 싶어요."
   },
   "classic/oz/say-p8-dorothy.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "그럼 우리랑 같이 가요!"
   },
   "classic/oz/seg-tc-minjung-p9-0.mp3": {
@@ -11227,9 +11092,9 @@
     "text": "그때 사자 한 마리가 어흥! 튀어나와,\n토토에게 달려들었어요."
   },
   "classic/oz/seg-cast-p9-1.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"우리 토토한테 그러면 안 돼요!\""
   },
   "classic/oz/seg-tc-minjung-p9-2.mp3": {
@@ -11245,21 +11110,21 @@
     "text": "\"사실은… 나는 겁쟁이예요.\""
   },
   "classic/oz/seg-cast-p9-4.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "happy",
-    "intensity": 0.4,
-    "text": "\"그럼 용기도 같이 부탁해요!\""
+    "intensity": 0.5,
+    "text": "\"그럼 저희 용기도 같이 부탁해 볼래요?\""
   },
   "classic/oz/seg-tc-minjung-p9-5.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "이렇게 넷이 함께 노란 길을 걷게 되었답니다."
+    "text": "이렇게 넷이 함께 여행을 떠나게 되었답니다."
   },
   "classic/oz/say-p9-dorothy.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "우리 토토한테 그러면 안 돼요!"
   },
   "classic/oz/say-p9-lion.mp3": {
@@ -11294,8 +11159,8 @@
   },
   "classic/oz/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.3,
     "text": "드디어 에메랄드 성에 닿았어요.\n벽도, 바닥도, 지붕도,\n온통 초록빛으로 반짝였지요.\n네 친구는 입을 다물지 못했답니다."
   },
   "classic/oz/seg-tc-minjung-p12-0.mp3": {
@@ -11308,7 +11173,7 @@
     "voice": "tc-changbae",
     "emotion": "tonedown",
     "intensity": 0.45,
-    "text": "\"내가 오즈의 마법사다. 무엇 때문에 찾아왔느냐?\"",
+    "text": "\"무엇 때문에 찾아왔느냐?\"",
     "tempo": 0.9
   },
   "classic/oz/seg-tc-minjung-p12-2.mp3": {
@@ -11328,7 +11193,7 @@
     "voice": "tc-changbae",
     "emotion": "tonedown",
     "intensity": 0.45,
-    "text": "내가 오즈의 마법사다. 무엇 때문에 찾아왔느냐?",
+    "text": "무엇 때문에 찾아왔느냐?",
     "tempo": 0.9
   },
   "classic/oz/seg-tc-minjung-p13-0.mp3": {
@@ -11344,11 +11209,10 @@
     "text": "서쪽 마녀는 세 친구를 커다란 우리에 가두었어요.\n우리 안에서 양철 나무꾼은,\n도로시가 걱정되어 눈물을 뚝뚝 흘렸지요.\n그러다 도로시가 신은 은빛 구두를 보고,\n마녀가 눈을 번뜩였어요."
   },
   "classic/oz/seg-cast-p14-1.mp3": {
-    "voice": "tc-gahee",
+    "voice": "tc-yubin",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"그 구두에 담긴 마법만 있으면,\n내가 온 나라를 차지할 수 있지! 당장 벗어라!\"",
-    "tempo": 0.88
+    "text": "\"그 구두에 담긴 마법만 있으면,\n내가 온 나라를 차지할 수 있지! 당장 벗어라!\""
   },
   "classic/oz/seg-tc-minjung-p15-0.mp3": {
     "voice": "tc-minjung",
@@ -11357,11 +11221,10 @@
     "text": "마녀가 구두 한 짝을 홱 벗겨 가자,\n도로시는 그만 화가 났어요.\n옆에 있던 물동이를 번쩍 들어 쫘악— 끼얹었지요."
   },
   "classic/oz/seg-cast-p15-1.mp3": {
-    "voice": "tc-gahee",
+    "voice": "tc-yubin",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"물! 물은 안 돼!\"",
-    "tempo": 0.88
+    "text": "\"물! 물은 안 돼!\""
   },
   "classic/oz/seg-tc-minjung-p15-2.mp3": {
     "voice": "tc-minjung",
@@ -11370,11 +11233,10 @@
     "text": "서쪽 마녀가 스르르 녹아 버리는 거예요!\n물이 닿으면 녹아 버리는 마법에 걸려 있었거든요.\n도로시는 빼앗긴 구두 한 짝을 되찾아 신고,\n얼른 우리를 열어 친구들을 구해 냈답니다."
   },
   "classic/oz/say-p15-witch.mp3": {
-    "voice": "tc-gahee",
+    "voice": "tc-yubin",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "물! 물은 안 돼!",
-    "tempo": 0.88
+    "text": "물! 물은 안 돼!"
   },
   "classic/oz/seg-tc-minjung-p16-0.mp3": {
     "voice": "tc-minjung",
@@ -11397,9 +11259,9 @@
     "tempo": 0.9
   },
   "classic/oz/seg-cast-p17-0.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "sad",
-    "intensity": 0.3,
+    "intensity": 0.6,
     "text": "\"그럼 저희 소원은 누가 들어주나요?\""
   },
   "classic/oz/seg-cast-p17-1.mp3": {
@@ -11416,9 +11278,9 @@
     "text": "세 친구는 그제야 알았어요.\n이미 다 가지고 있었다는 것을요."
   },
   "classic/oz/say-p17-dorothy.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "sad",
-    "intensity": 0.3,
+    "intensity": 0.6,
     "text": "그럼 저희 소원은 누가 들어주나요?"
   },
   "classic/oz/say-p17-oz.mp3": {
@@ -11442,21 +11304,21 @@
     "text": "할아버지가 도로시의 은빛 구두를 가리켰어요.\n가고 싶은 곳을 말하면서,\n뒤꿈치를 세 번 부딪치면,\n어디든 데려다준다고요."
   },
   "classic/oz/seg-cast-p18-2.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "happy",
-    "intensity": 0.35,
+    "intensity": 0.5,
     "text": "\"모두 잘 있어요. 함께여서 정말 행복했어요!\""
   },
   "classic/oz/say-p18-dorothy.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "happy",
-    "intensity": 0.35,
+    "intensity": 0.5,
     "text": "모두 잘 있어요. 함께여서 정말 행복했어요!"
   },
   "classic/oz/seg-cast-p19-0.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"캔자스의 집으로 돌아가고 싶어요!\""
   },
   "classic/oz/seg-tc-minjung-p19-1.mp3": {
@@ -11466,15 +11328,15 @@
     "text": "도로시가 토토를 안고 외치며,\n뒤꿈치를 세 번 부딪치자,\n하늘로 붕 떠올랐다가,\n캔자스 들판에 데구루루 굴러떨어졌어요."
   },
   "classic/oz/seg-cast-p19-2.mp3": {
-    "voice": "tc-sua",
-    "emotion": "toneup",
-    "intensity": 0.4,
+    "voice": "tc-jian",
+    "emotion": "happy",
+    "intensity": 0.5,
     "text": "\"헨리 아저씨, 엠 아주머니, 저예요!\""
   },
   "classic/oz/say-p19-dorothy.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "캔자스의 집으로 돌아가고 싶어요!"
   },
   "classic/oz/seg-tc-minjung-p20-0.mp3": {
@@ -11490,9 +11352,9 @@
     "text": "\"도로시, 대체 그동안 어디 있었니?\""
   },
   "classic/oz/seg-cast-p20-2.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"오즈의 나라요!\""
   },
   "classic/oz/seg-tc-minjung-p20-3.mp3": {
@@ -11508,9 +11370,9 @@
     "text": "도로시, 대체 그동안 어디 있었니?"
   },
   "classic/oz/say-p20-dorothy.mp3": {
-    "voice": "tc-sua",
+    "voice": "tc-jian",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "오즈의 나라요!"
   },
   "folk/sanggil/seg-tc-minjung-p1-0.mp3": {
@@ -11651,25 +11513,15 @@
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "\"얘들아, 또 만났구나!\n지난번엔 내가 산처럼 커다란 사람이었지?\n이번 이야기에서는 말이야,\n내가 아주아주 작아진단다.\""
+    "text": "\"얘들아, 또 만났구나!\n지난번엔 내가 산처럼 커다란 사람이었지?\n이번 이야기에서는 말이야,\n내가 아주아주 작아진단다.\"",
+    "tempo": 0.88
   },
   "classic/gulliver2/say-p1-gulliver.mp3": {
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "얘들아, 또 만났구나!\n지난번엔 내가 산처럼 커다란 사람이었지?\n이번 이야기에서는 말이야,\n내가 아주아주 작아진단다."
-  },
-  "classic/gulliver2/seg-tc-minjung-p2-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "다시 배를 탄 걸리버는,\n먼바다에서 마실 물이 떨어져,\n낯선 섬에 내렸어요.\n그런데 물을 찾아 헤매는 사이,\n배가 그만 먼저 떠나 버렸지 뭐예요!"
-  },
-  "classic/gulliver2/seg-tc-minjung-p3-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "섬 안쪽으로 들어간 걸리버는,\n깜짝 놀랐어요.\n풀이 나무만 하고,\n밀 이삭이 지붕보다 높았거든요!"
+    "text": "얘들아, 또 만났구나!\n지난번엔 내가 산처럼 커다란 사람이었지?\n이번 이야기에서는 말이야,\n내가 아주아주 작아진단다.",
+    "tempo": 0.88
   },
   "classic/gulliver2/seg-cast-p3-1.mp3": {
     "voice": "tc-kangil",
@@ -11683,71 +11535,29 @@
     "intensity": 0.35,
     "text": "여기가… 대체 어디지?"
   },
-  "classic/gulliver2/seg-tc-minjung-p4-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "쿵! 쿵! 쿵!\n땅이 울리기 시작했어요.\n밀을 베러 온 거인들이었지요.\n걸리버는 밀 줄기 사이에 납작 엎드렸답니다."
-  },
-  "classic/gulliver2/seg-tc-minjung-p5-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "그때 거인 농부가 걸리버를 발견했어요.\n농부는 조심조심 손수건을 펴서,\n걸리버를 살며시 집어 올렸지요."
-  },
   "classic/gulliver2/seg-cast-p5-1.mp3": {
-    "voice": "tc-wangkwon",
+    "voice": "tc-changbae",
     "emotion": "normal",
     "intensity": null,
     "text": "\"허허, 이렇게 조그만 사람이 다 있구나!\""
   },
   "classic/gulliver2/say-p5-farmer.mp3": {
-    "voice": "tc-wangkwon",
+    "voice": "tc-changbae",
     "emotion": "normal",
     "intensity": null,
     "text": "허허, 이렇게 조그만 사람이 다 있구나!"
-  },
-  "classic/gulliver2/seg-tc-minjung-p6-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "농부는 걸리버를 집으로 데려갔어요.\n식탁은 마당만 하고,\n빵 한 조각은 이불만 했지요.\n걸리버가 접시에 앉아 빵을 뜯고 있는데,\n어슬렁— 무언가 다가왔어요.\n사자만 한 고양이였지 뭐예요!\n걸리버가 겁내지 않고 똑바로 쳐다보자,\n고양이는 슬그머니 물러갔답니다."
-  },
-  "classic/gulliver2/seg-tc-minjung-p7-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "농부의 어린 딸이 걸리버를 보고,\n눈이 동그래졌어요."
   },
   "classic/gulliver2/seg-cast-p7-1.mp3": {
     "voice": "tc-sua",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"우와, 작은 사람이다! 내가 돌봐 줄게!\""
-  },
-  "classic/gulliver2/seg-tc-minjung-p7-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "딸은 인형 상자에 헝겊을 깔아 침대를 만들고,\n바느질로 작은 옷까지 지어 입혀 주었어요.\n걸리버에게는 세상에서 제일 다정한 친구였답니다."
+    "text": "\"우와, 작은 사람이다! 내가 돌봐 줄게. 이리 오렴!\""
   },
   "classic/gulliver2/say-p7-girl.mp3": {
     "voice": "tc-sua",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "우와, 작은 사람이다! 내가 돌봐 줄게!"
-  },
-  "classic/gulliver2/seg-tc-minjung-p8-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "소문이 퍼지자 농부는,\n걸리버를 장터에 데리고 다녔어요.\n사람들이 동전을 내고 구경했지요.\n날마다 인사하고 춤추느라,\n걸리버는 몹시 지쳐 갔답니다."
-  },
-  "classic/gulliver2/seg-tc-minjung-p9-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "소문이 궁궐까지 닿아, 공주님이 찾아왔어요.\n공주님은 농부에게 금덩이를 주고,\n걸리버를 궁궐로 데려가기로 했지요.\n농부는 싱글벙글,\n어린 딸은 눈물을 뚝뚝 흘렸답니다."
+    "text": "우와, 작은 사람이다! 내가 돌봐 줄게. 이리 오렴!"
   },
   "classic/gulliver2/seg-cast-p9-1.mp3": {
     "voice": "tc-arin",
@@ -11761,42 +11571,6 @@
     "intensity": 0.4,
     "text": "울지 마렴. 가끔 놀러 오면 되지."
   },
-  "classic/gulliver2/seg-tc-minjung-p10-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "공주님은 걸리버에게,\n나무로 만든 작은 집을 선물했어요.\n창문도 있고, 침대도 있고,\n손잡이까지 달린 집이었지요.\n공주님은 그 집을 들고 어디든 다녔답니다."
-  },
-  "classic/gulliver2/seg-tc-minjung-p11-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "어느 날 궁궐 정원으로,\n말벌 떼가 붕붕 날아왔어요.\n말벌 한 마리가 참새만 했지요!\n걸리버는 모자를 휘둘러,\n겨우 쫓아냈답니다."
-  },
-  "classic/gulliver2/seg-tc-minjung-p12-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "더 놀라운 일도 있었어요.\n궁궐의 원숭이가 창문으로 들어와,\n걸리버를 덥석 안고,\n지붕 위로 올라가 버린 거예요!"
-  },
-  "classic/gulliver2/seg-tc-minjung-p13-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "사람들이 사다리를 놓고 올라와,\n걸리버를 무사히 안아 내렸어요.\n원숭이는 그제야,\n시무룩하게 담을 넘어갔지요."
-  },
-  "classic/gulliver2/seg-tc-minjung-p14-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "어느 날 공주님이 걸리버를 손바닥에 올리고,\n이것저것 물었어요.\n걸리버가 그동안 다녀온 나라들 이야기를,\n신나게 들려주자,\n공주님은 한참을 곰곰이 생각했지요."
-  },
-  "classic/gulliver2/seg-tc-minjung-p15-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "공주님이 가만히 말했어요."
-  },
   "classic/gulliver2/seg-cast-p15-1.mp3": {
     "voice": "tc-arin",
     "emotion": "normal",
@@ -11809,23 +11583,11 @@
     "intensity": null,
     "text": "참 이상하지?\n어떤 나라에서는 네가 산처럼 컸다면서.\n그런데 지금은 내 손바닥에 앉아 있잖아.\n그래도 너는 똑같은 너인데."
   },
-  "classic/gulliver2/seg-tc-minjung-p16-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "공주님은 뭐든지 다 해 주었지만,\n걸리버는 자꾸만,\n자기가 살던 세상이 그리웠어요."
-  },
   "classic/gulliver2/seg-cast-p16-1.mp3": {
     "voice": "tc-arin",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "\"왜 기운이 없어? 바람 쐬러 갈까?\""
-  },
-  "classic/gulliver2/seg-tc-minjung-p16-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "공주님이 나무 집을 들고,\n바닷가로 데려갔답니다."
   },
   "classic/gulliver2/say-p16-princess.mp3": {
     "voice": "tc-arin",
@@ -11839,35 +11601,17 @@
     "intensity": 0.4,
     "text": "\"내가 조개로 집을 예쁘게 꾸며 줄게!\""
   },
-  "classic/gulliver2/seg-tc-minjung-p17-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "공주님이 나무 집을 바위에 올려놓고,\n조개를 주우러 달려간 순간,\n커다란 독수리가 집을 휙 낚아챘어요!"
-  },
   "classic/gulliver2/say-p17-princess.mp3": {
     "voice": "tc-arin",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "내가 조개로 집을 예쁘게 꾸며 줄게!"
   },
-  "classic/gulliver2/seg-tc-minjung-p18-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "한참을 날던 독수리가 지쳤는지,\n나무 집을 바다에 첨벙 떨어뜨렸어요.\n집은 물 위에 둥실둥실 떠다녔지요.\n물결에 흔들흔들 잠들었다가 깬 걸리버는,\n창밖을 내다보고 깜짝 놀랐어요.\n저 멀리 낯익은 항구가 보였거든요."
-  },
-  "classic/gulliver2/seg-tc-minjung-p19-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "집으로 돌아온 걸리버는,\n한동안 이상한 기분이 들었어요.\n사람들이 모두 인형처럼 작아 보였거든요."
-  },
   "classic/gulliver2/seg-cast-p19-1.mp3": {
     "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"나는 어떤 나라에서는 산처럼 컸고,\n어떤 나라에서는 손바닥만큼 작았단다.\n그래도 가는 곳마다 고마운 친구들을 만났지.\n그런데 말이야, 다음 여행에서는,\n하늘에 둥둥 떠 있는 섬에 가게 되었단다.\n그 이야기는 다음에!\""
+    "text": "\"나는 어떤 나라에서는 산처럼 컸고,\n어떤 나라에서는 손바닥만큼 작았었지.\n그래도 가는 곳마다 고마운 사람들을 만났었어.\n다음 여행에서는,\n하늘에 둥둥 떠 있는 하늘섬에 가게 되는 이야기란다.\n다음에 계속해서 이야기 들려줄게. 다음에 만나, 안녕!\""
   },
   "classic/gulliver2/say-p19-gulliver.mp3": {
     "voice": "tc-kangil",
@@ -13473,39 +13217,21 @@
   },
   "classic/gulliver3/seg-cast-p1-0.mp3": {
     "voice": "tc-kangil",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"얘들아, 또 만났구나!\n지난번엔 내가 거인의 손바닥에 앉아 있었지?\n이번 이야기에서는 말이야,\n내가 하늘을 나는 섬에 올라간단다.\n섬이 하늘을 난다니, 믿어지니?\""
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "\"얘들아, 안녕? 또 만났네!\n지난번엔 내가 거인의 손바닥에 앉아 있었지?\n이번 이야기는 내가 하늘섬에 가게 된 이야기야.\n섬이 하늘을 나는 신기한 이야기지.\n한번 들어 볼래?\""
   },
   "classic/gulliver3/say-p1-gulliver.mp3": {
     "voice": "tc-kangil",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "얘들아, 또 만났구나!\n지난번엔 내가 거인의 손바닥에 앉아 있었지?\n이번 이야기에서는 말이야,\n내가 하늘을 나는 섬에 올라간단다."
-  },
-  "classic/gulliver3/seg-tc-minjung-p2-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "또다시 배를 탄 걸리버는,\n먼바다에서 해적들을 만났어요.\n해적들은 짐을 몽땅 빼앗고,\n걸리버를 작은 배에 태워 떠나보냈지 뭐예요!\n그래도 마음 착한 해적 선장이,\n먹을 것을 넉넉히 실어 주었답니다."
-  },
-  "classic/gulliver3/seg-tc-minjung-p3-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "며칠을 떠돌다 바위섬에 닿은 걸리버가,\n조개를 줍고 있을 때였어요.\n갑자기 해가 쏙 사라지고 어둑해졌어요."
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "얘들아, 안녕? 또 만났네!\n지난번엔 내가 거인의 손바닥에 앉아 있었지?\n이번 이야기는 내가 하늘섬에 가게 된 이야기야."
   },
   "classic/gulliver3/seg-cast-p3-1.mp3": {
     "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "'구름이 가린 것 같지는 않은데?'"
-  },
-  "classic/gulliver3/seg-tc-minjung-p3-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버가 고개를 들어 보니,"
   },
   "classic/gulliver3/seg-cast-p3-3.mp3": {
     "voice": "tc-kangil",
@@ -13519,23 +13245,11 @@
     "intensity": 0.4,
     "text": "세상에! 섬이 하늘에 떠 있잖아!"
   },
-  "classic/gulliver3/seg-tc-minjung-p4-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "하늘 섬 가장자리에서,\n사람들이 낚시를 하고 있었어요."
-  },
   "classic/gulliver3/seg-cast-p4-1.mp3": {
     "voice": "tc-kangil",
     "emotion": "toneup",
     "intensity": 0.35,
     "text": "\"여기요! 저 좀 올려 주세요!\""
-  },
-  "classic/gulliver3/seg-tc-minjung-p4-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버가 팔을 흔들며 소리치자,\n한참 만에 사슬 의자가 스르르 내려왔어요.\n걸리버는 하늘 섬으로 쑥쑥 올라갔답니다."
   },
   "classic/gulliver3/say-p4-gulliver.mp3": {
     "voice": "tc-kangil",
@@ -13543,77 +13257,41 @@
     "intensity": 0.35,
     "text": "여기요! 저 좀 올려 주세요!"
   },
-  "classic/gulliver3/seg-tc-minjung-p5-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "하늘 섬 라퓨타의 사람들은 참 신기했어요.\n고개는 모두 한쪽으로 갸우뚱,\n한 눈은 머릿속 생각을,\n한 눈은 하늘을 보는 것 같았지요.\n길을 걸을 때도 하늘만 보다가,\n기둥에 콩! 부딪히곤 했답니다."
-  },
-  "classic/gulliver3/seg-tc-minjung-p6-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버가 인사해도 대답이 없었어요.\n모두 생각에 푹 빠져 있었거든요.\n그때 한 아이가 쪼르르 달려왔어요."
-  },
   "classic/gulliver3/seg-cast-p6-1.mp3": {
     "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "\"저는 두드리미예요.\n이 콩 주머니로 사람들 입을 두드리면 말을 하고,\n귀를 두드리면 남의 말을 들어요!\""
+    "text": "\"안녕하세요, 저는 두드리미라고 해요.\n이 콩 주머니로 사람들 입을 두드리면 말을 하고,\n귀를 두드리면 남의 말을 들어요!\""
   },
   "classic/gulliver3/say-p6-tapper.mp3": {
     "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "저는 두드리미예요.\n이 콩 주머니로 사람들 입을 두드리면 말을 하고,\n귀를 두드리면 남의 말을 들어요!"
-  },
-  "classic/gulliver3/seg-tc-minjung-p7-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "두드리미는 걸리버를 임금님께 데려갔어요.\n그런데 임금님은 숫자 셈에 푹 빠져 있었어요.\n두드리미가 임금님 입을 톡톡, 귀를 톡톡!\n그제야 임금님이 번쩍 고개를 들었지요."
+    "text": "안녕하세요, 저는 두드리미라고 해요.\n이 콩 주머니로 사람들 입을 두드리면 말을 하고,\n귀를 두드리면 남의 말을 들어요!"
   },
   "classic/gulliver3/seg-cast-p7-1.mp3": {
     "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"아, 그렇지! 손님이 왔구먼!\""
+    "text": "\"아, 그래! 손님이 왔구먼!\""
   },
   "classic/gulliver3/say-p7-king.mp3": {
     "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "아, 그렇지! 손님이 왔구먼!"
-  },
-  "classic/gulliver3/seg-tc-minjung-p8-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "임금님이 저녁을 차려 주었어요.\n고기는 세모, 빵은 고깔 모양,\n오리구이는 바이올린 모양,\n소시지는 피리 모양이었지요.\n걸리버가 소시지를 살짝 불어 보았지만,\n아무 소리도 나지 않았답니다."
-  },
-  "classic/gulliver3/seg-tc-minjung-p9-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "하루는 옷 만드는 재단사가 찾아왔어요.\n걸리버 몸에 줄자 한 번 대지 않고,\n셈만 하더니 옷을 지어 왔지요.\n입어 보니 한쪽 소매는 질질, 한쪽은 깡충!\n재단사는 고개를 더 갸우뚱했어요."
+    "text": "아, 그래! 손님이 왔구먼!"
   },
   "classic/gulliver3/seg-cast-p9-1.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-goat",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이상하다, 셈은 딱 맞는데?\""
+    "text": "\"이상하네, 셈은 딱 맞는데?\""
   },
   "classic/gulliver3/say-p9-tailor.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-goat",
     "emotion": "normal",
     "intensity": null,
-    "text": "이상하다, 셈은 딱 맞는데?"
-  },
-  "classic/gulliver3/seg-tc-minjung-p10-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "섬 한가운데 동굴에는,\n집채만 한 자석이 있었어요.\n두드리미가 자석을 살짝 밀며 말했어요."
+    "text": "이상하네, 셈은 딱 맞는데?"
   },
   "classic/gulliver3/seg-cast-p10-1.mp3": {
     "voice": "tc-siwoo",
@@ -13621,203 +13299,119 @@
     "intensity": 0.3,
     "text": "\"이렇게 기울이면 섬이 떠오르고,\n저렇게 기울이면 내려가요!\""
   },
-  "classic/gulliver3/seg-tc-minjung-p10-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "섬은 그렇게 이리저리 옮겨 다녔답니다."
-  },
   "classic/gulliver3/say-p10-tapper.mp3": {
     "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.3,
     "text": "이렇게 기울이면 섬이 떠오르고,\n저렇게 기울이면 내려가요!"
   },
-  "classic/gulliver3/seg-tc-minjung-p11-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "섬은 신기했지만, 걸리버는 조금 쓸쓸했어요.\n눈을 맞춰 주는 건 두드리미뿐이었거든요."
-  },
   "classic/gulliver3/seg-cast-p11-1.mp3": {
     "voice": "tc-kangil",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "\"섬 아래 나라에도 가 보고 싶구나.\""
-  },
-  "classic/gulliver3/seg-tc-minjung-p11-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버의 말에, 두드리미가 콩 주머니를 내밀었어요."
+    "text": "\"섬 아래 나라에 내려가 보고 싶어졌어.\""
   },
   "classic/gulliver3/seg-cast-p11-3.mp3": {
     "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"이거 가져가세요.\n누가 생각에 푹 빠지면 두드려 주세요!\""
+    "text": "\"걸리버, 이건 작별 선물이에요.\n누가 생각에 푹 빠져 있다면 이 막대로 두드려 주세요!\""
   },
   "classic/gulliver3/say-p11-gulliver.mp3": {
     "voice": "tc-kangil",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "섬 아래 나라에도 가 보고 싶구나."
+    "text": "섬 아래 나라에 내려가 보고 싶어졌어."
   },
   "classic/gulliver3/say-p11-tapper.mp3": {
     "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "이거 가져가세요.\n누가 생각에 푹 빠지면 두드려 주세요!"
-  },
-  "classic/gulliver3/seg-tc-minjung-p12-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "섬이 아래 나라 가까이 스르르 내려오자,\n걸리버는 사슬 의자를 타고 내려갔어요.\n그런데 밭에는 싹 하나 없고,\n집들은 기우뚱 기울어 있었지요.\n사람들도 하늘 섬 사람들처럼,\n새 발명 생각에 푹 빠져 있었거든요."
-  },
-  "classic/gulliver3/seg-tc-minjung-p13-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "발명 연구소의 박사님은,\n오이만 들여다보며 꼼짝도 않았어요.\n걸리버가 콩 주머니로 박사님 입과 귀를 톡톡!"
+    "text": "걸리버, 이건 작별 선물이에요.\n누가 생각에 푹 빠져 있다면 이 막대로 두드려 주세요!"
   },
   "classic/gulliver3/seg-cast-p13-1.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-jinhyuk",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"아, 그렇지! 오이에서 햇빛을 뽑아 병에 담고 있어요.\""
-  },
-  "classic/gulliver3/seg-tc-minjung-p13-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "벌써 여덟 해나 됐대요. 박사님은 싱글벙글 웃었어요."
+    "text": "\"아, 내가 또 오이에 집중하다 보니 손님이 온 줄도 몰랐네요. 지금 오이에서 햇빛을 뽑아 병에 담고 있어요.\""
   },
   "classic/gulliver3/seg-cast-p13-3.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-jinhyuk",
     "emotion": "normal",
     "intensity": null,
     "text": "\"조금만 더 하면 돼요!\""
   },
   "classic/gulliver3/say-p13-professor.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-jinhyuk",
     "emotion": "normal",
     "intensity": null,
     "text": "조금만 더 하면 돼요!"
-  },
-  "classic/gulliver3/seg-tc-minjung-p14-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "옆 마당에서는 집을 짓고 있었어요.\n그런데 글쎄, 지붕부터 짓는 거예요!\n지붕 아래는 텅 비어 있었지요."
   },
   "classic/gulliver3/seg-cast-p14-1.mp3": {
     "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"벽은 언제 쌓나요?\""
-  },
-  "classic/gulliver3/seg-tc-minjung-p14-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버가 묻자, 박사님이 싱글벙글 대답했어요."
+    "text": "\"건축가님, 왜 지붕부터 짓고 계세요?\""
   },
   "classic/gulliver3/seg-cast-p14-3.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"조금만 더 하면 돼요!\""
+    "voice": "tc-changbae",
+    "emotion": "happy",
+    "intensity": 0.35,
+    "text": "\"아, 지붕에 집중하다 보니 벽 쌓는 걸 깜빡했지 뭐예요! 조금만 더 하면 돼요!\""
   },
   "classic/gulliver3/say-p14-gulliver.mp3": {
     "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
-    "text": "벽은 언제 쌓나요?"
-  },
-  "classic/gulliver3/say-p14-professor.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "조금만 더 하면 돼요!"
-  },
-  "classic/gulliver3/seg-tc-minjung-p15-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "연구소 밭에서는 돼지들이 킁킁!\n땅에 도토리를 묻어 두면,\n돼지들이 그걸 찾느라 흙을 다 뒤집어 준대요.\n그런데 여기도 싹 하나 안 나고, 돼지들만 통통!\n박사님은 또 싱글벙글 웃었어요."
+    "text": "건축가님, 왜 지붕부터 짓고 계세요?"
   },
   "classic/gulliver3/seg-cast-p15-1.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-jinhyuk",
     "emotion": "normal",
     "intensity": null,
     "text": "\"조금만 더 하면 돼요!\""
   },
   "classic/gulliver3/say-p15-professor.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-jinhyuk",
     "emotion": "normal",
     "intensity": null,
     "text": "조금만 더 하면 돼요!"
-  },
-  "classic/gulliver3/seg-tc-minjung-p16-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "연구소를 나오니, 누런 밭들 사이에,\n초록 밭이 딱 하나 반짝였어요.\n걸리버가 콩 주머니를 들어 올리기도 전에,\n무노디 할아버지가 먼저 인사했어요."
   },
   "classic/gulliver3/seg-cast-p16-1.mp3": {
     "voice": "tc-jongdae",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "\"어서 오세요! 이웃들과 함께 키운 사과랍니다. 하나 드셔 보세요.\""
+    "text": "\"어서 오세요! 이웃들과 함께 키운 사과랍니다. 하나 드셔 보시겠어요?\""
   },
   "classic/gulliver3/say-p16-munodi.mp3": {
     "voice": "tc-jongdae",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "어서 오세요! 이웃들과 함께 키운 사과랍니다. 하나 드셔 보세요."
-  },
-  "classic/gulliver3/seg-tc-minjung-p17-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "아삭! 사과는 꿀처럼 달았어요.\n걸리버가 햇빛 병 이야기를 하자,\n할아버지가 빙그레 웃었어요."
+    "text": "어서 오세요! 이웃들과 함께 키운 사과랍니다. 하나 드셔 보시겠어요?"
   },
   "classic/gulliver3/seg-cast-p17-1.mp3": {
     "voice": "tc-jongdae",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "\"햇빛은 날마다 내 밭에 내려온답니다.\""
-  },
-  "classic/gulliver3/seg-tc-minjung-p17-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버는 하늘 섬을 바라보았어요."
+    "text": "\"햇빛은 병에 담지 않아도 날마다 내 밭에 내려오는걸요.\""
   },
   "classic/gulliver3/seg-cast-p17-3.mp3": {
     "voice": "tc-kangil",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "'생각에 푹 빠지면, 곁에 있는 것도 못 보는구나.'"
+    "text": "'생각에만 푹 빠져 있으면, 바로 곁에 있는 것도 못 보는구나.'"
   },
   "classic/gulliver3/say-p17-munodi.mp3": {
     "voice": "tc-jongdae",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "햇빛은 날마다 내 밭에 내려온답니다."
-  },
-  "classic/gulliver3/seg-tc-minjung-p18-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "집에 온 걸리버가 콩 주머니로 책상을 톡톡!"
+    "text": "햇빛은 병에 담지 않아도 날마다 내 밭에 내려오는걸요."
   },
   "classic/gulliver3/seg-cast-p18-1.mp3": {
     "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"얘들아, 너희는 두드리지 않아도,\n내 이야기를 끝까지 잘 들어 주었구나.\n그런데 말이야, 다음 여행에서는,\n말들이 사는 나라에 가게 되었단다.\n그 이야기는 다음에!\""
+    "text": "\"얘들아, 너희는 두드리지 않아도,\n내 이야기를 끝까지 잘 들어 주었구나.\n그런데 말이야, 다음 여행에서는,\n말들이 사는 나라에 가게 되었어.\n그 이야기는 다음에 계속해서 들려줄게. 안녕!\""
   },
   "classic/gulliver3/say-p18-gulliver.mp3": {
     "voice": "tc-kangil",
@@ -13829,19 +13423,13 @@
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "\"얘들아, 또 만났구나!\n지난번엔 내가 하늘을 나는 섬에 올라갔지?\n이번 이야기에서는 말이야,\n내가 말들이 사는 나라에 간단다.\n이게 내 마지막 여행 이야기란다.\n끝까지 같이 가 줄 거지?\""
+    "text": "\"얘들아, 안녕? 또 만났네!\n지난번엔 내가 하늘을 나는 섬에 올라갔었지?\n이번 이야기는 내가 말들이 사는 나라에 가게 된 이야기야.\n이게 내 마지막 여행 이야기란다.\n끝까지 같이 들어 줄 거지?\""
   },
   "classic/gulliver4/say-p1-gulliver.mp3": {
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "얘들아, 또 만났구나!\n지난번엔 내가 하늘을 나는 섬에 올라갔지?"
-  },
-  "classic/gulliver4/seg-tc-minjung-p2-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버는 가족에게 손을 흔들고,\n이번엔 선장이 되어 바다로 나갔어요.\n보물섬에 가고 싶던 선원들은,\n걸리버만 낯선 바닷가에 내려놓았지요."
+    "text": "얘들아, 안녕? 또 만났네!\n이번 이야기는 내가 말들이 사는 나라에 가게 된 이야기야."
   },
   "classic/gulliver4/seg-cast-p2-1.mp3": {
     "voice": "tc-homun",
@@ -13849,23 +13437,11 @@
     "intensity": 0.35,
     "text": "\"선장님, 금방 돌아올게요!\""
   },
-  "classic/gulliver4/seg-tc-minjung-p2-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "하지만 배는 돌아오지 않았답니다."
-  },
   "classic/gulliver4/say-p2-sailor.mp3": {
     "voice": "tc-homun",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "선장님, 금방 돌아올게요!"
-  },
-  "classic/gulliver4/seg-tc-minjung-p3-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버가 숲에 들어서자, 와글와글, 끽끽!\n털북숭이들이 나무에서 우르르 내려왔어요.\n씻지 않아 꾀죄죄한 들짐승, 야후였지요.\n야후들은 반짝이는 금단추를 서로 갖겠다고,\n걸리버의 외투를 이리저리 잡아당겼어요."
   },
   "classic/gulliver4/seg-cast-p4-0.mp3": {
     "voice": "tc-kangil",
@@ -13873,23 +13449,11 @@
     "intensity": 0.4,
     "text": "\"그만! 그만해! 단추 떨어지겠어!\""
   },
-  "classic/gulliver4/seg-tc-minjung-p4-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버가 어쩔 줄 모르는데, 따각따각!\n점잖은 회색 말이 다가와 발굽을 쿵 굴렀어요.\n야후들은 후다닥 달아났지요.\n금단추 하나를 쏙 뽑아 들고서 말이에요."
-  },
   "classic/gulliver4/say-p4-gulliver.mp3": {
     "voice": "tc-kangil",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "그만! 그만해! 단추 떨어지겠어!"
-  },
-  "classic/gulliver4/seg-tc-minjung-p5-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "밤색 말 한 마리가 다가와,\n회색 말과 히힝히힝 이야기를 나누었어요.\n야후, 휴이넘 하는 소리가 자꾸 들렸지요.\n걸리버도 가만가만 따라 해 보았어요."
   },
   "classic/gulliver4/seg-cast-p5-1.mp3": {
     "voice": "tc-kangil",
@@ -13897,47 +13461,23 @@
     "intensity": 0.3,
     "text": "\"야후… 휴이넘…\""
   },
-  "classic/gulliver4/seg-tc-minjung-p5-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "말 두 마리가 깜짝 놀라 귀를 쫑긋 세웠답니다."
-  },
   "classic/gulliver4/say-p5-gulliver.mp3": {
     "voice": "tc-kangil",
     "emotion": "tonedown",
     "intensity": 0.3,
     "text": "야후… 휴이넘…"
   },
-  "classic/gulliver4/seg-tc-minjung-p6-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "회색 말은 걸리버를 자기 집으로 데려갔어요.\n말들은 자기들을 휴이넘이라고 불렀어요.\n세상에서 가장 멋진 동물이라는 뜻이래요.\n걸리버는 귀리 빵을 구워 먹으며,\n날마다 휴이넘 말을 하나씩 배웠답니다."
-  },
-  "classic/gulliver4/seg-tc-minjung-p7-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "히힝은 안녕, 히히힝은 고마워라는 뜻이에요.\n그런데 걸리버가 히히힝 하려는데,\n자꾸만 힝히히, 힝히히, 하고 나왔어요.\n회색 말네 망아지가 깔깔 웃었지요."
-  },
   "classic/gulliver4/seg-cast-p7-1.mp3": {
-    "voice": "tc-hajun",
-    "emotion": "happy",
-    "intensity": 0.45,
+    "voice": "tc-siwoo",
+    "emotion": "toneup",
+    "intensity": 0.4,
     "text": "\"아저씨, 그건 당근 달라는 말이에요!\""
   },
   "classic/gulliver4/say-p7-foal.mp3": {
-    "voice": "tc-hajun",
-    "emotion": "happy",
-    "intensity": 0.45,
+    "voice": "tc-siwoo",
+    "emotion": "toneup",
+    "intensity": 0.4,
     "text": "아저씨, 그건 당근 달라는 말이에요!"
-  },
-  "classic/gulliver4/seg-tc-minjung-p8-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "하루가 가고, 이틀이 가고…\n어느 날 회색 말이 물었어요."
   },
   "classic/gulliver4/seg-cast-p8-1.mp3": {
     "voice": "tc-gunseok",
@@ -13950,12 +13490,6 @@
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "\"선원들이 거짓말을 하고 떠나 버렸어요.\""
-  },
-  "classic/gulliver4/seg-tc-minjung-p8-3.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버의 대답에 회색 말은 고개를 갸웃했지요."
   },
   "classic/gulliver4/say-p8-gulliver.mp3": {
     "voice": "tc-kangil",
@@ -13975,23 +13509,11 @@
     "intensity": null,
     "text": "\"거짓말? 그게 뭔가요?\""
   },
-  "classic/gulliver4/seg-tc-minjung-p9-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "회색 말이 묻자 걸리버는 곰곰이 생각했어요."
-  },
   "classic/gulliver4/seg-cast-p9-2.mp3": {
     "voice": "tc-kangil",
     "emotion": "normal",
     "intensity": null,
     "text": "\"있는 걸 없다고 하고,\n없는 걸 있다고 하는 거예요.\""
-  },
-  "classic/gulliver4/seg-tc-minjung-p9-3.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "회색 말은 눈을 끔뻑끔뻑하며 되물었어요."
   },
   "classic/gulliver4/seg-cast-p9-4.mp3": {
     "voice": "tc-gunseok",
@@ -14011,41 +13533,23 @@
     "intensity": null,
     "text": "거짓말? 그게 뭔가요?"
   },
-  "classic/gulliver4/seg-tc-minjung-p10-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "회색 말은 아무리 생각해도 알 수 없었어요."
-  },
   "classic/gulliver4/seg-cast-p10-1.mp3": {
     "voice": "tc-gunseok",
     "emotion": "tonedown",
     "intensity": 0.3,
     "text": "\"이야기는 서로 알려 주려고 하는 건데요.\""
   },
-  "classic/gulliver4/seg-tc-minjung-p10-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "망아지도 아빠처럼 고개를 갸웃했지요."
-  },
   "classic/gulliver4/seg-cast-p10-3.mp3": {
-    "voice": "tc-hajun",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"그러면 뭐가 좋아요?\""
-  },
-  "classic/gulliver4/seg-tc-minjung-p10-4.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "이 나라에는 거짓말이라는 낱말이 없었거든요."
+    "text": "\"아저씨 나라 사람들은 거짓말을 왜 해요?\""
   },
   "classic/gulliver4/say-p10-foal.mp3": {
-    "voice": "tc-hajun",
+    "voice": "tc-siwoo",
     "emotion": "normal",
     "intensity": null,
-    "text": "그러면 뭐가 좋아요?"
+    "text": "아저씨 나라 사람들은 거짓말을 왜 해요?"
   },
   "classic/gulliver4/say-p10-greyhorse.mp3": {
     "voice": "tc-gunseok",
@@ -14053,35 +13557,17 @@
     "intensity": 0.3,
     "text": "이야기는 서로 알려 주려고 하는 건데요."
   },
-  "classic/gulliver4/seg-tc-minjung-p11-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "풀밭 학교에서 달리기를 하던 날,\n망아지가 뛰다가 당근 바구니를 툭 엎었어요.\n아무도 못 봤는데, 선생님께 먼저 말했지요."
-  },
   "classic/gulliver4/seg-cast-p11-1.mp3": {
-    "voice": "tc-hajun",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"제가 그랬어요! 제가 주울게요!\""
   },
-  "classic/gulliver4/seg-tc-minjung-p11-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "망아지는 당근을 하나하나 물어 담았답니다."
-  },
   "classic/gulliver4/say-p11-foal.mp3": {
-    "voice": "tc-hajun",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "제가 그랬어요! 제가 주울게요!"
-  },
-  "classic/gulliver4/seg-tc-minjung-p12-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "말들은 서로 다투는 일이 없었어요.\n어느 마을에 풀이 모자라면,\n이웃 마을 말들이 나누어 주었지요.\n회색 말이 물었어요."
   },
   "classic/gulliver4/seg-cast-p12-1.mp3": {
     "voice": "tc-gunseok",
@@ -14089,23 +13575,11 @@
     "intensity": null,
     "text": "\"걸리버 나라에도 이렇게 나누며 사나요?\""
   },
-  "classic/gulliver4/seg-tc-minjung-p12-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버는 얼른 대답하지 못했답니다."
-  },
   "classic/gulliver4/say-p12-greyhorse.mp3": {
     "voice": "tc-gunseok",
     "emotion": "normal",
     "intensity": null,
     "text": "걸리버 나라에도 이렇게 나누며 사나요?"
-  },
-  "classic/gulliver4/seg-tc-minjung-p13-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "개울가에서는 야후들이,\n반짝이는 돌 하나를 두고 아웅다웅 다투었어요.\n걸리버는 그 모습을 가만히 바라보았어요.\n어쩐지 부끄러워서 얼굴이 화끈거렸지요."
   },
   "classic/gulliver4/seg-cast-p13-1.mp3": {
     "voice": "tc-kangil",
@@ -14113,23 +13587,11 @@
     "intensity": 0.35,
     "text": "'나도 저런 적이 있었구나.'"
   },
-  "classic/gulliver4/seg-tc-minjung-p14-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버는 말들의 나라가 참 좋았어요.\n그래도 밤이면 별을 보며 집 생각이 났지요."
-  },
   "classic/gulliver4/seg-cast-p14-1.mp3": {
     "voice": "tc-kangil",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"회색 말님, 가족이 보고 싶어요.\""
-  },
-  "classic/gulliver4/seg-tc-minjung-p14-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "회색 말은 가만히 고개를 끄덕였어요."
   },
   "classic/gulliver4/seg-cast-p14-3.mp3": {
     "voice": "tc-gunseok",
@@ -14149,29 +13611,17 @@
     "intensity": 0.35,
     "text": "기다리는 가족에게 돌아가야지요.\n우리가 배를 만들어 줄게요."
   },
-  "classic/gulliver4/seg-tc-minjung-p15-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "말들이 모두 나서서 작은 배를 지었어요.\n나무를 물어 나르고, 발굽으로 틈을 꾹꾹 막았지요.\n망아지는 하얀 조약돌을 물고 와,\n걸리버 손에 톡 떨어뜨렸어요."
-  },
   "classic/gulliver4/seg-cast-p15-1.mp3": {
-    "voice": "tc-hajun",
+    "voice": "tc-siwoo",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "\"아저씨 주려고 개울에서 골라 왔어요.\""
   },
   "classic/gulliver4/say-p15-foal.mp3": {
-    "voice": "tc-hajun",
+    "voice": "tc-siwoo",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "아저씨 주려고 개울에서 골라 왔어요."
-  },
-  "classic/gulliver4/seg-tc-minjung-p16-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "떠나는 날, 말들이 모두 바닷가에 나와 배웅했어요.\n걸리버는 휴이넘 말로 힘껏 외쳤어요."
   },
   "classic/gulliver4/seg-cast-p16-1.mp3": {
     "voice": "tc-kangil",
@@ -14179,16 +13629,10 @@
     "intensity": 0.45,
     "text": "\"히히힝!\""
   },
-  "classic/gulliver4/seg-tc-minjung-p16-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "망아지가 펄쩍펄쩍 뛰며 웃었지요."
-  },
   "classic/gulliver4/seg-cast-p16-3.mp3": {
-    "voice": "tc-hajun",
-    "emotion": "happy",
-    "intensity": 0.45,
+    "voice": "tc-siwoo",
+    "emotion": "toneup",
+    "intensity": 0.4,
     "text": "\"아저씨, 이번엔 당근이 아니라,\n고맙다는 말이에요!\""
   },
   "classic/gulliver4/say-p16-gulliver.mp3": {
@@ -14198,16 +13642,10 @@
     "text": "히히힝!"
   },
   "classic/gulliver4/say-p16-foal.mp3": {
-    "voice": "tc-hajun",
-    "emotion": "happy",
-    "intensity": 0.45,
+    "voice": "tc-siwoo",
+    "emotion": "toneup",
+    "intensity": 0.4,
     "text": "아저씨, 이번엔 당근이 아니라,\n고맙다는 말이에요!"
-  },
-  "classic/gulliver4/seg-tc-minjung-p17-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버는 작은 배로 바다를 건너다,\n큰 배를 만나 집으로 돌아왔어요.\n막내딸이 쪼르르 달려와 안겼지요."
   },
   "classic/gulliver4/seg-cast-p17-1.mp3": {
     "voice": "tc-arin",
@@ -14215,23 +13653,11 @@
     "intensity": 0.45,
     "text": "\"아빠, 보고 싶었어요!\""
   },
-  "classic/gulliver4/seg-tc-minjung-p17-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버는 온 가족을 꼭 끌어안았어요.\n그날부터 걸리버는 있는 그대로 이야기했답니다."
-  },
   "classic/gulliver4/say-p17-daughter.mp3": {
     "voice": "tc-arin",
     "emotion": "happy",
     "intensity": 0.45,
     "text": "아빠, 보고 싶었어요!"
-  },
-  "classic/gulliver4/seg-tc-minjung-p18-0.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "걸리버가 조약돌을 꺼내 보였어요."
   },
   "classic/gulliver4/seg-cast-p18-1.mp3": {
     "voice": "tc-kangil",
@@ -14947,64 +14373,45 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 어느 마을에 상인과 세 딸이 살았어요.\n두 언니는 예쁜 옷과 보석을 좋아했지만,\n막내 벨은 책과 꽃을 더 좋아했지요.\n마음씨가 고와 마을 사람들은 벨을 참 아꼈답니다."
+    "text": "옛날 어느 마을에 상인과 세 딸이 살았어요.\n두 언니는 예쁜 옷과 보석을 좋아했지만,\n막내 벨은 책과 꽃을 더 좋아했답니다.\n마음씨가 고와 마을 사람들은 벨을 참 아꼈답니다."
   },
   "classic/beauty/seg-tc-minjung-p2-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "어느 날 아버지가 먼 장사를 떠나게 되었어요."
+    "text": "어느 날 아버지는 먼 곳으로 장사를 떠나게 되었어요.\n아버지는 딸들에게 말했어요."
   },
   "classic/beauty/seg-cast-p2-1.mp3": {
-    "voice": "tc-daejin",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"무엇을 사다 줄까?\""
+    "voice": "tc-gunseok",
+    "emotion": "happy",
+    "intensity": 0.45,
+    "text": "\"너희에게 필요한 게 무엇이니? 돌아올 때 사다 주마.\""
   },
   "classic/beauty/seg-cast-p2-2.mp3": {
     "voice": "tc-jinseo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.5,
     "text": "\"저는 비단 드레스요!\"",
     "tempo": 0.8
   },
-  "classic/beauty/seg-cast-p2-3.mp3": {
-    "voice": "tc-jinseo",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"저는 진주 목걸이요!\"",
-    "tempo": 0.8
-  },
-  "classic/beauty/seg-tc-minjung-p2-4.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "벨은 가만히 웃으며 말했지요."
-  },
-  "classic/beauty/seg-cast-p2-5.mp3": {
-    "voice": "tc-jiwoo",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"저는 장미 한 송이면 돼요.\""
-  },
   "classic/beauty/say-p2-eldersister.mp3": {
     "voice": "tc-jinseo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.5,
     "text": "저는 비단 드레스요!",
     "tempo": 0.8
   },
   "classic/beauty/say-p2-eldersister2.mp3": {
     "voice": "tc-jinseo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.5,
     "text": "저는 진주 목걸이요!",
     "tempo": 0.8
   },
   "classic/beauty/say-p2-belle.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.4,
     "text": "저는 장미 한 송이면 돼요."
   },
   "classic/beauty/seg-tc-minjung-p3-0.mp3": {
@@ -15017,25 +14424,13 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "성문은 저절로 스르르 열렸어요.\n안에는 아무도 없는데 벽난로에 불이 활활 타고,\n식탁에는 따뜻한 수프가 차려져 있었지요.\n아버지는 고맙다고 인사하고 하룻밤을 묵었답니다."
+    "text": "성문은 저절로 스르르 열렸어요.\n안에는 아무도 없는데 벽난로에 불이 활활 타고,\n식탁에는 따뜻한 수프가 차려져 있었어요.\n아버지는 고맙다고 인사하고 하룻밤을 묵었답니다."
   },
   "classic/beauty/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "이튿날 아침, 성을 나서던 아버지는,\n눈 속에 핀 장미 정원을 보았어요.\n한겨울인데도 새빨간 장미가 활짝 피어 있었지요."
-  },
-  "classic/beauty/seg-cast-p5-1.mp3": {
-    "voice": "tc-daejin",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"아, 우리 벨이 부탁한 게 이거였지!\""
-  },
-  "classic/beauty/say-p5-father.mp3": {
-    "voice": "tc-daejin",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "아, 우리 벨이 부탁한 게 이거였지!"
+    "text": "이튿날 아침, 성을 나서던 아버지는,\n눈 속에 핀 장미 정원을 보았어요.\n한겨울에도 새빨간 장미가 활짝 피어 있었어요.\n아버지는 벨이 한 이야기가 떠올랐어요."
   },
   "classic/beauty/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
@@ -15044,15 +14439,15 @@
     "text": "아버지가 장미 한 송이를 톡 꺾는 순간이었어요.\n우르릉— 성 쪽에서 커다란 그림자가 다가왔어요.\n온몸이 털로 덮이고 뿔이 난 야수였지요."
   },
   "classic/beauty/seg-cast-p6-1.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "sad",
-    "intensity": 0.35,
+    "voice": "tc-shotgun",
+    "emotion": "angry",
+    "intensity": 0.6,
     "text": "\"내 정원의 장미를 꺾다니!\""
   },
   "classic/beauty/say-p6-beast.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "sad",
-    "intensity": 0.35,
+    "voice": "tc-shotgun",
+    "emotion": "angry",
+    "intensity": 0.6,
     "text": "내 정원의 장미를 꺾다니!"
   },
   "classic/beauty/seg-tc-minjung-p7-0.mp3": {
@@ -15062,10 +14457,10 @@
     "text": "야수는 한참 아버지를 내려다보다가 말했어요."
   },
   "classic/beauty/seg-cast-p7-1.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"그 장미는 내가 아끼던 것이다.\n꺾어 갔으니 그냥 보낼 수는 없다.\n누군가는 이 성에 남아야 한다.\""
+    "voice": "tc-shotgun",
+    "emotion": "tonedown",
+    "intensity": 0.55,
+    "text": "\"내 정원에서 내가 아끼는 장미를 꺾다니,\n그냥 보낼 수 없다.\n누군가는 이 성에 남아야 한다.\""
   },
   "classic/beauty/seg-tc-minjung-p7-2.mp3": {
     "voice": "tc-minjung",
@@ -15074,9 +14469,9 @@
     "text": "아버지는 그 자리에 무릎을 꿇었어요."
   },
   "classic/beauty/seg-cast-p7-3.mp3": {
-    "voice": "tc-daejin",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-gunseok",
+    "emotion": "sad",
+    "intensity": 0.6,
     "text": "\"그러면 딸들에게 작별 인사만 하게 해 주세요.\""
   },
   "classic/beauty/seg-tc-minjung-p7-4.mp3": {
@@ -15086,15 +14481,15 @@
     "text": "야수는 한참 말이 없다가, 고개를 끄덕였답니다."
   },
   "classic/beauty/say-p7-beast.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "그 장미는 내가 아끼던 것이다. 꺾어 갔으니 그냥 보낼 수는 없다. 누군가는 이 성에 남아야 한다."
+    "voice": "tc-shotgun",
+    "emotion": "tonedown",
+    "intensity": 0.55,
+    "text": "내 정원에서 내가 아끼는 장미를 꺾다니 그냥 보낼 수 없다. 누군가는 이 성에 남아야 한다."
   },
   "classic/beauty/say-p7-father.mp3": {
-    "voice": "tc-daejin",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-gunseok",
+    "emotion": "sad",
+    "intensity": 0.6,
     "text": "그러면 딸들에게 작별 인사만 하게 해 주세요."
   },
   "classic/beauty/seg-tc-minjung-p8-0.mp3": {
@@ -15105,14 +14500,14 @@
   },
   "classic/beauty/seg-cast-p8-1.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "sad",
+    "intensity": 0.5,
     "text": "\"제가 가겠어요, 아버지.\""
   },
   "classic/beauty/say-p8-belle.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "sad",
+    "intensity": 0.5,
     "text": "제가 가겠어요, 아버지."
   },
   "classic/beauty/seg-tc-minjung-p9-0.mp3": {
@@ -15122,15 +14517,15 @@
     "text": "벨이 성에 도착하자 야수가 맞으러 나왔어요.\n벨은 무서워 고개를 들 수 없었지요.\n야수는 한참 벨을 바라보다가,\n조용히 말했어요."
   },
   "classic/beauty/seg-cast-p9-1.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-shotgun",
+    "emotion": "tonedown",
+    "intensity": 0.45,
     "text": "\"이곳에서 너는 무엇이든 해도 좋다.\""
   },
   "classic/beauty/say-p9-beast.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-shotgun",
+    "emotion": "tonedown",
+    "intensity": 0.45,
     "text": "이곳에서 너는 무엇이든 해도 좋다."
   },
   "classic/beauty/seg-tc-minjung-p10-0.mp3": {
@@ -15141,14 +14536,14 @@
   },
   "classic/beauty/seg-cast-p10-1.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.5,
     "text": "\"이 책을… 제가 다 읽어도 되나요?\""
   },
   "classic/beauty/say-p10-belle.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.5,
     "text": "이 책을… 제가 다 읽어도 되나요?"
   },
   "classic/beauty/seg-tc-minjung-p11-0.mp3": {
@@ -15177,8 +14572,8 @@
   },
   "classic/beauty/seg-cast-p14-1.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "toneup",
+    "intensity": 0.4,
     "text": "\"낮에 보았어요.\n다친 새를 감싸 안고 계시던 것.\n손이 참 다정하시더라고요.\""
   },
   "classic/beauty/seg-tc-minjung-p14-2.mp3": {
@@ -15189,8 +14584,8 @@
   },
   "classic/beauty/say-p14-belle.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "toneup",
+    "intensity": 0.4,
     "text": "낮에 보았어요. 다친 새를 감싸 안고 계시던 것. 손이 참 다정하시더라고요."
   },
   "classic/beauty/seg-tc-minjung-p15-0.mp3": {
@@ -15206,9 +14601,9 @@
     "text": "야수는 한참 거울을 들여다보다가 말했어요."
   },
   "classic/beauty/seg-cast-p16-1.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-shotgun",
+    "emotion": "sad",
+    "intensity": 0.5,
     "text": "\"다녀오너라. 아버지께 가 보아라.\""
   },
   "classic/beauty/seg-tc-minjung-p16-2.mp3": {
@@ -15218,9 +14613,9 @@
     "text": "그러고는 창밖 정원의 장미를 가리켰지요."
   },
   "classic/beauty/seg-cast-p16-3.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "tonedown",
-    "intensity": 0.35,
+    "voice": "tc-shotgun",
+    "emotion": "sad",
+    "intensity": 0.6,
     "text": "\"다만… 저 장미가 다 지기 전에 돌아와 다오.\n꽃이 모두 지고 나면,\n나는 더 기다릴 힘이 없단다.\""
   },
   "classic/beauty/seg-tc-minjung-p16-4.mp3": {
@@ -15232,7 +14627,7 @@
   "classic/beauty/seg-cast-p16-5.mp3": {
     "voice": "tc-jiwoo",
     "emotion": "sad",
-    "intensity": 0.3,
+    "intensity": 0.6,
     "text": "\"…꼭 돌아올게요.\""
   },
   "classic/beauty/seg-tc-minjung-p16-6.mp3": {
@@ -15242,15 +14637,15 @@
     "text": "야수는 성문 앞에서 오래오래 손을 흔들었답니다."
   },
   "classic/beauty/say-p16-beast.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "tonedown",
-    "intensity": 0.35,
+    "voice": "tc-shotgun",
+    "emotion": "sad",
+    "intensity": 0.6,
     "text": "다만… 저 장미가 다 지기 전에 돌아와 다오. 꽃이 모두 지고 나면 나는 더 기다릴 힘이 없단다."
   },
   "classic/beauty/say-p16-belle.mp3": {
     "voice": "tc-jiwoo",
     "emotion": "sad",
-    "intensity": 0.3,
+    "intensity": 0.6,
     "text": "…꼭 돌아올게요."
   },
   "classic/beauty/seg-tc-minjung-p17-0.mp3": {
@@ -15268,7 +14663,7 @@
   "classic/beauty/seg-cast-p18-1.mp3": {
     "voice": "tc-jiwoo",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.6,
     "text": "\"안 돼, 내가 약속했잖아!\""
   },
   "classic/beauty/seg-tc-minjung-p19-0.mp3": {
@@ -15285,8 +14680,8 @@
   },
   "classic/beauty/seg-cast-p20-1.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "tonedown",
-    "intensity": 0.4,
+    "emotion": "sad",
+    "intensity": 0.6,
     "text": "\"돌아왔어요. 제가 너무 늦었죠.\n…저는 당신을 사랑해요.\""
   },
   "classic/beauty/seg-tc-minjung-p20-2.mp3": {
@@ -15297,8 +14692,8 @@
   },
   "classic/beauty/say-p20-belle.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "tonedown",
-    "intensity": 0.4,
+    "emotion": "sad",
+    "intensity": 0.6,
     "text": "돌아왔어요. 제가 너무 늦었죠. …저는 당신을 사랑해요."
   },
   "classic/beauty/seg-tc-minjung-p21-0.mp3": {
@@ -15506,5 +14901,578 @@
     "emotion": "normal",
     "intensity": null,
     "text": "마녀가 허리를 굽혀 화덕 앞으로 몸을 기울였어요."
+  },
+  "classic/gulliver1/seg-tc-kangil-p2-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "그러던 어느 날이었어. 우르르 쾅쾅!\n사나운 폭풍우가 몰아쳐서,\n배가 그만 뒤집히고 말았단다.\n나는 부서진 배 조각에 꼭 매달려,\n밤새도록 둥실둥실 떠다녔지.\n겨우 모래밭에 닿았을 때는,\n그만 스르르 잠이 들어 버렸단다."
+  },
+  "classic/gulliver1/seg-tc-kangil-p3-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "눈을 떠 보니 뭔가 이상했어.\n손가락 하나 꼼짝할 수가 없는 거야.\n온몸이 가느다란 실로 칭칭 묶여 있었거든.\n살그머니 고개를 들어 보았더니,\n글쎄 손가락만 한 작은 사람들이,\n내 몸 위를 오르락내리락하고 있지 뭐야?"
+  },
+  "classic/gulliver1/seg-tc-kangil-p4-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "내가 몸을 살짝 들썩이자,\n작은 사람들이 깜짝 놀라 화살을 쏘았어.\n따끔따끔했지만 하나도 다치지는 않았어.\n작은 사람 하나가 내 귀에 대고 뭐라고 소리쳤는데,\n나한테는 모깃소리처럼 앵앵 들릴 뿐이었지."
+  },
+  "classic/gulliver1/seg-tc-kangil-p5-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "내가 입을 벌리고,\n배가 고프다고 말했더니,\n작은 사람들이 빵이며 고기를 수레에 실어,\n내 입속에 가득 넣어 주었단다.\n어찌나 맛있던지, 허겁지겁 먹었지."
+  },
+  "classic/gulliver1/seg-tc-kangil-p6-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "작은 사람들은 커다란 수레를 만들어,\n나를 성안으로 옮겨 주었어.\n하루가 가고, 이틀이 가고…\n나는 그 나라 말을 하나씩 배웠지.\n어느새 사람들은 나를 묶은 실을 풀어 주었고,\n내 손바닥에 올라와 함께 놀게 되었단다."
+  },
+  "classic/gulliver1/seg-tc-kangil-p7-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "하루는 임금님이 나를 보러 오셨어."
+  },
+  "classic/gulliver1/seg-tc-kangil-p7-3.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "나의 말에 사람들은,\n나를 더욱더 좋아하게 되었지."
+  },
+  "classic/gulliver1/seg-tc-kangil-p8-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "하루는 바다 저편에서,\n이웃 나라 배들이 우르르 몰려왔어.\n내가 첨벙첨벙 바다로 걸어 들어가자"
+  },
+  "classic/gulliver1/seg-tc-kangil-p8-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "병사들이 깜짝 놀라 물에 풍덩 빠지기도 했지 뭐야."
+  },
+  "classic/gulliver1/seg-tc-kangil-p9-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "물에 빠진 병사들을,\n손가락으로 살짝 건져서 배에 다시 태워 주었어.\n그러고는 배마다 밧줄을 묶어,\n줄줄이 끌고 작은 나라로 돌아왔지.\n옷에 화살이 몇 개 꽂혔지만, 하나도 아프지 않았단다.\n바닷가 사람들은 모자를 던지며 기뻐했어!"
+  },
+  "classic/gulliver1/seg-tc-kangil-p10-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "임금님은 크게 기뻐하시며 말씀하셨어."
+  },
+  "classic/gulliver1/seg-tc-kangil-p10-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "나는 잠시 생각하다가 대답했지."
+  },
+  "classic/gulliver1/seg-tc-kangil-p10-4.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "임금님은 그러겠다고 약속해 주셨단다."
+  },
+  "classic/gulliver1/seg-tc-kangil-p11-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "그러던 어느 날 밤, 왕궁에 불이 났어.\n물통은 너무 작고, 불길은 너무 빨리 번져 버렸지.\n급한 마음에 나는,\n그만 오줌을 누어 불을 꺼 버렸단다.\n작은 사람들은 코를 막으면서도,\n고맙다며 모자를 흔들어 주었어."
+  },
+  "classic/gulliver1/seg-tc-kangil-p12-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "다음 날부터 온 나라가 배를 만드느라 바빠졌어.\n수백 명이 달라붙어 나무를 나르고,\n못을 박고, 돛을 꿰맸지.\n나도 손가락 하나로,\n널빤지를 잡아 주며 도왔단다."
+  },
+  "classic/gulliver1/seg-tc-kangil-p13-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "며칠이 지나자 배가 조금씩 모습을 갖춰 갔어.\n돛을 달고, 밧줄을 매고,\n먹을 것과 물통까지 가득 실었지.\n드디어 내 몸에 꼭 맞는,\n커다란 배가 완성됐어!"
+  },
+  "classic/gulliver1/seg-tc-kangil-p14-1.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "작은 사람들이 모자를 흔들며 배웅해 주었어.\n나는 다시 넓은 바다로 나아갔지."
+  },
+  "classic/gulliver2/seg-tc-kangil-p2-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "나는 다시 배를 탔어.\n그런데 먼바다에서 마실 물이 다 떨어져서,\n낯선 섬에 잠깐 내렸지.\n물을 찾아 이리저리 헤매는 사이,\n글쎄 배가 나만 두고 먼저 떠나 버렸지 뭐야!"
+  },
+  "classic/gulliver2/seg-tc-kangil-p3-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "섬 안쪽으로 들어간 나는,\n깜짝 놀랐어.\n풀이 나무만 하고,\n밀 이삭이 지붕보다 높았거든!"
+  },
+  "classic/gulliver2/seg-tc-kangil-p4-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "그때 갑자기 땅이 쿵쿵 울리기 시작했어.\n밀을 베러 온 거인들이었지.\n나는 밀 줄기 사이에 납작 엎드렸어."
+  },
+  "classic/gulliver2/seg-tc-kangil-p5-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "그때 거인 농부가 나를 발견했어.\n농부는 조심조심 손수건을 펴서,\n나를 살며시 집어 올렸지."
+  },
+  "classic/gulliver2/seg-tc-kangil-p6-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "농부는 나를 집으로 데려갔어.\n식탁은 마당만 하고,\n빵 한 조각은 이불만 했지.\n접시에 앉아 빵을 뜯고 있는데,\n어슬렁어슬렁 무언가 다가왔어.\n글쎄 사자만 한 고양이였지 뭐야!\n내가 겁내지 않고 똑바로 쳐다보았더니,\n고양이는 슬그머니 물러갔단다."
+  },
+  "classic/gulliver2/seg-tc-kangil-p7-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "농부의 어린 딸이 나를 보고,\n눈이 동그래졌어."
+  },
+  "classic/gulliver2/seg-tc-kangil-p7-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "딸은 인형 상자에 헝겊을 깔아 침대를 만들고,\n바느질로 작은 옷까지 지어 입혀 주었지.\n나에게는 세상에서 제일 다정한 친구였지."
+  },
+  "classic/gulliver2/seg-tc-kangil-p8-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "소문이 퍼지자 농부는,\n나를 장터에 데리고 다녔어.\n사람들은 동전을 내고 나를 구경했지.\n날마다 인사하고 춤추느라,\n나는 점점 지쳐 갔었지."
+  },
+  "classic/gulliver2/seg-tc-kangil-p9-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "소문이 궁궐까지 닿아, 공주님이 나를 찾아오셨어.\n공주님은 농부에게 금덩이를 주고,\n나를 궁궐로 데려가기로 하셨지.\n농부는 싱글벙글 웃었지만,\n어린 딸은 눈물을 뚝뚝 흘렸단다."
+  },
+  "classic/gulliver2/seg-tc-kangil-p10-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "공주님은 나에게,\n나무로 만든 작은 집을 선물해 주셨어.\n창문도 있고, 침대도 있고,\n손잡이까지 달린 집이었어.\n공주님은 그 집을 들고 어디든 다니셨단다."
+  },
+  "classic/gulliver2/seg-tc-kangil-p11-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "어느 날 궁궐 정원으로,\n말벌 떼가 붕붕 날아왔어.\n글쎄 말벌 한 마리가 독수리만 했다니까!\n나는 모자를 휘둘러,\n겨우겨우 쫓아냈었어."
+  },
+  "classic/gulliver2/seg-tc-kangil-p12-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "더 놀라운 일도 있었어.\n궁궐의 원숭이가 창문으로 쏙 들어와서,\n나를 덥석 안고,\n지붕 위로 올라가 버린 거야!"
+  },
+  "classic/gulliver2/seg-tc-kangil-p13-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "사람들이 사다리를 놓고 올라와,\n나를 무사히 안아 내려 주었어.\n원숭이는 그제야,\n시무룩하게 담을 넘어갔지."
+  },
+  "classic/gulliver2/seg-tc-kangil-p14-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "어느 날 공주님이 나를 손바닥에 올려놓고,\n이것저것 물어보셨어.\n내가 그동안 다녀온 나라들 이야기를,\n신나게 들려드렸더니,\n공주님은 한참을 곰곰이 생각하셨지."
+  },
+  "classic/gulliver2/seg-tc-kangil-p15-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "공주님이 가만히 말씀하셨어."
+  },
+  "classic/gulliver2/seg-tc-kangil-p16-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "공주님은 뭐든지 다 해 주셨지만,\n나는 자꾸만,\n내가 살던 세상이 그리웠었어."
+  },
+  "classic/gulliver2/seg-tc-kangil-p16-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "공주님이 나무 집을 들고,\n나를 바닷가로 데려가 주셨어."
+  },
+  "classic/gulliver2/seg-tc-kangil-p17-1.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "공주님이 나무 집을 바위에 올려놓고,\n조개를 주우러 달려간 순간,\n커다란 독수리가 집을 휙 낚아챘지 뭐야!"
+  },
+  "classic/gulliver2/seg-tc-kangil-p18-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "한참을 날던 독수리가 지쳤는지,\n나무 집을 바다에 첨벙 떨어뜨렸어.\n집은 물 위에 둥실둥실 떠다녔지.\n물결에 흔들흔들 잠들었다가 깬 나는,\n창밖을 내다보고 깜짝 놀라고 말았어.\n저 멀리 낯익은 항구가 보였거든!"
+  },
+  "classic/gulliver2/seg-tc-kangil-p19-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "집으로 돌아온 나는,\n한동안 이상한 기분이 들었어.\n사람들이 모두 인형처럼 작아 보였거든."
+  },
+  "classic/gulliver3/seg-tc-kangil-p2-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "나는 여행 도중 해적을 만나,\n내 배와 짐을 모두 빼앗기고,\n작은 배에 태워져 바다로 떠나보내졌어.\n그래도 마음 착한 해적 선장이,\n먹을 것을 넉넉히 실어 주었단다."
+  },
+  "classic/gulliver3/seg-tc-kangil-p3-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "작은 배를 타고 며칠을 떠다니던 나는,\n외딴섬에 도착해 조개를 줍고 있었어.\n그런데 갑자기 해가 쏙 사라지고 어둑해졌지."
+  },
+  "classic/gulliver3/seg-tc-kangil-p3-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "고개를 들어 보았더니,"
+  },
+  "classic/gulliver3/seg-tc-kangil-p4-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "하늘 섬 가장자리에서,\n사람들이 낚시를 하고 있었어."
+  },
+  "classic/gulliver3/seg-tc-kangil-p4-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "내가 팔을 흔들며 소리치자,\n한참 만에 사슬 의자가 스르르 내려왔지.\n나는 그걸 타고 하늘 섬으로 쑥쑥 올라갔단다."
+  },
+  "classic/gulliver3/seg-tc-kangil-p5-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "하늘 섬 라퓨타 사람들은 참 신기했어.\n고개는 모두 한쪽으로 갸우뚱,\n한 눈은 머릿속 생각을,\n한 눈은 하늘을 보는 것 같았지.\n길을 걸을 때도 하늘만 보다가,\n기둥에 콩! 부딪히곤 했단다."
+  },
+  "classic/gulliver3/seg-tc-kangil-p6-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "내가 인사를 해도 아무도 대답이 없었어.\n모두 생각에 푹 빠져 있었거든.\n그때 한 아이가 쪼르르 달려왔지."
+  },
+  "classic/gulliver3/seg-tc-kangil-p7-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "두드리미는 나를 임금님이 계신 곳에 데려다주었지.\n그런데 임금님은 숫자 셈에 푹 빠져 계셨어.\n두드리미 말처럼 임금님 입을 톡톡, 귀를 톡톡!\n그제야 임금님이 번쩍 고개를 드셨단다.",
+    "tempo": 0.92
+  },
+  "classic/gulliver3/seg-tc-kangil-p8-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "임금님은 나를 만찬에 초대해 주셨어.\n고기는 세모, 빵은 고깔 모양,\n오리구이는 바이올린 모양,\n소시지는 피리 모양이었지.\n재미있는 모양에 내가 소시지를 살짝 불어 보았는데,\n아무 소리도 나지 않았어."
+  },
+  "classic/gulliver3/seg-tc-kangil-p9-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "하루는 옷 만드는 재단사가 찾아왔어.\n내 몸에 줄자 한 번 대지 않고,\n셈만 하더니 옷을 지어 왔지 뭐야.\n입어 보니 한쪽 소매는 질질, 한쪽은 깡충!\n재단사는 고개를 갸우뚱하더니 이야기했어."
+  },
+  "classic/gulliver3/seg-tc-kangil-p10-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "섬 한가운데 동굴에는,\n집채만 한 자석이 있었어.\n두드리미가 자석을 살짝 밀며 말했지."
+  },
+  "classic/gulliver3/seg-tc-kangil-p10-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "섬은 그렇게 이리저리 하늘을 날며 여러 나라를 돌아다녔단다."
+  },
+  "classic/gulliver3/seg-tc-kangil-p11-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "섬은 신기했지만, 나는 조금 쓸쓸했어.\n눈을 맞춰 주는 건 두드리미뿐이었거든.\n나는 두드리미에게 이야기했어."
+  },
+  "classic/gulliver3/seg-tc-kangil-p11-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "내 말을 들은 두드리미가 작별 선물로 콩 주머니가 달린 막대를 내밀었지."
+  },
+  "classic/gulliver3/seg-tc-kangil-p12-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "두드리미의 도움으로 나는 아래 마을로 내려올 수 있었어.\n그런데 내가 내려온 마을은 어딘가 이상했어.\n밭에는 싹 하나 없고,\n집들은 기우뚱 기울어 있었지.\n이 마을 또한 하늘섬 사람들처럼,\n새로운 발명품 생각에 푹 빠져 있는 나라였어."
+  },
+  "classic/gulliver3/seg-tc-kangil-p13-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "마을 연구소에서 오이를 연구하시는 박사님은,\n오이만 들여다보며 꼼짝도 않으셨어.\n그때마다 내가 박사님의 입과 귀를 톡톡 두드리면,"
+  },
+  "classic/gulliver3/seg-tc-kangil-p13-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "벌써 여덟 해나 됐지 뭐야. 박사님은 싱글벙글 웃으셨어."
+  },
+  "classic/gulliver3/seg-tc-kangil-p14-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "옆 마당에서는 건축가 아저씨가 집을 짓고 있었어.\n그런데 웬일인지 몰라도 집을 지붕부터 짓고 있었어.\n지붕 아래는 텅 비어 있었지."
+  },
+  "classic/gulliver3/seg-tc-kangil-p14-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "내가 묻자, 건축가 아저씨가 머리를 긁적이며 대답했어."
+  },
+  "classic/gulliver3/seg-tc-kangil-p15-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "연구소 밭에서는 돼지들이 땅을 킁킁 파헤치고 있었어.\n박사님 말로는, 땅에 도토리를 묻어 두면,\n돼지들이 도토리를 찾느라 밭을 저절로 갈아 준대.\n그런데 밭에는 싹 하나 안 나고,\n돼지들만 도토리를 먹고 통통하게 살이 쪘지 뭐야!\n박사님은 또 싱글벙글 웃으셨어."
+  },
+  "classic/gulliver3/seg-tc-kangil-p16-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "연구소를 나오니, 누런 밭들 사이에,\n초록 밭이 딱 하나 반짝이고 있었어.\n그 밭의 주인은 무노디 할아버지였지.\n할아버지는 다른 사람들과 달리 생각에 빠져 있지 않았어.\n막대로 두드리지 않았는데도, 나를 보자마자 먼저 반갑게 인사하셨거든."
+  },
+  "classic/gulliver3/seg-tc-kangil-p17-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "아삭! 사과는 꿀처럼 달았어.\n나는 오이에서 햇빛을 뽑는 박사님 이야기를 들려드렸어.\n그러자 할아버지가 빙그레 웃으며 말씀하셨지."
+  },
+  "classic/gulliver3/seg-tc-kangil-p17-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "그 말을 듣고 나는 하늘 섬을 올려다보았어."
+  },
+  "classic/gulliver3/seg-tc-kangil-p18-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "집에 돌아온 나는 콩 주머니로 책상을 톡톡 두드렸어!"
+  },
+  "classic/gulliver4/seg-tc-kangil-p2-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "나는 가족에게 손을 흔들고,\n이번엔 선장이 되어 바다로 나갔어.\n그런데 보물섬에 가고 싶던 선원들이,\n나만 낯선 바닷가에 내려놓고는 이렇게 말했어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p2-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "하지만 그건 거짓말이었어.\n배는 끝내 돌아오지 않았거든."
+  },
+  "classic/gulliver4/seg-tc-kangil-p3-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "숲에 들어서자, 와글와글, 끽끽!\n털북숭이들이 나무에서 우르르 내려왔어.\n씻지 않아 꾀죄죄한 들짐승, 야후였지.\n야후들은 반짝이는 금단추를 서로 갖겠다고,\n내 외투를 이리저리 잡아당겼어.",
+    "tempo": 0.92
+  },
+  "classic/gulliver4/seg-tc-kangil-p4-1.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "내가 어쩔 줄 모르고 있는데, 따각따각!\n점잖은 회색 말이 다가와 발굽을 쿵 굴렀어.\n야후들은 후다닥 달아났지.\n금단추 하나를 쏙 뽑아 들고서 말이야."
+  },
+  "classic/gulliver4/seg-tc-kangil-p5-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "밤색 말 한 마리가 다가와,\n회색 말과 히힝히힝 이야기를 나누었어.\n야후, 휴이넘 하는 소리가 자꾸 들렸지.\n나도 가만가만 따라 해 보았어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p5-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "말 두 마리가 깜짝 놀라 귀를 쫑긋 세웠어.\n야후처럼 생긴 내가 말을 하니 신기했나 봐."
+  },
+  "classic/gulliver4/seg-tc-kangil-p6-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "회색 말은 나를 자기 집으로 데려갔어.\n말들은 자기들을 휴이넘이라고 불렀는데,\n세상에서 가장 멋진 동물이라는 뜻이래.\n나는 귀리 빵을 구워 먹으며,\n날마다 휴이넘 말을 하나씩 배웠어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p7-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "히힝은 안녕, 히히힝은 고마워라는 뜻이야.\n그런데 내가 히히힝 하려고 하면,\n자꾸만 힝히히, 힝히히, 하고 나왔지 뭐야.\n회색 말네 망아지가 깔깔 웃었어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p8-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "하루가 가고, 이틀이 가고…\n어느 날 회색 말이 물었어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p8-3.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "내 대답에 회색 말은 고개를 갸웃했어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p9-1.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "회색 말이 묻자 나는 곰곰이 생각했어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p9-3.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "회색 말은 눈을 끔뻑끔뻑하며 되물었지."
+  },
+  "classic/gulliver4/seg-tc-kangil-p10-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "회색 말은 아무리 생각해도 알 수 없었나 봐."
+  },
+  "classic/gulliver4/seg-tc-kangil-p10-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "망아지도 아빠처럼 고개를 갸웃하며 물었지."
+  },
+  "classic/gulliver4/seg-tc-kangil-p10-4.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "이 나라에는 거짓말이라는 낱말이 아예 없었거든."
+  },
+  "classic/gulliver4/seg-tc-kangil-p11-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "풀밭 학교에서 달리기를 하던 날,\n망아지가 뛰다가 당근 바구니를 툭 엎었어.\n아무도 못 봤는데도, 망아지는 선생님께 먼저 달려가 말했지."
+  },
+  "classic/gulliver4/seg-tc-kangil-p11-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "그러고는 당근을 하나하나 물어 담았단다."
+  },
+  "classic/gulliver4/seg-tc-kangil-p12-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "말들은 서로 다투는 일이 없었어.\n어느 마을에 풀이 모자라면,\n이웃 마을 말들이 나누어 주었지.\n회색 말이 나에게 물었어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p12-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "나는 얼른 대답하지 못했어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p13-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "개울가에서는 야후들이,\n반짝이는 돌 하나를 두고 아웅다웅 다투고 있었어.\n나는 그 모습을 가만히 바라보았지.\n어쩐지 부끄러워서 얼굴이 화끈거렸어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p14-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "나는 말들의 나라가 참 좋았어.\n그래도 밤이면 별을 보며 집 생각이 났지."
+  },
+  "classic/gulliver4/seg-tc-kangil-p14-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "회색 말은 가만히 고개를 끄덕였어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p15-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "말들이 모두 나서서 작은 배를 지어 주었어.\n나무를 물어 나르고, 발굽으로 틈을 꾹꾹 막았지.\n망아지는 하얀 조약돌을 물고 와,\n내 손에 톡 떨어뜨렸어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p16-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "떠나는 날, 말들이 모두 바닷가에 나와 배웅해 주었어.\n나는 휴이넘 말로 힘껏 외쳤지."
+  },
+  "classic/gulliver4/seg-tc-kangil-p16-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "망아지가 펄쩍펄쩍 뛰며 웃었어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p17-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "나는 작은 배로 바다를 건너다,\n큰 배를 만나 집으로 돌아왔어.\n막내딸이 쪼르르 달려와 안겼지."
+  },
+  "classic/gulliver4/seg-tc-kangil-p17-2.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "나는 온 가족을 꼭 끌어안았단다.\n그날부터 나는 늘 있는 그대로 이야기했어."
+  },
+  "classic/gulliver4/seg-tc-kangil-p18-0.mp3": {
+    "voice": "tc-kangil",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "나는 주머니에서 망아지가 준 하얀 조약돌을 꺼내 보였어."
+  },
+  "classic/gulliver3/say-p14-architect.mp3": {
+    "voice": "tc-changbae",
+    "emotion": "happy",
+    "intensity": 0.35,
+    "text": "아, 지붕에 집중하다 보니 벽 쌓는 걸 깜빡했지 뭐예요! 조금만 더 하면 돼요!"
+  },
+  "folk/heungbu/seg-cast-p19-2.mp3": {
+    "voice": "tc-sua",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"짹… 왜 일부러 아프게 하는 거예요…\""
+  },
+  "classic/beauty/seg-tc-minjung-p2-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "큰언니가 말했어요."
+  },
+  "classic/beauty/seg-cast-p2-4.mp3": {
+    "voice": "tc-jinseo",
+    "emotion": "happy",
+    "intensity": 0.5,
+    "text": "\"저는 진주 목걸이요!\"",
+    "tempo": 0.8
+  },
+  "classic/beauty/seg-tc-minjung-p2-5.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "작은언니도 말했지요.\n벨은 가만히 웃으며 말했어요."
+  },
+  "classic/beauty/seg-cast-p2-6.mp3": {
+    "voice": "tc-jiwoo",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"저는 장미 한 송이면 돼요.\""
   }
 }

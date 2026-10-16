@@ -10,14 +10,15 @@ import {
   isGoogleLoginEnabled,
   logIn,
   signInWithGoogle,
-  signUp,
 } from "@/lib/auth";
 import { safeAdminNext } from "@/lib/admin-console";
 import { usePricing } from "@/lib/use-pricing";
 
 /**
- * 회원가입 / 로그인 — 베타. 아이디·비밀번호만.
- * 성공하면 서재(/)로 보낸다. 가입 시 보너스 토큰을 준다(auth.signUp).
+ * 로그인 / 가입 — 가입은 구글로만 받는다(2026-10-16 사장님 "웹 오픈은 구글 회원가입으로만").
+ * 구글로 처음 들어오면 그대로 가입된다(가입 트리거가 회원 줄과 가입 토큰을 만든다).
+ * 아이디·비밀번호는 이미 있는 계정(관리자·베타 회원)의 로그인만 — 새 아이디 가입 탭은 없앴다(auth.signUp 은 남겨 둠).
+ * 성공하면 서재(/)로 보낸다.
  * 관리자 페이지 문 앞에서 온 로그인(?next=/admin…)이면 로그인 뒤 그 주소로 돌려보낸다 — 열려던 기록을 다시 찾지 않게.
  * 관리실 주소만 받는다(safeAdminNext) — 아무 주소나 받으면 남의 링크로 엉뚱한 곳에 보내는 길이 된다.
  */
@@ -33,7 +34,8 @@ export default function LoginPage() {
   const { theme } = useTheme();
   const { accent, accentDark } = theme.colors;
 
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  // 아이디 로그인 칸 — 구글이 켜져 있으면 접어 두고(기존 회원만 연다), 꺼져 있으면 처음부터 연다.
+  const [idOpen, setIdOpen] = useState(!isGoogleLoginEnabled());
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
@@ -76,10 +78,9 @@ export default function LoginPage() {
     if (busy) return;
     setError("");
     setBusy(true);
-    const res = await (mode === "signup" ? signUp(id, pw) : logIn(id, pw));
+    const res = await logIn(id, pw);
     if (res.ok) {
-      // 새로 가입한 계정은 관리자가 아니므로 늘 서재로.
-      router.push(mode === "login" ? afterLoginPath() : "/");
+      router.push(afterLoginPath());
     } else {
       setError(res.error);
       setBusy(false);
@@ -109,82 +110,23 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-6 rounded-[28px] bg-white/92 p-7 shadow-xl backdrop-blur">
-          {/* 로그인 / 회원가입 탭 */}
-          <div className="mb-5 flex rounded-full bg-neutral-100 p-1">
-            {(["login", "signup"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => {
-                  setMode(m);
-                  setError("");
-                }}
-                style={mode === m ? { background: accent } : undefined}
-                className={`flex-1 rounded-full py-2 text-sm font-extrabold transition ${
-                  mode === m ? "text-white shadow" : "text-neutral-500"
-                }`}
-              >
-                {m === "login" ? "로그인" : "회원가입"}
-              </button>
-            ))}
-          </div>
-
-          <form onSubmit={submit} className="flex flex-col gap-3">
-            <div>
-              <label className="mb-1.5 block text-sm font-bold text-neutral-500">아이디</label>
-              <input
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                autoComplete="username"
-                placeholder="영문·숫자, 2~20자"
-                className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-bold text-neutral-500">비밀번호</label>
-              <input
-                value={pw}
-                onChange={(e) => setPw(e.target.value)}
-                type="password"
-                autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                placeholder="4자 이상"
-                className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
-              />
-            </div>
-
-            {error && <p className="text-center text-sm font-bold text-red-600">{error}</p>}
-
-            {mode === "signup" && (
-              <p className="rounded-xl bg-neutral-50 px-3 py-2 text-center text-xs font-bold text-neutral-500">
-                🎁 가입하면 무료 토큰 {pricing.signup_bonus_tokens}개를 드려요
-              </p>
-            )}
-
-            <button
-              type="submit"
-              style={{ background: accent, boxShadow: `0 5px 0 ${accentDark}` }}
-              className="mt-1 rounded-full py-3.5 text-lg font-extrabold text-white transition-transform active:translate-y-0.5"
-            >
-              {mode === "signup" ? "가입하고 시작하기" : "로그인"}
-            </button>
-          </form>
-
-          <div className="mt-4 flex items-center gap-3">
-            <span className="h-px flex-1 bg-neutral-200" />
-            <span className="text-xs font-bold text-neutral-400">또는</span>
-            <span className="h-px flex-1 bg-neutral-200" />
-          </div>
-
           {/*
-            구글로 시작하기 — 설정을 켠 뒤에만 보인다(NEXT_PUBLIC_GOOGLE_LOGIN=1).
-            안 켠 채로 단추만 있으면 눌렀을 때 오류만 나므로 아예 감춘다.
+            구글로 시작하기 — 가입은 이 단추 하나로만 받는다. 설정을 켠 뒤에만 보인다(NEXT_PUBLIC_GOOGLE_LOGIN=1).
+            안 켠 채로 단추만 있으면 눌렀을 때 오류만 나므로 아예 감추고, 가입은 준비 중이라고만 알린다.
           */}
+          {isGoogleLoginEnabled() ? (
+            <p className="mb-3 text-center text-sm font-extrabold text-neutral-600">구글 계정으로 가입하고 로그인해요</p>
+          ) : (
+            <p className="mb-3 rounded-xl bg-neutral-50 px-3 py-2 text-center text-xs font-bold text-neutral-500">
+              새 가입은 구글 계정으로 받아요 · 지금은 준비 중이에요
+            </p>
+          )}
           {isGoogleLoginEnabled() && (
             <button
               type="button"
               onClick={google}
               disabled={busy}
-              className="mt-3 flex w-full items-center justify-center gap-2.5 rounded-full border-2 border-neutral-200 bg-white px-4 py-3 text-sm font-extrabold text-neutral-700 transition hover:bg-neutral-50 disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2.5 rounded-full border-2 border-neutral-200 bg-white px-4 py-3.5 text-base font-extrabold text-neutral-700 shadow-sm transition hover:bg-neutral-50 disabled:opacity-60"
             >
               <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
                 <path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-3.2-.4-4.7H24v8.9h11.8c-.5 2.7-2 5-4.4 6.6v5.5h7.1c4.2-3.8 6.6-9.5 6.6-16.3z" />
@@ -195,6 +137,63 @@ export default function LoginPage() {
               구글로 시작하기
             </button>
           )}
+          {isGoogleLoginEnabled() && pricing.signup_bonus_tokens > 0 && (
+            <p className="mt-2 text-center text-xs font-bold text-neutral-500">
+              🎁 처음 가입하면 무료 토큰 {pricing.signup_bonus_tokens}개를 드려요
+            </p>
+          )}
+
+          {/* 이미 있는 아이디 계정(관리자·베타 회원)의 로그인 — 새 아이디 가입은 받지 않는다 */}
+          {idOpen ? (
+            <form onSubmit={submit} className="mt-5 flex flex-col gap-3 border-t border-neutral-200 pt-4">
+              <p className="text-center text-xs font-bold text-neutral-400">기존 아이디로 로그인</p>
+              <div>
+                <label htmlFor="login-id" className="mb-1.5 block text-sm font-bold text-neutral-500">
+                  아이디
+                </label>
+                <input
+                  id="login-id"
+                  value={id}
+                  onChange={(e) => setId(e.target.value)}
+                  autoComplete="username"
+                  className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                />
+              </div>
+              <div>
+                <label htmlFor="login-pw" className="mb-1.5 block text-sm font-bold text-neutral-500">
+                  비밀번호
+                </label>
+                <input
+                  id="login-pw"
+                  value={pw}
+                  onChange={(e) => setPw(e.target.value)}
+                  type="password"
+                  autoComplete="current-password"
+                  className="w-full rounded-2xl border-2 border-neutral-200 px-4 py-3 text-base font-bold outline-none focus:border-neutral-400"
+                />
+              </div>
+              <button
+                type="submit"
+                style={{ background: accent, boxShadow: `0 5px 0 ${accentDark}` }}
+                className="mt-1 rounded-full py-3.5 text-lg font-extrabold text-white transition-transform active:translate-y-0.5"
+              >
+                로그인
+              </button>
+            </form>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setIdOpen(true);
+                setError("");
+              }}
+              className="mt-3 flex min-h-11 w-full items-center justify-center text-xs font-bold text-neutral-500 underline underline-offset-2"
+            >
+              기존 아이디로 로그인
+            </button>
+          )}
+
+          {error && <p className="mt-3 text-center text-sm font-bold text-red-600">{error}</p>}
 
           {/* 비회원 둘러보기 — 전래동화·세계명작만 열람. 만들기·내 책장은 로그인 필요. */}
           <button
@@ -218,7 +217,7 @@ export default function LoginPage() {
         </Link>
 
         <p className="mt-3 text-center text-xs font-medium text-white/90" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>
-          베타 버전 · 계정은 이 기기에 저장돼요
+          가입은 구글 계정으로만 받아요
         </p>
       </main>
     </div>

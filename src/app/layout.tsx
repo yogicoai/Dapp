@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Dongle, Gaegu, Gowun_Dodum, Jua, Nanum_Pen_Script } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { READ_ALOUD_VOICE } from "@/lib/plans";
 import "./globals.css";
 
 const dongle = Dongle({ weight: ["300", "400", "700"], variable: "--font-dongle", preload: false });
@@ -11,7 +12,7 @@ const nanumPen = Nanum_Pen_Script({ weight: "400", variable: "--font-nanum-pen",
 
 export const metadata: Metadata = {
   title: "우리 가족 보이스 동화",
-  description: "아이가 주인공인 그림동화를 엄마·아빠 목소리로 읽어줍니다.",
+  description: `아이가 주인공인 그림동화를 ${READ_ALOUD_VOICE}로 읽어줍니다.`,
   /*
    * 아이폰용 — '홈 화면에 추가'로 열었을 때 주소창 없이 꽉 찬 앱으로 뜨게 한다.
    *

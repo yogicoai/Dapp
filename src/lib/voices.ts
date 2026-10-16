@@ -254,6 +254,8 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-kukhee", label: "국희", emoji: "🍲", voiceId: "tc_5c789c31dabcfa0008b0a38c", model: "ssfm-v30", desc: "여자 · 중년 목소리", sample: "얘야, 여기는 거인의 성이란다. 우리 남편이 오면 큰일 나!" },
   // 헨젤과 그레텔 · 마녀 역 (2026-10-15 사장님 채팅 "마녀는 마녀 사브리나로 변경해줘", Typecast 이름 Sabrina the Witch — 표시는 여자 중년).
   { kind: "tc", id: "tc-sabrina", label: "마녀 사브리나", emoji: "🧙", voiceId: "tc_634f8ec12e351d8a3d548e61", model: "ssfm-v30", desc: "여자 · 중년 마녀 목소리", sample: "배가 고팠구나. 어서 들어오렴. 따뜻한 수프가 있단다." },
+  // 인어 공주 · 인어 공주 역 (2026-10-16 사장님 채팅 "인어공주를 지안으로 변경", Typecast 이름 Jian — 표시는 여자 청소년).
+  { kind: "tc", id: "tc-jian", label: "지안", emoji: "🫧", voiceId: "tc_615c6a4e369566b08b8a7a71", model: "ssfm-v30", desc: "여자 · 청소년 목소리", sample: "사랑하는 왕자님, 부디 행복하세요." },
 ];
 
 /**

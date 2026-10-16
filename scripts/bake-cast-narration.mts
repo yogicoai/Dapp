@@ -279,8 +279,9 @@ const BOOKS: Record<string, BookSpec> = {
     data: "src/data/classic-books.json",
     root: "classic",
     dir: "gulliver1",
-    narrators: ["tc-minjung"],
-    defaultNarrator: "tc-minjung",
+    // 2026-10-16 사장님: 걸리버가 아이들에게 처음부터 끝까지 직접 들려주는 이야기체로 — 지문도 강일이 읽는다.
+    narrators: ["tc-kangil"],
+    defaultNarrator: "tc-kangil",
     cast: [{ name: "걸리버" }, { name: "임금님" }],
   },
   // 인어 공주 — 사장님 캐스팅(2026-09-17): 나레이션 민정 · 인어 공주 민정 · 언니 가희 ·
@@ -339,8 +340,9 @@ const BOOKS: Record<string, BookSpec> = {
     data: "src/data/classic-books.json",
     root: "classic",
     dir: "gulliver2",
-    narrators: ["tc-minjung"],
-    defaultNarrator: "tc-minjung",
+    // 2026-10-16 사장님: 1편처럼 걸리버가 직접 들려주는 이야기체 — 지문도 강일.
+    narrators: ["tc-kangil"],
+    defaultNarrator: "tc-kangil",
     cast: [{ name: "걸리버" }, { name: "거인의 딸" }, { name: "공주님" }, { name: "농부" }],
   },
   // 걸리버 여행기 3 — 사장님 캐스팅(2026-09-20): 나레이션 민정 · 걸리버 강일(1·2편과 같은 목소리) ·
@@ -351,11 +353,14 @@ const BOOKS: Record<string, BookSpec> = {
     data: "src/data/classic-books.json",
     root: "classic",
     dir: "gulliver3",
-    narrators: ["tc-minjung"],
-    defaultNarrator: "tc-minjung",
+    // 2026-10-16 사장님: 걸리버 시리즈 전체를 걸리버가 직접 들려주는 이야기체로 — 지문도 강일.
+    narrators: ["tc-kangil"],
+    defaultNarrator: "tc-kangil",
     cast: [
       { name: "걸리버" }, { name: "두드리미" }, { name: "임금님" },
       { name: "재단사" }, { name: "박사님" }, { name: "무노디 할아버지" },
+      // 14쪽 지붕부터 짓는 건축가(2026-10-16 사장님) — 심호문
+      { name: "건축가" },
     ],
   },
   // 걸리버 여행기 4 — 사장님 캐스팅(2026-09-20): 나레이션 민정(처음엔 민주였는데 1~3편과 맞추려고 되돌렸다) ·
@@ -367,8 +372,9 @@ const BOOKS: Record<string, BookSpec> = {
     data: "src/data/classic-books.json",
     root: "classic",
     dir: "gulliver4",
-    narrators: ["tc-minjung"],
-    defaultNarrator: "tc-minjung",
+    // 2026-10-16 사장님: 걸리버 시리즈 전체를 걸리버가 직접 들려주는 이야기체로 — 지문도 강일.
+    narrators: ["tc-kangil"],
+    defaultNarrator: "tc-kangil",
     cast: [
       { name: "걸리버" }, { name: "선원" }, { name: "회색 말" },
       { name: "망아지" }, { name: "막내딸" },
@@ -858,7 +864,11 @@ for (const [i, page] of book.pages.entries()) {
       }
       // 지문은 고를 수 있는 성우마다 한 벌씩. 뷰어가 seg- 뒤에 성우를 끼워 넣는다.
       for (const voice of BAKED_NARRATORS) {
-        await bake(`seg-${voice}-p${n}-${j}.mp3`, spoken, voice, "normal");
+        // 책의 voiceTempo.narration 이 있으면 그 책 지문만 그 빠르기로(걸리버 1 — 걸리버가 들려주는 이야기체가 쉼 없이 빨랐다, 2026-10-16).
+        // 지문 빠르기: 쪽의 narrationTempo → 책의 voiceTempo.narration (쪽마다 읽는 결이 달라 한 쪽만 느리거나 빠를 때 — 걸리버 2 5쪽, 2026-10-16).
+        // 지문 감정: 쪽의 narrationFeel · narrationIntensity → 책의 narrationFeel · narrationIntensity → 보통.
+        // 걸리버 시리즈는 걸리버(강일)가 들려주는 이야기라 책 전체를 기쁨 0.3 으로(사장님 "기쁨 정도로 읽어 주는 방식", 2026-10-16).
+        await bake(`seg-${voice}-p${n}-${j}.mp3`, spoken, voice, page.narrationFeel ?? book.narrationFeel ?? "normal", false, page.narrationTempo ?? book.voiceTempo?.[NARRATION], undefined, page.narrationIntensity ?? book.narrationIntensity);
       }
       segments.push({ who: NARRATION, src: `${URL_DIR}/seg-p${n}-${j}.mp3`, text: seg.text });
     } else {
