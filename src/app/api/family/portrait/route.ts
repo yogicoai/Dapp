@@ -3,6 +3,8 @@ import sharp from "sharp";
 import { bindAiUsageSink, settleAiUsage, withAiUsage } from "@/lib/ai-usage";
 import { dbUsageSink } from "@/lib/ai-usage-db";
 import { callerOf, type Caller } from "@/lib/api-auth";
+import { canCreate } from "@/lib/create-access-server";
+import { CREATE_LOCKED_CODE, CREATE_LOCKED_MESSAGE } from "@/lib/create-access";
 import { ART_STYLES } from "@/lib/art-styles";
 import { ftpErrorCode, uploadHitDeadline, uploadManyToCafe24 } from "@/lib/cafe24";
 import { removeWhiteBackground } from "@/lib/cutout";
@@ -606,6 +608,8 @@ async function handlePost(request: Request) {
   // ① 로그인
   const caller = await callerOf(request);
   if (!caller) return fail(401, "로그인이 필요합니다.", "login");
+  // 결제 전에는 관리자(yogico·fe)와 결제 요금제 회원만 그린다(lib/create-access — 사장님 2026-10-19)
+  if (!(await canCreate(caller))) return fail(403, CREATE_LOCKED_MESSAGE, CREATE_LOCKED_CODE);
   bindAiUsageSink(dbUsageSink(caller.db));
   clock.mark("auth");
 

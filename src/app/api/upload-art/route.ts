@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { callerOf, type Caller } from "@/lib/api-auth";
+import { canCreate, createLockedResponse } from "@/lib/create-access-server";
 import { ftpErrorCode, uploadToCafe24 } from "@/lib/cafe24";
 
 /**
@@ -98,6 +99,8 @@ export async function POST(request: Request) {
   if (!caller) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
+  // 결제 전에는 관리자(yogico·fe)와 결제 요금제 회원만 만든다(lib/create-access — 사장님 2026-10-19)
+  if (!(await canCreate(caller))) return createLockedResponse();
   let body: unknown;
   try {
     body = await request.json();

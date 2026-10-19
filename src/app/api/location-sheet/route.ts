@@ -3,6 +3,7 @@ import backgrounds from "@/data/backgrounds.json";
 import { bindAiUsageSink, withAiUsage } from "@/lib/ai-usage";
 import { dbUsageSink } from "@/lib/ai-usage-db";
 import { callerOf } from "@/lib/api-auth";
+import { canCreate, createLockedResponse } from "@/lib/create-access-server";
 import { ART_STYLES } from "@/lib/art-styles";
 import { findLocationBackground, type LocationBg } from "@/lib/location-bg";
 import { GeminiError, generateImage, loadReferenceImage, shrinkForReference, toDataUrl } from "@/lib/gemini";
@@ -49,6 +50,8 @@ async function handlePost(request: Request) {
   if (!caller) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
+  // 결제 전에는 관리자(yogico·fe)와 결제 요금제 회원만 만든다(lib/create-access — 사장님 2026-10-19)
+  if (!(await canCreate(caller))) return createLockedResponse();
   bindAiUsageSink(dbUsageSink(caller.db));
   let body: unknown;
   try {

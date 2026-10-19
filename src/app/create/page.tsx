@@ -25,6 +25,8 @@ import { castPortraits, storyFamilyLooks } from "@/lib/family-cast";
 import { placeVisits } from "@/lib/page-camera";
 import { detectBookScale, shrunkPages } from "@/lib/scale-lock";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
+import { canCreateWith, CREATE_LOCKED_MESSAGE } from "@/lib/create-access";
+import { loadMyPlanKey } from "@/lib/member-plan-client";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
 import {
   capFailures,
@@ -999,6 +1001,8 @@ export default function CreatePage() {
   // 로그인 게이트 + 토큰 잔액 + 이미 만든 권수(5권 제한). 로그인 안 했으면 로그인으로.
   const [tokens, setTokens] = useState(0);
   const [master, setMaster] = useState(false);
+  // 결제 전 생성 막기(lib/create-access, 사장님 2026-10-19) — 관리자가 아니고 결제 요금제가 없으면 위에 안내를 띄운다(서버도 막는다).
+  const [planLocked, setPlanLocked] = useState(false);
   const [bookCount, setBookCount] = useState(0);
   useEffect(() => {
     let alive = true;
@@ -1012,6 +1016,11 @@ export default function CreatePage() {
       setTokens(s.profile?.tokens ?? 0);
       setMaster(s.isMaster);
       setDraftOwner(s.uid);
+      if (!s.isMaster) {
+        const key = await loadMyPlanKey(s.uid);
+        if (!alive) return;
+        setPlanLocked(!canCreateWith(false, key ? { plan: key, ends_at: null } : null, Date.now()));
+      }
       // 권수 상한 확인용 — 숫자만 센다. 예전엔 책을 통째로 받아 세느라(삽화 포함)
       // 만들기 화면을 열 때마다 수십 MB가 오갔다.
       setBookCount(await countMyBooks());
@@ -4231,6 +4240,37 @@ export default function CreatePage() {
         className="fixed inset-0 -z-10 h-full w-full object-cover"
       />
       <div className="fixed inset-0 -z-10 bg-white/25" />
+
+      {planLocked && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/45 px-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="plan-lock-title">
+          <div className="w-full max-w-sm rounded-[28px] bg-white p-6 text-center shadow-2xl">
+            <p className="text-4xl" aria-hidden>📚</p>
+            <h2 id="plan-lock-title" className="mt-2 break-keep text-lg font-extrabold text-neutral-800">
+              {CREATE_LOCKED_MESSAGE}
+            </h2>
+            <p className="mt-2 break-keep text-sm font-medium leading-relaxed text-neutral-500">
+              결제는 곧 열려요. 그동안 세계명작·전래동화는 마음껏 들을 수 있어요.
+            </p>
+            <div className="mt-5 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => router.push("/plans")}
+                style={{ background: accent, boxShadow: `0 5px 0 ${accentDark}` }}
+                className="min-h-12 rounded-full text-base font-extrabold text-white transition-transform active:translate-y-0.5"
+              >
+                요금제 보기
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/")}
+                className="min-h-12 rounded-full bg-neutral-100 text-base font-extrabold text-neutral-700"
+              >
+                홈으로
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {pendingDraft && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="draft-title">
