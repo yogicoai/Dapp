@@ -13,6 +13,8 @@
  * 지키는 것(옛 관리실과 같다): 늦게 온 옛 응답을 버리는 번호(detailSeq)와 '지금 열린 판'(openRef) 확인,
  * 되살리기 막힘(restoreCheck), 열면 [닫기]에 초점, Esc 로 닫기(확인창이 떠 있으면 안 닫힘),
  * 믿는 그림 주소만 미리보기(no-referrer), 원고 90일 보관 안내, 실패 이유, 다른 책·지운 책 안내.
+ * 크레딧으로 보상(2026-10-19 사장님 "사고가 발생했을 때 크레딧으로 제공 — 동화와 캐릭터 생성으로 나눠서"): 회원 상세의
+ * '보상 크레딧'과 같은 창(GrantCreditDialog) — 사유 칸에 이 기록 id 를 미리 적어 둔다.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -30,6 +32,7 @@ import {
 import { useEscClose } from "@/lib/use-esc-close";
 import { useScrollLock } from "@/lib/scroll-lock";
 import { AdminLink } from "../kit/display";
+import { GrantCreditDialog } from "../members/GrantCreditDialog";
 import { useAdmin } from "../shell/AdminContext";
 import { CaseDialogs, type CaseDialogState } from "./CaseDialogs";
 import { KindChip, SEV_CHIP, STAGE_STYLE } from "./case-ui";
@@ -70,6 +73,8 @@ function CasePanel({
   const [detail, setDetail] = useState<JobDetail | null>(null);
   const [detailError, setDetailError] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CaseDialogState>(null);
+  /** 크레딧으로 보상 — 이 기록의 회원에게 */
+  const [credit, setCredit] = useState<JobDetail | null>(null);
   // 응답 순서 꼬임 막기 — 늦게 온 옛 응답이 새로 연 판을 덮어쓰지 않게 요청마다 번호를 붙인다.
   const detailSeq = useRef(0);
   // 지금 열린 판. 처리 뒤 다시 읽기는 누른 순간의 판을 들고 있어서, 그 사이 닫았으면 읽으면 안 된다.
@@ -104,7 +109,7 @@ function CasePanel({
     return forget;
   }, [o, loadDetail, forget]);
 
-  useEscClose(onClose, !dialog);
+  useEscClose(onClose, !dialog && !credit);
   useScrollLock();
 
   /** 무엇을 처리한 뒤엔 목록·상세·배지를 다시 읽는다 — 화면이 짐작으로 고치면 DB 와 어긋난다. */
@@ -133,6 +138,7 @@ function CasePanel({
           onRefund={(d) => setDialog({ kind: "refund", detail: d })}
           onRestore={(d) => setDialog({ kind: "restore", detail: d })}
           onResolve={(d) => setDialog({ kind: "resolve", detail: d })}
+          onCredit={(d) => setCredit(d)}
         />
       </aside>
       {dialog && (
@@ -143,6 +149,16 @@ function CasePanel({
           setDialog={setDialog}
           onDone={refreshAll}
           onRefunded={(entry, note) => rememberRefund(entry, { by: me.username || "마스터", note })}
+        />
+      )}
+      {credit && (
+        <GrantCreditDialog
+          memberId={credit.member}
+          username={credit.username ?? "이 회원"}
+          initialKind="book"
+          defaultNote={`사고 보상 — ${credit.title ?? "동화"}${credit.jobId ? ` (기록 ${credit.jobId.slice(0, 8)})` : ""}`}
+          onClose={() => setCredit(null)}
+          onDone={() => setCredit(null)}
         />
       )}
     </>
@@ -160,6 +176,7 @@ function DetailPanel({
   onRefund,
   onRestore,
   onResolve,
+  onCredit,
 }: {
   detail: JobDetail | null;
   error: string | null;
@@ -170,6 +187,8 @@ function DetailPanel({
   onRefund: (d: JobDetail) => void;
   onRestore: (d: JobDetail) => void;
   onResolve: (d: JobDetail) => void;
+  /** 크레딧으로 보상(동화 · 캐릭터 생성) */
+  onCredit: (d: JobDetail) => void;
 }) {
   const closeRef = useRef<HTMLButtonElement | null>(null);
   useEffect(() => {
@@ -412,6 +431,15 @@ function DetailPanel({
         >
           토큰 환불
         </button>
+        {d.member && (
+          <button
+            type="button"
+            onClick={() => onCredit(d)}
+            className="min-h-11 rounded-xl border border-[#3182f6] px-3.5 py-2 text-sm font-bold text-[#3182f6]"
+          >
+            크레딧으로 보상
+          </button>
+        )}
         {d.bookExists && d.bookId && (
           <a
             href={`/book/${encodeURIComponent(d.bookId)}`}

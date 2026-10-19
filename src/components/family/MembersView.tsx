@@ -14,7 +14,7 @@ import type { ReactNode } from "react";
 import {
   BEST_FRIEND_LABEL,
   canAddRole,
-  nextDrawCost,
+  priceMembers,
   ROLE_LABEL,
   ROLE_ORDER,
   type FamilyMember,
@@ -42,6 +42,7 @@ export function MembersView({
   child,
   family,
   master,
+  freeDraws = 0,
   onBack,
   onToggle,
   onRemove,
@@ -53,6 +54,8 @@ export function MembersView({
   child: ChildPrefs;
   family: FamilyMember[];
   master: boolean;
+  /** 관리실이 더해 준 무료 생성 남은 횟수 — 쿠키가 드는 그리기에 먼저 쓴다(lib/family drawPrices) */
+  freeDraws?: number;
   onBack: () => void;
   /** 엄마·아빠·(첫)할머니·할아버지 켜기 */
   onToggle: (role: "mom" | "dad" | "grandma" | "grandpa") => void;
@@ -93,7 +96,10 @@ export function MembersView({
 
   // 이번에 그릴 사람 = 아직 고정 안 된 사람 전부(아이·단짝 친구 포함)
   const targets = family.filter((m) => !m.portrait);
-  const total = targets.reduce((s, m) => s + nextDrawCost(m.draws), 0);
+  // 관리실이 더해 준 무료 생성은 앞사람부터(확인 창과 같은 셈)
+  const priced = priceMembers(targets, master ? 0 : freeDraws);
+  const total = priced.reduce((s, r) => s + r.cost, 0);
+  const usedFree = priced.filter((r) => r.free).length;
 
   const renderTile = (t: Tile) => {
     if (t.kind === "member") {
@@ -208,7 +214,7 @@ export function MembersView({
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="flex items-center gap-1.5 text-[15px] font-extrabold text-neutral-800">
             <CookieIcon size={18} />
-            {targets.length}명 · {master ? "관리자 0개" : `쿠키 ${total}개`}
+            {targets.length}명 · {master ? "관리자 0개" : `쿠키 ${total}개${usedFree > 0 ? ` · 무료 생성 ${usedFree}번` : ""}`}
           </span>
           <span className="text-xs font-bold text-neutral-500">고정할 사람 · 다시 그리기 1번씩 포함</span>
         </div>

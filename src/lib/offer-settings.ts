@@ -12,6 +12,7 @@
 import {
   CREDIT_USES,
   CREDIT_USE_LABEL,
+  VOICE_TERM_LABEL,
   DEFAULT_CREDIT_COSTS,
   DEFAULT_CREDIT_PACKS,
   DEFAULT_PLAN_TERMS,
@@ -158,7 +159,7 @@ export const PASS_TERM_FIELDS: readonly TermField<keyof PassPlanTerms>[] = [
   { key: "priceWon", label: "값(부가세 포함)", unit: "원", min: 1_000, max: 10_000_000 },
   { key: "booksPerMonth", label: "매달 새 동화", unit: "권", min: 1, max: 100 },
   { key: "familyCharacters", label: "가족 캐릭터", unit: "명", min: 1, max: 20 },
-  { key: "voices", label: "가족 목소리", unit: "명", min: 0, max: 10 },
+  { key: "voices", label: VOICE_TERM_LABEL, unit: "명", min: 0, max: 10 },
   { key: "voiceRemakesPerMonth", label: "목소리 다시 만들기(한 달에)", unit: "번", min: 0, max: 10 },
   { key: "drawTokensPerMonth", label: "가족 그리기 토큰(매달)", unit: "개", min: 0, max: 100 },
   { key: "drawTokensFirstMonth", label: "가족 그리기 토큰(첫 달)", unit: "개", min: 0, max: 200 },
@@ -168,7 +169,7 @@ export const STARTER_TERM_FIELDS: readonly TermField<keyof StarterTerms>[] = [
   { key: "priceWon", label: "값(부가세 포함)", unit: "원", min: 0, max: 1_000_000 },
   { key: "books", label: "동화 만들기", unit: "권", min: 0, max: 20 },
   { key: "familyCharacters", label: "가족 캐릭터", unit: "명", min: 0, max: 20 },
-  { key: "voices", label: "가족 목소리", unit: "명", min: 0, max: 10 },
+  { key: "voices", label: VOICE_TERM_LABEL, unit: "명", min: 0, max: 10 },
 ];
 
 /** "19,900원" · "4권" · "1명" */

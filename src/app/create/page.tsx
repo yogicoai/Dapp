@@ -26,6 +26,7 @@ import { placeVisits } from "@/lib/page-camera";
 import { detectBookScale, shrunkPages } from "@/lib/scale-lock";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { canCreateWith, CREATE_LOCKED_MESSAGE } from "@/lib/create-access";
+import { loadBookCredits } from "@/lib/member-credits-client";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
 import {
@@ -1003,6 +1004,13 @@ export default function CreatePage() {
   const [master, setMaster] = useState(false);
   // 결제 전 생성 막기(lib/create-access, 사장님 2026-10-19) — 관리자가 아니고 결제 요금제가 없으면 위에 안내를 띄운다(서버도 막는다).
   const [planLocked, setPlanLocked] = useState(false);
+  /**
+   * 동화 크레딧(관리실이 사고·문의 보상으로 더해 준 무료 동화 권수 — lib/member-credits, 사장님 2026-10-19).
+   * 있으면 새 대본을 받을 때 1권을 쓰고, 서버가 그 동화 한 권 값(대본 + 그림)을 쿠키로 채운 뒤 예전처럼 값을 받는다.
+   */
+  const [bookCredits, setBookCredits] = useState(0);
+  /** 이번 동화에 크레딧이 채워 준 쿠키 — 대본·그림 화면에 한 줄 알린다(새 대본을 만들면 지운다) */
+  const [creditTopup, setCreditTopup] = useState<number | null>(null);
   const [bookCount, setBookCount] = useState(0);
   useEffect(() => {
     let alive = true;
@@ -1020,6 +1028,9 @@ export default function CreatePage() {
         const key = await loadMyPlanKey(s.uid);
         if (!alive) return;
         setPlanLocked(!canCreateWith(false, key ? { plan: key, ends_at: null } : null, Date.now()));
+        const credits = await loadBookCredits();
+        if (!alive) return;
+        setBookCredits(credits);
       }
       // 권수 상한 확인용 — 숫자만 센다. 예전엔 책을 통째로 받아 세느라(삽화 포함)
       // 만들기 화면을 열 때마다 수십 MB가 오갔다.
@@ -1428,7 +1439,9 @@ export default function CreatePage() {
    * 버튼을 먼저 막고 있어서, 서버만 면제해 봐야 잔액이 바닥나면 못 만들었다.
    * 여기서도 같이 면제해야 실제로 계속 만들 수 있다.
    */
-  const shortOnTokens = !master && tokens < scriptCost;
+  const shortOnTokens = !master && tokens < scriptCost && bookCredits <= 0;
+  /** 이번 '대본 만들기'에 동화 크레딧을 쓰나 — 새 줄거리에만(끊긴 줄거리로 이어 쓰면 값이 이미 나갔을 수 있어 서버가 정한다) */
+  const useBookCredit = !master && bookCredits > 0;
 
   /*
    * 생성 결과 — 줄거리는 화면에 따로 안 보인다(2026-09-29 줄거리 확인 화면을 없앴다).
@@ -2682,6 +2695,8 @@ export default function CreatePage() {
         jobId: again && !keepPaidJob ? jobIdRef.current : null,
         // 다시 만들기면 값을 낸 줄거리로 센다 — 새로 지은 줄거리라도 값을 또 받지 않는다(서버 storyChargeKey).
         ...(anchor ? { paidOutline: anchor } : {}),
+        // 동화 크레딧 — 새 대본에만. 서버(charge_story)가 새 줄거리일 때만 1권을 쓰고 한 권 값을 쿠키로 채운다.
+        ...(!again && useBookCredit ? { useBookCredit: true } : {}),
       }),
       signal,
     });
@@ -2714,12 +2729,20 @@ export default function CreatePage() {
      * 아직 SQL 을 안 돌린 DB 면 charge 가 없다 — 그때만 예전처럼 여기서 깎는다(처음 대본만).
      */
     const charge = data.charge as
-      | { charged: number; rewrites: number; tokens: number }
+      | { charged: number; rewrites: number; tokens: number; credit_used?: boolean; credit_left?: number; topup?: number }
       | null
       | undefined;
     if (charge) {
       setTokens(charge.tokens);
       setStoryRewrites(charge.rewrites);
+      // 동화 크레딧을 썼다 — 남은 권수를 맞추고, 채워 준 쿠키를 알린다(그림 값도 그 쿠키로 낸다)
+      if (charge.credit_used) {
+        const left = charge.credit_left;
+        setBookCredits((n) => (typeof left === "number" ? left : Math.max(0, n - 1)));
+        setCreditTopup(typeof charge.topup === "number" ? charge.topup : 0);
+      } else if (!again) {
+        setCreditTopup(null);
+      }
     } else if (!master && !again) {
       const cost = scriptCostOf(story.pages.length, pricing);
       if (!(await spendTokens(cost, "story"))) {
@@ -4317,14 +4340,22 @@ export default function CreatePage() {
         */}
         {chargeAsk === "script" && (
           <ChargeConfirm
-            title={`토큰 ${scriptCost}개가 나가요`}
-            lines={[
-              resumePlot
-                ? "아까 지은 줄거리로 대본을 이어서 써요. 그때 대본 값이 이미 나갔다면 다시 받지 않아요."
-                : "줄거리를 짓고 대본까지 한 번에 써요.",
-              `내 잔액 ${tokens}개`,
-              ...(IMAGES_ENABLED ? [`그림 값 ${imageCost}개는 대본을 읽어 보고 고친 뒤, 그릴 때 따로 내요.`] : []),
-            ]}
+            title={useBookCredit && !resumePlot ? "동화 크레딧 1권으로 만들어요" : `토큰 ${scriptCost}개가 나가요`}
+            lines={
+              useBookCredit && !resumePlot
+                ? [
+                    "줄거리를 짓고 대본까지 한 번에 써요.",
+                    `동화 크레딧 1권을 쓰고, 이 동화 한 권 값(대본 ${scriptCost}개${IMAGES_ENABLED ? ` + 그림 ${imageCost}개` : ""} 토큰)을 크레딧으로 채워 드려요.`,
+                    `남은 동화 크레딧 ${bookCredits}권 · 내 잔액 ${tokens}개`,
+                  ]
+                : [
+                    resumePlot
+                      ? "아까 지은 줄거리로 대본을 이어서 써요. 그때 대본 값이 이미 나갔다면 다시 받지 않아요."
+                      : "줄거리를 짓고 대본까지 한 번에 써요.",
+                    `내 잔액 ${tokens}개`,
+                    ...(IMAGES_ENABLED ? [`그림 값 ${imageCost}개는 대본을 읽어 보고 고친 뒤, 그릴 때 따로 내요.`] : []),
+                  ]
+            }
             confirmLabel="대본 만들기"
             accent={accent}
             accentDark={accentDark}
@@ -4781,7 +4812,7 @@ export default function CreatePage() {
                       void makeScript();
                     }}
                   >
-                    대본 만들기 ✍️{master ? "" : ` · 토큰 ${scriptCost}개`}
+                    대본 만들기 ✍️{master ? "" : useBookCredit && !resumePlot ? " · 동화 크레딧 1권" : ` · 토큰 ${scriptCost}개`}
                   </BigButton>
                 </div>
                 <p className="flex items-center justify-center gap-1 break-keep text-center text-[11px] font-medium leading-relaxed text-neutral-500">
@@ -4789,8 +4820,10 @@ export default function CreatePage() {
                   <span>
                     {master
                       ? "관리자는 토큰이 들지 않아요."
-                      : `지금은 대본 값 ${scriptCost}개만 나가요 (내 잔액 ${tokens}개).`}
-                    {IMAGES_ENABLED && !master && ` 그림 값 ${imageCost}개는 대본을 읽어 본 뒤 그릴 때 내요.`}
+                      : useBookCredit && !resumePlot
+                        ? `무료 동화 크레딧이 ${bookCredits}권 있어요 — 이 동화에 1권을 쓰고, 대본·그림 값을 크레딧으로 채워 드려요.`
+                        : `지금은 대본 값 ${scriptCost}개만 나가요 (내 잔액 ${tokens}개).`}
+                    {IMAGES_ENABLED && !master && !(useBookCredit && !resumePlot) && ` 그림 값 ${imageCost}개는 대본을 읽어 본 뒤 그릴 때 내요.`}
                   </span>
                 </p>
                 {resumePlot ? (
@@ -5204,7 +5237,9 @@ export default function CreatePage() {
                     <p className="break-keep text-center text-[11px] font-medium text-neutral-400">
                       {master
                         ? "관리자는 토큰이 들지 않아요"
-                        : `그림을 그리면 토큰 ${illustrationCost(story.pages.length, pricing)}개가 더 들어요 (내 잔액 ${tokens}개)`}
+                        : creditTopup !== null
+                          ? `동화 크레딧으로 채워 드린 쿠키로 그림 값 ${illustrationCost(story.pages.length, pricing)}개를 내요 (내 잔액 ${tokens}개)`
+                          : `그림을 그리면 토큰 ${illustrationCost(story.pages.length, pricing)}개가 더 들어요 (내 잔액 ${tokens}개)`}
                       <br />
                       {drawNotice(story.pages.length)} · 그동안 명작·전래동화를 읽고 계셔도 돼요
                     </p>

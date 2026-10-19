@@ -36,6 +36,7 @@ import { GrantDialog } from "@/components/admin/cases/GrantDialog";
 import { useCaseParam, type CaseOpen } from "@/components/admin/cases/useCaseParam";
 import { DeleteMemberDialog } from "./DeleteMemberDialog";
 import { MemberBooks } from "./MemberBooks";
+import { MemberCreditsCard } from "./MemberCreditsCard";
 import { MemberGrants } from "./MemberGrants";
 import { MemberJobs } from "./MemberJobs";
 import { MemberLedger } from "./MemberLedger";
@@ -163,6 +164,9 @@ function MemberDetail({ id }: { id: string }) {
 
       {/* 요금제 — 관리자가 지정한다(결제 전 베타). 따로 읽어서 이 카드가 실패해도 나머지는 보인다. */}
       <MemberPlanCard memberId={id} username={c?.profile.username ?? "이 회원"} />
+
+      {/* 보상 크레딧(동화 · 캐릭터 생성) — 사고·문의를 풀 때 더해 준다(2026-10-19). 관리자 계정은 원래 값이 안 나가 띄우지 않는다. */}
+      {c && !c.profile.isMaster ? <MemberCreditsCard memberId={id} username={c.profile.username} /> : null}
 
       <SectionTabs
         label="회원 기록"

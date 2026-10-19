@@ -35,6 +35,7 @@ import {
   isKidRole,
   nextDrawCost,
   ourChildrenNames,
+  priceMembers,
   showsLooksChanged,
   showsOnHome,
   type FamilyMember,
@@ -54,6 +55,7 @@ export function AlbumView({
   family,
   tokens,
   master,
+  freeDraws = 0,
   onHome,
   onCard,
   onChanged,
@@ -73,6 +75,8 @@ export function AlbumView({
   onStudio?: () => void;
   tokens: number;
   master: boolean;
+  /** 관리실이 더해 준 무료 생성 남은 횟수 — 쿠키가 드는 그리기에 먼저 쓴다(lib/family drawPrices) */
+  freeDraws?: number;
   onHome: () => void;
   onCard: (id: string) => void;
   /** '모습이 바뀌었어요' 카드 — 다시 그릴지 묻는 시트를 연다 */
@@ -98,6 +102,15 @@ export function AlbumView({
   const title = familyTitle(ourChildrenNames(child.name, family));
   const isChanged = (m: FamilyMember) => showsLooksChanged(m, child);
   const changedList = byRoleOrder(family.filter(isChanged));
+  // '얼굴 고정하기' 카드의 무료 표시 — 보이는 순서(가족 → 단짝 친구)대로 앞사람부터. 한 명만 눌러도 카드보다 비싸지 않다.
+  const freeIds = new Set(
+    priceMembers(
+      [...kin, ...friends].filter((m) => !m.portrait && !m.draft),
+      master ? 0 : freeDraws,
+    )
+      .filter((r) => r.free)
+      .map((r) => r.m.id),
+  );
 
   const card = (m: FamilyMember) => {
     const changed = isChanged(m);
@@ -108,6 +121,7 @@ export function AlbumView({
         colors={colors}
         changed={changed}
         looksPicked={hasPickedLooks(m, child)}
+        free={freeIds.has(m.id)}
         onClick={() => (changed ? onChanged(m.id) : onCard(m.id))}
       />
     );
@@ -207,6 +221,15 @@ export function AlbumView({
             관리자는 쿠키가 들지 않아요
           </p>
         )}
+        {/* 관리실이 더해 준 무료 생성 — 쿠키가 드는 그리기에 먼저 쓴다 */}
+        {!master && freeDraws > 0 && (
+          <p
+            className="mt-3 break-keep rounded-2xl px-3.5 py-2 text-center text-xs font-extrabold"
+            style={{ background: colors.accentSoft, color: colors.accentDark }}
+          >
+            캐릭터 무료 생성 {freeDraws}번이 있어요 · 쿠키 대신 먼저 써요
+          </p>
+        )}
 
         <p className="mt-5 text-sm font-extrabold text-neutral-500">
           우리 가족 · {kin.length}명 <span className="font-bold">(얼굴 고정 {kin.filter((m) => m.portrait).length}명)</span>
@@ -271,6 +294,7 @@ function MemberCard({
   colors,
   changed,
   looksPicked,
+  free,
   onClick,
 }: {
   member: FamilyMember;
@@ -279,6 +303,8 @@ function MemberCard({
   changed: boolean;
   /** 생김새를 하나라도 골랐다 — '특징만 저장됨' 카드의 설명 글자를 고른다 */
   looksPicked: boolean;
+  /** 관리실이 더해 준 무료 생성으로 고정할 수 있다 */
+  free: boolean;
   onClick: () => void;
 }) {
   const kid = isKidRole(m.role);
@@ -415,7 +441,7 @@ function MemberCard({
         )}
         <span className="flex items-center gap-1 text-xs font-extrabold" style={{ color: colors.accentDark }}>
           <CookieIcon size={14} />
-          얼굴 고정하기 · {cost}개
+          얼굴 고정하기 · {free ? "무료" : `${cost}개`}
         </span>
       </span>
     </button>

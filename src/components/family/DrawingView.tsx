@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { isKidRole, nextDrawCost, type FamilyMember } from "@/lib/family";
+import { drawPrice, isKidRole, type FamilyMember } from "@/lib/family";
 import { displayName, objectOf, paperStyle, withObject, type Colors, type Job } from "./family-ui";
 import { PortraitImg } from "./Figures";
 import { CheckIcon, HangerIcon, Silhouette } from "./icons";
@@ -32,6 +32,7 @@ export function DrawingView({
   members,
   jobs,
   master,
+  freeDraws = 0,
   onRetry,
   onReview,
   onLeave,
@@ -46,6 +47,8 @@ export function DrawingView({
   members: FamilyMember[];
   jobs: Record<string, Job>;
   master: boolean;
+  /** 관리실이 더해 준 무료 생성 남은 횟수 — 쿠키가 드는 그리기에 먼저 쓴다(lib/family drawPrices) */
+  freeDraws?: number;
   onRetry: (id: string) => void;
   onReview: () => void;
   onLeave: () => void;
@@ -128,7 +131,7 @@ export function DrawingView({
         <div className="mt-3 flex w-full flex-col gap-2">
           {errors.map((m) => {
             const j = jobs[m.id];
-            const cost = nextDrawCost(m.draws);
+            const { cost, free } = drawPrice(m.draws, master ? 0 : freeDraws);
             return (
               <div key={m.id} className="flex flex-wrap items-center gap-2 rounded-2xl bg-white px-3.5 py-2.5 shadow-[0_0_0_1.5px_#fecdd3]">
                 <span className="min-w-0 flex-1 break-keep text-[13px] font-bold text-neutral-700">
@@ -149,7 +152,7 @@ export function DrawingView({
                   </button>
                 ) : (
                   <button type="button" onClick={() => onRetry(m.id)} className="min-h-11 shrink-0 rounded-full px-3.5 text-[13px] font-extrabold text-white" style={{ background: colors.accentDark }}>
-                    다시 해 볼게요{!master && cost > 0 && j?.kind !== "lost" ? ` · 쿠키 ${cost}개` : ""}
+                    다시 해 볼게요{!master && j?.kind !== "lost" ? (free ? " · 무료 생성" : cost > 0 ? ` · 쿠키 ${cost}개` : "") : ""}
                   </button>
                 )}
               </div>

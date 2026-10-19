@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Dongle, Gaegu, Gowun_Dodum, Jua, Nanum_Pen_Script } from "next/font/google";
+import { ConsentGate } from "@/components/ConsentGate";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { buildSiteMetadata } from "@/lib/seo";
 import { readSeo } from "@/lib/seo-server";
@@ -60,7 +61,11 @@ export default function RootLayout({
           이게 있어야 '홈 화면에 추가'로 열 때 주소창 없이 꽉 찬 앱으로 뜬다. */}
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <body className="min-h-full flex flex-col">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          {/* 로그인 직후 한 번 — 약관·개인정보·보호자 동의(lib/consent, 사장님 2026-10-19) */}
+          <ConsentGate />
+        </ThemeProvider>
       </body>
     </html>
   );

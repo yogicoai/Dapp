@@ -3,6 +3,8 @@
 /**
  * 사업자 정보 — 사이트 맨 아래 줄(전자상거래법 표시 사항)을 적는 칸 + "사이트에 이렇게 보여요" 미리보기 + 바꾼 이력.
  *
+ *  · 바꾼 이력은 fe 계정에서만 보인다(lib/admin-console seesChangeLog — 사장님 2026-10-19 "yogico 계정 안에서는 안 보여도 될 듯").
+ *    기록은 그대로 쌓인다(DB). 화면에서만 감춘다.
  *  · 칸을 벗어나면 바로 검사한다(사업자등록번호는 숫자 10자리·검증 숫자, 모양도 000-00-00000 으로 맞춘다).
  *    검사는 바꾼 칸만 한다 — DB 에 이미 있는 값이 앱 검사보다 느슨해도 다른 칸 저장을 막지 않게.
  *  · 저장은 아래 저장 줄 → 확인 창(무엇이 무엇으로 바뀌나 + 바꾼 까닭 고르기) → 서버 → 다시 읽기.
@@ -28,6 +30,7 @@ import {
   type Column,
 } from "@/components/admin/kit";
 import { useAdmin, useUnsavedGuard } from "@/components/admin/shell/AdminContext";
+import { seesChangeLog } from "@/lib/admin-console";
 import {
   BUSINESS_FIELDS,
   businessFieldLabel,
@@ -99,7 +102,8 @@ const LOG_COLUMNS: Column<BusinessChange>[] = [
 ];
 
 function BusinessInfoForm({ data, onSaved }: { data: BusinessAdminResponse; onSaved: () => void }) {
-  const { api, say, refreshBadges } = useAdmin();
+  const { api, say, refreshBadges, me } = useAdmin();
+  const showLog = seesChangeLog(me);
   const idBase = useId();
   const [draft, setDraft] = useState<Draft>(() => draftFrom(data));
   const [touched, setTouched] = useState<ReadonlySet<BusinessColumn>>(() => new Set());
@@ -240,20 +244,22 @@ function BusinessInfoForm({ data, onSaved }: { data: BusinessAdminResponse; onSa
         </Card>
       </div>
 
-      <section aria-labelledby={`${idBase}-log`} className="flex flex-col gap-3">
-        <h2 id={`${idBase}-log`} className="text-[17px] font-bold tracking-tight text-[#191f28]">
-          바꾼 이력 <span className="text-[13px] font-medium text-[#8b95a1]">{data.log.length ? `최근 ${data.log.length}건` : ""}</span>
-        </h2>
-        <DataTable
-          caption="사업자 정보 바꾼 이력"
-          columns={LOG_COLUMNS}
-          rows={data.log}
-          rowKey={(r) => String(r.id)}
-          empty={
-            <div className="rounded-2xl bg-white px-5 py-6 text-[13px] font-medium text-[#8b95a1]">아직 바꾼 적이 없어요.</div>
-          }
-        />
-      </section>
+      {showLog ? (
+        <section aria-labelledby={`${idBase}-log`} className="flex flex-col gap-3">
+          <h2 id={`${idBase}-log`} className="text-[17px] font-bold tracking-tight text-[#191f28]">
+            바꾼 이력 <span className="text-[13px] font-medium text-[#8b95a1]">{data.log.length ? `최근 ${data.log.length}건` : ""}</span>
+          </h2>
+          <DataTable
+            caption="사업자 정보 바꾼 이력"
+            columns={LOG_COLUMNS}
+            rows={data.log}
+            rowKey={(r) => String(r.id)}
+            empty={
+              <div className="rounded-2xl bg-white px-5 py-6 text-[13px] font-medium text-[#8b95a1]">아직 바꾼 적이 없어요.</div>
+            }
+          />
+        </section>
+      ) : null}
 
       <SaveBar
         visible={editable && changes.length > 0}
@@ -297,7 +303,7 @@ function BusinessInfoForm({ data, onSaved }: { data: BusinessAdminResponse; onSa
           }
           extra={
             <p className="rounded-xl bg-[#f2f4f6] px-4 py-3 text-[13px] font-medium leading-relaxed text-[#6b7684]">
-              저장하면 사이트 맨 아래 줄에 1~5분 안에 반영되고, 바꾼 이력에 남아요.
+              {showLog ? "저장하면 사이트 맨 아래 줄에 1~5분 안에 반영되고, 바꾼 이력에 남아요." : "저장하면 사이트 맨 아래 줄에 1~5분 안에 반영돼요."}
             </p>
           }
         />

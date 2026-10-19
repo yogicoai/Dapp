@@ -23,6 +23,17 @@ export const COMPANY_ADMIN = "yogico";
 /** GET /api/admin/me 가 돌려주는 모양 — 관리자 페이지 겉틀이 첫 화면을 열기 전에 확인한다. */
 export type AdminMe = { username: string; canEditCompany: boolean };
 
+/**
+ * 바꾼 이력을 보는 계정 — 사업자 정보의 '바꾼 이력' 같은 점검용 표는 이 계정에서만 보인다(사장님 2026-10-19:
+ * "바꾼 이력 구지 아래 안 보여도 될 듯, fe 계정 안에서만 보이는 건 ok, yogico 계정 안에서는 안 보여도").
+ * 화면에서 가리는 편의일 뿐 — 기록은 그대로 쌓이고 읽기 권한도 그대로다.
+ */
+export const CHANGE_LOG_VIEWER = "fe";
+
+export function seesChangeLog(me: Pick<AdminMe, "username">): boolean {
+  return me.username === CHANGE_LOG_VIEWER;
+}
+
 /** GET /api/admin/badges — 메뉴 옆 숫자. 한쪽을 못 읽으면 그 칸만 null(배지를 감춘다, 0 으로 속이지 않는다). */
 export type AdminBadges = { incidents: number | null; paidNotSaved: number | null; feedback: number | null };
 

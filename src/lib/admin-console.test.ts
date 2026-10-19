@@ -33,6 +33,7 @@ import {
   parseAdminId,
   payDemoState,
   safeAdminNext,
+  seesChangeLog,
   withParams,
 } from "./admin-console.ts";
 import { payDemoMode } from "./pay-demo.ts";
@@ -103,6 +104,11 @@ describe("회사 계정 · 시연 상태", () => {
     const u = /username = '([^']+)'/.exec(body);
     assert.ok(u, "is_pricing_admin 안에 username 비교가 없다");
     assert.equal(u[1], COMPANY_ADMIN);
+  });
+  it("바꾼 이력 표는 fe 계정에서만 보인다 — 회사 계정(yogico)에는 감춘다(사장님 2026-10-19)", () => {
+    assert.equal(seesChangeLog({ username: "fe" }), true);
+    assert.equal(seesChangeLog({ username: COMPANY_ADMIN }), false);
+    assert.equal(seesChangeLog({ username: "" }), false);
   });
   it("payDemoState 는 결제 시연 모듈 규칙과 같다", () => {
     for (const v of [undefined, "on", "off", " OFF ", "Off", "false", "", "0"]) {

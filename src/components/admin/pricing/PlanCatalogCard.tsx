@@ -16,6 +16,8 @@ import {
   libraryCountText,
   monthlyEquivalent,
   priceLabel,
+  PARENT_VOICE_OPEN,
+  voiceTermText,
   won,
   yearlyDiscountPct,
   type PassPlanTerms,
@@ -39,7 +41,9 @@ const COLUMNS: Column<Row>[] = [
 
 /** 가족 패스 한 주기의 구성 한 줄 */
 function passDetail(t: PassPlanTerms, libraryBooks: number): string {
-  return `매달 ${t.booksPerMonth}권 · 가족 캐릭터 ${t.familyCharacters}명 · 가족 목소리 ${t.voices}명(한 달 ${t.voiceRemakesPerMonth}번 다시 만들기) · 가족 그리기 토큰 매달 ${t.drawTokensPerMonth}개(첫 달 ${t.drawTokensFirstMonth}개) · 명작·전래 ${libraryBooks}권`;
+  // 부모 목소리를 닫아 둔 동안은 'AI 성우 목소리 N명 추가'(lib/plans voiceTermText) — 다시 만들기 횟수는 부모 목소리에만 붙인다
+  const voice = PARENT_VOICE_OPEN ? `${voiceTermText(t.voices)}(한 달 ${t.voiceRemakesPerMonth}번 다시 만들기)` : voiceTermText(t.voices);
+  return `매달 ${t.booksPerMonth}권 · 가족 캐릭터 ${t.familyCharacters}명 · ${voice} · 가족 그리기 토큰 매달 ${t.drawTokensPerMonth}개(첫 달 ${t.drawTokensFirstMonth}개) · 명작·전래 ${libraryBooks}권`;
 }
 
 export function PlanCatalogCard({ offer }: { offer?: OfferAdminResponse | null }) {
@@ -61,7 +65,7 @@ export function PlanCatalogCard({ offer }: { offer?: OfferAdminResponse | null }
       key: "starter",
       name: "스타트팩",
       price: won(starter.priceWon),
-      detail: `동화 ${starter.books}권 · 가족 캐릭터 ${starter.familyCharacters}명 · 가족 목소리 ${starter.voices}명 · ${
+      detail: `동화 ${starter.books}권 · 가족 캐릭터 ${starter.familyCharacters}명 · ${voiceTermText(starter.voices)} · ${
         libraryCountText(view.starter.classics, view.starter.folk) || "명작·전래 없음"
       } 듣기`,
       tag: "처음 한 번",

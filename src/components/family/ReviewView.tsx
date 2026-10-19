@@ -9,7 +9,7 @@
  */
 
 import { useRef } from "react";
-import { nextDrawCost, type FamilyMember } from "@/lib/family";
+import { drawPrice, type FamilyMember } from "@/lib/family";
 import type { ChildPrefs } from "@/lib/prefs";
 import { displayName, looksSummary, objectOf, paperStyle, type Colors, type Job } from "./family-ui";
 import { FaceAvatar, PortraitImg } from "./Figures";
@@ -25,6 +25,7 @@ export function ReviewView({
   jobs,
   idx,
   master,
+  freeDraws = 0,
   onPick,
   onAccept,
   onAcceptAll,
@@ -40,6 +41,8 @@ export function ReviewView({
   jobs: Record<string, Job>;
   idx: number;
   master: boolean;
+  /** 관리실이 더해 준 무료 생성 남은 횟수 — 쿠키가 드는 그리기에 먼저 쓴다(lib/family drawPrices) */
+  freeDraws?: number;
   onPick: (i: number) => void;
   /** which: 'draft' 새 그림 / 'prev' 앞 그림으로 고정 */
   onAccept: (id: string, which: "draft" | "prev") => void;
@@ -67,7 +70,7 @@ export function ReviewView({
   const note = !busy && job?.status === "done" && m.draft ? job.note : undefined;
   const pendingCount = people.filter((p) => p.draft && jobs[p.id]?.status !== "drawing" && jobs[p.id]?.status !== "wait").length;
   const sum = looksSummary(m, child);
-  const cost = nextDrawCost(m.draws);
+  const { cost, free } = drawPrice(m.draws, master ? 0 : freeDraws);
   const name = displayName(m);
 
   const heading = busy
@@ -269,7 +272,7 @@ export function ReviewView({
                 다시 그리기
               </SoftButton>
             )}
-            <span className="text-center text-xs font-bold text-neutral-500">{costText(cost, master)}</span>
+            <span className="text-center text-xs font-bold text-neutral-500">{costText(cost, master, free)}</span>
           </div>
           {confirmed ? (
             <BigButton

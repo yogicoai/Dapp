@@ -18,7 +18,7 @@
  */
 
 import { useId, useRef, useState, type ReactNode } from "react";
-import { BEST_FRIEND_LABEL, nextDrawCost, showsOnHome, type FamilyMember } from "@/lib/family";
+import { BEST_FRIEND_LABEL, drawPrice, showsOnHome, type FamilyMember } from "@/lib/family";
 import { displayName, objectOf, ourChildHint, type Colors } from "./family-ui";
 import { PortraitImg } from "./Figures";
 import { NextIcon, Silhouette } from "./icons";
@@ -31,6 +31,7 @@ export function MemberSheet({
   childName,
   family,
   master,
+  freeDraws = 0,
   looksPicked,
   onClose,
   onReview,
@@ -52,6 +53,8 @@ export function MemberSheet({
   /** 지금 가족 — 명패 예에 이미 '우리 아이'인 형제까지 넣는다 */
   family: FamilyMember[];
   master: boolean;
+  /** 관리실이 더해 준 무료 생성 남은 횟수 — 쿠키가 드는 그리기에 먼저 쓴다(lib/family drawPrices) */
+  freeDraws?: number;
   onClose: () => void;
   onReview: () => void;
   onRedraw: () => void;
@@ -72,7 +75,8 @@ export function MemberSheet({
 }) {
   const [asking, setAsking] = useState(false);
   const pic = m.draft ?? m.portrait;
-  const cost = nextDrawCost(m.draws);
+  // 관리실이 더해 준 무료 생성이 있으면 쿠키 대신 그걸 쓴다
+  const { cost, free } = drawPrice(m.draws, master ? 0 : freeDraws);
   const name = displayName(m);
   const fixedOrDrawn = Boolean(m.portrait || m.draft);
   const friend = m.role === "friend";
@@ -213,7 +217,7 @@ export function MemberSheet({
         {!fixedOrDrawn && (
           <BigButton colors={colors} onClick={onFix}>
             얼굴 고정하기
-            <CookiePill colors={colors} text={master ? "관리자 0개" : `쿠키 ${cost}개`} />
+            <CookiePill colors={colors} text={master ? "관리자 0개" : free ? "무료 생성" : `쿠키 ${cost}개`} />
           </BigButton>
         )}
         <div className="mt-1 flex flex-col gap-2">
@@ -221,7 +225,7 @@ export function MemberSheet({
             <Action
               icon="/icons/func-remake.webp"
               label="다시 그리기"
-              right={costText(cost, master)}
+              right={costText(cost, master, free)}
               onClick={onRedraw}
               colors={colors}
             />

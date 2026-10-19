@@ -363,7 +363,7 @@ describe("요금제 값(가족 패스 월간·연간 · 스타트팩) — 관리
     assert.match(bad((t) => delete t.starter), /스타트팩 값이 빠졌어요/);
     assert.match(bad((t) => (t.monthly.priceWon = 500)), /가족 패스\(월간\) 값\(부가세 포함\)은\(는\) 1,000원~10,000,000원/);
     assert.match(bad((t) => (t.yearly.familyCharacters = 0)), /가족 패스\(연간\) 가족 캐릭터/);
-    assert.match(bad((t) => (t.starter.voices = 1.5)), /스타트팩 가족 목소리/);
+    assert.match(bad((t) => (t.starter.voices = 1.5)), /스타트팩 (가족|AI 성우) 목소리/);
     assert.match(bad((t) => (t.monthly.tip = 1)), /모르는 항목이에요: tip/);
     assert.match(bad((t) => (t.weekly = {})), /모르는 항목이에요: weekly/);
     assert.equal(parsePlanTerms("x").ok, false);

@@ -199,6 +199,44 @@ export function freeRedrawsLeft(draws: number | undefined): number {
   return Math.max(0, FAMILY_FREE_REDRAWS - (n - 1));
 }
 
+/**
+ * 관리실이 더해 준 '캐릭터 무료 생성'(사장님 2026-10-19 — 고객 문의 해결용, supabase-family-draw-credits.sql)을 셈에 넣은 값.
+ * DB(charge_family_portrait)와 같은 규칙: 쿠키가 드는 그리기에만 한 번에 하나씩 쓰고, 원래 0개인 '포함된 다시 그리기'에는
+ * 쓰지 않는다. 여러 명이면 앞사람부터 쓴다. 무료로 보인 그리기는 보낸 값 0 으로 서버에 가고, 서버는 그 그리기에만
+ * 무료 횟수를 쓴다(요청이 닿는 순서와 상관없이 화면과 같게).
+ */
+export type DrawPrice = { cost: number; free: boolean };
+
+export function drawPrices(drawsList: readonly (number | undefined)[], freeLeft: number): DrawPrice[] {
+  let left = Number.isFinite(freeLeft) ? Math.max(0, Math.floor(freeLeft)) : 0;
+  return drawsList.map((draws) => {
+    const cost = nextDrawCost(draws);
+    if (cost > 0 && left > 0) {
+      left -= 1;
+      return { cost: 0, free: true };
+    }
+    return { cost, free: false };
+  });
+}
+
+/** 한 사람만 그릴 때 */
+export function drawPrice(draws: number | undefined, freeLeft: number): DrawPrice {
+  return drawPrices([draws], freeLeft)[0];
+}
+
+/** 확인 창의 줄 — ROLE_ORDER 순서로 값을 매기고 무료 생성을 앞사람부터 쓴다. 그리기 요청도 이 결과를 따른다. */
+export function priceMembers<T extends Pick<FamilyMember, "role" | "draws">>(
+  members: readonly T[],
+  freeLeft: number,
+): (DrawPrice & { m: T })[] {
+  const ordered = byRoleOrder(members);
+  const prices = drawPrices(
+    ordered.map((m) => m.draws),
+    freeLeft,
+  );
+  return ordered.map((m, i) => ({ m, ...prices[i] }));
+}
+
 /* ─────────────────────────────── 역할 ─────────────────────────────── */
 
 export const ROLE_LABEL: Record<FamilyRole, string> = {

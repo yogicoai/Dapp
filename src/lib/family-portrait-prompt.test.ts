@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  PENLINE_SAMPLE,
   PHOTO_FALLBACK_MIN_MS,
   buildPrompt,
   cardFor,
@@ -1197,5 +1198,67 @@ describe("모자·액세서리는 그리지 않는다 — 사진·특징표·칩
     const line = buildPrompt(person("dad"), PHOTO).split("\n").find((l) => l.startsWith("NO HEADWEAR OR ACCESSORIES"));
     assert.ok(line && /glasses are part of the face, not an accessory/.test(line), line);
     assert.ok(line && !/\bglasses,/.test(line.replace(/sunglasses/g, "")), "평범한 안경은 빼라는 목록에 없다");
+  });
+});
+
+describe("펜선 또렷한 수채화(fe 시험, 2026-10-19) — 기본 수채화 글은 그대로", () => {
+  const CLOSE = portraitReferences({ photo: "P", closeUp: "C", sample: "S", sibling: null, guide: "G" }).attached;
+
+  it("켜면 첫 줄 그림체가 펜선 + 수채, 얼굴 펜선 줄이 붙고 견본의 얼굴은 따르지 말라고 한다", () => {
+    for (const input of [person("child", { callName: "하온", age: 5, gender: "boy" }), person("mom", { callName: "엄마" })]) {
+      const p = buildPrompt({ ...input, penline: true }, CLOSE, CARD);
+      const first = p.split("\n")[0];
+      assert.match(first, /ink-and-watercolor illustration: confident fine dark sepia-brown ink pen outlines/);
+      assert.ok(!/soft bleeding edges/.test(first), "펜선인데 번지는 수채 말이 남았다");
+      assert.match(p, /INK LINE FACE: draw the face with clear, fine ink lines/);
+      assert.match(p, /never dot eyes, never oversized cartoon eyes/);
+      assert.match(p, /as a hand-drawn ink-and-watercolor illustration in the painting style described here/);
+      assert.match(p, /Draw that face in the same ink-and-watercolor style as the rest of the figure/);
+      assert.match(p, /The ink-and-watercolor picture-book style changes only the rendering \(ink line, washes\), never who they are\./);
+      assert.match(p, /Never copy its people, faces or face style — take only its ink line, washes, palette and paper\./);
+    }
+  });
+
+  it("끄면(기본) 예전 수채화 글 그대로 — 펜선 말이 하나도 없다", () => {
+    const p = buildPrompt(person("mom", { callName: "엄마" }), CLOSE, CARD);
+    assert.match(p.split("\n")[0], /warm soft watercolor storybook illustration/);
+    assert.ok(!/ink-and-watercolor|INK LINE FACE/.test(p));
+    assert.equal(buildPrompt(person("mom", { callName: "엄마", penline: false }), CLOSE, CARD), p);
+  });
+
+  it("칩 갈래도 같은 그림체 글 · 머리 비율 다시 그리기도 펜선 그림체로", () => {
+    const chips = buildPrompt(person("dad", { looks: "짧은 머리", penline: true }), NO_PHOTO);
+    assert.match(chips.split("\n")[0], /ink-and-watercolor illustration/);
+    assert.match(chips, /INK LINE FACE/);
+    const fix: HeadFix = { target: 7, verdict: "big", measured: 4.2 };
+    assert.match(headRedrawPrompt(fix, { guide: true, penline: true }).split("\n")[0], /ink-and-watercolor illustration/);
+    assert.match(headRedrawPrompt(fix, { guide: true }).split("\n")[0], /warm soft watercolor storybook illustration/);
+    assert.match(headRedrawRecipe({ first: "F", guide: null, fix, penline: true }).prompt, /ink-and-watercolor illustration/);
+  });
+
+  it("견본 그림은 public 에 있는 빨간 모자 1쪽", () => {
+    assert.equal(PENLINE_SAMPLE, "/art-styles/penline-sample.webp");
+  });
+});
+
+describe("펜선 시험의 얼굴 점 — 까만 잉크 점이 아니라 옅은 갈색 수채 점으로(사장님 2026-10-19 '점점점')", () => {
+  const MOLE_CARD = [CARD, "- skin marks: small mole on the left cheek, mole near the chin"].join("\n");
+  const refs = portraitReferences({ photo: "P", sample: "S", sibling: null }).attached;
+
+  it("펜선이면 점을 아주 작은 옅은 갈색 수채 점으로, 까만 잉크 점은 막는다", () => {
+    const p = buildPrompt(person("dad", { penline: true }), refs, MOLE_CARD);
+    assert.match(p, /each mole or beauty mark is one tiny, soft light-brown watercolor dot in the place the spec gives — never a solid black ink dot/);
+    assert.ok(!p.includes("one small dark-brown dot"));
+  });
+
+  it("기본(수채화)은 예전 글 그대로", () => {
+    const p = buildPrompt(person("dad"), refs, MOLE_CARD);
+    assert.match(p, /each mole or beauty mark is one small dark-brown dot in the place the spec gives/);
+    assert.ok(!/soft light-brown watercolor dot/.test(p));
+  });
+
+  it("머리 비율 다시 그리기의 닮음 줄도 펜선이면 같은 점 말", () => {
+    assert.match(redrawLikeness(person("dad", { penline: true }), MOLE_CARD) ?? "", /tiny, soft light-brown watercolor dot/);
+    assert.match(redrawLikeness(person("dad"), MOLE_CARD) ?? "", /one small dark-brown dot/);
   });
 });

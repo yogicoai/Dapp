@@ -23,6 +23,10 @@
  *  - 서버 값이 뒤늦게 와도 이 화면에서 고친 생김새 칸(looksEdits)만 지키고 나머지는 서버 값을 따른다.
  *  - 쿠키 셈과 차감은 서버가 한다. 화면의 값은 안내일 뿐이고(nextDrawCost), 요청에 실어 보내
  *    서버 값이 더 크면 깎지 않고 409(price)로 돌아온다 — 그때 확인 창을 다시 띄운다.
+ *  - 관리실이 더해 준 '캐릭터 무료 생성'(사장님 2026-10-19, lib/member-credits — 캐릭터 생성 크레딧)은 쿠키가 드는 그리기에 먼저 쓴다. 확인 창이
+ *    누구를 무료로 그릴지 정해(priceMembers) freePlanRef 에 적고, 그 사람 요청은 보낸 값 0 으로 간다 — 서버는 보낸 값이
+ *    값보다 작을 때만 무료 횟수를 쓰므로 여러 명을 한꺼번에 그려도 화면에 보인 그대로 받는다. 남은 횟수는 응답(freeLeft)과
+ *    그리기가 끝난 뒤 다시 읽기로 맞춘다.
  *  - '사진으로 할게요'(사장님 2026-09-29): 생김새 고르기에서 칩 대신 그 사람 사진 한 장을 고를 수 있다. 약속은
  *    "사진은 저장하지 않고, 그림을 그리는 데 한 번 쓰고 바로 지워요" — 사진은 이 화면의 메모리(photos state)에만
  *    두고 ChildPrefs·FamilyMember·saveChild·saveFamilyNow·localStorage 에 **절대 넣지 않는다.** 그리기 요청에 실어
@@ -81,6 +85,7 @@ import {
   canAddRole,
   currentLockKey,
   currentLooksOf,
+  drawPrice,
   dropPhotoFixedLooks,
   FAMILY_MAX_MEMBERS,
   familyTitle,
@@ -95,6 +100,7 @@ import {
   newMemberId,
   nextDrawCost,
   ourChildrenNames,
+  priceMembers,
   ROLE_LABEL,
   type FamilyLooks,
   type FamilyMember,
@@ -102,6 +108,8 @@ import {
   type FamilyRemoval,
   type FamilyRole,
 } from "@/lib/family";
+import { loadDevMode } from "@/lib/dev-mode-client";
+import { loadFreeDraws } from "@/lib/member-credits-client";
 import { cleanBodyStretch, cleanHeadRatio } from "@/lib/family-head";
 import { historyFloor } from "@/lib/family-history";
 import { withOutfit, type MemberOutfit, type OutfitThemeId } from "@/lib/family-outfit";
@@ -157,6 +165,9 @@ const PARALLEL = 2;
  * 카드가 '그리는 중'에 갇힌다. 끊은 뒤에는 서버에 결과를 묻는다(recover).
  */
 const REQUEST_TIMEOUT_MS = 75_000;
+/** fe 시험 — 펜선 또렷한 수채화 스위치를 이 기기에 기억하는 열쇠 */
+const PENLINE_KEY = "family-penline-test";
+
 /** 응답을 잃은 뒤 서버에 결과를 묻는 시간 — 서버가 90초 넘은 미완성 그리기를 되돌리므로 그 뒤까지 */
 const RECOVER_MS = 100_000;
 const RECOVER_EVERY_MS = 5_000;
@@ -256,7 +267,13 @@ export default function FamilyPage() {
   const [child, setChild] = useState<ChildPrefs | null>(null);
   const [family, setFamily] = useState<FamilyMember[]>([]);
   const [tokens, setTokens] = useState(0);
+  /** 관리실이 더해 준 무료 생성 남은 횟수(관리자는 0 — 원래 값이 안 나간다) */
+  const [freeDraws, setFreeDraws] = useState(0);
   const [master, setMaster] = useState(false);
+  /** 개발자 모드(fe) — 펜선 끄기(예전 수채화 비교) 스위치를 보인다. 서버도 끄기는 fe 만 받는다(lib/dev-mode). */
+  const [dev, setDev] = useState(false);
+  /** fe 비교용 — 펜선 또렷한 수채화로 그리기(모두의 기본. fe 만 끌 수 있고, 끈 값은 이 기기에 기억한다) */
+  const [penline, setPenline] = useState(true);
   const [looks, setLooks] = useState<LooksSession | null>(null);
   const [overlay, setOverlay] = useState<Overlay>(null);
   const [round, setRound] = useState<{ ids: string[]; from: From }>({ ids: [], from: "members" });
@@ -270,6 +287,11 @@ export default function FamilyPage() {
   const familyRef = useRef<FamilyMember[]>([]);
   const childRef = useRef<ChildPrefs | null>(null);
   const masterRef = useRef(false);
+  /** 확인 창에서 무료 생성으로 정한 사람 — 그 사람 요청은 보낸 값 0 으로 간다. 받으면·값이 바뀌면(price) 지운다. */
+  const freePlanRef = useRef<Set<string>>(new Set());
+  /** 그리기 요청이 늘 지금 스위치를 보게 — fe 일 때만 요청에 싣는다(다른 회원은 서버 기본 = 펜선) */
+  const penlineRef = useRef(true);
+  const devRef = useRef(false);
   /** 부모가 한 번이라도 만졌나(단계 이동 포함) — 뒤늦게 온 서버 값이 첫 화면을 바꾸거나 방금 한 것을 덮지 않게 */
   const touched = useRef(false);
   /**
@@ -394,6 +416,25 @@ export default function FamilyPage() {
       setTokens(s.profile?.tokens ?? 0);
       setMaster(s.isMaster);
       masterRef.current = s.isMaster;
+      if (!s.isMaster) {
+        void loadFreeDraws().then((n) => {
+          if (alive) setFreeDraws(n);
+        });
+      }
+      // fe 비교 스위치 — 개발자 모드일 때만 보이고 처음엔 켜져 있다(펜선이 모두의 기본). 끈 값은 이 기기에 기억한다
+      void loadDevMode().then((d) => {
+        if (!alive || !d) return;
+        devRef.current = true;
+        setDev(true);
+        let on = false;
+        try {
+          on = localStorage.getItem(PENLINE_KEY) !== "0";
+        } catch {
+          on = true;
+        }
+        penlineRef.current = on;
+        setPenline(on);
+      });
       if (!touched.current) setStep(firstStep(familyRef.current, childRef.current));
       // 다른 기기에서 고정한 가족도 보이게 계정 값을 받아 온다.
       const remote = await loadChildRemote().catch(() => null);
@@ -421,6 +462,11 @@ export default function FamilyPage() {
     const refresh = () => {
       if (document.visibilityState !== "visible" || Date.now() - last < 15_000) return;
       last = Date.now();
+      if (!masterRef.current) {
+        void loadFreeDraws().then((n) => {
+          if (alive) setFreeDraws(n);
+        });
+      }
       loadChildRemote()
         .then((remote) => {
           if (alive && remote && childRef.current) absorbRemote(remote);
@@ -807,6 +853,22 @@ export default function FamilyPage() {
     if (typeof t === "number") setTokens((prev) => Math.min(prev, t));
   }
 
+  /** fe 비교 스위치 — 바로 다음 그리기부터 쓰고, 이 기기에 기억한다 */
+  function setPenlineTest(on: boolean) {
+    penlineRef.current = on;
+    setPenline(on);
+    try {
+      localStorage.setItem(PENLINE_KEY, on ? "1" : "0");
+    } catch {
+      /* 저장이 막힌 브라우저 — 이번 방문에만 쓴다 */
+    }
+  }
+
+  /** 응답의 남은 무료 생성 — 잔액과 같은 까닭으로 작은 값만 받고, 그리기가 다 끝나면 다시 읽는다. */
+  function noteFree(f: unknown) {
+    if (typeof f === "number" && Number.isInteger(f) && f >= 0) setFreeDraws((prev) => Math.min(prev, f));
+  }
+
   /**
    * 받은 그림을 확인 전 그림(draft)으로 넣는다. serverDraws 는 서버 셈(관리자는 undefined — 셈을 안 한다).
    * fromPhoto — 사진을 보내 그린 그림. 표시만 남기고 사진 자체는 여기 없다(저장 금지).
@@ -907,6 +969,7 @@ export default function FamilyPage() {
       const r = await recover(id, lockKey, fromPhoto);
       if (r.result === "got") {
         resumeFirst.current.delete(id);
+        freePlanRef.current.delete(id);
         setJob(id, { status: "done" });
         return;
       }
@@ -921,7 +984,10 @@ export default function FamilyPage() {
     const cur = findMember(id) ?? m;
     const body = {
       ...portraitRequest(cur, c, familyRef.current, photo),
-      ...(masterRef.current ? {} : { expectedCost: nextDrawCost(cur.draws) }),
+      // 확인 창에서 무료 생성으로 정한 사람은 0 — 서버가 그 그리기에 무료 횟수를 쓴다.
+      ...(masterRef.current ? {} : { expectedCost: freePlanRef.current.has(id) ? 0 : nextDrawCost(cur.draws) }),
+      // 펜선은 서버 기본 — fe 만 비교용으로 켬·끔을 싣는다(끄기는 서버가 fe 인지 다시 본다)
+      ...(devRef.current ? { penline: penlineRef.current } : {}),
       // 이 사진은 이번 방문에 이미 거절됐다 — 서버가 사진 그리기를 건너뛰고 사진 속 특징으로 바로 그린다(값은 같다).
       ...(photo && photoSkipRef.current.has(id) ? { skipPhotoDraw: true } : {}),
     };
@@ -958,11 +1024,15 @@ export default function FamilyPage() {
       draw?: unknown;
       draws?: unknown;
       tokens?: unknown;
+      freeLeft?: unknown;
       code?: unknown;
       photoFallback?: unknown;
+      penline?: unknown;
     };
     const code = typeof d.code === "string" ? d.code : undefined;
     noteTokens(d.tokens);
+    noteFree(d.freeLeft);
+    const plannedFree = freePlanRef.current.has(id);
 
     // 본문이 커서 배포 환경이 받지 않았다(우리 code 없는 413) — 서버에 닿지 않았으니 값도 안 나갔다. 되묻지 않는다.
     if (res?.status === 413 && !code) {
@@ -980,14 +1050,16 @@ export default function FamilyPage() {
     if (lost || code === "busy") {
       const r = await recover(id, lockKey, fromPhoto);
       if (r.result === "got") {
+        freePlanRef.current.delete(id);
         setJob(id, { status: "done" });
       } else if (r.result === "none") {
+        const what = plannedFree ? "무료 생성 횟수는" : "쿠키는";
         setJob(id, {
           status: "error",
           kind: "other",
           message: r.refunded
-            ? "그림을 받지 못했어요. 쿠키는 돌려드렸어요 — 다시 해 주세요."
-            : "그림을 받지 못했어요. 쿠키는 그대로예요 — 다시 해 주세요.",
+            ? `그림을 받지 못했어요. ${what} 돌려드렸어요 — 다시 해 주세요.`
+            : `그림을 받지 못했어요. ${what} 그대로예요 — 다시 해 주세요.`,
         });
       } else {
         resumeFirst.current.add(id);
@@ -997,6 +1069,7 @@ export default function FamilyPage() {
     }
 
     if (!res || !res.ok) {
+      if (code === "price") freePlanRef.current.delete(id);
       if (code === "price" && typeof d.draws === "number" && !masterRef.current) {
         // 화면 셈이 서버와 어긋났다(다른 기기에서 그림 등) — 서버 셈으로 맞춘다. 값은 안 나갔다.
         const draws = d.draws;
@@ -1009,6 +1082,7 @@ export default function FamilyPage() {
       return;
     }
 
+    freePlanRef.current.delete(id);
     const url = d.url as string;
     const ref = d.ref as string;
     // 관리자는 쿠키 셈을 하지 않으니 그린 횟수도 그대로 둔다(서버가 draw 0 을 준다).
@@ -1038,7 +1112,11 @@ export default function FamilyPage() {
       lockKey,
       fromPhoto && fallback !== "looks",
     );
-    setJob(id, fallback ? { status: "done", note: PHOTO_FALLBACK_NOTE[fallback] } : { status: "done" });
+    // fe 비교용 — 펜선으로 그렸으면 확인 화면에 한 줄(서버가 fe 에게만 싣는다)
+    const note = [fallback ? PHOTO_FALLBACK_NOTE[fallback] : "", devRef.current && d.penline === true ? "펜선 또렷한 수채화로 그렸어요 (fe 확인용)" : ""]
+      .filter(Boolean)
+      .join(" · ");
+    setJob(id, note ? { status: "done", note } : { status: "done" });
   }
 
   function pump() {
@@ -1097,7 +1175,7 @@ export default function FamilyPage() {
       queueDraw(id);
       return;
     }
-    if (!master && tokens < nextDrawCost(m.draws)) {
+    if (!master && tokens < drawPrice(m.draws, freeDraws).cost) {
       showToast("쿠키가 조금 모자라요 — 충전은 결제가 열리면 할 수 있어요");
       return;
     }
@@ -1123,6 +1201,12 @@ export default function FamilyPage() {
         if (alive && p) setTokens(p.tokens);
       })
       .catch(() => {});
+    // 무료 생성도 — 실패해 되돌린 횟수·그사이 관리실이 더한 횟수
+    if (!masterRef.current) {
+      void loadFreeDraws().then((n) => {
+        if (alive) setFreeDraws(n);
+      });
+    }
     return () => {
       alive = false;
     };
@@ -1297,6 +1381,8 @@ export default function FamilyPage() {
     overlay?.kind === "member" || overlay?.kind === "changed" || overlay?.kind === "history"
       ? family.find((m) => m.id === overlay.id)
       : undefined;
+  // 시트 한 사람의 값 — 무료 생성이 있으면 쿠키 대신(관리자는 셈 없음)
+  const sheetPrice = sheetMember ? drawPrice(sheetMember.draws, master ? 0 : freeDraws) : null;
   const roundMembers = round.ids.map((id) => family.find((m) => m.id === id)).filter((m): m is FamilyMember => Boolean(m));
   const looksMembers = looks ? looks.ids.map((id) => family.find((m) => m.id === id)).filter((m): m is FamilyMember => Boolean(m)) : [];
   // 명패 — 아이와 '우리 아이예요'를 켠 형제(하온·하린이네 가족). 단짝 친구는 안 든다.
@@ -1336,6 +1422,7 @@ export default function FamilyPage() {
         child={child}
         family={family}
         master={master}
+        freeDraws={freeDraws}
         onBack={() => (hasAlbum(family) ? go("album") : router.push("/"))}
         onToggle={addPreset}
         onRemove={removeMember}
@@ -1381,6 +1468,7 @@ export default function FamilyPage() {
         members={roundMembers}
         jobs={jobs}
         master={master}
+        freeDraws={freeDraws}
         onRetry={retry}
         onReview={() => openReview()}
         onLeave={() => go("album")}
@@ -1398,6 +1486,7 @@ export default function FamilyPage() {
         jobs={jobs}
         idx={reviewIdx}
         master={master}
+        freeDraws={freeDraws}
         onPick={setReviewIdx}
         onAccept={accept}
         onAcceptAll={acceptAll}
@@ -1435,6 +1524,7 @@ export default function FamilyPage() {
         family={family}
         tokens={tokens}
         master={master}
+        freeDraws={freeDraws}
         onHome={() => router.push("/")}
         onCard={(id) => setOverlay({ kind: "member", id })}
         onChanged={openChanged}
@@ -1489,12 +1579,19 @@ export default function FamilyPage() {
           members={confirmMembers}
           tokens={tokens}
           master={master}
+          freeDraws={freeDraws}
+          penlineTest={dev ? { on: penline, onChange: setPenlineTest } : undefined}
           variant={overlay.variant}
           childGender={child?.gender}
           photoIds={Object.keys(photos)}
           onClose={() => setOverlay(null)}
           onConfirm={() => {
             const ids = confirmMembers.map((m) => m.id);
+            // 무료 생성 — 이 창에 보인 줄 그대로 보낸다(무료 줄은 보낸 값 0)
+            for (const r of priceMembers(confirmMembers, master ? 0 : freeDraws)) {
+              if (r.free) freePlanRef.current.add(r.m.id);
+              else freePlanRef.current.delete(r.m.id);
+            }
             if (overlay.inline) {
               setOverlay(null);
               ids.forEach(queueDraw);
@@ -1522,6 +1619,7 @@ export default function FamilyPage() {
           childName={child?.name ?? ""}
           family={family}
           master={master}
+          freeDraws={freeDraws}
           looksPicked={hasPickedLooks(sheetMember, child)}
           onClose={() => setOverlay(null)}
           onReview={() => openReview(sheetMember.id)}
@@ -1567,7 +1665,8 @@ export default function FamilyPage() {
           colors={colors}
           member={sheetMember}
           diff={overlay.diff}
-          cost={nextDrawCost(sheetMember.draws)}
+          cost={sheetPrice?.cost ?? nextDrawCost(sheetMember.draws)}
+          free={sheetPrice?.free ?? false}
           master={master}
           tokens={tokens}
           onRedraw={() => setOverlay({ kind: "confirm", ids: [sheetMember.id], variant: "redraw", from: "album" })}

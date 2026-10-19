@@ -5,6 +5,7 @@ import { dbUsageSink } from "@/lib/ai-usage-db";
 import { callerOf, type Caller } from "@/lib/api-auth";
 import { canCreate } from "@/lib/create-access-server";
 import { CREATE_LOCKED_CODE, CREATE_LOCKED_MESSAGE } from "@/lib/create-access";
+import { isDevUser } from "@/lib/dev-mode";
 import { ART_STYLES } from "@/lib/art-styles";
 import { ftpErrorCode, uploadHitDeadline, uploadManyToCafe24 } from "@/lib/cafe24";
 import { removeWhiteBackground } from "@/lib/cutout";
@@ -43,6 +44,7 @@ import { cleanBodyStretch, cleanHeadRatio, headChartRatio, type Box } from "@/li
 import { evenOutHead, measureHeadRatio, type HeadPassLog } from "@/lib/family-head-check";
 import { ratioAfterStretch, stretchFigure } from "@/lib/family-stretch";
 import {
+  PENLINE_SAMPLE,
   PHOTO_FALLBACK_MIN_MS,
   buildPrompt,
   cardFor,
@@ -68,6 +70,11 @@ export const maxDuration = 60;
  *
  * 값(쿠키 = 토큰)은 **서버가 먼저 받는다**. 한 사람 처음 2쿠키(다시 그리기 1번 포함), 그 뒤 1쿠키.
  * 셈은 DB(family_portraits, supabase/family-portraits.sql)가 하고, 브라우저는 차감하지 않는다.
+ * 관리실이 더해 준 '캐릭터 무료 생성'(2026-10-19, supabase-family-draw-credits.sql)은 화면이 무료로 보여 준 그리기
+ * (expectedCost 0)에 DB 가 쿠키 대신 쓴다 — 응답의 freeUsed · freeLeft 로 화면이 안내 숫자를 맞춘다.
+ * 펜선 또렷한 수채화(2026-10-19 — lib/family-portrait-prompt PENLINE): fe 시험 뒤 사장님 "전체에 반영"으로 **모든 회원의 기본**이다.
+ *   그림체 글·얼굴 펜선 줄이 바뀌고, 그림체 견본은 빨간 모자 1쪽(PENLINE_SAMPLE), 같은 가족 그림(옛 수채화)은 붙이지 않는다.
+ *   penline:false(예전 수채화)는 fe(isDevUser)만 받는다 — 비교용. 다른 회원이 보내도 펜선으로 그린다.
  * 함수가 없는 DB 면 브라우저 차감으로 물러서지 않고 503 으로 멈춘다 — 물러서면 경로를 직접 불러
  * 공짜로 그릴 수 있다.
  *
@@ -162,7 +169,17 @@ class PhotoRefused extends Error {
 }
 
 /** charge_family_portrait 가 돌려준 값(status 'ok') */
-type Charge = { charged: number; entry: string | null; draw: number; lease: string; tokens: number | null };
+type Charge = {
+  charged: number;
+  entry: string | null;
+  draw: number;
+  lease: string;
+  tokens: number | null;
+  /** 관리실이 더해 준 무료 생성을 이번에 썼나(supabase-family-draw-credits.sql) — 되돌리면 그 횟수도 돌아온다 */
+  freeUsed: boolean;
+  /** 남은 무료 생성 — 옛 함수(무료 횟수 전)는 null */
+  freeLeft: number | null;
+};
 
 type DbError = { code?: string; message?: string } | null;
 
@@ -232,7 +249,10 @@ function parseInput(body: unknown): Input | string {
   // 사진이 이번 방문에 이미 거절됐다(화면이 알려 준다) — true 만 받는다. 값은 똑같이 받는다(건너뛰는 건 거절될 그리기뿐).
   const skipPhotoDraw = b.skipPhotoDraw === true;
 
-  return { memberId, role, callName, gender, age, looks, styleRef, expectedCost, skipPhotoDraw };
+  // 펜선 또렷한 수채화 — 기본으로 켠다. false(예전 수채화)는 fe 만 — handlePost 가 다른 회원은 다시 켠다.
+  const penline = b.penline !== false;
+
+  return { memberId, role, callName, gender, age, looks, styleRef, expectedCost, skipPhotoDraw, penline };
 }
 
 /**
@@ -265,16 +285,25 @@ function missingFunction(error: DbError): boolean {
   return code === "42883" || code === "PGRST202" || /could not find the function/i.test(error?.message ?? "");
 }
 
+/** 되돌렸을 때 붙이는 말 — 쿠키를 냈으면 쿠키, 무료 생성을 썼으면 그 횟수. **실제로** 되돌렸을 때만. */
+function refundNote(charge: Charge, refunded: boolean): string {
+  if (!refunded) return "";
+  if (charge.charged > 0) return " 쿠키는 돌려드렸어요.";
+  if (charge.freeUsed) return " 무료 생성 횟수는 돌려드렸어요.";
+  return "";
+}
+
 /** charge_family_portrait 응답 — ok / busy / price, 모양이 다르면 null */
 type ChargeReply =
   | { status: "ok"; charge: Charge }
   | { status: "busy"; draws: number; retryAfter: number; tokens: number | null }
-  | { status: "price"; cost: number; draws: number; tokens: number | null };
+  | { status: "price"; cost: number; draws: number; tokens: number | null; freeLeft: number | null };
 
 function readCharge(data: unknown): ChargeReply | null {
   const d = data as Record<string, unknown> | null;
   if (!d || typeof d !== "object") return null;
   const tokens = typeof d.tokens === "number" ? d.tokens : null;
+  const freeLeft = typeof d.free_left === "number" && Number.isInteger(d.free_left) && d.free_left >= 0 ? d.free_left : null;
   const draws = Number(d.draws);
   if (d.status === "busy") {
     return { status: "busy", draws: Number.isInteger(draws) ? draws : 0, retryAfter: Number(d.retry_after) || 30, tokens };
@@ -282,7 +311,7 @@ function readCharge(data: unknown): ChargeReply | null {
   if (d.status === "price") {
     const cost = Number(d.cost);
     if (!Number.isInteger(cost)) return null;
-    return { status: "price", cost, draws: Number.isInteger(draws) ? draws : 0, tokens };
+    return { status: "price", cost, draws: Number.isInteger(draws) ? draws : 0, tokens, freeLeft };
   }
   if (d.status !== "ok") return null;
   const draw = Number(d.draw);
@@ -296,6 +325,8 @@ function readCharge(data: unknown): ChargeReply | null {
       draw,
       lease: d.lease,
       tokens,
+      freeUsed: d.free_used === true,
+      freeLeft,
     },
   };
 }
@@ -625,7 +656,8 @@ async function handlePost(request: Request) {
   }
   const parsed = parseInput(body);
   if (typeof parsed === "string") return fail(400, parsed, "input");
-  const input = parsed;
+  // 예전 수채화(펜선 끄기)는 fe(개발자 모드)만 — 비교용. 다른 회원은 늘 펜선(lib/dev-mode)
+  const input = !parsed.penline && !isDevUser(caller.username) ? { ...parsed, penline: true } : parsed;
   // 사진(선택) — 값을 받기 전에 형식·크기를 본다. 사진은 이 변수(와 특징 카드·그리기 도우미의 인자)에만 두고,
   // 본문은 곧바로 놓는다. 사진은 저장하지 않는다: 로그·DB·cafe24·오류 응답 어디에도 넣지 않고, 이 요청의 특징 카드와
   // 그리기에만 넘긴 뒤 버린다(머리글).
@@ -648,11 +680,13 @@ async function handlePost(request: Request) {
   const style = ART_STYLES.find((s) => s.id === "watercolor") ?? ART_STYLES[0];
   // 비율 견본(머리글 ①)은 서버가 만든다(받아 오지 않는다) — 이 사람의 표 비율로.
   const headTarget = headChartRatio(input.role, input.age);
+  // 펜선 시험은 견본을 빨간 모자 1쪽으로, 같은 가족 그림(옛 수채화)은 받지 않는다 — 옛 결로 당기지 않게.
+  const sampleImage = input.penline ? PENLINE_SAMPLE : style.image;
   const refsReady = Promise.all([
-    style.image
-      ? orNullAfter(loadReferenceImage(new URL(style.image, request.url).toString()), REF_TIMEOUT_MS)
+    sampleImage
+      ? orNullAfter(loadReferenceImage(new URL(sampleImage, request.url).toString()), REF_TIMEOUT_MS)
       : Promise.resolve(null),
-    styleRef ? orNullAfter(loadReferenceImage(styleRef), REF_TIMEOUT_MS) : Promise.resolve(null),
+    styleRef && !input.penline ? orNullAfter(loadReferenceImage(styleRef), REF_TIMEOUT_MS) : Promise.resolve(null),
     orNullAfter(guideImage(headTarget), REF_TIMEOUT_MS),
   ]);
 
@@ -702,6 +736,7 @@ async function handlePost(request: Request) {
         cost: reply.cost,
         draws: reply.draws,
         tokens: reply.tokens,
+        ...(reply.freeLeft !== null ? { freeLeft: reply.freeLeft } : {}),
       });
     }
     charge = reply.charge;
@@ -715,7 +750,7 @@ async function handlePost(request: Request) {
     if (!charge) return fail(status, error, code, extra);
     const r = await refundDraw(caller, input.memberId, charge);
     const refunded = r?.refunded === true;
-    const note = refunded && charge.charged > 0 ? " 쿠키는 돌려드렸어요." : "";
+    const note = refundNote(charge, refunded);
     return fail(status, `${error}${note}`, code, { ...extra, refunded, tokens: r?.tokens ?? null });
   };
 
@@ -781,7 +816,7 @@ async function handlePost(request: Request) {
       target: headTarget,
       measure: (img, ms) => measureHeadRatio(img, { timeoutMs: ms }),
       redraw: async (first, fix, ms) => {
-        const again = headRedrawRecipe({ first, guide, fix, likeness });
+        const again = headRedrawRecipe({ first, guide, fix, likeness, penline: input.penline });
         try {
           // 끊긴 뒤 뒤에서 다시 걸지 않는다(drawWithin until) — 버릴 그림에 값이 나가지 않게.
           return await drawWithin(
@@ -967,7 +1002,7 @@ async function handlePost(request: Request) {
       const r = await refundDraw(caller, input.memberId, charge);
       if (!r?.delivered) {
         const refunded = r?.refunded === true;
-        const note = refunded && charge.charged > 0 ? " 쿠키는 돌려드렸어요." : "";
+        const note = refundNote(charge, refunded);
         return fail(500, `그림을 드리지 못했어요. 잠시 뒤 다시 해 주세요.${note}`, "finish", {
           refunded,
           tokens: r?.tokens ?? null,
@@ -980,7 +1015,7 @@ async function handlePost(request: Request) {
   }
   clock.mark("finish");
   // 단계마다 걸린 ms(단계 이름과 숫자만) — 느려지는 단계를 실패하기 전에 본다.
-  console.info("[family/portrait] 단계 시간", input.memberId, draw, withPhoto ? "사진" : "칩", clock.summary());
+  console.info("[family/portrait] 단계 시간", input.memberId, draw, withPhoto ? "사진" : "칩", input.penline ? "펜선" : "수채화", clock.summary());
 
   // ⑧ photoFallback — 사진이 거절돼 대신 그렸을 때만('features' 사진 속 특징으로 · 'looks' 고르신 특징으로).
   //    카드 글은 싣지 않는다. 이 표시는 DB(last_pic)에도 적지 않는다 — 화면이 그 자리에서 한 줄 알리는 데만 쓴다.
@@ -993,9 +1028,14 @@ async function handlePost(request: Request) {
     draw,
     freeRedrawLeft: charge ? freeRedrawsLeft(charge.draw) : 1,
     tokens: charge ? charge.tokens : null,
+    // 관리실이 더해 준 무료 생성 — 썼나 · 남은 횟수(화면이 안내 숫자를 맞춘다)
+    ...(charge ? { freeUsed: charge.freeUsed } : {}),
+    ...(charge && charge.freeLeft !== null ? { freeLeft: charge.freeLeft } : {}),
     ...(pic.headRatio !== undefined ? { headRatio: pic.headRatio } : {}),
     ...(pic.bodyStretch !== undefined ? { bodyStretch: pic.bodyStretch } : {}),
     ...(fallback ? { photoFallback: fallback } : {}),
+    // fe 비교용 — 펜선으로 그렸다는 표시(fe 확인 화면에만 한 줄). 고객 응답에는 싣지 않는다.
+    ...(input.penline && isDevUser(caller.username) ? { penline: true } : {}),
   });
 }
 

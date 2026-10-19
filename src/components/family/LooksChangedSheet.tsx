@@ -23,6 +23,7 @@ export function LooksChangedSheet({
   member: m,
   diff,
   cost,
+  free = false,
   master,
   tokens,
   onRedraw,
@@ -34,6 +35,8 @@ export function LooksChangedSheet({
   member: FamilyMember;
   diff: string[];
   cost: number;
+  /** 관리실이 더해 준 무료 생성으로 그린다(cost 는 0) */
+  free?: boolean;
   master: boolean;
   tokens: number;
   onRedraw: () => void;
@@ -98,7 +101,7 @@ export function LooksChangedSheet({
       <div className="mt-[18px] w-full">
         <BigButton colors={colors} onClick={onRedraw} disabled={short}>
           지금 다시 그리기
-          <CookiePill colors={colors} text={costText(cost, master)} />
+          <CookiePill colors={colors} text={costText(cost, master, free)} />
         </BigButton>
       </div>
       <button

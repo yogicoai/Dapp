@@ -55,6 +55,7 @@ import {
   type LegalVersion,
   type LegalVersionMeta,
 } from "@/lib/legal-doc";
+import { LEGAL_DRAFT_EFFECTIVE, LEGAL_DRAFTS } from "@/lib/legal-drafts";
 
 type Form = { title: string; body: string; effectiveDate: string };
 
@@ -462,6 +463,23 @@ function Editor({
 
             {editable ? (
               <div className="flex flex-wrap gap-2">
+                {!form.body.trim() ? (
+                  // 사장님과 같이 정한 초안(lib/legal-drafts, 2026-10-19) — 본문·제목·시행일을 채우기만 한다. 게시는 읽고 누른다.
+                  <Button
+                    tone="primary"
+                    onClick={() => {
+                      const d = LEGAL_DRAFTS[kind];
+                      edit({
+                        title: d.title,
+                        body: d.body,
+                        effectiveDate: LEGAL_DRAFT_EFFECTIVE >= today ? LEGAL_DRAFT_EFFECTIVE : form.effectiveDate,
+                      });
+                      say("준비된 초안을 넣었어요 — 읽어 보고 게시해 주세요");
+                    }}
+                  >
+                    준비된 초안 넣기
+                  </Button>
+                ) : null}
                 {!form.body.trim() ? (
                   <Button
                     onClick={() => {

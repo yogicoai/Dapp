@@ -278,8 +278,10 @@ export function LooksPreview({
 }
 
 /** 값 글자 — 0이면 '다시 그리기 1번 포함', 관리자면 '관리자 0개' */
-export function costText(cost: number, master: boolean): string {
+export function costText(cost: number, master: boolean, free = false): string {
   if (master) return "관리자 0개";
+  // 관리실이 더해 준 무료 생성으로 그린다(lib/family drawPrice)
+  if (free) return "무료 생성";
   if (cost === 0) return "다시 그리기 1번 포함";
   return `쿠키 ${cost}개`;
 }

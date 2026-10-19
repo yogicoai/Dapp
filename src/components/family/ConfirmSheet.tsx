@@ -7,21 +7,24 @@
  * 처음 고정(fix)이고 부르는 쪽이 onLooksOnly 를 주면 둘째 선택 '그림 없이 특징만 저장할게요'(쿠키 0개)를
  * 보인다(사장님 2026-09-28). 쿠키가 모자라도 누를 수 있다 — 그리기 서버는 부르지 않는다.
  * 사진으로 그릴 사람(photoIds)은 이름 옆에 '사진으로'를 단다. 값은 칩으로 그릴 때와 같다(사장님 2026-09-29).
+ * 관리실이 더해 준 무료 생성(freeDraws)은 쿠키가 드는 줄에 순서대로 먼저 쓴다 — 그리기 요청도 이 줄 그대로 보낸다
+ * (무료 줄은 보낸 값 0, lib/family priceMembers · 사장님 2026-10-19).
  */
 
-import { byRoleOrder, nextDrawCost, type FamilyMember } from "@/lib/family";
+import { priceMembers, type FamilyMember } from "@/lib/family";
 import type { Gender } from "@/lib/prefs";
 import { displayName, type Colors } from "./family-ui";
 import { FaceAvatar } from "./Figures";
 import { CheckIcon, CookieIcon } from "./icons";
 import { Sheet } from "./Sheet";
-import { BigButton } from "./ui";
+import { BigButton, SwitchRow } from "./ui";
 
 export function ConfirmSheet({
   colors,
   members,
   tokens,
   master,
+  freeDraws = 0,
   variant,
   childGender,
   photoIds,
@@ -29,11 +32,14 @@ export function ConfirmSheet({
   onConfirm,
   onCharge,
   onLooksOnly,
+  penlineTest,
 }: {
   colors: Colors;
   members: FamilyMember[];
   tokens: number;
   master: boolean;
+  /** 관리실이 더해 준 무료 생성 남은 횟수 — 쿠키가 드는 그리기에 먼저 쓴다(lib/family drawPrices) */
+  freeDraws?: number;
   /** fix: 처음 고정 / redraw: 고정된 사람 다시 그리기 */
   variant: "fix" | "redraw";
   childGender?: Gender;
@@ -44,9 +50,12 @@ export function ConfirmSheet({
   onCharge: () => void;
   /** 그림 없이 특징만 저장(쿠키 0개) — 생김새 고르기에서 온 처음 고정(fix)일 때만 준다 */
   onLooksOnly?: () => void;
+  /** fe 비교용 — 펜선 또렷한 수채화(모두의 기본) 켬·끔 스위치. 개발자 모드(fe)에서만 넘긴다 — 고객에게는 보이지 않는다(lib/dev-mode). */
+  penlineTest?: { on: boolean; onChange: (on: boolean) => void };
 }) {
   // 순서: 아이 → 엄마 → 아빠 → 형제자매 → 할머니 → 할아버지 → 단짝 친구(ROLE_ORDER)
-  const rows = byRoleOrder(members).map((m) => ({ m, cost: nextDrawCost(m.draws) }));
+  const rows = priceMembers(members, master ? 0 : freeDraws);
+  const usedFree = rows.filter((r) => r.free).length;
   const total = rows.reduce((s, r) => s + r.cost, 0);
   const n = members.length;
   const short = !master && tokens < total;
@@ -64,10 +73,13 @@ export function ConfirmSheet({
         ? `쿠키 ${total}개로 ${n}명을 고정할까요?`
         : `${n}명을 그릴까요?`;
 
-  const checks =
+  const baseChecks =
     variant === "redraw"
       ? ["지금 그림과 새 그림을 나란히 보고 고를 수 있어요", "평소 옷만 바꾸는 건 언제나 0개", "그리다 실패하면 쿠키는 바로 돌려드려요"]
       : ["사람마다 다시 그리기 1번 포함 — 그 뒤엔 1개씩", "평소 옷만 바꾸는 건 언제나 0개", "그리다 실패한 사람의 쿠키는 바로 돌려드려요"];
+  // 무료 생성을 쓰면 맨 앞에 알린다(남는 횟수까지)
+  const checks =
+    usedFree > 0 ? [`캐릭터 무료 생성 ${usedFree}번을 써요 (남는 무료 생성 ${freeDraws - usedFree}번)`, ...baseChecks] : baseChecks;
 
   return (
     <Sheet onClose={onClose} label="쿠키 확인">
@@ -77,7 +89,7 @@ export function ConfirmSheet({
       </p>
 
       <div className="mt-3.5 flex w-full flex-col rounded-[20px] bg-stone-50 px-3.5 py-1 shadow-[inset_0_0_0_1px_#f0ede8]">
-        {rows.map(({ m, cost }) => (
+        {rows.map(({ m, cost, free }) => (
           <div key={m.id} className="flex min-h-[46px] items-center gap-2.5 border-b border-stone-200/70">
             <FaceAvatar member={m} size={34} childGender={childGender} />
             <span className="min-w-0 flex-1 truncate text-[15px] font-extrabold text-neutral-800">{displayName(m)}</span>
@@ -85,7 +97,7 @@ export function ConfirmSheet({
               <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-extrabold text-emerald-700">사진으로</span>
             )}
             <span className="text-sm font-extrabold" style={{ color: colors.accentDark }}>
-              {cost === 0 ? "0개 (포함된 다시 그리기)" : `${cost}개`}
+              {free ? "0개 (무료 생성)" : cost === 0 ? "0개 (포함된 다시 그리기)" : `${cost}개`}
             </span>
           </div>
         ))}
@@ -139,6 +151,18 @@ export function ConfirmSheet({
           <button type="button" onClick={onCharge} className="min-h-11 px-3 text-sm font-extrabold underline underline-offset-2" style={{ color: colors.accentDark }}>
             요금제 미리 보기
           </button>
+        </div>
+      )}
+
+      {penlineTest && (
+        <div className="mt-3 w-full">
+          <SwitchRow
+            colors={colors}
+            on={penlineTest.on}
+            onChange={penlineTest.onChange}
+            label="펜선 또렷한 수채화로 그리기"
+            hint="fe 전용 · 모두의 기본 그림체예요. 끄면 예전 수채화로 그려요(비교용)"
+          />
         </div>
       )}
 

@@ -39,7 +39,16 @@ const MAX_FREE_REWRITES = 2;
  */
 
 /** 대본 값을 받은 결과. 서버 DB 에 함수가 없으면(SQL 미적용) charged 가 null 이다. */
-type StoryCharge = { charged: number; entry: string | null; rewrites: number; tokens: number } | null;
+type StoryCharge = {
+  charged: number;
+  entry: string | null;
+  rewrites: number;
+  tokens: number;
+  /** 동화 크레딧을 썼나 · 남은 권수 · 넣어 준 쿠키(supabase-book-credits.sql — 옛 함수면 없다) */
+  credit_used?: boolean;
+  credit_left?: number;
+  topup?: number;
+} | null;
 
 export async function POST(request: Request) {
   const caller = await callerOf(request);
@@ -69,6 +78,8 @@ export async function POST(request: Request) {
      * 이 줄거리의 지문으로 값을 센다(lib/story-charge storyChargeKey). 없으면 outline 으로 센다(예전과 같다).
      */
     paidOutline?: unknown;
+    /** 동화 크레딧을 쓸까(화면이 크레딧이 있을 때 true) — 새 줄거리에만 쓰인다(DB 가 다시 본다) */
+    useBookCredit?: unknown;
   };
 
   let child, outline, material, occasion, mood;
@@ -128,11 +139,18 @@ export async function POST(request: Request) {
   }
   let charge: StoryCharge = null;
   {
-    const { data, error } = await caller.db.rpc("charge_story", {
+    const args = {
       p_outline_key: outlineKey,
       p_pages: outline.scenes.length,
       p_max_free_rewrites: MAX_FREE_REWRITES,
-    });
+    };
+    // 동화 크레딧(관리실이 더해 준 무료 권수) — 화면이 쓰겠다고 할 때만 싣는다. 다시 쓰기(paidOutline)에는 쓰지 않는다.
+    const useCredit = input.useBookCredit === true && !paidOutline && !caller.isMaster;
+    let { data, error } = await caller.db.rpc("charge_story", useCredit ? { ...args, p_use_credit: true } : args);
+    // 크레딧 SQL(11번) 전의 DB 는 4인자 판이 없다 — 크레딧 없이 다시 부른다('함수 없음'으로 보고 브라우저가 깎게 두면 안 된다).
+    if (error && useCredit && (error.code === "PGRST202" || error.code === "42883")) {
+      ({ data, error } = await caller.db.rpc("charge_story", args));
+    }
     if (error) {
       const missing =
         error.code === "42883" ||

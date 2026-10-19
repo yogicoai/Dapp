@@ -22,7 +22,7 @@ import {
   viewerTierOf,
   type MemberUsage,
 } from "./member-plan.ts";
-import { DEFAULT_PLAN_TERMS } from "./plans.ts";
+import { DEFAULT_PLAN_TERMS, PARENT_VOICE_OPEN } from "./plans.ts";
 
 const NOW = Date.parse("2026-10-02T05:00:00Z"); // 한국 14:00
 const ID = "0b8f1c2e-1111-4222-8333-444455556666";
@@ -75,23 +75,28 @@ describe("요금제의 몫 — 관리실 요금제 값에서", () => {
     const terms = { ...DEFAULT_PLAN_TERMS, monthly: { ...DEFAULT_PLAN_TERMS.monthly, booksPerMonth: 6 } };
     assert.equal(planLimits("monthly", terms).books, 6);
   });
-  it("넘은 것 — 매달 권수(가족 패스만) · 캐릭터 · 목소리, 무료·지정 없음은 따지지 않는다", () => {
+  it("넘은 것 — 매달 권수(가족 패스만) · 캐릭터 · 목소리(부모 목소리를 열었을 때만), 무료·지정 없음은 따지지 않는다", () => {
     const usage: MemberUsage = { booksThisMonth: 5, booksTotal: 9, familyCharacters: 5, familyMembers: 6, voices: 2 };
+    // 부모 목소리를 닫아 둔 동안 목소리 칸은 'AI 성우 목소리'(요금제 몫) — 쓴 양과 견주지 않는다(2026-10-19)
+    const voiceOver = (n: number) => (PARENT_VOICE_OPEN ? [`가족 목소리 2명 · 한도 ${n}명`] : []);
     assert.deepEqual(overLimits(usage, "monthly", DEFAULT_PLAN_TERMS), [
       "이번 달 동화 5권 · 한도 4권",
       "가족 캐릭터 5명 · 한도 4명",
-      "가족 목소리 2명 · 한도 1명",
+      ...voiceOver(1),
     ]);
     assert.deepEqual(overLimits(usage, "yearly", DEFAULT_PLAN_TERMS), ["이번 달 동화 5권 · 한도 4권"]);
     // 스타트팩은 권수를 '한 번'으로 세므로 이번 달 권수로 넘김을 따지지 않는다
-    assert.deepEqual(overLimits(usage, "starter", DEFAULT_PLAN_TERMS), ["가족 캐릭터 5명 · 한도 1명", "가족 목소리 2명 · 한도 1명"]);
+    assert.deepEqual(overLimits(usage, "starter", DEFAULT_PLAN_TERMS), ["가족 캐릭터 5명 · 한도 1명", ...voiceOver(1)]);
     assert.deepEqual(overLimits(usage, "free", DEFAULT_PLAN_TERMS), []);
     assert.deepEqual(overLimits(usage, null, DEFAULT_PLAN_TERMS), []);
   });
   it("고르는 칸 설명", () => {
-    assert.equal(planSummary("monthly", DEFAULT_PLAN_TERMS), "매달 동화 4권 · 가족 캐릭터 4명 · 가족 목소리 1명 · 월 19,900원");
-    assert.equal(planSummary("yearly", DEFAULT_PLAN_TERMS), "매달 동화 4권 · 가족 캐릭터 6명 · 가족 목소리 2명 · 연 199,000원");
-    assert.equal(planSummary("starter", DEFAULT_PLAN_TERMS), "동화 1권 · 가족 캐릭터 1명 · 가족 목소리 1명 · 4,900원");
+    // 목소리 칸 — 부모 목소리를 닫아 둔 동안은 'AI 성우 목소리 N명 추가'(사장님 2026-10-19)
+    const v = (n: number) => (PARENT_VOICE_OPEN ? `가족 목소리 ${n}명` : `AI 성우 목소리 ${n}명 추가`);
+    assert.equal(planSummary("monthly", DEFAULT_PLAN_TERMS), `매달 동화 4권 · 가족 캐릭터 4명 · ${v(1)} · 월 19,900원`);
+    assert.equal(planSummary("yearly", DEFAULT_PLAN_TERMS), `매달 동화 4권 · 가족 캐릭터 6명 · ${v(2)} · 연 199,000원`);
+    assert.equal(planSummary("starter", DEFAULT_PLAN_TERMS), `동화 1권 · 가족 캐릭터 1명 · ${v(1)} · 4,900원`);
+    if (!PARENT_VOICE_OPEN) assert.ok(!["monthly", "yearly", "starter"].some((k) => planSummary(k as "monthly", DEFAULT_PLAN_TERMS).includes("가족 목소리")));
     assert.match(planSummary("free", DEFAULT_PLAN_TERMS), /무료/);
   });
 });

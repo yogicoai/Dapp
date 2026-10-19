@@ -17,6 +17,9 @@ import {
   libraryCountText,
   monthlyEquivalent,
   plansOf,
+  PARENT_VOICE_OPEN,
+  VOICE_TERM_LABEL,
+  voiceTermText,
   won,
   yearlyDiscountPct,
   type OfferView,
@@ -179,19 +182,19 @@ export function buildAdminReport(offer: OfferView, app: AppTokenInfo, source: "d
           [
             "스타트팩 (처음 한 번)",
             won(st.priceWon),
-            `동화 ${st.books}권 · 가족 캐릭터 ${st.familyCharacters}명 · 가족 목소리 ${st.voices}명 · ${
+            `동화 ${st.books}권 · 가족 캐릭터 ${st.familyCharacters}명 · ${voiceTermText(st.voices)} · ${
               libraryCountText(offer.starter.classics, offer.starter.folk) || "명작·전래 없음"
             } 듣기`,
           ],
           [
             "가족 패스 (월간)",
             `월 ${won(m.priceWon)}`,
-            `매달 ${m.booksPerMonth}권 · 가족 캐릭터 ${m.familyCharacters}명 · 가족 목소리 ${m.voices}명(한 달 ${m.voiceRemakesPerMonth}번 다시) · 가족 그리기 토큰 매달 ${m.drawTokensPerMonth}개(첫 달 ${m.drawTokensFirstMonth}개) · 명작·전래 ${offer.libraryBooks}권`,
+            `매달 ${m.booksPerMonth}권 · 가족 캐릭터 ${m.familyCharacters}명 · ${voiceTermText(m.voices)}${PARENT_VOICE_OPEN ? `(한 달 ${m.voiceRemakesPerMonth}번 다시)` : ""} · 가족 그리기 토큰 매달 ${m.drawTokensPerMonth}개(첫 달 ${m.drawTokensFirstMonth}개) · 명작·전래 ${offer.libraryBooks}권`,
           ],
           [
             "가족 패스 (연간)",
             `연 ${won(y.priceWon)}`,
-            `월 ${won(monthlyEquivalent(plans.yearly))}꼴${pctOff > 0 ? ` · ${pctOff}% 할인` : ""} · 매달 ${y.booksPerMonth}권 · 가족 캐릭터 ${y.familyCharacters}명 · 가족 목소리 ${y.voices}명`,
+            `월 ${won(monthlyEquivalent(plans.yearly))}꼴${pctOff > 0 ? ` · ${pctOff}% 할인` : ""} · 매달 ${y.booksPerMonth}권 · 가족 캐릭터 ${y.familyCharacters}명 · ${voiceTermText(y.voices)}`,
           ],
           [
             "크레딧 (단품)",
@@ -231,7 +234,7 @@ export function buildAdminReport(offer: OfferView, app: AppTokenInfo, source: "d
     points: [
       "바꾼 값은 요금제 화면(/plans) · 시연 결제 · 내 결제 화면이 서버에서 읽어요 — 바로, 늦어도 1분 안에 보여요.",
       "결제를 붙이면 실제 결제 금액도 서버가 이 값으로 정해요. 브라우저가 보낸 금액은 믿지 않아요.",
-      "아직 앱이 막지 않는 것: 동화 권수 · 가족 캐릭터 · 가족 목소리 한도, 크레딧 사고 쓰기 — 결제를 붙일 때 서버에서 걸어요.",
+      `아직 앱이 막지 않는 것: 동화 권수 · 가족 캐릭터 · ${VOICE_TERM_LABEL} 한도, 크레딧 사고 쓰기 — 결제를 붙일 때 서버에서 걸어요.`,
     ],
   });
 
@@ -248,7 +251,7 @@ export function buildAdminReport(offer: OfferView, app: AppTokenInfo, source: "d
           `'${pctOff > 0 ? `${pctOff}% 할인` : "할인"}' 스티커 — 연간이 월간 12달보다 싼 만큼 저절로 계산해 붙어요. 싸지 않으면 붙지 않아요.`,
           "'추천' 스티커 — 가족 패스 카드 오른쪽 위에 늘 붙어요(글자는 고정).",
           "가족 패스 값 — 고른 결제 주기의 값(부가세 포함)이에요.",
-          "구성 줄 — 매달 동화 권수 · 가족 캐릭터 · 가족 목소리 · 가족 그리기 토큰은 '요금제' 탭에서, 명작·전래 권수는 서가에서 세요.",
+          `구성 줄 — 매달 동화 권수 · 가족 캐릭터 · ${VOICE_TERM_LABEL} · 가족 그리기 토큰은 '요금제' 탭에서, 명작·전래 권수는 서가에서 세요.`,
           "시작 단추 — 결제를 붙이기 전에는 시연 결제로 이어지거나 '결제는 곧 열려요'로 잠겨요.",
         ],
       },
@@ -257,7 +260,7 @@ export function buildAdminReport(offer: OfferView, app: AppTokenInfo, source: "d
         title: "요금제 화면 · '1년 한 번에'를 골랐을 때",
         legend: [
           "연 값과 월로 나눈 값 · 할인율 — 연간 값에서 저절로 계산해요.",
-          `연간 구성 — 월간과 다른 칸(가족 캐릭터 ${y.familyCharacters}명 · 가족 목소리 ${y.voices}명)이 바로 바뀌어 보여요.`,
+          `연간 구성 — 월간과 다른 칸(가족 캐릭터 ${y.familyCharacters}명 · ${voiceTermText(y.voices)})이 바로 바뀌어 보여요.`,
         ],
       },
       {

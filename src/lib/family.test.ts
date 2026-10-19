@@ -6,6 +6,8 @@ import {
   byRoleOrder,
   canAddRole,
   currentLockKey,
+  drawPrice,
+  drawPrices,
   dropPhotoFixedLooks,
   familyLooksToPrompt,
   familyMembersOnly,
@@ -34,6 +36,7 @@ import {
   ourChildrenNames,
   pictureDecidesLooks,
   portraitLooksChanged,
+  priceMembers,
   ROLE_ORDER,
   showsLooksChanged,
   vocative,
@@ -69,6 +72,40 @@ describe("값 — 한 사람 2쿠키(다시 그리기 1번 포함), 그 뒤 1쿠
     assert.equal(freeRedrawsLeft(0), 1);
     assert.equal(freeRedrawsLeft(1), 1);
     assert.equal(freeRedrawsLeft(2), 0);
+  });
+});
+
+describe("캐릭터 무료 생성(관리실이 더해 준 횟수) — DB 와 같은 규칙", () => {
+  it("쿠키가 드는 그리기에만 쓴다 — 포함된 다시 그리기(0개)에는 안 쓴다", () => {
+    assert.deepEqual(drawPrice(0, 1), { cost: 0, free: true });
+    assert.deepEqual(drawPrice(2, 1), { cost: 0, free: true });
+    assert.deepEqual(drawPrice(1, 1), { cost: 0, free: false });
+    assert.deepEqual(drawPrice(0, 0), { cost: 2, free: false });
+  });
+  it("여러 명이면 앞사람부터, 다 쓰면 쿠키로", () => {
+    assert.deepEqual(drawPrices([0, 1, 2, 0], 2), [
+      { cost: 0, free: true },
+      { cost: 0, free: false },
+      { cost: 0, free: true },
+      { cost: 2, free: false },
+    ]);
+  });
+  it("이상한 횟수(음수·NaN)는 0 으로 본다", () => {
+    assert.deepEqual(drawPrice(0, -3), { cost: 2, free: false });
+    assert.deepEqual(drawPrice(0, Number.NaN), { cost: 2, free: false });
+    assert.deepEqual(drawPrice(0, 1.7), { cost: 0, free: true });
+  });
+  it("확인 창 줄은 ROLE_ORDER 순서로 매긴다 — 그리기 요청도 같은 결과를 쓴다", () => {
+    const dad = { id: "dad", role: "dad" as const, draws: 0 };
+    const kid = { id: "kid", role: "child" as const, draws: 2 };
+    const rows = priceMembers([dad, kid], 1);
+    assert.deepEqual(
+      rows.map((r) => [r.m.id, r.cost, r.free]),
+      [
+        ["kid", 0, true],
+        ["dad", 2, false],
+      ],
+    );
   });
 });
 

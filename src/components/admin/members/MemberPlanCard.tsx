@@ -25,7 +25,7 @@ import {
   type MemberPlanResponse,
   type MemberUsage,
 } from "@/lib/member-plan";
-import type { PlanTerms } from "@/lib/plans";
+import { PARENT_VOICE_OPEN, VOICE_TERM_LABEL, type PlanTerms } from "@/lib/plans";
 import {
   Banner,
   Button,
@@ -183,12 +183,19 @@ function UsageGrid({ usage, plan, terms }: { usage: MemberUsage | null; plan: Me
       sub: l ? `${l.familyCharacters}명까지 · 가족 ${usage.familyMembers}명` : `가족 ${usage.familyMembers}명`,
       over: !!l && plan !== "free" && usage.familyCharacters > l.familyCharacters,
     },
-    {
-      label: "가족 목소리",
-      value: `${usage.voices}명`,
-      sub: l ? `${l.voices}명까지${l.voiceRemakesPerMonth ? ` · 한 달 ${l.voiceRemakesPerMonth}번 다시` : ""}` : "준비된 목소리만",
-      over: !!l && plan !== "free" && usage.voices > l.voices,
-    },
+    // 부모 목소리를 닫아 둔 동안은 'AI 성우 목소리'(요금제 몫)만 보인다 — 쓴 양과 견주지 않는다(lib/plans voiceTermText)
+    PARENT_VOICE_OPEN
+      ? {
+          label: "가족 목소리",
+          value: `${usage.voices}명`,
+          sub: l ? `${l.voices}명까지${l.voiceRemakesPerMonth ? ` · 한 달 ${l.voiceRemakesPerMonth}번 다시` : ""}` : "준비된 목소리만",
+          over: !!l && plan !== "free" && usage.voices > l.voices,
+        }
+      : {
+          label: VOICE_TERM_LABEL,
+          value: l && l.voices > 0 ? `${l.voices}명 추가` : "–",
+          sub: l ? "요금제에 든 몫" : "요금제 지정 없음",
+        },
     {
       label: "가족 그리기 토큰",
       value: l && l.drawTokensPerMonth > 0 ? `매달 ${l.drawTokensPerMonth}개` : "–",

@@ -147,22 +147,34 @@ export const DEFAULT_PLAN_TERMS: PlanTerms = {
  * 가족 그리기 토큰(패스에 매달 들어오는 몫)과 따로 센다.
  * 가격별 묶음 · 쓰는 곳별 크레딧은 관리실 '요금제·가격'에서 바꾼다 — 아래는 바꾸기 전의 기본값(2026-10-02 사장님 확정, "이대로").
  */
-export type CreditPack = { priceWon: number; credits: number };
-export type CreditUse = "book" | "character" | "voice" | "draw";
-export const CREDIT_USES: readonly CreditUse[] = ["book", "character", "voice", "draw"];
-export const CREDIT_USE_LABEL: Readonly<Record<CreditUse, string>> = {
-  book: "동화 1권 더 만들기",
-  character: "가족 캐릭터 1명 더",
-  voice: "가족 목소리 1명 더",
-  draw: "가족 그리기 1번 더",
-};
-
 /**
  * 가족(부모) 목소리를 고객 화면에 보이는지 — 2026-10-16 사장님: 웹 오픈 때는 숨기고 추가 개발 뒤에 연다.
  * false 면 요금제·결제·자주 묻는 질문·홈 소개 문구에서 '가족 목소리'를 뺀다. 관리실 값(목소리 수·크레딧)은 그대로 둔다.
  * 녹음·만들기·읽기는 원래부터 개발자 모드(fe)에서만 보인다(lib/dev-mode).
  */
 export const PARENT_VOICE_OPEN = false;
+
+/**
+ * 요금제 구성의 목소리 칸 이름 — 부모 목소리를 닫아 둔 동안은 'AI 성우 목소리'로 부른다(사장님 2026-10-19 "가족 목소리가
+ * 아니라 AI 성우 목소리 1명 추가하기 정도로"). 관리실 요금제·가격 · 회원 요금제 줄이 이 이름을 쓴다. 값(voices)은 그대로다.
+ */
+export const VOICE_TERM_LABEL = PARENT_VOICE_OPEN ? "가족 목소리" : "AI 성우 목소리";
+
+/** "AI 성우 목소리 1명 추가"(열면 "가족 목소리 1명") */
+export function voiceTermText(n: number): string {
+  return PARENT_VOICE_OPEN ? `가족 목소리 ${n}명` : `AI 성우 목소리 ${n}명 추가`;
+}
+
+export type CreditPack = { priceWon: number; credits: number };
+export type CreditUse = "book" | "character" | "voice" | "draw";
+export const CREDIT_USES: readonly CreditUse[] = ["book", "character", "voice", "draw"];
+export const CREDIT_USE_LABEL: Readonly<Record<CreditUse, string>> = {
+  book: "동화 1권 더 만들기",
+  character: "가족 캐릭터 1명 더",
+  voice: PARENT_VOICE_OPEN ? "가족 목소리 1명 더" : "AI 성우 목소리 1명 더",
+  draw: "가족 그리기 1번 더",
+};
+
 /** 고객 화면에 보이는 크레딧 쓰는 곳 — 가족 목소리가 닫혀 있으면 뺀다(관리실은 CREDIT_USES 전부) */
 export const CUSTOMER_CREDIT_USES: readonly CreditUse[] = CREDIT_USES.filter((k) => PARENT_VOICE_OPEN || k !== "voice");
 /** 크레딧으로 더하는 것 — "동화·가족 캐릭터(·가족 목소리)" */

@@ -8,7 +8,7 @@
  * 순수 파일 — node --test 가 그대로 읽는다.
  */
 import type { LibraryTier } from "./offer-settings.ts";
-import { won, type PlanTerms } from "./plans.ts";
+import { PARENT_VOICE_OPEN, voiceTermText, won, type PlanTerms } from "./plans.ts";
 
 export type MemberPlanKey = "free" | "starter" | "monthly" | "yearly";
 export const MEMBER_PLAN_KEYS: readonly MemberPlanKey[] = ["free", "starter", "monthly", "yearly"];
@@ -108,10 +108,10 @@ export function planSummary(k: MemberPlanKey, terms: PlanTerms): string {
   if (k === "free") return "무료로 연 세계명작·전래동화만 들어요";
   if (k === "starter") {
     const t = terms.starter;
-    return `동화 ${t.books}권 · 가족 캐릭터 ${t.familyCharacters}명 · 가족 목소리 ${t.voices}명 · ${won(t.priceWon)}`;
+    return `동화 ${t.books}권 · 가족 캐릭터 ${t.familyCharacters}명 · ${voiceTermText(t.voices)} · ${won(t.priceWon)}`;
   }
   const t = terms[k];
-  return `매달 동화 ${t.booksPerMonth}권 · 가족 캐릭터 ${t.familyCharacters}명 · 가족 목소리 ${t.voices}명 · ${
+  return `매달 동화 ${t.booksPerMonth}권 · 가족 캐릭터 ${t.familyCharacters}명 · ${voiceTermText(t.voices)} · ${
     k === "monthly" ? "월" : "연"
   } ${won(t.priceWon)}`;
 }
@@ -140,7 +140,8 @@ export function overLimits(usage: MemberUsage, k: MemberPlanKey | null, terms: P
   if (usage.familyCharacters > l.familyCharacters) {
     out.push(`가족 캐릭터 ${usage.familyCharacters}명 · 한도 ${l.familyCharacters}명`);
   }
-  if (usage.voices > l.voices) out.push(`가족 목소리 ${usage.voices}명 · 한도 ${l.voices}명`);
+  // 부모 목소리를 닫아 둔 동안은 목소리 칸이 'AI 성우 목소리'(요금제 몫)라 쓴 양과 견주지 않는다
+  if (PARENT_VOICE_OPEN && usage.voices > l.voices) out.push(`가족 목소리 ${usage.voices}명 · 한도 ${l.voices}명`);
   return out;
 }
 

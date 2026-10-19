@@ -84,6 +84,11 @@ export type PortraitInput = {
   styleRef?: string;
   /** 화면이 보여 준 값 — 실제 값이 더 크면 깎지 않고 409(price)로 돌려준다 */
   expectedCost?: number;
+  /**
+   * 펜선 또렷한 수채화로 그린다(아래 PENLINE). 서버(api/family/portrait)는 모든 회원에게 켜고, fe 만 비교용으로 끌 수 있다.
+   * 없거나 false 면 예전 수채화 글 그대로다(이 파일만 놓고 보면 기본은 수채화 — 켜는 쪽은 라우트).
+   */
+  penline?: boolean;
 };
 
 /**
@@ -346,11 +351,38 @@ function identityOf(input: PortraitInput, source: Source): Identity {
   }
 }
 
+/* ─────────────────────────────── 펜선 또렷한 수채화(fe 시험) ─────────────────────────────── */
+
+/**
+ * 사장님(2026-10-19): "아이 얼굴이 더 비슷하게 캐릭터로 연출된다면 그걸로 선택하는 것도 나쁘지 않겠다" → '펜선 또렷한 수채화'를
+ * fe 계정에서 먼저 시험했고("이게 더 근접"), 같은 날 "전체에 반영"으로 모든 회원의 기본이 됐다(라우트가 켠다, fe 만 끌 수 있다). 번지는 수채(soft bleeding edges)가 눈매·코·입을 흐려 닮음이
+ * 약해지는 것을 줄이려고, 책 기준 그림체(빨간 모자 — 갈색 펜선 + 투명 수채)와 같은 결로 이목구비를
+ * 가는 펜선으로 또렷이 긋는다. 바뀌는 것:
+ *  · 그림체 글(PENLINE_STYLE_PROMPT)과 얼굴 펜선 줄(PENLINE_FACE_LINE — 실제 눈 모양·크기, 점 눈·큰 만화 눈 금지)
+ *  · 사진·클로즈업·LIKENESS FIRST 줄의 'watercolor' 말을 'ink-and-watercolor' 로
+ *  · 그림체 견본: 점 눈 여우(style_01) 대신 빨간 모자 1쪽(PENLINE_SAMPLE) — 견본의 얼굴·인물은 따르지 말라고 붙인다
+ *  · 같은 가족 그림(옛 수채화)은 붙이지 않는다(라우트) — 옛 결로 당기지 않게
+ * 머리 비율 다시 그리기도 같은 그림체 글을 쓴다. 기본(수채화) 갈래의 글은 그대로다.
+ */
+export const PENLINE_SAMPLE = "/art-styles/penline-sample.webp";
+const PENLINE_STYLE_PROMPT =
+  "classic storybook ink-and-watercolor illustration: confident fine dark sepia-brown ink pen outlines around the whole figure, the clothes and every facial feature, with transparent watercolor washes laid inside the lines on cream paper; crisp edges with little bleeding, especially on the face; warm muted palette (peach, ochre, sage), light left unpainted for highlights, matte paper finish";
+const PENLINE_FACE_LINE =
+  "INK LINE FACE: draw the face with clear, fine ink lines exactly where the real face has them — the upper eyelid and lash line, the iris and pupil, the eyebrows, the side of the nose and the nostrils, the line between the lips, the jaw line and the ears — keeping their real shape, size and spacing. Real eye shape and size: never dot eyes, never oversized cartoon eyes. Light, flat watercolor washes on the skin; no heavy shading that hides the features.";
+const PENLINE_SAMPLE_NO_FACE = " Never copy its people, faces or face style — take only its ink line, washes, palette and paper.";
+
+/** 첫 줄의 그림체 글 — 기본은 ART_STYLES 수채화 그대로 */
+function stylePromptFor(penline: boolean | undefined): string {
+  if (penline) return PENLINE_STYLE_PROMPT;
+  return (ART_STYLES.find((s) => s.id === "watercolor") ?? ART_STYLES[0]).prompt;
+}
+
 /* ─────────────────────────────── 사진·특징 카드 규칙 ─────────────────────────────── */
 
 /** 사진 갈래 첫 줄 — 사진이 무엇이고 무엇을 그리는지. 안전 검사에 걸리지 않게 담담하게 적는다. */
-function photoIntro(nth: string): string {
-  return `${nth} image = a reference PHOTO of the person to paint, given only for likeness. Paint this same person as a friendly picture-book character — recognisable at a glance — as a hand-painted watercolor illustration in the painting style described here, not photorealistic.`;
+function photoIntro(nth: string, penline = false): string {
+  const medium = penline ? "a hand-drawn ink-and-watercolor illustration" : "a hand-painted watercolor illustration";
+  return `${nth} image = a reference PHOTO of the person to paint, given only for likeness. Paint this same person as a friendly picture-book character — recognisable at a glance — as ${medium} in the painting style described here, not photorealistic.`;
 }
 
 /**
@@ -361,8 +393,9 @@ function photoIntro(nth: string): string {
  * 잘린다. 클로즈업에서 머리를 읽으면 단발처럼 짧아진다.
  * 얼굴은 수채화로 — 선명하게 키운 실제 얼굴이라, 막지 않으면 얼굴만 사진처럼(피부 결·빛·그늘) 그리는 일이 있다.
  */
-function closeUpLine(nth: string, photoNth: string): string {
-  return `${nth} image = a close-up of the same person's face, cropped and enlarged from the ${photoNth} image — use it for the exact face: face shape, eyes, eyebrows, nose, mouth, cheeks, jaw, hairline and fringe. Hair length and the overall hairstyle come from the ${photoNth} image (the crop cuts the hair off). Paint that face in the same watercolor style as the rest of the figure — take only its features, never its photographic skin texture, lighting or shadows. It is the same single person, not a second person, and its tight crop is neither the composition nor the head size — still paint one full-body figure at the PROPORTIONS head-to-height ratio.`;
+function closeUpLine(nth: string, photoNth: string, penline = false): string {
+  const paint = penline ? "Draw that face in the same ink-and-watercolor style" : "Paint that face in the same watercolor style";
+  return `${nth} image = a close-up of the same person's face, cropped and enlarged from the ${photoNth} image — use it for the exact face: face shape, eyes, eyebrows, nose, mouth, cheeks, jaw, hairline and fringe. Hair length and the overall hairstyle come from the ${photoNth} image (the crop cuts the hair off). ${paint} as the rest of the figure — take only its features, never its photographic skin texture, lighting or shadows. It is the same single person, not a second person, and its tight crop is neither the composition nor the head size — still paint one full-body figure at the PROPORTIONS head-to-height ratio.`;
 }
 
 /**
@@ -376,7 +409,7 @@ function closeUpLine(nth: string, photoNth: string): string {
  */
 function likenessFirst(
   source: "photo" | "card",
-  o: { distinctive: boolean; closeUp: boolean; kid: boolean; ageFromWho: boolean },
+  o: { distinctive: boolean; closeUp: boolean; kid: boolean; ageFromWho: boolean; penline?: boolean },
 ): string {
   const whom = source === "photo" ? "the person in the reference photo" : "the person described in the LIKENESS SPEC below";
   const traits = o.distinctive
@@ -395,7 +428,7 @@ function likenessFirst(
     : o.ageFromWho
       ? " Age and hair colour still follow the WHO line and the hair-colour rule below."
       : " Hair colour still follows the hair-colour rule below.";
-  return `LIKENESS FIRST — top priority: anyone who knows ${whom} must recognise this exact person at a glance from the painting alone. ${traits}, true to life — never exaggerated or caricatured; keep the face shape, eye shape, size and spacing, eyebrows, nose, mouth, cheeks, jaw, hairline and hairstyle ${from}. The watercolor picture-book style changes only the rendering (brushwork, soft washes), never who they are. Head size comes only from the PROPORTIONS line — never enlarge the head to show the face.${kidNote}`;
+  return `LIKENESS FIRST — top priority: anyone who knows ${whom} must recognise this exact person at a glance from the painting alone. ${traits}, true to life — never exaggerated or caricatured; keep the face shape, eye shape, size and spacing, eyebrows, nose, mouth, cheeks, jaw, hairline and hairstyle ${from}. ${o.penline ? "The ink-and-watercolor picture-book style changes only the rendering (ink line, washes)" : "The watercolor picture-book style changes only the rendering (brushwork, soft washes)"}, never who they are. Head size comes only from the PROPORTIONS line — never enlarge the head to show the face.${kidNote}`;
 }
 
 /**
@@ -651,8 +684,10 @@ const MOUTH_NEGATED = /\b(not|no|never|without)\s+((showing|visible|any|very|too
  * MUST KEEP 줄(머리글 '어긋나기 쉬운 쪽 막기' ①) — 카드에 그 특징이 있을 때만 그 한 마디를 넣는다. 걸 것이 없으면 빈 글자.
  * adult — 어른이면 눈·코·입도(아이는 부드러운 그림책 얼굴 그대로). 어느 말이 카드의 어느 줄에서 걸리는지는 위 낱말 목록.
  * 특징 말은 '카드가 적은 대로(as the spec gives)'로 가리키고 새 생김새 낱말을 지어 넣지 않는다 — 앞머리·주근깨의 꼴만 짧게 푼다.
+ * penline — 펜선 시험(fe)이면 점을 '아주 작은 옅은 갈색 수채 점'으로 적는다. 'dark-brown dot' 에 얼굴 펜선 줄이 겹치자 점이
+ * 까만 잉크 점으로 진하게 찍혔다(사장님 2026-10-19 "얼굴에 점점점이 생긴 이유"). 점은 지키되(닮음) 눈에 덜 띄게. 기본 글은 그대로.
  */
-function driftGuards(spec: string, adult: boolean): string {
+function driftGuards(spec: string, adult: boolean, penline = false): string {
   const fringe = specValue(spec, "fringe");
   const fringeText = [fringe, ...distinctiveTraits(spec, /\b(fringe|bangs)\b/i)].join("; ").replace(NEGATED, " ");
   const face = [specValue(spec, "face shape"), ...distinctiveTraits(spec, /\bface\b/i)].join("; ");
@@ -704,7 +739,11 @@ function driftGuards(spec: string, adult: boolean): string {
     /freckl/i.test(marks)
       ? "the freckles are painted as the spec gives them, as many and in the places written — small, soft light-brown dots, subtle but clearly there; never left out, never dark blotches"
       : "",
-    /\bmoles?\b|\bbeauty (marks?|spots?)\b/i.test(marks) ? "each mole or beauty mark is one small dark-brown dot in the place the spec gives" : "",
+    /\bmoles?\b|\bbeauty (marks?|spots?)\b/i.test(marks)
+      ? penline
+        ? "each mole or beauty mark is one tiny, soft light-brown watercolor dot in the place the spec gives — never a solid black ink dot, never bigger or darker than in the photo"
+        : "each mole or beauty mark is one small dark-brown dot in the place the spec gives"
+      : "",
   ].filter(Boolean);
   return parts.length ? `MUST KEEP — the ways portraits of this person usually drift; this one must not: ${parts.join("; ")}.` : "";
 }
@@ -794,7 +833,8 @@ function guideLine(nth: string, ratio: number): string {
  *    어른 PROPORTIONS 줄).
  */
 export function buildPrompt(input: PortraitInput, attached: Attached, card: string | null = null): string {
-  const style = ART_STYLES.find((s) => s.id === "watercolor") ?? ART_STYLES[0];
+  const stylePrompt = stylePromptFor(input.penline);
+  const penline = input.penline === true;
   const order = refOrder(attached);
   const nth = (k: RefKind) => ["FIRST", "SECOND", "THIRD", "FOURTH"][order.indexOf(k)] ?? "attached";
   const has = (k: RefKind) => order.includes(k);
@@ -847,15 +887,15 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
 
   return [
     source === "chips"
-      ? `One full-body character portrait of a single person for a Korean children's picture book, ${style.prompt}.`
-      : `One full-body character portrait of a single person for a Korean picture book, ${style.prompt}.`,
+      ? `One full-body character portrait of a single person for a Korean children's picture book, ${stylePrompt}.`
+      : `One full-body character portrait of a single person for a Korean picture book, ${stylePrompt}.`,
     source !== "chips"
-      ? likenessFirst(source, { distinctive: hasDistinctive(spec), closeUp: has("closeUp"), kid, ageFromWho })
+      ? likenessFirst(source, { distinctive: hasDistinctive(spec), closeUp: has("closeUp"), kid, ageFromWho, penline })
       : "",
-    has("photo") ? photoIntro(nth("photo")) : "",
-    has("closeUp") ? closeUpLine(nth("closeUp"), nth("photo")) : "",
+    has("photo") ? photoIntro(nth("photo"), penline) : "",
+    has("closeUp") ? closeUpLine(nth("closeUp"), nth("photo"), penline) : "",
     has("sample")
-      ? `${nth("sample")} image = painting-style sample only (never copy its people, animals, subject, pose or composition). Copy only HOW it is painted: medium, brush and line quality, edge softness, colour palette, shading and paper finish.${realAdultFace ? SAMPLE_NO_FACE : ""}`
+      ? `${nth("sample")} image = painting-style sample only (never copy its people, animals, subject, pose or composition). Copy only HOW it is painted: medium, brush and line quality, edge softness, colour palette, shading and paper finish.${penline ? PENLINE_SAMPLE_NO_FACE : realAdultFace ? SAMPLE_NO_FACE : ""}`
       : "",
     has("sibling")
       ? source === "card"
@@ -865,8 +905,10 @@ export function buildPrompt(input: PortraitInput, attached: Attached, card: stri
     has("guide") ? guideLine(nth("guide"), headChartRatio(input.role, input.age)) : "",
     spec && source !== "chips" ? cardBlock(spec, source) : "",
     // 카드 바로 뒤 — 카드에 있는 특징만 '흔히 어긋나는 쪽'을 막는다(아이는 눈·코·입 빼고). 사진 규칙보다 앞.
-    spec && source !== "chips" ? driftGuards(spec, !kid) : "",
+    spec && source !== "chips" ? driftGuards(spec, !kid, penline) : "",
     realAdultFace ? adultFace(source) : kid && source !== "chips" ? kidFace(source, has("closeUp")) : "",
+    // 펜선 시험 — 이목구비를 실제 모양대로 가는 펜선으로(점 눈·큰 만화 눈 금지)
+    penline ? PENLINE_FACE_LINE : "",
     ...(source === "photo" ? photoRules(Boolean(spec), ageFromWho, has("closeUp")) : []),
     source === "card"
       ? "Keep the face shape and proportions the LIKENESS SPEC describes — face shape, eye shape and size, eyebrows, nose, mouth, cheeks and jaw — rather than a generic picture-book face; never exaggerate or caricature a feature."
@@ -955,7 +997,7 @@ export function redrawLikeness(input: PortraitInput, card: string | null): strin
     "LIKENESS SPEC — this person's real, recognisable face and hair, which the FIRST image was painted to match. Keep every trait below; where the FIRST image has drifted from one of them, follow the spec for the face and hair — everything else stays exactly as in the FIRST image.",
     notes,
     SIDE_WORD.test(notes) ? SIDE_LINE : "",
-    driftGuards(notes, !kid),
+    driftGuards(notes, !kid, input.penline === true),
     kid ? KID_FACE_REDRAW : adultFace("card"),
   ]
     .filter(Boolean)
@@ -988,8 +1030,8 @@ const FIRST_LINE_LIKENESS =
  * (FIRST_LINE_LIKENESS). 없으면(칩 갈래·카드 없음) 글자 하나 다르지 않게 예전 그대로다.
  * 아이 쪽 말·가족 말도 없다(역할과 상관없이 같은 글 — 나이는 '첫째 그림의 보이는 나이 그대로').
  */
-export function headRedrawPrompt(fix: HeadFix, o: { guide: boolean; likeness?: string | null }): string {
-  const style = ART_STYLES.find((s) => s.id === "watercolor") ?? ART_STYLES[0];
+export function headRedrawPrompt(fix: HeadFix, o: { guide: boolean; likeness?: string | null; penline?: boolean }): string {
+  const stylePrompt = stylePromptFor(o.penline);
   const big = fix.verdict === "big";
   const want = ratioText(fix.target);
   // 몇 등신인가(7 · 5.5 · 6.5) — 그림 그리는 사람의 말. 비율 견본의 가로줄(머리 높이마다)과 같은 셈이다.
@@ -1008,7 +1050,7 @@ export function headRedrawPrompt(fix: HeadFix, o: { guide: boolean; likeness?: s
   // 고르게 늘린다 — 짧은 목의 큰 머리 그림에서 목만 길게 빼거나 다리만 늘리는 쉬운 길을 막는다.
   const evenly = `evenly, so the figure stays naturally proportioned${big ? " with a natural-length neck (never a long, stretched neck)" : ""} — never only the legs or only the torso changed`;
   return [
-    `One full-body character portrait of a single person for a Korean picture book, ${style.prompt}.`,
+    `One full-body character portrait of a single person for a Korean picture book, ${stylePrompt}.`,
     // 몸집(body build)도 그대로 — 늘리다 보면 날씬한 패션 그림 몸으로 바뀌어 딴사람 같아진다. 나이는 '얼굴이 보여 주는 나이' —
     // 짧은 몸이 주는 어려 보이는 인상은 따르지 않는다. 바꾸는 것은 머리:키 비율(머리 크기·목·몸통·다리 길이)뿐이다.
     // 닮음 줄이 붙으면 얼굴·머리는 그 줄이 바로잡는 곳만 바꾼다(FIRST_LINE_LIKENESS) — 없으면 예전 글 그대로.
@@ -1042,12 +1084,15 @@ export function headRedrawPrompt(fix: HeadFix, o: { guide: boolean; likeness?: s
  * likeness — 사진으로 그렸을 때 카드의 얼굴·머리 줄(redrawLikeness). 글로만 붙고 참고 그림은 그대로다(사진은 다시 보내지 않는다).
  * first 는 우리가 방금 그린 그림(이 요청 메모리에만 — 건네는 쪽만 올린다).
  */
-export function headRedrawRecipe<T>(o: { first: T; guide: T | null; fix: HeadFix; likeness?: string | null }): {
+export function headRedrawRecipe<T>(o: { first: T; guide: T | null; fix: HeadFix; likeness?: string | null; penline?: boolean }): {
   prompt: string;
   references: T[];
 } {
   const refs: T[] = o.guide !== null ? [o.first, o.guide] : [o.first];
-  return { prompt: headRedrawPrompt(o.fix, { guide: o.guide !== null, likeness: o.likeness }), references: refs };
+  return {
+    prompt: headRedrawPrompt(o.fix, { guide: o.guide !== null, likeness: o.likeness, penline: o.penline }),
+    references: refs,
+  };
 }
 
 /* ─────────────────────────────── 대신 그리기(사진 거절 뒤) ─────────────────────────────── */

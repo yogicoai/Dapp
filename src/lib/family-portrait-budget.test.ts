@@ -168,3 +168,15 @@ describe("stageClock — 단계 이름과 ms 숫자만", () => {
     assert.equal(clock.summary(), "total=250");
   });
 });
+
+describe("펜선 또렷한 수채화(2026-10-19 '전체 반영') — route.ts 는 모두에게 켜고, 끄기는 fe 만", () => {
+  it("기본으로 켜고, 끄기(예전 수채화)는 isDevUser 만 — 켜면 견본을 바꾸고 같은 가족 그림(옛 수채화)은 받지 않는다", () => {
+    const src = readFileSync(ROUTE, "utf8");
+    assert.ok(src.includes("const penline = b.penline !== false;"), "기본이 펜선이 아니다");
+    assert.ok(src.includes("!parsed.penline && !isDevUser(caller.username) ? { ...parsed, penline: true } : parsed"), "끄기를 fe 만 받지 않는다");
+    assert.ok(src.includes("...(input.penline && isDevUser(caller.username) ? { penline: true } : {}),"), "펜선 표시가 고객 응답에도 실린다");
+    assert.ok(src.includes("const sampleImage = input.penline ? PENLINE_SAMPLE : style.image;"), "견본 바꾸기가 없다");
+    assert.ok(src.includes("styleRef && !input.penline ? orNullAfter(loadReferenceImage(styleRef)"), "같은 가족 그림 빼기가 없다");
+    assert.ok(src.includes("headRedrawRecipe({ first, guide, fix, likeness, penline: input.penline })"), "머리 비율 다시 그리기가 펜선을 모른다");
+  });
+});
