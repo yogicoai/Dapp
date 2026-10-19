@@ -7,6 +7,7 @@ import { AddToHomeHint } from "@/components/AddToHomeHint";
 import { BgVideo } from "@/components/BgVideo";
 import { Bookshelf } from "@/components/Bookshelf";
 import { FamilyFrame } from "@/components/FamilyFrame";
+import { SiteFooter } from "@/components/pay/SiteFooter";
 import { useTheme } from "@/components/ThemeProvider";
 import { UpdateNotice } from "@/components/UpdateNotice";
 import { DEMO_SHELF_OWNER, loadSession } from "@/lib/auth";
@@ -612,6 +613,11 @@ export default function Home() {
           </span>
         </Link>
       </main>
+      {/* 사이트 맨 아래 사업자 정보·약관 링크 — 전자상거래법 표시 사항. 결제사(KG) 심사도 첫 화면에서 본다(2026-10-19).
+          아래 '동화 만들기' 둥근 단추(화면에 붙어 있음)에 가리지 않게 아래를 넉넉히 비운다. */}
+      <div className="relative mx-auto w-full max-w-3xl px-6 pb-28 sm:pb-32">
+        <SiteFooter compact />
+      </div>
     </div>
   );
 }

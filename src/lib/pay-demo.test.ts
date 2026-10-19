@@ -150,7 +150,7 @@ describe("동의", () => {
     assert.match(CONSENTS[1].label(credit), /^크레딧을 쓰기 시작하면/);
     assert.match(CONSENTS[1].label(PLANS.starter), /^동화를 만들기 시작하면/);
     assert.ok(CONSENTS[1].sheetBody(credit).join(" ").includes("크레딧을 하나도 쓰지 않았다면"));
-    assert.ok(CONSENTS[1].sheetBody(PLANS.monthly).join(" ").includes("새 동화를 한 권도 만들지 않았다면"));
+    assert.ok(CONSENTS[1].sheetBody(PLANS.monthly).join(" ").includes("아직 쓰지 않았다면(동화 만들기·캐릭터 그리기·패스로 열린 동화 듣기 전)"));
   });
 });
 
