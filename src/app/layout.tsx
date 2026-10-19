@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Dongle, Gaegu, Gowun_Dodum, Jua, Nanum_Pen_Script } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { READ_ALOUD_VOICE } from "@/lib/plans";
+import { buildSiteMetadata } from "@/lib/seo";
+import { readSeo } from "@/lib/seo-server";
 import "./globals.css";
 
 const dongle = Dongle({ weight: ["300", "400", "700"], variable: "--font-dongle", preload: false });
@@ -10,9 +11,18 @@ const gowunDodum = Gowun_Dodum({ weight: "400", variable: "--font-gowun-dodum", 
 const jua = Jua({ weight: "400", variable: "--font-jua", preload: false });
 const nanumPen = Nanum_Pen_Script({ weight: "400", variable: "--font-nanum-pen", preload: false });
 
-export const metadata: Metadata = {
-  title: "우리 가족 보이스 동화",
-  description: `아이가 주인공인 그림동화를 ${READ_ALOUD_VOICE}로 읽어줍니다.`,
+/*
+ * 검색 노출(SEO) — 제목·설명·검색어·공유 그림·소유 확인·검색 노출 켜기는 관리실 '검색 노출(SEO)'에서 바꾼다(lib/seo).
+ * 5분마다 새로 읽고, 관리실에서 저장하면 그 자리에서 다시 그린다(api/admin/seo 의 revalidatePath). DB 가 없거나 느리면 기본값.
+ */
+export const revalidate = 300;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings, origin } = await readSeo();
+  return { ...buildSiteMetadata(settings, origin), appleWebApp: APPLE_WEB_APP };
+}
+
+const APPLE_WEB_APP: Metadata["appleWebApp"] = {
   /*
    * 아이폰용 — '홈 화면에 추가'로 열었을 때 주소창 없이 꽉 찬 앱으로 뜨게 한다.
    *
@@ -23,11 +33,9 @@ export const metadata: Metadata = {
    *
    * 상태표시줄은 검은 반투명 — 배경 그림이 위까지 이어져 책처럼 보인다.
    */
-  appleWebApp: {
-    capable: true,
-    title: "보이스 동화",
-    statusBarStyle: "black-translucent",
-  },
+  capable: true,
+  title: "보이스 동화",
+  statusBarStyle: "black-translucent",
 };
 
 export const viewport: Viewport = {

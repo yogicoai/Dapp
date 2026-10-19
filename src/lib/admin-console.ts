@@ -58,6 +58,7 @@ export type AdminNavKey =
   | "billing"
   | "pricing"
   | "business"
+  | "seo"
   | "report";
 export type AdminNavGroup = "운영" | "매출" | "회사";
 
@@ -86,6 +87,8 @@ export const ADMIN_NAV: readonly AdminNavItem[] = [
   { key: "billing", href: "/admin/billing", label: "결제·구독", group: "매출", icon: "card", tag: "연동 전" },
   { key: "pricing", href: "/admin/pricing", label: "요금제·가격", group: "매출", icon: "tag" },
   { key: "business", href: "/admin/business", label: "사업자 정보·약관", group: "회사", icon: "building" },
+  // 검색 노출(SEO) — 네이버·구글 검색 결과와 카카오톡 공유에 보이는 제목·설명·그림(2026-10-19 사장님, lib/seo)
+  { key: "seo", href: "/admin/seo", label: "검색 노출(SEO)", group: "회사", icon: "search" },
   // 가격정책 확인 데이터 — 원가·마진이 들어 있어 출시 전에 지운다(사장님 2026-10-02 "이건 삭제될꺼다 라는거 까지",
   // 이름은 "보고용이라고 써주지 말고 가격정책 확인 데이터 식으로")
   { key: "report", href: "/admin/report", label: "가격정책 확인 데이터", group: "회사", icon: "info", tag: "지울 예정" },

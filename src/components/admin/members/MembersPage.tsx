@@ -26,6 +26,7 @@ import {
   type MembersListResponse,
 } from "@/lib/admin-members";
 import {
+  AdminLink,
   Badge,
   Banner,
   Button,
@@ -156,6 +157,15 @@ export function MembersPage() {
         title="회원"
         description="가입한 회원의 동화·토큰·부모 목소리를 봐요. 회원을 누르면 토큰 충전·환불과 만들기 기록이 있어요."
         meta={q.data ? `전체 ${groupDigits(q.data.total)}명` : undefined}
+        actions={
+          // 탈퇴한 회원·지운 동화의 90일 보관함(lib/retention)
+          <AdminLink
+            href="/admin/members/retention"
+            className="inline-flex min-h-10 items-center rounded-lg bg-white px-3 text-sm font-bold text-[#4e5968] shadow-[inset_0_0_0_1px_#e5e8eb]"
+          >
+            탈퇴·삭제 보관함 ›
+          </AdminLink>
+        }
       />
 
       <FilterBar onReset={filtered ? reset : undefined} resultText={q.data ? `${groupDigits(rows.length)}명` : undefined}>

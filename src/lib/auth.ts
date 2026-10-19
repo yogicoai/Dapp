@@ -190,6 +190,29 @@ export async function finishOAuthLogin(): Promise<AuthResult | null> {
   return { ok: true, profile };
 }
 
+/**
+ * 회원 탈퇴 — DB 함수(withdraw_me, supabase-withdrawal.sql)가 이 회원의 동화·가족 그림·기록을 90일 보관함에 담고 계정을 지운다.
+ * 계정이 없어지므로 끝나면 이 기기의 로그인·아이 정보도 지운다(로그아웃과 달리 서버 백업은 하지 않는다 — 올릴 계정이 없다).
+ * SQL 을 아직 안 돌린 DB 면 함수가 없다(PGRST202) — 그때는 '준비 중'이라고만 알린다.
+ */
+export async function withdrawAccount(confirm: string, reason: string | null): Promise<{ ok: true } | { ok: false; error: string }> {
+  const sb = getSupabase();
+  if (!sb) return { ok: false, error: "서버(Supabase)가 설정되지 않았어요." };
+  const { error } = await sb.rpc("withdraw_me", { p_confirm: confirm, p_reason: reason });
+  if (error) {
+    if (error.code === "PGRST202" || /could not find the function/i.test(error.message)) {
+      return { ok: false, error: "회원 탈퇴는 아직 준비 중이에요. 고객센터로 알려 주세요." };
+    }
+    return { ok: false, error: error.message || "탈퇴하지 못했어요. 잠시 뒤 다시 해 주세요." };
+  }
+  clearGuest();
+  clearChild();
+  rememberUid(null);
+  // 계정이 이미 없어 서버 로그아웃은 실패할 수 있다 — 이 기기의 세션만 지우면 된다.
+  await sb.auth.signOut({ scope: "local" }).catch(() => {});
+  return { ok: true };
+}
+
 export async function logOut(): Promise<void> {
   // 지우기 전에 현재 아이 정보를 계정 백업에 확실히 넣어둔다(재로그인 복구용).
   await backupChildBeforeLogout().catch(() => {});

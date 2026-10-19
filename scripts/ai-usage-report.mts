@@ -120,10 +120,16 @@ async function main(): Promise<void> {
 
   // 회원 이름(있으면)
   const names = new Map<string, string>();
+  // 관리자 계정(yogico 회사 마스터 · fe 개발 시험 계정) — 사장님 2026-10-19 "fe 에서 생기는 그림 비용은 관리자 단에서 안 보이게".
+  // 고객 몫과 개발·관리 몫을 나눠 보여 준다(스크립트로 그린 것도 개발 몫).
+  const masters = new Set<string>();
   const owners = [...new Set(rows.map((r) => r.owner).filter((o): o is string => Boolean(o)))];
   if (owners.length) {
-    const { data } = await db.from("profiles").select("id,username").in("id", owners);
-    for (const p of (data ?? []) as { id: string; username: string | null }[]) names.set(p.id, p.username ?? "");
+    const { data } = await db.from("profiles").select("id,username,is_master").in("id", owners);
+    for (const p of (data ?? []) as { id: string; username: string | null; is_master: boolean | null }[]) {
+      names.set(p.id, p.username ?? "");
+      if (p.is_master) masters.add(p.id);
+    }
   }
   const memberOf = (r: Row) => (r.owner ? names.get(r.owner) || r.owner.slice(0, 8) : "(스크립트)");
 
@@ -151,6 +157,12 @@ async function main(): Promise<void> {
   );
 
   if (rows.length) {
+    const isDev = (r: Row) => !r.owner || masters.has(r.owner);
+    const cust = zero();
+    const dev = zero();
+    for (const r of rows) add(isDev(r) ? dev : cust, r);
+    console.log(`  └ 고객 몫: ${cust.calls}번 · 그림 ${cust.images}장 · ${usdText(cust.usd)} · 약 ${won(cust.usd)}`);
+    console.log(`  └ 개발·관리 몫(fe·yogico·스크립트): ${dev.calls}번 · 그림 ${dev.images}장 · ${usdText(dev.usd)} · 약 ${won(dev.usd)}`);
     table("모델별", group(rows, (r) => `${r.provider} ${r.model}`));
     table("용도별 (image 그림 · check 검수 · head-check 머리 비율 · photo-card 사진 특징표)", group(rows, (r) => r.kind));
     table("부른 곳별 (vercel 운영 · local 개발 PC · script 스크립트)", group(rows, (r) => `${r.env} · ${r.route}`));

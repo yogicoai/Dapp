@@ -21,7 +21,7 @@ export async function legalMetadata(kind: LegalKind): Promise<Metadata> {
   const { current } = await getLegalPair(kind);
   const title = current?.title || LEGAL_DOCS[kind].title;
   return {
-    title: `${title} · ${APP_NAME}`,
+    title, // 뒤의 사이트 이름은 app/layout 제목 틀(lib/seo)이 붙인다
     // 시행 중인 판이 없으면 색인하지 않는다('준비 중' 화면이 검색 결과에 남지 않게).
     robots: current ? undefined : { index: false, follow: true },
   };

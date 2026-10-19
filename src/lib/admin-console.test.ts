@@ -57,8 +57,9 @@ describe("메뉴", () => {
       assert.ok(existsSync(at(`app${n.href}/page.tsx`)), `${n.href} 화면 파일이 없다`);
     }
   });
-  it("여덟 메뉴 · 세 묶음 · 결제엔 '연동 전', 가격정책 확인 데이터엔 '지울 예정' 꼬리표 · 공개 동화는 운영 묶음", () => {
-    assert.equal(ADMIN_NAV.length, 8);
+  it("아홉 메뉴(10-19 검색 노출 더함) · 세 묶음 · 결제엔 '연동 전', 가격정책 확인 데이터엔 '지울 예정' 꼬리표 · 공개 동화는 운영 묶음", () => {
+    assert.equal(ADMIN_NAV.length, 9);
+    assert.equal(ADMIN_NAV.find((n) => n.key === "seo")?.group, "회사");
     assert.equal(ADMIN_NAV.find((n) => n.key === "library")?.group, "운영");
     assert.deepEqual([...new Set(ADMIN_NAV.map((n) => n.group))], [...ADMIN_NAV_GROUPS]);
     assert.deepEqual(

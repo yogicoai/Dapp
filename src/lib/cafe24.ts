@@ -1,5 +1,6 @@
 import { Client, FTPError, type AccessOptions } from "basic-ftp";
 import { Readable } from "node:stream";
+import { isRetentionDir } from "./retention.ts";
 
 /**
  * cafe24 이미지호스팅에 파일을 FTP로 올리고 공개 URL을 돌려준다.
@@ -189,6 +190,57 @@ export async function listCafe24Files(remoteDir: string, timeoutMs = 12_000): Pr
     clearTimeout(timer);
     client.close();
   }
+}
+
+/** 폴더 지우기 결과 — gone: 지웠거나 원래 없었다. code: 못 지운 까닭(ftpErrorCode · bad-dir · closed) */
+export type RemoveDirResult = { dir: string; gone: boolean; code?: string };
+
+/**
+ * 폴더를 안의 파일·하위 폴더까지 통째로 지운다 — 90일 보관함 정리(api/admin/retention)만 쓴다.
+ * dirs 는 올릴 때와 같은 규칙(기준 폴더 아래 상대 경로, 예 "books/fe/my-abc" · "family/<회원 id>").
+ * 지워도 되는 모양(lib/retention isRetentionDir)이 아니면 건드리지 않는다(bad-dir) — 기준 폴더·명작 그림을 지우는 사고 막이.
+ * 한 세션으로 차례로 지운다. 없는 폴더는 지운 것으로 친다(550 이면 정말 없는지 한 번 더 본다).
+ * deadline(Date.now 기준)이 지나면 남은 폴더는 손대지 않고 closed 로 돌려준다 — 다음 정리 때 다시 한다.
+ */
+export async function removeCafe24Dirs(dirs: string[], deadline?: number): Promise<RemoveDirResult[]> {
+  const out: RemoveDirResult[] = [];
+  const left = () => dirs.filter((d) => !out.some((o) => o.dir === d));
+  const client = new Client(IDLE_MS);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  if (deadline !== undefined) timer = setTimeout(() => client.close(), Math.max(0, deadline - Date.now()));
+  try {
+    await client.access(accessOptions());
+    const home = (await client.pwd()).replace(/\/+$/, "");
+    for (const dir of dirs) {
+      if (!isRetentionDir(dir)) {
+        out.push({ dir, gone: false, code: "bad-dir" });
+        continue;
+      }
+      if (deadline !== undefined && Date.now() >= deadline) break;
+      const full = `${home}/${relPathOf(dir)}`;
+      try {
+        await client.removeDir(full);
+        out.push({ dir, gone: true });
+      } catch (e) {
+        if (!(e instanceof FTPError && e.code === 550)) throw e;
+        // 550 — 폴더가 없거나(이미 지움) 권한이 없다. 정말 없는지 목록으로 한 번 더 본다.
+        await client.cd(home);
+        const exists = await client.list(full).then(
+          () => true,
+          (err: unknown) => !(err instanceof FTPError && err.code === 550),
+        );
+        out.push(exists ? { dir, gone: false, code: "ftp-550" } : { dir, gone: true });
+      }
+    }
+  } catch (e) {
+    const code = ftpErrorCode(e);
+    for (const dir of left()) out.push({ dir, gone: false, code });
+  } finally {
+    clearTimeout(timer);
+    client.close();
+  }
+  for (const dir of left()) out.push({ dir, gone: false, code: "closed" });
+  return out;
 }
 
 /**

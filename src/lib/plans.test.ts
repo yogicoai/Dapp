@@ -44,6 +44,7 @@ import {
   won,
   yearlyDiscountPct,
 } from "./plans.ts";
+import { CONSENTS } from "./pay-demo.ts";
 
 const ymd = (d: Date | null) => (d ? [d.getFullYear(), d.getMonth() + 1, d.getDate()] : null);
 
@@ -346,6 +347,8 @@ describe("가족 목소리 숨김(2026-10-16 웹 오픈) — 닫혀 있으면 �
       ...CUSTOMER_CREDIT_USES.map((k) => CREDIT_USE_LABEL[k]),
       CREDIT_EXTRAS_TEXT,
       READ_ALOUD_VOICE,
+      // 결제 동의 시트의 글(크레딧·스타트팩·가족 패스) — 10-19 크레딧 줄에 남아 있던 것을 찾음
+      ...Object.values(plansOf(DEFAULT_PLAN_TERMS, DEFAULT_CREDIT_PACKS[0])).flatMap((p) => CONSENTS.flatMap((c) => [c.label(p), ...c.sheetBody(p)])),
     ];
     if (PARENT_VOICE_OPEN) {
       assert.ok(CUSTOMER_CREDIT_USES.includes("voice"));

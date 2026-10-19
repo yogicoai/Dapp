@@ -16,7 +16,9 @@ import {
   type Parents,
 } from "@/components/settings/AdultLooksEditor";
 import { FamilyCharacterRow } from "@/components/settings/FamilyBits";
+import { WithdrawSheet } from "@/components/settings/WithdrawSheet";
 import type { FamilyMember } from "@/lib/family";
+import { deleteBookConfirmText } from "@/lib/retention";
 import {
   loadSession,
   logOut,
@@ -424,6 +426,9 @@ export default function SettingsPage() {
     router.replace("/login");
   }
 
+  // 회원 탈퇴 시트(components/settings/WithdrawSheet) — 끝나면 계정이 없어지므로 로그인 화면으로(탈퇴했다는 한 줄과 함께).
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
+
   // 책장 노출 토글(숨기기/보이기) — 숨기면 책장에서 내려가고, 보이면 다시 뜬다.
   async function toggleHide(id: string, hidden: boolean) {
     await setMyBookHidden(id, hidden);
@@ -431,9 +436,9 @@ export default function SettingsPage() {
     flashSaved();
   }
 
-  // 영구 삭제 — 복원 불가라 경고를 띄우고 한 번 더 확인받는다.
+  // 삭제 — 책장에서 바로 내려가고, DB 가 90일 보관함에 담았다가 지운다(lib/retention · supabase-withdrawal.sql).
   async function purgeBook(id: string, title: string) {
-    if (!window.confirm(`⚠️ "${title}"을(를) 영구 삭제할까요?\n\n완전히 지워지며 복원할 수 없어요.`)) return;
+    if (!window.confirm(deleteBookConfirmText(title))) return;
     await deleteMyBook(id);
     setMyBooks((prev) => prev.filter((b) => b.id !== id));
     flashSaved();
@@ -1605,6 +1610,23 @@ export default function SettingsPage() {
                 회원·토큰, 결제·구독, 의견·오류, 요금제, 사업자 정보·약관을 한곳에서 관리해요.
               </p>
             </section>
+          )}
+
+          {/* 회원 탈퇴 — 눈에 띄지 않게 맨 아래 한 줄. 관리자 계정은 탈퇴하지 않는다(DB 도 막는다). */}
+          {!master && (
+            <button
+              type="button"
+              onClick={() => setWithdrawOpen(true)}
+              className="mt-2 inline-flex min-h-11 items-center self-center px-3 text-xs font-bold text-neutral-400 underline underline-offset-2"
+            >
+              회원 탈퇴
+            </button>
+          )}
+          {withdrawOpen && (
+            <WithdrawSheet
+              onClose={() => setWithdrawOpen(false)}
+              onDone={() => router.replace("/login?bye=1")}
+            />
           )}
           </>)}
 

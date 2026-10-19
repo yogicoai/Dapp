@@ -12,10 +12,10 @@
     "text": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요."
   },
   "folk/tortoise/seg-cast-p1-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"이 숲에서 나보다 빠른 동물은 아무도 없지!\""
+    "text": "\"이 숲에서 나보다 빠른 동물은 아무도 없을걸!\""
   },
   "folk/tortoise/seg-tc-arin-p1-2.mp3": {
     "voice": "tc-arin",
@@ -30,7 +30,7 @@
     "text": "토끼는 만나는 친구마다 자랑을 늘어놓았지요."
   },
   "folk/tortoise/say-p1-rabbit.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "나보다 빠른 동물은 없지! 다들 비켜 비켜~"
@@ -66,13 +66,13 @@
     "text": "어느 날, 토끼가 거북이를 보고 깔깔 웃었어요."
   },
   "folk/tortoise/seg-cast-p3-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"거북아, 너는 세상에서 제일가는 느림보야!\n그 걸음으로 어디를 간다는 거니?\""
   },
   "folk/tortoise/say-p3-rabbit.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "거북아, 넌 정말 느림보구나! 하하!"
@@ -97,24 +97,26 @@
   },
   "folk/tortoise/seg-cast-p4-1.mp3": {
     "voice": "tc-taeji",
-    "emotion": "tonedown",
+    "emotion": "happy",
     "intensity": 0.3,
-    "text": "\"토끼야, 그럼 나랑 달리기 시합을 해 볼래?\n저기 언덕 꼭대기의 큰 소나무까지 말이야.\""
+    "text": "\"토끼야, 그럼 나랑 달리기 시합을 해 볼래?\n저기 언덕 꼭대기의 큰 소나무까지 말이야.\"",
+    "tempo": 0.85
   },
   "folk/tortoise/say-p4-rabbit.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "뭐라고? 재미있겠는걸?"
   },
   "folk/tortoise/say-p4-tortoise.mp3": {
     "voice": "tc-taeji",
-    "emotion": "tonedown",
+    "emotion": "happy",
     "intensity": 0.3,
-    "text": "토끼야, 나랑 달리기 시합할래?"
+    "text": "토끼야, 나랑 달리기 시합할래?",
+    "tempo": 0.85
   },
   "folk/tortoise/seg-cast-p5-0.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"뭐라고? 네가 나랑 시합을 하자고?\""
@@ -132,7 +134,7 @@
     "text": "토끼는 배를 잡고 웃었지만, 곧 자신만만하게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요."
   },
   "folk/tortoise/say-p5-rabbit.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "네가 나랑 시합을 하자고? 하하, 좋아!"
@@ -156,10 +158,11 @@
     "text": "부엉이 할아버지가 심판을 맡았어요."
   },
   "folk/tortoise/seg-cast-p6-1.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-sheriffkim",
     "emotion": "toneup",
     "intensity": 0.45,
-    "text": "자아, 준비이… 시자악!"
+    "text": "자아… 준비이이… 시자아악!",
+    "tempo": 0.8
   },
   "folk/tortoise/seg-tc-arin-p6-2.mp3": {
     "voice": "tc-arin",
@@ -180,13 +183,14 @@
     "text": "나도 출발! 엉금엉금."
   },
   "folk/tortoise/say-p6-owl.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-sheriffkim",
     "emotion": "toneup",
     "intensity": 0.45,
-    "text": "자아, 준비이… 시자악!"
+    "text": "자아… 준비이이… 시자아악!",
+    "tempo": 0.8
   },
   "folk/tortoise/say-p6-rabbit.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "먼저 간다~! 씽씽!"
@@ -240,14 +244,14 @@
     "text": "한참을 달린 토끼가 뒤를 돌아보았어요.\n거북이는 점처럼 조그맣게 보였지요."
   },
   "folk/tortoise/seg-cast-p8-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "\"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\"",
     "tempo": 0.9
   },
   "folk/tortoise/say-p8-rabbit.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "하암~ 저 느림보 오려면 멀었네. 낮잠이나 자자.",
@@ -301,12 +305,6 @@
     "intensity": 0.4,
     "text": "쉿! 토끼를 깨우지 말고 살금살금…"
   },
-  "folk/tortoise/seg-cast-p12-0.mp3": {
-    "voice": "tc-hamchu",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"음냐음냐… 내가 일등이야…\""
-  },
   "folk/tortoise/seg-tc-arin-p12-1.mp3": {
     "voice": "tc-arin",
     "emotion": "normal",
@@ -320,7 +318,7 @@
     "text": "한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가 소스라치게 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!"
   },
   "folk/tortoise/say-p12-rabbit.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "으악! 안 돼! 큰일 났다!",
@@ -333,7 +331,7 @@
     "text": "조금만 더! 거의 다 왔어!"
   },
   "folk/tortoise/seg-cast-p13-0.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"안 돼!\""
@@ -351,7 +349,7 @@
     "text": "토끼는 있는 힘껏 달렸지만 이미 늦었어요. 거북이가 한 발 먼저 큰 소나무를 짚었답니다."
   },
   "folk/tortoise/seg-cast-p13-2.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-sheriffkim",
     "emotion": "toneup",
     "intensity": 0.45,
     "text": "\"거북이 승리!\""
@@ -369,13 +367,13 @@
     "text": "부엉이 할아버지가 크게 외쳤어요."
   },
   "folk/tortoise/say-p13-owl.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-sheriffkim",
     "emotion": "toneup",
     "intensity": 0.45,
     "text": "거북이 승리! 부엉부엉!"
   },
   "folk/tortoise/say-p13-rabbit.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "sad",
     "intensity": 0.35,
     "text": "아이고, 늦어 버렸네…"
@@ -383,7 +381,7 @@
   "folk/tortoise/say-p13-tortoise.mp3": {
     "voice": "tc-taeji",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "해냈다! 정말 기뻐!"
   },
   "folk/tortoise/seg-tc-arin-p14-0.mp3": {
@@ -399,16 +397,17 @@
     "text": "숲속 친구들이 우레 같은 박수를 보냈어요."
   },
   "folk/tortoise/seg-cast-p14-1.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "sad",
-    "intensity": 0.4,
+    "intensity": 0.35,
     "text": "\"거북아, 잘난 척해서 미안해.\""
   },
   "folk/tortoise/seg-cast-p14-2.mp3": {
     "voice": "tc-taeji",
     "emotion": "happy",
-    "intensity": 0.35,
-    "text": "\"괜찮아, 우리 좋은 친구가 되자!\""
+    "intensity": 0.3,
+    "text": "괜찮아… 우리, 좋은 친구가 되자.",
+    "tempo": 0.85
   },
   "folk/tortoise/seg-tc-arin-p14-3.mp3": {
     "voice": "tc-arin",
@@ -423,16 +422,17 @@
     "text": "느려도 포기하지 않는 마음이 결국 해낸답니다."
   },
   "folk/tortoise/say-p14-rabbit.mp3": {
-    "voice": "tc-hamchu",
+    "voice": "tc-siwoo",
     "emotion": "sad",
-    "intensity": 0.4,
+    "intensity": 0.35,
     "text": "거북아, 잘난 척해서 미안해."
   },
   "folk/tortoise/say-p14-tortoise.mp3": {
     "voice": "tc-taeji",
     "emotion": "happy",
-    "intensity": 0.35,
-    "text": "괜찮아! 우리 좋은 친구가 되자!"
+    "intensity": 0.3,
+    "text": "괜찮아… 우리, 좋은 친구가 되자.",
+    "tempo": 0.85
   },
   "folk/heungbu/seg-tc-kwonil-p1-0.mp3": {
     "voice": "tc-kwonil",
@@ -483,10 +483,11 @@
     "text": "아이들이 조르면, 흥부는 허허 웃으며 재미난 이야기를 들려주었답니다."
   },
   "folk/heungbu/seg-cast-p5-0.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-aeran",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"여보, 쌀독이 비었어요. 아이들이 사흘째 굶었는데…\""
+    "intensity": 0.55,
+    "text": "여보… 쌀독이 비었어요. 아이들이 사흘째 굶었는데…",
+    "tempo": 0.92
   },
   "folk/heungbu/seg-tc-kwonil-p5-1.mp3": {
     "voice": "tc-kwonil",
@@ -495,10 +496,11 @@
     "text": "흥부는 한참을 말없이 앉아 있었어요."
   },
   "folk/heungbu/seg-cast-p5-2.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "tonedown",
-    "intensity": 0.35,
-    "text": "\"내가 형님한테 한번 가 볼게요.\""
+    "voice": "tc-sungho",
+    "emotion": "sad",
+    "intensity": 0.45,
+    "text": "\"미안하구려. 형님한테 한번 가 볼게요.\"",
+    "tempo": 0.95
   },
   "folk/heungbu/seg-tc-kwonil-p5-3.mp3": {
     "voice": "tc-kwonil",
@@ -507,16 +509,17 @@
     "text": "흥부는 헌 두루마기를 걸치고 집을 나섰지요."
   },
   "folk/heungbu/seg-cast-p6-0.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"형수님, 밥 한 술만 주실 수 있을까요? 아이들이 사흘을 굶었어요.\""
+    "intensity": 0.45,
+    "text": "형수님… 밥 한 술만… 주실 수 있을까요? 아이들이 사흘째 아무것도 못 먹었어요.",
+    "tempo": 0.92
   },
   "folk/heungbu/seg-cast-p6-1.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-sookhee",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "\"흥, 너희한텐 밥 한 술도 아까워! 썩 물러가!\""
+    "text": "\"너희한테 줄 밥은 없어! 썩 물러가!\""
   },
   "folk/heungbu/seg-tc-kwonil-p6-2.mp3": {
     "voice": "tc-kwonil",
@@ -531,13 +534,13 @@
     "text": "흥부는 뺨이 얼얼했지만, 거기 붙은 밥알을 보고 눈이 번쩍 뜨였어요."
   },
   "folk/heungbu/seg-cast-p7-1.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.\""
+    "voice": "tc-sungho",
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "\"형수님… 이쪽 뺨도 한 번만 더 쳐 주시겠어요?\""
   },
   "folk/heungbu/seg-cast-p7-2.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-sookhee",
     "emotion": "angry",
     "intensity": 0.35,
     "text": "\"별 이상한 사람을 다 보겠네!\""
@@ -549,10 +552,11 @@
     "text": "형수는 반대쪽 뺨도 철썩 때리고는 문을 쾅 닫아 버렸지요."
   },
   "folk/heungbu/seg-cast-p7-4.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "tonedown",
-    "intensity": 0.35,
-    "text": "'이만하면 우리 아이들에게 저녁을 먹일 수 있겠어.'"
+    "voice": "tc-sungho",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "'이만하면 우리 아이들에게 저녁을 먹일 수 있겠어.'",
+    "tempo": 0.9
   },
   "folk/heungbu/seg-tc-kwonil-p7-5.mp3": {
     "voice": "tc-kwonil",
@@ -565,12 +569,6 @@
     "emotion": "normal",
     "intensity": null,
     "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요."
-  },
-  "folk/heungbu/seg-cast-p8-1.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "happy",
-    "intensity": 0.35,
-    "text": "\"어서 오렴, 제비들아.\""
   },
   "folk/heungbu/seg-tc-kwonil-p8-2.mp3": {
     "voice": "tc-kwonil",
@@ -615,10 +613,11 @@
     "text": "소리를 듣고 흥부가 한달음에 달려 나왔지요."
   },
   "folk/heungbu/seg-cast-p12-0.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "\"저런, 다리가 부러졌구나!\""
+    "text": "\"저런, 다리가 부러졌구나!\"",
+    "tempo": 0.9
   },
   "folk/heungbu/seg-tc-kwonil-p12-1.mp3": {
     "voice": "tc-kwonil",
@@ -627,10 +626,11 @@
     "text": "흥부는 아기 제비를 두 손으로 고이 감싸 안고,\n명주실로 다친 다리를 정성껏 싸매 주었답니다."
   },
   "folk/heungbu/seg-cast-p12-2.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "\"곧 나을 거야. 걱정하지 마렴.\""
+    "text": "\"곧 나을 거란다. 걱정하지 마렴.\"",
+    "tempo": 0.9
   },
   "folk/heungbu/seg-tc-kwonil-p13-0.mp3": {
     "voice": "tc-kwonil",
@@ -652,8 +652,8 @@
   },
   "folk/heungbu/seg-cast-p14-1.mp3": {
     "voice": "tc-sua",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.4,
     "text": "\"짹짹!\""
   },
   "folk/heungbu/seg-tc-kwonil-p14-2.mp3": {
@@ -662,23 +662,11 @@
     "intensity": null,
     "text": "제비는 박씨를 흥부 손바닥에 톡 떨어뜨렸답니다."
   },
-  "folk/heungbu/seg-cast-p15-0.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"이게 웬 박씨일까?\""
-  },
   "folk/heungbu/seg-tc-kwonil-p15-1.mp3": {
     "voice": "tc-kwonil",
     "emotion": "normal",
     "intensity": null,
     "text": "흥부는 박씨를 마당 한켠에 정성껏 심었어요."
-  },
-  "folk/heungbu/seg-cast-p15-2.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "happy",
-    "intensity": 0.35,
-    "text": "\"싹아, 얼른 나오렴!\""
   },
   "folk/heungbu/seg-tc-kwonil-p15-3.mp3": {
     "voice": "tc-kwonil",
@@ -686,20 +674,15 @@
     "intensity": null,
     "text": "박씨는 무럭무럭 자라 지붕 위까지 덩굴을 뻗었어요.\n가을이 되자 집채만 한 박이 주렁주렁 열렸지요."
   },
-  "folk/heungbu/seg-cast-p15-4.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"우아! 이 박으로 박죽이라도 끓여 먹자꾸나.\""
-  },
   "folk/heungbu/seg-cast-p16-0.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "\"슬근슬근, 톱질하세!\""
+    "text": "\"슬근슬근, 톱질하세!\"",
+    "tempo": 0.9
   },
   "folk/heungbu/seg-cast-p16-1.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-aeran",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "\"영차영차, 톱질하세!\""
@@ -729,10 +712,11 @@
     "text": "세 번째 박에서는 고운 비단과 번쩍번쩍한 새 기와집까지 나왔답니다."
   },
   "folk/heungbu/seg-cast-p17-3.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "happy",
     "intensity": 0.45,
-    "text": "\"제비야, 고맙다!\""
+    "text": "\"제비야, 고맙다!\"",
+    "tempo": 0.9
   },
   "folk/heungbu/seg-tc-kwonil-p17-4.mp3": {
     "voice": "tc-kwonil",
@@ -789,7 +773,7 @@
     "text": "\"슬근슬근, 톱질하세!\""
   },
   "folk/heungbu/seg-cast-p21-1.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-sookhee",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "\"어기여차, 톱질하세!\""
@@ -815,7 +799,7 @@
   "folk/heungbu/seg-cast-p22-0.mp3": {
     "voice": "tc-homun",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"이놈, 욕심쟁이 놀부야! 방망이 맛 좀 봐라!\""
   },
   "folk/heungbu/seg-tc-kwonil-p22-1.mp3": {
@@ -941,13 +925,13 @@
   "folk/hokburi/seg-cast-p4-1.mp3": {
     "voice": "tc-hakchul",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"아하! 저 볼록한 게 바로 노래 주머니로구나!\""
   },
   "folk/hokburi/say-p4-dokkaebi.mp3": {
     "voice": "tc-hakchul",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "영감! 그 고운 노래는 어디서 나오는 거냐?"
   },
   "folk/hokburi/seg-tc-jiyoon-p5-0.mp3": {
@@ -959,7 +943,7 @@
   "folk/hokburi/seg-cast-p5-1.mp3": {
     "voice": "tc-hakchul",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"옳지! 이 노래 주머니는 우리가 사 가마!\""
   },
   "folk/hokburi/seg-cast-p5-2.mp3": {
@@ -983,7 +967,7 @@
   "folk/hokburi/say-p5-dokkaebi.mp3": {
     "voice": "tc-hakchul",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "오오! 그 노래 주머니를 나에게 팔아라!"
   },
   "folk/hokburi/seg-tc-jiyoon-p6-0.mp3": {
@@ -999,10 +983,10 @@
     "text": "혹도 떼고 보물도 얻었구나!"
   },
   "folk/hokburi/seg-cast-p7-0.mp3": {
-    "voice": "tc-goat",
-    "emotion": "happy",
-    "intensity": 0.4,
-    "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야지!\""
+    "voice": "tc-byunghun",
+    "emotion": "toneup",
+    "intensity": 0.45,
+    "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야겠다!\""
   },
   "folk/hokburi/seg-tc-jiyoon-p7-1.mp3": {
     "voice": "tc-jiyoon",
@@ -1023,9 +1007,9 @@
     "text": "듣기 싫은 노랫소리가 삐걱삐걱 울렸어요."
   },
   "folk/hokburi/say-p7-greedy.mp3": {
-    "voice": "tc-goat",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-byunghun",
+    "emotion": "toneup",
+    "intensity": 0.35,
     "text": "애앰~ 애앰~ 노래야 나와라~"
   },
   "folk/hokburi/seg-tc-jiyoon-p8-0.mp3": {
@@ -1035,10 +1019,10 @@
     "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감은 얼른 제 혹을 가리키며 소리쳤지요."
   },
   "folk/hokburi/seg-cast-p8-1.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-byunghun",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"이 혹에서 고운 노래가 나온다오! 특별히 내가 보물과 바꿔 주겠소!\""
+    "text": "\"이 혹은 고운 노래가 나오는 특별한 노래 주머니인데, 내가 특별히 보물과 바꿔 주겠소!\""
   },
   "folk/hokburi/seg-tc-jiyoon-p8-2.mp3": {
     "voice": "tc-jiyoon",
@@ -1049,11 +1033,11 @@
   "folk/hokburi/seg-cast-p8-3.mp3": {
     "voice": "tc-hakchul",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"거짓말 마라! 저번에 가져간 혹에서는 아무 노래도 나오지 않았단 말이다!\""
   },
   "folk/hokburi/say-p8-greedy.mp3": {
-    "voice": "tc-goat",
+    "voice": "tc-byunghun",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "이 혹에서 고운 노래가 나온다오! 어서 보물을 주고 사 가시오!"
@@ -1061,14 +1045,14 @@
   "folk/hokburi/say-p8-dokkaebi.mp3": {
     "voice": "tc-hakchul",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "거짓말! 지난번 혹에서도 노래는 나오지 않았다!"
   },
   "folk/hokburi/seg-cast-p9-0.mp3": {
     "voice": "tc-hakchul",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "\"이 거짓말쟁이 영감 같으니! 이 혹도 가져가라!\""
+    "text": "\"이 거짓말쟁이 영감 같으니! 이 혹도 가져가거라!\""
   },
   "folk/hokburi/seg-tc-jiyoon-p9-1.mp3": {
     "voice": "tc-jiyoon",
@@ -1076,23 +1060,11 @@
     "intensity": null,
     "text": "도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은 엉엉 울며 집으로 돌아갔지요."
   },
-  "folk/hokburi/seg-cast-p9-2.mp3": {
-    "voice": "tc-goat",
-    "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…\""
-  },
   "folk/hokburi/say-p9-dokkaebi.mp3": {
     "voice": "tc-hakchul",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "이 거짓말쟁이 영감 같으니! 이 혹도 가져가라!"
-  },
-  "folk/hokburi/say-p9-greedy.mp3": {
-    "voice": "tc-goat",
-    "emotion": "sad",
-    "intensity": 0.4,
-    "text": "아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…"
+    "text": "이 거짓말쟁이 영감 같으니! 이 혹도 가져가거라!"
   },
   "folk/hokburi/seg-tc-jiyoon-p10-0.mp3": {
     "voice": "tc-jiyoon",
@@ -1137,16 +1109,16 @@
     "text": "새어머니는 팥쥐만 예뻐하고, 힘든 일은 모두 콩쥐에게 시켰어요."
   },
   "folk/kongjwi/seg-cast-p2-1.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-ladycho",
     "emotion": "angry",
     "intensity": 0.35,
     "text": "\"콩쥐야! 밭을 매고, 물도 길어 오너라!\""
   },
   "folk/kongjwi/seg-cast-p2-2.mp3": {
     "voice": "tc-gahee",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"엄마, 나는 그늘에서 좀 쉴래.\"",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "\"엄마, 나는 그늘에서 좀 쉴래요.\"",
     "tempo": 0.88
   },
   "folk/kongjwi/seg-tc-jungsoon-p2-3.mp3": {
@@ -1162,7 +1134,7 @@
     "text": "괜찮아. 열심히 하다 보면 좋은 일이 올 거야."
   },
   "folk/kongjwi/say-p2-stepmom.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-ladycho",
     "emotion": "angry",
     "intensity": 0.4,
     "text": "콩쥐야! 아직 멀었느냐!"
@@ -1208,10 +1180,10 @@
     "voice": "tc-najin",
     "emotion": "toneup",
     "intensity": 0.35,
-    "text": "\"저도 잔치에 가고 싶어요!\""
+    "text": "\"어머님, 저도 잔치에 가고 싶어요!\""
   },
   "folk/kongjwi/seg-cast-p4-2.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-ladycho",
     "emotion": "angry",
     "intensity": 0.35,
     "text": "\"흥! 그럼 밭을 다 매고, 이 항아리에 물도 가득 채워 놓고 오너라.\""
@@ -1220,10 +1192,10 @@
     "voice": "tc-najin",
     "emotion": "toneup",
     "intensity": 0.35,
-    "text": "저도 잔치에 가고 싶어요!"
+    "text": "어머님, 저도 잔치에 가고 싶어요!"
   },
   "folk/kongjwi/say-p4-stepmom.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-ladycho",
     "emotion": "angry",
     "intensity": 0.35,
     "text": "물을 다 채우기 전엔 못 온다!"
@@ -1238,7 +1210,7 @@
     "voice": "tc-gahee",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "\"엄마, 이걸로 주면 딱 좋겠는데.\"",
+    "text": "\"엄마, 이걸로 주면 딱 좋을 것 같은데요.\"",
     "tempo": 0.88
   },
   "folk/kongjwi/seg-tc-jungsoon-p5-2.mp3": {
@@ -1251,7 +1223,7 @@
     "voice": "tc-gahee",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "\"참, 언니한테는 저 볏단도 다 찧어 놓으라고 해. 잔치에 못 오게 집이나 지키라고 하고!\"",
+    "text": "\"참, 언니한테는 저 볏단도 다 찧어 놓고 오라고 해요. 잔치에 못 오게 말이에요.\"",
     "tempo": 0.88
   },
   "folk/kongjwi/seg-tc-jungsoon-p5-4.mp3": {
@@ -1264,11 +1236,11 @@
     "voice": "tc-gahee",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "엄마, 이걸로 주면 딱 좋겠는데.",
+    "text": "엄마, 이걸로 주면 딱 좋을 것 같은데요.",
     "tempo": 0.88
   },
   "folk/kongjwi/say-p5-stepmom.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-ladycho",
     "emotion": "happy",
     "intensity": 0.3,
     "text": "옳지, 그걸로 하렴."
@@ -1282,8 +1254,9 @@
   "folk/kongjwi/seg-cast-p6-1.mp3": {
     "voice": "tc-najin",
     "emotion": "sad",
-    "intensity": 0.35,
-    "text": "\"이 밭을 언제 다 매지…\""
+    "intensity": 0.4,
+    "text": "하아… 이 밭을 언제 다 매나…",
+    "tempo": 0.85
   },
   "folk/kongjwi/seg-tc-jungsoon-p6-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1294,8 +1267,9 @@
   "folk/kongjwi/say-p6-kongjwi.mp3": {
     "voice": "tc-najin",
     "emotion": "sad",
-    "intensity": 0.35,
-    "text": "이 밭을 언제 다 매지…"
+    "intensity": 0.4,
+    "text": "하아… 이 밭을 언제 다 매나…",
+    "tempo": 0.85
   },
   "folk/kongjwi/say-p6-ox.mp3": {
     "voice": "tc-monggun",
@@ -1354,8 +1328,9 @@
   "folk/kongjwi/seg-cast-p9-1.mp3": {
     "voice": "tc-najin",
     "emotion": "sad",
-    "intensity": 0.3,
-    "text": "\"이걸 다 찧으려면 밤을 새워도 모자랄 텐데…\""
+    "intensity": 0.4,
+    "text": "하아… 이걸 다 찧으려면 밤을 새워도 모자랄 텐데…",
+    "tempo": 0.85
   },
   "folk/kongjwi/seg-tc-jungsoon-p9-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1378,8 +1353,9 @@
   "folk/kongjwi/say-p9-kongjwi.mp3": {
     "voice": "tc-najin",
     "emotion": "sad",
-    "intensity": 0.3,
-    "text": "이걸 다 찧으려면 밤을 새워도…"
+    "intensity": 0.4,
+    "text": "하아… 이걸 다 찧으려면 밤을 새워도 모자랄 텐데…",
+    "tempo": 0.85
   },
   "folk/kongjwi/say-p9-sparrow.mp3": {
     "voice": "tc-sua",
@@ -1396,8 +1372,9 @@
   "folk/kongjwi/seg-cast-p10-1.mp3": {
     "voice": "tc-najin",
     "emotion": "sad",
-    "intensity": 0.3,
-    "text": "\"…다 해냈는데.\""
+    "intensity": 0.4,
+    "text": "\"…다 해냈는데.\"",
+    "tempo": 0.9
   },
   "folk/kongjwi/seg-tc-jungsoon-p10-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1408,8 +1385,9 @@
   "folk/kongjwi/say-p10-kongjwi.mp3": {
     "voice": "tc-najin",
     "emotion": "sad",
-    "intensity": 0.3,
-    "text": "…다 해냈는데."
+    "intensity": 0.4,
+    "text": "…다 해냈는데.",
+    "tempo": 0.9
   },
   "folk/kongjwi/seg-tc-jungsoon-p11-0.mp3": {
     "voice": "tc-jungsoon",
@@ -1418,10 +1396,10 @@
     "text": "그때 마당이 환해지더니 하늘에서 선녀님이 사뿐히 내려왔어요."
   },
   "folk/kongjwi/seg-cast-p11-1.mp3": {
-    "voice": "tc-jiyoung",
+    "voice": "tc-gaeul",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "\"네가 나누어 준 마음을 하늘이 다 보고 있었단다.\""
+    "text": "\"너의 착한 마음을 하늘이 다 보고 있었단다.\""
   },
   "folk/kongjwi/seg-tc-jungsoon-p11-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1430,22 +1408,22 @@
     "text": "선녀님은 고운 비단 치마와 반짝이는 꽃신 한 켤레를 건네주었지요."
   },
   "folk/kongjwi/seg-cast-p11-3.mp3": {
-    "voice": "tc-jiyoung",
+    "voice": "tc-gaeul",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "\"어서 가렴. 오늘은 네 날이란다.\""
+    "text": "\"어서 가렴.\""
   },
   "folk/kongjwi/say-p11-kongjwi.mp3": {
     "voice": "tc-najin",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "우와, 예쁜 꽃신! 감사합니다!"
   },
   "folk/kongjwi/say-p11-fairy.mp3": {
-    "voice": "tc-jiyoung",
+    "voice": "tc-gaeul",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "어서 가렴. 오늘은 네 날이란다."
+    "text": "어서 가렴."
   },
   "folk/kongjwi/seg-tc-jungsoon-p12-0.mp3": {
     "voice": "tc-jungsoon",
@@ -1455,8 +1433,8 @@
   },
   "folk/kongjwi/seg-cast-p12-1.mp3": {
     "voice": "tc-najin",
-    "emotion": "tonedown",
-    "intensity": 0.35,
+    "emotion": "whisper",
+    "intensity": 0.4,
     "text": "'내가… 여기 있어도 되는 걸까?'"
   },
   "folk/kongjwi/seg-tc-jungsoon-p12-2.mp3": {
@@ -1467,8 +1445,8 @@
   },
   "folk/kongjwi/say-p12-kongjwi.mp3": {
     "voice": "tc-najin",
-    "emotion": "tonedown",
-    "intensity": 0.35,
+    "emotion": "whisper",
+    "intensity": 0.4,
     "text": "내가… 여기 있어도 되는 걸까?"
   },
   "folk/kongjwi/seg-tc-jungsoon-p13-0.mp3": {
@@ -1478,10 +1456,10 @@
     "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았지요."
   },
   "folk/kongjwi/seg-cast-p13-1.mp3": {
-    "voice": "tc-tian",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"저 아가씨는 어느 집 사람일까?\""
+    "voice": "tc-taewoo",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "\"저 아가씨는 어느 집 사람이지?\""
   },
   "folk/kongjwi/seg-tc-jungsoon-p13-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1490,17 +1468,18 @@
     "text": "원님이 다가가려는데, 콩쥐는 벌써 자리에서 일어서고 있었어요."
   },
   "folk/kongjwi/say-p13-magistrate.mp3": {
-    "voice": "tc-tian",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "저 아가씨는 어느 집 사람일까?"
+    "voice": "tc-taewoo",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "저 아가씨는 어느 집 사람이지?"
   },
   "folk/kongjwi/seg-cast-p14-0.mp3": {
     "voice": "tc-najin",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "'어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가 있어야 해!'",
-    "tempo": 1.1
+    "intensity": 0.6,
+    "text": "앗! 어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가야 해!",
+    "tempo": 1.1,
+    "pitch": 1
   },
   "folk/kongjwi/seg-tc-jungsoon-p14-1.mp3": {
     "voice": "tc-jungsoon",
@@ -1511,8 +1490,9 @@
   "folk/kongjwi/say-p14-kongjwi.mp3": {
     "voice": "tc-najin",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "아앗! 내 꽃신!"
+    "intensity": 0.55,
+    "text": "아앗! 내 꽃신!",
+    "tempo": 1.1
   },
   "folk/kongjwi/seg-tc-jungsoon-p15-0.mp3": {
     "voice": "tc-jungsoon",
@@ -1521,15 +1501,16 @@
     "text": "콩쥐를 뒤따라 나온 원님은\n개울가에서 반짝이는 꽃신 한 짝을 발견했어요."
   },
   "folk/kongjwi/seg-cast-p15-1.mp3": {
-    "voice": "tc-tian",
-    "emotion": "happy",
-    "intensity": 0.3,
-    "text": "'이 신을 돌려주러 가면, 그 아가씨를 다시 만날 수 있겠구나.'"
+    "voice": "tc-taewoo",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "이 꽃신을 돌려주러 가면… 그 아가씨를 다시 만날 수 있겠지.",
+    "tempo": 0.95
   },
   "folk/kongjwi/say-p15-magistrate.mp3": {
-    "voice": "tc-tian",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-taewoo",
+    "emotion": "toneup",
+    "intensity": 0.35,
     "text": "이 꽃신의 주인을 꼭 찾아내야겠다!"
   },
   "folk/kongjwi/seg-tc-jungsoon-p16-0.mp3": {
@@ -1539,7 +1520,7 @@
     "text": "다음 날, 원님은 꽃신을 들고 집집마다 주인을 찾아다녔어요."
   },
   "folk/kongjwi/seg-cast-p16-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-taewoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이 꽃신의 주인을 찾고 있습니다.\""
@@ -1551,7 +1532,7 @@
     "text": "팥쥐가 냉큼 발을 들이밀었지만,\n아무리 용을 써도 발이 들어가지 않았답니다."
   },
   "folk/kongjwi/say-p16-magistrate.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-taewoo",
     "emotion": "normal",
     "intensity": null,
     "text": "이 꽃신의 주인을 찾습니다!"
@@ -1576,16 +1557,18 @@
     "text": "새어머니는 콩쥐를 헛간으로 밀어 넣고 문을 닫아 버렸어요.\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했지요."
   },
   "folk/kongjwi/seg-cast-p17-2.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-ladycho",
     "emotion": "toneup",
-    "intensity": 0.35,
-    "text": "\"우리 집 딸은 팥쥐 하나뿐입니다!\""
+    "intensity": 0.4,
+    "text": "\"우리 집 딸은 팥쥐 하나뿐입니다!\"",
+    "tempo": 1.1
   },
   "folk/kongjwi/say-p17-stepmom.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-ladycho",
     "emotion": "toneup",
-    "intensity": 0.35,
-    "text": "우리 집 딸은 팥쥐 하나뿐입니다!"
+    "intensity": 0.4,
+    "text": "우리 집 딸은 팥쥐 하나뿐입니다!",
+    "tempo": 1.1
   },
   "folk/kongjwi/say-p17-sparrow.mp3": {
     "voice": "tc-sua",
@@ -1612,10 +1595,10 @@
     "text": "콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요!"
   },
   "folk/kongjwi/seg-cast-p18-3.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-taewoo",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!\""
+    "text": "\"잔치에서 뵀던 그 아가씨가 당신이군요. 드디어 찾았습니다!\""
   },
   "folk/kongjwi/say-p18-kongjwi.mp3": {
     "voice": "tc-najin",
@@ -1624,7 +1607,7 @@
     "text": "저… 저도 신어 봐도 될까요?"
   },
   "folk/kongjwi/say-p18-magistrate.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-taewoo",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "드디어 찾았습니다!"
@@ -1636,10 +1619,10 @@
     "text": "원님은 콩쥐에게 손을 내밀었어요."
   },
   "folk/kongjwi/seg-cast-p19-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-taewoo",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "\"이제 저와 함께 가시겠습니까?\""
+    "text": "\"저와 함께 가실래요?\""
   },
   "folk/kongjwi/seg-tc-jungsoon-p19-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1648,10 +1631,10 @@
     "text": "콩쥐는 헛간 문턱을 넘어 마당으로 걸어 나왔지요.\n새어머니와 팥쥐는 아무 말도 하지 못했답니다."
   },
   "folk/kongjwi/say-p19-magistrate.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-taewoo",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "이제 저와 함께 가시겠습니까?"
+    "text": "저와 함께 가실래요?"
   },
   "folk/kongjwi/seg-tc-jungsoon-p20-0.mp3": {
     "voice": "tc-jungsoon",
@@ -1660,10 +1643,11 @@
     "text": "얼마 뒤, 원님과 콩쥐는 온 마을의 축복 속에 혼례를 올렸어요.\n새어머니와 팥쥐는 잔칫날 마당 끝에 서서 고개를 들지 못했지요."
   },
   "folk/kongjwi/seg-cast-p20-1.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-ladycho",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "\"콩쥐야… 그동안 미안했다.\""
+    "text": "\"콩쥐야… 그동안 미안했다.\"",
+    "tempo": 0.9
   },
   "folk/kongjwi/seg-tc-jungsoon-p20-2.mp3": {
     "voice": "tc-jungsoon",
@@ -1673,10 +1657,10 @@
   },
   "folk/kongjwi/seg-cast-p20-3.mp3": {
     "voice": "tc-gahee",
-    "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "\"언니… 나도 미안해.\"",
-    "tempo": 0.88
+    "emotion": "sad",
+    "intensity": 0.5,
+    "text": "언니… 나도… 미안해.",
+    "tempo": 0.85
   },
   "folk/kongjwi/say-p20-kongjwi.mp3": {
     "voice": "tc-najin",
@@ -1685,17 +1669,18 @@
     "text": "들어와서 같이 드세요. 오늘은 잔칫날인걸요."
   },
   "folk/kongjwi/say-p20-stepmom.mp3": {
-    "voice": "tc-sookhee",
+    "voice": "tc-ladycho",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "콩쥐야… 그동안 미안했다."
+    "text": "콩쥐야… 그동안 미안했다.",
+    "tempo": 0.9
   },
   "folk/kongjwi/say-p20-patjwi.mp3": {
     "voice": "tc-gahee",
-    "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "언니, 나도 미안해…",
-    "tempo": 0.88
+    "emotion": "sad",
+    "intensity": 0.5,
+    "text": "언니… 나도… 미안해.",
+    "tempo": 0.85
   },
   "folk/haedal/seg-tc-jungsoon-p1-0.mp3": {
     "voice": "tc-jungsoon",
@@ -1704,10 +1689,11 @@
     "text": "옛날 깊은 산골 오두막에 어머니와 오누이가 살았어요.\n어머니는 고개 너머 마을에서 떡을 팔아\n두 아이를 정성껏 키웠답니다."
   },
   "folk/haedal/seg-cast-p2-0.mp3": {
-    "voice": "tc-gaeul",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 된다!\""
+    "voice": "tc-aeran",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "엄마 금방 다녀올게. 문 꼭 잠그고… 엄마 목소리가 아니면 절대 열어 주면 안 돼요.",
+    "tempo": 0.92
   },
   "folk/haedal/seg-tc-jungsoon-p2-1.mp3": {
     "voice": "tc-jungsoon",
@@ -1716,9 +1702,9 @@
     "text": "어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요."
   },
   "folk/haedal/say-p2-mother.mp3": {
-    "voice": "tc-gaeul",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-aeran",
+    "emotion": "tonedown",
+    "intensity": 0.35,
     "text": "문 꼭 잠그고 있으렴!"
   },
   "folk/haedal/seg-tc-jungsoon-p3-0.mp3": {
@@ -1728,10 +1714,11 @@
     "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌지요."
   },
   "folk/haedal/seg-cast-p3-1.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-haeun",
     "emotion": "sad",
-    "intensity": 0.3,
-    "text": "\"오빠, 엄마 왜 이렇게 안 오지?\""
+    "intensity": 0.4,
+    "text": "오빠… 엄마 왜 이렇게 안 오는 걸까?",
+    "tempo": 0.9
   },
   "folk/haedal/seg-cast-p3-2.mp3": {
     "voice": "tc-siwoo",
@@ -1746,10 +1733,11 @@
     "text": "누이는 오빠 옆에 바짝 붙어 앉았답니다."
   },
   "folk/haedal/say-p3-sister.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-haeun",
     "emotion": "sad",
-    "intensity": 0.3,
-    "text": "오빠, 엄마 왜 이렇게 안 오지?"
+    "intensity": 0.4,
+    "text": "오빠… 엄마 왜 이렇게 안 오는 걸까?",
+    "tempo": 0.9
   },
   "folk/haedal/say-p3-brother.mp3": {
     "voice": "tc-siwoo",
@@ -1806,7 +1794,7 @@
     "text": "떡 하나 주면 안 잡아먹지!"
   },
   "folk/haedal/say-p5-mother.mp3": {
-    "voice": "tc-gaeul",
+    "voice": "tc-aeran",
     "emotion": "sad",
     "intensity": 0.35,
     "text": "이것도 가져가렴… 우리 아이들이 기다린단다."
@@ -1818,15 +1806,15 @@
     "text": "마지막 고개에서 그만 떡이 다 떨어지고 말았어요."
   },
   "folk/haedal/seg-cast-p6-1.mp3": {
-    "voice": "tc-gaeul",
+    "voice": "tc-aeran",
     "emotion": "sad",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"이제 더 이상 줄 떡이 없어요…\""
   },
   "folk/haedal/seg-cast-p6-2.mp3": {
     "voice": "tc-homun",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"그럼 널 잡아먹어야겠다!\""
   },
   "folk/haedal/seg-tc-jungsoon-p6-3.mp3": {
@@ -1836,15 +1824,15 @@
     "text": "그때 호랑이 눈에 어머니의 옷이 들어왔어요."
   },
   "folk/haedal/say-p6-mother.mp3": {
-    "voice": "tc-gaeul",
+    "voice": "tc-aeran",
     "emotion": "sad",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "이제 더 이상 줄 떡이 없어요…"
   },
   "folk/haedal/say-p6-tiger.mp3": {
     "voice": "tc-homun",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "그럼 널 잡아먹어야겠다!"
   },
   "folk/haedal/seg-tc-jungsoon-p7-0.mp3": {
@@ -1854,15 +1842,16 @@
     "text": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요.\n똑똑똑."
   },
   "folk/haedal/seg-cast-p7-1.mp3": {
-    "voice": "tc-homun",
-    "emotion": "tonedown",
+    "voice": "tc-hades",
+    "emotion": "whisper",
     "intensity": 0.4,
-    "text": "\"얘들아, 엄마 왔단다. 문 열어 주렴.\""
+    "text": "얘들아… 엄마 왔단다. 문 열어 주렴…",
+    "tempo": 0.9
   },
   "folk/haedal/seg-cast-p7-2.mp3": {
     "voice": "tc-siwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "whisper",
+    "intensity": 0.35,
     "text": "\"어? 우리 엄마 목소리가 아닌데?\""
   },
   "folk/haedal/seg-tc-jungsoon-p7-3.mp3": {
@@ -1871,35 +1860,24 @@
     "intensity": null,
     "text": "오누이는 고개를 갸웃했지요."
   },
-  "folk/haedal/say-p7-tiger.mp3": {
-    "voice": "tc-homun",
-    "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "얘들아, 엄마 왔단다~"
-  },
   "folk/haedal/say-p7-brother.mp3": {
     "voice": "tc-siwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "whisper",
+    "intensity": 0.35,
     "text": "어? 우리 엄마 목소리가 아닌데?"
   },
   "folk/haedal/seg-cast-p8-0.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"그럼 문틈으로 손을 보여 주세요.\""
+    "voice": "tc-hades",
+    "emotion": "whisper",
+    "intensity": 0.4,
+    "text": "콜록콜록… 엄마가 감기에 걸려서 목소리가 이렇단다. 어서 문 열어 주렴…",
+    "tempo": 0.9
   },
   "folk/haedal/seg-tc-jungsoon-p8-1.mp3": {
     "voice": "tc-jungsoon",
     "emotion": "normal",
     "intensity": null,
     "text": "문틈으로 쑥 들어온 손은 털이 북슬북슬!"
-  },
-  "folk/haedal/seg-cast-p8-2.mp3": {
-    "voice": "tc-arin",
-    "emotion": "toneup",
-    "intensity": 0.45,
-    "text": "\"호, 호랑이다!\""
   },
   "folk/haedal/seg-tc-jungsoon-p8-3.mp3": {
     "voice": "tc-jungsoon",
@@ -1909,15 +1887,17 @@
   },
   "folk/haedal/say-p8-brother.mp3": {
     "voice": "tc-siwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.35,
     "text": "그럼 문틈으로 손을 보여 주세요."
   },
   "folk/haedal/say-p8-sister.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-haeun",
     "emotion": "toneup",
-    "intensity": 0.45,
-    "text": "호, 호랑이다!"
+    "intensity": 0.55,
+    "text": "헉! 오, 오빠! 호, 호랑이인 것 같아! 어떡해!",
+    "tempo": 1.05,
+    "pitch": 1
   },
   "folk/haedal/seg-tc-jungsoon-p9-0.mp3": {
     "voice": "tc-jungsoon",
@@ -1932,7 +1912,7 @@
     "text": "쉿… 뒷문으로 나가자."
   },
   "folk/haedal/say-p9-sister.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-haeun",
     "emotion": "whisper",
     "intensity": 0.4,
     "text": "오빠, 무서워…"
@@ -1968,9 +1948,9 @@
     "text": "옳지, 너희 우물 속에 숨었구나!"
   },
   "folk/haedal/say-p10-sister.mp3": {
-    "voice": "tc-arin",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-haeun",
+    "emotion": "happy",
+    "intensity": 0.4,
     "text": "바보 호랑이!"
   },
   "folk/haedal/seg-tc-jungsoon-p11-0.mp3": {
@@ -1995,7 +1975,7 @@
     "voice": "tc-siwoo",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "\"손에 참기름을 바르고 올라왔지요!\""
+    "text": "\"손에 참기름을 바르고 올라왔어요!\""
   },
   "folk/haedal/say-p11-brother.mp3": {
     "voice": "tc-siwoo",
@@ -2010,22 +1990,16 @@
     "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요."
   },
   "folk/haedal/seg-cast-p12-1.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-haeun",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"바보 호랑이! 도끼로 찍으면서 올라와야지!\""
   },
   "folk/haedal/say-p12-sister.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-haeun",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "바보 호랑이! 도끼로 찍으면서 올라와야지!"
-  },
-  "folk/haedal/say-p12-brother.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "앗, 안 돼!"
   },
   "folk/haedal/seg-tc-jungsoon-p13-0.mp3": {
     "voice": "tc-jungsoon",
@@ -2034,15 +2008,15 @@
     "text": "쿵! 쿵! 호랑이가 도끼로 나무를 찍으며 올라오기 시작했어요.\n나무가 휘청휘청 흔들렸지요.\n오누이는 더 올라갈 데가 없었어요."
   },
   "folk/haedal/seg-cast-p13-1.mp3": {
-    "voice": "tc-arin",
-    "emotion": "sad",
-    "intensity": 0.4,
+    "voice": "tc-haeun",
+    "emotion": "toneup",
+    "intensity": 0.45,
     "text": "\"오빠, 어떡해!\""
   },
   "folk/haedal/say-p13-sister.mp3": {
-    "voice": "tc-arin",
-    "emotion": "sad",
-    "intensity": 0.4,
+    "voice": "tc-haeun",
+    "emotion": "toneup",
+    "intensity": 0.45,
     "text": "오빠, 어떡해!"
   },
   "folk/haedal/say-p13-tiger.mp3": {
@@ -2060,17 +2034,17 @@
   "folk/haedal/seg-cast-p14-1.mp3": {
     "voice": "tc-siwoo",
     "emotion": "sad",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"하느님, 저희를 살려 주시려거든,\n튼튼한 동아줄을 내려 주세요!\""
   },
   "folk/haedal/say-p14-brother.mp3": {
     "voice": "tc-siwoo",
     "emotion": "sad",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "하느님, 동아줄을 내려 주세요!"
   },
   "folk/haedal/say-p14-sister.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-haeun",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "저희를 살려 주세요!"
@@ -2084,13 +2058,13 @@
   "folk/haedal/seg-cast-p15-1.mp3": {
     "voice": "tc-homun",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"하느님, 저도요! 저한테도 동아줄을 내려 주세요!\""
   },
   "folk/haedal/say-p15-tiger.mp3": {
     "voice": "tc-homun",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "동아줄! 동아줄 내놔라!"
   },
   "folk/haedal/seg-tc-jungsoon-p16-0.mp3": {
@@ -2162,10 +2136,11 @@
     "text": "임금님이 손을 들자 어머니가 사뿐히 내려왔어요."
   },
   "folk/haedal/seg-cast-p18-1.mp3": {
-    "voice": "tc-gaeul",
+    "voice": "tc-aeran",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"우리 아가들… 얼마나 무서웠니.\""
+    "intensity": 0.45,
+    "text": "\"우리 아가들… 얼마나 무서웠니.\"",
+    "tempo": 0.9
   },
   "folk/haedal/seg-tc-jungsoon-p18-2.mp3": {
     "voice": "tc-jungsoon",
@@ -2174,10 +2149,11 @@
     "text": "셋은 오래오래 서로를 꼭 안았답니다."
   },
   "folk/haedal/say-p18-mother.mp3": {
-    "voice": "tc-gaeul",
+    "voice": "tc-aeran",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "우리 아가들… 얼마나 무서웠니."
+    "intensity": 0.45,
+    "text": "우리 아가들… 얼마나 무서웠니.",
+    "tempo": 0.9
   },
   "folk/haedal/say-p18-sister.mp3": {
     "voice": "tc-arin",
@@ -2205,7 +2181,7 @@
     "text": "처음엔 오빠가 해님, 동생이 달님이 되기로 했어요.\n그런데 동생이 소곤소곤."
   },
   "folk/haedal/seg-cast-p19-3.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-haeun",
     "emotion": "whisper",
     "intensity": 0.4,
     "text": "\"오빠… 나 깜깜한 밤은 무서워.\""
@@ -2230,7 +2206,7 @@
     "tempo": 0.9
   },
   "folk/haedal/say-p19-sister.mp3": {
-    "voice": "tc-arin",
+    "voice": "tc-haeun",
     "emotion": "whisper",
     "intensity": 0.4,
     "text": "오빠… 나 깜깜한 밤은 무서워."
@@ -2254,18 +2230,18 @@
     "text": "옛날 어느 산골에 부지런한 나무꾼이 살았어요.\n나무꾼은 홀어머니를 모시고\n날마다 산에 올라 열심히 나무를 했답니다."
   },
   "folk/goldaxe/say-p1-woodcutter.mp3": {
-    "voice": "tc-heejoon",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-seojoon",
+    "emotion": "happy",
+    "intensity": 0.3,
     "text": "오늘도 나무하러 갑니다!",
-    "tempo": 0.88
+    "tempo": 0.83
   },
   "folk/goldaxe/seg-cast-p2-0.mp3": {
-    "voice": "tc-heejoon",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"오늘도 부지런히 나무를 해서, 어머니 약값을 벌어야지!\"",
-    "tempo": 0.88
+    "voice": "tc-seojoon",
+    "emotion": "toneup",
+    "intensity": 0.3,
+    "text": "\"오늘도 부지런히 나무를 해 어머님 약값을 벌어야겠다!\"",
+    "tempo": 0.83
   },
   "folk/goldaxe/seg-tc-hosun-p2-1.mp3": {
     "voice": "tc-hosun",
@@ -2274,11 +2250,11 @@
     "text": "나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만,\n나무꾼은 도끼를 보물처럼 아꼈어요."
   },
   "folk/goldaxe/say-p2-woodcutter.mp3": {
-    "voice": "tc-heejoon",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "오늘도 부지런히 나무를 해서, 어머니 약값을 벌어야지!",
-    "tempo": 0.88
+    "voice": "tc-seojoon",
+    "emotion": "toneup",
+    "intensity": 0.3,
+    "text": "오늘도 부지런히 나무를 해 어머님 약값을 벌어야겠다!",
+    "tempo": 0.83
   },
   "folk/goldaxe/seg-tc-hosun-p3-0.mp3": {
     "voice": "tc-hosun",
@@ -2287,11 +2263,11 @@
     "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았지요."
   },
   "folk/goldaxe/say-p3-woodcutter.mp3": {
-    "voice": "tc-heejoon",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-seojoon",
+    "emotion": "toneup",
+    "intensity": 0.3,
     "text": "이 나무만 하면 오늘 몫은 끝이다!",
-    "tempo": 0.88
+    "tempo": 0.83
   },
   "folk/goldaxe/seg-tc-hosun-p4-0.mp3": {
     "voice": "tc-hosun",
@@ -2300,18 +2276,18 @@
     "text": "풍덩! 도끼가 깊은 연못 속으로 가라앉고 말았어요."
   },
   "folk/goldaxe/seg-cast-p4-1.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "sad",
-    "intensity": 0.45,
-    "text": "\"아이고, 하나뿐인 내 도끼!\"",
-    "tempo": 0.88
+    "intensity": 0.6,
+    "text": "아이고… 하나뿐인… 내 도끼…!",
+    "tempo": 0.85
   },
   "folk/goldaxe/seg-cast-p4-2.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"이제 어머니 약값은 어떻게 벌지…\"",
-    "tempo": 0.88
+    "intensity": 0.5,
+    "text": "하아… 이제 어머니 약값은 어떻게 벌지…",
+    "tempo": 0.85
   },
   "folk/goldaxe/seg-tc-hosun-p4-3.mp3": {
     "voice": "tc-hosun",
@@ -2320,11 +2296,11 @@
     "text": "나무꾼은 연못가에 주저앉아 엉엉 울었답니다."
   },
   "folk/goldaxe/say-p4-woodcutter.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "이제 어머니 약값은 어떻게 벌지…",
-    "tempo": 0.88
+    "intensity": 0.5,
+    "text": "하아… 이제 어머니 약값은 어떻게 벌지…",
+    "tempo": 0.85
   },
   "folk/goldaxe/seg-tc-hosun-p5-0.mp3": {
     "voice": "tc-hosun",
@@ -2345,7 +2321,7 @@
     "text": "나무꾼아, 왜 그리 슬피 우느냐?"
   },
   "folk/goldaxe/seg-cast-p6-0.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서,\n어머니 약도 지어 드릴 수가 없어요.\"",
@@ -2358,11 +2334,11 @@
     "text": "산신령님은 고개를 끄덕이더니 연못 속으로 사라졌지요."
   },
   "folk/goldaxe/say-p6-woodcutter.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "어머니 약도 지어 드릴 수가 없어요.",
-    "tempo": 0.88
+    "tempo": 0.83
   },
   "folk/goldaxe/seg-tc-hosun-p7-0.mp3": {
     "voice": "tc-hosun",
@@ -2372,16 +2348,16 @@
   },
   "folk/goldaxe/seg-cast-p7-1.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"이 금도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p7-2.mp3": {
-    "voice": "tc-heejoon",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"아니요, 제 도끼가 아닙니다.\"",
-    "tempo": 0.88
+    "voice": "tc-seojoon",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "\"아닙니다, 제 도끼가 아닙니다.\"",
+    "tempo": 0.83
   },
   "folk/goldaxe/seg-tc-hosun-p7-3.mp3": {
     "voice": "tc-hosun",
@@ -2391,16 +2367,16 @@
   },
   "folk/goldaxe/say-p7-spirit.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "이 금도끼가 네 도끼냐?"
   },
   "folk/goldaxe/say-p7-woodcutter.mp3": {
-    "voice": "tc-heejoon",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "아니요, 제 도끼가 아닙니다.",
-    "tempo": 0.88
+    "voice": "tc-seojoon",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "아닙니다, 제 도끼가 아닙니다.",
+    "tempo": 0.83
   },
   "folk/goldaxe/seg-tc-hosun-p8-0.mp3": {
     "voice": "tc-hosun",
@@ -2410,16 +2386,16 @@
   },
   "folk/goldaxe/seg-cast-p8-1.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"그럼 이 은도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p8-2.mp3": {
-    "voice": "tc-heejoon",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"아니요, 그것도 제 것이 아닙니다.\"",
-    "tempo": 0.88
+    "voice": "tc-seojoon",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "\"아닙니다, 그것도 제 것이 아닙니다.\"",
+    "tempo": 0.83
   },
   "folk/goldaxe/seg-tc-hosun-p8-3.mp3": {
     "voice": "tc-hosun",
@@ -2429,16 +2405,16 @@
   },
   "folk/goldaxe/say-p8-spirit.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "그럼 이 은도끼가 네 도끼냐?"
   },
   "folk/goldaxe/say-p8-woodcutter.mp3": {
-    "voice": "tc-heejoon",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "아니요, 그것도 제 것이 아닙니다.",
-    "tempo": 0.88
+    "voice": "tc-seojoon",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "아닙니다, 그것도 제 것이 아닙니다.",
+    "tempo": 0.83
   },
   "folk/goldaxe/seg-tc-hosun-p9-0.mp3": {
     "voice": "tc-hosun",
@@ -2447,7 +2423,7 @@
     "text": "마지막으로 낡은 쇠도끼를 들고 나오자\n나무꾼의 얼굴이 환해졌어요."
   },
   "folk/goldaxe/seg-cast-p9-1.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "happy",
     "intensity": 0.45,
     "text": "\"맞아요! 그게 바로 제 도끼입니다!\"",
@@ -2455,16 +2431,16 @@
   },
   "folk/goldaxe/say-p9-spirit.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "그럼 이건 어떠냐?"
   },
   "folk/goldaxe/say-p9-woodcutter.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "happy",
     "intensity": 0.45,
     "text": "맞아요! 그게 바로 제 도끼입니다!",
-    "tempo": 0.88
+    "tempo": 0.83
   },
   "folk/goldaxe/seg-tc-hosun-p10-0.mp3": {
     "voice": "tc-hosun",
@@ -2493,7 +2469,7 @@
     "text": "나무꾼은 도끼 세 자루를 안고 한달음에 집으로 갔어요."
   },
   "folk/goldaxe/seg-cast-p11-1.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"어머니! 산신령님이 이런 선물을 주셨어요!\"",
@@ -2501,9 +2477,10 @@
   },
   "folk/goldaxe/seg-cast-p11-2.mp3": {
     "voice": "tc-juha",
-    "emotion": "tonedown",
+    "emotion": "happy",
     "intensity": 0.35,
-    "text": "\"네가 바르게 살아 준 덕분이구나.\""
+    "text": "\"아이고, 우리 아들. 정직하게 살더니 복을 받았구나.\"",
+    "tempo": 0.9
   },
   "folk/goldaxe/seg-tc-hosun-p11-3.mp3": {
     "voice": "tc-hosun",
@@ -2512,17 +2489,18 @@
     "text": "어머니는 아들의 손을 오래오래 쓸어 주었답니다."
   },
   "folk/goldaxe/say-p11-woodcutter.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "어머니! 산신령님이 이런 선물을 주셨어요!",
-    "tempo": 0.88
+    "tempo": 0.83
   },
   "folk/goldaxe/say-p11-mother.mp3": {
     "voice": "tc-juha",
-    "emotion": "tonedown",
+    "emotion": "happy",
     "intensity": 0.35,
-    "text": "네가 바르게 살아 준 덕분이구나."
+    "text": "아이고, 우리 아들. 정직하게 살더니 복을 받았구나.",
+    "tempo": 0.9
   },
   "folk/goldaxe/seg-tc-hosun-p12-0.mp3": {
     "voice": "tc-hosun",
@@ -2531,7 +2509,7 @@
     "text": "나무꾼이 금도끼를 받았다는 소문은 이웃 마을까지 퍼졌어요.\n그 말을 들은 욕심쟁이가 무릎을 탁 쳤지요."
   },
   "folk/goldaxe/seg-cast-p12-1.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.45,
     "text": "\"옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!\""
@@ -2543,7 +2521,7 @@
     "text": "욕심쟁이는 그날 밤 잠도 이루지 못했답니다."
   },
   "folk/goldaxe/say-p12-greedy.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.45,
     "text": "옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!"
@@ -2555,16 +2533,16 @@
     "text": "이튿날 아침, 욕심쟁이는 연못으로 달려갔어요.\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는\n손등으로 눈을 비비며 거짓 울음을 울었지요."
   },
   "folk/goldaxe/seg-cast-p13-1.mp3": {
-    "voice": "tc-sullock",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"아이고, 내 도끼야! 엉엉!\""
+    "voice": "tc-byunghun",
+    "emotion": "sad",
+    "intensity": 0.5,
+    "text": "\"아이고, 내 도끼야!\""
   },
   "folk/goldaxe/say-p13-greedy.mp3": {
-    "voice": "tc-sullock",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "아이고, 내 도끼야! 엉엉!"
+    "voice": "tc-byunghun",
+    "emotion": "sad",
+    "intensity": 0.5,
+    "text": "아이고, 내 도끼야!"
   },
   "folk/goldaxe/seg-tc-hosun-p14-0.mp3": {
     "voice": "tc-hosun",
@@ -2574,12 +2552,12 @@
   },
   "folk/goldaxe/seg-cast-p14-1.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"이 금도끼가 네 도끼냐?\""
   },
   "folk/goldaxe/seg-cast-p14-2.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.45,
     "text": "\"맞아요, 맞아! 그 금도끼가 제 것입니다!\"",
@@ -2593,12 +2571,12 @@
   },
   "folk/goldaxe/say-p14-spirit.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "이 금도끼가 네 도끼냐?"
   },
   "folk/goldaxe/say-p14-greedy.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.45,
     "text": "맞아요, 맞아! 그 금도끼가 제 것입니다!",
@@ -2635,7 +2613,7 @@
     "text": "욕심쟁이는 해가 지도록 연못가에서 기다렸지만\n산신령님은 다시 나오지 않았어요.\n금도끼는커녕 제 쇠도끼까지 잃고\n터덜터덜 빈손으로 돌아갔답니다."
   },
   "folk/goldaxe/say-p16-greedy.mp3": {
-    "voice": "tc-sullock",
+    "voice": "tc-byunghun",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "산신령님… 제 도끼라도 돌려주세요…"
@@ -2647,7 +2625,7 @@
     "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n어머니의 병도 씻은 듯이 나았지요."
   },
   "folk/goldaxe/seg-cast-p17-1.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "\"어머니, 저는 도끼 한 자루면 넉넉해요.\"",
@@ -2660,7 +2638,7 @@
     "text": "나무꾼과 어머니는 오래오래 행복하게 살았답니다.\n정직한 마음은 금도끼보다 더 값진 보물이니까요."
   },
   "folk/goldaxe/say-p17-woodcutter.mp3": {
-    "voice": "tc-heejoon",
+    "voice": "tc-seojoon",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "어머니, 저는 도끼 한 자루면 넉넉해요.",
@@ -2681,13 +2659,13 @@
   "folk/patjuk-halmae-tiger/seg-cast-p1-1.mp3": {
     "voice": "tc-hakchul",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"널 잡아먹어야겠다!\""
   },
   "folk/patjuk-halmae-tiger/say-p1-tiger.mp3": {
     "voice": "tc-hakchul",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "널 잡아먹어야겠다!"
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p2-0.mp3": {
@@ -2697,7 +2675,7 @@
     "text": "할머니는 깜짝 놀랐지만 꾀를 냈어요."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p2-1.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "\"호랑이야, 가을에 팥이 익으면 팥죽을 쒀 줄게.\n그때 배불리 먹고 나서 나를 잡아먹으렴.\""
@@ -2715,15 +2693,15 @@
     "text": "호랑이는 어슬렁어슬렁 돌아갔어요."
   },
   "folk/patjuk-halmae-tiger/say-p2-granny.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "가을에 팥이 익으면 팥죽을 쒀 줄게."
   },
   "folk/patjuk-halmae-tiger/say-p2-tiger.mp3": {
     "voice": "tc-hakchul",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "좋아, 그럼 그때 다시 찾아오지."
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p3-0.mp3": {
@@ -2733,16 +2711,18 @@
     "text": "가을이 되어 팥이 빨갛게 익었어요.\n할머니는 솥 가득 팥죽을 쒔지요.\n하지만 호랑이가 올 생각을 하니 눈물이 주르륵."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p3-1.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"흑흑, 이제 나는 잡아먹히고 마는구나.\""
+    "intensity": 0.5,
+    "text": "\"흑흑, 이제 나는 잡아먹히고 마는구나.\"",
+    "tempo": 0.9
   },
   "folk/patjuk-halmae-tiger/say-p3-granny.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "흑흑, 이제 나는 잡아먹히고 마는구나."
+    "intensity": 0.5,
+    "text": "흑흑, 이제 나는 잡아먹히고 마는구나.",
+    "tempo": 0.9
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p4-0.mp3": {
     "voice": "tc-jiyoung",
@@ -2757,7 +2737,7 @@
     "text": "\"할머니, 왜 우세요?\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p4-2.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"호랑이가 날 잡아먹으러 온단다.\""
@@ -2775,7 +2755,7 @@
     "text": "알밤은 냠냠 팥죽을 먹고 아궁이 속에 쏙 숨었어요."
   },
   "folk/patjuk-halmae-tiger/say-p4-granny.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "호랑이가 날 잡아먹으러 온단다."
@@ -2820,43 +2800,31 @@
     "voice": "tc-guri",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"저희들도 할머니를 도와드릴게요!\""
+    "text": "\"할머니, 저희도 도와드릴게요!\""
   },
-  "folk/patjuk-halmae-tiger/seg-cast-p6-2.mp3": {
+  "folk/patjuk-halmae-tiger/seg-cast-p6-3.mp3": {
     "voice": "tc-kijang",
     "emotion": "toneup",
     "intensity": 0.45,
-    "text": "\"나는 미끄럽지! 밟기만 해 보라지.\""
-  },
-  "folk/patjuk-halmae-tiger/seg-cast-p6-3.mp3": {
-    "voice": "tc-guri",
-    "emotion": "happy",
-    "intensity": 0.4,
-    "text": "\"나는 둘둘 말 줄 알아!\""
-  },
-  "folk/patjuk-halmae-tiger/seg-cast-p6-4.mp3": {
-    "voice": "tc-babilon",
-    "emotion": "happy",
-    "intensity": 0.35,
-    "text": "\"나는 지고 갈 힘이 있소!\""
+    "text": "\"나는 미끌미끌 미끄럽지! 호랑이가 밟기만 해 보라지.\""
   },
   "folk/patjuk-halmae-tiger/say-p6-dung.mp3": {
     "voice": "tc-kijang",
     "emotion": "toneup",
     "intensity": 0.45,
-    "text": "나는 미끄럽지! 밟기만 해 보라지."
+    "text": "나는 미끌미끌 미끄럽지! 호랑이가 밟기만 해 보라지."
   },
   "folk/patjuk-halmae-tiger/say-p6-mat.mp3": {
     "voice": "tc-guri",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "나는 둘둘 말 줄 알아!"
+    "text": "나는 호랑이를 둘둘 말 줄 알아!"
   },
   "folk/patjuk-halmae-tiger/say-p6-carrier.mp3": {
     "voice": "tc-babilon",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "나는 지고 갈 힘이 있소!"
+    "text": "나는 호랑이를 번쩍 지고 갈 힘이 있지!"
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p7-0.mp3": {
     "voice": "tc-jiyoung",
@@ -2877,7 +2845,7 @@
     "text": "할머니, 우리만 믿으세요!"
   },
   "folk/patjuk-halmae-tiger/say-p7-granny.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "고맙구나, 얘들아…"
@@ -2890,12 +2858,12 @@
   },
   "folk/patjuk-halmae-tiger/seg-cast-p8-1.mp3": {
     "voice": "tc-hakchul",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.4,
     "text": "\"약속대로 왔다! 팥죽은 다 되었겠지?\""
   },
   "folk/patjuk-halmae-tiger/seg-cast-p8-2.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "\"부엌 아궁이에 있으니 직접 꺼내 먹으렴.\""
@@ -2908,12 +2876,12 @@
   },
   "folk/patjuk-halmae-tiger/say-p8-tiger.mp3": {
     "voice": "tc-hakchul",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.4,
     "text": "약속대로 왔다!"
   },
   "folk/patjuk-halmae-tiger/say-p8-granny.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "tonedown",
     "intensity": 0.35,
     "text": "부엌 아궁이에 있으니 직접 꺼내 먹으렴."
@@ -2933,13 +2901,13 @@
   "folk/patjuk-halmae-tiger/say-p9-chestnut.mp3": {
     "voice": "tc-hamchu",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "지금이다!"
+    "intensity": 0.45,
+    "text": "지금이다아!"
   },
   "folk/patjuk-halmae-tiger/say-p9-tiger.mp3": {
     "voice": "tc-hakchul",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "아야! 내 눈!"
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p10-0.mp3": {
@@ -2949,27 +2917,15 @@
     "text": "호랑이가 물동이로 눈을 씻으러 달려갔어요.\n물에 손을 넣는 순간, 자라가 콱!"
   },
   "folk/patjuk-halmae-tiger/seg-cast-p10-1.mp3": {
-    "voice": "tc-monggun",
-    "emotion": "happy",
-    "intensity": 0.4,
-    "text": "\"약속대로 꽉 물었지!\""
-  },
-  "folk/patjuk-halmae-tiger/seg-cast-p10-2.mp3": {
     "voice": "tc-hakchul",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"아이고, 아파!\""
-  },
-  "folk/patjuk-halmae-tiger/say-p10-turtle.mp3": {
-    "voice": "tc-monggun",
-    "emotion": "happy",
-    "intensity": 0.4,
-    "text": "약속대로 꽉 물었지!"
   },
   "folk/patjuk-halmae-tiger/say-p10-tiger.mp3": {
     "voice": "tc-hakchul",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "아이고, 아파!"
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p11-0.mp3": {
@@ -2982,7 +2938,7 @@
     "voice": "tc-kijang",
     "emotion": "toneup",
     "intensity": 0.45,
-    "text": "\"밟았구나! 내가 말했지, 밟기만 해 보라고!\""
+    "text": "\"내가 말했지, 밟기만 해 보라고!\""
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p11-2.mp3": {
     "voice": "tc-jiyoung",
@@ -3071,8 +3027,9 @@
   "folk/patjuk-halmae-tiger/seg-cast-p14-1.mp3": {
     "voice": "tc-hakchul",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"어푸어푸! 아이고, 호랑이 살려!\""
+    "intensity": 0.6,
+    "text": "아이고오! 호랑이 살려어!",
+    "tempo": 1.1
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p14-2.mp3": {
     "voice": "tc-jiyoung",
@@ -3083,8 +3040,9 @@
   "folk/patjuk-halmae-tiger/say-p14-tiger.mp3": {
     "voice": "tc-hakchul",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "아이고, 호랑이 살려!"
+    "intensity": 0.6,
+    "text": "아이고오! 호랑이 살려어!",
+    "tempo": 1.1
   },
   "folk/patjuk-halmae-tiger/say-p14-carrier.mp3": {
     "voice": "tc-babilon",
@@ -3099,7 +3057,7 @@
     "text": "할머니는 남은 팥죽을 다시 데웠어요.\n알밤도 자라도, 쇠똥도 멍석도 지게도 마당에 둘러앉았지요."
   },
   "folk/patjuk-halmae-tiger/seg-cast-p15-1.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "\"너희가 아니었으면 할미가 어쩔 뻔했니. 정말 고맙구나.\""
@@ -3117,7 +3075,7 @@
     "text": "그날 밤, 오두막에는 웃음소리가 오래오래 이어졌답니다."
   },
   "folk/patjuk-halmae-tiger/say-p15-granny.mp3": {
-    "voice": "tc-jungsoon",
+    "voice": "tc-sooni",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "너희가 아니었으면 할미가 어쩔 뻔했니."
@@ -3147,46 +3105,43 @@
     "text": "아버지, 오늘은 무슨 이야기 들려주실 거예요?"
   },
   "folk/heungbu/say-p5-heungbuwife.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-aeran",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "여보, 쌀독이 비었어요. 아이들이 사흘째 굶었는데…"
+    "intensity": 0.55,
+    "text": "여보… 쌀독이 비었어요. 아이들이 사흘째 굶었는데…",
+    "tempo": 0.92
   },
   "folk/heungbu/say-p5-heungbu.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "tonedown",
-    "intensity": 0.35,
-    "text": "내가 형님한테 한번 가 볼게요."
+    "voice": "tc-sungho",
+    "emotion": "sad",
+    "intensity": 0.45,
+    "text": "미안하구려. 형님한테 한번 가 볼게요.",
+    "tempo": 0.95
   },
   "folk/heungbu/say-p6-nolbuwife.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-sookhee",
     "emotion": "angry",
     "intensity": 0.4,
-    "text": "흥, 너희한텐 밥 한 술도 아까워! 썩 물러가!"
+    "text": "너희한테 줄 밥은 없어! 썩 물러가!"
   },
   "folk/heungbu/say-p6-heungbu.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "형수님, 밥 한 술만 주실 수 있을까요? 아이들이 사흘을 굶었어요."
+    "intensity": 0.45,
+    "text": "형수님… 밥 한 술만… 주실 수 있을까요? 아이들이 사흘째 아무것도 못 먹었어요.",
+    "tempo": 0.92
   },
   "folk/heungbu/say-p7-nolbuwife.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-sookhee",
     "emotion": "angry",
     "intensity": 0.35,
     "text": "별 이상한 사람을 다 보겠네!"
   },
   "folk/heungbu/say-p7-heungbu.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "형수님… 이쪽 뺨도 한 번만 더 쳐 주세요."
-  },
-  "folk/heungbu/say-p8-heungbu.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "happy",
-    "intensity": 0.35,
-    "text": "어서 오렴, 제비들아."
+    "voice": "tc-sungho",
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "형수님… 이쪽 뺨도 한 번만 더 쳐 주시겠어요?"
   },
   "folk/heungbu/say-p9-kids.mp3": {
     "voice": "tc-arin",
@@ -3201,31 +3156,27 @@
     "text": "짹짹! 아파요, 아파!"
   },
   "folk/heungbu/say-p12-heungbu.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "sad",
     "intensity": 0.4,
-    "text": "저런, 다리가 부러졌구나!"
+    "text": "저런, 다리가 부러졌구나!",
+    "tempo": 0.9
   },
   "folk/heungbu/say-p14-swallow.mp3": {
     "voice": "tc-sua",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.4,
     "text": "짹짹!"
   },
-  "folk/heungbu/say-p15-heungbu.mp3": {
-    "voice": "tc-seungjae",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "우아! 이 박으로 박죽이라도 끓여 먹자꾸나."
-  },
   "folk/heungbu/say-p16-heungbu.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "슬근슬근, 톱질하세!"
+    "text": "슬근슬근, 톱질하세!",
+    "tempo": 0.9
   },
   "folk/heungbu/say-p16-heungbuwife.mp3": {
-    "voice": "tc-najin",
+    "voice": "tc-aeran",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "영차영차, 톱질하세!"
@@ -3237,22 +3188,17 @@
     "text": "아버지, 이게 다 우리 거예요?"
   },
   "folk/heungbu/say-p17-heungbu.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "happy",
     "intensity": 0.45,
-    "text": "제비야, 고맙다!"
+    "text": "제비야, 고맙다!",
+    "tempo": 0.9
   },
   "folk/heungbu/say-p18-nolbu.mp3": {
     "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "그럼 나도 다친 제비만 있으면 되겠는데!"
-  },
-  "folk/heungbu/say-p19-swallow.mp3": {
-    "voice": "tc-sua",
-    "emotion": "sad",
-    "intensity": 0.4,
-    "text": "짹… 왜 일부러 아프게 하는 거예요…"
   },
   "folk/heungbu/say-p20-nolbu.mp3": {
     "voice": "tc-byunghun",
@@ -3261,7 +3207,7 @@
     "text": "옳지! 이제 나도 부자가 되겠구나!"
   },
   "folk/heungbu/say-p21-nolbuwife.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-sookhee",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "어기여차, 톱질하세!"
@@ -3275,7 +3221,7 @@
   "folk/heungbu/say-p22-dokkaebi.mp3": {
     "voice": "tc-homun",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "이놈, 욕심쟁이 놀부야! 방망이 맛 좀 봐라!"
   },
   "folk/heungbu/say-p24-nolbu.mp3": {
@@ -3286,10 +3232,11 @@
     "tempo": 0.9
   },
   "folk/heungbu/say-p24-heungbu.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "괜찮아요, 형님. 우리 집에서 같이 살아요."
+    "text": "괜찮아요, 형님. 우리 집에서 같이 살아요.",
+    "tempo": 0.9
   },
   "classic/threepigs/seg-tc-minjung-p1-0.mp3": {
     "voice": "tc-minjung",
@@ -5328,8 +5275,8 @@
   "folk/patjuk-halmae-tiger/seg-cast-p9-1.mp3": {
     "voice": "tc-hamchu",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"지금이다!\""
+    "intensity": 0.45,
+    "text": "지금이다아!"
   },
   "folk/patjuk-halmae-tiger/seg-tc-jiyoung-p9-2.mp3": {
     "voice": "tc-jiyoung",
@@ -5340,14 +5287,8 @@
   "folk/patjuk-halmae-tiger/seg-cast-p9-3.mp3": {
     "voice": "tc-hakchul",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"아야! 내 눈!\""
-  },
-  "folk/haedal/seg-cast-p12-2.mp3": {
-    "voice": "tc-siwoo",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"앗, 안 돼!\""
   },
   "classic/bremen/seg-cast-p15-2.mp3": {
     "voice": "tc-homun",
@@ -5971,7 +5912,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 어느 마을에 사이좋은 형제가 살았어요.\n형은 아랫마을에, 아우는 윗마을에 살았지만,\n논은 나란히 붙어 있어 날마다 함께 일했지요."
+    "text": "옛날 어느 마을에 사이좋은 형제가 살았어요.\n형은 아랫마을에, 아우는 윗마을에 살았지만,\n논은 나란히 붙어 있어 날마다 함께 일했답니다."
   },
   "folk/brothers/seg-cast-p1-1.mp3": {
     "voice": "tc-hosun",
@@ -5981,14 +5922,14 @@
   },
   "folk/brothers/seg-cast-p1-2.mp3": {
     "voice": "tc-gunseok",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.3,
     "text": "\"그래, 나는 풀을 뽑으마.\""
   },
   "folk/brothers/say-p1-brother.mp3": {
     "voice": "tc-gunseok",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.3,
     "text": "그래, 나는 풀을 뽑으마."
   },
   "folk/brothers/say-p1-younger.mp3": {
@@ -6005,26 +5946,26 @@
   },
   "folk/brothers/seg-cast-p2-1.mp3": {
     "voice": "tc-hosun",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.3,
     "text": "\"형님, 올해도 반씩이에요.\""
   },
   "folk/brothers/seg-cast-p2-2.mp3": {
     "voice": "tc-gunseok",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"그래, 늘 하던 대로.\""
   },
   "folk/brothers/say-p2-brother.mp3": {
     "voice": "tc-gunseok",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "그래, 늘 하던 대로."
   },
   "folk/brothers/say-p2-younger.mp3": {
     "voice": "tc-hosun",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.3,
     "text": "형님, 올해도 반씩이에요."
   },
   "folk/brothers/seg-tc-minjung-p3-0.mp3": {
@@ -6085,7 +6026,7 @@
     "voice": "tc-hosun",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "'형님 댁은 식구가 많잖아. 조카들도 한창 먹을 때인데…\n내 볏단을 형님께 드려야지.'"
+    "text": "'형님 댁은 식구가 많고 조카들도 지금 한창 먹을 나이인데…\n내 볏단을 형님께 나눠 드려야겠어.'"
   },
   "folk/brothers/seg-tc-minjung-p5-2.mp3": {
     "voice": "tc-minjung",
@@ -6097,7 +6038,7 @@
     "voice": "tc-hosun",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "형님 댁은 식구가 많잖아… 내 볏단을 드려야지."
+    "text": "형님 댁은 식구가 많고 조카들도 한창 먹을 나이인데… 내 볏단을 나눠 드려야겠어."
   },
   "folk/brothers/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
@@ -6109,7 +6050,7 @@
     "voice": "tc-hosun",
     "emotion": "whisper",
     "intensity": 0.4,
-    "text": "\"형님이 알면 도로 주실 거야. 몰래 놓고 와야지.\""
+    "text": "\"형님이 아시면 도로 주시겠지. 몰래 놓고 와야겠어.\""
   },
   "folk/brothers/seg-tc-minjung-p6-2.mp3": {
     "voice": "tc-minjung",
@@ -6121,7 +6062,7 @@
     "voice": "tc-hosun",
     "emotion": "whisper",
     "intensity": 0.4,
-    "text": "형님이 알면 도로 주실 거야. 몰래 놓고 와야지."
+    "text": "형님이 아시면 도로 주시겠지. 몰래 놓고 와야겠어."
   },
   "folk/brothers/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
@@ -6132,32 +6073,32 @@
   "folk/brothers/seg-cast-p7-1.mp3": {
     "voice": "tc-gunseok",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.35,
     "text": "\"어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?\""
   },
   "folk/brothers/seg-tc-minjung-p7-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "아우도 제 논을 보고 고개를 갸웃했지요."
+    "text": "아우도 제 논을 보고 고개를 갸웃했답니다."
   },
   "folk/brothers/seg-cast-p7-3.mp3": {
     "voice": "tc-hosun",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"형님 논에 놓고 왔는데 왜 그대로지?\""
+    "intensity": 0.35,
+    "text": "\"형님 논에 볏단을 놓고 왔는데 왜 그대로인 것 같지?\""
   },
   "folk/brothers/say-p7-brother.mp3": {
     "voice": "tc-gunseok",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.35,
     "text": "어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?"
   },
   "folk/brothers/say-p7-younger.mp3": {
     "voice": "tc-hosun",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "형님 논에 놓고 왔는데 왜 그대로지?"
+    "intensity": 0.35,
+    "text": "형님 논에 볏단을 놓고 왔는데 왜 그대로인 것 같지?"
   },
   "folk/brothers/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
@@ -6203,14 +6144,14 @@
   },
   "folk/brothers/seg-cast-p10-1.mp3": {
     "voice": "tc-hosun",
-    "emotion": "toneup",
-    "intensity": 0.4,
+    "emotion": "sad",
+    "intensity": 0.35,
     "text": "\"형님…!\""
   },
   "folk/brothers/seg-cast-p10-3.mp3": {
     "voice": "tc-gunseok",
-    "emotion": "toneup",
-    "intensity": 0.4,
+    "emotion": "sad",
+    "intensity": 0.35,
     "text": "\"아우야…!\""
   },
   "folk/brothers/seg-tc-minjung-p10-4.mp3": {
@@ -6221,14 +6162,14 @@
   },
   "folk/brothers/say-p10-brother.mp3": {
     "voice": "tc-gunseok",
-    "emotion": "toneup",
-    "intensity": 0.4,
+    "emotion": "sad",
+    "intensity": 0.35,
     "text": "아우야…!"
   },
   "folk/brothers/say-p10-younger.mp3": {
     "voice": "tc-hosun",
-    "emotion": "toneup",
-    "intensity": 0.4,
+    "emotion": "sad",
+    "intensity": 0.35,
     "text": "형님…!"
   },
   "folk/brothers/seg-tc-minjung-p11-0.mp3": {
@@ -6253,7 +6194,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "둘은 달을 올려다보며 한참을 웃었지요."
+    "text": "둘은 달을 올려다보며 한참을 웃었답니다."
   },
   "folk/brothers/say-p11-brother.mp3": {
     "voice": "tc-gunseok",
@@ -6271,7 +6212,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "다음 해 가을에도, 형제의 논은 나란히 황금빛으로 물들었어요.\n이번에는 볏단을 반으로 나누지 않았지요."
+    "text": "다음 해 가을에도, 형제의 논은 나란히 황금빛으로 물들었어요.\n이번에는 볏단을 반으로 나누지 않았답니다."
   },
   "folk/brothers/seg-tc-minjung-p12-1.mp3": {
     "voice": "tc-minjung",
@@ -6319,7 +6260,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그날 흥부네가 찾아간 곳은, 산 아래 다 쓰러져 가는 초가집이었어요.\n바람이 숭숭 들어오는 방에, 여섯 식구가 옹기종기 모여 앉았지요."
+    "text": "그날 흥부네가 찾아간 곳은, 산 아래 다 쓰러져 가는 초가집이었어요.\n바람이 숭숭 들어오는 방에, 여섯 식구가 옹기종기 모여 앉았답니다."
   },
   "folk/heungbu/seg-tc-minjung-p4-0.mp3": {
     "voice": "tc-minjung",
@@ -6343,7 +6284,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "흥부는 헌 두루마기를 걸치고 집을 나섰지요."
+    "text": "흥부는 헌 두루마기를 걸치고는 집을 나섰답니다."
   },
   "folk/heungbu/seg-tc-minjung-p6-2.mp3": {
     "voice": "tc-minjung",
@@ -6373,13 +6314,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요."
-  },
-  "folk/heungbu/seg-tc-minjung-p8-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "흥부네 가족은 제비 가족을 반갑게 맞아 주었어요."
+    "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요.\n흥부네 가족은 제비 가족을 반갑게 맞아 주었어요."
   },
   "folk/heungbu/seg-tc-minjung-p9-0.mp3": {
     "voice": "tc-minjung",
@@ -6428,18 +6363,6 @@
     "emotion": "normal",
     "intensity": null,
     "text": "제비는 박씨를 흥부 손바닥에 톡 떨어뜨렸답니다."
-  },
-  "folk/heungbu/seg-tc-minjung-p15-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "흥부는 박씨를 마당 한쪽에 정성껏 심었어요."
-  },
-  "folk/heungbu/seg-tc-minjung-p15-3.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "박씨는 무럭무럭 자라, 지붕 위까지 덩굴을 뻗었어요.\n가을이 되자 집채만 한 박이 주렁주렁 열렸지요."
   },
   "folk/heungbu/seg-tc-minjung-p16-2.mp3": {
     "voice": "tc-minjung",
@@ -6505,7 +6428,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "도깨비들이 방망이를 들고 우르르 몰려나왔어요.\n놀부와 아내는 마당을 빙빙 돌며 달아났지요."
+    "text": "도깨비들이 방망이를 들고 우르르 몰려나왔어요.\n놀부와 아내는 마당을 빙빙 돌며 달아났답니다."
   },
   "folk/heungbu/seg-tc-minjung-p23-0.mp3": {
     "voice": "tc-minjung",
@@ -6541,7 +6464,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니가 일찍 돌아가신 콩쥐는 새어머니, 동생 팥쥐와 함께 살았지요."
+    "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니가 일찍 돌아가신 콩쥐는 새어머니, 동생 팥쥐와 함께 살았답니다."
   },
   "folk/kongjwi/seg-tc-minjung-p2-0.mp3": {
     "voice": "tc-minjung",
@@ -6559,7 +6482,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지,\n배고픈 참새들에게는 제 몫의 낟알 한 줌."
+    "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지를,\n배고픈 참새들에게는 제 몫의 낟알 한 줌을 나눠 줬답니다."
   },
   "folk/kongjwi/seg-tc-minjung-p3-2.mp3": {
     "voice": "tc-minjung",
@@ -6583,7 +6506,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았지요."
+    "text": "팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았답니다."
   },
   "folk/kongjwi/seg-tc-minjung-p5-4.mp3": {
     "voice": "tc-minjung",
@@ -6595,7 +6518,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자, 그만 주저앉고 말았지요."
+    "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자, 그만 주저앉고 말았답니다."
   },
   "folk/kongjwi/seg-tc-minjung-p6-2.mp3": {
     "voice": "tc-minjung",
@@ -6607,7 +6530,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는,\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.\n콩쥐 눈에 그만 눈물이 그렁그렁 맺혔지요."
+    "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는,\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.\n콩쥐 눈에 그만 눈물이 그렁그렁 맺혔답니다."
   },
   "folk/kongjwi/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
@@ -6619,7 +6542,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "두꺼비는 항아리 속으로 쏙 들어가, 제 몸으로 구멍을 막았지요.\n그러자 항아리에 물이 금세 가득 찼답니다."
+    "text": "두꺼비는 항아리 속으로 쏙 들어가, 제 몸으로 구멍을 막았답니다.\n그러자 항아리에 물이 금세 가득 찼답니다."
   },
   "folk/kongjwi/seg-tc-minjung-p9-0.mp3": {
     "voice": "tc-minjung",
@@ -6667,7 +6590,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n떡이며 과일이며, 콩쥐는 난생처음 보는 것투성이였지요."
+    "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n떡이며 과일이며, 콩쥐는 난생처음 보는 것들뿐이었지요."
   },
   "folk/kongjwi/seg-tc-minjung-p12-2.mp3": {
     "voice": "tc-minjung",
@@ -6679,7 +6602,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았지요."
+    "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았답니다."
   },
   "folk/kongjwi/seg-tc-minjung-p13-2.mp3": {
     "voice": "tc-minjung",
@@ -6697,7 +6620,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "콩쥐를 뒤따라 나온 원님은 두리번거렸어요.\n하지만 아가씨는 벌써 보이지 않았지요.\n개울가 돌 틈에는, 반짝이는 꽃신 한 짝만 동그마니 걸려 있었어요.\n원님은 꽃신을 가만히 주워 들고 생각했지요."
+    "text": "콩쥐를 뒤따라 나온 원님은 두리번거렸어요.\n하지만 콩쥐는 벌써 보이지 않았답니다.\n개울가 돌 틈에는, 떠내려가던 꽃신 한 짝이 반짝 걸려 있었어요.\n원님은 꽃신을 가만히 주워 들었답니다."
   },
   "folk/kongjwi/seg-tc-minjung-p16-0.mp3": {
     "voice": "tc-minjung",
@@ -6715,10 +6638,10 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "새어머니는 얼른 콩쥐를 헛간으로 밀어 넣고, 문을 닫아 버렸어요.\n원님이 집 안을 둘러보며 물었지요."
+    "text": "새어머니는 얼른 콩쥐를 헛간으로 밀어 넣고, 문을 닫아 버렸어요.\n원님이 집 안을 둘러보며 물었답니다."
   },
   "folk/kongjwi/seg-cast-p17-1.mp3": {
-    "voice": "tc-tian",
+    "voice": "tc-taewoo",
     "emotion": "normal",
     "intensity": null,
     "text": "\"이 댁에 다른 아가씨는 안 계십니까?\""
@@ -6815,9 +6738,9 @@
     "text": "그 소리에 동생이 그만 웃음을 터뜨리고 말았지요."
   },
   "folk/haedal/seg-cast-p10-3.mp3": {
-    "voice": "tc-arin",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-haeun",
+    "emotion": "happy",
+    "intensity": 0.4,
     "text": "\"바보 호랑이!\""
   },
   "folk/haedal/seg-tc-jungsoon-p15-2.mp3": {
@@ -6842,7 +6765,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가,\n그만 손이 미끄러지고 말았지요."
+    "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가,\n그만 손이 미끄러지고 말았답니다."
   },
   "folk/goldaxe/seg-tc-minjung-p4-0.mp3": {
     "voice": "tc-minjung",
@@ -6866,7 +6789,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "산신령님은 고개를 끄덕이더니, 연못 속으로 사라졌지요."
+    "text": "산신령님은 고개를 끄덕이더니, 연못 속으로 사라졌답니다."
   },
   "folk/goldaxe/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
@@ -6878,7 +6801,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "산신령님은 슬며시 웃으며, 다시 물속으로 들어갔지요."
+    "text": "산신령님은 슬며시 웃으며, 다시 물속으로 들어갔어요."
   },
   "folk/goldaxe/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
@@ -6920,7 +6843,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "나무꾼이 금도끼를 받았다는 소문은, 이웃 마을까지 퍼졌어요.\n그 말을 들은 욕심쟁이가 무릎을 탁 쳤지요."
+    "text": "나무꾼이 금도끼를 받았다는 소문은, 이웃 마을까지 퍼졌어요.\n그 말을 들은 욕심쟁이 나무꾼이 무릎을 탁 치며 말했어요."
   },
   "folk/goldaxe/seg-tc-minjung-p12-2.mp3": {
     "voice": "tc-minjung",
@@ -6932,7 +6855,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "이튿날 아침, 욕심쟁이는 연못으로 달려갔어요.\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는,\n손등으로 눈을 비비며 거짓 울음을 울었지요."
+    "text": "이튿날 아침, 욕심쟁이 나무꾼은 연못으로 달려갔어요.\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는,\n손등으로 눈을 비비며 거짓 울음을 울었지요."
   },
   "folk/goldaxe/seg-tc-minjung-p14-0.mp3": {
     "voice": "tc-minjung",
@@ -6944,7 +6867,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "욕심쟁이는 손을 뻗으며 냉큼 외쳤지요."
+    "text": "욕심쟁이는 손을 뻗으며 냉큼 외쳤어요."
   },
   "folk/goldaxe/seg-tc-minjung-p15-0.mp3": {
     "voice": "tc-minjung",
@@ -6968,7 +6891,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n금도끼 판 돈으로 좋은 약을 지어 드리자, 어머니의 병도 씻은 듯이 나았지요."
+    "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n금도끼 판 돈으로 좋은 약을 지어 드리자, 어머니의 병도 씻은 듯이 나았답니다."
   },
   "folk/goldaxe/seg-tc-minjung-p17-2.mp3": {
     "voice": "tc-minjung",
@@ -6992,12 +6915,12 @@
     "voice": "tc-hosun",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"형님, 어차피 서로 줄 텐데요. 그냥 같이 쓰지요!\""
+    "text": "\"형님, 어차피 서로 나눠 줄 텐데 그냥 저희 같이 쓰시지요!\""
   },
   "folk/brothers/seg-cast-p12-2.mp3": {
     "voice": "tc-gunseok",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.3,
     "text": "\"허허, 그러자꾸나.\""
   },
   "folk/brothers/seg-tc-minjung-p12-3.mp3": {
@@ -7028,7 +6951,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 옛날 어느 산골 마을에, 볼에 커다란 혹이 달린 할아버지가 살았어요.\n사람들은 '혹부리 영감'이라고 불렀어요.\n할아버지는 놀림을 받아도 씩 웃으며 노래를 불렀지요."
+    "text": "옛날 옛날 어느 산골 마을에, 볼에 커다란 혹이 달린 할아버지가 살았어요.\n사람들은 할아버지를 혹부리 영감님이라고 불렀어요.\n할아버지는 놀림을 받아도 씩 웃으며 노래를 불렀지요."
   },
   "folk/hokburi/seg-tc-minjung-p1-1.mp3": {
     "voice": "tc-minjung",
@@ -7088,13 +7011,13 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자, 혹부리 영감이 부르던 노래를 흉내 내어, 억지로 크게 불렀지요.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n같은 노래인데도 삐걱삐걱, 하나도 곱지 않았답니다."
+    "text": "욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자, 혹부리 영감이 부르던 노래를 흉내 내어, 억지로 크게 불렀답니다.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n같은 노래인데도 삐걱삐걱, 하나도 곱지 않았어요."
   },
   "folk/hokburi/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감은 얼른 제 혹을 가리키며 소리쳤지요."
+    "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감님은 얼른 제 혹을 가리키며 소리쳤지요."
   },
   "folk/hokburi/seg-tc-minjung-p8-2.mp3": {
     "voice": "tc-minjung",
@@ -7106,7 +7029,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은, 엉엉 울며 집으로 돌아갔지요."
+    "text": "도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은, 엉엉 울며 집으로 돌아갔답니다."
   },
   "folk/hokburi/seg-tc-minjung-p10-0.mp3": {
     "voice": "tc-minjung",
@@ -7474,7 +7397,7 @@
     "voice": "tc-jongdae",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"견우야, 직녀야. 너희는 참 잘 어울리는구나.\""
+    "text": "\"견우야, 직녀야. 너희는 참 잘 어울리는 한 쌍인 것 같구나.\""
   },
   "folk/gyeonu/seg-tc-minjung-p2-2.mp3": {
     "voice": "tc-minjung",
@@ -7486,7 +7409,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "함께 지내는 나날은 꿈처럼 행복했어요.\n둘은 손을 꼭 잡고 은하수를 거닐며, 웃음이 끊이지 않았지요."
+    "text": "함께 지내는 나날은 꿈처럼 행복했어요.\n둘은 손을 꼭 잡고 은하수를 거닐며, 웃음이 끊이지 않았답니다."
   },
   "folk/gyeonu/seg-cast-p3-1.mp3": {
     "voice": "tc-najin",
@@ -7498,13 +7421,13 @@
     "voice": "tc-hosun",
     "emotion": "happy",
     "intensity": 0.5,
-    "text": "\"그래요. 나는 당신만 보고 있어도 하루가 다 가요.\""
+    "text": "\"그래요. 나는 당신만 보고 있어도 하루가 다 가는 것 같아요.\""
   },
   "folk/gyeonu/seg-tc-minjung-p4-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그런데 행복에 빠진 두 사람은 그만 할 일을 잊어버렸어요.\n견우는 소에게 풀 먹이는 것도 잊고,\n직녀는 베틀 앞에 앉지도 않았지요."
+    "text": "그런데 행복에 빠진 두 사람은 그만 할 일을 잊어버렸어요.\n견우는 소에게 풀 먹이는 것도 잊고,\n직녀는 베틀 앞에 앉지도 않았답니다."
   },
   "folk/gyeonu/seg-cast-p4-1.mp3": {
     "voice": "tc-najin",
@@ -7546,8 +7469,9 @@
   "folk/gyeonu/seg-cast-p7-1.mp3": {
     "voice": "tc-najin",
     "emotion": "sad",
-    "intensity": 0.55,
-    "text": "\"여보! 가지 말아요!\""
+    "intensity": 0.65,
+    "text": "흑… 여보오… 가지 말아요…!",
+    "tempo": 0.88
   },
   "folk/gyeonu/seg-cast-p7-2.mp3": {
     "voice": "tc-hosun",
@@ -7587,13 +7511,13 @@
   },
   "folk/gyeonu/seg-cast-p10-1.mp3": {
     "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"은하수만 건널 수 있다면 두 분이 만날 텐데.\""
   },
   "folk/gyeonu/seg-cast-p10-2.mp3": {
     "voice": "tc-minjung",
-    "emotion": "happy",
+    "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"옳지! 우리가 다리를 놓아 드리자!\""
   },
@@ -7623,9 +7547,10 @@
   },
   "folk/gyeonu/seg-cast-p12-1.mp3": {
     "voice": "tc-najin",
-    "emotion": "happy",
-    "intensity": 0.55,
-    "text": "\"여보, 얼마나 보고 싶었는지 몰라요.\""
+    "emotion": "sad",
+    "intensity": 0.5,
+    "text": "여보… 얼마나, 얼마나 보고 싶었는지 몰라요…!",
+    "tempo": 0.9
   },
   "folk/gyeonu/seg-cast-p12-2.mp3": {
     "voice": "tc-hosun",
@@ -7668,7 +7593,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 신라에 마음씨 착한 임금님이 살았어요.\n그런데 어느 날 아침, 거울을 본 임금님은 깜짝 놀랐지요.\n밤사이 두 귀가 쑥쑥 자라, 당나귀 귀처럼 길쭉해져 있었거든요!"
+    "text": "옛날 신라에 마음씨 착한 임금님이 살았어요.\n그런데 어느 날 아침, 거울을 본 임금님은 깜짝 놀랐어요.\n밤사이 두 귀가 쑥쑥 자라, 당나귀 귀처럼 길쭉해져 있었거든요!"
   },
   "folk/donkeyears/seg-cast-p2-0.mp3": {
     "voice": "tc-jongdae",
@@ -7690,12 +7615,12 @@
   },
   "folk/donkeyears/seg-cast-p3-1.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.4,
     "text": "\"오늘 본 것은 죽을 때까지 아무에게도 말하지 말거라. 알겠느냐?\""
   },
   "folk/donkeyears/seg-cast-p3-2.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-sheriffkim",
     "emotion": "toneup",
     "intensity": 0.35,
     "text": "\"네, 임금님! 절대로, 절대로 말하지 않겠습니다!\""
@@ -7710,7 +7635,8 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "복두장이는 약속을 꼭 지켰어요.\n어느 누구에게도 말하지 않았지요.\n그런데 비밀이란 게 참 이상하지요?\n말하면 안 된다고 생각할수록 입이 근질근질, 자꾸만 말이 나오려고 했답니다."
+    "text": "복두장이는 약속을 꼭 지켰어요.\n어느 누구에게도, 말하지 않았어요.\n그런데, 비밀이란 게 참 이상하지요?\n말하면 안 된다고 생각할수록, 입이 근질근질, 자꾸만 말이 나오려고 했답니다.",
+    "tempo": 0.9
   },
   "folk/donkeyears/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
@@ -7719,7 +7645,7 @@
     "text": "한 해, 두 해, 세 해가 지났어요.\n비밀을 꾹꾹 눌러 담은 복두장이는, 가슴이 답답해서 밥도 잘 못 먹게 되었지요."
   },
   "folk/donkeyears/seg-cast-p5-1.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-sheriffkim",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"이러다 정말 병이 나겠어. 딱 한 번만, 아무도 없는 곳에서 말하면 안 될까…\""
@@ -7731,9 +7657,9 @@
     "text": "복두장이는 사람이 아무도 없는 깊은 대나무 숲으로 갔어요.\n이쪽저쪽 두리번두리번, 정말 아무도 없는지 살핀 다음,\n두 손을 입에 모으고 있는 힘껏 외쳤지요."
   },
   "folk/donkeyears/seg-cast-p6-1.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-sheriffkim",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"임금님 귀는 당나귀 귀! 임금님 귀는 당나귀 귀!\""
   },
   "folk/donkeyears/seg-tc-minjung-p6-2.mp3": {
@@ -7756,8 +7682,8 @@
   },
   "folk/donkeyears/seg-cast-p8-1.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "angry",
-    "intensity": 0.4,
+    "emotion": "toneup",
+    "intensity": 0.45,
     "text": "\"뭐라고? 대나무가 그런 말을 한다고?\""
   },
   "folk/donkeyears/seg-tc-minjung-p8-2.mp3": {
@@ -7769,19 +7695,19 @@
   "folk/donkeyears/seg-cast-p8-3.mp3": {
     "voice": "tc-jongdae",
     "emotion": "angry",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"당장 그 대나무 숲을 몽땅 베어 버려라!\""
   },
   "folk/donkeyears/seg-tc-minjung-p9-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "신하들은 대나무를 한 그루도 남기지 않고 베어 냈어요.\n그리고 그 자리에 산수유나무를 잔뜩 심었지요."
+    "text": "신하들은 대나무를 한 그루도 남기지 않고 베어 냈어요.\n그리고 그 자리에 산수유 나무를 잔뜩 심었답니다."
   },
   "folk/donkeyears/seg-cast-p9-1.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"이제 됐다. 다시는 그 소리가 들리지 않겠구나.\""
   },
   "folk/donkeyears/seg-tc-minjung-p9-2.mp3": {
@@ -7798,9 +7724,10 @@
   },
   "folk/donkeyears/seg-cast-p10-1.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "'아무리 숨겨도 없어지지 않는구나. 숨기려고 할수록 자꾸 새어 나오는구나…'"
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "'아무리 숨겨도 없어지지 않는구나. 숨기려고 할수록 자꾸 새어 나오는구나…'",
+    "tempo": 0.9
   },
   "folk/donkeyears/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
@@ -7809,7 +7736,7 @@
     "text": "임금님은 복두장이를 궁궐로 불렀어요.\n복두장이는 벌을 받을까 봐 무릎을 덜덜 떨었지요."
   },
   "folk/donkeyears/seg-cast-p11-1.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-sheriffkim",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"임금님, 죄송합니다. 제가 그만…\""
@@ -7828,9 +7755,10 @@
   },
   "folk/donkeyears/seg-cast-p12-1.mp3": {
     "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"그래, 내 귀는 당나귀 귀다. 부끄러워서 숨겼지만, 숨길 일이 아니었구나.\n이 큰 귀로 너희 이야기를 더 잘 들으마.\""
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "\"그래, 내 귀는 당나귀 귀다. 부끄러워서 숨겼지만, 숨길 일이 아니었구나.\n이 큰 귀로 너희 이야기를 더 잘 들으마.\"",
+    "tempo": 0.9
   },
   "folk/donkeyears/seg-tc-minjung-p12-2.mp3": {
     "voice": "tc-minjung",
@@ -8203,8 +8131,8 @@
   },
   "folk/patjuk-halmae-tiger/seg-cast-p2-3.mp3": {
     "voice": "tc-hakchul",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"좋아, 그럼 그때 다시 찾아오지.\""
   },
   "folk/patjuk-halmae-tiger/seg-tc-minjung-p2-4.mp3": {
@@ -8217,7 +8145,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "가을이 되어 팥이 빨갛게 익었어요.\n할머니는 솥 가득 팥죽을 쒔지요.\n하지만 호랑이가 올 생각을 하니 눈물이 주르륵."
+    "text": "가을이 되어 팥이 빨갛게 익었어요.\n할머니는 솥 가득 팥죽을 끓였어요.\n하지만 호랑이가 올 생각을 하니 눈물이 주르륵."
   },
   "folk/patjuk-halmae-tiger/seg-tc-minjung-p4-0.mp3": {
     "voice": "tc-minjung",
@@ -8247,7 +8175,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아와 다 함께 말했어요."
+    "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아왔어요."
   },
   "folk/patjuk-halmae-tiger/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
@@ -8265,7 +8193,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "호랑이는 침을 꿀꺽 삼키며 부엌으로 갔지요."
+    "text": "호랑이는 침을 꿀꺽 삼키며 부엌으로 갔답니다."
   },
   "folk/patjuk-halmae-tiger/seg-tc-minjung-p9-0.mp3": {
     "voice": "tc-minjung",
@@ -8349,7 +8277,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "토끼는 만나는 친구마다 자랑을 늘어놓았지요."
+    "text": "토끼는 만나는 친구마다 자랑을 늘어놓았답니다."
   },
   "folk/tortoise/seg-tc-minjung-p2-0.mp3": {
     "voice": "tc-minjung",
@@ -8373,7 +8301,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "토끼는 배를 잡고 웃었지만, 곧 자신 있게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요."
+    "text": "토끼는 배를 잡고 웃었지만, 곧 자신 있게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었답니다."
   },
   "folk/tortoise/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
@@ -8385,7 +8313,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그 말이 끝나자마자 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요."
+    "text": "그 말이 끝나자마자 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일어났어요."
   },
   "folk/tortoise/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
@@ -8397,13 +8325,13 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "거북이는 씩씩하게 앞만 보았답니다."
+    "text": "거북이는 씩씩하게 앞만 보고 걸어갔답니다."
   },
   "folk/tortoise/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "한참을 달린 토끼가 뒤를 돌아보았어요.\n거북이는 점처럼 조그맣게 보였지요."
+    "text": "한참을 달린 토끼가 뒤를 돌아보니 거북이가 점처럼 조그맣게 보였어요."
   },
   "folk/tortoise/seg-tc-minjung-p9-0.mp3": {
     "voice": "tc-minjung",
@@ -8421,13 +8349,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 깨우지 않고, 엉금엉금 언덕을 올라갔답니다."
-  },
-  "folk/tortoise/seg-tc-minjung-p12-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가, 깜짝 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!"
+    "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 지나 엉금엉금 언덕을 올라갔답니다."
   },
   "folk/tortoise/seg-tc-minjung-p13-1.mp3": {
     "voice": "tc-minjung",
@@ -8462,8 +8384,9 @@
   "folk/gyeonu/seg-cast-p7-3.mp3": {
     "voice": "tc-hosun",
     "emotion": "sad",
-    "intensity": 0.55,
-    "text": "\"조금만 기다려요. 꼭 다시 만나요!\""
+    "intensity": 0.6,
+    "text": "조금만… 기다려요. 꼭… 다시 만나요!",
+    "tempo": 0.9
   },
   "folk/gyeonu/seg-tc-minjung-p7-4.mp3": {
     "voice": "tc-minjung",
@@ -8480,8 +8403,9 @@
   "folk/gyeonu/seg-cast-p12-3.mp3": {
     "voice": "tc-hosun",
     "emotion": "happy",
-    "intensity": 0.55,
-    "text": "\"이렇게 다시 만나다니, 꿈만 같아요.\""
+    "intensity": 0.45,
+    "text": "하아… 이렇게… 다시 만나다니… 꿈만 같아요…",
+    "tempo": 0.88
   },
   "folk/gyeonu/seg-tc-minjung-p12-4.mp3": {
     "voice": "tc-minjung",
@@ -8697,7 +8621,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 어느 마을 앞에 나지막한 고개가 하나 있었어요.\n사람들은 그 고개를 '삼년 고개'라고 불렀지요.\n저 고개에서 넘어지면, 삼 년밖에 못 산다는 이야기가 오래오래 전해 왔거든요.\n그래서 마을 사람들은 그 고개를 넘을 때면, 발끝까지 조심조심 걸었답니다."
+    "text": "옛날 어느 마을 앞에 나지막한 고개가 하나 있었어요.\n사람들은 그 고개를 '삼년 고개'라고 불렀답니다.\n저 고개에서 넘어지면, 삼 년밖에 못 산다는 이야기가 오래오래 전해 왔거든요.\n그래서 마을 사람들은 그 고개를 넘을 때면, 발끝까지 조심조심 걸었답니다."
   },
   "folk/samnyeon/seg-tc-minjung-p1-1.mp3": {
     "voice": "tc-minjung",
@@ -8718,9 +8642,9 @@
     "text": "마을에는 마음씨 좋은 할아버지가 살았어요.\n어느 가을날, 할아버지는 장에서 산 감을 지게에 지고, 삼년 고개를 넘고 있었지요."
   },
   "folk/samnyeon/seg-cast-p2-1.mp3": {
-    "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-changbae",
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"오늘도 무사히 넘어가야 할 텐데.\""
   },
   "folk/samnyeon/seg-tc-minjung-p2-2.mp3": {
@@ -8730,9 +8654,9 @@
     "text": "할아버지는 한 걸음 한 걸음 조심스럽게 발을 내디뎠어요."
   },
   "folk/samnyeon/say-p2-grandpa.mp3": {
-    "voice": "tc-jongdae",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-changbae",
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "오늘도 무사히 넘어가야 할 텐데."
   },
   "folk/samnyeon/seg-tc-minjung-p3-0.mp3": {
@@ -8742,15 +8666,15 @@
     "text": "그런데 그만, 돌부리에 발이 걸리고 말았어요.\n할아버지는 데굴데굴 굴러 고갯길에 벌렁 넘어졌지요.\n지게에서 쏟아진 감들이 여기저기로 또르르 굴러갔어요."
   },
   "folk/samnyeon/seg-cast-p3-1.mp3": {
-    "voice": "tc-jongdae",
+    "voice": "tc-changbae",
     "emotion": "sad",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"아이고, 이를 어쩌나! 내가 삼년 고개에서 넘어졌구나!\""
   },
   "folk/samnyeon/say-p3-grandpa.mp3": {
-    "voice": "tc-jongdae",
+    "voice": "tc-changbae",
     "emotion": "sad",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "아이고, 이를 어쩌나! 내가 삼년 고개에서 넘어졌구나!"
   },
   "folk/samnyeon/seg-tc-minjung-p4-0.mp3": {
@@ -8760,10 +8684,11 @@
     "text": "할아버지는 감도 줍지 못하고 터덜터덜 집으로 돌아왔어요.\n그러고는 이불을 뒤집어쓰고 자리에 누워 버렸지요."
   },
   "folk/samnyeon/seg-cast-p4-1.mp3": {
-    "voice": "tc-jongdae",
+    "voice": "tc-changbae",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"이제 나는 삼 년밖에 못 사는구나…\""
+    "intensity": 0.45,
+    "text": "\"이제 나는 삼 년밖에 못 사는구나…\"",
+    "tempo": 0.9
   },
   "folk/samnyeon/seg-tc-minjung-p4-2.mp3": {
     "voice": "tc-minjung",
@@ -8772,10 +8697,11 @@
     "text": "할머니가 아무리 달래도, 할아버지는 고개만 저었답니다."
   },
   "folk/samnyeon/say-p4-grandpa.mp3": {
-    "voice": "tc-jongdae",
+    "voice": "tc-changbae",
     "emotion": "sad",
-    "intensity": 0.4,
-    "text": "이제 나는 삼 년밖에 못 사는구나…"
+    "intensity": 0.45,
+    "text": "이제 나는 삼 년밖에 못 사는구나…",
+    "tempo": 0.9
   },
   "folk/samnyeon/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
@@ -8784,13 +8710,13 @@
     "text": "하루가 지나고 이틀이 지나도, 할아버지는 일어나지 못했어요.\n밥도 잘 먹지 못하고, 얼굴은 날마다 홀쭉해져 갔지요.\n할머니는 걱정이 되어 눈물이 다 났어요."
   },
   "folk/samnyeon/seg-cast-p5-1.mp3": {
-    "voice": "tc-juha",
+    "voice": "tc-sooni",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "\"영감, 제발 기운 좀 차려 보세요.\""
   },
   "folk/samnyeon/say-p5-grandma.mp3": {
-    "voice": "tc-juha",
+    "voice": "tc-sooni",
     "emotion": "sad",
     "intensity": 0.4,
     "text": "영감, 제발 기운 좀 차려 보세요."
@@ -8817,7 +8743,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "할아버지는 힘없이 고개를 끄덕였어요.\n덕이는 잠시 생각하더니 눈을 반짝 빛냈지요."
+    "text": "할아버지는 힘없이 고개를 끄덕였어요.\n덕이는 잠시 생각하더니, 눈을 반짝이며 말했어요."
   },
   "folk/samnyeon/seg-cast-p7-1.mp3": {
     "voice": "tc-siwoo",
@@ -8868,9 +8794,9 @@
     "text": "할아버지는 곧장 삼년 고개로 달려갔어요.\n그러고는 고갯길에 벌렁 누워 데굴데굴 구르기 시작했지요.\n한 번, 두 번, 세 번, 네 번…"
   },
   "folk/samnyeon/seg-cast-p9-1.mp3": {
-    "voice": "tc-jongdae",
+    "voice": "tc-changbae",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"어이쿠, 십오 년! 어이쿠, 삼십 년!\""
   },
   "folk/samnyeon/seg-tc-minjung-p9-2.mp3": {
@@ -8880,9 +8806,9 @@
     "text": "할아버지의 웃음소리가 고개 너머까지 퍼져 나갔어요."
   },
   "folk/samnyeon/say-p9-grandpa.mp3": {
-    "voice": "tc-jongdae",
+    "voice": "tc-changbae",
     "emotion": "happy",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "어이쿠, 십오 년! 어이쿠, 삼십 년!"
   },
   "folk/samnyeon/seg-tc-minjung-p10-0.mp3": {
@@ -8916,7 +8842,7 @@
     "text": "할아버지는 다시 밥도 잘 먹고 기운을 되찾았어요.\n덕이를 만날 때마다 등을 토닥이며 고마워했지요."
   },
   "folk/samnyeon/seg-cast-p11-1.mp3": {
-    "voice": "tc-jongdae",
+    "voice": "tc-changbae",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "\"네 덕분에 나는 만 년을 살겠구나!\""
@@ -8928,7 +8854,7 @@
     "text": "무서운 일도 생각을 바꾸면 웃음이 된답니다."
   },
   "folk/samnyeon/say-p11-grandpa.mp3": {
-    "voice": "tc-jongdae",
+    "voice": "tc-changbae",
     "emotion": "happy",
     "intensity": 0.4,
     "text": "네 덕분에 나는 만 년을 살겠구나!"
@@ -8949,7 +8875,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌지요."
+    "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌답니다."
   },
   "folk/haedal/seg-tc-minjung-p3-3.mp3": {
     "voice": "tc-minjung",
@@ -9009,19 +8935,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "오누이는 고개를 갸웃했지요."
-  },
-  "folk/haedal/seg-tc-minjung-p8-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "문틈으로 쑥 들어온 손은 털이 북슬북슬!"
-  },
-  "folk/haedal/seg-tc-minjung-p8-3.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "오누이는 서로 손을 꼭 잡았어요."
+    "text": "오누이는 고개를 갸웃했답니다."
   },
   "folk/haedal/seg-tc-minjung-p9-0.mp3": {
     "voice": "tc-minjung",
@@ -9075,7 +8989,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n그걸 본 호랑이도 얼른 두 손을 모으고 빌었어요."
+    "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔답니다.\n그걸 본 호랑이도 얼른 두 손을 모으고 빌었어요."
   },
   "folk/haedal/seg-tc-minjung-p16-0.mp3": {
     "voice": "tc-minjung",
@@ -9471,8 +9385,8 @@
   },
   "folk/gotgam/seg-cast-p1-1.mp3": {
     "voice": "tc-homun",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"오늘은 마을에 내려가 볼까?\""
   },
   "folk/gotgam/seg-tc-minjung-p1-2.mp3": {
@@ -9483,8 +9397,8 @@
   },
   "folk/gotgam/say-p1-tiger.mp3": {
     "voice": "tc-homun",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "오늘은 마을에 내려가 볼까?"
   },
   "folk/gotgam/seg-tc-minjung-p2-0.mp3": {
@@ -9515,12 +9429,12 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그런데 그때, 집 안에서 아기 우는 소리가 들렸어요.\n으앙— 으앙—"
+    "text": "그런데 그때, 집 안에서 아기 우는 소리가 들렸어요."
   },
   "folk/gotgam/seg-cast-p3-1.mp3": {
     "voice": "tc-homun",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.35,
     "text": "\"어라, 아기잖아? 아기부터 볼까?\""
   },
   "folk/gotgam/seg-tc-minjung-p3-2.mp3": {
@@ -9531,8 +9445,8 @@
   },
   "folk/gotgam/say-p3-tiger.mp3": {
     "voice": "tc-homun",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "happy",
+    "intensity": 0.35,
     "text": "어라, 아기잖아? 아기부터 볼까?"
   },
   "folk/gotgam/seg-tc-minjung-p4-0.mp3": {
@@ -9542,22 +9456,22 @@
     "text": "그러자 방 안에서 엄마 목소리가 들려왔어요."
   },
   "folk/gotgam/seg-cast-p4-1.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-najin",
     "emotion": "angry",
     "intensity": 0.3,
-    "text": "\"뚝! 자꾸 울면 호랑이가 잡아간다!\""
+    "text": "\"자꾸 울면 호랑이가 잡아간다, 어흥!\""
   },
   "folk/gotgam/seg-tc-minjung-p4-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "하지만 아기는 울음을 그치지 않았어요.\n으앙— 으아앙—"
+    "text": "하지만 아기는 울음을 그치지 않았어요."
   },
   "folk/gotgam/say-p4-mother.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-najin",
     "emotion": "angry",
     "intensity": 0.3,
-    "text": "뚝! 자꾸 울면 호랑이가 잡아간다!"
+    "text": "자꾸 울면 호랑이가 잡아간다, 어흥!"
   },
   "folk/gotgam/seg-cast-p5-0.mp3": {
     "voice": "tc-homun",
@@ -9584,28 +9498,28 @@
     "text": "그런데 이번에는 엄마가 달콤한 곶감을 내밀며 말했어요."
   },
   "folk/gotgam/seg-cast-p6-1.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-najin",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "\"옜다, 곶감이다!\""
+    "text": "\"울지 마, 우리 아기. 옜다, 곶감이다!\""
   },
   "folk/gotgam/seg-tc-minjung-p6-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그러자 아기가 울음을 뚝 그치는 거예요.\n방 안이 조용해졌답니다."
+    "text": "그러자 아기가 울음을 뚝 그쳤어요.\n방 안이 금세 조용해졌답니다."
   },
   "folk/gotgam/say-p6-mother.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-najin",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "옜다, 곶감이다!"
+    "text": "울지 마, 우리 아기. 옜다, 곶감이다!"
   },
   "folk/gotgam/seg-cast-p7-0.mp3": {
     "voice": "tc-homun",
-    "emotion": "sad",
+    "emotion": "whisper",
     "intensity": 0.4,
-    "text": "\"고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 뚝 그치지?\""
+    "text": "\"고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 울음을 뚝 그치지?\""
   },
   "folk/gotgam/seg-tc-minjung-p7-1.mp3": {
     "voice": "tc-minjung",
@@ -9615,9 +9529,9 @@
   },
   "folk/gotgam/say-p7-tiger.mp3": {
     "voice": "tc-homun",
-    "emotion": "sad",
+    "emotion": "whisper",
     "intensity": 0.4,
-    "text": "고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 뚝 그치지?"
+    "text": "고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 울음을 뚝 그치지?"
   },
   "folk/gotgam/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
@@ -9628,8 +9542,8 @@
   "folk/gotgam/seg-cast-p9-0.mp3": {
     "voice": "tc-homun",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"으악! 곶감이다! 곶감이 나를 잡으러 왔다!\""
+    "intensity": 0.5,
+    "text": "\"으악! 곶감이다! 곶감이 나를 잡으러 왔구나!\""
   },
   "folk/gotgam/seg-tc-minjung-p9-1.mp3": {
     "voice": "tc-minjung",
@@ -9640,11 +9554,11 @@
   "folk/gotgam/say-p9-tiger.mp3": {
     "voice": "tc-homun",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "으악! 곶감이다! 곶감이 나를 잡으러 왔다!"
+    "intensity": 0.5,
+    "text": "으악! 곶감이다! 곶감이 나를 잡으러 왔구나!"
   },
   "folk/gotgam/seg-cast-p10-0.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-bongman",
     "emotion": "toneup",
     "intensity": 0.35,
     "text": "\"어어? 소가 왜 이렇게 빠르지?\""
@@ -9656,7 +9570,7 @@
     "text": "소도둑은 떨어지지 않으려고,\n호랑이 등을 꼭 껴안았어요.\n둘은 눈밭을 가로질러 쌩쌩 달렸답니다."
   },
   "folk/gotgam/say-p10-thief.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-bongman",
     "emotion": "toneup",
     "intensity": 0.35,
     "text": "어어? 소가 왜 이렇게 빠르지?"
@@ -9668,9 +9582,9 @@
     "text": "산속으로 들어서자, 구름이 걷히고 달빛이 환하게 비쳤어요.\n소도둑은 그제야 자기가 올라탄 것이,\n소가 아니라 호랑이라는 걸 알았지요."
   },
   "folk/gotgam/seg-cast-p11-1.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-bongman",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"으악, 이게 무슨 일이야!\""
   },
   "folk/gotgam/seg-tc-minjung-p11-2.mp3": {
@@ -9680,9 +9594,9 @@
     "text": "소도둑은 폴짝 뛰어내려 커다란 나무 뒤에 숨었어요."
   },
   "folk/gotgam/say-p11-thief.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-bongman",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "으악, 이게 무슨 일이야!"
   },
   "folk/gotgam/seg-tc-minjung-p12-0.mp3": {
@@ -9854,7 +9768,7 @@
     "text": "옛날 옛적, 한 나그네가,\n깊은 산길을 조심조심 걷고 있었어요.\n그때 어디선가 으르렁— 소리가 들려왔어요."
   },
   "folk/rabbitjudge/seg-cast-p1-1.mp3": {
-    "voice": "tc-daejin",
+    "voice": "tc-sungho",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"호랑이 소리잖아? 마주치면 큰일인데!\""
@@ -9866,7 +9780,7 @@
     "text": "나그네는 화들짝 놀라 걸음을 멈췄지요."
   },
   "folk/rabbitjudge/say-p1-traveller.mp3": {
-    "voice": "tc-daejin",
+    "voice": "tc-sungho",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "호랑이 소리잖아? 마주치면 큰일인데!"
@@ -9902,7 +9816,7 @@
     "text": "이봐요, 거기 나그네! 나 좀 꺼내 줘요. 제발 부탁이에요!"
   },
   "folk/rabbitjudge/seg-cast-p4-0.mp3": {
-    "voice": "tc-daejin",
+    "voice": "tc-sungho",
     "emotion": "sad",
     "intensity": 0.3,
     "text": "\"내가 꺼내 주면 나를 잡아먹을지도 모르잖아요.\n내가 왜 도와줘야 하지요?\""
@@ -9914,7 +9828,7 @@
     "text": "\"잡아먹다니요! 그런 일 절대 없어요.\n약속할게요. 날 좀 믿어 줘요.\""
   },
   "folk/rabbitjudge/say-p4-traveller.mp3": {
-    "voice": "tc-daejin",
+    "voice": "tc-sungho",
     "emotion": "sad",
     "intensity": 0.3,
     "text": "내가 꺼내 주면 나를 잡아먹을지도 모르잖아요.\n내가 왜 도와줘야 하지요?"
@@ -9950,7 +9864,7 @@
     "text": "오랜만에 나왔더니 배가 너무 고프네.\n너를 잡아먹어야겠다!"
   },
   "folk/rabbitjudge/seg-cast-p7-0.mp3": {
-    "voice": "tc-daejin",
+    "voice": "tc-sungho",
     "emotion": "toneup",
     "intensity": 0.45,
     "text": "\"뭐라고요? 약속은 어쩌고요!\n내가 구덩이에서 꺼내 줬잖아요!\""
@@ -9962,7 +9876,7 @@
     "text": "\"흥, 너희 사람들이 구덩이를 파서, 이렇게 된 거야.\n네가 대신 벌을 받아야지.\""
   },
   "folk/rabbitjudge/say-p7-traveller.mp3": {
-    "voice": "tc-daejin",
+    "voice": "tc-sungho",
     "emotion": "toneup",
     "intensity": 0.45,
     "text": "뭐라고요? 약속은 어쩌고요!\n내가 구덩이에서 꺼내 줬잖아요!"
@@ -9980,9 +9894,9 @@
     "text": "나그네는 눈앞이 캄캄했지만 용기를 냈어요."
   },
   "folk/rabbitjudge/seg-cast-p8-1.mp3": {
-    "voice": "tc-daejin",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-sungho",
+    "emotion": "tonedown",
+    "intensity": 0.35,
     "text": "\"그럼 누가 옳은지 다른 이에게 물어봅시다.\n저기 나무에게 가서 물어봐요!\""
   },
   "folk/rabbitjudge/seg-cast-p8-2.mp3": {
@@ -9992,9 +9906,9 @@
     "text": "\"좋아. 나무라면 당연히 내 편이겠지.\""
   },
   "folk/rabbitjudge/say-p8-traveller.mp3": {
-    "voice": "tc-daejin",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-sungho",
+    "emotion": "tonedown",
+    "intensity": 0.35,
     "text": "그럼 누가 옳은지 다른 이에게 물어봅시다.\n저기 나무에게 가서 물어봐요!"
   },
   "folk/rabbitjudge/say-p8-tiger.mp3": {
@@ -10005,8 +9919,8 @@
   },
   "folk/rabbitjudge/seg-cast-p9-0.mp3": {
     "voice": "tc-homun",
-    "emotion": "angry",
-    "intensity": 0.4,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"나무야, 나무야. 이 나그네가 나를 구해 줬는데,\n내가 지금 너무 배가 고파. 이 사람을 잡아먹어도 될까?\""
   },
   "folk/rabbitjudge/seg-cast-p9-1.mp3": {
@@ -10018,8 +9932,8 @@
   },
   "folk/rabbitjudge/say-p9-tiger.mp3": {
     "voice": "tc-homun",
-    "emotion": "angry",
-    "intensity": 0.4,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "나무야, 나무야. 이 나그네가 나를 구해 줬는데,\n내가 지금 너무 배가 고파. 이 사람을 잡아먹어도 될까?"
   },
   "folk/rabbitjudge/say-p9-tree.mp3": {
@@ -10036,9 +9950,9 @@
     "text": "호랑이는 흐뭇하게 웃으며 발톱을 쓱쓱 세웠어요."
   },
   "folk/rabbitjudge/seg-cast-p10-1.mp3": {
-    "voice": "tc-daejin",
+    "voice": "tc-sungho",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"자, 잠깐만요! 저기 오는 소에게도 물어봐요!\""
   },
   "folk/rabbitjudge/seg-tc-minjung-p10-2.mp3": {
@@ -10048,9 +9962,9 @@
     "text": "나그네가 다급하게 외쳤어요."
   },
   "folk/rabbitjudge/say-p10-traveller.mp3": {
-    "voice": "tc-daejin",
+    "voice": "tc-sungho",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "자, 잠깐만요! 저기 오는 소에게도 물어봐요!"
   },
   "folk/rabbitjudge/seg-cast-p11-0.mp3": {
@@ -10081,8 +9995,8 @@
   },
   "folk/rabbitjudge/seg-cast-p12-1.mp3": {
     "voice": "tc-hamchu",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"제가 누구 말이 옳은지 알려 드릴게요.\n무슨 일인지 설명해 주시겠어요?\""
   },
   "folk/rabbitjudge/seg-tc-minjung-p12-2.mp3": {
@@ -10093,8 +10007,8 @@
   },
   "folk/rabbitjudge/say-p12-rabbit.mp3": {
     "voice": "tc-hamchu",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "제가 누구 말이 옳은지 알려 드릴게요.\n무슨 일인지 설명해 주시겠어요?"
   },
   "folk/rabbitjudge/seg-tc-minjung-p13-0.mp3": {
@@ -10105,14 +10019,14 @@
   },
   "folk/rabbitjudge/seg-cast-p13-1.mp3": {
     "voice": "tc-hamchu",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"음… 그런데 그렇게 커다란 호랑이님이,\n어떻게 저 구덩이에 빠지셨다는 거죠?\n한 번만 보여 주시겠어요?\""
   },
   "folk/rabbitjudge/say-p13-rabbit.mp3": {
     "voice": "tc-hamchu",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "음… 그런데 그렇게 커다란 호랑이님이,\n어떻게 저 구덩이에 빠지셨다는 거죠?\n한 번만 보여 주시겠어요?"
   },
   "folk/rabbitjudge/seg-cast-p14-0.mp3": {
@@ -10247,7 +10161,7 @@
     "voice": "tc-monggun",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "\"안녕하시오, 토끼 선생. 나는 용궁에서 온 자라라고 하오.\n우리 용왕님이 선생을 초대하고 싶어 하신다오.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.\""
+    "text": "\"안녕하세요, 토끼 선생님. 저는 용궁에서 온 자라라고 합니다.\n우리 용왕님이 토끼 선생님을 꼭 초대하고 싶어 하신답니다.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.\""
   },
   "folk/byeoljubu/say-p8-turtle.mp3": {
     "voice": "tc-monggun",
@@ -10262,13 +10176,13 @@
     "text": "토끼는 눈을 반짝였어요."
   },
   "folk/byeoljubu/seg-cast-p9-1.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-hamchu",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"용궁이라니, 정말 신기한 곳이구나.\n그럼 한번 가 보지, 뭐!\""
   },
   "folk/byeoljubu/say-p9-rabbit.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-hamchu",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "용궁이라니, 정말 신기한 곳이구나.\n그럼 한번 가 보지, 뭐!"
@@ -10277,61 +10191,61 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "토끼는 자라의 등에 올라타 바다로 향했어요.\n처음 보는 깊은 바닷속은,\n무섭고 낯설었지만,\n토끼는 두 눈을 꼭 감고 용궁으로 갔지요."
+    "text": "토끼는 자라의 등에 올라타고 바다로 풍덩 뛰어들었어요.\n처음 보는 깊은 바닷속은 어둡고 낯설었어요."
   },
   "folk/byeoljubu/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "마침내 용궁에 닿자,\n화려한 궁전과 반짝이는 물고기들이,\n토끼를 맞이했어요.\n용왕님이 웃으며 말했어요."
+    "text": "마침내 용궁에 닿았어요.\n반짝이는 산호 궁전과 알록달록한 물고기들이 토끼를 맞이했어요."
   },
   "folk/byeoljubu/seg-cast-p11-1.mp3": {
-    "voice": "tc-wangkwon",
-    "emotion": "happy",
-    "intensity": 0.35,
-    "text": "\"어서 오너라, 귀한 손님아.\""
+    "voice": "tc-hamchu",
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"우와, 정말 멋지다! 자라 말이 다 진짜였네!\""
   },
   "folk/byeoljubu/say-p11-king.mp3": {
     "voice": "tc-wangkwon",
     "emotion": "happy",
     "intensity": 0.35,
-    "text": "어서 오너라, 귀한 손님아."
+    "text": "어서 오너라, 귀한 손님아.\n먼 길 오느라 수고했구나."
   },
   "folk/byeoljubu/seg-tc-minjung-p12-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그런데 그다음 순간,\n자라가 용왕님 앞에 나아가 말했어요."
+    "text": "그런데 바로 그때, 자라가 용왕님 앞에 나아가 꾸벅 절을 했어요."
   },
   "folk/byeoljubu/seg-cast-p12-1.mp3": {
     "voice": "tc-monggun",
     "emotion": "tonedown",
     "intensity": 0.3,
-    "text": "\"용왕님, 어서 토끼의 간을 드시고 병을 고치소서.\""
+    "text": "\"용왕님, 말씀하신 토끼를 데려왔습니다. 어서 토끼의 간을 드시고 병을 고치소서.\""
   },
   "folk/byeoljubu/seg-tc-minjung-p12-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "토끼는 깜짝 놀라 두 눈을 크게 떴어요."
+    "text": "토끼는 귀가 번쩍 서고, 두 눈이 동그래졌어요."
   },
   "folk/byeoljubu/seg-cast-p12-3.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-hamchu",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"제… 제 간을요?\""
+    "intensity": 0.45,
+    "text": "\"제… 제 간을요? 그, 그게 무슨 말이에요?\""
   },
   "folk/byeoljubu/say-p12-turtle.mp3": {
     "voice": "tc-monggun",
     "emotion": "tonedown",
     "intensity": 0.3,
-    "text": "용왕님, 어서 토끼의 간을 드시고 병을 고치소서."
+    "text": "용왕님, 어서 토끼의 간을 드시고,\n병을 고치소서."
   },
   "folk/byeoljubu/say-p12-rabbit.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-hamchu",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "제… 제 간을요?"
+    "intensity": 0.45,
+    "text": "제… 제 간을요?\n그, 그게 무슨 말이에요?"
   },
   "folk/byeoljubu/seg-tc-minjung-p13-0.mp3": {
     "voice": "tc-minjung",
@@ -10340,13 +10254,13 @@
     "text": "가슴이 덜컥 내려앉았지만,\n토끼는 아무렇지 않은 척 대답했어요."
   },
   "folk/byeoljubu/seg-cast-p13-1.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-hamchu",
     "emotion": "tonedown",
     "intensity": 0.3,
     "text": "\"아이고, 그런데 이를 어째요.\n제 간은 지금 몸에 없답니다.\n간이 몸에 좋다는 소문이 나는 바람에, 육지에 따로 숨겨 두고 다니거든요.\""
   },
   "folk/byeoljubu/say-p13-rabbit.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-hamchu",
     "emotion": "tonedown",
     "intensity": 0.3,
     "text": "제 간은 지금 몸에 없답니다.\n육지에 따로 숨겨 두고 다니거든요."
@@ -10359,8 +10273,8 @@
   },
   "folk/byeoljubu/seg-cast-p14-1.mp3": {
     "voice": "tc-wangkwon",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "\"그렇다면 얼른 다녀오너라.\""
   },
   "folk/byeoljubu/seg-tc-minjung-p14-2.mp3": {
@@ -10371,27 +10285,27 @@
   },
   "folk/byeoljubu/say-p14-king.mp3": {
     "voice": "tc-wangkwon",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.3,
     "text": "그렇다면 얼른 다녀오너라."
   },
   "folk/byeoljubu/seg-tc-minjung-p15-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "파도가 거세게 몰아쳤지만,\n자라는 끝까지 육지로 헤엄쳤어요.\n육지에 닿자 토끼는 폴짝 뛰어내렸지요."
+    "text": "파도가 거세게 몰아쳤지만, 자라는 쉬지 않고 육지로 헤엄쳤어요.\n드디어 육지에 닿자, 토끼는 모래밭으로 폴짝 뛰어내렸답니다.\n자라가 숨을 몰아쉬며 말했어요."
   },
   "folk/byeoljubu/seg-cast-p15-1.mp3": {
     "voice": "tc-monggun",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "\"어서 간을 찾아오시오. 여기서 기다리고 있겠소.\""
+    "text": "\"토끼 선생님, 어서 간을 찾아오세요. 저는 여기서 기다리고 있겠습니다.\""
   },
   "folk/byeoljubu/say-p15-turtle.mp3": {
     "voice": "tc-monggun",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "어서 간을 찾아오시오. 여기서 기다리고 있겠소."
+    "text": "어서 간을 찾아오세요.\n저는 여기서 기다리고 있겠습니다."
   },
   "folk/byeoljubu/seg-tc-minjung-p16-0.mp3": {
     "voice": "tc-minjung",
@@ -10400,7 +10314,7 @@
     "text": "그러자 토끼가 깔깔 웃으며 외쳤어요."
   },
   "folk/byeoljubu/seg-cast-p16-1.mp3": {
-    "voice": "tc-dukgu",
+    "voice": "tc-hamchu",
     "emotion": "toneup",
     "intensity": 0.45,
     "text": "\"자라야, 간을 넣었다 뺐다 하는 동물이 어디 있어?\n간은 몸속에 있는 거야!\""
@@ -10414,7 +10328,7 @@
   "folk/byeoljubu/seg-cast-p16-3.mp3": {
     "voice": "tc-monggun",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"뭐, 뭐라고? 거기 서!\""
   },
   "folk/byeoljubu/seg-tc-minjung-p16-4.mp3": {
@@ -10426,7 +10340,7 @@
   "folk/byeoljubu/say-p16-turtle.mp3": {
     "voice": "tc-monggun",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "뭐, 뭐라고? 거기 서!"
   },
   "folk/greenfrog/seg-tc-minjung-p1-0.mp3": {
@@ -10441,107 +10355,83 @@
     "intensity": null,
     "text": "그런데 이 아기 청개구리는,\n무슨 말을 해도 꼭!\n거꾸로만 하는 말썽쟁이였어요."
   },
-  "folk/greenfrog/seg-cast-p3-0.mp3": {
-    "voice": "tc-minju",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"물속에 들어가 있어라\""
-  },
-  "folk/greenfrog/seg-tc-minjung-p3-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "하면,\n풀숲으로 폴짝!"
-  },
-  "folk/greenfrog/seg-cast-p3-2.mp3": {
-    "voice": "tc-minju",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"풀숲에 숨어 있어라\""
-  },
-  "folk/greenfrog/seg-tc-minjung-p3-3.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "하면,\n물속으로 풍덩!"
-  },
   "folk/greenfrog/seg-cast-p4-0.mp3": {
     "voice": "tc-minju",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"엄마 올 때까지 저녁 먹지 마\""
+    "text": "\"엄마 올 때까지 저녁 먹지 말고 기다려라.\""
   },
   "folk/greenfrog/seg-tc-minjung-p4-1.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "하면,\n엄마가 돌아서자마자 냠냠 먹어 치우고,"
+    "text": "엄마가 돌아서자마자, 아기는 냠냠 저녁을 다 먹어 치웠어요."
   },
   "folk/greenfrog/seg-cast-p4-2.mp3": {
     "voice": "tc-minju",
     "emotion": "normal",
     "intensity": null,
-    "text": "\"어서 저녁 먹어라\""
+    "text": "\"그럼 어서 저녁 먹어라.\""
   },
   "folk/greenfrog/seg-tc-minjung-p4-3.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "하면,\n입을 꼭 다문 채 뒤돌아앉았지요."
+    "text": "이번엔 입을 꼭 다물고 뒤돌아앉았답니다."
   },
   "folk/greenfrog/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "비가 오면 냇물이 불어나,\n돌 위까지 찰랑거렸어요."
+    "text": "비가 오는 날에는 냇물이 불어나 돌 위까지 찰랑거렸어요."
   },
   "folk/greenfrog/seg-cast-p5-1.mp3": {
     "voice": "tc-minju",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"물가에 가지 마라\""
+    "emotion": "toneup",
+    "intensity": 0.4,
+    "text": "\"아기야, 위험하니까 물가에 가지 마라!\""
   },
   "folk/greenfrog/seg-tc-minjung-p5-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "하면,\n아기는 더 가까이 폴짝!"
+    "text": "엄마가 소리쳤지만, 아기는 물가로 더 가까이 폴짝폴짝!"
   },
   "folk/greenfrog/seg-tc-minjung-p6-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "엄마 청개구리는,\n이런 아기가 늘 걱정스러웠어요."
+    "text": "엄마 청개구리는 밤마다 한숨을 쉬었어요."
   },
   "folk/greenfrog/seg-cast-p6-1.mp3": {
     "voice": "tc-minju",
     "emotion": "sad",
     "intensity": 0.35,
-    "text": "'얘가 언제쯤 말을 잘 들을까…'"
+    "text": "'우리 아기는 언제쯤 엄마 말을 들을까…'"
   },
   "folk/greenfrog/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그래도 해가 지면,\n둘은 같은 연잎 아래 앉아,\n별을 세었어요.\n엄마는 아기를 꼭 안아 주었지요."
+    "text": "그래도 해가 지면, 둘은 같은 연잎 아래 나란히 앉아 별을 세었어요."
   },
   "folk/greenfrog/seg-tc-minjung-p8-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "여름이 가고, 또 한 번 여름이 갔어요.\n엄마 청개구리는 이제 잘 뛰지 않았어요."
+    "text": "여름이 가고, 또 한 번 여름이 지나갔어요.\n엄마 청개구리는 이제 잘 뛰지 못했어요."
   },
   "folk/greenfrog/seg-cast-p8-1.mp3": {
     "voice": "tc-minju",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "\"엄마는 여기 있을 테니, 저리 가서 놀아라.\""
+    "text": "\"엄마는 여기서 쉴 테니, 너는 저리 가서 놀아라.\""
   },
   "folk/greenfrog/seg-tc-minjung-p8-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "거꾸로 하는 아기는 엄마 옆에 꼭 붙어 앉았어요."
+    "text": "거꾸로 하는 아기는 이번에도 반대로, 엄마 옆에 꼭 붙어 앉았어요."
   },
   "folk/greenfrog/seg-cast-p8-3.mp3": {
     "voice": "tc-minju",
@@ -10568,12 +10458,6 @@
     "text": "\"얘야, 엄마가 하늘나라에 가면,\n숲속 말고, 꼭 냇가에다 묻어 주렴.\"",
     "tempo": 0.9
   },
-  "folk/greenfrog/seg-tc-minjung-p9-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "아기는 그게 무슨 말인지 몰랐어요.\n사실 엄마는 조용한 숲속이 좋았지만,\n거꾸로 하는 우리 아기를 잘 알아서, 반대로 말했지요."
-  },
   "folk/greenfrog/say-p9-mother.mp3": {
     "voice": "tc-minju",
     "emotion": "tonedown",
@@ -10585,85 +10469,76 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "다음 날 아침이었어요.\n엄마는 돌 위에서 움직이지 않았어요."
+    "text": "다음 날 아침이었어요.\n엄마는 돌 위에 가만히 누워 움직이지 않았어요."
   },
   "folk/greenfrog/seg-cast-p10-1.mp3": {
-    "voice": "tc-toby",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"엄마. 엄마…\""
+    "voice": "tc-gunwoo",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "\"엄마. 엄마…? 왜 대답이 없어…?\"",
+    "tempo": 0.85
   },
   "folk/greenfrog/seg-tc-minjung-p10-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "두 번이나 불렀는데, 아무 소리도 나지 않았어요.\n엄마 청개구리는 하늘나라로 떠난 거예요."
+    "text": "아기가 몇 번이나 불렀지만, 아무 대답도 들리지 않았어요.\n엄마 청개구리는 하늘나라로 떠난 거예요."
   },
   "folk/greenfrog/say-p10-child.mp3": {
-    "voice": "tc-toby",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "엄마. 엄마…"
+    "voice": "tc-gunwoo",
+    "emotion": "sad",
+    "intensity": 0.4,
+    "text": "엄마. 엄마…?\n왜 대답이 없어…?",
+    "tempo": 0.85
   },
   "folk/greenfrog/seg-tc-minjung-p11-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "늘 거꾸로만 하던 아기였지만, 이번엔 달랐어요.\n이제는 거꾸로 해도, 받아 줄 엄마가 없으니까요."
+    "text": "늘 거꾸로만 하던 아기였지만, 이번만은 달랐어요.\n이제는 거꾸로 해도, 웃으며 받아 줄 엄마가 없으니까요."
   },
   "folk/greenfrog/seg-cast-p11-1.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-gunwoo",
     "emotion": "sad",
     "intensity": 0.45,
-    "text": "\"엄마, 보고 싶어.\""
-  },
-  "folk/greenfrog/seg-cast-p11-2.mp3": {
-    "voice": "tc-toby",
-    "emotion": "sad",
-    "intensity": 0.35,
-    "text": "'엄마 말대로, 이번엔 꼭 할게.'"
-  },
-  "folk/greenfrog/seg-tc-minjung-p11-3.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "아기는 울면서, 엄마를 냇가에 조심조심 묻어 주었어요."
+    "text": "\"엄마, 보고 싶어. 이번엔 꼭 엄마 말대로 할게.\"",
+    "tempo": 0.9
   },
   "folk/greenfrog/say-p11-child.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-gunwoo",
     "emotion": "sad",
     "intensity": 0.45,
-    "text": "엄마, 보고 싶어."
+    "text": "엄마, 보고 싶어.\n이번엔 꼭 엄마 말대로 할게."
   },
   "folk/greenfrog/seg-tc-minjung-p12-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "아기가 무덤 옆에 앉아 말했어요."
+    "text": "아기는 무덤 옆에 앉아 작게 말했어요."
   },
   "folk/greenfrog/seg-cast-p12-1.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-gunwoo",
     "emotion": "sad",
     "intensity": 0.35,
-    "text": "\"엄마, 나 이번엔 진짜로 엄마 말대로 했어.\""
+    "text": "\"엄마, 나 이번엔 진짜로 엄마 말대로 했어. 잘했지?\""
   },
   "folk/greenfrog/seg-tc-minjung-p12-2.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그때 하늘이 흐려지더니, 후두둑 빗방울이 떨어졌어요.\n아기는 얼른 연잎을 따다, 돌무덤 위에 덮어 주었어요.\n냇물이 두런두런, 아기 곁에서 같이 흘러갔지요."
+    "text": "그때 하늘이 흐려지더니, 후두둑 빗방울이 떨어지기 시작했어요."
   },
   "folk/greenfrog/say-p12-child.mp3": {
-    "voice": "tc-toby",
+    "voice": "tc-gunwoo",
     "emotion": "sad",
     "intensity": 0.35,
-    "text": "엄마, 나 이번엔 진짜로 엄마 말대로 했어."
+    "text": "엄마, 나 이번엔 진짜로,\n엄마 말대로 했어. 잘했지?"
   },
   "folk/greenfrog/seg-tc-minjung-p13-0.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "그날 이후로, 비가 오는 날이면,\n아기 청개구리는 냇가에 나와,\n엄마 무덤이 떠내려가지는 않을까 걱정하며,\n개굴개굴 울었답니다.\n지금도 비가 오면, 개구리가 그렇게 운대요."
+    "text": "그날부터 비가 오는 날이면, 아기 청개구리는 냇가에 나와 앉았어요."
   },
   "classic/gulliver1/seg-cast-p1-0.mp3": {
     "voice": "tc-kangil",
@@ -10744,7 +10619,8 @@
     "voice": "tc-kangil",
     "emotion": "toneup",
     "intensity": 0.3,
-    "text": "\"그런데 말이야, 그다음에 닿은 나라에서는,\n내가 저 작은 사람들처럼 조그마해지고 말았단다.\n그 이야기는 다음에 계속해서 들려줄게. 안녕!\""
+    "text": "\"그런데 말이야, 그다음에 닿은 나라에서는,\n내가 저 작은 사람들처럼 조그마해지고 말았단다.\n그 이야기는 다음에 계속해서 들려줄게. 안녕!\"",
+    "tempo": 0.88
   },
   "classic/gulliver1/say-p14-gulliver.mp3": {
     "voice": "tc-kangil",
@@ -11394,13 +11270,13 @@
     "text": "먼저 한 사람이 턱을 치켜들고,\n거만하게 말했어요."
   },
   "folk/sanggil/seg-cast-p3-1.mp3": {
-    "voice": "tc-jinhyuk",
+    "voice": "tc-sheriffkim",
     "emotion": "toneup",
     "intensity": 0.35,
     "text": "\"에헴! 이 상길이 놈아!\n냉큼 고기 한 덩이 썰어 내 앞에 가져오너라!\""
   },
   "folk/sanggil/say-p3-proud.mp3": {
-    "voice": "tc-jinhyuk",
+    "voice": "tc-sheriffkim",
     "emotion": "toneup",
     "intensity": 0.35,
     "text": "에헴! 이 상길이 놈아!\n냉큼 고기 한 덩이 썰어 내 앞에 가져오너라!"
@@ -11448,13 +11324,13 @@
     "text": "거만한 양반은 얼굴을 찡그리며,\n소리쳤어요."
   },
   "folk/sanggil/seg-cast-p8-1.mp3": {
-    "voice": "tc-jinhyuk",
+    "voice": "tc-sheriffkim",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"아니, 이게 뭐야!\n어째서 내 고기만 이렇게 작단 말이냐!\""
   },
   "folk/sanggil/say-p8-proud.mp3": {
-    "voice": "tc-jinhyuk",
+    "voice": "tc-sheriffkim",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "아니, 이게 뭐야!\n어째서 내 고기만 이렇게 작단 말이냐!"
@@ -11466,15 +11342,15 @@
     "text": "박상길 어르신은 싱긋 웃으며 대답했어요."
   },
   "folk/sanggil/seg-cast-p9-1.mp3": {
-    "voice": "tc-changbae",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-duckchun",
+    "emotion": "tonedown",
+    "intensity": 0.35,
     "text": "\"양반님 고기는 상길이 놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박 서방이 썰었으니 그렇지요.\""
   },
   "folk/sanggil/say-p9-butcher.mp3": {
-    "voice": "tc-changbae",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-duckchun",
+    "emotion": "tonedown",
+    "intensity": 0.35,
     "text": "양반님 고기는 상길이 놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박 서방이 썰었으니 그렇지요."
   },
   "folk/sanggil/seg-tc-minjung-p10-0.mp3": {
@@ -11487,21 +11363,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "돌아가는 길,\n양반은 손에 든 작은 고기를,\n한참 내려다보았어요.\n그러고는 조용히 중얼거렸지요."
-  },
-  "folk/sanggil/seg-cast-p11-1.mp3": {
-    "voice": "tc-jinhyuk",
-    "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "\"…내가 말을 함부로 했구나.\"",
-    "tempo": 0.9
-  },
-  "folk/sanggil/say-p11-proud.mp3": {
-    "voice": "tc-jinhyuk",
-    "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "…내가 말을 함부로 했구나.",
-    "tempo": 0.9
+    "text": "돌아가는 길,\n양반은 손에 든 작은 고기를,\n한참 내려다보았어요.\n그러고는 고개를 푹 숙인 채, 조용히 집으로 돌아갔답니다."
   },
   "folk/sanggil/seg-tc-minjung-p12-0.mp3": {
     "voice": "tc-minjung",
@@ -11627,11 +11489,11 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p1-1.mp3": {
-    "voice": "tc-seojoon",
-    "emotion": "sad",
-    "intensity": 0.3,
-    "text": "\"하아… 이렇게 일해서 뭐 하나.\n같이 밥 먹을 사람도 없는데.\"",
-    "tempo": 0.88
+    "voice": "tc-sungho",
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "\"에이, 이 농사를 지어서 뭐 하나.\n누구랑 먹고 산다고…\"",
+    "tempo": 0.9
   },
   "folk/ureong/seg-tc-jinseo-p2-0.mp3": {
     "voice": "tc-jinseo",
@@ -11641,7 +11503,7 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p2-1.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-gaeul",
     "emotion": "tonedown",
     "intensity": 0.3,
     "text": "\"저랑 먹고 살면 되죠.\""
@@ -11654,11 +11516,10 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p3-0.mp3": {
-    "voice": "tc-seojoon",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"허 참, 잘못 들었나 보다.\"",
-    "tempo": 0.83
+    "voice": "tc-sungho",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "\"허 참, 잘못 들었나 보다.\""
   },
   "folk/ureong/seg-tc-jinseo-p3-1.mp3": {
     "voice": "tc-jinseo",
@@ -11668,14 +11529,14 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p3-2.mp3": {
-    "voice": "tc-seojoon",
+    "voice": "tc-sungho",
     "emotion": "sad",
     "intensity": 0.3,
     "text": "\"이렇게 일해 봤자 내 짝은 없지. 무슨 소용이람.\"",
     "tempo": 0.88
   },
   "folk/ureong/seg-cast-p3-3.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-gaeul",
     "emotion": "tonedown",
     "intensity": 0.3,
     "text": "\"저랑 살면 되죠.\""
@@ -11695,7 +11556,7 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p4-1.mp3": {
-    "voice": "tc-seojoon",
+    "voice": "tc-sungho",
     "emotion": "tonedown",
     "intensity": 0.3,
     "text": "\"음, 우렁이잖아? 여기 있다가 밟히겠다.\n나랑 집에 가자.\"",
@@ -11716,7 +11577,7 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p5-1.mp3": {
-    "voice": "tc-seojoon",
+    "voice": "tc-sungho",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"이게 뭐야? 누가 왔다 갔나?\"",
@@ -11758,17 +11619,16 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p9-1.mp3": {
-    "voice": "tc-seojoon",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"당신… 누구요?\"",
-    "tempo": 0.83
-  },
-  "folk/ureong/seg-cast-p9-2.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-sungho",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "\"사실 저는 용왕님의 딸이에요.\n몰래 인간 세상에 왔다가 들켜서,\n벌로 우렁이가 되었지요.\""
+    "text": "\"당신은… 누구시죠?\""
+  },
+  "folk/ureong/seg-cast-p9-2.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "\"사실 저는 용왕님의 딸이에요.\n몰래 인간 세상에 왔다가 들켜서,\n벌로 우렁이가 되었답니다.\""
   },
   "folk/ureong/seg-tc-jinseo-p10-0.mp3": {
     "voice": "tc-jinseo",
@@ -11785,7 +11645,7 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p11-1.mp3": {
-    "voice": "tc-wangkwon",
+    "voice": "tc-jongdae",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "\"그동안 고생이 많았구나.\n내가 너무 무거운 벌을 주었지.\n이제 그 벌은 풀어 주마.\"",
@@ -11806,9 +11666,9 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p12-1.mp3": {
-    "voice": "tc-miso",
-    "emotion": "normal",
-    "intensity": null,
+    "voice": "tc-minju",
+    "emotion": "whisper",
+    "intensity": 0.35,
     "text": "\"농부네 각시가 어찌나 곱다던지.\""
   },
   "folk/ureong/seg-tc-jinseo-p12-2.mp3": {
@@ -11819,10 +11679,10 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p12-3.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"농부야, 나와 내기를 하자.\n내가 이기면 네 각시를 데려가겠다!\""
+    "text": "\"농부야, 나와 내기를 해서 네가 지면,\n네 각시를 내가 데려가겠다!\""
   },
   "folk/ureong/seg-tc-jinseo-p13-0.mp3": {
     "voice": "tc-jinseo",
@@ -11832,10 +11692,10 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p13-1.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-gaeul",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "\"저는 누구의 것도 아닙니다.\""
+    "text": "\"저는 누구의 것도 아니에요.\""
   },
   "folk/ureong/seg-tc-jinseo-p13-2.mp3": {
     "voice": "tc-jinseo",
@@ -11845,7 +11705,7 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p13-3.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-gaeul",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "\"아버지가 주신 요술 조롱박이에요.\n무슨 내기든 서방님이 이기게 해 줄 거예요.\""
@@ -11858,7 +11718,7 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p14-1.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"저기 보이는 섬까지,\n먼저 가는 사람이 이기는 거다!\""
@@ -11885,9 +11745,9 @@
     "tempo": 0.8
   },
   "folk/ureong/seg-cast-p16-1.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-byunghun",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.5,
     "text": "\"으악! 배가 뒤집힌다!\""
   },
   "folk/ureong/seg-tc-jinseo-p16-2.mp3": {
@@ -11897,24 +11757,12 @@
     "text": "사또의 배가 그만 기우뚱 넘어가고 말았지요.",
     "tempo": 0.8
   },
-  "folk/ureong/seg-cast-p16-3.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"살려 주시오! 하라는 대로 다 하겠소!\""
-  },
   "folk/ureong/seg-tc-jinseo-p17-0.mp3": {
     "voice": "tc-jinseo",
     "emotion": "normal",
     "intensity": null,
     "text": "농부는 망설이지 않고 배를 돌려,\n사또와 일행을 모두 건져 주었어요.",
     "tempo": 0.8
-  },
-  "folk/ureong/seg-cast-p17-1.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "\"정말 고맙소. 다시는 안 그러겠소.\""
   },
   "folk/ureong/seg-tc-jinseo-p17-2.mp3": {
     "voice": "tc-jinseo",
@@ -11931,88 +11779,74 @@
     "tempo": 0.8
   },
   "folk/ureong/say-p1-farmer.mp3": {
-    "voice": "tc-seojoon",
-    "emotion": "sad",
-    "intensity": 0.3,
-    "text": "하아… 이렇게 일해서 뭐 하나. 같이 밥 먹을 사람도 없는데.",
+    "voice": "tc-sungho",
+    "emotion": "tonedown",
+    "intensity": 0.4,
+    "text": "에이, 이 농사를 지어서 뭐 하나.\n누구랑 먹고 산다고…",
     "tempo": 0.88
   },
   "folk/ureong/say-p3-farmer.mp3": {
-    "voice": "tc-seojoon",
+    "voice": "tc-sungho",
     "emotion": "sad",
     "intensity": 0.3,
-    "text": "이렇게 일해 봤자 내 짝은 없지. 무슨 소용이람.",
-    "tempo": 0.83
+    "text": "이렇게 일해 봤자 내 짝은 없지. 무슨 소용이람."
   },
   "folk/ureong/say-p3-snail.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-gaeul",
     "emotion": "tonedown",
     "intensity": 0.3,
     "text": "저랑 살면 되죠."
   },
   "folk/ureong/say-p4-farmer.mp3": {
-    "voice": "tc-seojoon",
+    "voice": "tc-sungho",
     "emotion": "tonedown",
     "intensity": 0.3,
     "text": "음, 우렁이잖아? 여기 있다가 밟히겠다. 나랑 집에 가자.",
     "tempo": 0.88
   },
   "folk/ureong/say-p5-farmer.mp3": {
-    "voice": "tc-seojoon",
+    "voice": "tc-sungho",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "이게 뭐야? 누가 왔다 갔나?",
-    "tempo": 0.83
+    "tempo": 0.88
   },
   "folk/ureong/say-p9-farmer.mp3": {
-    "voice": "tc-seojoon",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "당신… 누구요?",
-    "tempo": 0.83
-  },
-  "folk/ureong/say-p9-snail.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-sungho",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "사실 저는 용왕님의 딸이에요. 몰래 인간 세상에 왔다가 들켜서, 벌로 우렁이가 되었지요."
+    "text": "당신은… 누구시죠?"
+  },
+  "folk/ureong/say-p9-snail.mp3": {
+    "voice": "tc-gaeul",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "사실 저는 용왕님의 딸이에요. 몰래 인간 세상에 왔다가 들켜서, 벌로 우렁이가 되었답니다."
   },
   "folk/ureong/say-p11-dragonking.mp3": {
-    "voice": "tc-wangkwon",
+    "voice": "tc-jongdae",
     "emotion": "tonedown",
     "intensity": 0.4,
     "text": "그동안 고생이 많았구나. 내가 너무 무거운 벌을 주었지. 이제 그 벌은 풀어 주마.",
     "tempo": 0.9
   },
   "folk/ureong/say-p12-magistrate.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "농부야, 나와 내기를 하자. 내가 이기면 네 각시를 데려가겠다!"
+    "text": "농부야, 나와 내기를 해서 네가 지면,\n네 각시를 내가 데려가겠다!"
   },
   "folk/ureong/say-p13-snail.mp3": {
-    "voice": "tc-chungah",
+    "voice": "tc-gaeul",
     "emotion": "happy",
     "intensity": 0.35,
     "text": "아버지가 주신 요술 조롱박이에요. 무슨 내기든 서방님이 이기게 해 줄 거예요."
   },
   "folk/ureong/say-p14-magistrate.mp3": {
-    "voice": "tc-mckong",
+    "voice": "tc-byunghun",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "저기 보이는 섬까지 먼저 가는 사람이 이기는 거다!"
-  },
-  "folk/ureong/say-p16-magistrate.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "살려 주시오! 하라는 대로 다 하겠소!"
-  },
-  "folk/ureong/say-p17-magistrate.mp3": {
-    "voice": "tc-mckong",
-    "emotion": "tonedown",
-    "intensity": 0.4,
-    "text": "정말 고맙소. 다시는 안 그러겠소."
   },
   "folk/banggwi/seg-tc-jinseo-p1-0.mp3": {
     "voice": "tc-jinseo",
@@ -12190,8 +12024,8 @@
   },
   "folk/banggwi/seg-cast-p13-1.mp3": {
     "voice": "tc-byunghun",
-    "emotion": "toneup",
-    "intensity": 0.4,
+    "emotion": "angry",
+    "intensity": 0.45,
     "text": "\"거기 서라! 가진 거 다 내놔!\""
   },
   "folk/banggwi/seg-tc-jinseo-p13-2.mp3": {
@@ -12210,8 +12044,8 @@
   },
   "folk/banggwi/seg-cast-p14-1.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.35,
     "text": "\"저한테 맡기세요.\""
   },
   "folk/banggwi/seg-tc-jinseo-p14-2.mp3": {
@@ -12257,10 +12091,11 @@
     "tempo": 0.85
   },
   "folk/gamtu/seg-cast-p2-1.mp3": {
-    "voice": "tc-taewoo",
+    "voice": "tc-heejoon",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "\"어휴, 날도 어두워지고…\n오늘 밤은 여기서 좀 쉬고 가야겠군.\""
+    "text": "\"어휴, 날도 어두워지고…\n오늘 밤은 여기서 좀 쉬고 가야겠다.\"",
+    "tempo": 0.88
   },
   "folk/gamtu/seg-tc-hyemin-p3-0.mp3": {
     "voice": "tc-hyemin",
@@ -12275,12 +12110,6 @@
     "intensity": null,
     "text": "도깨비들이 우르르 몰려온 거예요!",
     "tempo": 0.85
-  },
-  "folk/gamtu/seg-cast-p4-1.mp3": {
-    "voice": "tc-taewoo",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"도… 도깨비?\""
   },
   "folk/gamtu/seg-tc-hyemin-p4-2.mp3": {
     "voice": "tc-hyemin",
@@ -12311,10 +12140,11 @@
     "tempo": 0.85
   },
   "folk/gamtu/seg-cast-p7-1.mp3": {
-    "voice": "tc-taewoo",
+    "voice": "tc-heejoon",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "\"어라? 진짜 보이지 않네!\""
+    "text": "\"어라? 진짜 보이지 않네!\"",
+    "tempo": 0.88
   },
   "folk/gamtu/seg-tc-hyemin-p7-2.mp3": {
     "voice": "tc-hyemin",
@@ -12331,10 +12161,11 @@
     "tempo": 0.85
   },
   "folk/gamtu/seg-cast-p8-1.mp3": {
-    "voice": "tc-taewoo",
+    "voice": "tc-heejoon",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "\"이 감투만 있으면, 돈도 필요 없지!\""
+    "text": "\"이 감투만 있으면, 돈도 필요 없지!\"",
+    "tempo": 0.88
   },
   "folk/gamtu/seg-tc-hyemin-p9-0.mp3": {
     "voice": "tc-hyemin",
@@ -12344,7 +12175,7 @@
     "tempo": 0.85
   },
   "folk/gamtu/seg-cast-p9-1.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-insun",
     "emotion": "sad",
     "intensity": 0.35,
     "text": "\"물건을 놔두면 눈 깜짝할 사이에 없어져요.\""
@@ -12370,10 +12201,11 @@
     "text": "\"이 낡은 감투는 뭐야? 버려야겠네.\""
   },
   "folk/gamtu/seg-cast-p11-0.mp3": {
-    "voice": "tc-taewoo",
+    "voice": "tc-heejoon",
     "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "\"안 돼!\""
+    "intensity": 0.5,
+    "text": "\"안 돼!\"",
+    "tempo": 0.88
   },
   "folk/gamtu/seg-tc-hyemin-p11-1.mp3": {
     "voice": "tc-hyemin",
@@ -12383,10 +12215,11 @@
     "tempo": 0.85
   },
   "folk/gamtu/seg-cast-p11-2.mp3": {
-    "voice": "tc-taewoo",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "\"조금 찢어진 것쯤이야, 뭐 어때.\""
+    "voice": "tc-heejoon",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "\"조금 찢어진 것쯤이야, 뭐 어때.\"",
+    "tempo": 0.88
   },
   "folk/gamtu/seg-tc-hyemin-p12-0.mp3": {
     "voice": "tc-hyemin",
@@ -12396,15 +12229,15 @@
     "tempo": 0.85
   },
   "folk/gamtu/seg-cast-p13-0.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-insun",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "\"어어? 저기 봐! 머리카락이 떠다닌다!\""
   },
   "folk/gamtu/seg-cast-p13-1.mp3": {
-    "voice": "tc-minju",
-    "emotion": "toneup",
-    "intensity": 0.4,
+    "voice": "tc-insun",
+    "emotion": "angry",
+    "intensity": 0.45,
     "text": "\"도둑이야!\""
   },
   "folk/gamtu/seg-tc-hyemin-p13-2.mp3": {
@@ -12415,7 +12248,7 @@
     "tempo": 0.85
   },
   "folk/gamtu/seg-cast-p14-0.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-insun",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "\"아니, 선비님 아니십니까!\""
@@ -12491,14 +12324,14 @@
   },
   "folk/banggwi/say-p13-thief.mp3": {
     "voice": "tc-byunghun",
-    "emotion": "toneup",
-    "intensity": 0.4,
+    "emotion": "angry",
+    "intensity": 0.45,
     "text": "거기 서라! 가진 거 다 내놔!"
   },
   "folk/banggwi/say-p14-bride.mp3": {
     "voice": "tc-jiwoo",
-    "emotion": "normal",
-    "intensity": null,
+    "emotion": "tonedown",
+    "intensity": 0.35,
     "text": "저한테 맡기세요."
   },
   "folk/banggwi/say-p15-bong.mp3": {
@@ -12509,31 +12342,28 @@
     "tempo": 0.9
   },
   "folk/gamtu/say-p2-scholar.mp3": {
-    "voice": "tc-taewoo",
+    "voice": "tc-heejoon",
     "emotion": "tonedown",
     "intensity": 0.35,
-    "text": "어휴, 날도 어두워지고… 오늘 밤은 여기서 좀 쉬고 가야겠군."
-  },
-  "folk/gamtu/say-p4-scholar.mp3": {
-    "voice": "tc-taewoo",
-    "emotion": "toneup",
-    "intensity": 0.4,
-    "text": "도… 도깨비?"
+    "text": "어휴, 날도 어두워지고… 오늘 밤은 여기서 좀 쉬고 가야겠다.",
+    "tempo": 0.88
   },
   "folk/gamtu/say-p7-scholar.mp3": {
-    "voice": "tc-taewoo",
+    "voice": "tc-heejoon",
     "emotion": "toneup",
     "intensity": 0.4,
-    "text": "어라? 진짜 보이지 않네!"
+    "text": "어라? 진짜 보이지 않네!",
+    "tempo": 0.88
   },
   "folk/gamtu/say-p8-scholar.mp3": {
-    "voice": "tc-taewoo",
+    "voice": "tc-heejoon",
     "emotion": "happy",
     "intensity": 0.4,
-    "text": "이 감투만 있으면, 돈도 필요 없지!"
+    "text": "이 감투만 있으면, 돈도 필요 없지!",
+    "tempo": 0.88
   },
   "folk/gamtu/say-p9-villager.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-insun",
     "emotion": "sad",
     "intensity": 0.35,
     "text": "물건을 놔두면 눈 깜짝할 사이에 없어져요."
@@ -12545,19 +12375,20 @@
     "text": "이 낡은 감투는 뭐야? 버려야겠네."
   },
   "folk/gamtu/say-p11-scholar.mp3": {
-    "voice": "tc-taewoo",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "조금 찢어진 것쯤이야, 뭐 어때."
+    "voice": "tc-heejoon",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "조금 찢어진 것쯤이야, 뭐 어때.",
+    "tempo": 0.88
   },
   "folk/gamtu/say-p13-villager.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-insun",
     "emotion": "toneup",
-    "intensity": 0.4,
+    "intensity": 0.45,
     "text": "어어? 저기 봐! 머리카락이 떠다닌다!"
   },
   "folk/gamtu/say-p14-villager.mp3": {
-    "voice": "tc-minju",
+    "voice": "tc-insun",
     "emotion": "toneup",
     "intensity": 0.4,
     "text": "아니, 선비님 아니십니까!"
@@ -13053,10 +12884,11 @@
     "tempo": 0.8
   },
   "folk/heungbu/seg-cast-p24-1.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "sad",
     "intensity": 0.35,
-    "text": "\"형님!\""
+    "text": "\"형님!\"",
+    "tempo": 0.9
   },
   "folk/heungbu/seg-tc-minjung-p24-2.mp3": {
     "voice": "tc-minjung",
@@ -13078,10 +12910,11 @@
     "text": "흥부는 형의 손을 꼭 잡았지요."
   },
   "folk/heungbu/seg-cast-p24-5.mp3": {
-    "voice": "tc-seungjae",
+    "voice": "tc-sungho",
     "emotion": "tonedown",
     "intensity": 0.4,
-    "text": "\"괜찮아요, 형님. 우리 집에서 같이 살아요.\""
+    "text": "\"괜찮아요, 형님. 우리 집에서 같이 살아요.\"",
+    "tempo": 0.9
   },
   "folk/heungbu/seg-tc-minjung-p24-6.mp3": {
     "voice": "tc-minjung",
@@ -13148,12 +12981,6 @@
     "emotion": "normal",
     "intensity": null,
     "text": "그날 밤, 봉 영감은,\n좀처럼 잠을 이루지 못했어요."
-  },
-  "folk/banggwi/seg-tc-minjung-p9-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "'이대로라면 우리 집이,\n며느리 방귀에 무너질지도 모르겠구나…'"
   },
   "folk/banggwi/seg-tc-minjung-p10-0.mp3": {
     "voice": "tc-minjung",
@@ -13711,7 +13538,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "농부는 우렁이를 조심스레 데려와,\n부엌 항아리에 담아 두었지요."
+    "text": "농부는 우렁이를 조심스레 데려와,\n부엌 항아리에 담아 두었답니다."
   },
   "folk/ureong/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
@@ -13724,12 +13551,6 @@
     "emotion": "normal",
     "intensity": null,
     "text": "그날부터 농부가 집을 비우기만 하면,\n맛있는 밥상이 차려져 있고,\n집은 반짝반짝 깨끗했어요."
-  },
-  "folk/ureong/seg-tc-minjung-p6-1.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "'이상하다… 도대체 누가 다녀가는 거지?'"
   },
   "folk/ureong/seg-tc-minjung-p7-0.mp3": {
     "voice": "tc-minjung",
@@ -13825,13 +13646,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "농부는 망설이지 않고 배를 돌려,\n사또와 사람들을 모두 건져 주었어요."
-  },
-  "folk/ureong/seg-tc-minjung-p17-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "사또는 물에 빠진 생쥐 꼴로,\n고개를 푹 숙였지요."
+    "text": "농부는 망설이지 않고 배를 돌려,\n사또와 사람들을 모두 건져 주었어요.\n사또는 물에 빠진 생쥐 꼴로,\n고개를 푹 숙였지요."
   },
   "folk/ureong/seg-tc-minjung-p18-0.mp3": {
     "voice": "tc-minjung",
@@ -13963,7 +13778,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "옛날 옛적, 어느 산골 마을에,\n선비와 아내가 살고 있었어요.\n어느 날, 선비가 볼일을 보고 돌아오는데,\n그만 깊은 산속에서 해가 지고 말았지요."
+    "text": "옛날 옛적, 어느 산골 마을에,\n선비와 아내가 살고 있었어요.\n어느 날, 선비가 볼일을 보고 돌아오는데,\n그만 깊은 산속에서 해가 지고 말았답니다."
   },
   "folk/gamtu/seg-tc-minjung-p2-0.mp3": {
     "voice": "tc-minjung",
@@ -13981,13 +13796,7 @@
     "voice": "tc-minjung",
     "emotion": "normal",
     "intensity": null,
-    "text": "도깨비들이 우르르 몰려온 거예요!"
-  },
-  "folk/gamtu/seg-tc-minjung-p4-2.mp3": {
-    "voice": "tc-minjung",
-    "emotion": "normal",
-    "intensity": null,
-    "text": "선비는 숨을 죽이고,\n문틈으로 가만히 지켜보았어요."
+    "text": "도깨비들이 우르르 몰려온 거예요!\n선비는 숨을 죽이고,\n문틈으로 가만히 지켜보았어요."
   },
   "folk/gamtu/seg-tc-minjung-p5-0.mp3": {
     "voice": "tc-minjung",
@@ -14906,7 +14715,8 @@
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "그러던 어느 날이었어. 우르르 쾅쾅!\n사나운 폭풍우가 몰아쳐서,\n배가 그만 뒤집히고 말았단다.\n나는 부서진 배 조각에 꼭 매달려,\n밤새도록 둥실둥실 떠다녔지.\n겨우 모래밭에 닿았을 때는,\n그만 스르르 잠이 들어 버렸단다."
+    "text": "그러던 어느 날이었어. 우르르 쾅쾅!\n사나운 폭풍우가 몰아쳐서,\n배가 그만 뒤집히고 말았단다.\n나는 부서진 배 조각에 꼭 매달려,\n밤새도록 둥실둥실 떠다녔지.\n겨우 모래밭에 닿았을 때는,\n그만 스르르 잠이 들어 버렸단다.",
+    "tempo": 0.88
   },
   "classic/gulliver1/seg-tc-kangil-p3-0.mp3": {
     "voice": "tc-kangil",
@@ -14918,13 +14728,15 @@
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "내가 몸을 살짝 들썩이자,\n작은 사람들이 깜짝 놀라 화살을 쏘았어.\n따끔따끔했지만 하나도 다치지는 않았어.\n작은 사람 하나가 내 귀에 대고 뭐라고 소리쳤는데,\n나한테는 모깃소리처럼 앵앵 들릴 뿐이었지."
+    "text": "내가 몸을 살짝 들썩이자,\n작은 사람들이 깜짝 놀라 화살을 쏘았어.\n따끔따끔했지만 하나도 다치지는 않았어.\n작은 사람 하나가 내 귀에 대고 뭐라고 소리쳤는데,\n나한테는 모깃소리처럼 앵앵 들릴 뿐이었지.",
+    "tempo": 0.88
   },
   "classic/gulliver1/seg-tc-kangil-p5-0.mp3": {
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "내가 입을 벌리고,\n배가 고프다고 말했더니,\n작은 사람들이 빵이며 고기를 수레에 실어,\n내 입속에 가득 넣어 주었단다.\n어찌나 맛있던지, 허겁지겁 먹었지."
+    "text": "내가 입을 벌리고,\n배가 고프다고 말했더니,\n작은 사람들이 빵이며 고기를 수레에 실어,\n내 입속에 가득 넣어 주었단다.\n어찌나 맛있던지, 허겁지겁 먹었지.",
+    "tempo": 0.84
   },
   "classic/gulliver1/seg-tc-kangil-p6-0.mp3": {
     "voice": "tc-kangil",
@@ -14948,19 +14760,22 @@
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "하루는 바다 저편에서,\n이웃 나라 배들이 우르르 몰려왔어.\n내가 첨벙첨벙 바다로 걸어 들어가자"
+    "text": "하루는 바다 저편에서,\n이웃 나라 배들이 우르르 몰려왔어.\n내가 첨벙첨벙 바다로 걸어 들어가자",
+    "tempo": 0.92
   },
   "classic/gulliver1/seg-tc-kangil-p8-2.mp3": {
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "병사들이 깜짝 놀라 물에 풍덩 빠지기도 했지 뭐야."
+    "text": "병사들이 깜짝 놀라 물에 풍덩 빠지기도 했지 뭐야.",
+    "tempo": 0.92
   },
   "classic/gulliver1/seg-tc-kangil-p9-0.mp3": {
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "물에 빠진 병사들을,\n손가락으로 살짝 건져서 배에 다시 태워 주었어.\n그러고는 배마다 밧줄을 묶어,\n줄줄이 끌고 작은 나라로 돌아왔지.\n옷에 화살이 몇 개 꽂혔지만, 하나도 아프지 않았단다.\n바닷가 사람들은 모자를 던지며 기뻐했어!"
+    "text": "물에 빠진 병사들을,\n손가락으로 살짝 건져서 배에 다시 태워 주었어.\n그러고는 배마다 밧줄을 묶어,\n줄줄이 끌고 작은 나라로 돌아왔지.\n옷에 화살이 몇 개 꽂혔지만, 하나도 아프지 않았단다.\n바닷가 사람들은 모자를 던지며 기뻐했어!",
+    "tempo": 0.93
   },
   "classic/gulliver1/seg-tc-kangil-p10-0.mp3": {
     "voice": "tc-kangil",
@@ -14990,7 +14805,8 @@
     "voice": "tc-kangil",
     "emotion": "happy",
     "intensity": 0.3,
-    "text": "다음 날부터 온 나라가 배를 만드느라 바빠졌어.\n수백 명이 달라붙어 나무를 나르고,\n못을 박고, 돛을 꿰맸지.\n나도 손가락 하나로,\n널빤지를 잡아 주며 도왔단다."
+    "text": "다음 날부터 온 나라가 배를 만드느라 바빠졌어.\n수백 명이 달라붙어 나무를 나르고,\n못을 박고, 돛을 꿰맸지.\n나도 손가락 하나로,\n널빤지를 잡아 주며 도왔단다.",
+    "tempo": 0.87
   },
   "classic/gulliver1/seg-tc-kangil-p13-0.mp3": {
     "voice": "tc-kangil",
@@ -15444,12 +15260,6 @@
     "intensity": 0.35,
     "text": "아, 지붕에 집중하다 보니 벽 쌓는 걸 깜빡했지 뭐예요! 조금만 더 하면 돼요!"
   },
-  "folk/heungbu/seg-cast-p19-2.mp3": {
-    "voice": "tc-sua",
-    "emotion": "sad",
-    "intensity": 0.4,
-    "text": "\"짹… 왜 일부러 아프게 하는 거예요…\""
-  },
   "classic/beauty/seg-tc-minjung-p2-3.mp3": {
     "voice": "tc-minjung",
     "emotion": "normal",
@@ -15474,5 +15284,268 @@
     "emotion": "happy",
     "intensity": 0.4,
     "text": "\"저는 장미 한 송이면 돼요.\""
+  },
+  "folk/heungbu/seg-tc-minjung-p15-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "흥부는 박씨를 마당 한쪽에 정성껏 심었어요."
+  },
+  "folk/heungbu/seg-cast-p15-1.mp3": {
+    "voice": "tc-sungho",
+    "emotion": "happy",
+    "intensity": 0.35,
+    "text": "\"싹아, 얼른 나오렴!\""
+  },
+  "folk/heungbu/seg-tc-minjung-p15-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "박씨는 무럭무럭 자라, 지붕 위까지 덩굴을 뻗었어요.\n가을이 되자 집채만 한 박이 주렁주렁 열렸답니다."
+  },
+  "folk/heungbu/seg-cast-p15-3.mp3": {
+    "voice": "tc-aeran",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"우아! 여보, 이 박으로 박죽이라도 끓여 먹어요.\""
+  },
+  "folk/heungbu/say-p15-heungbuwife.mp3": {
+    "voice": "tc-aeran",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "우아! 여보, 이 박으로 박죽이라도 끓여 먹어요."
+  },
+  "folk/tortoise/seg-tc-minjung-p12-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가, 깜짝 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!"
+  },
+  "folk/haedal/say-p7-tigerMimic.mp3": {
+    "voice": "tc-hades",
+    "emotion": "whisper",
+    "intensity": 0.4,
+    "text": "얘들아… 엄마 왔단다…",
+    "tempo": 0.9
+  },
+  "folk/haedal/seg-cast-p8-1.mp3": {
+    "voice": "tc-siwoo",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "\"그럼 문틈으로 손을 보여 주세요.\""
+  },
+  "folk/haedal/seg-tc-minjung-p8-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "문틈으로 쑥 들어온 손은 털이 북슬북슬!"
+  },
+  "folk/haedal/seg-cast-p8-3.mp3": {
+    "voice": "tc-haeun",
+    "emotion": "toneup",
+    "intensity": 0.55,
+    "text": "헉! 오, 오빠! 호, 호랑이인 것 같아! 어떡해!",
+    "tempo": 1.05,
+    "pitch": 1
+  },
+  "folk/haedal/seg-tc-minjung-p8-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "오누이는 서로 손을 꼭 잡았어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p6-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "먼저 쇠똥이 말했어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p6-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "멍석이 뒤를 이었어요."
+  },
+  "folk/patjuk-halmae-tiger/seg-cast-p6-5.mp3": {
+    "voice": "tc-guri",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"나는 호랑이를 둘둘 말 줄 알아!\""
+  },
+  "folk/patjuk-halmae-tiger/seg-tc-minjung-p6-6.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "지게도 큰소리를 쳤답니다."
+  },
+  "folk/patjuk-halmae-tiger/seg-cast-p6-7.mp3": {
+    "voice": "tc-babilon",
+    "emotion": "happy",
+    "intensity": 0.35,
+    "text": "\"나는 호랑이를 번쩍 지고 갈 힘이 있지!\""
+  },
+  "folk/byeoljubu/seg-cast-p10-1.mp3": {
+    "voice": "tc-hamchu",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "\"으으, 깊어도 너무 깊다. 자라야, 용궁은 아직 멀어?\""
+  },
+  "folk/byeoljubu/seg-tc-minjung-p10-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "자라가 다정하게 대답했어요."
+  },
+  "folk/byeoljubu/seg-cast-p10-3.mp3": {
+    "voice": "tc-monggun",
+    "emotion": "happy",
+    "intensity": 0.3,
+    "text": "\"조금만 참으세요, 토끼 선생님. 이제 다 왔답니다.\""
+  },
+  "folk/byeoljubu/seg-tc-minjung-p10-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "토끼는 두 눈을 꼭 감고 자라의 등을 꼭 붙잡았답니다."
+  },
+  "folk/byeoljubu/seg-tc-minjung-p11-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "용왕님이 토끼를 반갑게 맞으며 말했어요."
+  },
+  "folk/byeoljubu/seg-cast-p11-3.mp3": {
+    "voice": "tc-wangkwon",
+    "emotion": "happy",
+    "intensity": 0.35,
+    "text": "\"어서 오너라, 귀한 손님아. 먼 길 오느라 수고했구나.\""
+  },
+  "folk/greenfrog/seg-cast-p3-1.mp3": {
+    "voice": "tc-minju",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"아기야, 물속에 들어가 있어라.\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p3-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하면,\n아기는 풀숲으로 폴짝!"
+  },
+  "folk/greenfrog/seg-cast-p3-3.mp3": {
+    "voice": "tc-minju",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "\"그럼 풀숲에 숨어 있어라.\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p3-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "하면,\n이번엔 물속으로 풍덩!"
+  },
+  "folk/greenfrog/seg-cast-p3-5.mp3": {
+    "voice": "tc-gunwoo",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"개굴! 난 거꾸로가 제일 재밌어!\""
+  },
+  "folk/greenfrog/seg-cast-p4-4.mp3": {
+    "voice": "tc-gunwoo",
+    "emotion": "angry",
+    "intensity": 0.3,
+    "text": "\"흥, 안 먹어! 배 하나도 안 고파!\""
+  },
+  "folk/greenfrog/seg-cast-p5-3.mp3": {
+    "voice": "tc-gunwoo",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"엄마는 걱정도 많아. 나는 수영도 잘하는데!\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p6-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "그래도 엄마는 아기를 한 번도 미워하지 않았답니다."
+  },
+  "folk/greenfrog/seg-cast-p7-1.mp3": {
+    "voice": "tc-gunwoo",
+    "emotion": "happy",
+    "intensity": 0.4,
+    "text": "\"엄마, 저 별은 내 거야. 저기 큰 별은 엄마 거!\""
+  },
+  "folk/greenfrog/seg-cast-p7-2.mp3": {
+    "voice": "tc-minju",
+    "emotion": "tonedown",
+    "intensity": 0.35,
+    "text": "\"그래, 우리 아기 별이 제일 반짝이는구나.\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p7-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마는 아기를 꼭 안아 주었답니다."
+  },
+  "folk/greenfrog/seg-cast-p9-2.mp3": {
+    "voice": "tc-gunwoo",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "\"엄마, 그게 무슨 말이야? 하늘나라에 왜 가?\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p9-3.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아기는 그 말이 무슨 뜻인지 몰랐어요.\n사실 엄마는 조용한 숲속에 묻히고 싶었지만,\n거꾸로만 하는 아기를 잘 알아서 반대로 말한 거였답니다."
+  },
+  "folk/greenfrog/seg-tc-minjung-p11-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아기는 엉엉 울면서, 엄마를 냇가에 조심조심 묻어 주었답니다."
+  },
+  "folk/greenfrog/seg-cast-p12-3.mp3": {
+    "voice": "tc-gunwoo",
+    "emotion": "toneup",
+    "intensity": 0.45,
+    "text": "\"안 돼, 비가 오면 엄마 무덤이 떠내려가면 어떡해!\""
+  },
+  "folk/greenfrog/seg-tc-minjung-p12-4.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "아기는 얼른 연잎을 따다 돌무덤 위에 덮어 주었답니다."
+  },
+  "folk/greenfrog/seg-cast-p13-1.mp3": {
+    "voice": "tc-gunwoo",
+    "emotion": "sad",
+    "intensity": 0.45,
+    "text": "\"개굴개굴… 엄마, 떠내려가지 마. 개굴개굴…\"",
+    "tempo": 0.9
+  },
+  "folk/greenfrog/seg-tc-minjung-p13-2.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마 무덤이 떠내려갈까 걱정하며 밤새 울었답니다.\n지금도 비가 오면 개구리가 개굴개굴 우는 건, 바로 그래서래요."
+  },
+  "folk/greenfrog/seg-tc-minjung-p3-0.mp3": {
+    "voice": "tc-minjung",
+    "emotion": "normal",
+    "intensity": null,
+    "text": "엄마 청개구리가"
+  },
+  "folk/banggwi/seg-cast-p9-1.mp3": {
+    "voice": "tc-changbae",
+    "emotion": "sad",
+    "intensity": 0.35,
+    "text": "'이대로라면 우리 집이,\n며느리 방귀에 무너질지도 모르겠구나…'",
+    "tempo": 0.9
+  },
+  "folk/ureong/seg-cast-p6-1.mp3": {
+    "voice": "tc-sungho",
+    "emotion": "tonedown",
+    "intensity": 0.3,
+    "text": "'이상하다… 도대체 누가 다녀가는 거지?'"
   }
 }

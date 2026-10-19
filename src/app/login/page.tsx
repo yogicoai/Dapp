@@ -12,6 +12,7 @@ import {
   signInWithGoogle,
 } from "@/lib/auth";
 import { safeAdminNext } from "@/lib/admin-console";
+import { RETENTION_DAYS } from "@/lib/retention";
 import { usePricing } from "@/lib/use-pricing";
 
 /**
@@ -40,6 +41,12 @@ export default function LoginPage() {
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  // 회원 탈퇴 뒤 넘어왔을 때(?bye=1, 설정 › 회원 탈퇴) — 주소는 첫 화면을 그린 뒤에야 읽을 수 있어 효과에서 한 번 본다.
+  const [bye, setBye] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setBye(new URLSearchParams(window.location.search).get("bye") === "1");
+  }, []);
 
   /*
    * 구글에서 돌아왔을 때 — 크롬이 이 화면으로 되돌려 보낸다.
@@ -110,6 +117,13 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-6 rounded-[28px] bg-white/92 p-7 shadow-xl backdrop-blur">
+          {bye && (
+            <p role="status" className="mb-4 break-keep rounded-xl bg-neutral-50 px-3 py-2.5 text-center text-xs font-bold leading-relaxed text-neutral-600">
+              탈퇴가 끝났어요. 그동안 함께해 주셔서 고마워요.
+              <br />
+              만든 동화와 그림은 {RETENTION_DAYS}일 뒤 완전히 지워져요.
+            </p>
+          )}
           {/*
             구글로 시작하기 — 가입은 이 단추 하나로만 받는다. 설정을 켠 뒤에만 보인다(NEXT_PUBLIC_GOOGLE_LOGIN=1).
             안 켠 채로 단추만 있으면 눌렀을 때 오류만 나므로 아예 감추고, 가입은 준비 중이라고만 알린다.

@@ -62,13 +62,13 @@
         ]
       },
       {
-        "text": "그날 흥부네가 찾아간 곳은, 산 아래 다 쓰러져 가는 초가집이었어요.\n바람이 숭숭 들어오는 방에, 여섯 식구가 옹기종기 모여 앉았지요.",
+        "text": "그날 흥부네가 찾아간 곳은, 산 아래 다 쓰러져 가는 초가집이었어요.\n바람이 숭숭 들어오는 방에, 여섯 식구가 옹기종기 모여 앉았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p3.webp?v=6",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/heungbu/seg-p3-0.mp3",
-            "text": "그날 흥부네가 찾아간 곳은, 산 아래 다 쓰러져 가는 초가집이었어요.\n바람이 숭숭 들어오는 방에, 여섯 식구가 옹기종기 모여 앉았지요."
+            "text": "그날 흥부네가 찾아간 곳은, 산 아래 다 쓰러져 가는 초가집이었어요.\n바람이 숭숭 들어오는 방에, 여섯 식구가 옹기종기 모여 앉았답니다."
           }
         ]
       },
@@ -117,7 +117,7 @@
         ]
       },
       {
-        "text": "\"여보, 쌀독이 비었어요. 아이들이 사흘째 굶었는데…\"\n흥부는 한참을 말없이 앉아 있었어요.\n\"내가 형님한테 한번 가 볼게요.\"\n흥부는 헌 두루마기를 걸치고 집을 나섰지요.",
+        "text": "\"여보, 쌀독이 비었어요. 아이들이 사흘째 굶었는데…\"\n흥부는 한참을 말없이 앉아 있었어요.\n\"미안하구려. 형님한테 한번 가 볼게요.\"\n흥부는 헌 두루마기를 걸치고는 집을 나섰답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p5.webp?v=6",
         "segments": [
           {
@@ -133,12 +133,12 @@
           {
             "who": "heungbu",
             "src": "/folk/heungbu/seg-cast-p5-2.mp3",
-            "text": "\"내가 형님한테 한번 가 볼게요.\""
+            "text": "\"미안하구려. 형님한테 한번 가 볼게요.\""
           },
           {
             "who": "narration",
             "src": "/folk/heungbu/seg-p5-3.mp3",
-            "text": "\n흥부는 헌 두루마기를 걸치고 집을 나섰지요."
+            "text": "\n흥부는 헌 두루마기를 걸치고는 집을 나섰답니다."
           }
         ],
         "lines": [
@@ -146,13 +146,16 @@
             "text": "여보, 쌀독이 비었어요. 아이들이 사흘째 굶었는데…",
             "who": "heungbuwife",
             "feel": "sad",
-            "intensity": 0.4
+            "intensity": 0.55,
+            "say": "여보… 쌀독이 비었어요. 아이들이 사흘째 굶었는데…",
+            "tempo": 0.92
           },
           {
-            "text": "내가 형님한테 한번 가 볼게요.",
+            "text": "미안하구려. 형님한테 한번 가 볼게요.",
             "who": "heungbu",
-            "feel": "tonedown",
-            "intensity": 0.35
+            "feel": "sad",
+            "intensity": 0.45,
+            "tempo": 0.95
           }
         ],
         "hotspots": [
@@ -167,11 +170,13 @@
             ],
             "audio": "/folk/heungbu/say-p5-heungbuwife.mp3",
             "feel": "sad",
-            "intensity": 0.4
+            "intensity": 0.55,
+            "say": "여보… 쌀독이 비었어요. 아이들이 사흘째 굶었는데…",
+            "tempo": 0.92
           },
           {
             "label": "heungbu",
-            "line": "내가 형님한테 한번 가 볼게요.",
+            "line": "미안하구려. 형님한테 한번 가 볼게요.",
             "box": [
               290,
               390,
@@ -179,24 +184,25 @@
               610
             ],
             "audio": "/folk/heungbu/say-p5-heungbu.mp3",
-            "feel": "tonedown",
-            "intensity": 0.35
+            "feel": "sad",
+            "intensity": 0.45,
+            "tempo": 0.95
           }
         ]
       },
       {
-        "text": "\"형수님, 밥 한 술만 주실 수 있을까요? 아이들이 사흘을 굶었어요.\"\n\"흥, 너희한텐 밥 한 술도 아까워! 썩 물러가!\"\n형수는 밥 푸던 주걱으로 흥부의 뺨을 철썩 때렸어요.",
+        "text": "\"형수님… 밥 한 술만 주실 수 있을까요? 아이들이 사흘째 아무것도 못 먹었어요.\"\n\"너희한테 줄 밥은 없어! 썩 물러가!\"\n형수는 밥 푸던 주걱으로 흥부의 뺨을 철썩 때렸어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p6.webp?v=6",
         "segments": [
           {
             "who": "heungbu",
             "src": "/folk/heungbu/seg-cast-p6-0.mp3",
-            "text": "\"형수님, 밥 한 술만 주실 수 있을까요? 아이들이 사흘을 굶었어요.\"\n"
+            "text": "\"형수님… 밥 한 술만 주실 수 있을까요? 아이들이 사흘째 아무것도 못 먹었어요.\"\n"
           },
           {
             "who": "nolbuwife",
             "src": "/folk/heungbu/seg-cast-p6-1.mp3",
-            "text": "\"흥, 너희한텐 밥 한 술도 아까워! 썩 물러가!\""
+            "text": "\"너희한테 줄 밥은 없어! 썩 물러가!\""
           },
           {
             "who": "narration",
@@ -206,13 +212,15 @@
         ],
         "lines": [
           {
-            "text": "형수님, 밥 한 술만 주실 수 있을까요? 아이들이 사흘을 굶었어요.",
+            "text": "형수님… 밥 한 술만 주실 수 있을까요? 아이들이 사흘째 아무것도 못 먹었어요.",
             "who": "heungbu",
             "feel": "sad",
-            "intensity": 0.4
+            "intensity": 0.45,
+            "tempo": 0.92,
+            "say": "형수님… 밥 한 술만… 주실 수 있을까요? 아이들이 사흘째 아무것도 못 먹었어요."
           },
           {
-            "text": "흥, 너희한텐 밥 한 술도 아까워! 썩 물러가!",
+            "text": "너희한테 줄 밥은 없어! 썩 물러가!",
             "who": "nolbuwife",
             "feel": "angry",
             "intensity": 0.4
@@ -221,7 +229,7 @@
         "hotspots": [
           {
             "label": "nolbuwife",
-            "line": "흥, 너희한텐 밥 한 술도 아까워! 썩 물러가!",
+            "line": "너희한테 줄 밥은 없어! 썩 물러가!",
             "box": [
               150,
               580,
@@ -234,7 +242,7 @@
           },
           {
             "label": "heungbu",
-            "line": "형수님, 밥 한 술만 주실 수 있을까요? 아이들이 사흘을 굶었어요.",
+            "line": "형수님… 밥 한 술만 주실 수 있을까요? 아이들이 사흘째 아무것도 못 먹었어요.",
             "box": [
               190,
               130,
@@ -243,17 +251,22 @@
             ],
             "audio": "/folk/heungbu/say-p6-heungbu.mp3",
             "feel": "sad",
-            "intensity": 0.4
+            "intensity": 0.45,
+            "tempo": 0.92,
+            "say": "형수님… 밥 한 술만… 주실 수 있을까요? 아이들이 사흘째 아무것도 못 먹었어요."
           }
         ]
       },
       {
-        "text": "흥부는 뺨이 얼얼했지만, 거기 붙은 밥알을 보고 눈이 번쩍 뜨였어요.\n\"형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.\"\n\"별 이상한 사람을 다 보겠네!\"\n형수는 반대쪽 뺨도 철썩 때리고는, 문을 쾅 닫아 버렸지요.\n'이만하면 우리 아이들에게 저녁을 먹일 수 있겠어.'\n흥부는 밥알을 손에 꼭 쥐고 집으로 돌아갔어요.",
+        "text": "흥부는 뺨이 얼얼했지만, 거기 붙은 밥알을 보고 눈이 번쩍 뜨였어요.\n\"형수님… 이쪽 뺨도 한 번만 더 쳐 주시겠어요?\"\n\"별 이상한 사람을 다 보겠네!\"\n형수는 반대쪽 뺨도 철썩 때리고는, 문을 쾅 닫아 버렸지요.\n'이만하면 우리 아이들에게 저녁을 먹일 수 있겠어.'\n흥부는 밥알을 손에 꼭 쥐고 집으로 돌아갔어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p7.webp?v=6",
         "lines": [
           {
-            "text": "형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.",
-            "who": "heungbu"
+            "text": "형수님… 이쪽 뺨도 한 번만 더 쳐 주시겠어요?",
+            "who": "heungbu",
+            "feel": "tonedown",
+            "intensity": 0.4,
+            "tempo": 1
           },
           {
             "text": "별 이상한 사람을 다 보겠네!",
@@ -264,8 +277,8 @@
           {
             "text": "이만하면 우리 아이들에게 저녁을 먹일 수 있겠어.",
             "who": "heungbu",
-            "feel": "tonedown",
-            "intensity": 0.35
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -284,14 +297,17 @@
           },
           {
             "label": "heungbu",
-            "line": "형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.",
+            "line": "형수님… 이쪽 뺨도 한 번만 더 쳐 주시겠어요?",
             "box": [
               200,
               170,
               950,
               380
             ],
-            "audio": "/folk/heungbu/say-p7-heungbu.mp3"
+            "audio": "/folk/heungbu/say-p7-heungbu.mp3",
+            "feel": "tonedown",
+            "intensity": 0.4,
+            "tempo": 1
           }
         ],
         "segments": [
@@ -303,7 +319,7 @@
           {
             "who": "heungbu",
             "src": "/folk/heungbu/seg-cast-p7-1.mp3",
-            "text": "\"형수님… 이쪽 뺨도 한 번만 더 쳐 주세요.\"\n"
+            "text": "\"형수님… 이쪽 뺨도 한 번만 더 쳐 주시겠어요?\"\n"
           },
           {
             "who": "nolbuwife",
@@ -328,48 +344,17 @@
         ]
       },
       {
-        "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요.\n\"어서 오렴, 제비들아.\"\n흥부네 가족은 제비 가족을 반갑게 맞아 주었어요.",
+        "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요.\n흥부네 가족은 제비 가족을 반갑게 맞아 주었어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p8.webp?v=6",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/heungbu/seg-p8-0.mp3",
-            "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요.\n"
-          },
-          {
-            "who": "heungbu",
-            "src": "/folk/heungbu/seg-cast-p8-1.mp3",
-            "text": "\"어서 오렴, 제비들아.\""
-          },
-          {
-            "who": "narration",
-            "src": "/folk/heungbu/seg-p8-2.mp3",
-            "text": "\n흥부네 가족은 제비 가족을 반갑게 맞아 주었어요."
+            "text": "어느 따뜻한 봄날, 제비 부부가 흥부네 처마 밑에 둥지를 틀었어요.\n흥부네 가족은 제비 가족을 반갑게 맞아 주었어요."
           }
         ],
-        "hotspots": [
-          {
-            "label": "heungbu",
-            "line": "어서 오렴, 제비들아.",
-            "box": [
-              180,
-              90,
-              900,
-              290
-            ],
-            "audio": "/folk/heungbu/say-p8-heungbu.mp3",
-            "feel": "happy",
-            "intensity": 0.35
-          }
-        ],
-        "lines": [
-          {
-            "text": "어서 오렴, 제비들아.",
-            "who": "heungbu",
-            "feel": "happy",
-            "intensity": 0.35
-          }
-        ]
+        "hotspots": [],
+        "lines": []
       },
       {
         "text": "알에서 깬 아기 제비들은 노래하듯 지저귀며, 무럭무럭 자랐어요.\n아이들은 날마다 둥지를 올려다보며 제비들에게 인사를 했어요.\n\"안녕, 아기 제비야! 오늘도 잘 잤니?\"",
@@ -466,7 +451,7 @@
         ]
       },
       {
-        "text": "\"저런, 다리가 부러졌구나!\"\n흥부는 아기 제비를 두 손으로 고이 감싸안고,\n명주실로 다친 다리를 정성껏 싸매 주었답니다.\n\"곧 나을 거야. 걱정하지 마렴.\"",
+        "text": "\"저런, 다리가 부러졌구나!\"\n흥부는 아기 제비를 두 손으로 고이 감싸안고,\n명주실로 다친 다리를 정성껏 싸매 주었답니다.\n\"곧 나을 거란다. 걱정하지 마렴.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p12.webp?v=6",
         "segments": [
           {
@@ -482,7 +467,7 @@
           {
             "who": "heungbu",
             "src": "/folk/heungbu/seg-cast-p12-2.mp3",
-            "text": "\"곧 나을 거야. 걱정하지 마렴.\""
+            "text": "\"곧 나을 거란다. 걱정하지 마렴.\""
           }
         ],
         "hotspots": [
@@ -508,7 +493,7 @@
             "intensity": 0.4
           },
           {
-            "text": "곧 나을 거야. 걱정하지 마렴.",
+            "text": "곧 나을 거란다. 걱정하지 마렴.",
             "who": "heungbu",
             "feel": "tonedown",
             "intensity": 0.4
@@ -549,7 +534,9 @@
         "lines": [
           {
             "text": "\"짹짹!\"",
-            "who": "swallow"
+            "who": "swallow",
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -562,66 +549,64 @@
               440,
               650
             ],
-            "audio": "/folk/heungbu/say-p14-swallow.mp3"
+            "audio": "/folk/heungbu/say-p14-swallow.mp3",
+            "feel": "happy",
+            "intensity": 0.4
           }
         ]
       },
       {
-        "text": "\"이게 웬 박씨일까?\"\n흥부는 박씨를 마당 한쪽에 정성껏 심었어요.\n\"싹아, 얼른 나오렴!\"\n박씨는 무럭무럭 자라, 지붕 위까지 덩굴을 뻗었어요.\n가을이 되자 집채만 한 박이 주렁주렁 열렸지요.\n\"우아! 이 박으로 박죽이라도 끓여 먹자꾸나.\"",
+        "text": "흥부는 박씨를 마당 한쪽에 정성껏 심었어요.\n\"싹아, 얼른 나오렴!\"\n박씨는 무럭무럭 자라, 지붕 위까지 덩굴을 뻗었어요.\n가을이 되자 집채만 한 박이 주렁주렁 열렸답니다.\n\"우아! 여보, 이 박으로 박죽이라도 끓여 먹어요.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p15.webp?v=7",
         "segments": [
           {
-            "who": "heungbu",
-            "src": "/folk/heungbu/seg-cast-p15-0.mp3",
-            "text": "\"이게 웬 박씨일까?\""
-          },
-          {
             "who": "narration",
-            "src": "/folk/heungbu/seg-p15-1.mp3",
-            "text": "\n흥부는 박씨를 마당 한쪽에 정성껏 심었어요.\n"
+            "src": "/folk/heungbu/seg-p15-0.mp3",
+            "text": "흥부는 박씨를 마당 한쪽에 정성껏 심었어요.\n"
           },
           {
             "who": "heungbu",
-            "src": "/folk/heungbu/seg-cast-p15-2.mp3",
+            "src": "/folk/heungbu/seg-cast-p15-1.mp3",
             "text": "\"싹아, 얼른 나오렴!\""
           },
           {
             "who": "narration",
-            "src": "/folk/heungbu/seg-p15-3.mp3",
-            "text": "\n박씨는 무럭무럭 자라, 지붕 위까지 덩굴을 뻗었어요.\n가을이 되자 집채만 한 박이 주렁주렁 열렸지요.\n"
+            "src": "/folk/heungbu/seg-p15-2.mp3",
+            "text": "\n박씨는 무럭무럭 자라, 지붕 위까지 덩굴을 뻗었어요.\n가을이 되자 집채만 한 박이 주렁주렁 열렸답니다.\n"
           },
           {
-            "who": "heungbu",
-            "src": "/folk/heungbu/seg-cast-p15-4.mp3",
-            "text": "\"우아! 이 박으로 박죽이라도 끓여 먹자꾸나.\""
+            "who": "heungbuwife",
+            "src": "/folk/heungbu/seg-cast-p15-3.mp3",
+            "text": "\"우아! 여보, 이 박으로 박죽이라도 끓여 먹어요.\""
           }
         ],
         "lines": [
           {
-            "text": "우아! 이 박으로 박죽이라도 끓여 먹자꾸나.",
-            "who": "heungbu",
-            "feel": "toneup",
+            "text": "우아! 여보, 이 박으로 박죽이라도 끓여 먹어요.",
+            "who": "heungbuwife",
+            "feel": "happy",
             "intensity": 0.4
           },
           {
             "text": "싹아, 얼른 나오렴!",
             "who": "heungbu",
             "feel": "happy",
-            "intensity": 0.35
+            "intensity": 0.35,
+            "tempo": 1
           }
         ],
         "hotspots": [
           {
-            "label": "heungbu",
-            "line": "우아! 이 박으로 박죽이라도 끓여 먹자꾸나.",
+            "label": "heungbuwife",
+            "line": "우아! 여보, 이 박으로 박죽이라도 끓여 먹어요.",
             "box": [
               490,
               20,
               890,
               260
             ],
-            "audio": "/folk/heungbu/say-p15-heungbu.mp3",
-            "feel": "toneup",
+            "audio": "/folk/heungbu/say-p15-heungbuwife.mp3",
+            "feel": "happy",
             "intensity": 0.4
           }
         ]
@@ -804,7 +789,7 @@
         ]
       },
       {
-        "text": "놀부는 처마 밑 제비를 잡아, 다리를 뚝 부러뜨리고는,\n대충 싸매 주며 히죽 웃었어요.\n\"이제 나도 부자가 되겠어, 부자가!\"\n\"짹… 왜 일부러 아프게 하는 거예요…\"",
+        "text": "놀부는 처마 밑 제비를 잡아, 다리를 뚝 부러뜨리고는,\n대충 싸매 주며 히죽 웃었어요.\n\"이제 나도 부자가 되겠어, 부자가!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p19.webp?v=6",
         "segments": [
           {
@@ -815,12 +800,7 @@
           {
             "who": "nolbu",
             "src": "/folk/heungbu/seg-cast-p19-1.mp3",
-            "text": "\"이제 나도 부자가 되겠어, 부자가!\"\n"
-          },
-          {
-            "who": "swallow",
-            "src": "/folk/heungbu/seg-cast-p19-2.mp3",
-            "text": "\"짹… 왜 일부러 아프게 하는 거예요…\""
+            "text": "\"이제 나도 부자가 되겠어, 부자가!\""
           }
         ],
         "lines": [
@@ -829,29 +809,9 @@
             "who": "nolbu",
             "feel": "happy",
             "intensity": 0.4
-          },
-          {
-            "text": "짹… 왜 일부러 아프게 하는 거예요…",
-            "who": "swallow",
-            "feel": "sad",
-            "intensity": 0.4
           }
         ],
-        "hotspots": [
-          {
-            "label": "swallow",
-            "line": "짹… 왜 일부러 아프게 하는 거예요…",
-            "box": [
-              440,
-              90,
-              670,
-              300
-            ],
-            "audio": "/folk/heungbu/say-p19-swallow.mp3",
-            "feel": "sad",
-            "intensity": 0.4
-          }
-        ]
+        "hotspots": []
       },
       {
         "text": "이듬해 봄, 놀부네 제비도 박씨를 물어다 주었어요.\n\"옳지! 이제 나도 부자가 되겠구나!\"\n놀부는 신이 나서 박씨를 심고, 박이 열리기만 밤낮으로 기다렸답니다.",
@@ -977,7 +937,7 @@
         ]
       },
       {
-        "text": "\"이놈, 욕심쟁이 놀부야! 방망이 맛 좀 봐라!\"\n도깨비들이 방망이를 들고 우르르 몰려나왔어요.\n놀부와 아내는 마당을 빙빙 돌며 달아났지요.",
+        "text": "\"이놈, 욕심쟁이 놀부야! 방망이 맛 좀 봐라!\"\n도깨비들이 방망이를 들고 우르르 몰려나왔어요.\n놀부와 아내는 마당을 빙빙 돌며 달아났답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p22.webp?v=6",
         "segments": [
           {
@@ -988,7 +948,7 @@
           {
             "who": "narration",
             "src": "/folk/heungbu/seg-p22-1.mp3",
-            "text": "\n도깨비들이 방망이를 들고 우르르 몰려나왔어요.\n놀부와 아내는 마당을 빙빙 돌며 달아났지요."
+            "text": "\n도깨비들이 방망이를 들고 우르르 몰려나왔어요.\n놀부와 아내는 마당을 빙빙 돌며 달아났답니다."
           }
         ],
         "hotspots": [
@@ -1001,7 +961,17 @@
               730,
               960
             ],
-            "audio": "/folk/heungbu/say-p22-dokkaebi.mp3"
+            "audio": "/folk/heungbu/say-p22-dokkaebi.mp3",
+            "feel": "angry",
+            "intensity": 0.45
+          }
+        ],
+        "lines": [
+          {
+            "text": "이놈, 욕심쟁이 놀부야! 방망이 맛 좀 봐라!",
+            "who": "dokkaebi",
+            "feel": "angry",
+            "intensity": 0.45
           }
         ]
       },
@@ -1111,10 +1081,10 @@
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/heungbu/p1.webp?v=6",
     "voiceCast": {
       "narration": "tc-minjung",
-      "heungbu": "tc-seungjae",
+      "heungbu": "tc-sungho",
       "nolbu": "tc-byunghun",
-      "heungbuwife": "tc-najin",
-      "nolbuwife": "tc-chungah",
+      "heungbuwife": "tc-aeran",
+      "nolbuwife": "tc-sookhee",
       "swallow": "tc-sua",
       "dokkaebi": "tc-homun",
       "kids": "tc-arin"
@@ -1137,7 +1107,10 @@
     },
     "narrators": [
       "tc-minjung"
-    ]
+    ],
+    "voiceTempo": {
+      "heungbu": 0.9
+    }
   },
   {
     "id": "folk-tortoise",
@@ -1150,7 +1123,7 @@
     "narrator": "tc-minjung",
     "pages": [
       {
-        "text": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요.\n\"이 숲에서 나보다 빠른 동물은 아무도 없지!\"\n토끼는 만나는 친구마다 자랑을 늘어놓았지요.",
+        "text": "옛날 옛날, 푸른 숲속 마을에 발 빠르기로 소문난 토끼가 살았어요.\n\"이 숲에서 나보다 빠른 동물은 아무도 없을걸!\"\n토끼는 만나는 친구마다 자랑을 늘어놓았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p1.webp?v=3",
         "audio": "/folk/tortoise/narr-p1.mp3",
         "hotspots": [
@@ -1177,17 +1150,17 @@
           {
             "who": "rabbit",
             "src": "/folk/tortoise/seg-cast-p1-1.mp3",
-            "text": "\"이 숲에서 나보다 빠른 동물은 아무도 없지!\""
+            "text": "\"이 숲에서 나보다 빠른 동물은 아무도 없을걸!\""
           },
           {
             "who": "narration",
             "src": "/folk/tortoise/seg-p1-2.mp3",
-            "text": "\n토끼는 만나는 친구마다 자랑을 늘어놓았지요."
+            "text": "\n토끼는 만나는 친구마다 자랑을 늘어놓았답니다."
           }
         ],
         "lines": [
           {
-            "text": "이 숲에서 나보다 빠른 동물은 아무도 없지!",
+            "text": "이 숲에서 나보다 빠른 동물은 아무도 없을걸!",
             "who": "rabbit",
             "feel": "toneup",
             "intensity": 0.4
@@ -1298,8 +1271,9 @@
             ],
             "audio": "/folk/tortoise/say-p4-tortoise.mp3",
             "line": "토끼야, 나랑 달리기 시합할래?",
-            "feel": "tonedown",
-            "intensity": 0.3
+            "feel": "happy",
+            "intensity": 0.3,
+            "tempo": 0.85
           }
         ],
         "segments": [
@@ -1318,13 +1292,14 @@
           {
             "text": "토끼야, 그럼 나랑 달리기 시합을 해 볼래? 저기 언덕 꼭대기의 큰 소나무까지 말이야.",
             "who": "tortoise",
-            "feel": "tonedown",
-            "intensity": 0.3
+            "feel": "happy",
+            "intensity": 0.3,
+            "tempo": 0.85
           }
         ]
       },
       {
-        "text": "\"뭐라고? 네가 나랑 시합을 하자고?\"\n토끼는 배를 잡고 웃었지만, 곧 자신 있게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요.",
+        "text": "\"뭐라고? 네가 나랑 시합을 하자고?\"\n토끼는 배를 잡고 웃었지만, 곧 자신 있게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p5.webp?v=3",
         "audio": "/folk/tortoise/narr-p5.mp3",
         "hotspots": [
@@ -1371,12 +1346,12 @@
           {
             "who": "narration",
             "src": "/folk/tortoise/seg-p5-1.mp3",
-            "text": "\n토끼는 배를 잡고 웃었지만, 곧 자신 있게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었지요."
+            "text": "\n토끼는 배를 잡고 웃었지만, 곧 자신 있게 고개를 끄덕였어요.\n소문을 들은 숲속 친구들이 구름처럼 모여들었답니다."
           }
         ]
       },
       {
-        "text": "부엉이 할아버지가 심판을 맡았어요.\n\"자, 준비… 시작!\"\n그 말이 끝나자마자 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요.",
+        "text": "부엉이 할아버지가 심판을 맡았어요.\n\"자, 준비… 시작!\"\n그 말이 끝나자마자 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일어났어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p6.webp?v=3",
         "audio": "/folk/tortoise/narr-p6.mp3",
         "hotspots": [
@@ -1401,9 +1376,10 @@
             ],
             "audio": "/folk/tortoise/say-p6-owl.mp3",
             "line": "자, 준비… 시작!",
-            "say": "자아, 준비이… 시자악!",
+            "say": "자아… 준비이이… 시자아악!",
             "feel": "toneup",
-            "intensity": 0.45
+            "intensity": 0.45,
+            "tempo": 0.8
           },
           {
             "label": "rabbit",
@@ -1433,22 +1409,23 @@
           {
             "who": "narration",
             "src": "/folk/tortoise/seg-p6-2.mp3",
-            "text": "\n그 말이 끝나자마자 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일었지요."
+            "text": "\n그 말이 끝나자마자 토끼는 바람처럼 쌩 달려 나갔어요. 흙먼지가 뽀얗게 일어났어요."
           }
         ],
         "lines": [
           {
             "text": "자, 준비… 시작!",
             "who": "owl",
-            "say": "자아, 준비이… 시자악!",
+            "say": "자아… 준비이이… 시자아악!",
             "feel": "toneup",
-            "intensity": 0.45
+            "intensity": 0.45,
+            "tempo": 0.8
           }
         ],
         "video": "/folk/tortoise/p6.mp4"
       },
       {
-        "text": "거북이는 한 걸음, 또 한 걸음. 엉금엉금 천천히 걸었어요.\n\"괜찮아. 나는 나의 걸음으로 가면 돼.\"\n거북이는 씩씩하게 앞만 보았답니다.",
+        "text": "거북이는 한 걸음, 또 한 걸음. 엉금엉금 천천히 걸었어요.\n\"괜찮아. 나는 나의 걸음으로 가면 돼.\"\n거북이는 씩씩하게 앞만 보고 걸어갔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p7.webp?v=3",
         "audio": "/folk/tortoise/narr-p7.mp3",
         "hotspots": [
@@ -1478,7 +1455,7 @@
           {
             "who": "narration",
             "src": "/folk/tortoise/seg-p7-2.mp3",
-            "text": "\n거북이는 씩씩하게 앞만 보았답니다."
+            "text": "\n거북이는 씩씩하게 앞만 보고 걸어갔답니다."
           }
         ],
         "lines": [
@@ -1489,7 +1466,7 @@
         ]
       },
       {
-        "text": "한참을 달린 토끼가 뒤를 돌아보았어요.\n거북이는 점처럼 조그맣게 보였지요.\n\"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\"",
+        "text": "한참을 달린 토끼가 뒤를 돌아보니 거북이가 점처럼 조그맣게 보였어요.\n\"하암~ 저 느림보가 오려면 아직 멀었네. 낮잠이나 한숨 자야겠다.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p8.webp?v=3",
         "audio": "/folk/tortoise/narr-p8.mp3",
         "hotspots": [
@@ -1512,7 +1489,7 @@
           {
             "who": "narration",
             "src": "/folk/tortoise/seg-p8-0.mp3",
-            "text": "한참을 달린 토끼가 뒤를 돌아보았어요.\n거북이는 점처럼 조그맣게 보였지요.\n"
+            "text": "한참을 달린 토끼가 뒤를 돌아보니 거북이가 점처럼 조그맣게 보였어요.\n"
           },
           {
             "who": "rabbit",
@@ -1570,7 +1547,7 @@
         ]
       },
       {
-        "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 깨우지 않고, 엉금엉금 언덕을 올라갔답니다.",
+        "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 지나 엉금엉금 언덕을 올라갔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p11.webp?v=3",
         "audio": "/folk/tortoise/narr-p11.mp3",
         "hotspots": [
@@ -1592,12 +1569,12 @@
           {
             "who": "narration",
             "src": "/folk/tortoise/seg-p11-0.mp3",
-            "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 깨우지 않고, 엉금엉금 언덕을 올라갔답니다."
+            "text": "마침내 거북이가 잠든 토끼 옆을 지나가게 되었어요.\n살금살금, 아주 조용히.\n거북이는 토끼를 지나 엉금엉금 언덕을 올라갔답니다."
           }
         ]
       },
       {
-        "text": "\"음냐음냐… 내가 일등이야…\"\n한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가, 깜짝 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!",
+        "text": "한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가, 깜짝 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/tortoise/p12.webp?v=3",
         "audio": "/folk/tortoise/narr-p12.mp3",
         "hotspots": [
@@ -1631,22 +1608,12 @@
         ],
         "segments": [
           {
-            "who": "rabbit",
-            "src": "/folk/tortoise/seg-cast-p12-0.mp3",
-            "text": "\"음냐음냐… 내가 일등이야…\""
-          },
-          {
             "who": "narration",
-            "src": "/folk/tortoise/seg-p12-1.mp3",
-            "text": "\n한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가, 깜짝 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!"
+            "src": "/folk/tortoise/seg-p12-0.mp3",
+            "text": "한참 뒤, 낮잠에서 깬 토끼는 기지개를 켜다가, 깜짝 놀랐어요.\n거북이가 언덕 꼭대기 바로 앞까지 가 있는 게 아니겠어요!"
           }
         ],
-        "lines": [
-          {
-            "text": "음냐음냐… 내가 일등이야…",
-            "who": "rabbit"
-          }
-        ]
+        "lines": []
       },
       {
         "text": "\"안 돼!\"\n토끼는 있는 힘껏 달렸지만 이미 늦었어요. 거북이가 한 발 먼저 큰 소나무를 짚었답니다.\n\"거북이 승리!\" 부엉이 할아버지가 크게 외쳤어요.",
@@ -1688,7 +1655,9 @@
               785
             ],
             "audio": "/folk/tortoise/say-p13-tortoise.mp3",
-            "line": "해냈다! 정말 기뻐!"
+            "line": "해냈다! 정말 기뻐!",
+            "feel": "happy",
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -1742,7 +1711,9 @@
               490
             ],
             "audio": "/folk/tortoise/say-p14-rabbit.mp3",
-            "line": "거북아, 잘난 척해서 미안해."
+            "line": "거북아, 잘난 척해서 미안해.",
+            "feel": "sad",
+            "intensity": 0.35
           },
           {
             "label": "tortoise",
@@ -1755,7 +1726,9 @@
             "audio": "/folk/tortoise/say-p14-tortoise.mp3",
             "line": "괜찮아! 우리 좋은 친구가 되자!",
             "feel": "happy",
-            "intensity": 0.35
+            "intensity": 0.3,
+            "tempo": 0.85,
+            "say": "괜찮아… 우리, 좋은 친구가 되자."
           }
         ],
         "segments": [
@@ -1783,13 +1756,17 @@
         "lines": [
           {
             "text": "거북아, 잘난 척해서 미안해.",
-            "who": "rabbit"
+            "who": "rabbit",
+            "feel": "sad",
+            "intensity": 0.35
           },
           {
             "text": "괜찮아, 우리 좋은 친구가 되자!",
             "who": "tortoise",
             "feel": "happy",
-            "intensity": 0.35
+            "intensity": 0.3,
+            "tempo": 0.85,
+            "say": "괜찮아… 우리, 좋은 친구가 되자."
           }
         ],
         "video": "/folk/tortoise/p14.mp4"
@@ -1797,9 +1774,9 @@
     ],
     "voiceCast": {
       "narration": "tc-minjung",
-      "rabbit": "tc-hamchu",
+      "rabbit": "tc-siwoo",
       "tortoise": "tc-taeji",
-      "owl": "tc-goat"
+      "owl": "tc-sheriffkim"
     },
     "roleOf": {
       "토끼": "rabbit",
@@ -1816,7 +1793,7 @@
     "narrator": "tc-minjung",
     "pages": [
       {
-        "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니가 일찍 돌아가신 콩쥐는 새어머니, 동생 팥쥐와 함께 살았지요.",
+        "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니가 일찍 돌아가신 콩쥐는 새어머니, 동생 팥쥐와 함께 살았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p1.webp?v=3",
         "hotspots": [
           {
@@ -1837,12 +1814,12 @@
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p1-0.mp3",
-            "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니가 일찍 돌아가신 콩쥐는 새어머니, 동생 팥쥐와 함께 살았지요."
+            "text": "옛날 어느 마을에 마음씨 고운 콩쥐가 살았어요.\n어머니가 일찍 돌아가신 콩쥐는 새어머니, 동생 팥쥐와 함께 살았답니다."
           }
         ]
       },
       {
-        "text": "새어머니는 팥쥐만 예뻐하고, 힘든 일은 모두 콩쥐에게 시켰어요.\n\"콩쥐야! 밭을 매고, 물도 길어 오너라!\"\n\"엄마, 나는 그늘에서 좀 쉴래.\"\n팥쥐는 부채질을 하며 콩쥐를 흘겨보았지요.",
+        "text": "새어머니는 팥쥐만 예뻐하고, 힘든 일은 모두 콩쥐에게 시켰어요.\n\"콩쥐야! 밭을 매고, 물도 길어 오너라!\"\n\"엄마, 나는 그늘에서 좀 쉴래요.\"\n팥쥐는 부채질을 하며 콩쥐를 흘겨보았지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p2.webp?v=3",
         "lines": [
           {
@@ -1852,8 +1829,10 @@
             "intensity": 0.35
           },
           {
-            "text": "엄마, 나는 그늘에서 좀 쉴래.",
-            "who": "patjwi"
+            "text": "엄마, 나는 그늘에서 좀 쉴래요.",
+            "who": "patjwi",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -1909,7 +1888,7 @@
           {
             "who": "patjwi",
             "src": "/folk/kongjwi/seg-cast-p2-2.mp3",
-            "text": "\"엄마, 나는 그늘에서 좀 쉴래.\""
+            "text": "\"엄마, 나는 그늘에서 좀 쉴래요.\""
           },
           {
             "who": "narration",
@@ -1919,7 +1898,7 @@
         ]
       },
       {
-        "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지,\n배고픈 참새들에게는 제 몫의 낟알 한 줌.\n\"나는 조금만 먹어도 괜찮아.\"\n물동이에 빠져 허우적대던 두꺼비는, 두 손으로 건져 주었답니다.",
+        "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지를,\n배고픈 참새들에게는 제 몫의 낟알 한 줌을 나눠 줬답니다.\n\"나는 조금만 먹어도 괜찮아.\"\n물동이에 빠져 허우적대던 두꺼비는, 두 손으로 건져 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p3.webp?v=3",
         "lines": [
           {
@@ -1948,7 +1927,7 @@
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p3-0.mp3",
-            "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지,\n배고픈 참새들에게는 제 몫의 낟알 한 줌.\n"
+            "text": "밭을 매고 물을 길으러 다니면서도, 콩쥐는 늘 무언가를 나누어 주었어요.\n목마른 검은 소에게는 물 한 바가지를,\n배고픈 참새들에게는 제 몫의 낟알 한 줌을 나눠 줬답니다.\n"
           },
           {
             "who": "kongjwi",
@@ -1963,11 +1942,11 @@
         ]
       },
       {
-        "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n새어머니와 팥쥐는 아침부터 고운 옷을 꺼내 입었지요.\n\"저도 잔치에 가고 싶어요!\"\n\"흥! 그럼 밭을 다 매고, 이 항아리에 물도 가득 채워 놓고 오너라.\"",
+        "text": "어느 날, 마을 원님이 큰 잔치를 연다는 소식이 들려왔어요.\n새어머니와 팥쥐는 아침부터 고운 옷을 꺼내 입었지요.\n\"어머님, 저도 잔치에 가고 싶어요!\"\n\"흥! 그럼 밭을 다 매고, 이 항아리에 물도 가득 채워 놓고 오너라.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p4.webp?v=3",
         "lines": [
           {
-            "text": "저도 잔치에 가고 싶어요!",
+            "text": "어머님, 저도 잔치에 가고 싶어요!",
             "who": "kongjwi",
             "feel": "toneup",
             "intensity": 0.35
@@ -1982,7 +1961,7 @@
         "hotspots": [
           {
             "label": "kongjwi",
-            "line": "저도 잔치에 가고 싶어요!",
+            "line": "어머님, 저도 잔치에 가고 싶어요!",
             "box": [
               382,
               625,
@@ -2016,7 +1995,7 @@
           {
             "who": "kongjwi",
             "src": "/folk/kongjwi/seg-cast-p4-1.mp3",
-            "text": "\"저도 잔치에 가고 싶어요!\"\n"
+            "text": "\"어머님, 저도 잔치에 가고 싶어요!\"\n"
           },
           {
             "who": "stepmom",
@@ -2026,11 +2005,11 @@
         ]
       },
       {
-        "text": "그때 팥쥐가 헛간에서 항아리를 하나 골라 왔어요.\n\"엄마, 이걸로 주면 딱 좋겠는데.\"\n팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았지요.\n\"참, 언니한테는 저 볏단도 다 찧어 놓으라고 해. 잔치에 못 오게 집이나 지키라고 하고!\"\n둘이 떠난 마당에는, 항아리와 볏단만 덩그러니 남았답니다.",
+        "text": "그때 팥쥐가 헛간에서 항아리를 하나 골라 왔어요.\n\"엄마, 이걸로 주면 딱 좋을 것 같은데요.\"\n팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았답니다.\n\"참, 언니한테는 저 볏단도 다 찧어 놓고 오라고 해요. 잔치에 못 오게 말이에요.\"\n둘이 떠난 마당에는, 항아리와 볏단만 덩그러니 남았답니다.",
         "hotspots": [
           {
             "label": "patjwi",
-            "line": "엄마, 이걸로 주면 딱 좋겠는데.",
+            "line": "엄마, 이걸로 주면 딱 좋을 것 같은데요.",
             "box": [
               365,
               270,
@@ -2064,17 +2043,17 @@
           {
             "who": "patjwi",
             "src": "/folk/kongjwi/seg-cast-p5-1.mp3",
-            "text": "\"엄마, 이걸로 주면 딱 좋겠는데.\""
+            "text": "\"엄마, 이걸로 주면 딱 좋을 것 같은데요.\""
           },
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p5-2.mp3",
-            "text": "\n팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았지요.\n"
+            "text": "\n팥쥐는 히죽 웃으며 항아리를 마당에 툭 내려놓았답니다.\n"
           },
           {
             "who": "patjwi",
             "src": "/folk/kongjwi/seg-cast-p5-3.mp3",
-            "text": "\"참, 언니한테는 저 볏단도 다 찧어 놓으라고 해. 잔치에 못 오게 집이나 지키라고 하고!\""
+            "text": "\"참, 언니한테는 저 볏단도 다 찧어 놓고 오라고 해요. 잔치에 못 오게 말이에요.\""
           },
           {
             "who": "narration",
@@ -2085,14 +2064,14 @@
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p5.webp?v=3",
         "lines": [
           {
-            "text": "엄마, 이걸로 주면 딱 좋겠는데.",
+            "text": "엄마, 이걸로 주면 딱 좋을 것 같은데요.",
             "who": "patjwi",
             "feel": "happy",
             "intensity": 0.3,
             "tempo": 0.88
           },
           {
-            "text": "참, 언니한테는 저 볏단도 다 찧어 놓으라고 해. 잔치에 못 오게 집이나 지키라고 하고!",
+            "text": "참, 언니한테는 저 볏단도 다 찧어 놓고 오라고 해요. 잔치에 못 오게 말이에요.",
             "who": "patjwi",
             "feel": "happy",
             "intensity": 0.35,
@@ -2101,12 +2080,12 @@
         ]
       },
       {
-        "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자, 그만 주저앉고 말았지요.\n\"이 밭을 언제 다 매지…\"\n그때 물을 나눠 받았던 검은 소가, 저벅저벅 걸어와 밭을 갈아 주었답니다.",
+        "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자, 그만 주저앉고 말았답니다.\n\"이 밭을 언제 다 매나…\"\n그때 물을 나눠 받았던 검은 소가, 저벅저벅 걸어와 밭을 갈아 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p6.webp?v=3",
         "hotspots": [
           {
             "label": "kongjwi",
-            "line": "이 밭을 언제 다 매지…",
+            "line": "이 밭을 언제 다 매나…",
             "box": [
               370,
               591,
@@ -2115,7 +2094,9 @@
             ],
             "audio": "/folk/kongjwi/say-p6-kongjwi.mp3",
             "feel": "sad",
-            "intensity": 0.35
+            "intensity": 0.4,
+            "tempo": 0.85,
+            "say": "하아… 이 밭을 언제 다 매나…"
           },
           {
             "label": "ox",
@@ -2133,22 +2114,24 @@
         ],
         "lines": [
           {
-            "text": "이 밭을 언제 다 매지…",
+            "text": "이 밭을 언제 다 매나…",
             "who": "kongjwi",
             "feel": "sad",
-            "intensity": 0.35
+            "intensity": 0.4,
+            "tempo": 0.85,
+            "say": "하아… 이 밭을 언제 다 매나…"
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p6-0.mp3",
-            "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자, 그만 주저앉고 말았지요.\n"
+            "text": "콩쥐는 곧장 밭으로 달려갔어요.\n그런데 나무 호미가 뚝 부러지자, 그만 주저앉고 말았답니다.\n"
           },
           {
             "who": "kongjwi",
             "src": "/folk/kongjwi/seg-cast-p6-1.mp3",
-            "text": "\"이 밭을 언제 다 매지…\""
+            "text": "\"이 밭을 언제 다 매나…\""
           },
           {
             "who": "narration",
@@ -2158,7 +2141,7 @@
         ]
       },
       {
-        "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.\n콩쥐 눈에 그만 눈물이 그렁그렁 맺혔지요.",
+        "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.\n콩쥐 눈에 그만 눈물이 그렁그렁 맺혔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p7.webp?v=3",
         "hotspots": [
           {
@@ -2179,12 +2162,12 @@
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p7-0.mp3",
-            "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.\n콩쥐 눈에 그만 눈물이 그렁그렁 맺혔지요."
+            "text": "콩쥐는 부지런히 물을 길어다 부었어요.\n그런데 아무리 부어도 물이 차지 않는 거예요.\n알고 보니 팥쥐가 골라 온 항아리는\n밑에 커다란 구멍이 뻥 뚫린 항아리였답니다.\n콩쥐 눈에 그만 눈물이 그렁그렁 맺혔답니다."
           }
         ]
       },
       {
-        "text": "그때 물동이에서 건져 주었던 두꺼비가, 엉금엉금 기어 나왔어요.\n\"콩쥐야, 울지 마. 이번엔 내가 도와줄게!\"\n두꺼비는 항아리 속으로 쏙 들어가, 제 몸으로 구멍을 막았지요.\n그러자 항아리에 물이 금세 가득 찼답니다.",
+        "text": "그때 물동이에서 건져 주었던 두꺼비가, 엉금엉금 기어 나왔어요.\n\"콩쥐야, 울지 마. 이번엔 내가 도와줄게!\"\n두꺼비는 항아리 속으로 쏙 들어가, 제 몸으로 구멍을 막았답니다.\n그러자 항아리에 물이 금세 가득 찼답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p8.webp?v=3",
         "hotspots": [
           {
@@ -2196,7 +2179,9 @@
               943,
               785
             ],
-            "audio": "/folk/kongjwi/say-p8-kongjwi.mp3"
+            "audio": "/folk/kongjwi/say-p8-kongjwi.mp3",
+            "feel": "happy",
+            "intensity": 0.4
           },
           {
             "label": "toad",
@@ -2226,7 +2211,7 @@
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p8-2.mp3",
-            "text": "\n두꺼비는 항아리 속으로 쏙 들어가, 제 몸으로 구멍을 막았지요.\n그러자 항아리에 물이 금세 가득 찼답니다."
+            "text": "\n두꺼비는 항아리 속으로 쏙 들어가, 제 몸으로 구멍을 막았답니다.\n그러자 항아리에 물이 금세 가득 찼답니다."
           }
         ],
         "lines": [
@@ -2253,7 +2238,9 @@
             ],
             "audio": "/folk/kongjwi/say-p9-kongjwi.mp3",
             "feel": "sad",
-            "intensity": 0.3
+            "intensity": 0.4,
+            "tempo": 0.85,
+            "say": "하아… 이걸 다 찧으려면 밤을 새워도 모자랄 텐데…"
           },
           {
             "label": "sparrow",
@@ -2274,7 +2261,9 @@
             "text": "이걸 다 찧으려면 밤을 새워도 모자랄 텐데…",
             "who": "kongjwi",
             "feel": "sad",
-            "intensity": 0.3
+            "intensity": 0.4,
+            "tempo": 0.85,
+            "say": "하아… 이걸 다 찧으려면 밤을 새워도 모자랄 텐데…"
           },
           {
             "text": "짹짹! 이번엔 우리가 도와줄게!",
@@ -2325,7 +2314,8 @@
             ],
             "audio": "/folk/kongjwi/say-p10-kongjwi.mp3",
             "feel": "sad",
-            "intensity": 0.3
+            "intensity": 0.4,
+            "tempo": 0.9
           }
         ],
         "segments": [
@@ -2351,12 +2341,13 @@
             "text": "…다 해냈는데.",
             "who": "kongjwi",
             "feel": "sad",
-            "intensity": 0.3
+            "intensity": 0.4,
+            "tempo": 0.9
           }
         ]
       },
       {
-        "text": "그때 마당이 환해지더니, 하늘에서 선녀님이 사뿐히 내려왔어요.\n\"네가 나누어 준 마음을 하늘이 다 보고 있었단다.\"\n선녀님은 고운 비단 치마와, 반짝이는 꽃신 한 켤레를 건네주었지요.\n\"어서 가렴. 오늘은 네 날이란다.\"",
+        "text": "그때 마당이 환해지더니, 하늘에서 선녀님이 사뿐히 내려왔어요.\n\"너의 착한 마음을 하늘이 다 보고 있었단다.\"\n선녀님은 고운 비단 치마와, 반짝이는 꽃신 한 켤레를 건네주었지요.\n\"어서 가렴.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p11.webp?v=3",
         "hotspots": [
           {
@@ -2368,11 +2359,13 @@
               926,
               811
             ],
-            "audio": "/folk/kongjwi/say-p11-kongjwi.mp3"
+            "audio": "/folk/kongjwi/say-p11-kongjwi.mp3",
+            "feel": "happy",
+            "intensity": 0.45
           },
           {
             "label": "fairy",
-            "line": "어서 가렴. 오늘은 네 날이란다.",
+            "line": "어서 가렴.",
             "box": [
               104,
               127,
@@ -2386,13 +2379,13 @@
         ],
         "lines": [
           {
-            "text": "네가 나누어 준 마음을 하늘이 다 보고 있었단다.",
+            "text": "너의 착한 마음을 하늘이 다 보고 있었단다.",
             "who": "fairy",
             "feel": "tonedown",
             "intensity": 0.35
           },
           {
-            "text": "어서 가렴. 오늘은 네 날이란다.",
+            "text": "어서 가렴.",
             "who": "fairy",
             "feel": "happy",
             "intensity": 0.35
@@ -2407,7 +2400,7 @@
           {
             "who": "fairy",
             "src": "/folk/kongjwi/seg-cast-p11-1.mp3",
-            "text": "\"네가 나누어 준 마음을 하늘이 다 보고 있었단다.\""
+            "text": "\"너의 착한 마음을 하늘이 다 보고 있었단다.\""
           },
           {
             "who": "narration",
@@ -2417,13 +2410,13 @@
           {
             "who": "fairy",
             "src": "/folk/kongjwi/seg-cast-p11-3.mp3",
-            "text": "\"어서 가렴. 오늘은 네 날이란다.\""
+            "text": "\"어서 가렴.\""
           }
         ],
         "video": "/folk/kongjwi/p11.mp4"
       },
       {
-        "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n떡이며 과일이며, 콩쥐는 난생처음 보는 것투성이였지요.\n'내가… 여기 있어도 되는 걸까?'\n그래도 콩쥐는 오랜만에 마음껏 웃었답니다.",
+        "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n떡이며 과일이며, 콩쥐는 난생처음 보는 것들뿐이었지요.\n'내가… 여기 있어도 되는 걸까?'\n그래도 콩쥐는 오랜만에 마음껏 웃었답니다.",
         "hotspots": [
           {
             "label": "kongjwi",
@@ -2435,23 +2428,23 @@
               997
             ],
             "audio": "/folk/kongjwi/say-p12-kongjwi.mp3",
-            "feel": "tonedown",
-            "intensity": 0.35
+            "feel": "whisper",
+            "intensity": 0.4
           }
         ],
         "lines": [
           {
             "text": "'내가… 여기 있어도 되는 걸까?'",
             "who": "kongjwi",
-            "feel": "tonedown",
-            "intensity": 0.35
+            "feel": "whisper",
+            "intensity": 0.4
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p12-0.mp3",
-            "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n떡이며 과일이며, 콩쥐는 난생처음 보는 것투성이였지요.\n"
+            "text": "잔치 마당은 노랫소리와 웃음소리로 가득했어요.\n떡이며 과일이며, 콩쥐는 난생처음 보는 것들뿐이었지요.\n"
           },
           {
             "who": "kongjwi",
@@ -2467,41 +2460,51 @@
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p12.webp?v=3"
       },
       {
-        "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았지요.\n\"저 아가씨는 어느 집 사람일까?\"\n원님이 다가가려는데, 콩쥐는 벌써 자리에서 일어서고 있었어요.",
+        "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았답니다.\n\"저 아가씨는 어느 집 사람이지?\"\n원님이 다가가려는데, 콩쥐는 벌써 자리에서 일어서고 있었어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p13.webp?v=3",
         "hotspots": [
           {
             "label": "magistrate",
-            "line": "저 아가씨는 어느 집 사람일까?",
+            "line": "저 아가씨는 어느 집 사람이지?",
             "box": [
               203,
               667,
               880,
               836
             ],
-            "audio": "/folk/kongjwi/say-p13-magistrate.mp3"
+            "audio": "/folk/kongjwi/say-p13-magistrate.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p13-0.mp3",
-            "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았지요.\n"
+            "text": "그때 잔치를 연 젊은 원님이 콩쥐를 보았어요.\n환하게 웃는 그 얼굴이 마음에 오래 남았답니다.\n"
           },
           {
             "who": "magistrate",
             "src": "/folk/kongjwi/seg-cast-p13-1.mp3",
-            "text": "\"저 아가씨는 어느 집 사람일까?\""
+            "text": "\"저 아가씨는 어느 집 사람이지?\""
           },
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p13-2.mp3",
             "text": "\n원님이 다가가려는데, 콩쥐는 벌써 자리에서 일어서고 있었어요."
           }
+        ],
+        "lines": [
+          {
+            "text": "저 아가씨는 어느 집 사람이지?",
+            "who": "magistrate",
+            "feel": "tonedown",
+            "intensity": 0.3
+          }
         ]
       },
       {
-        "text": "'어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가 있어야 해!'\n콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요.",
+        "text": "'어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가야 해!'\n콩쥐는 서둘러 개울을 폴짝 건너다가 그만 —\n꽃신 한 짝이 벗겨져 물에 동동 떠내려가고 말았어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p14.webp?v=3",
         "hotspots": [
           {
@@ -2515,14 +2518,15 @@
             ],
             "audio": "/folk/kongjwi/say-p14-kongjwi.mp3",
             "feel": "toneup",
-            "intensity": 0.4
+            "intensity": 0.55,
+            "tempo": 1.1
           }
         ],
         "segments": [
           {
             "who": "kongjwi",
             "src": "/folk/kongjwi/seg-cast-p14-0.mp3",
-            "text": "'어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가 있어야 해!'"
+            "text": "'어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가야 해!'"
           },
           {
             "who": "narration",
@@ -2532,16 +2536,18 @@
         ],
         "lines": [
           {
-            "text": "'어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가 있어야 해!'",
+            "text": "'어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가야 해!'",
             "who": "kongjwi",
             "feel": "toneup",
-            "intensity": 0.4,
-            "tempo": 1.1
+            "intensity": 0.6,
+            "tempo": 1.1,
+            "pitch": 1,
+            "say": "앗! 어머, 벌써 시간이 이렇게 됐네! 새어머니가 돌아오시기 전에 먼저 집에 가야 해!"
           }
         ]
       },
       {
-        "text": "콩쥐를 뒤따라 나온 원님은 두리번거렸어요.\n하지만 아가씨는 벌써 보이지 않았지요.\n개울가 돌 틈에는, 반짝이는 꽃신 한 짝만 동그마니 걸려 있었어요.\n원님은 꽃신을 가만히 주워 들고 생각했지요.\n'이 신을 돌려주러 가면, 그 아가씨를 다시 만날 수 있겠구나.'",
+        "text": "콩쥐를 뒤따라 나온 원님은 두리번거렸어요.\n하지만 콩쥐는 벌써 보이지 않았답니다.\n개울가 돌 틈에는, 떠내려가던 꽃신 한 짝이 반짝 걸려 있었어요.\n원님은 꽃신을 가만히 주워 들었답니다.\n'이 꽃신을 돌려주러 가면, 그 아가씨를 다시 만날 수 있겠지.'",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p15.webp?v=4",
         "hotspots": [
           {
@@ -2553,27 +2559,31 @@
               694,
               828
             ],
-            "audio": "/folk/kongjwi/say-p15-magistrate.mp3"
+            "audio": "/folk/kongjwi/say-p15-magistrate.mp3",
+            "feel": "toneup",
+            "intensity": 0.35
           }
         ],
         "lines": [
           {
-            "text": "이 신을 돌려주러 가면, 그 아가씨를 다시 만날 수 있겠구나.",
+            "text": "이 꽃신을 돌려주러 가면, 그 아가씨를 다시 만날 수 있겠지.",
             "who": "magistrate",
-            "feel": "happy",
-            "intensity": 0.3
+            "feel": "tonedown",
+            "intensity": 0.35,
+            "tempo": 0.95,
+            "say": "이 꽃신을 돌려주러 가면… 그 아가씨를 다시 만날 수 있겠지."
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p15-0.mp3",
-            "text": "콩쥐를 뒤따라 나온 원님은 두리번거렸어요.\n하지만 아가씨는 벌써 보이지 않았지요.\n개울가 돌 틈에는, 반짝이는 꽃신 한 짝만 동그마니 걸려 있었어요.\n원님은 꽃신을 가만히 주워 들고 생각했지요.\n"
+            "text": "콩쥐를 뒤따라 나온 원님은 두리번거렸어요.\n하지만 콩쥐는 벌써 보이지 않았답니다.\n개울가 돌 틈에는, 떠내려가던 꽃신 한 짝이 반짝 걸려 있었어요.\n원님은 꽃신을 가만히 주워 들었답니다.\n"
           },
           {
             "who": "magistrate",
             "src": "/folk/kongjwi/seg-cast-p15-1.mp3",
-            "text": "'이 신을 돌려주러 가면, 그 아가씨를 다시 만날 수 있겠구나.'"
+            "text": "'이 꽃신을 돌려주러 가면, 그 아가씨를 다시 만날 수 있겠지.'"
           }
         ]
       },
@@ -2648,7 +2658,7 @@
         ]
       },
       {
-        "text": "새어머니는 얼른 콩쥐를 헛간으로 밀어 넣고, 문을 닫아 버렸어요.\n원님이 집 안을 둘러보며 물었지요.\n\"이 댁에 다른 아가씨는 안 계십니까?\"\n\"우리 집 딸은 팥쥐 하나뿐입니다!\"\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했어요.\n\"짹짹! 여기예요, 여기! 헛간 안이에요!\"",
+        "text": "새어머니는 얼른 콩쥐를 헛간으로 밀어 넣고, 문을 닫아 버렸어요.\n원님이 집 안을 둘러보며 물었답니다.\n\"이 댁에 다른 아가씨는 안 계십니까?\"\n\"우리 집 딸은 팥쥐 하나뿐입니다!\"\n그때 지붕 위에서 참새 떼가 요란하게 울기 시작했어요.\n\"짹짹! 여기예요, 여기! 헛간 안이에요!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p17.webp?v=3",
         "lines": [
           {
@@ -2659,12 +2669,14 @@
             "text": "우리 집 딸은 팥쥐 하나뿐입니다!",
             "who": "stepmom",
             "feel": "toneup",
-            "intensity": 0.35
+            "intensity": 0.4,
+            "tempo": 1.1
           },
           {
             "text": "짹짹! 여기예요, 여기! 헛간 안이에요!",
             "who": "sparrow",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -2679,7 +2691,8 @@
             ],
             "audio": "/folk/kongjwi/say-p17-stepmom.mp3",
             "feel": "toneup",
-            "intensity": 0.35
+            "intensity": 0.4,
+            "tempo": 1.1
           },
           {
             "label": "sparrow",
@@ -2699,7 +2712,7 @@
           {
             "who": "narration",
             "src": "/folk/kongjwi/seg-p17-0.mp3",
-            "text": "새어머니는 얼른 콩쥐를 헛간으로 밀어 넣고, 문을 닫아 버렸어요.\n원님이 집 안을 둘러보며 물었지요.\n"
+            "text": "새어머니는 얼른 콩쥐를 헛간으로 밀어 넣고, 문을 닫아 버렸어요.\n원님이 집 안을 둘러보며 물었답니다.\n"
           },
           {
             "who": "magistrate",
@@ -2724,7 +2737,7 @@
         ]
       },
       {
-        "text": "원님이 헛간 문을 열자 콩쥐가 서 있었어요.\n\"저… 저도 신어 봐도 될까요?\"\n콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요!\n\"아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!\"",
+        "text": "원님이 헛간 문을 열자 콩쥐가 서 있었어요.\n\"저… 저도 신어 봐도 될까요?\"\n콩쥐가 조심스레 발을 내밀자 — 꽃신이 쏙, 꼭 맞았어요!\n\"잔치에서 뵀던 그 아가씨가 당신이군요. 드디어 찾았습니다!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p18.webp?v=5",
         "hotspots": [
           {
@@ -2762,10 +2775,11 @@
             "intensity": 0.35
           },
           {
-            "text": "아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!",
+            "text": "잔치에서 뵀던 그 아가씨가 당신이군요. 드디어 찾았습니다!",
             "who": "magistrate",
             "feel": "happy",
-            "intensity": 0.4
+            "intensity": 0.4,
+            "tempo": 1
           }
         ],
         "segments": [
@@ -2787,16 +2801,16 @@
           {
             "who": "magistrate",
             "src": "/folk/kongjwi/seg-cast-p18-3.mp3",
-            "text": "\"아! 잔치에서 뵀던 그 아가씨군요. 드디어 찾았습니다!\""
+            "text": "\"잔치에서 뵀던 그 아가씨가 당신이군요. 드디어 찾았습니다!\""
           }
         ]
       },
       {
-        "text": "원님은 콩쥐에게 손을 내밀었어요.\n\"이제 저와 함께 가시겠습니까?\"\n콩쥐는 헛간 문턱을 넘어 마당으로 걸어 나왔지요.\n새어머니와 팥쥐는 아무 말도 하지 못했답니다.",
+        "text": "원님은 콩쥐에게 손을 내밀었어요.\n\"저와 함께 가실래요?\"\n콩쥐는 헛간 문턱을 넘어 마당으로 걸어 나왔지요.\n새어머니와 팥쥐는 아무 말도 하지 못했답니다.",
         "hotspots": [
           {
             "label": "magistrate",
-            "line": "이제 저와 함께 가시겠습니까?",
+            "line": "저와 함께 가실래요?",
             "box": [
               191,
               359,
@@ -2817,7 +2831,7 @@
           {
             "who": "magistrate",
             "src": "/folk/kongjwi/seg-cast-p19-1.mp3",
-            "text": "\"이제 저와 함께 가시겠습니까?\""
+            "text": "\"저와 함께 가실래요?\""
           },
           {
             "who": "narration",
@@ -2828,7 +2842,7 @@
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/kongjwi/p19.webp?v=6",
         "lines": [
           {
-            "text": "이제 저와 함께 가시겠습니까?",
+            "text": "저와 함께 가실래요?",
             "who": "magistrate",
             "feel": "tonedown",
             "intensity": 0.35
@@ -2861,7 +2875,10 @@
               891,
               760
             ],
-            "audio": "/folk/kongjwi/say-p20-stepmom.mp3"
+            "audio": "/folk/kongjwi/say-p20-stepmom.mp3",
+            "feel": "sad",
+            "intensity": 0.4,
+            "tempo": 0.9
           },
           {
             "label": "patjwi",
@@ -2873,19 +2890,27 @@
               946
             ],
             "audio": "/folk/kongjwi/say-p20-patjwi.mp3",
-            "feel": "tonedown",
-            "intensity": 0.4
+            "feel": "sad",
+            "intensity": 0.5,
+            "tempo": 0.85,
+            "say": "언니… 나도… 미안해."
           }
         ],
         "lines": [
           {
             "text": "콩쥐야… 그동안 미안했다.",
-            "who": "stepmom"
+            "who": "stepmom",
+            "feel": "sad",
+            "intensity": 0.4,
+            "tempo": 0.9
           },
           {
             "text": "언니… 나도 미안해.",
             "who": "patjwi",
-            "feel": "tonedown"
+            "feel": "sad",
+            "intensity": 0.5,
+            "tempo": 0.85,
+            "say": "언니… 나도… 미안해."
           },
           {
             "text": "들어와서 같이 드세요. 오늘은 잔칫날인걸요.",
@@ -2932,9 +2957,9 @@
       "narration": "tc-minjung",
       "kongjwi": "tc-najin",
       "patjwi": "tc-gahee",
-      "stepmom": "tc-sookhee",
-      "magistrate": "tc-tian",
-      "fairy": "tc-jiyoung",
+      "stepmom": "tc-ladycho",
+      "magistrate": "tc-taewoo",
+      "fairy": "tc-gaeul",
       "ox": "tc-monggun",
       "toad": "tc-homun",
       "sparrow": "tc-sua"
@@ -2976,7 +3001,7 @@
         ]
       },
       {
-        "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 된다!\"\n어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요.",
+        "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 돼요.\"\n어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p2.webp?v=5",
         "hotspots": [
           {
@@ -2988,31 +3013,45 @@
               961,
               473
             ],
-            "audio": "/folk/haedal/say-p2-mother.mp3"
+            "audio": "/folk/haedal/say-p2-mother.mp3",
+            "feel": "tonedown",
+            "intensity": 0.35
           }
         ],
         "segments": [
           {
             "who": "mother",
             "src": "/folk/haedal/seg-cast-p2-0.mp3",
-            "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 된다!\""
+            "text": "\"엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 돼요.\""
           },
           {
             "who": "narration",
             "src": "/folk/haedal/seg-p2-1.mp3",
             "text": "\n어머니는 떡 광주리를 이고 꼬불꼬불 산길을 넘어갔어요."
           }
+        ],
+        "lines": [
+          {
+            "text": "엄마 금방 다녀올게. 문 꼭 잠그고,\n엄마 목소리가 아니면 절대 열어 주면 안 돼요.",
+            "who": "mother",
+            "feel": "happy",
+            "intensity": 0.3,
+            "tempo": 0.92,
+            "say": "엄마 금방 다녀올게. 문 꼭 잠그고… 엄마 목소리가 아니면 절대 열어 주면 안 돼요."
+          }
         ]
       },
       {
-        "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌지요.\n\"오빠, 엄마 왜 이렇게 안 오지?\"\n\"조금만 더 기다려 보자. 곧 오실 거야.\"\n동생은 오빠 옆에 바짝 붙어 앉았답니다.",
+        "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌답니다.\n\"오빠, 엄마 왜 이렇게 안 오는 걸까?\"\n\"조금만 더 기다려 보자. 곧 오실 거야.\"\n동생은 오빠 옆에 바짝 붙어 앉았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p3.webp?v=5",
         "lines": [
           {
-            "text": "오빠, 엄마 왜 이렇게 안 오지?",
+            "text": "오빠, 엄마 왜 이렇게 안 오는 걸까?",
             "who": "sister",
             "feel": "sad",
-            "intensity": 0.3
+            "intensity": 0.4,
+            "tempo": 0.9,
+            "say": "오빠… 엄마 왜 이렇게 안 오는 걸까?"
           },
           {
             "text": "조금만 더 기다려 보자. 곧 오실 거야.",
@@ -3024,7 +3063,7 @@
         "hotspots": [
           {
             "label": "sister",
-            "line": "오빠, 엄마 왜 이렇게 안 오지?",
+            "line": "오빠, 엄마 왜 이렇게 안 오는 걸까?",
             "box": [
               347,
               17,
@@ -3033,7 +3072,9 @@
             ],
             "audio": "/folk/haedal/say-p3-sister.mp3",
             "feel": "sad",
-            "intensity": 0.3
+            "intensity": 0.4,
+            "tempo": 0.9,
+            "say": "오빠… 엄마 왜 이렇게 안 오는 걸까?"
           },
           {
             "label": "brother",
@@ -3053,12 +3094,12 @@
           {
             "who": "narration",
             "src": "/folk/haedal/seg-p3-0.mp3",
-            "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌지요.\n"
+            "text": "오누이는 문을 꼭 잠그고 엄마를 기다렸어요.\n해가 기울고, 방 안이 어둑어둑해졌답니다.\n"
           },
           {
             "who": "sister",
             "src": "/folk/haedal/seg-cast-p3-1.mp3",
-            "text": "\"오빠, 엄마 왜 이렇게 안 오지?\"\n"
+            "text": "\"오빠, 엄마 왜 이렇게 안 오는 걸까?\"\n"
           },
           {
             "who": "brother",
@@ -3180,17 +3221,20 @@
           {
             "text": "이제 더 이상 줄 떡이 없어요…",
             "who": "mother",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.5
           },
           {
             "text": "그럼 널 잡아먹어야겠다!",
             "who": "tiger",
-            "feel": "angry"
+            "feel": "angry",
+            "intensity": 0.45
           },
           {
             "text": "옳지! 이 옷을 입고 가면 그 집 아이들까지 잡아먹을 수 있겠구나.",
             "who": "tiger",
-            "feel": "tonedown"
+            "feel": "tonedown",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -3204,7 +3248,8 @@
               473
             ],
             "audio": "/folk/haedal/say-p6-mother.mp3",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.5
           },
           {
             "label": "tiger",
@@ -3215,7 +3260,9 @@
               926,
               971
             ],
-            "audio": "/folk/haedal/say-p6-tiger.mp3"
+            "audio": "/folk/haedal/say-p6-tiger.mp3",
+            "feel": "angry",
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -3247,11 +3294,11 @@
         ]
       },
       {
-        "text": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요.\n똑똑똑. \"얘들아, 엄마 왔단다. 문 열어 주렴.\"\n\"어? 우리 엄마 목소리가 아닌데?\"\n오누이는 고개를 갸웃했지요.",
+        "text": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요.\n똑똑똑. \"얘들아, 엄마 왔단다. 문 열어 주렴.\"\n\"어? 우리 엄마 목소리가 아닌데?\"\n오누이는 고개를 갸웃했답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p7.webp?v=5",
         "hotspots": [
           {
-            "label": "tiger",
+            "label": "tigerMimic",
             "line": "얘들아, 엄마 왔단다~",
             "box": [
               150,
@@ -3259,9 +3306,11 @@
               961,
               760
             ],
-            "audio": "/folk/haedal/say-p7-tiger.mp3",
-            "feel": "tonedown",
-            "intensity": 0.4
+            "audio": "/folk/haedal/say-p7-tigerMimic.mp3",
+            "feel": "whisper",
+            "intensity": 0.4,
+            "tempo": 0.9,
+            "say": "얘들아… 엄마 왔단다…"
           },
           {
             "label": "brother",
@@ -3272,19 +3321,25 @@
               683,
               355
             ],
-            "audio": "/folk/haedal/say-p7-brother.mp3"
+            "audio": "/folk/haedal/say-p7-brother.mp3",
+            "feel": "whisper",
+            "intensity": 0.35
           }
         ],
         "lines": [
           {
             "text": "얘들아, 엄마 왔단다. 문 열어 주렴.",
-            "who": "tiger",
-            "feel": "tonedown",
-            "intensity": 0.4
+            "who": "tigerMimic",
+            "feel": "whisper",
+            "intensity": 0.4,
+            "tempo": 0.9,
+            "say": "얘들아… 엄마 왔단다. 문 열어 주렴…"
           },
           {
             "text": "어? 우리 엄마 목소리가 아닌데?",
-            "who": "brother"
+            "who": "brother",
+            "feel": "whisper",
+            "intensity": 0.35
           }
         ],
         "unspoken": [
@@ -3297,7 +3352,7 @@
             "text": "호랑이는 어머니 옷을 입고 오누이네 집으로 갔어요.\n똑똑똑. "
           },
           {
-            "who": "tiger",
+            "who": "tigerMimic",
             "src": "/folk/haedal/seg-cast-p7-1.mp3",
             "text": "\"얘들아, 엄마 왔단다. 문 열어 주렴.\"\n"
           },
@@ -3309,12 +3364,12 @@
           {
             "who": "narration",
             "src": "/folk/haedal/seg-p7-3.mp3",
-            "text": "\n오누이는 고개를 갸웃했지요."
+            "text": "\n오누이는 고개를 갸웃했답니다."
           }
         ]
       },
       {
-        "text": "\"그럼 문틈으로 손을 보여 주세요.\"\n문틈으로 쑥 들어온 손은 털이 북슬북슬!\n\"호, 호랑이다!\"\n오누이는 서로 손을 꼭 잡았어요.",
+        "text": "\"콜록콜록, 엄마가 감기에 걸려서 목소리가 이렇단다. 어서 문 열어 주렴.\"\n\"그럼 문틈으로 손을 보여 주세요.\"\n문틈으로 쑥 들어온 손은 털이 북슬북슬!\n\"오, 오빠! 호, 호랑이인 것 같아! 어떡해!\"\n오누이는 서로 손을 꼭 잡았어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p8.webp?v=5",
         "hotspots": [
           {
@@ -3326,11 +3381,13 @@
               949,
               777
             ],
-            "audio": "/folk/haedal/say-p8-brother.mp3"
+            "audio": "/folk/haedal/say-p8-brother.mp3",
+            "feel": "tonedown",
+            "intensity": 0.35
           },
           {
             "label": "sister",
-            "line": "호, 호랑이다!",
+            "line": "오, 오빠! 호, 호랑이인 것 같아! 어떡해!",
             "box": [
               231,
               642,
@@ -3339,40 +3396,61 @@
             ],
             "audio": "/folk/haedal/say-p8-sister.mp3",
             "feel": "toneup",
-            "intensity": 0.45
+            "intensity": 0.55,
+            "tempo": 1.05,
+            "say": "헉! 오, 오빠! 호, 호랑이인 것 같아! 어떡해!",
+            "pitch": 1
           }
         ],
         "lines": [
           {
-            "text": "그럼 문틈으로 손을 보여 주세요.",
-            "who": "brother"
+            "text": "콜록콜록, 엄마가 감기에 걸려서 목소리가 이렇단다. 어서 문 열어 주렴.",
+            "who": "tigerMimic",
+            "feel": "whisper",
+            "intensity": 0.4,
+            "tempo": 0.9,
+            "say": "콜록콜록… 엄마가 감기에 걸려서 목소리가 이렇단다. 어서 문 열어 주렴…"
           },
           {
-            "text": "호, 호랑이다!",
+            "text": "그럼 문틈으로 손을 보여 주세요.",
+            "who": "brother",
+            "feel": "tonedown",
+            "intensity": 0.35
+          },
+          {
+            "text": "오, 오빠! 호, 호랑이인 것 같아! 어떡해!",
             "who": "sister",
             "feel": "toneup",
-            "intensity": 0.45
+            "intensity": 0.55,
+            "tempo": 1.05,
+            "say": "헉! 오, 오빠! 호, 호랑이인 것 같아! 어떡해!",
+            "pitch": 1
           }
         ],
         "segments": [
           {
-            "who": "brother",
+            "who": "tigerMimic",
             "src": "/folk/haedal/seg-cast-p8-0.mp3",
+            "text": "\"콜록콜록, 엄마가 감기에 걸려서 목소리가 이렇단다. 어서 문 열어 주렴.\"\n"
+          },
+          {
+            "who": "brother",
+            "src": "/folk/haedal/seg-cast-p8-1.mp3",
             "text": "\"그럼 문틈으로 손을 보여 주세요.\""
           },
           {
             "who": "narration",
-            "src": "/folk/haedal/seg-p8-1.mp3",
+            "src": "/folk/haedal/seg-p8-2.mp3",
             "text": "\n문틈으로 쑥 들어온 손은 털이 북슬북슬!\n"
           },
           {
             "who": "sister",
-            "src": "/folk/haedal/seg-cast-p8-2.mp3",
-            "text": "\"호, 호랑이다!\""
+            "src": "/folk/haedal/seg-cast-p8-3.mp3",
+            "text": "\"오, 오빠! 호, 호랑이인 것 같아! 어떡해!\""
           },
           {
             "who": "narration",
-            "src": "/folk/haedal/seg-p8-3.mp3",
+            "src": "/folk/haedal/seg-p8-4.mp3",
             "text": "\n오누이는 서로 손을 꼭 잡았어요."
           }
         ]
@@ -3428,7 +3506,9 @@
           },
           {
             "text": "바보 호랑이!",
-            "who": "sister"
+            "who": "sister",
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -3454,7 +3534,9 @@
               394,
               743
             ],
-            "audio": "/folk/haedal/say-p10-sister.mp3"
+            "audio": "/folk/haedal/say-p10-sister.mp3",
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -3481,7 +3563,7 @@
         ]
       },
       {
-        "text": "웃음소리에 위를 올려다본 호랑이가 물었어요.\n\"얘들아, 거기는 어떻게 올라갔니?\"\n오빠가 꾀를 내어 대답했지요.\n\"손에 참기름을 바르고 올라왔지요!\"",
+        "text": "웃음소리에 위를 올려다본 호랑이가 물었어요.\n\"얘들아, 거기는 어떻게 올라갔니?\"\n오빠가 꾀를 내어 대답했지요.\n\"손에 참기름을 바르고 올라왔어요!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p11.webp?v=5",
         "hotspots": [
           {
@@ -3517,7 +3599,7 @@
           {
             "who": "brother",
             "src": "/folk/haedal/seg-cast-p11-3.mp3",
-            "text": "\"손에 참기름을 바르고 올라왔지요!\""
+            "text": "\"손에 참기름을 바르고 올라왔어요!\""
           }
         ],
         "lines": [
@@ -3528,7 +3610,7 @@
             "intensity": 0.4
           },
           {
-            "text": "손에 참기름을 바르고 올라왔지요!",
+            "text": "손에 참기름을 바르고 올라왔어요!",
             "who": "brother",
             "feel": "happy",
             "intensity": 0.3
@@ -3536,7 +3618,7 @@
         ]
       },
       {
-        "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요.\n\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n\"앗, 안 돼!\"",
+        "text": "호랑이는 참기름을 바르고 나무에 매달렸지만\n미끌미끌, 쭈르륵! 자꾸만 미끄러졌어요.\n그때 동생이 그만 깜빡 말해 버렸지요.\n\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p12.webp?v=6",
         "lines": [
           {
@@ -3544,11 +3626,6 @@
             "who": "sister",
             "feel": "toneup",
             "intensity": 0.4
-          },
-          {
-            "text": "앗, 안 돼!",
-            "who": "brother",
-            "feel": "toneup"
           }
         ],
         "hotspots": [
@@ -3564,19 +3641,6 @@
             "audio": "/folk/haedal/say-p12-sister.mp3",
             "feel": "toneup",
             "intensity": 0.4
-          },
-          {
-            "label": "brother",
-            "line": "앗, 안 돼!",
-            "box": [
-              0,
-              676,
-              336,
-              853
-            ],
-            "audio": "/folk/haedal/say-p12-brother.mp3",
-            "feel": "toneup",
-            "intensity": 0.4
           }
         ],
         "segments": [
@@ -3588,12 +3652,7 @@
           {
             "who": "sister",
             "src": "/folk/haedal/seg-cast-p12-1.mp3",
-            "text": "\"바보 호랑이! 도끼로 찍으면서 올라와야지!\"\n"
-          },
-          {
-            "who": "brother",
-            "src": "/folk/haedal/seg-cast-p12-2.mp3",
-            "text": "\"앗, 안 돼!\""
+            "text": "\"바보 호랑이! 도끼로 찍으면서 올라와야지!\""
           }
         ]
       },
@@ -3610,7 +3669,9 @@
               301,
               794
             ],
-            "audio": "/folk/haedal/say-p13-sister.mp3"
+            "audio": "/folk/haedal/say-p13-sister.mp3",
+            "feel": "toneup",
+            "intensity": 0.45
           },
           {
             "label": "tiger",
@@ -3629,7 +3690,9 @@
         "lines": [
           {
             "text": "오빠, 어떡해!",
-            "who": "sister"
+            "who": "sister",
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -3660,7 +3723,7 @@
             ],
             "audio": "/folk/haedal/say-p14-brother.mp3",
             "feel": "sad",
-            "intensity": 0.4
+            "intensity": 0.45
           },
           {
             "label": "sister",
@@ -3671,13 +3734,17 @@
               428,
               465
             ],
-            "audio": "/folk/haedal/say-p14-sister.mp3"
+            "audio": "/folk/haedal/say-p14-sister.mp3",
+            "feel": "sad",
+            "intensity": 0.4
           }
         ],
         "lines": [
           {
             "text": "하느님, 저희를 살려 주시려거든\n튼튼한 동아줄을 내려 주세요!",
-            "who": "brother"
+            "who": "brother",
+            "feel": "sad",
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -3694,7 +3761,7 @@
         ]
       },
       {
-        "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n그걸 본 호랑이도 얼른 두 손을 모으고 빌었어요.\n\"하느님, 저도요! 저한테도 동아줄을 내려 주세요!\"",
+        "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔답니다.\n그걸 본 호랑이도 얼른 두 손을 모으고 빌었어요.\n\"하느님, 저도요! 저한테도 동아줄을 내려 주세요!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p15.webp?v=5",
         "hotspots": [
           {
@@ -3708,14 +3775,14 @@
             ],
             "audio": "/folk/haedal/say-p15-tiger.mp3",
             "feel": "toneup",
-            "intensity": 0.4
+            "intensity": 0.45
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/haedal/seg-p15-0.mp3",
-            "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔지요.\n그걸 본 호랑이도 얼른 두 손을 모으고 빌었어요.\n"
+            "text": "그러자 하늘에서 반짝이는 튼튼한 동아줄이 스르르 내려왔어요.\n오누이가 줄을 꼭 잡자 동아줄은 두둥실 하늘로 올라갔답니다.\n그걸 본 호랑이도 얼른 두 손을 모으고 빌었어요.\n"
           },
           {
             "who": "tiger",
@@ -3727,7 +3794,8 @@
           {
             "text": "하느님, 저도요! 저한테도 동아줄을 내려 주세요!",
             "who": "tiger",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "video": "/folk/haedal/p15.mp4"
@@ -3859,14 +3927,19 @@
               498,
               743
             ],
-            "audio": "/folk/haedal/say-p18-mother.mp3"
+            "audio": "/folk/haedal/say-p18-mother.mp3",
+            "feel": "sad",
+            "intensity": 0.45,
+            "tempo": 0.9
           }
         ],
         "lines": [
           {
             "text": "우리 아가들… 얼마나 무서웠니.",
             "who": "mother",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.45,
+            "tempo": 0.9
           }
         ],
         "segments": [
@@ -4001,10 +4074,11 @@
     "voiceCast": {
       "narration": "tc-minjung",
       "brother": "tc-siwoo",
-      "sister": "tc-arin",
-      "mother": "tc-gaeul",
+      "sister": "tc-haeun",
+      "mother": "tc-aeran",
       "tiger": "tc-homun",
-      "king": "tc-jongdae"
+      "king": "tc-jongdae",
+      "tigerMimic": "tc-hades"
     },
     "roleOf": {
       "오빠": "brother",
@@ -4014,7 +4088,8 @@
       "엄마": "mother",
       "호랑이": "tiger",
       "임금님": "king",
-      "하늘나라 임금님": "king"
+      "하늘나라 임금님": "king",
+      "호랑이(흉내)": "tigerMimic"
     },
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/haedal/p1.webp?v=5",
     "narrators": [
@@ -4041,7 +4116,9 @@
               891,
               895
             ],
-            "audio": "/folk/goldaxe/say-p1-woodcutter.mp3"
+            "audio": "/folk/goldaxe/say-p1-woodcutter.mp3",
+            "feel": "happy",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -4053,36 +4130,46 @@
         ]
       },
       {
-        "text": "\"오늘도 부지런히 나무를 해서, 어머니 약값을 벌어야지!\"\n나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만,\n나무꾼은 도끼를 보물처럼 아꼈어요.",
+        "text": "\"오늘도 부지런히 나무를 해 어머님 약값을 벌어야겠다!\"\n나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만,\n나무꾼은 도끼를 보물처럼 아꼈어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p2.webp?v=8",
         "hotspots": [
           {
             "label": "woodcutter",
-            "line": "오늘도 부지런히 나무를 해서, 어머니 약값을 벌어야지!",
+            "line": "오늘도 부지런히 나무를 해 어머님 약값을 벌어야겠다!",
             "box": [
               46,
               321,
               972,
               752
             ],
-            "audio": "/folk/goldaxe/say-p2-woodcutter.mp3"
+            "audio": "/folk/goldaxe/say-p2-woodcutter.mp3",
+            "feel": "toneup",
+            "intensity": 0.3
           }
         ],
         "segments": [
           {
             "who": "woodcutter",
             "src": "/folk/goldaxe/seg-cast-p2-0.mp3",
-            "text": "\"오늘도 부지런히 나무를 해서, 어머니 약값을 벌어야지!\""
+            "text": "\"오늘도 부지런히 나무를 해 어머님 약값을 벌어야겠다!\""
           },
           {
             "who": "narration",
             "src": "/folk/goldaxe/seg-p2-1.mp3",
             "text": "\n나무꾼의 도끼는 낡은 쇠도끼 하나뿐이었지만,\n나무꾼은 도끼를 보물처럼 아꼈어요."
           }
+        ],
+        "lines": [
+          {
+            "text": "오늘도 부지런히 나무를 해 어머님 약값을 벌어야겠다!",
+            "who": "woodcutter",
+            "feel": "toneup",
+            "intensity": 0.3
+          }
         ]
       },
       {
-        "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았지요.",
+        "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p3.webp?v=8",
         "hotspots": [
           {
@@ -4094,14 +4181,16 @@
               752,
               456
             ],
-            "audio": "/folk/goldaxe/say-p3-woodcutter.mp3"
+            "audio": "/folk/goldaxe/say-p3-woodcutter.mp3",
+            "feel": "toneup",
+            "intensity": 0.3
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/goldaxe/seg-p3-0.mp3",
-            "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았지요."
+            "text": "어느 날, 깊은 산속 연못가에서 나무를 하던 중이었어요.\n쿵! 쿵! 힘차게 도끼질을 하다가\n그만 손이 미끄러지고 말았답니다."
           }
         ]
       },
@@ -4120,7 +4209,9 @@
             ],
             "audio": "/folk/goldaxe/say-p4-woodcutter.mp3",
             "feel": "sad",
-            "intensity": 0.4
+            "intensity": 0.5,
+            "tempo": 0.85,
+            "say": "하아… 이제 어머니 약값은 어떻게 벌지…"
           }
         ],
         "segments": [
@@ -4150,15 +4241,17 @@
             "text": "아이고, 하나뿐인 내 도끼!",
             "who": "woodcutter",
             "feel": "sad",
-            "intensity": 0.45,
-            "tempo": 0.88
+            "intensity": 0.6,
+            "tempo": 0.85,
+            "say": "아이고… 하나뿐인… 내 도끼…!"
           },
           {
             "text": "이제 어머니 약값은 어떻게 벌지…",
             "who": "woodcutter",
             "feel": "sad",
-            "intensity": 0.4,
-            "tempo": 0.88
+            "intensity": 0.5,
+            "tempo": 0.85,
+            "say": "하아… 이제 어머니 약값은 어떻게 벌지…"
           }
         ]
       },
@@ -4203,14 +4296,15 @@
         "video": "/folk/goldaxe/p5.mp4"
       },
       {
-        "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\"\n산신령님은 고개를 끄덕이더니, 연못 속으로 사라졌지요.",
+        "text": "\"하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.\"\n산신령님은 고개를 끄덕이더니, 연못 속으로 사라졌답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p6.webp?v=8",
         "lines": [
           {
             "text": "하나뿐인 쇠도끼를 빠뜨렸습니다.\n그 도끼가 없으면 나무를 못 해서\n어머니 약도 지어 드릴 수가 없어요.",
             "who": "woodcutter",
             "feel": "sad",
-            "tempo": 0.9
+            "tempo": 0.9,
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -4237,21 +4331,25 @@
           {
             "who": "narration",
             "src": "/folk/goldaxe/seg-p6-1.mp3",
-            "text": "\n산신령님은 고개를 끄덕이더니, 연못 속으로 사라졌지요."
+            "text": "\n산신령님은 고개를 끄덕이더니, 연못 속으로 사라졌답니다."
           }
         ]
       },
       {
-        "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요.\n\"이 금도끼가 네 도끼냐?\"\n\"아니요, 제 도끼가 아닙니다.\"\n산신령님은 슬며시 웃으며, 다시 물속으로 들어갔지요.",
+        "text": "잠시 후, 산신령님이 번쩍이는 금도끼를 들고 나왔어요.\n\"이 금도끼가 네 도끼냐?\"\n\"아닙니다, 제 도끼가 아닙니다.\"\n산신령님은 슬며시 웃으며, 다시 물속으로 들어갔어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p7.webp?v=8",
         "lines": [
           {
             "text": "이 금도끼가 네 도끼냐?",
-            "who": "spirit"
+            "who": "spirit",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
-            "text": "아니요, 제 도끼가 아닙니다.",
-            "who": "woodcutter"
+            "text": "아닙니다, 제 도끼가 아닙니다.",
+            "who": "woodcutter",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -4264,18 +4362,22 @@
               926,
               422
             ],
-            "audio": "/folk/goldaxe/say-p7-spirit.mp3"
+            "audio": "/folk/goldaxe/say-p7-spirit.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
             "label": "woodcutter",
-            "line": "아니요, 제 도끼가 아닙니다.",
+            "line": "아닙니다, 제 도끼가 아닙니다.",
             "box": [
               289,
               541,
               961,
               895
             ],
-            "audio": "/folk/goldaxe/say-p7-woodcutter.mp3"
+            "audio": "/folk/goldaxe/say-p7-woodcutter.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -4292,26 +4394,30 @@
           {
             "who": "woodcutter",
             "src": "/folk/goldaxe/seg-cast-p7-2.mp3",
-            "text": "\"아니요, 제 도끼가 아닙니다.\""
+            "text": "\"아닙니다, 제 도끼가 아닙니다.\""
           },
           {
             "who": "narration",
             "src": "/folk/goldaxe/seg-p7-3.mp3",
-            "text": "\n산신령님은 슬며시 웃으며, 다시 물속으로 들어갔지요."
+            "text": "\n산신령님은 슬며시 웃으며, 다시 물속으로 들어갔어요."
           }
         ]
       },
       {
-        "text": "이번에는 산신령님이 은도끼를 들고 나왔어요.\n\"그럼 이 은도끼가 네 도끼냐?\"\n\"아니요, 그것도 제 것이 아닙니다.\"\n나무꾼은 고개를 살래살래 저었어요.",
+        "text": "이번에는 산신령님이 은도끼를 들고 나왔어요.\n\"그럼 이 은도끼가 네 도끼냐?\"\n\"아닙니다, 그것도 제 것이 아닙니다.\"\n나무꾼은 고개를 살래살래 저었어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p8.webp?v=8",
         "lines": [
           {
             "text": "그럼 이 은도끼가 네 도끼냐?",
-            "who": "spirit"
+            "who": "spirit",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
-            "text": "아니요, 그것도 제 것이 아닙니다.",
-            "who": "woodcutter"
+            "text": "아닙니다, 그것도 제 것이 아닙니다.",
+            "who": "woodcutter",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -4324,18 +4430,22 @@
               995,
               422
             ],
-            "audio": "/folk/goldaxe/say-p8-spirit.mp3"
+            "audio": "/folk/goldaxe/say-p8-spirit.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
             "label": "woodcutter",
-            "line": "아니요, 그것도 제 것이 아닙니다.",
+            "line": "아닙니다, 그것도 제 것이 아닙니다.",
             "box": [
               162,
               541,
               995,
               912
             ],
-            "audio": "/folk/goldaxe/say-p8-woodcutter.mp3"
+            "audio": "/folk/goldaxe/say-p8-woodcutter.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -4352,7 +4462,7 @@
           {
             "who": "woodcutter",
             "src": "/folk/goldaxe/seg-cast-p8-2.mp3",
-            "text": "\"아니요, 그것도 제 것이 아닙니다.\""
+            "text": "\"아닙니다, 그것도 제 것이 아닙니다.\""
           },
           {
             "who": "narration",
@@ -4374,7 +4484,9 @@
               995,
               473
             ],
-            "audio": "/folk/goldaxe/say-p9-spirit.mp3"
+            "audio": "/folk/goldaxe/say-p9-spirit.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
             "label": "woodcutter",
@@ -4454,7 +4566,7 @@
         ]
       },
       {
-        "text": "나무꾼은 도끼 세 자루를 안고, 집으로 힘껏 달려갔어요.\n\"어머니! 산신령님이 이런 선물을 주셨어요!\"\n\"네가 바르게 살아 준 덕분이구나.\"\n어머니는 아들의 손을 오래오래 쓸어 주었답니다.",
+        "text": "나무꾼은 도끼 세 자루를 안고, 집으로 힘껏 달려갔어요.\n\"어머니! 산신령님이 이런 선물을 주셨어요!\"\n\"아이고, 우리 아들. 정직하게 살더니 복을 받았구나.\"\n어머니는 아들의 손을 오래오래 쓸어 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p11.webp?v=8",
         "lines": [
           {
@@ -4465,10 +4577,11 @@
             "tempo": 0.88
           },
           {
-            "text": "네가 바르게 살아 준 덕분이구나.",
+            "text": "아이고, 우리 아들. 정직하게 살더니 복을 받았구나.",
             "who": "mother",
-            "feel": "tonedown",
-            "intensity": 0.35
+            "feel": "happy",
+            "intensity": 0.35,
+            "tempo": 0.9
           }
         ],
         "hotspots": [
@@ -4487,7 +4600,7 @@
           },
           {
             "label": "mother",
-            "line": "네가 바르게 살아 준 덕분이구나.",
+            "line": "아이고, 우리 아들. 정직하게 살더니 복을 받았구나.",
             "box": [
               116,
               507,
@@ -4495,8 +4608,9 @@
               853
             ],
             "audio": "/folk/goldaxe/say-p11-mother.mp3",
-            "feel": "tonedown",
-            "intensity": 0.35
+            "feel": "happy",
+            "intensity": 0.35,
+            "tempo": 0.9
           }
         ],
         "segments": [
@@ -4513,7 +4627,7 @@
           {
             "who": "mother",
             "src": "/folk/goldaxe/seg-cast-p11-2.mp3",
-            "text": "\"네가 바르게 살아 준 덕분이구나.\""
+            "text": "\"아이고, 우리 아들. 정직하게 살더니 복을 받았구나.\""
           },
           {
             "who": "narration",
@@ -4523,7 +4637,7 @@
         ]
       },
       {
-        "text": "나무꾼이 금도끼를 받았다는 소문은, 이웃 마을까지 퍼졌어요.\n그 말을 들은 욕심쟁이가 무릎을 탁 쳤지요.\n\"옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!\"\n욕심쟁이는 그날 밤 잠도 이루지 못했답니다.",
+        "text": "나무꾼이 금도끼를 받았다는 소문은, 이웃 마을까지 퍼졌어요.\n그 말을 들은 욕심쟁이 나무꾼이 무릎을 탁 치며 말했어요.\n\"옳지! 도끼를 빠뜨리기만 하면 금도끼를 주는구나!\"\n욕심쟁이는 그날 밤 잠도 이루지 못했답니다.",
         "hotspots": [
           {
             "label": "greedy",
@@ -4544,7 +4658,7 @@
           {
             "who": "narration",
             "src": "/folk/goldaxe/seg-p12-0.mp3",
-            "text": "나무꾼이 금도끼를 받았다는 소문은, 이웃 마을까지 퍼졌어요.\n그 말을 들은 욕심쟁이가 무릎을 탁 쳤지요.\n"
+            "text": "나무꾼이 금도끼를 받았다는 소문은, 이웃 마을까지 퍼졌어요.\n그 말을 들은 욕심쟁이 나무꾼이 무릎을 탁 치며 말했어요.\n"
           },
           {
             "who": "greedy",
@@ -4567,11 +4681,11 @@
         ]
       },
       {
-        "text": "이튿날 아침, 욕심쟁이는 연못으로 달려갔어요.\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는\n손등으로 눈을 비비며 거짓 울음을 울었지요.\n\"아이고, 내 도끼야! 엉엉!\"",
+        "text": "이튿날 아침, 욕심쟁이 나무꾼은 연못으로 달려갔어요.\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는\n손등으로 눈을 비비며 거짓 울음을 울었지요.\n\"아이고, 내 도끼야!\"",
         "hotspots": [
           {
             "label": "greedy",
-            "line": "아이고, 내 도끼야! 엉엉!",
+            "line": "아이고, 내 도끼야!",
             "box": [
               46,
               541,
@@ -4579,14 +4693,16 @@
               946
             ],
             "audio": "/folk/goldaxe/say-p13-greedy.mp3",
-            "feel": "normal"
+            "feel": "sad",
+            "intensity": 0.5
           }
         ],
         "lines": [
           {
-            "text": "아이고, 내 도끼야! 엉엉!",
+            "text": "아이고, 내 도끼야!",
             "who": "greedy",
-            "feel": "normal"
+            "feel": "sad",
+            "intensity": 0.5
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p12b.webp?v=9",
@@ -4594,22 +4710,24 @@
           {
             "who": "narration",
             "src": "/folk/goldaxe/seg-p13-0.mp3",
-            "text": "이튿날 아침, 욕심쟁이는 연못으로 달려갔어요.\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는\n손등으로 눈을 비비며 거짓 울음을 울었지요.\n"
+            "text": "이튿날 아침, 욕심쟁이 나무꾼은 연못으로 달려갔어요.\n멀쩡한 제 도끼를 일부러 풍덩! 던지고는\n손등으로 눈을 비비며 거짓 울음을 울었지요.\n"
           },
           {
             "who": "greedy",
             "src": "/folk/goldaxe/seg-cast-p13-1.mp3",
-            "text": "\"아이고, 내 도끼야! 엉엉!\""
+            "text": "\"아이고, 내 도끼야!\""
           }
         ]
       },
       {
-        "text": "연못이 반짝이더니, 산신령님이 금도끼를 들고 나타났어요.\n\"이 금도끼가 네 도끼냐?\"\n\"맞아요, 맞아! 그 금도끼가 제 것입니다!\"\n욕심쟁이는 손을 뻗으며 냉큼 외쳤지요.",
+        "text": "연못이 반짝이더니, 산신령님이 금도끼를 들고 나타났어요.\n\"이 금도끼가 네 도끼냐?\"\n\"맞아요, 맞아! 그 금도끼가 제 것입니다!\"\n욕심쟁이는 손을 뻗으며 냉큼 외쳤어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p13.webp?v=8",
         "lines": [
           {
             "text": "이 금도끼가 네 도끼냐?",
-            "who": "spirit"
+            "who": "spirit",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
             "text": "맞아요, 맞아! 그 금도끼가 제 것입니다!",
@@ -4629,7 +4747,9 @@
               995,
               524
             ],
-            "audio": "/folk/goldaxe/say-p14-spirit.mp3"
+            "audio": "/folk/goldaxe/say-p14-spirit.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
             "label": "greedy",
@@ -4665,7 +4785,7 @@
           {
             "who": "narration",
             "src": "/folk/goldaxe/seg-p14-3.mp3",
-            "text": "\n욕심쟁이는 손을 뻗으며 냉큼 외쳤지요."
+            "text": "\n욕심쟁이는 손을 뻗으며 냉큼 외쳤어요."
           }
         ]
       },
@@ -4740,7 +4860,7 @@
         ]
       },
       {
-        "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n금도끼 판 돈으로 좋은 약을 지어 드리자, 어머니의 병도 씻은 듯이 나았지요.\n\"어머니, 저는 도끼 한 자루면 넉넉해요.\"\n어머니가 아들의 등을 토닥이며 말했지요.\n\"그럼. 정직한 네 마음이 금도끼보다 더 소중하단다.\"\n나무꾼과 어머니는 오래오래 행복하게 살았답니다.",
+        "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n금도끼 판 돈으로 좋은 약을 지어 드리자, 어머니의 병도 씻은 듯이 나았답니다.\n\"어머니, 저는 도끼 한 자루면 넉넉해요.\"\n어머니가 아들의 등을 토닥이며 말했지요.\n\"그럼. 정직한 네 마음이 금도끼보다 더 소중하단다.\"\n나무꾼과 어머니는 오래오래 행복하게 살았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p16.webp?v=8",
         "lines": [
           {
@@ -4790,7 +4910,7 @@
           {
             "who": "narration",
             "src": "/folk/goldaxe/seg-p17-0.mp3",
-            "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n금도끼 판 돈으로 좋은 약을 지어 드리자, 어머니의 병도 씻은 듯이 나았지요.\n"
+            "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n금도끼 판 돈으로 좋은 약을 지어 드리자, 어머니의 병도 씻은 듯이 나았답니다.\n"
           },
           {
             "who": "woodcutter",
@@ -4818,9 +4938,9 @@
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p10.webp?v=8",
     "voiceCast": {
       "narration": "tc-minjung",
-      "woodcutter": "tc-heejoon",
+      "woodcutter": "tc-seojoon",
       "spirit": "tc-jongdae",
-      "greedy": "tc-sullock",
+      "greedy": "tc-byunghun",
       "mother": "tc-juha"
     },
     "roleOf": {
@@ -4855,7 +4975,9 @@
               700,
               955
             ],
-            "audio": "/folk/patjuk-halmae-tiger/say-p1-tiger.mp3"
+            "audio": "/folk/patjuk-halmae-tiger/say-p1-tiger.mp3",
+            "feel": "angry",
+            "intensity": 0.45
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p1-2.webp",
@@ -4869,6 +4991,14 @@
             "who": "tiger",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p1-1.mp3",
             "text": "\"널 잡아먹어야겠다!\""
+          }
+        ],
+        "lines": [
+          {
+            "text": "널 잡아먹어야겠다!",
+            "who": "tiger",
+            "feel": "angry",
+            "intensity": 0.45
           }
         ]
       },
@@ -4884,7 +5014,9 @@
           },
           {
             "text": "좋아, 그럼 그때 다시 찾아오지.",
-            "who": "tiger"
+            "who": "tiger",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -4910,7 +5042,9 @@
               950,
               850
             ],
-            "audio": "/folk/patjuk-halmae-tiger/say-p2-tiger.mp3"
+            "audio": "/folk/patjuk-halmae-tiger/say-p2-tiger.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -4942,7 +5076,7 @@
         ]
       },
       {
-        "text": "가을이 되어 팥이 빨갛게 익었어요.\n할머니는 솥 가득 팥죽을 쒔지요.\n하지만 호랑이가 올 생각을 하니 눈물이 주르륵.\n\"흑흑, 이제 나는 잡아먹히고 마는구나.\"",
+        "text": "가을이 되어 팥이 빨갛게 익었어요.\n할머니는 솥 가득 팥죽을 끓였어요.\n하지만 호랑이가 올 생각을 하니 눈물이 주르륵.\n\"흑흑, 이제 나는 잡아먹히고 마는구나.\"",
         "hotspots": [
           {
             "label": "granny",
@@ -4953,13 +5087,19 @@
               950,
               810
             ],
-            "audio": "/folk/patjuk-halmae-tiger/say-p3-granny.mp3"
+            "audio": "/folk/patjuk-halmae-tiger/say-p3-granny.mp3",
+            "feel": "sad",
+            "intensity": 0.5,
+            "tempo": 0.9
           }
         ],
         "lines": [
           {
             "text": "흑흑, 이제 나는 잡아먹히고 마는구나.",
-            "who": "granny"
+            "who": "granny",
+            "feel": "sad",
+            "intensity": 0.5,
+            "tempo": 0.9
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p3-2.webp",
@@ -4967,7 +5107,7 @@
           {
             "who": "narration",
             "src": "/folk/patjuk-halmae-tiger/seg-p3-0.mp3",
-            "text": "가을이 되어 팥이 빨갛게 익었어요.\n할머니는 솥 가득 팥죽을 쒔지요.\n하지만 호랑이가 올 생각을 하니 눈물이 주르륵.\n"
+            "text": "가을이 되어 팥이 빨갛게 익었어요.\n할머니는 솥 가득 팥죽을 끓였어요.\n하지만 호랑이가 올 생각을 하니 눈물이 주르륵.\n"
           },
           {
             "who": "granny",
@@ -4990,7 +5130,8 @@
           {
             "text": "호랑이가 날 잡아먹으러 온단다.",
             "who": "granny",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.4
           },
           {
             "text": "저에게 팥죽 한 그릇만 주시면, 제가 할머니를 도와드릴게요!",
@@ -5100,29 +5241,29 @@
         ]
       },
       {
-        "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아와 다 함께 말했어요.\n\"저희들도 할머니를 도와드릴게요!\"\n\"나는 미끄럽지! 밟기만 해 보라지.\"\n\"나는 둘둘 말 줄 알아!\"\n\"나는 지고 갈 힘이 있소!\"",
+        "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아왔어요.\n\"할머니, 저희도 도와드릴게요!\"\n먼저 쇠똥이 말했어요.\n\"나는 미끌미끌 미끄럽지! 호랑이가 밟기만 해 보라지.\"\n멍석이 뒤를 이었어요.\n\"나는 호랑이를 둘둘 말 줄 알아!\"\n지게도 큰소리를 쳤답니다.\n\"나는 호랑이를 번쩍 지고 갈 힘이 있지!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p6-2.webp",
         "lines": [
           {
-            "text": "저희들도 할머니를 도와드릴게요!",
+            "text": "할머니, 저희도 도와드릴게요!",
             "who": "mat",
             "feel": "happy",
             "intensity": 0.4
           },
           {
-            "text": "나는 미끄럽지! 밟기만 해 보라지.",
+            "text": "나는 미끌미끌 미끄럽지! 호랑이가 밟기만 해 보라지.",
             "who": "dung",
             "feel": "toneup",
             "intensity": 0.45
           },
           {
-            "text": "나는 둘둘 말 줄 알아!",
+            "text": "나는 호랑이를 둘둘 말 줄 알아!",
             "who": "mat",
             "feel": "happy",
             "intensity": 0.4
           },
           {
-            "text": "나는 지고 갈 힘이 있소!",
+            "text": "나는 호랑이를 번쩍 지고 갈 힘이 있지!",
             "who": "carrier",
             "feel": "happy",
             "intensity": 0.35
@@ -5131,7 +5272,7 @@
         "hotspots": [
           {
             "label": "dung",
-            "line": "나는 미끄럽지! 밟기만 해 보라지.",
+            "line": "나는 미끌미끌 미끄럽지! 호랑이가 밟기만 해 보라지.",
             "box": [
               590,
               105,
@@ -5144,7 +5285,7 @@
           },
           {
             "label": "mat",
-            "line": "나는 둘둘 말 줄 알아!",
+            "line": "나는 호랑이를 둘둘 말 줄 알아!",
             "box": [
               370,
               402,
@@ -5157,7 +5298,7 @@
           },
           {
             "label": "carrier",
-            "line": "나는 지고 갈 힘이 있소!",
+            "line": "나는 호랑이를 번쩍 지고 갈 힘이 있지!",
             "box": [
               390,
               628,
@@ -5173,27 +5314,42 @@
           {
             "who": "narration",
             "src": "/folk/patjuk-halmae-tiger/seg-p6-0.mp3",
-            "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아와 다 함께 말했어요.\n"
+            "text": "뒤이어 쇠똥이, 멍석이, 지게가 나란히 찾아왔어요.\n"
           },
           {
             "who": "mat",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p6-1.mp3",
-            "text": "\"저희들도 할머니를 도와드릴게요!\"\n"
+            "text": "\"할머니, 저희도 도와드릴게요!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/patjuk-halmae-tiger/seg-p6-2.mp3",
+            "text": "\n먼저 쇠똥이 말했어요.\n"
           },
           {
             "who": "dung",
-            "src": "/folk/patjuk-halmae-tiger/seg-cast-p6-2.mp3",
-            "text": "\"나는 미끄럽지! 밟기만 해 보라지.\"\n"
+            "src": "/folk/patjuk-halmae-tiger/seg-cast-p6-3.mp3",
+            "text": "\"나는 미끌미끌 미끄럽지! 호랑이가 밟기만 해 보라지.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/patjuk-halmae-tiger/seg-p6-4.mp3",
+            "text": "\n멍석이 뒤를 이었어요.\n"
           },
           {
             "who": "mat",
-            "src": "/folk/patjuk-halmae-tiger/seg-cast-p6-3.mp3",
-            "text": "\"나는 둘둘 말 줄 알아!\"\n"
+            "src": "/folk/patjuk-halmae-tiger/seg-cast-p6-5.mp3",
+            "text": "\"나는 호랑이를 둘둘 말 줄 알아!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/patjuk-halmae-tiger/seg-p6-6.mp3",
+            "text": "\n지게도 큰소리를 쳤답니다.\n"
           },
           {
             "who": "carrier",
-            "src": "/folk/patjuk-halmae-tiger/seg-cast-p6-4.mp3",
-            "text": "\"나는 지고 갈 힘이 있소!\""
+            "src": "/folk/patjuk-halmae-tiger/seg-cast-p6-7.mp3",
+            "text": "\"나는 호랑이를 번쩍 지고 갈 힘이 있지!\""
           }
         ]
       },
@@ -5250,12 +5406,14 @@
         ]
       },
       {
-        "text": "깜깜한 밤, 드디어 호랑이가 어슬렁어슬렁 찾아왔어요.\n\"약속대로 왔다! 팥죽은 다 되었겠지?\"\n\"부엌 아궁이에 있으니 직접 꺼내 먹으렴.\"\n호랑이는 침을 꿀꺽 삼키며 부엌으로 갔지요.",
+        "text": "깜깜한 밤, 드디어 호랑이가 어슬렁어슬렁 찾아왔어요.\n\"약속대로 왔다! 팥죽은 다 되었겠지?\"\n\"부엌 아궁이에 있으니 직접 꺼내 먹으렴.\"\n호랑이는 침을 꿀꺽 삼키며 부엌으로 갔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p8-2.webp",
         "lines": [
           {
             "text": "약속대로 왔다! 팥죽은 다 되었겠지?",
-            "who": "tiger"
+            "who": "tiger",
+            "feel": "happy",
+            "intensity": 0.4
           },
           {
             "text": "부엌 아궁이에 있으니 직접 꺼내 먹으렴.",
@@ -5274,7 +5432,9 @@
               970,
               890
             ],
-            "audio": "/folk/patjuk-halmae-tiger/say-p8-tiger.mp3"
+            "audio": "/folk/patjuk-halmae-tiger/say-p8-tiger.mp3",
+            "feel": "happy",
+            "intensity": 0.4
           },
           {
             "label": "granny",
@@ -5309,7 +5469,7 @@
           {
             "who": "narration",
             "src": "/folk/patjuk-halmae-tiger/seg-p8-3.mp3",
-            "text": "\n호랑이는 침을 꿀꺽 삼키며 부엌으로 갔지요."
+            "text": "\n호랑이는 침을 꿀꺽 삼키며 부엌으로 갔답니다."
           }
         ]
       },
@@ -5320,12 +5480,16 @@
           {
             "text": "지금이다!",
             "who": "chestnut",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45,
+            "tempo": 1,
+            "say": "지금이다아!"
           },
           {
             "text": "아야! 내 눈!",
             "who": "tiger",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "hotspots": [
@@ -5340,7 +5504,9 @@
             ],
             "audio": "/folk/patjuk-halmae-tiger/say-p9-chestnut.mp3",
             "feel": "toneup",
-            "intensity": 0.4
+            "intensity": 0.45,
+            "tempo": 1,
+            "say": "지금이다아!"
           },
           {
             "label": "tiger",
@@ -5353,7 +5519,7 @@
             ],
             "audio": "/folk/patjuk-halmae-tiger/say-p9-tiger.mp3",
             "feel": "toneup",
-            "intensity": 0.4
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -5380,35 +5546,17 @@
         ]
       },
       {
-        "text": "호랑이가 물동이로 눈을 씻으러 달려갔어요.\n물에 손을 넣는 순간, 자라가 콱!\n\"약속대로 꽉 물었지!\"\n\"아이고, 아파!\"",
+        "text": "호랑이가 물동이로 눈을 씻으러 달려갔어요.\n물에 손을 넣는 순간, 자라가 콱!\n\"아이고, 아파!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p10-2.webp",
         "lines": [
           {
-            "text": "약속대로 꽉 물었지!",
-            "who": "turtle",
-            "feel": "happy",
-            "intensity": 0.4
-          },
-          {
             "text": "아이고, 아파!",
             "who": "tiger",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "hotspots": [
-          {
-            "label": "turtle",
-            "line": "약속대로 꽉 물었지!",
-            "box": [
-              555,
-              425,
-              940,
-              770
-            ],
-            "audio": "/folk/patjuk-halmae-tiger/say-p10-turtle.mp3",
-            "feel": "happy",
-            "intensity": 0.4
-          },
           {
             "label": "tiger",
             "line": "아이고, 아파!",
@@ -5420,7 +5568,7 @@
             ],
             "audio": "/folk/patjuk-halmae-tiger/say-p10-tiger.mp3",
             "feel": "toneup",
-            "intensity": 0.4
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -5430,23 +5578,18 @@
             "text": "호랑이가 물동이로 눈을 씻으러 달려갔어요.\n물에 손을 넣는 순간, 자라가 콱!\n"
           },
           {
-            "who": "turtle",
-            "src": "/folk/patjuk-halmae-tiger/seg-cast-p10-1.mp3",
-            "text": "\"약속대로 꽉 물었지!\"\n"
-          },
-          {
             "who": "tiger",
-            "src": "/folk/patjuk-halmae-tiger/seg-cast-p10-2.mp3",
+            "src": "/folk/patjuk-halmae-tiger/seg-cast-p10-1.mp3",
             "text": "\"아이고, 아파!\""
           }
         ]
       },
       {
-        "text": "놀란 호랑이가 뒷걸음질을 쳤어요.\n마당 한가운데 쇠똥을 밟고 주르륵 — 쿵!\n호랑이가 벌러덩 나자빠졌지요.\n\"밟았구나! 내가 말했지, 밟기만 해 보라고!\"",
+        "text": "놀란 호랑이가 뒷걸음질을 쳤어요.\n마당 한가운데 쇠똥을 밟고 주르륵 — 쿵!\n호랑이가 벌러덩 나자빠졌지요.\n\"내가 말했지, 밟기만 해 보라고!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p11-2.webp",
         "lines": [
           {
-            "text": "밟았구나! 내가 말했지, 밟기만 해 보라고!",
+            "text": "내가 말했지, 밟기만 해 보라고!",
             "who": "dung",
             "feel": "toneup",
             "intensity": 0.45
@@ -5489,7 +5632,7 @@
           {
             "who": "dung",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p11-1.mp3",
-            "text": "\"밟았구나! 내가 말했지, 밟기만 해 보라고!\""
+            "text": "\"내가 말했지, 밟기만 해 보라고!\""
           }
         ]
       },
@@ -5606,14 +5749,16 @@
         ]
       },
       {
-        "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n물에 젖은 멍석이 스르르 풀렸어요.\n\"어푸어푸! 아이고, 호랑이 살려!\"\n호랑이는 강 건너 산 너머로, 걸음아 날 살려라 도망쳤답니다.",
+        "text": "지게는 호랑이를 지고 강가로 성큼성큼 걸어갔어요.\n그리고 풍덩!\n물에 젖은 멍석이 스르르 풀렸어요.\n\"아이고, 호랑이 살려!\"\n호랑이는 강 건너 산 너머로, 걸음아 날 살려라 도망쳤답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/patjuk-halmae-tiger/p14-2.webp",
         "lines": [
           {
-            "text": "어푸어푸! 아이고, 호랑이 살려!",
+            "text": "아이고, 호랑이 살려!",
             "who": "tiger",
             "feel": "toneup",
-            "intensity": 0.4
+            "intensity": 0.6,
+            "tempo": 1.1,
+            "say": "아이고오! 호랑이 살려어!"
           }
         ],
         "hotspots": [
@@ -5628,7 +5773,9 @@
             ],
             "audio": "/folk/patjuk-halmae-tiger/say-p14-tiger.mp3",
             "feel": "toneup",
-            "intensity": 0.4
+            "intensity": 0.6,
+            "tempo": 1.1,
+            "say": "아이고오! 호랑이 살려어!"
           },
           {
             "label": "carrier",
@@ -5653,7 +5800,7 @@
           {
             "who": "tiger",
             "src": "/folk/patjuk-halmae-tiger/seg-cast-p14-1.mp3",
-            "text": "\"어푸어푸! 아이고, 호랑이 살려!\""
+            "text": "\"아이고, 호랑이 살려!\""
           },
           {
             "who": "narration",
@@ -5746,7 +5893,7 @@
     ],
     "voiceCast": {
       "narration": "tc-minjung",
-      "granny": "tc-jungsoon",
+      "granny": "tc-sooni",
       "tiger": "tc-hakchul",
       "chestnut": "tc-hamchu",
       "turtle": "tc-monggun",
@@ -5776,13 +5923,13 @@
     "narrator": "tc-minjung",
     "pages": [
       {
-        "text": "옛날 옛날 어느 산골 마을에, 볼에 커다란 혹이 달린 할아버지가 살았어요.\n사람들은 '혹부리 영감'이라고 불렀어요.\n할아버지는 놀림을 받아도 씩 웃으며 노래를 불렀지요.",
+        "text": "옛날 옛날 어느 산골 마을에, 볼에 커다란 혹이 달린 할아버지가 살았어요.\n사람들은 할아버지를 혹부리 영감님이라고 불렀어요.\n할아버지는 놀림을 받아도 씩 웃으며 노래를 불렀지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p1.webp?v=4",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/hokburi/seg-p1-0.mp3",
-            "text": "옛날 옛날 어느 산골 마을에, 볼에 커다란 혹이 달린 할아버지가 살았어요.\n사람들은 '혹부리 영감'이라고 불렀어요.\n할아버지는 놀림을 받아도 씩 웃으며 노래를 불렀지요."
+            "text": "옛날 옛날 어느 산골 마을에, 볼에 커다란 혹이 달린 할아버지가 살았어요.\n사람들은 할아버지를 혹부리 영감님이라고 불렀어요.\n할아버지는 놀림을 받아도 씩 웃으며 노래를 불렀지요."
           }
         ]
       },
@@ -5867,14 +6014,15 @@
             ],
             "audio": "/folk/hokburi/say-p4-dokkaebi.mp3",
             "feel": "happy",
-            "intensity": 0.4
+            "intensity": 0.45
           }
         ],
         "lines": [
           {
             "text": "아하! 저 볼록한 게 바로 노래 주머니로구나!",
             "who": "dokkaebi",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -5918,14 +6066,15 @@
             ],
             "audio": "/folk/hokburi/say-p5-dokkaebi.mp3",
             "feel": "happy",
-            "intensity": 0.4
+            "intensity": 0.45
           }
         ],
         "lines": [
           {
             "text": "옳지! 이 노래 주머니는 우리가 사 가마!",
             "who": "dokkaebi",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.45
           },
           {
             "text": "아니, 여보게들! 그건 노래 주머니가 아니라오…",
@@ -5989,7 +6138,7 @@
         ]
       },
       {
-        "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야지!\"\n욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자, 혹부리 영감이 부르던 노래를 흉내 내어, 억지로 크게 불렀지요.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n같은 노래인데도 삐걱삐걱, 하나도 곱지 않았답니다.",
+        "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야겠다!\"\n욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자, 혹부리 영감이 부르던 노래를 흉내 내어, 억지로 크게 불렀답니다.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n같은 노래인데도 삐걱삐걱, 하나도 곱지 않았어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p7.webp?v=4",
         "hotspots": [
           {
@@ -6001,31 +6150,34 @@
               949,
               617
             ],
-            "audio": "/folk/hokburi/say-p7-greedy.mp3"
+            "audio": "/folk/hokburi/say-p7-greedy.mp3",
+            "feel": "toneup",
+            "intensity": 0.35
           }
         ],
         "lines": [
           {
-            "text": "옳거니! 나도 혹을 팔아서 부자가 되어야지!",
+            "text": "옳거니! 나도 혹을 팔아서 부자가 되어야겠다!",
             "who": "greedy",
-            "feel": "happy"
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "segments": [
           {
             "who": "greedy",
             "src": "/folk/hokburi/seg-cast-p7-0.mp3",
-            "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야지!\""
+            "text": "\"옳거니! 나도 혹을 팔아서 부자가 되어야겠다!\""
           },
           {
             "who": "narration",
             "src": "/folk/hokburi/seg-p7-1.mp3",
-            "text": "\n욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자, 혹부리 영감이 부르던 노래를 흉내 내어, 억지로 크게 불렀지요.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n같은 노래인데도 삐걱삐걱, 하나도 곱지 않았답니다."
+            "text": "\n욕심쟁이 영감은 부리나케 그 오두막으로 달려갔어요.\n그리고 밤이 되자, 혹부리 영감이 부르던 노래를 흉내 내어, 억지로 크게 불렀답니다.\n얼씨구나 좋구나~ 달님도 별님도 내 친구라네!\n같은 노래인데도 삐걱삐걱, 하나도 곱지 않았어요."
           }
         ]
       },
       {
-        "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감은 얼른 제 혹을 가리키며 소리쳤지요.\n\"이 혹에서 고운 노래가 나온다오! 특별히 내가 보물과 바꿔 주겠소!\"\n그러자 도깨비 대장이 버럭 화를 냈어요.\n\"거짓말 마라! 저번에 가져간 혹에서는 아무 노래도 나오지 않았단 말이다!\"",
+        "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감님은 얼른 제 혹을 가리키며 소리쳤지요.\n\"이 혹은 고운 노래가 나오는 특별한 노래 주머니인데, 내가 특별히 보물과 바꿔 주겠소!\"\n그러자 도깨비 대장이 버럭 화를 냈어요.\n\"거짓말 마라! 저번에 가져간 혹에서는 아무 노래도 나오지 않았단 말이다!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p8.webp?v=4",
         "hotspots": [
           {
@@ -6052,31 +6204,33 @@
             ],
             "audio": "/folk/hokburi/say-p8-dokkaebi.mp3",
             "feel": "angry",
-            "intensity": 0.4
+            "intensity": 0.45
           }
         ],
         "lines": [
           {
-            "text": "이 혹에서 고운 노래가 나온다오! 특별히 내가 보물과 바꿔 주겠소!",
+            "text": "이 혹은 고운 노래가 나오는 특별한 노래 주머니인데, 내가 특별히 보물과 바꿔 주겠소!",
             "who": "greedy",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           },
           {
             "text": "거짓말 마라! 저번에 가져간 혹에서는 아무 노래도 나오지 않았단 말이다!",
             "who": "dokkaebi",
-            "feel": "angry"
+            "feel": "angry",
+            "intensity": 0.45
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/hokburi/seg-p8-0.mp3",
-            "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감은 얼른 제 혹을 가리키며 소리쳤지요.\n"
+            "text": "쿵! 쿵! 쿵! 도깨비들이 다시 나타났어요.\n욕심쟁이 영감님은 얼른 제 혹을 가리키며 소리쳤지요.\n"
           },
           {
             "who": "greedy",
             "src": "/folk/hokburi/seg-cast-p8-1.mp3",
-            "text": "\"이 혹에서 고운 노래가 나온다오! 특별히 내가 보물과 바꿔 주겠소!\""
+            "text": "\"이 혹은 고운 노래가 나오는 특별한 노래 주머니인데, 내가 특별히 보물과 바꿔 주겠소!\""
           },
           {
             "who": "narration",
@@ -6091,12 +6245,12 @@
         ]
       },
       {
-        "text": "\"이 거짓말쟁이 영감 같으니! 이 혹도 가져가라!\"\n도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은, 엉엉 울며 집으로 돌아갔지요.\n\"아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…\"",
+        "text": "\"이 거짓말쟁이 영감 같으니! 이 혹도 가져가거라!\"\n도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은, 엉엉 울며 집으로 돌아갔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/hokburi/p9.webp?v=4",
         "hotspots": [
           {
             "label": "dokkaebi",
-            "line": "이 거짓말쟁이 영감 같으니! 이 혹도 가져가라!",
+            "line": "이 거짓말쟁이 영감 같으니! 이 혹도 가져가거라!",
             "box": [
               104,
               524,
@@ -6106,49 +6260,26 @@
             "audio": "/folk/hokburi/say-p9-dokkaebi.mp3",
             "feel": "angry",
             "intensity": 0.4
-          },
-          {
-            "label": "greedy",
-            "line": "아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…",
-            "box": [
-              185,
-              228,
-              903,
-              524
-            ],
-            "audio": "/folk/hokburi/say-p9-greedy.mp3",
-            "feel": "sad",
-            "intensity": 0.4
           }
         ],
         "lines": [
           {
-            "text": "이 거짓말쟁이 영감 같으니! 이 혹도 가져가라!",
+            "text": "이 거짓말쟁이 영감 같으니! 이 혹도 가져가거라!",
             "who": "dokkaebi",
             "feel": "angry",
             "intensity": 0.4
-          },
-          {
-            "text": "아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…",
-            "who": "greedy",
-            "feel": "sad"
           }
         ],
         "segments": [
           {
             "who": "dokkaebi",
             "src": "/folk/hokburi/seg-cast-p9-0.mp3",
-            "text": "\"이 거짓말쟁이 영감 같으니! 이 혹도 가져가라!\""
+            "text": "\"이 거짓말쟁이 영감 같으니! 이 혹도 가져가거라!\""
           },
           {
             "who": "narration",
             "src": "/folk/hokburi/seg-p9-1.mp3",
-            "text": "\n도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은, 엉엉 울며 집으로 돌아갔지요.\n"
-          },
-          {
-            "who": "greedy",
-            "src": "/folk/hokburi/seg-cast-p9-2.mp3",
-            "text": "\"아이고, 욕심을 부리다가 혹만 하나 더 붙였구나…\""
+            "text": "\n도깨비는 떼어 갔던 혹을 욕심쟁이 영감의 반대쪽 볼에 척! 붙여 버렸어요.\n혹이 두 개가 된 욕심쟁이 영감은, 엉엉 울며 집으로 돌아갔답니다."
           }
         ]
       },
@@ -6200,7 +6331,7 @@
     "voiceCast": {
       "narration": "tc-minjung",
       "oldman": "tc-changbae",
-      "greedy": "tc-goat",
+      "greedy": "tc-byunghun",
       "dokkaebi": "tc-hakchul"
     },
     "roleOf": {
@@ -6238,7 +6369,7 @@
     },
     "pages": [
       {
-        "text": "옛날 어느 마을에 사이좋은 형제가 살았어요.\n형은 아랫마을에, 아우는 윗마을에 살았지만\n논은 나란히 붙어 있어 날마다 함께 일했지요.\n\"형님, 제가 물꼬를 볼게요!\"\n\"그래, 나는 풀을 뽑으마.\"",
+        "text": "옛날 어느 마을에 사이좋은 형제가 살았어요.\n형은 아랫마을에, 아우는 윗마을에 살았지만\n논은 나란히 붙어 있어 날마다 함께 일했답니다.\n\"형님, 제가 물꼬를 볼게요!\"\n\"그래, 나는 풀을 뽑으마.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p1.webp?v=4",
         "lines": [
           {
@@ -6249,7 +6380,9 @@
           },
           {
             "text": "그래, 나는 풀을 뽑으마.",
-            "who": "brother"
+            "who": "brother",
+            "feel": "happy",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -6262,7 +6395,9 @@
               740,
               375
             ],
-            "audio": "/folk/brothers/say-p1-brother.mp3"
+            "audio": "/folk/brothers/say-p1-brother.mp3",
+            "feel": "happy",
+            "intensity": 0.3
           },
           {
             "label": "younger",
@@ -6274,14 +6409,15 @@
               860
             ],
             "audio": "/folk/brothers/say-p1-younger.mp3",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/brothers/seg-p1-0.mp3",
-            "text": "옛날 어느 마을에 사이좋은 형제가 살았어요.\n형은 아랫마을에, 아우는 윗마을에 살았지만\n논은 나란히 붙어 있어 날마다 함께 일했지요.\n"
+            "text": "옛날 어느 마을에 사이좋은 형제가 살았어요.\n형은 아랫마을에, 아우는 윗마을에 살았지만\n논은 나란히 붙어 있어 날마다 함께 일했답니다.\n"
           },
           {
             "who": "younger",
@@ -6301,11 +6437,15 @@
         "lines": [
           {
             "text": "형님, 올해도 반씩이에요.",
-            "who": "younger"
+            "who": "younger",
+            "feel": "happy",
+            "intensity": 0.3
           },
           {
             "text": "그래, 늘 하던 대로.",
-            "who": "brother"
+            "who": "brother",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -6318,7 +6458,9 @@
               830,
               340
             ],
-            "audio": "/folk/brothers/say-p2-brother.mp3"
+            "audio": "/folk/brothers/say-p2-brother.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
             "label": "younger",
@@ -6329,7 +6471,9 @@
               845,
               815
             ],
-            "audio": "/folk/brothers/say-p2-younger.mp3"
+            "audio": "/folk/brothers/say-p2-younger.mp3",
+            "feel": "happy",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -6401,7 +6545,8 @@
           {
             "text": "아우는 모르게 해야지. 알면 안 받을 테니까.",
             "who": "brother",
-            "feel": "whisper"
+            "feel": "whisper",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -6415,7 +6560,8 @@
               555
             ],
             "audio": "/folk/brothers/say-p4-brother.mp3",
-            "feel": "whisper"
+            "feel": "whisper",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -6437,11 +6583,11 @@
         ]
       },
       {
-        "text": "같은 밤, 아우도 뒤척이고 있었어요.\n'형님 댁은 식구가 많잖아. 조카들도 한창 먹을 때인데…\n내 볏단을 형님께 드려야지.'\n아우도 살그머니 지게를 챙겨 나갔답니다.",
+        "text": "같은 밤, 아우도 뒤척이고 있었어요.\n'형님 댁은 식구가 많고 조카들도 지금 한창 먹을 나이인데…\n내 볏단을 형님께 나눠 드려야겠어.'\n아우도 살그머니 지게를 챙겨 나갔답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p5.webp?v=4",
         "lines": [
           {
-            "text": "'형님 댁은 식구가 많잖아. 조카들도 한창 먹을 때인데…\n내 볏단을 형님께 드려야지.'",
+            "text": "'형님 댁은 식구가 많고 조카들도 지금 한창 먹을 나이인데…\n내 볏단을 형님께 나눠 드려야겠어.'",
             "who": "younger",
             "feel": "tonedown",
             "intensity": 0.4
@@ -6450,7 +6596,7 @@
         "hotspots": [
           {
             "label": "younger",
-            "line": "형님 댁은 식구가 많잖아… 내 볏단을 드려야지.",
+            "line": "형님 댁은 식구가 많고 조카들도 한창 먹을 나이인데… 내 볏단을 나눠 드려야겠어.",
             "box": [
               185,
               460,
@@ -6471,7 +6617,7 @@
           {
             "who": "younger",
             "src": "/folk/brothers/seg-cast-p5-1.mp3",
-            "text": "'형님 댁은 식구가 많잖아. 조카들도 한창 먹을 때인데…\n내 볏단을 형님께 드려야지.'"
+            "text": "'형님 댁은 식구가 많고 조카들도 지금 한창 먹을 나이인데…\n내 볏단을 형님께 나눠 드려야겠어.'"
           },
           {
             "who": "narration",
@@ -6481,19 +6627,20 @@
         ]
       },
       {
-        "text": "아우는 볏단을 지고 형네 논으로 갔어요.\n\"형님이 알면 도로 주실 거야. 몰래 놓고 와야지.\"\n아우는 볏단을 가만히 얹어 놓고\n휘파람을 불며 가볍게 돌아왔지요.",
+        "text": "아우는 볏단을 지고 형네 논으로 갔어요.\n\"형님이 아시면 도로 주시겠지. 몰래 놓고 와야겠어.\"\n아우는 볏단을 가만히 얹어 놓고\n휘파람을 불며 가볍게 돌아왔지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p6.webp?v=4",
         "lines": [
           {
-            "text": "형님이 알면 도로 주실 거야. 몰래 놓고 와야지.",
+            "text": "형님이 아시면 도로 주시겠지. 몰래 놓고 와야겠어.",
             "who": "younger",
-            "feel": "whisper"
+            "feel": "whisper",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
           {
             "label": "younger",
-            "line": "형님이 알면 도로 주실 거야. 몰래 놓고 와야지.",
+            "line": "형님이 아시면 도로 주시겠지. 몰래 놓고 와야겠어.",
             "box": [
               220,
               540,
@@ -6501,7 +6648,8 @@
               745
             ],
             "audio": "/folk/brothers/say-p6-younger.mp3",
-            "feel": "whisper"
+            "feel": "whisper",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -6513,7 +6661,7 @@
           {
             "who": "younger",
             "src": "/folk/brothers/seg-cast-p6-1.mp3",
-            "text": "\"형님이 알면 도로 주실 거야. 몰래 놓고 와야지.\""
+            "text": "\"형님이 아시면 도로 주시겠지. 몰래 놓고 와야겠어.\""
           },
           {
             "who": "narration",
@@ -6523,18 +6671,20 @@
         ]
       },
       {
-        "text": "이튿날 아침, 형은 논에 나가 볏단을 세어 보았어요.\n\"어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?\"\n아우도 제 논을 보고 고개를 갸웃했지요.\n\"형님 논에 놓고 왔는데 왜 그대로지?\"",
+        "text": "이튿날 아침, 형은 논에 나가 볏단을 세어 보았어요.\n\"어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?\"\n아우도 제 논을 보고 고개를 갸웃했답니다.\n\"형님 논에 볏단을 놓고 왔는데 왜 그대로인 것 같지?\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p7.webp?v=4",
         "lines": [
           {
             "text": "어, 분명 한 단을 놓고 왔는데 왜 그대로인 것 같지?",
             "who": "brother",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.35
           },
           {
-            "text": "형님 논에 놓고 왔는데 왜 그대로지?",
+            "text": "형님 논에 볏단을 놓고 왔는데 왜 그대로인 것 같지?",
             "who": "younger",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.35
           }
         ],
         "hotspots": [
@@ -6548,11 +6698,12 @@
               258
             ],
             "audio": "/folk/brothers/say-p7-brother.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.35
           },
           {
             "label": "younger",
-            "line": "형님 논에 놓고 왔는데 왜 그대로지?",
+            "line": "형님 논에 볏단을 놓고 왔는데 왜 그대로인 것 같지?",
             "box": [
               345,
               812,
@@ -6560,7 +6711,8 @@
               955
             ],
             "audio": "/folk/brothers/say-p7-younger.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.35
           }
         ],
         "segments": [
@@ -6577,12 +6729,12 @@
           {
             "who": "narration",
             "src": "/folk/brothers/seg-p7-2.mp3",
-            "text": "\n아우도 제 논을 보고 고개를 갸웃했지요.\n"
+            "text": "\n아우도 제 논을 보고 고개를 갸웃했답니다.\n"
           },
           {
             "who": "younger",
             "src": "/folk/brothers/seg-cast-p7-3.mp3",
-            "text": "\"형님 논에 놓고 왔는데 왜 그대로지?\""
+            "text": "\"형님 논에 볏단을 놓고 왔는데 왜 그대로인 것 같지?\""
           }
         ]
       },
@@ -6600,7 +6752,8 @@
               430
             ],
             "audio": "/folk/brothers/say-p8-brother.mp3",
-            "feel": "whisper"
+            "feel": "whisper",
+            "intensity": 0.4
           },
           {
             "label": "younger",
@@ -6612,7 +6765,8 @@
               872
             ],
             "audio": "/folk/brothers/say-p8-younger.mp3",
-            "feel": "whisper"
+            "feel": "whisper",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -6637,7 +6791,8 @@
               495
             ],
             "audio": "/folk/brothers/say-p9-brother.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.4
           },
           {
             "label": "younger",
@@ -6649,7 +6804,8 @@
               680
             ],
             "audio": "/folk/brothers/say-p9-younger.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -6668,12 +6824,14 @@
           {
             "text": "형님…!",
             "who": "younger",
-            "feel": "toneup"
+            "feel": "sad",
+            "intensity": 0.35
           },
           {
             "text": "아우야…!",
             "who": "brother",
-            "feel": "toneup"
+            "feel": "sad",
+            "intensity": 0.35
           }
         ],
         "hotspots": [
@@ -6687,7 +6845,8 @@
               435
             ],
             "audio": "/folk/brothers/say-p10-brother.mp3",
-            "feel": "toneup"
+            "feel": "sad",
+            "intensity": 0.35
           },
           {
             "label": "younger",
@@ -6699,7 +6858,8 @@
               712
             ],
             "audio": "/folk/brothers/say-p10-younger.mp3",
-            "feel": "toneup"
+            "feel": "sad",
+            "intensity": 0.35
           }
         ],
         "segments": [
@@ -6726,18 +6886,20 @@
         ]
       },
       {
-        "text": "형제는 지게를 내려놓고 서로를 꼭 끌어안았어요.\n\"이 녀석아, 내 걱정은 말고 새살림에나 넉넉히 쓰지 그랬어.\"\n\"형님도 참. 조카들 한창 먹을 때라면서, 저한테 주시면 어떡해요.\"\n둘은 달을 올려다보며 한참을 웃었지요.",
+        "text": "형제는 지게를 내려놓고 서로를 꼭 끌어안았어요.\n\"이 녀석아, 내 걱정은 말고 새살림에나 넉넉히 쓰지 그랬어.\"\n\"형님도 참. 조카들 한창 먹을 때라면서, 저한테 주시면 어떡해요.\"\n둘은 달을 올려다보며 한참을 웃었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p11.webp?v=4",
         "lines": [
           {
             "text": "이 녀석아, 내 걱정은 말고 새살림에나 넉넉히 쓰지 그랬어.",
             "who": "brother",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           },
           {
             "text": "형님도 참. 조카들 한창 먹을 때라면서, 저한테 주시면 어떡해요.",
             "who": "younger",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -6751,7 +6913,8 @@
               500
             ],
             "audio": "/folk/brothers/say-p11-brother.mp3",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           },
           {
             "label": "younger",
@@ -6763,7 +6926,8 @@
               618
             ],
             "audio": "/folk/brothers/say-p11-younger.mp3",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -6785,12 +6949,12 @@
           {
             "who": "narration",
             "src": "/folk/brothers/seg-p11-3.mp3",
-            "text": "\n둘은 달을 올려다보며 한참을 웃었지요."
+            "text": "\n둘은 달을 올려다보며 한참을 웃었답니다."
           }
         ]
       },
       {
-        "text": "다음 해 가을에도, 형제의 논은 나란히 황금빛으로 물들었어요.\n이번에는 볏단을 반으로 나누지 않았지요.\n\"형님, 어차피 서로 줄 텐데요. 그냥 같이 쓰지요!\"\n\"허허, 그러자꾸나.\"\n그 뒤로도 두 형제는 서로를 위하며, 오래오래 행복하게 살았답니다.",
+        "text": "다음 해 가을에도, 형제의 논은 나란히 황금빛으로 물들었어요.\n이번에는 볏단을 반으로 나누지 않았답니다.\n\"형님, 어차피 서로 나눠 줄 텐데 그냥 저희 같이 쓰시지요!\"\n\"허허, 그러자꾸나.\"\n그 뒤로도 두 형제는 서로를 위하며, 오래오래 행복하게 살았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/brothers/v4/p12.webp?v=4",
         "hotspots": [
           {
@@ -6803,7 +6967,8 @@
               455
             ],
             "audio": "/folk/brothers/say-p12-brother.mp3",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           },
           {
             "label": "younger",
@@ -6815,19 +6980,20 @@
               655
             ],
             "audio": "/folk/brothers/say-p12-younger.mp3",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/brothers/seg-p12-0.mp3",
-            "text": "다음 해 가을에도, 형제의 논은 나란히 황금빛으로 물들었어요.\n이번에는 볏단을 반으로 나누지 않았지요.\n"
+            "text": "다음 해 가을에도, 형제의 논은 나란히 황금빛으로 물들었어요.\n이번에는 볏단을 반으로 나누지 않았답니다.\n"
           },
           {
             "who": "younger",
             "src": "/folk/brothers/seg-cast-p12-1.mp3",
-            "text": "\"형님, 어차피 서로 줄 텐데요. 그냥 같이 쓰지요!\"\n"
+            "text": "\"형님, 어차피 서로 나눠 줄 텐데 그냥 저희 같이 쓰시지요!\"\n"
           },
           {
             "who": "brother",
@@ -6842,14 +7008,16 @@
         ],
         "lines": [
           {
-            "text": "형님, 어차피 서로 줄 텐데요. 그냥 같이 쓰지요!",
+            "text": "형님, 어차피 서로 나눠 줄 텐데 그냥 저희 같이 쓰시지요!",
             "who": "younger",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           },
           {
             "text": "허허, 그러자꾸나.",
             "who": "brother",
-            "feel": "normal"
+            "feel": "happy",
+            "intensity": 0.3
           }
         ]
       }
@@ -6899,13 +7067,14 @@
       },
       {
         "n": 2,
-        "text": "어느 날, 하늘 임금님이 두 사람을 불러, 서로를 만나게 해 주었어요.\n\"견우야, 직녀야. 너희는 참 잘 어울리는구나.\"\n견우와 직녀는 첫눈에 서로가 좋아졌지요.\n얼마 뒤, 둘은 온 하늘나라의 축하를 받으며 부부가 되었답니다.",
+        "text": "어느 날, 하늘 임금님이 두 사람을 불러, 서로를 만나게 해 주었어요.\n\"견우야, 직녀야. 너희는 참 잘 어울리는 한 쌍인 것 같구나.\"\n견우와 직녀는 첫눈에 서로가 좋아졌지요.\n얼마 뒤, 둘은 온 하늘나라의 축하를 받으며 부부가 되었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p2.webp?v=3",
         "lines": [
           {
-            "text": "견우야, 직녀야. 너희는 참 잘 어울리는구나.",
+            "text": "견우야, 직녀야. 너희는 참 잘 어울리는 한 쌍인 것 같구나.",
             "who": "king",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -6917,7 +7086,7 @@
           {
             "who": "king",
             "src": "/folk/gyeonu/seg-cast-p2-1.mp3",
-            "text": "\"견우야, 직녀야. 너희는 참 잘 어울리는구나.\""
+            "text": "\"견우야, 직녀야. 너희는 참 잘 어울리는 한 쌍인 것 같구나.\""
           },
           {
             "who": "narration",
@@ -6928,7 +7097,7 @@
       },
       {
         "n": 3,
-        "text": "함께 지내는 나날은 꿈처럼 행복했어요.\n둘은 손을 꼭 잡고 은하수를 거닐며, 웃음이 끊이지 않았지요.\n\"우리, 매일매일 이렇게 함께 있어요.\"\n\"그래요. 나는 당신만 보고 있어도 하루가 다 가요.\"",
+        "text": "함께 지내는 나날은 꿈처럼 행복했어요.\n둘은 손을 꼭 잡고 은하수를 거닐며, 웃음이 끊이지 않았답니다.\n\"우리, 매일매일 이렇게 함께 있어요.\"\n\"그래요. 나는 당신만 보고 있어도 하루가 다 가는 것 같아요.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p3.webp?v=3",
         "lines": [
           {
@@ -6938,7 +7107,7 @@
             "intensity": 0.5
           },
           {
-            "text": "그래요. 나는 당신만 보고 있어도 하루가 다 가요.",
+            "text": "그래요. 나는 당신만 보고 있어도 하루가 다 가는 것 같아요.",
             "who": "gyeonu",
             "feel": "happy",
             "intensity": 0.5
@@ -6948,7 +7117,7 @@
           {
             "who": "narration",
             "src": "/folk/gyeonu/seg-p3-0.mp3",
-            "text": "함께 지내는 나날은 꿈처럼 행복했어요.\n둘은 손을 꼭 잡고 은하수를 거닐며, 웃음이 끊이지 않았지요.\n"
+            "text": "함께 지내는 나날은 꿈처럼 행복했어요.\n둘은 손을 꼭 잡고 은하수를 거닐며, 웃음이 끊이지 않았답니다.\n"
           },
           {
             "who": "jiknyeo",
@@ -6958,13 +7127,13 @@
           {
             "who": "gyeonu",
             "src": "/folk/gyeonu/seg-cast-p3-2.mp3",
-            "text": "\"그래요. 나는 당신만 보고 있어도 하루가 다 가요.\""
+            "text": "\"그래요. 나는 당신만 보고 있어도 하루가 다 가는 것 같아요.\""
           }
         ]
       },
       {
         "n": 4,
-        "text": "그런데 행복에 빠진 두 사람은 그만 할 일을 잊어버렸어요.\n견우는 소에게 풀 먹이는 것도 잊고,\n직녀는 베틀 앞에 앉지도 않았지요.\n\"일은 내일 하면 되죠. 오늘은 당신이랑 놀래요.\"",
+        "text": "그런데 행복에 빠진 두 사람은 그만 할 일을 잊어버렸어요.\n견우는 소에게 풀 먹이는 것도 잊고,\n직녀는 베틀 앞에 앉지도 않았답니다.\n\"일은 내일 하면 되죠. 오늘은 당신이랑 놀래요.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p4.webp?v=3",
         "lines": [
           {
@@ -6978,7 +7147,7 @@
           {
             "who": "narration",
             "src": "/folk/gyeonu/seg-p4-0.mp3",
-            "text": "그런데 행복에 빠진 두 사람은 그만 할 일을 잊어버렸어요.\n견우는 소에게 풀 먹이는 것도 잊고,\n직녀는 베틀 앞에 앉지도 않았지요.\n"
+            "text": "그런데 행복에 빠진 두 사람은 그만 할 일을 잊어버렸어요.\n견우는 소에게 풀 먹이는 것도 잊고,\n직녀는 베틀 앞에 앉지도 않았답니다.\n"
           },
           {
             "who": "jiknyeo",
@@ -7021,7 +7190,8 @@
             "text": "너희가 맡은 일을 이리 내버려 두다니!\n오늘부터 은하수 양쪽에 떨어져 살아라!",
             "who": "king",
             "feel": "angry",
-            "tempo": 0.85
+            "tempo": 0.85,
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -7050,12 +7220,18 @@
           {
             "text": "여보! 가지 말아요!",
             "who": "jiknyeo",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.65,
+            "tempo": 0.88,
+            "say": "흑… 여보오… 가지 말아요…!"
           },
           {
             "text": "조금만 기다려요. 꼭 다시 만나요!",
             "who": "gyeonu",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.6,
+            "tempo": 0.9,
+            "say": "조금만… 기다려요. 꼭… 다시 만나요!"
           }
         ],
         "segments": [
@@ -7136,12 +7312,14 @@
           {
             "text": "은하수만 건널 수 있다면 두 분이 만날 텐데.",
             "who": "crowd",
-            "feel": "normal"
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
             "text": "옳지! 우리가 다리를 놓아 드리자!",
             "who": "crowd",
-            "feel": "happy"
+            "feel": "toneup",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -7175,7 +7353,8 @@
           {
             "text": "자, 어서 건너오세요!",
             "who": "crowd",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -7200,12 +7379,18 @@
           {
             "text": "여보, 얼마나 보고 싶었는지 몰라요.",
             "who": "jiknyeo",
-            "feel": "happy"
+            "feel": "sad",
+            "intensity": 0.5,
+            "tempo": 0.9,
+            "say": "여보… 얼마나, 얼마나 보고 싶었는지 몰라요…!"
           },
           {
             "text": "이렇게 다시 만나다니, 꿈만 같아요.",
             "who": "gyeonu",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.45,
+            "tempo": 0.88,
+            "say": "하아… 이렇게… 다시 만나다니… 꿈만 같아요…"
           }
         ],
         "segments": [
@@ -7239,7 +7424,7 @@
       {
         "n": 13,
         "text": "그 모습을 본 하늘 임금님도 마음이 스르르 풀렸어요.\n\"이제 둘 다 일을 참 열심히 하는구나.\n그럼 일 년에 한 번, 칠월 칠석날에는 만나도 좋다.\"\n견우와 직녀는 임금님께 고맙다고 몇 번이나 인사했지요.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p13.webp?v=3",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gyeonu/v3/p13.webp?v=4",
         "lines": [
           {
             "text": "이제 둘 다 일을 참 열심히 하는구나.\n그럼 일 년에 한 번, 칠월 칠석날에는 만나도 좋다.",
@@ -7294,7 +7479,7 @@
     "voiceCast": {
       "narration": "tc-minjung",
       "king": "tc-jongdae",
-      "hatmaker": "tc-dukgu"
+      "hatmaker": "tc-sheriffkim"
     },
     "roleOf": {
       "임금님": "king",
@@ -7304,13 +7489,13 @@
     "pages": [
       {
         "n": 1,
-        "text": "옛날 신라에 마음씨 착한 임금님이 살았어요.\n그런데 어느 날 아침, 거울을 본 임금님은 깜짝 놀랐지요.\n밤사이 두 귀가 쑥쑥 자라, 당나귀 귀처럼 길쭉해져 있었거든요!",
+        "text": "옛날 신라에 마음씨 착한 임금님이 살았어요.\n그런데 어느 날 아침, 거울을 본 임금님은 깜짝 놀랐어요.\n밤사이 두 귀가 쑥쑥 자라, 당나귀 귀처럼 길쭉해져 있었거든요!",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p1.webp?v=4",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/donkeyears/seg-p1-0.mp3",
-            "text": "옛날 신라에 마음씨 착한 임금님이 살았어요.\n그런데 어느 날 아침, 거울을 본 임금님은 깜짝 놀랐지요.\n밤사이 두 귀가 쑥쑥 자라, 당나귀 귀처럼 길쭉해져 있었거든요!"
+            "text": "옛날 신라에 마음씨 착한 임금님이 살았어요.\n그런데 어느 날 아침, 거울을 본 임금님은 깜짝 놀랐어요.\n밤사이 두 귀가 쑥쑥 자라, 당나귀 귀처럼 길쭉해져 있었거든요!"
           }
         ]
       },
@@ -7347,7 +7532,8 @@
           {
             "text": "오늘 본 것은 죽을 때까지 아무에게도 말하지 말거라. 알겠느냐?",
             "who": "king",
-            "feel": "normal"
+            "feel": "tonedown",
+            "intensity": 0.4
           },
           {
             "text": "네, 임금님! 절대로, 절대로 말하지 않겠습니다!",
@@ -7381,15 +7567,16 @@
       },
       {
         "n": 4,
-        "text": "복두장이는 약속을 꼭 지켰어요.\n어느 누구에게도 말하지 않았지요.\n그런데 비밀이란 게 참 이상하지요?\n말하면 안 된다고 생각할수록 입이 근질근질, 자꾸만 말이 나오려고 했답니다.",
+        "text": "복두장이는 약속을 꼭 지켰어요.\n어느 누구에게도, 말하지 않았어요.\n그런데, 비밀이란 게 참 이상하지요?\n말하면 안 된다고 생각할수록, 입이 근질근질, 자꾸만 말이 나오려고 했답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p4.webp?v=3",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/donkeyears/seg-p4-0.mp3",
-            "text": "복두장이는 약속을 꼭 지켰어요.\n어느 누구에게도 말하지 않았지요.\n그런데 비밀이란 게 참 이상하지요?\n말하면 안 된다고 생각할수록 입이 근질근질, 자꾸만 말이 나오려고 했답니다."
+            "text": "복두장이는 약속을 꼭 지켰어요.\n어느 누구에게도, 말하지 않았어요.\n그런데, 비밀이란 게 참 이상하지요?\n말하면 안 된다고 생각할수록, 입이 근질근질, 자꾸만 말이 나오려고 했답니다."
           }
-        ]
+        ],
+        "narrationTempo": 0.9
       },
       {
         "n": 5,
@@ -7399,7 +7586,8 @@
           {
             "text": "이러다 정말 병이 나겠어. 딱 한 번만, 아무도 없는 곳에서 말하면 안 될까…",
             "who": "hatmaker",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -7423,7 +7611,8 @@
           {
             "text": "임금님 귀는 당나귀 귀! 임금님 귀는 당나귀 귀!",
             "who": "hatmaker",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.5
           }
         ],
         "segments": [
@@ -7465,12 +7654,14 @@
           {
             "text": "뭐라고? 대나무가 그런 말을 한다고?",
             "who": "king",
-            "feel": "angry"
+            "feel": "toneup",
+            "intensity": 0.45
           },
           {
             "text": "당장 그 대나무 숲을 몽땅 베어 버려라!",
             "who": "king",
-            "feel": "angry"
+            "feel": "angry",
+            "intensity": 0.5
           }
         ],
         "segments": [
@@ -7498,19 +7689,21 @@
       },
       {
         "n": 9,
-        "text": "신하들은 대나무를 한 그루도 남기지 않고 베어 냈어요.\n그리고 그 자리에 산수유나무를 잔뜩 심었지요.\n\"이제 됐다. 다시는 그 소리가 들리지 않겠구나.\"\n임금님은 그제야 마음을 놓았답니다.",
+        "text": "신하들은 대나무를 한 그루도 남기지 않고 베어 냈어요.\n그리고 그 자리에 산수유 나무를 잔뜩 심었답니다.\n\"이제 됐다. 다시는 그 소리가 들리지 않겠구나.\"\n임금님은 그제야 마음을 놓았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/donkeyears/p9.webp?v=3",
         "lines": [
           {
             "text": "이제 됐다. 다시는 그 소리가 들리지 않겠구나.",
-            "who": "king"
+            "who": "king",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/donkeyears/seg-p9-0.mp3",
-            "text": "신하들은 대나무를 한 그루도 남기지 않고 베어 냈어요.\n그리고 그 자리에 산수유나무를 잔뜩 심었지요.\n"
+            "text": "신하들은 대나무를 한 그루도 남기지 않고 베어 냈어요.\n그리고 그 자리에 산수유 나무를 잔뜩 심었답니다.\n"
           },
           {
             "who": "king",
@@ -7532,7 +7725,9 @@
           {
             "text": "아무리 숨겨도 없어지지 않는구나. 숨기려고 할수록 자꾸 새어 나오는구나…",
             "who": "king",
-            "feel": "normal"
+            "feel": "tonedown",
+            "intensity": 0.4,
+            "tempo": 0.9
           }
         ],
         "segments": [
@@ -7556,7 +7751,8 @@
           {
             "text": "임금님, 죄송합니다. 제가 그만…",
             "who": "hatmaker",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.4
           },
           {
             "text": "아니다. 네 잘못이 아니란다. 내가 자꾸 숨기려고만 했구나.",
@@ -7591,7 +7787,9 @@
           {
             "text": "그래, 내 귀는 당나귀 귀다. 부끄러워서 숨겼지만, 숨길 일이 아니었구나.\n이 큰 귀로 너희 이야기를 더 잘 들으마.",
             "who": "king",
-            "feel": "normal"
+            "feel": "tonedown",
+            "intensity": 0.35,
+            "tempo": 0.9
           }
         ],
         "segments": [
@@ -7638,8 +7836,8 @@
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p1.webp?v=1",
     "voiceCast": {
       "narration": "tc-minjung",
-      "grandpa": "tc-jongdae",
-      "grandma": "tc-juha",
+      "grandpa": "tc-changbae",
+      "grandma": "tc-sooni",
       "boy": "tc-siwoo"
     },
     "roleOf": {
@@ -7652,13 +7850,13 @@
     "pages": [
       {
         "n": 1,
-        "text": "옛날 어느 마을 앞에 나지막한 고개가 하나 있었어요.\n사람들은 그 고개를 '삼년 고개'라고 불렀지요.\n저 고개에서 넘어지면, 삼 년밖에 못 산다는 이야기가 오래오래 전해 왔거든요.\n그래서 마을 사람들은 그 고개를 넘을 때면, 발끝까지 조심조심 걸었답니다.",
+        "text": "옛날 어느 마을 앞에 나지막한 고개가 하나 있었어요.\n사람들은 그 고개를 '삼년 고개'라고 불렀답니다.\n저 고개에서 넘어지면, 삼 년밖에 못 산다는 이야기가 오래오래 전해 왔거든요.\n그래서 마을 사람들은 그 고개를 넘을 때면, 발끝까지 조심조심 걸었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p1.webp?v=1",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/samnyeon/seg-p1-0.mp3",
-            "text": "옛날 어느 마을 앞에 나지막한 고개가 하나 있었어요.\n사람들은 그 고개를 '삼년 고개'라고 불렀지요.\n저 고개에서 넘어지면, 삼 년밖에 못 산다는 이야기가 오래오래 전해 왔거든요.\n그래서 마을 사람들은 그 고개를 넘을 때면, 발끝까지 조심조심 걸었답니다."
+            "text": "옛날 어느 마을 앞에 나지막한 고개가 하나 있었어요.\n사람들은 그 고개를 '삼년 고개'라고 불렀답니다.\n저 고개에서 넘어지면, 삼 년밖에 못 산다는 이야기가 오래오래 전해 왔거든요.\n그래서 마을 사람들은 그 고개를 넘을 때면, 발끝까지 조심조심 걸었답니다."
           }
         ]
       },
@@ -7669,7 +7867,9 @@
         "lines": [
           {
             "text": "오늘도 무사히 넘어가야 할 텐데.",
-            "who": "grandpa"
+            "who": "grandpa",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -7682,7 +7882,9 @@
               764,
               473
             ],
-            "audio": "/folk/samnyeon/say-p2-grandpa.mp3"
+            "audio": "/folk/samnyeon/say-p2-grandpa.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -7711,7 +7913,8 @@
           {
             "text": "아이고, 이를 어쩌나! 내가 삼년 고개에서 넘어졌구나!",
             "who": "grandpa",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.5
           }
         ],
         "hotspots": [
@@ -7726,7 +7929,7 @@
             ],
             "audio": "/folk/samnyeon/say-p3-grandpa.mp3",
             "feel": "sad",
-            "intensity": 0.4
+            "intensity": 0.5
           }
         ],
         "segments": [
@@ -7750,7 +7953,9 @@
           {
             "text": "이제 나는 삼 년밖에 못 사는구나…",
             "who": "grandpa",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.45,
+            "tempo": 0.9
           }
         ],
         "hotspots": [
@@ -7765,7 +7970,8 @@
             ],
             "audio": "/folk/samnyeon/say-p4-grandpa.mp3",
             "feel": "sad",
-            "intensity": 0.4
+            "intensity": 0.45,
+            "tempo": 0.9
           }
         ],
         "segments": [
@@ -7794,7 +8000,8 @@
           {
             "text": "영감, 제발 기운 좀 차려 보세요.",
             "who": "grandma",
-            "feel": "sad"
+            "feel": "sad",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -7867,7 +8074,7 @@
       },
       {
         "n": 7,
-        "text": "할아버지는 힘없이 고개를 끄덕였어요.\n덕이는 잠시 생각하더니 눈을 반짝 빛냈지요.\n\"할아버지, 그럼 한 번 더 넘어지시면 삼 년을 더 사시겠네요?\"\n할아버지는 무슨 소리냐는 듯 덕이를 빤히 바라보았어요.",
+        "text": "할아버지는 힘없이 고개를 끄덕였어요.\n덕이는 잠시 생각하더니, 눈을 반짝이며 말했어요.\n\"할아버지, 그럼 한 번 더 넘어지시면 삼 년을 더 사시겠네요?\"\n할아버지는 무슨 소리냐는 듯 덕이를 빤히 바라보았어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/samnyeon/p7.webp?v=1",
         "lines": [
           {
@@ -7896,7 +8103,7 @@
           {
             "who": "narration",
             "src": "/folk/samnyeon/seg-p7-0.mp3",
-            "text": "할아버지는 힘없이 고개를 끄덕였어요.\n덕이는 잠시 생각하더니 눈을 반짝 빛냈지요.\n"
+            "text": "할아버지는 힘없이 고개를 끄덕였어요.\n덕이는 잠시 생각하더니, 눈을 반짝이며 말했어요.\n"
           },
           {
             "who": "boy",
@@ -7963,7 +8170,8 @@
           {
             "text": "어이쿠, 십오 년! 어이쿠, 삼십 년!",
             "who": "grandpa",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.5
           }
         ],
         "hotspots": [
@@ -7978,7 +8186,7 @@
             ],
             "audio": "/folk/samnyeon/say-p9-grandpa.mp3",
             "feel": "happy",
-            "intensity": 0.4
+            "intensity": 0.5
           }
         ],
         "segments": [
@@ -8020,7 +8228,8 @@
           {
             "text": "네 덕분에 나는 만 년을 살겠구나!",
             "who": "grandpa",
-            "feel": "happy"
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -8071,8 +8280,8 @@
     "voiceCast": {
       "narration": "tc-minjung",
       "tiger": "tc-homun",
-      "mother": "tc-minju",
-      "thief": "tc-mckong"
+      "mother": "tc-najin",
+      "thief": "tc-bongman"
     },
     "roleOf": {
       "호랑이": "tiger",
@@ -8089,7 +8298,9 @@
         "lines": [
           {
             "text": "오늘은 마을에 내려가 볼까?",
-            "who": "tiger"
+            "who": "tiger",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -8102,7 +8313,9 @@
               648,
               422
             ],
-            "audio": "/folk/gotgam/say-p1-tiger.mp3"
+            "audio": "/folk/gotgam/say-p1-tiger.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -8170,12 +8383,14 @@
       },
       {
         "n": 3,
-        "text": "그런데 그때, 집 안에서 아기 우는 소리가 들렸어요.\n으앙— 으앙—\n\"어라, 아기잖아? 아기부터 볼까?\"\n호랑이는 문밖에서 귀를 쫑긋 세우고 기다렸어요.",
+        "text": "그런데 그때, 집 안에서 아기 우는 소리가 들렸어요.\n\"어라, 아기잖아? 아기부터 볼까?\"\n호랑이는 문밖에서 귀를 쫑긋 세우고 기다렸어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gotgam/p3.webp?v=1",
         "lines": [
           {
             "text": "어라, 아기잖아? 아기부터 볼까?",
-            "who": "tiger"
+            "who": "tiger",
+            "feel": "happy",
+            "intensity": 0.35
           }
         ],
         "hotspots": [
@@ -8188,14 +8403,16 @@
               810,
               954
             ],
-            "audio": "/folk/gotgam/say-p3-tiger.mp3"
+            "audio": "/folk/gotgam/say-p3-tiger.mp3",
+            "feel": "happy",
+            "intensity": 0.35
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/gotgam/seg-p3-0.mp3",
-            "text": "그런데 그때, 집 안에서 아기 우는 소리가 들렸어요.\n으앙— 으앙—\n"
+            "text": "그런데 그때, 집 안에서 아기 우는 소리가 들렸어요.\n"
           },
           {
             "who": "tiger",
@@ -8211,11 +8428,11 @@
       },
       {
         "n": 4,
-        "text": "그러자 방 안에서 엄마 목소리가 들려왔어요.\n\"뚝! 자꾸 울면 호랑이가 잡아간다!\"\n하지만 아기는 울음을 그치지 않았어요.\n으앙— 으아앙—",
+        "text": "그러자 방 안에서 엄마 목소리가 들려왔어요.\n\"자꾸 울면 호랑이가 잡아간다, 어흥!\"\n하지만 아기는 울음을 그치지 않았어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gotgam/p4.webp?v=1",
         "lines": [
           {
-            "text": "뚝! 자꾸 울면 호랑이가 잡아간다!",
+            "text": "자꾸 울면 호랑이가 잡아간다, 어흥!",
             "who": "mother",
             "feel": "angry",
             "intensity": 0.3
@@ -8224,7 +8441,7 @@
         "hotspots": [
           {
             "label": "mother",
-            "line": "뚝! 자꾸 울면 호랑이가 잡아간다!",
+            "line": "자꾸 울면 호랑이가 잡아간다, 어흥!",
             "box": [
               122,
               207,
@@ -8245,12 +8462,12 @@
           {
             "who": "mother",
             "src": "/folk/gotgam/seg-cast-p4-1.mp3",
-            "text": "\"뚝! 자꾸 울면 호랑이가 잡아간다!\""
+            "text": "\"자꾸 울면 호랑이가 잡아간다, 어흥!\""
           },
           {
             "who": "narration",
             "src": "/folk/gotgam/seg-p4-2.mp3",
-            "text": "\n하지만 아기는 울음을 그치지 않았어요.\n으앙— 으아앙—"
+            "text": "\n하지만 아기는 울음을 그치지 않았어요."
           }
         ]
       },
@@ -8296,11 +8513,11 @@
       },
       {
         "n": 6,
-        "text": "그런데 이번에는 엄마가 달콤한 곶감을 내밀며 말했어요.\n\"옜다, 곶감이다!\"\n그러자 아기가 울음을 뚝 그치는 거예요.\n방 안이 조용해졌답니다.",
+        "text": "그런데 이번에는 엄마가 달콤한 곶감을 내밀며 말했어요.\n\"울지 마, 우리 아기. 옜다, 곶감이다!\"\n그러자 아기가 울음을 뚝 그쳤어요.\n방 안이 금세 조용해졌답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gotgam/p6.webp?v=1",
         "lines": [
           {
-            "text": "옜다, 곶감이다!",
+            "text": "울지 마, 우리 아기. 옜다, 곶감이다!",
             "who": "mother",
             "feel": "happy",
             "intensity": 0.35
@@ -8309,7 +8526,7 @@
         "hotspots": [
           {
             "label": "mother",
-            "line": "옜다, 곶감이다!",
+            "line": "울지 마, 우리 아기. 옜다, 곶감이다!",
             "box": [
               17,
               160,
@@ -8330,43 +8547,47 @@
           {
             "who": "mother",
             "src": "/folk/gotgam/seg-cast-p6-1.mp3",
-            "text": "\"옜다, 곶감이다!\""
+            "text": "\"울지 마, 우리 아기. 옜다, 곶감이다!\""
           },
           {
             "who": "narration",
             "src": "/folk/gotgam/seg-p6-2.mp3",
-            "text": "\n그러자 아기가 울음을 뚝 그치는 거예요.\n방 안이 조용해졌답니다."
+            "text": "\n그러자 아기가 울음을 뚝 그쳤어요.\n방 안이 금세 조용해졌답니다."
           }
         ]
       },
       {
         "n": 7,
-        "text": "\"고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 뚝 그치지?\"\n덜컥 겁이 난 호랑이는\n외양간 안으로 쏙 숨어 버렸어요.",
+        "text": "\"고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 울음을 뚝 그치지?\"\n덜컥 겁이 난 호랑이는\n외양간 안으로 쏙 숨어 버렸어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gotgam/p7.webp?v=1",
         "lines": [
           {
-            "text": "고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 뚝 그치지?",
-            "who": "tiger"
+            "text": "고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 울음을 뚝 그치지?",
+            "who": "tiger",
+            "feel": "whisper",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
           {
             "label": "tiger",
-            "line": "고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 뚝 그치지?",
+            "line": "고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 울음을 뚝 그치지?",
             "box": [
               393,
               507,
               763,
               785
             ],
-            "audio": "/folk/gotgam/say-p7-tiger.mp3"
+            "audio": "/folk/gotgam/say-p7-tiger.mp3",
+            "feel": "whisper",
+            "intensity": 0.4
           }
         ],
         "segments": [
           {
             "who": "tiger",
             "src": "/folk/gotgam/seg-cast-p7-0.mp3",
-            "text": "\"고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 뚝 그치지?\""
+            "text": "\"고… 곶감? 대체 얼마나 무서운 놈이길래,\n내가 잡아간다는데도 안 그치던 아기가 울음을 뚝 그치지?\""
           },
           {
             "who": "narration",
@@ -8389,19 +8610,20 @@
       },
       {
         "n": 9,
-        "text": "\"으악! 곶감이다! 곶감이 나를 잡으러 왔다!\"\n호랑이는 등에 올라탄 것이 곶감인 줄 알고\n허둥지둥 달리기 시작했어요.",
+        "text": "\"으악! 곶감이다! 곶감이 나를 잡으러 왔구나!\"\n호랑이는 등에 올라탄 것이 곶감인 줄 알고\n허둥지둥 달리기 시작했어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gotgam/p9.webp?v=1",
         "lines": [
           {
-            "text": "으악! 곶감이다! 곶감이 나를 잡으러 왔다!",
+            "text": "으악! 곶감이다! 곶감이 나를 잡으러 왔구나!",
             "who": "tiger",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.5
           }
         ],
         "hotspots": [
           {
             "label": "tiger",
-            "line": "으악! 곶감이다! 곶감이 나를 잡으러 왔다!",
+            "line": "으악! 곶감이다! 곶감이 나를 잡으러 왔구나!",
             "box": [
               289,
               253,
@@ -8409,14 +8631,15 @@
               473
             ],
             "audio": "/folk/gotgam/say-p9-tiger.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.5
           }
         ],
         "segments": [
           {
             "who": "tiger",
             "src": "/folk/gotgam/seg-cast-p9-0.mp3",
-            "text": "\"으악! 곶감이다! 곶감이 나를 잡으러 왔다!\""
+            "text": "\"으악! 곶감이다! 곶감이 나를 잡으러 왔구나!\""
           },
           {
             "who": "narration",
@@ -8474,7 +8697,8 @@
           {
             "text": "으악, 이게 무슨 일이야!",
             "who": "thief",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.5
           }
         ],
         "hotspots": [
@@ -8488,7 +8712,8 @@
               557
             ],
             "audio": "/folk/gotgam/say-p11-thief.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.5
           }
         ],
         "segments": [
@@ -8568,7 +8793,7 @@
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/rabbitjudge/cover.webp?v=1",
     "voiceCast": {
       "narration": "tc-minjung",
-      "traveller": "tc-daejin",
+      "traveller": "tc-sungho",
       "tiger": "tc-homun",
       "tree": "tc-seungjae",
       "ox": "tc-dukgu",
@@ -8591,7 +8816,8 @@
           {
             "text": "호랑이 소리잖아? 마주치면 큰일인데!",
             "who": "traveller",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -8605,7 +8831,8 @@
               439
             ],
             "audio": "/folk/rabbitjudge/say-p1-traveller.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -8861,7 +9088,9 @@
         "lines": [
           {
             "text": "그럼 누가 옳은지 다른 이에게 물어봅시다.\n저기 나무에게 가서 물어봐요!",
-            "who": "traveller"
+            "who": "traveller",
+            "feel": "tonedown",
+            "intensity": 0.35
           },
           {
             "text": "좋아. 나무라면 당연히 내 편이겠지.",
@@ -8880,7 +9109,9 @@
               880,
               253
             ],
-            "audio": "/folk/rabbitjudge/say-p8-traveller.mp3"
+            "audio": "/folk/rabbitjudge/say-p8-traveller.mp3",
+            "feel": "tonedown",
+            "intensity": 0.35
           },
           {
             "label": "tiger",
@@ -8921,7 +9152,9 @@
         "lines": [
           {
             "text": "나무야, 나무야. 이 나그네가 나를 구해 줬는데\n내가 지금 너무 배가 고파. 이 사람을 잡아먹어도 될까?",
-            "who": "tiger"
+            "who": "tiger",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
             "text": "하고 싶은 대로 하세요, 호랑이님.\n사람들은 저만 보면 베고, 쪼개고, 팔아 버리니까요.",
@@ -8941,7 +9174,9 @@
               914,
               616
             ],
-            "audio": "/folk/rabbitjudge/say-p9-tiger.mp3"
+            "audio": "/folk/rabbitjudge/say-p9-tiger.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
             "label": "tree",
@@ -8979,7 +9214,8 @@
           {
             "text": "자, 잠깐만요! 저기 오는 소에게도 물어봐요!",
             "who": "traveller",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "hotspots": [
@@ -8993,7 +9229,8 @@
               279
             ],
             "audio": "/folk/rabbitjudge/say-p10-traveller.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -9063,7 +9300,9 @@
         "lines": [
           {
             "text": "제가 누구 말이 옳은지 알려 드릴게요.\n무슨 일인지 설명해 주시겠어요?",
-            "who": "rabbit"
+            "who": "rabbit",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -9076,7 +9315,9 @@
               717,
               245
             ],
-            "audio": "/folk/rabbitjudge/say-p12-rabbit.mp3"
+            "audio": "/folk/rabbitjudge/say-p12-rabbit.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -9104,7 +9345,9 @@
         "lines": [
           {
             "text": "음… 그런데 그렇게 커다란 호랑이님이\n어떻게 저 구덩이에 빠지셨다는 거죠?\n한 번만 보여 주시겠어요?",
-            "who": "rabbit"
+            "who": "rabbit",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -9117,7 +9360,9 @@
               752,
               600
             ],
-            "audio": "/folk/rabbitjudge/say-p13-rabbit.mp3"
+            "audio": "/folk/rabbitjudge/say-p13-rabbit.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -9141,7 +9386,8 @@
           {
             "text": "답답하기는! 이렇게, 이렇게 말이야!",
             "who": "tiger",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.4
           }
         ],
         "hotspots": [
@@ -9155,7 +9401,8 @@
               827
             ],
             "audio": "/folk/rabbitjudge/say-p14-tiger.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -9235,7 +9482,7 @@
       "king": "tc-wangkwon",
       "catfish": "tc-jongdae",
       "turtle": "tc-monggun",
-      "rabbit": "tc-dukgu"
+      "rabbit": "tc-hamchu"
     },
     "roleOf": {
       "용왕": "king",
@@ -9423,11 +9670,11 @@
       },
       {
         "n": 8,
-        "text": "자라는 동물들에게 물어물어\n마침내 토끼를 찾았어요.\n\"안녕하시오, 토끼 선생. 나는 용궁에서 온 자라라고 하오.\n우리 용왕님이 선생을 초대하고 싶어 하신다오.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.\"",
+        "text": "자라는 동물들에게 물어물어\n마침내 토끼를 찾았어요.\n\"안녕하세요, 토끼 선생님. 저는 용궁에서 온 자라라고 합니다.\n우리 용왕님이 토끼 선생님을 꼭 초대하고 싶어 하신답니다.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p8.webp?v=1",
         "lines": [
           {
-            "text": "안녕하시오, 토끼 선생. 나는 용궁에서 온 자라라고 하오.\n우리 용왕님이 선생을 초대하고 싶어 하신다오.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.",
+            "text": "안녕하세요, 토끼 선생님. 저는 용궁에서 온 자라라고 합니다.\n우리 용왕님이 토끼 선생님을 꼭 초대하고 싶어 하신답니다.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.",
             "who": "turtle",
             "feel": "happy",
             "intensity": 0.35
@@ -9457,7 +9704,7 @@
           {
             "who": "turtle",
             "src": "/folk/byeoljubu/seg-cast-p8-1.mp3",
-            "text": "\"안녕하시오, 토끼 선생. 나는 용궁에서 온 자라라고 하오.\n우리 용왕님이 선생을 초대하고 싶어 하신다오.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.\""
+            "text": "\"안녕하세요, 토끼 선생님. 저는 용궁에서 온 자라라고 합니다.\n우리 용왕님이 토끼 선생님을 꼭 초대하고 싶어 하신답니다.\n바닷속에는 멋진 궁궐도 있고, 맛있는 음식과 즐거운 노래도 가득하지요.\""
           }
         ]
       },
@@ -9503,23 +9750,63 @@
       },
       {
         "n": 10,
-        "text": "토끼는 자라의 등에 올라타 바다로 향했어요.\n처음 보는 깊은 바닷속은\n무섭고 낯설었지만,\n토끼는 두 눈을 꼭 감고 용궁으로 갔지요.",
+        "text": "토끼는 자라의 등에 올라타고 바다로 풍덩 뛰어들었어요.\n처음 보는 깊은 바닷속은 어둡고 낯설었어요.\n\"으으, 깊어도 너무 깊다. 자라야, 용궁은 아직 멀어?\"\n자라가 다정하게 대답했어요.\n\"조금만 참으세요, 토끼 선생님. 이제 다 왔답니다.\"\n토끼는 두 눈을 꼭 감고 자라의 등을 꼭 붙잡았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p10.webp?v=1",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/byeoljubu/seg-p10-0.mp3",
-            "text": "토끼는 자라의 등에 올라타 바다로 향했어요.\n처음 보는 깊은 바닷속은\n무섭고 낯설었지만,\n토끼는 두 눈을 꼭 감고 용궁으로 갔지요."
+            "text": "토끼는 자라의 등에 올라타고 바다로 풍덩 뛰어들었어요.\n처음 보는 깊은 바닷속은 어둡고 낯설었어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/byeoljubu/seg-cast-p10-1.mp3",
+            "text": "\"으으, 깊어도 너무 깊다. 자라야, 용궁은 아직 멀어?\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p10-2.mp3",
+            "text": "\n자라가 다정하게 대답했어요.\n"
+          },
+          {
+            "who": "turtle",
+            "src": "/folk/byeoljubu/seg-cast-p10-3.mp3",
+            "text": "\"조금만 참으세요, 토끼 선생님. 이제 다 왔답니다.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p10-4.mp3",
+            "text": "\n토끼는 두 눈을 꼭 감고 자라의 등을 꼭 붙잡았답니다."
+          }
+        ],
+        "lines": [
+          {
+            "text": "으으, 깊어도 너무 깊다. 자라야, 용궁은 아직 멀어?",
+            "who": "rabbit",
+            "feel": "tonedown",
+            "intensity": 0.3
+          },
+          {
+            "text": "조금만 참으세요, 토끼 선생님. 이제 다 왔답니다.",
+            "who": "turtle",
+            "feel": "happy",
+            "intensity": 0.3
           }
         ]
       },
       {
         "n": 11,
-        "text": "마침내 용궁에 닿자\n화려한 궁전과 반짝이는 물고기들이\n토끼를 맞이했어요.\n용왕님이 웃으며 말했어요.\n\"어서 오너라, 귀한 손님아.\"",
+        "text": "마침내 용궁에 닿았어요.\n반짝이는 산호 궁전과 알록달록한 물고기들이 토끼를 맞이했어요.\n\"우와, 정말 멋지다! 자라 말이 다 진짜였네!\"\n용왕님이 토끼를 반갑게 맞으며 말했어요.\n\"어서 오너라, 귀한 손님아. 먼 길 오느라 수고했구나.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p11.webp?v=1",
         "lines": [
           {
-            "text": "어서 오너라, 귀한 손님아.",
+            "text": "우와, 정말 멋지다! 자라 말이 다 진짜였네!",
+            "who": "rabbit",
+            "feel": "toneup",
+            "intensity": 0.4
+          },
+          {
+            "text": "어서 오너라, 귀한 손님아. 먼 길 오느라 수고했구나.",
             "who": "king",
             "feel": "happy",
             "intensity": 0.35
@@ -9528,7 +9815,7 @@
         "hotspots": [
           {
             "label": "king",
-            "line": "어서 오너라, 귀한 손님아.",
+            "line": "어서 오너라, 귀한 손님아.\n먼 길 오느라 수고했구나.",
             "box": [
               41,
               152,
@@ -9544,37 +9831,48 @@
           {
             "who": "narration",
             "src": "/folk/byeoljubu/seg-p11-0.mp3",
-            "text": "마침내 용궁에 닿자\n화려한 궁전과 반짝이는 물고기들이\n토끼를 맞이했어요.\n용왕님이 웃으며 말했어요.\n"
+            "text": "마침내 용궁에 닿았어요.\n반짝이는 산호 궁전과 알록달록한 물고기들이 토끼를 맞이했어요.\n"
+          },
+          {
+            "who": "rabbit",
+            "src": "/folk/byeoljubu/seg-cast-p11-1.mp3",
+            "text": "\"우와, 정말 멋지다! 자라 말이 다 진짜였네!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/byeoljubu/seg-p11-2.mp3",
+            "text": "\n용왕님이 토끼를 반갑게 맞으며 말했어요.\n"
           },
           {
             "who": "king",
-            "src": "/folk/byeoljubu/seg-cast-p11-1.mp3",
-            "text": "\"어서 오너라, 귀한 손님아.\""
+            "src": "/folk/byeoljubu/seg-cast-p11-3.mp3",
+            "text": "\"어서 오너라, 귀한 손님아. 먼 길 오느라 수고했구나.\""
           }
         ],
         "video": "/folk/byeoljubu/p11.mp4"
       },
       {
         "n": 12,
-        "text": "그런데 그다음 순간,\n자라가 용왕님 앞에 나아가 말했어요.\n\"용왕님, 어서 토끼의 간을 드시고 병을 고치소서.\"\n토끼는 깜짝 놀라 두 눈을 크게 떴어요.\n\"제… 제 간을요?\"",
+        "text": "그런데 바로 그때, 자라가 용왕님 앞에 나아가 꾸벅 절을 했어요.\n\"용왕님, 말씀하신 토끼를 데려왔습니다. 어서 토끼의 간을 드시고 병을 고치소서.\"\n토끼는 귀가 번쩍 서고, 두 눈이 동그래졌어요.\n\"제… 제 간을요? 그, 그게 무슨 말이에요?\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p12.webp?v=1",
         "lines": [
           {
-            "text": "용왕님, 어서 토끼의 간을 드시고 병을 고치소서.",
+            "text": "용왕님, 말씀하신 토끼를 데려왔습니다. 어서 토끼의 간을 드시고 병을 고치소서.",
             "who": "turtle",
             "feel": "tonedown",
             "intensity": 0.3
           },
           {
-            "text": "제… 제 간을요?",
+            "text": "제… 제 간을요? 그, 그게 무슨 말이에요?",
             "who": "rabbit",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "hotspots": [
           {
             "label": "turtle",
-            "line": "용왕님, 어서 토끼의 간을 드시고 병을 고치소서.",
+            "line": "용왕님, 어서 토끼의 간을 드시고\n병을 고치소서.",
             "box": [
               498,
               477,
@@ -9587,7 +9885,7 @@
           },
           {
             "label": "rabbit",
-            "line": "제… 제 간을요?",
+            "line": "제… 제 간을요?\n그, 그게 무슨 말이에요?",
             "box": [
               405,
               832,
@@ -9595,29 +9893,30 @@
               980
             ],
             "audio": "/folk/byeoljubu/say-p12-rabbit.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/byeoljubu/seg-p12-0.mp3",
-            "text": "그런데 그다음 순간,\n자라가 용왕님 앞에 나아가 말했어요.\n"
+            "text": "그런데 바로 그때, 자라가 용왕님 앞에 나아가 꾸벅 절을 했어요.\n"
           },
           {
             "who": "turtle",
             "src": "/folk/byeoljubu/seg-cast-p12-1.mp3",
-            "text": "\"용왕님, 어서 토끼의 간을 드시고 병을 고치소서.\""
+            "text": "\"용왕님, 말씀하신 토끼를 데려왔습니다. 어서 토끼의 간을 드시고 병을 고치소서.\""
           },
           {
             "who": "narration",
             "src": "/folk/byeoljubu/seg-p12-2.mp3",
-            "text": "\n토끼는 깜짝 놀라 두 눈을 크게 떴어요.\n"
+            "text": "\n토끼는 귀가 번쩍 서고, 두 눈이 동그래졌어요.\n"
           },
           {
             "who": "rabbit",
             "src": "/folk/byeoljubu/seg-cast-p12-3.mp3",
-            "text": "\"제… 제 간을요?\""
+            "text": "\"제… 제 간을요? 그, 그게 무슨 말이에요?\""
           }
         ]
       },
@@ -9668,7 +9967,9 @@
         "lines": [
           {
             "text": "그렇다면 얼른 다녀오너라.",
-            "who": "king"
+            "who": "king",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -9681,7 +9982,9 @@
               579,
               355
             ],
-            "audio": "/folk/byeoljubu/say-p14-king.mp3"
+            "audio": "/folk/byeoljubu/say-p14-king.mp3",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -9704,11 +10007,11 @@
       },
       {
         "n": 15,
-        "text": "파도가 거세게 몰아쳤지만,\n자라는 끝까지 육지로 헤엄쳤어요.\n육지에 닿자 토끼는 폴짝 뛰어내렸지요.\n\"어서 간을 찾아오시오. 여기서 기다리고 있겠소.\"",
+        "text": "파도가 거세게 몰아쳤지만, 자라는 쉬지 않고 육지로 헤엄쳤어요.\n드디어 육지에 닿자, 토끼는 모래밭으로 폴짝 뛰어내렸답니다.\n자라가 숨을 몰아쉬며 말했어요.\n\"토끼 선생님, 어서 간을 찾아오세요. 저는 여기서 기다리고 있겠습니다.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/byeoljubu/p15.webp?v=1",
         "lines": [
           {
-            "text": "어서 간을 찾아오시오. 여기서 기다리고 있겠소.",
+            "text": "토끼 선생님, 어서 간을 찾아오세요. 저는 여기서 기다리고 있겠습니다.",
             "who": "turtle",
             "feel": "tonedown",
             "intensity": 0.35
@@ -9717,7 +10020,7 @@
         "hotspots": [
           {
             "label": "turtle",
-            "line": "어서 간을 찾아오시오. 여기서 기다리고 있겠소.",
+            "line": "어서 간을 찾아오세요.\n저는 여기서 기다리고 있겠습니다.",
             "box": [
               405,
               182,
@@ -9733,12 +10036,12 @@
           {
             "who": "narration",
             "src": "/folk/byeoljubu/seg-p15-0.mp3",
-            "text": "파도가 거세게 몰아쳤지만,\n자라는 끝까지 육지로 헤엄쳤어요.\n육지에 닿자 토끼는 폴짝 뛰어내렸지요.\n"
+            "text": "파도가 거세게 몰아쳤지만, 자라는 쉬지 않고 육지로 헤엄쳤어요.\n드디어 육지에 닿자, 토끼는 모래밭으로 폴짝 뛰어내렸답니다.\n자라가 숨을 몰아쉬며 말했어요.\n"
           },
           {
             "who": "turtle",
             "src": "/folk/byeoljubu/seg-cast-p15-1.mp3",
-            "text": "\"어서 간을 찾아오시오. 여기서 기다리고 있겠소.\""
+            "text": "\"토끼 선생님, 어서 간을 찾아오세요. 저는 여기서 기다리고 있겠습니다.\""
           }
         ]
       },
@@ -9756,7 +10059,8 @@
           {
             "text": "뭐, 뭐라고? 거기 서!",
             "who": "turtle",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "hotspots": [
@@ -9770,7 +10074,8 @@
               625
             ],
             "audio": "/folk/byeoljubu/say-p16-turtle.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -9816,7 +10121,7 @@
     "voiceCast": {
       "narration": "tc-minjung",
       "mother": "tc-minju",
-      "child": "tc-toby"
+      "child": "tc-gunwoo"
     },
     "roleOf": {
       "엄마 청개구리": "mother",
@@ -9851,115 +10156,174 @@
       },
       {
         "n": 3,
-        "text": "\"물속에 들어가 있어라\" 하면\n풀숲으로 폴짝!\n\"풀숲에 숨어 있어라\" 하면\n물속으로 풍덩!",
+        "text": "엄마 청개구리가 \"아기야, 물속에 들어가 있어라.\" 하면\n아기는 풀숲으로 폴짝!\n\"그럼 풀숲에 숨어 있어라.\" 하면\n이번엔 물속으로 풍덩!\n\"개굴! 난 거꾸로가 제일 재밌어!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p3.webp?v=2",
         "lines": [
           {
-            "text": "물속에 들어가 있어라",
-            "who": "mother"
+            "text": "아기야, 물속에 들어가 있어라.",
+            "who": "mother",
+            "feel": "normal"
           },
           {
-            "text": "풀숲에 숨어 있어라",
-            "who": "mother"
+            "text": "그럼 풀숲에 숨어 있어라.",
+            "who": "mother",
+            "feel": "normal"
+          },
+          {
+            "text": "개굴! 난 거꾸로가 제일 재밌어!",
+            "who": "child",
+            "feel": "happy",
+            "intensity": 0.4
           }
         ],
         "segments": [
           {
-            "who": "mother",
-            "src": "/folk/greenfrog/seg-cast-p3-0.mp3",
-            "text": "\"물속에 들어가 있어라\""
-          },
-          {
             "who": "narration",
-            "src": "/folk/greenfrog/seg-p3-1.mp3",
-            "text": " 하면\n풀숲으로 폴짝!\n"
+            "src": "/folk/greenfrog/seg-p3-0.mp3",
+            "text": "엄마 청개구리가 "
           },
           {
             "who": "mother",
-            "src": "/folk/greenfrog/seg-cast-p3-2.mp3",
-            "text": "\"풀숲에 숨어 있어라\""
+            "src": "/folk/greenfrog/seg-cast-p3-1.mp3",
+            "text": "\"아기야, 물속에 들어가 있어라.\""
           },
           {
             "who": "narration",
-            "src": "/folk/greenfrog/seg-p3-3.mp3",
-            "text": " 하면\n물속으로 풍덩!"
+            "src": "/folk/greenfrog/seg-p3-2.mp3",
+            "text": " 하면\n아기는 풀숲으로 폴짝!\n"
+          },
+          {
+            "who": "mother",
+            "src": "/folk/greenfrog/seg-cast-p3-3.mp3",
+            "text": "\"그럼 풀숲에 숨어 있어라.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/greenfrog/seg-p3-4.mp3",
+            "text": " 하면\n이번엔 물속으로 풍덩!\n"
+          },
+          {
+            "who": "child",
+            "src": "/folk/greenfrog/seg-cast-p3-5.mp3",
+            "text": "\"개굴! 난 거꾸로가 제일 재밌어!\""
           }
         ]
       },
       {
         "n": 4,
-        "text": "\"엄마 올 때까지 저녁 먹지 마\" 하면\n엄마가 돌아서자마자 냠냠 먹어 치우고,\n\"어서 저녁 먹어라\" 하면\n입을 꼭 다문 채 뒤돌아앉았지요.",
+        "text": "\"엄마 올 때까지 저녁 먹지 말고 기다려라.\"\n엄마가 돌아서자마자, 아기는 냠냠 저녁을 다 먹어 치웠어요.\n\"그럼 어서 저녁 먹어라.\"\n이번엔 입을 꼭 다물고 뒤돌아앉았답니다.\n\"흥, 안 먹어! 배 하나도 안 고파!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p4.webp?v=2",
         "segments": [
           {
             "who": "mother",
             "src": "/folk/greenfrog/seg-cast-p4-0.mp3",
-            "text": "\"엄마 올 때까지 저녁 먹지 마\""
+            "text": "\"엄마 올 때까지 저녁 먹지 말고 기다려라.\""
           },
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p4-1.mp3",
-            "text": " 하면\n엄마가 돌아서자마자 냠냠 먹어 치우고,\n"
+            "text": "\n엄마가 돌아서자마자, 아기는 냠냠 저녁을 다 먹어 치웠어요.\n"
           },
           {
             "who": "mother",
             "src": "/folk/greenfrog/seg-cast-p4-2.mp3",
-            "text": "\"어서 저녁 먹어라\""
+            "text": "\"그럼 어서 저녁 먹어라.\""
           },
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p4-3.mp3",
-            "text": " 하면\n입을 꼭 다문 채 뒤돌아앉았지요."
+            "text": "\n이번엔 입을 꼭 다물고 뒤돌아앉았답니다.\n"
+          },
+          {
+            "who": "child",
+            "src": "/folk/greenfrog/seg-cast-p4-4.mp3",
+            "text": "\"흥, 안 먹어! 배 하나도 안 고파!\""
+          }
+        ],
+        "lines": [
+          {
+            "text": "엄마 올 때까지 저녁 먹지 말고 기다려라.",
+            "who": "mother",
+            "feel": "normal"
+          },
+          {
+            "text": "그럼 어서 저녁 먹어라.",
+            "who": "mother",
+            "feel": "normal"
+          },
+          {
+            "text": "흥, 안 먹어! 배 하나도 안 고파!",
+            "who": "child",
+            "feel": "angry",
+            "intensity": 0.3
           }
         ]
       },
       {
         "n": 5,
-        "text": "비가 오면 냇물이 불어나\n돌 위까지 찰랑거렸어요.\n\"물가에 가지 마라\" 하면\n아기는 더 가까이 폴짝!",
+        "text": "비가 오는 날에는 냇물이 불어나 돌 위까지 찰랑거렸어요.\n\"아기야, 위험하니까 물가에 가지 마라!\"\n엄마가 소리쳤지만, 아기는 물가로 더 가까이 폴짝폴짝!\n\"엄마는 걱정도 많아. 나는 수영도 잘하는데!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p5.webp?v=2",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p5-0.mp3",
-            "text": "비가 오면 냇물이 불어나\n돌 위까지 찰랑거렸어요.\n"
+            "text": "비가 오는 날에는 냇물이 불어나 돌 위까지 찰랑거렸어요.\n"
           },
           {
             "who": "mother",
             "src": "/folk/greenfrog/seg-cast-p5-1.mp3",
-            "text": "\"물가에 가지 마라\""
+            "text": "\"아기야, 위험하니까 물가에 가지 마라!\""
           },
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p5-2.mp3",
-            "text": " 하면\n아기는 더 가까이 폴짝!"
+            "text": "\n엄마가 소리쳤지만, 아기는 물가로 더 가까이 폴짝폴짝!\n"
+          },
+          {
+            "who": "child",
+            "src": "/folk/greenfrog/seg-cast-p5-3.mp3",
+            "text": "\"엄마는 걱정도 많아. 나는 수영도 잘하는데!\""
           }
         ],
         "lines": [
           {
-            "text": "물가에 가지 마라",
-            "who": "mother"
+            "text": "아기야, 위험하니까 물가에 가지 마라!",
+            "who": "mother",
+            "feel": "toneup",
+            "intensity": 0.4
+          },
+          {
+            "text": "엄마는 걱정도 많아. 나는 수영도 잘하는데!",
+            "who": "child",
+            "feel": "happy",
+            "intensity": 0.4
           }
         ]
       },
       {
         "n": 6,
-        "text": "엄마 청개구리는\n이런 아기가 늘 걱정스러웠어요.\n'얘가 언제쯤 말을 잘 들을까…'",
+        "text": "엄마 청개구리는 밤마다 한숨을 쉬었어요.\n'우리 아기는 언제쯤 엄마 말을 들을까…'\n그래도 엄마는 아기를 한 번도 미워하지 않았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p6.webp?v=2",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p6-0.mp3",
-            "text": "엄마 청개구리는\n이런 아기가 늘 걱정스러웠어요.\n"
+            "text": "엄마 청개구리는 밤마다 한숨을 쉬었어요.\n"
           },
           {
             "who": "mother",
             "src": "/folk/greenfrog/seg-cast-p6-1.mp3",
-            "text": "'얘가 언제쯤 말을 잘 들을까…'"
+            "text": "'우리 아기는 언제쯤 엄마 말을 들을까…'"
+          },
+          {
+            "who": "narration",
+            "src": "/folk/greenfrog/seg-p6-2.mp3",
+            "text": "\n그래도 엄마는 아기를 한 번도 미워하지 않았답니다."
           }
         ],
         "lines": [
           {
-            "text": "'얘가 언제쯤 말을 잘 들을까…'",
+            "text": "'우리 아기는 언제쯤 엄마 말을 들을까…'",
             "who": "mother",
             "feel": "sad",
             "intensity": 0.35
@@ -9968,24 +10332,53 @@
       },
       {
         "n": 7,
-        "text": "그래도 해가 지면\n둘은 같은 연잎 아래 앉아\n별을 세었어요.\n엄마는 아기를 꼭 안아 주었지요.",
+        "text": "그래도 해가 지면, 둘은 같은 연잎 아래 나란히 앉아 별을 세었어요.\n\"엄마, 저 별은 내 거야. 저기 큰 별은 엄마 거!\"\n\"그래, 우리 아기 별이 제일 반짝이는구나.\"\n엄마는 아기를 꼭 안아 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p7.webp?v=2",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p7-0.mp3",
-            "text": "그래도 해가 지면\n둘은 같은 연잎 아래 앉아\n별을 세었어요.\n엄마는 아기를 꼭 안아 주었지요."
+            "text": "그래도 해가 지면, 둘은 같은 연잎 아래 나란히 앉아 별을 세었어요.\n"
+          },
+          {
+            "who": "child",
+            "src": "/folk/greenfrog/seg-cast-p7-1.mp3",
+            "text": "\"엄마, 저 별은 내 거야. 저기 큰 별은 엄마 거!\"\n"
+          },
+          {
+            "who": "mother",
+            "src": "/folk/greenfrog/seg-cast-p7-2.mp3",
+            "text": "\"그래, 우리 아기 별이 제일 반짝이는구나.\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/greenfrog/seg-p7-3.mp3",
+            "text": "\n엄마는 아기를 꼭 안아 주었답니다."
           }
         ],
-        "video": "/folk/greenfrog/p7.mp4"
+        "video": "/folk/greenfrog/p7.mp4",
+        "lines": [
+          {
+            "text": "엄마, 저 별은 내 거야. 저기 큰 별은 엄마 거!",
+            "who": "child",
+            "feel": "happy",
+            "intensity": 0.4
+          },
+          {
+            "text": "그래, 우리 아기 별이 제일 반짝이는구나.",
+            "who": "mother",
+            "feel": "tonedown",
+            "intensity": 0.35
+          }
+        ]
       },
       {
         "n": 8,
-        "text": "여름이 가고, 또 한 번 여름이 갔어요.\n엄마 청개구리는 이제 잘 뛰지 않았어요.\n\"엄마는 여기 있을 테니, 저리 가서 놀아라.\"\n거꾸로 하는 아기는 엄마 옆에 꼭 붙어 앉았어요.\n\"우리 아기, 엄마는 네가 참 좋아.\"",
+        "text": "여름이 가고, 또 한 번 여름이 지나갔어요.\n엄마 청개구리는 이제 잘 뛰지 못했어요.\n\"엄마는 여기서 쉴 테니, 너는 저리 가서 놀아라.\"\n거꾸로 하는 아기는 이번에도 반대로, 엄마 옆에 꼭 붙어 앉았어요.\n\"우리 아기, 엄마는 네가 참 좋아.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p8.webp?v=2",
         "lines": [
           {
-            "text": "엄마는 여기 있을 테니, 저리 가서 놀아라.",
+            "text": "엄마는 여기서 쉴 테니, 너는 저리 가서 놀아라.",
             "who": "mother",
             "feel": "tonedown",
             "intensity": 0.4
@@ -10016,17 +10409,17 @@
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p8-0.mp3",
-            "text": "여름이 가고, 또 한 번 여름이 갔어요.\n엄마 청개구리는 이제 잘 뛰지 않았어요.\n"
+            "text": "여름이 가고, 또 한 번 여름이 지나갔어요.\n엄마 청개구리는 이제 잘 뛰지 못했어요.\n"
           },
           {
             "who": "mother",
             "src": "/folk/greenfrog/seg-cast-p8-1.mp3",
-            "text": "\"엄마는 여기 있을 테니, 저리 가서 놀아라.\""
+            "text": "\"엄마는 여기서 쉴 테니, 너는 저리 가서 놀아라.\""
           },
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p8-2.mp3",
-            "text": "\n거꾸로 하는 아기는 엄마 옆에 꼭 붙어 앉았어요.\n"
+            "text": "\n거꾸로 하는 아기는 이번에도 반대로, 엄마 옆에 꼭 붙어 앉았어요.\n"
           },
           {
             "who": "mother",
@@ -10037,7 +10430,7 @@
       },
       {
         "n": 9,
-        "text": "어느 저녁, 엄마가 아기의 앞발을 꼭 쥐었어요.\n\"얘야, 엄마가 하늘나라에 가면\n숲속 말고, 꼭 냇가에다 묻어 주렴.\"\n아기는 그게 무슨 말인지 몰랐어요.\n사실 엄마는 조용한 숲속이 좋았지만,\n거꾸로 하는 우리 아기를 잘 알아서, 반대로 말했지요.",
+        "text": "어느 저녁, 엄마가 아기의 앞발을 꼭 쥐었어요.\n\"얘야, 엄마가 하늘나라에 가면\n숲속 말고, 꼭 냇가에다 묻어 주렴.\"\n\"엄마, 그게 무슨 말이야? 하늘나라에 왜 가?\"\n아기는 그 말이 무슨 뜻인지 몰랐어요.\n사실 엄마는 조용한 숲속에 묻히고 싶었지만,\n거꾸로만 하는 아기를 잘 알아서 반대로 말한 거였답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p9.webp?v=2",
         "lines": [
           {
@@ -10046,6 +10439,12 @@
             "feel": "tonedown",
             "intensity": 0.45,
             "tempo": 0.9
+          },
+          {
+            "text": "엄마, 그게 무슨 말이야? 하늘나라에 왜 가?",
+            "who": "child",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ],
         "hotspots": [
@@ -10073,31 +10472,37 @@
           {
             "who": "mother",
             "src": "/folk/greenfrog/seg-cast-p9-1.mp3",
-            "text": "\"얘야, 엄마가 하늘나라에 가면\n숲속 말고, 꼭 냇가에다 묻어 주렴.\""
+            "text": "\"얘야, 엄마가 하늘나라에 가면\n숲속 말고, 꼭 냇가에다 묻어 주렴.\"\n"
+          },
+          {
+            "who": "child",
+            "src": "/folk/greenfrog/seg-cast-p9-2.mp3",
+            "text": "\"엄마, 그게 무슨 말이야? 하늘나라에 왜 가?\""
           },
           {
             "who": "narration",
-            "src": "/folk/greenfrog/seg-p9-2.mp3",
-            "text": "\n아기는 그게 무슨 말인지 몰랐어요.\n사실 엄마는 조용한 숲속이 좋았지만,\n거꾸로 하는 우리 아기를 잘 알아서, 반대로 말했지요."
+            "src": "/folk/greenfrog/seg-p9-3.mp3",
+            "text": "\n아기는 그 말이 무슨 뜻인지 몰랐어요.\n사실 엄마는 조용한 숲속에 묻히고 싶었지만,\n거꾸로만 하는 아기를 잘 알아서 반대로 말한 거였답니다."
           }
         ]
       },
       {
         "n": 10,
-        "text": "다음 날 아침이었어요.\n엄마는 돌 위에서 움직이지 않았어요.\n\"엄마. 엄마…\"\n두 번이나 불렀는데, 아무 소리도 나지 않았어요.\n엄마 청개구리는 하늘나라로 떠난 거예요.",
+        "text": "다음 날 아침이었어요.\n엄마는 돌 위에 가만히 누워 움직이지 않았어요.\n\"엄마. 엄마…? 왜 대답이 없어…?\"\n아기가 몇 번이나 불렀지만, 아무 대답도 들리지 않았어요.\n엄마 청개구리는 하늘나라로 떠난 거예요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p10.webp?v=2",
         "lines": [
           {
-            "text": "엄마. 엄마…",
+            "text": "엄마. 엄마…? 왜 대답이 없어…?",
             "who": "child",
-            "feel": "normal",
-            "intensity": 0.2
+            "feel": "sad",
+            "intensity": 0.4,
+            "tempo": 0.85
           }
         ],
         "hotspots": [
           {
             "label": "child",
-            "line": "엄마. 엄마…",
+            "line": "엄마. 엄마…?\n왜 대답이 없어…?",
             "box": [
               335,
               415,
@@ -10105,50 +10510,46 @@
               580
             ],
             "audio": "/folk/greenfrog/say-p10-child.mp3",
-            "feel": "normal",
-            "intensity": 0.2
+            "feel": "sad",
+            "intensity": 0.4,
+            "tempo": 0.85
           }
         ],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p10-0.mp3",
-            "text": "다음 날 아침이었어요.\n엄마는 돌 위에서 움직이지 않았어요.\n"
+            "text": "다음 날 아침이었어요.\n엄마는 돌 위에 가만히 누워 움직이지 않았어요.\n"
           },
           {
             "who": "child",
             "src": "/folk/greenfrog/seg-cast-p10-1.mp3",
-            "text": "\"엄마. 엄마…\""
+            "text": "\"엄마. 엄마…? 왜 대답이 없어…?\""
           },
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p10-2.mp3",
-            "text": "\n두 번이나 불렀는데, 아무 소리도 나지 않았어요.\n엄마 청개구리는 하늘나라로 떠난 거예요."
+            "text": "\n아기가 몇 번이나 불렀지만, 아무 대답도 들리지 않았어요.\n엄마 청개구리는 하늘나라로 떠난 거예요."
           }
         ]
       },
       {
         "n": 11,
-        "text": "늘 거꾸로만 하던 아기였지만, 이번엔 달랐어요.\n이제는 거꾸로 해도, 받아 줄 엄마가 없으니까요.\n\"엄마, 보고 싶어.\"\n'엄마 말대로, 이번엔 꼭 할게.'\n아기는 울면서, 엄마를 냇가에 조심조심 묻어 주었어요.",
+        "text": "늘 거꾸로만 하던 아기였지만, 이번만은 달랐어요.\n이제는 거꾸로 해도, 웃으며 받아 줄 엄마가 없으니까요.\n\"엄마, 보고 싶어. 이번엔 꼭 엄마 말대로 할게.\"\n아기는 엉엉 울면서, 엄마를 냇가에 조심조심 묻어 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p11.webp?v=2",
         "lines": [
           {
-            "text": "엄마, 보고 싶어.",
+            "text": "엄마, 보고 싶어. 이번엔 꼭 엄마 말대로 할게.",
             "who": "child",
             "feel": "sad",
-            "intensity": 0.45
-          },
-          {
-            "text": "'엄마 말대로, 이번엔 꼭 할게.'",
-            "who": "child",
-            "feel": "sad",
-            "intensity": 0.35
+            "intensity": 0.45,
+            "tempo": 0.9
           }
         ],
         "hotspots": [
           {
             "label": "child",
-            "line": "엄마, 보고 싶어.",
+            "line": "엄마, 보고 싶어.\n이번엔 꼭 엄마 말대로 할게.",
             "box": [
               390,
               555,
@@ -10164,41 +10565,42 @@
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p11-0.mp3",
-            "text": "늘 거꾸로만 하던 아기였지만, 이번엔 달랐어요.\n이제는 거꾸로 해도, 받아 줄 엄마가 없으니까요.\n"
+            "text": "늘 거꾸로만 하던 아기였지만, 이번만은 달랐어요.\n이제는 거꾸로 해도, 웃으며 받아 줄 엄마가 없으니까요.\n"
           },
           {
             "who": "child",
             "src": "/folk/greenfrog/seg-cast-p11-1.mp3",
-            "text": "\"엄마, 보고 싶어.\"\n"
-          },
-          {
-            "who": "child",
-            "src": "/folk/greenfrog/seg-cast-p11-2.mp3",
-            "text": "'엄마 말대로, 이번엔 꼭 할게.'"
+            "text": "\"엄마, 보고 싶어. 이번엔 꼭 엄마 말대로 할게.\""
           },
           {
             "who": "narration",
-            "src": "/folk/greenfrog/seg-p11-3.mp3",
-            "text": "\n아기는 울면서, 엄마를 냇가에 조심조심 묻어 주었어요."
+            "src": "/folk/greenfrog/seg-p11-2.mp3",
+            "text": "\n아기는 엉엉 울면서, 엄마를 냇가에 조심조심 묻어 주었답니다."
           }
         ]
       },
       {
         "n": 12,
-        "text": "아기가 무덤 옆에 앉아 말했어요.\n\"엄마, 나 이번엔 진짜로 엄마 말대로 했어.\"\n그때 하늘이 흐려지더니, 후두둑 빗방울이 떨어졌어요.\n아기는 얼른 연잎을 따다, 돌무덤 위에 덮어 주었어요.\n냇물이 두런두런, 아기 곁에서 같이 흘러갔지요.",
+        "text": "아기는 무덤 옆에 앉아 작게 말했어요.\n\"엄마, 나 이번엔 진짜로 엄마 말대로 했어. 잘했지?\"\n그때 하늘이 흐려지더니, 후두둑 빗방울이 떨어지기 시작했어요.\n\"안 돼, 비가 오면 엄마 무덤이 떠내려가면 어떡해!\"\n아기는 얼른 연잎을 따다 돌무덤 위에 덮어 주었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p12.webp?v=2",
         "lines": [
           {
-            "text": "엄마, 나 이번엔 진짜로 엄마 말대로 했어.",
+            "text": "엄마, 나 이번엔 진짜로 엄마 말대로 했어. 잘했지?",
             "who": "child",
             "feel": "sad",
             "intensity": 0.35
+          },
+          {
+            "text": "안 돼, 비가 오면 엄마 무덤이 떠내려가면 어떡해!",
+            "who": "child",
+            "feel": "toneup",
+            "intensity": 0.45
           }
         ],
         "hotspots": [
           {
             "label": "child",
-            "line": "엄마, 나 이번엔 진짜로 엄마 말대로 했어.",
+            "line": "엄마, 나 이번엔 진짜로\n엄마 말대로 했어. 잘했지?",
             "box": [
               385,
               500,
@@ -10214,29 +10616,58 @@
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p12-0.mp3",
-            "text": "아기가 무덤 옆에 앉아 말했어요.\n"
+            "text": "아기는 무덤 옆에 앉아 작게 말했어요.\n"
           },
           {
             "who": "child",
             "src": "/folk/greenfrog/seg-cast-p12-1.mp3",
-            "text": "\"엄마, 나 이번엔 진짜로 엄마 말대로 했어.\""
+            "text": "\"엄마, 나 이번엔 진짜로 엄마 말대로 했어. 잘했지?\""
           },
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p12-2.mp3",
-            "text": "\n그때 하늘이 흐려지더니, 후두둑 빗방울이 떨어졌어요.\n아기는 얼른 연잎을 따다, 돌무덤 위에 덮어 주었어요.\n냇물이 두런두런, 아기 곁에서 같이 흘러갔지요."
+            "text": "\n그때 하늘이 흐려지더니, 후두둑 빗방울이 떨어지기 시작했어요.\n"
+          },
+          {
+            "who": "child",
+            "src": "/folk/greenfrog/seg-cast-p12-3.mp3",
+            "text": "\"안 돼, 비가 오면 엄마 무덤이 떠내려가면 어떡해!\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/greenfrog/seg-p12-4.mp3",
+            "text": "\n아기는 얼른 연잎을 따다 돌무덤 위에 덮어 주었답니다."
           }
         ]
       },
       {
         "n": 13,
-        "text": "그날 이후로, 비가 오는 날이면\n아기 청개구리는 냇가에 나와\n엄마 무덤이 떠내려가지는 않을까 걱정하며\n개굴개굴 울었답니다.\n지금도 비가 오면, 개구리가 그렇게 운대요.",
+        "text": "그날부터 비가 오는 날이면, 아기 청개구리는 냇가에 나와 앉았어요.\n\"개굴개굴… 엄마, 떠내려가지 마. 개굴개굴…\"\n엄마 무덤이 떠내려갈까 걱정하며 밤새 울었답니다.\n지금도 비가 오면 개구리가 개굴개굴 우는 건, 바로 그래서래요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/greenfrog/v2/p13.webp?v=2",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/greenfrog/seg-p13-0.mp3",
-            "text": "그날 이후로, 비가 오는 날이면\n아기 청개구리는 냇가에 나와\n엄마 무덤이 떠내려가지는 않을까 걱정하며\n개굴개굴 울었답니다.\n지금도 비가 오면, 개구리가 그렇게 운대요."
+            "text": "그날부터 비가 오는 날이면, 아기 청개구리는 냇가에 나와 앉았어요.\n"
+          },
+          {
+            "who": "child",
+            "src": "/folk/greenfrog/seg-cast-p13-1.mp3",
+            "text": "\"개굴개굴… 엄마, 떠내려가지 마. 개굴개굴…\""
+          },
+          {
+            "who": "narration",
+            "src": "/folk/greenfrog/seg-p13-2.mp3",
+            "text": "\n엄마 무덤이 떠내려갈까 걱정하며 밤새 울었답니다.\n지금도 비가 오면 개구리가 개굴개굴 우는 건, 바로 그래서래요."
+          }
+        ],
+        "lines": [
+          {
+            "text": "개굴개굴… 엄마, 떠내려가지 마. 개굴개굴…",
+            "who": "child",
+            "feel": "sad",
+            "intensity": 0.45,
+            "tempo": 0.9
           }
         ]
       }
@@ -10253,9 +10684,9 @@
     ],
     "voiceCast": {
       "narration": "tc-minjung",
-      "proud": "tc-jinhyuk",
+      "proud": "tc-sheriffkim",
       "polite": "tc-kangil",
-      "butcher": "tc-changbae"
+      "butcher": "tc-duckchun"
     },
     "roleOf": {
       "거만한 양반": "proud",
@@ -10464,7 +10895,8 @@
           {
             "text": "아니, 이게 뭐야!\n어째서 내 고기만 이렇게 작단 말이냐!",
             "who": "proud",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.4
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p8.webp?v=3",
@@ -10479,7 +10911,8 @@
               440
             ],
             "audio": "/folk/sanggil/say-p8-proud.mp3",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -10502,7 +10935,8 @@
           {
             "text": "양반님 고기는 상길이 놈이 썰었으니 그렇고,\n저쪽 양반님 고기는 박 서방이 썰었으니 그렇지요.",
             "who": "butcher",
-            "feel": "normal"
+            "feel": "tonedown",
+            "intensity": 0.35
           }
         ],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p9.webp?v=3",
@@ -10517,7 +10951,8 @@
               1000
             ],
             "audio": "/folk/sanggil/say-p9-butcher.mp3",
-            "feel": "normal"
+            "feel": "tonedown",
+            "intensity": 0.35
           }
         ],
         "segments": [
@@ -10547,43 +10982,15 @@
       },
       {
         "n": 11,
-        "text": "돌아가는 길,\n양반은 손에 든 작은 고기를\n한참 내려다보았어요.\n그러고는 조용히 중얼거렸지요.\n\"…내가 말을 함부로 했구나.\"",
-        "lines": [
-          {
-            "text": "…내가 말을 함부로 했구나.",
-            "who": "proud",
-            "feel": "tonedown",
-            "intensity": 0.4,
-            "tempo": 0.9
-          }
-        ],
+        "text": "돌아가는 길,\n양반은 손에 든 작은 고기를\n한참 내려다보았어요.\n그러고는 고개를 푹 숙인 채, 조용히 집으로 돌아갔답니다.",
+        "lines": [],
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/sanggil/p11.webp?v=3",
-        "hotspots": [
-          {
-            "label": "proud",
-            "line": "…내가 말을 함부로 했구나.",
-            "box": [
-              30,
-              440,
-              960,
-              870
-            ],
-            "audio": "/folk/sanggil/say-p11-proud.mp3",
-            "feel": "tonedown",
-            "intensity": 0.4,
-            "tempo": 0.9
-          }
-        ],
+        "hotspots": [],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/sanggil/seg-p11-0.mp3",
-            "text": "돌아가는 길,\n양반은 손에 든 작은 고기를\n한참 내려다보았어요.\n그러고는 조용히 중얼거렸지요.\n"
-          },
-          {
-            "who": "proud",
-            "src": "/folk/sanggil/seg-cast-p11-1.mp3",
-            "text": "\"…내가 말을 함부로 했구나.\""
+            "text": "돌아가는 길,\n양반은 손에 든 작은 고기를\n한참 내려다보았어요.\n그러고는 고개를 푹 숙인 채, 조용히 집으로 돌아갔답니다."
           }
         ]
       },
@@ -10614,11 +11021,11 @@
     "coverImage": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/ureong/cover.webp?v=1",
     "voiceCast": {
       "narration": "tc-minjung",
-      "farmer": "tc-seojoon",
-      "snail": "tc-chungah",
-      "magistrate": "tc-mckong",
-      "dragonking": "tc-wangkwon",
-      "crowd": "tc-miso"
+      "farmer": "tc-sungho",
+      "snail": "tc-gaeul",
+      "magistrate": "tc-byunghun",
+      "dragonking": "tc-jongdae",
+      "crowd": "tc-minju"
     },
     "roleOf": {
       "농부": "farmer",
@@ -10631,15 +11038,15 @@
     "pages": [
       {
         "n": 1,
-        "text": "옛날 옛날, 어느 마을에\n혼자 살며 논밭에서 부지런히 일하는\n농부가 있었어요.\n\"하아… 이렇게 일해서 뭐 하나.\n같이 밥 먹을 사람도 없는데.\"",
+        "text": "옛날 옛날, 어느 마을에\n혼자 살며 논밭에서 부지런히 일하는\n농부가 있었어요.\n\"에이, 이 농사를 지어서 뭐 하나.\n누구랑 먹고 산다고…\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/ureong/p1.webp?v=1",
         "lines": [
           {
-            "text": "하아… 이렇게 일해서 뭐 하나. 같이 밥 먹을 사람도 없는데.",
+            "text": "에이, 이 농사를 지어서 뭐 하나. 누구랑 먹고 산다고…",
             "who": "farmer",
-            "feel": "sad",
-            "intensity": 0.3,
-            "tempo": 0.88
+            "feel": "tonedown",
+            "intensity": 0.4,
+            "tempo": 0.9
           }
         ],
         "segments": [
@@ -10651,13 +11058,13 @@
           {
             "who": "farmer",
             "src": "/folk/ureong/seg-cast-p1-1.mp3",
-            "text": "\"하아… 이렇게 일해서 뭐 하나.\n같이 밥 먹을 사람도 없는데.\""
+            "text": "\"에이, 이 농사를 지어서 뭐 하나.\n누구랑 먹고 산다고…\""
           }
         ],
         "hotspots": [
           {
             "label": "farmer",
-            "line": "하아… 이렇게 일해서 뭐 하나. 같이 밥 먹을 사람도 없는데.",
+            "line": "에이, 이 농사를 지어서 뭐 하나.\n누구랑 먹고 산다고…",
             "box": [
               85,
               265,
@@ -10665,8 +11072,8 @@
               500
             ],
             "audio": "/folk/ureong/say-p1-farmer.mp3",
-            "feel": "sad",
-            "intensity": 0.3,
+            "feel": "tonedown",
+            "intensity": 0.4,
             "tempo": 0.88
           }
         ]
@@ -10708,7 +11115,9 @@
         "lines": [
           {
             "text": "허 참, 잘못 들었나 보다.",
-            "who": "farmer"
+            "who": "farmer",
+            "feel": "tonedown",
+            "intensity": 0.3
           },
           {
             "text": "이렇게 일해 봤자 내 짝은 없지. 무슨 소용이람.",
@@ -10782,7 +11191,7 @@
       },
       {
         "n": 4,
-        "text": "소리를 따라가 보니\n논둑 물가에 우렁이 한 마리가 있었어요.\n\"음, 우렁이잖아? 여기 있다가 밟히겠다.\n나랑 집에 가자.\"\n농부는 우렁이를 조심스레 데려와\n부엌 항아리에 담아 두었지요.",
+        "text": "소리를 따라가 보니\n논둑 물가에 우렁이 한 마리가 있었어요.\n\"음, 우렁이잖아? 여기 있다가 밟히겠다.\n나랑 집에 가자.\"\n농부는 우렁이를 조심스레 데려와\n부엌 항아리에 담아 두었답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/ureong/p4.webp?v=1",
         "lines": [
           {
@@ -10807,7 +11216,7 @@
           {
             "who": "narration",
             "src": "/folk/ureong/seg-p4-2.mp3",
-            "text": "\n농부는 우렁이를 조심스레 데려와\n부엌 항아리에 담아 두었지요."
+            "text": "\n농부는 우렁이를 조심스레 데려와\n부엌 항아리에 담아 두었답니다."
           }
         ],
         "hotspots": [
@@ -10864,7 +11273,8 @@
             ],
             "audio": "/folk/ureong/say-p5-farmer.mp3",
             "feel": "toneup",
-            "intensity": 0.4
+            "intensity": 0.4,
+            "tempo": 0.88
           }
         ]
       },
@@ -10879,9 +11289,17 @@
             "text": "그날부터 농부가 집을 비우기만 하면\n맛있는 밥상이 차려져 있고,\n집은 반짝반짝 깨끗했어요.\n"
           },
           {
-            "who": "narration",
-            "src": "/folk/ureong/seg-p6-1.mp3",
+            "who": "farmer",
+            "src": "/folk/ureong/seg-cast-p6-1.mp3",
             "text": "'이상하다… 도대체 누가 다녀가는 거지?'"
+          }
+        ],
+        "lines": [
+          {
+            "text": "'이상하다… 도대체 누가 다녀가는 거지?'",
+            "who": "farmer",
+            "feel": "tonedown",
+            "intensity": 0.3
           }
         ]
       },
@@ -10912,15 +11330,17 @@
       },
       {
         "n": 9,
-        "text": "농부가 용기를 내어 앞에 나섰어요.\n\"당신… 누구요?\"\n\"사실 저는 용왕님의 딸이에요.\n몰래 인간 세상에 왔다가 들켜서,\n벌로 우렁이가 되었지요.\"",
+        "text": "농부가 용기를 내어 앞에 나섰어요.\n\"당신은… 누구시죠?\"\n\"사실 저는 용왕님의 딸이에요.\n몰래 인간 세상에 왔다가 들켜서,\n벌로 우렁이가 되었답니다.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/ureong/p9.webp?v=1",
         "lines": [
           {
-            "text": "당신… 누구요?",
-            "who": "farmer"
+            "text": "당신은… 누구시죠?",
+            "who": "farmer",
+            "feel": "tonedown",
+            "intensity": 0.35
           },
           {
-            "text": "사실 저는 용왕님의 딸이에요. 몰래 인간 세상에 왔다가 들켜서, 벌로 우렁이가 되었지요.",
+            "text": "사실 저는 용왕님의 딸이에요. 몰래 인간 세상에 왔다가 들켜서, 벌로 우렁이가 되었답니다.",
             "who": "snail",
             "feel": "tonedown",
             "intensity": 0.35
@@ -10935,29 +11355,31 @@
           {
             "who": "farmer",
             "src": "/folk/ureong/seg-cast-p9-1.mp3",
-            "text": "\"당신… 누구요?\"\n"
+            "text": "\"당신은… 누구시죠?\"\n"
           },
           {
             "who": "snail",
             "src": "/folk/ureong/seg-cast-p9-2.mp3",
-            "text": "\"사실 저는 용왕님의 딸이에요.\n몰래 인간 세상에 왔다가 들켜서,\n벌로 우렁이가 되었지요.\""
+            "text": "\"사실 저는 용왕님의 딸이에요.\n몰래 인간 세상에 왔다가 들켜서,\n벌로 우렁이가 되었답니다.\""
           }
         ],
         "hotspots": [
           {
             "label": "farmer",
-            "line": "당신… 누구요?",
+            "line": "당신은… 누구시죠?",
             "box": [
               85,
               145,
               935,
               430
             ],
-            "audio": "/folk/ureong/say-p9-farmer.mp3"
+            "audio": "/folk/ureong/say-p9-farmer.mp3",
+            "feel": "tonedown",
+            "intensity": 0.35
           },
           {
             "label": "snail",
-            "line": "사실 저는 용왕님의 딸이에요. 몰래 인간 세상에 왔다가 들켜서, 벌로 우렁이가 되었지요.",
+            "line": "사실 저는 용왕님의 딸이에요. 몰래 인간 세상에 왔다가 들켜서, 벌로 우렁이가 되었답니다.",
             "box": [
               170,
               550,
@@ -11032,15 +11454,17 @@
       },
       {
         "n": 12,
-        "text": "둘은 마을로 돌아와 부부가 되었어요.\n그 뒤로 마을엔 소문이 쫙 퍼졌어요.\n\"농부네 각시가 어찌나 곱다던지.\"\n그 말을 들은 욕심 많은 사또가\n농부의 집으로 불쑥 찾아와 억지를 부렸어요.\n\"농부야, 나와 내기를 하자.\n내가 이기면 네 각시를 데려가겠다!\"",
+        "text": "둘은 마을로 돌아와 부부가 되었어요.\n그 뒤로 마을엔 소문이 쫙 퍼졌어요.\n\"농부네 각시가 어찌나 곱다던지.\"\n그 말을 들은 욕심 많은 사또가\n농부의 집으로 불쑥 찾아와 억지를 부렸어요.\n\"농부야, 나와 내기를 해서 네가 지면,\n네 각시를 내가 데려가겠다!\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/ureong/p12.webp?v=1",
         "lines": [
           {
             "text": "농부네 각시가 어찌나 곱다던지.",
-            "who": "crowd"
+            "who": "crowd",
+            "feel": "whisper",
+            "intensity": 0.35
           },
           {
-            "text": "농부야, 나와 내기를 하자. 내가 이기면 네 각시를 데려가겠다!",
+            "text": "농부야, 나와 내기를 해서 네가 지면, 네 각시를 내가 데려가겠다!",
             "who": "magistrate",
             "feel": "toneup",
             "intensity": 0.4
@@ -11065,13 +11489,13 @@
           {
             "who": "magistrate",
             "src": "/folk/ureong/seg-cast-p12-3.mp3",
-            "text": "\"농부야, 나와 내기를 하자.\n내가 이기면 네 각시를 데려가겠다!\""
+            "text": "\"농부야, 나와 내기를 해서 네가 지면,\n네 각시를 내가 데려가겠다!\""
           }
         ],
         "hotspots": [
           {
             "label": "magistrate",
-            "line": "농부야, 나와 내기를 하자. 내가 이기면 네 각시를 데려가겠다!",
+            "line": "농부야, 나와 내기를 해서 네가 지면,\n네 각시를 내가 데려가겠다!",
             "box": [
               140,
               490,
@@ -11086,11 +11510,11 @@
       },
       {
         "n": 13,
-        "text": "그러자 각시가 문 앞으로 나섰어요.\n\"저는 누구의 것도 아닙니다.\"\n그날 밤, 각시는 농부에게\n조롱박 하나를 건네며 말했지요.\n\"아버지가 주신 요술 조롱박이에요.\n무슨 내기든 서방님이 이기게 해 줄 거예요.\"",
+        "text": "그러자 각시가 문 앞으로 나섰어요.\n\"저는 누구의 것도 아니에요.\"\n그날 밤, 각시는 농부에게\n조롱박 하나를 건네며 말했지요.\n\"아버지가 주신 요술 조롱박이에요.\n무슨 내기든 서방님이 이기게 해 줄 거예요.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/ureong/p13.webp?v=1",
         "lines": [
           {
-            "text": "저는 누구의 것도 아닙니다.",
+            "text": "저는 누구의 것도 아니에요.",
             "who": "snail",
             "feel": "tonedown",
             "intensity": 0.4
@@ -11111,7 +11535,7 @@
           {
             "who": "snail",
             "src": "/folk/ureong/seg-cast-p13-1.mp3",
-            "text": "\"저는 누구의 것도 아닙니다.\""
+            "text": "\"저는 누구의 것도 아니에요.\""
           },
           {
             "who": "narration",
@@ -11199,18 +11623,14 @@
       },
       {
         "n": 16,
-        "text": "그 순간, 하늘이 어두워지더니\n비바람이 몰아치고 파도가 솟구쳤어요.\n\"으악! 배가 뒤집힌다!\"\n사또의 배가 그만 기우뚱 넘어가고 말았지요.\n\"살려 주시오! 하라는 대로 다 하겠소!\"",
+        "text": "그 순간, 하늘이 어두워지더니\n비바람이 몰아치고 파도가 솟구쳤어요.\n\"으악! 배가 뒤집힌다!\"\n사또의 배가 그만 기우뚱 넘어가고 말았지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/ureong/p16.webp?v=1",
         "lines": [
           {
             "text": "으악! 배가 뒤집힌다!",
             "who": "magistrate",
-            "feel": "toneup"
-          },
-          {
-            "text": "살려 주시오! 하라는 대로 다 하겠소!",
-            "who": "magistrate",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.5
           }
         ],
         "segments": [
@@ -11227,73 +11647,24 @@
           {
             "who": "narration",
             "src": "/folk/ureong/seg-p16-2.mp3",
-            "text": "\n사또의 배가 그만 기우뚱 넘어가고 말았지요.\n"
-          },
-          {
-            "who": "magistrate",
-            "src": "/folk/ureong/seg-cast-p16-3.mp3",
-            "text": "\"살려 주시오! 하라는 대로 다 하겠소!\""
+            "text": "\n사또의 배가 그만 기우뚱 넘어가고 말았지요."
           }
         ],
-        "hotspots": [
-          {
-            "label": "magistrate",
-            "line": "살려 주시오! 하라는 대로 다 하겠소!",
-            "box": [
-              405,
-              395,
-              775,
-              750
-            ],
-            "feel": "toneup",
-            "audio": "/folk/ureong/say-p16-magistrate.mp3"
-          }
-        ]
+        "hotspots": []
       },
       {
         "n": 17,
-        "text": "농부는 망설이지 않고 배를 돌려\n사또와 사람들을 모두 건져 주었어요.\n\"정말 고맙소. 다시는 안 그러겠소.\"\n사또는 물에 빠진 생쥐 꼴로\n고개를 푹 숙였지요.",
+        "text": "농부는 망설이지 않고 배를 돌려\n사또와 사람들을 모두 건져 주었어요.\n사또는 물에 빠진 생쥐 꼴로\n고개를 푹 숙였지요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/ureong/p17.webp?v=1",
-        "lines": [
-          {
-            "text": "정말 고맙소. 다시는 안 그러겠소.",
-            "who": "magistrate",
-            "feel": "tonedown",
-            "intensity": 0.4
-          }
-        ],
+        "lines": [],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/ureong/seg-p17-0.mp3",
-            "text": "농부는 망설이지 않고 배를 돌려\n사또와 사람들을 모두 건져 주었어요.\n"
-          },
-          {
-            "who": "magistrate",
-            "src": "/folk/ureong/seg-cast-p17-1.mp3",
-            "text": "\"정말 고맙소. 다시는 안 그러겠소.\""
-          },
-          {
-            "who": "narration",
-            "src": "/folk/ureong/seg-p17-2.mp3",
-            "text": "\n사또는 물에 빠진 생쥐 꼴로\n고개를 푹 숙였지요."
+            "text": "농부는 망설이지 않고 배를 돌려\n사또와 사람들을 모두 건져 주었어요.\n사또는 물에 빠진 생쥐 꼴로\n고개를 푹 숙였지요."
           }
         ],
-        "hotspots": [
-          {
-            "label": "magistrate",
-            "line": "정말 고맙소. 다시는 안 그러겠소.",
-            "box": [
-              465,
-              300,
-              835,
-              600
-            ],
-            "audio": "/folk/ureong/say-p17-magistrate.mp3",
-            "feel": "tonedown",
-            "intensity": 0.4
-          }
-        ]
+        "hotspots": []
       },
       {
         "n": 18,
@@ -11413,7 +11784,8 @@
           {
             "text": "사실은요… 새 식구라 부끄러워서 방귀를 꾹 참고 있었어요.",
             "who": "bride",
-            "feel": "tonedown"
+            "feel": "tonedown",
+            "intensity": 0.4
           }
         ],
         "segments": [
@@ -11462,7 +11834,8 @@
               790
             ],
             "feel": "tonedown",
-            "audio": "/folk/banggwi/say-p4-bride.mp3"
+            "audio": "/folk/banggwi/say-p4-bride.mp3",
+            "intensity": 0.4
           }
         ]
       },
@@ -11632,9 +12005,18 @@
             "text": "그날 밤, 봉 영감은\n좀처럼 잠을 이루지 못했어요.\n"
           },
           {
-            "who": "narration",
-            "src": "/folk/banggwi/seg-p9-1.mp3",
+            "who": "bong",
+            "src": "/folk/banggwi/seg-cast-p9-1.mp3",
             "text": "'이대로라면 우리 집이\n며느리 방귀에 무너질지도 모르겠구나…'"
+          }
+        ],
+        "lines": [
+          {
+            "text": "'이대로라면 우리 집이\n며느리 방귀에 무너질지도 모르겠구나…'",
+            "who": "bong",
+            "feel": "sad",
+            "intensity": 0.35,
+            "tempo": 0.9
           }
         ]
       },
@@ -11773,7 +12155,8 @@
           {
             "text": "거기 서라! 가진 거 다 내놔!",
             "who": "thief",
-            "feel": "toneup"
+            "feel": "angry",
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -11803,8 +12186,9 @@
               840,
               990
             ],
-            "feel": "toneup",
-            "audio": "/folk/banggwi/say-p13-thief.mp3"
+            "feel": "angry",
+            "audio": "/folk/banggwi/say-p13-thief.mp3",
+            "intensity": 0.45
           }
         ]
       },
@@ -11815,7 +12199,9 @@
         "lines": [
           {
             "text": "저한테 맡기세요.",
-            "who": "bride"
+            "who": "bride",
+            "feel": "tonedown",
+            "intensity": 0.35
           }
         ],
         "segments": [
@@ -11845,7 +12231,9 @@
               890,
               525
             ],
-            "audio": "/folk/banggwi/say-p14-bride.mp3"
+            "audio": "/folk/banggwi/say-p14-bride.mp3",
+            "feel": "tonedown",
+            "intensity": 0.35
           }
         ]
       },
@@ -11916,10 +12304,10 @@
     ],
     "voiceCast": {
       "narration": "tc-minjung",
-      "scholar": "tc-taewoo",
+      "scholar": "tc-heejoon",
       "wife": "tc-aeran",
       "dokkaebi": "tc-jinhyuk",
-      "villager": "tc-minju"
+      "villager": "tc-insun"
     },
     "roleOf": {
       "선비": "scholar",
@@ -11934,23 +12322,23 @@
     "pages": [
       {
         "n": 1,
-        "text": "옛날 옛적, 어느 산골 마을에\n선비와 아내가 살고 있었어요.\n어느 날, 선비가 볼일을 보고 돌아오는데\n그만 깊은 산속에서 해가 지고 말았지요.",
+        "text": "옛날 옛적, 어느 산골 마을에\n선비와 아내가 살고 있었어요.\n어느 날, 선비가 볼일을 보고 돌아오는데\n그만 깊은 산속에서 해가 지고 말았답니다.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gamtu/p1.webp?v=3",
         "segments": [
           {
             "who": "narration",
             "src": "/folk/gamtu/seg-p1-0.mp3",
-            "text": "옛날 옛적, 어느 산골 마을에\n선비와 아내가 살고 있었어요.\n어느 날, 선비가 볼일을 보고 돌아오는데\n그만 깊은 산속에서 해가 지고 말았지요."
+            "text": "옛날 옛적, 어느 산골 마을에\n선비와 아내가 살고 있었어요.\n어느 날, 선비가 볼일을 보고 돌아오는데\n그만 깊은 산속에서 해가 지고 말았답니다."
           }
         ]
       },
       {
         "n": 2,
-        "text": "그때 나무 사이로\n조용한 초가집 한 채가 보였어요.\n\"어휴, 날도 어두워지고…\n오늘 밤은 여기서 좀 쉬고 가야겠군.\"",
+        "text": "그때 나무 사이로\n조용한 초가집 한 채가 보였어요.\n\"어휴, 날도 어두워지고…\n오늘 밤은 여기서 좀 쉬고 가야겠다.\"",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gamtu/p2.webp?v=3",
         "lines": [
           {
-            "text": "어휴, 날도 어두워지고… 오늘 밤은 여기서 좀 쉬고 가야겠군.",
+            "text": "어휴, 날도 어두워지고… 오늘 밤은 여기서 좀 쉬고 가야겠다.",
             "who": "scholar",
             "feel": "tonedown",
             "intensity": 0.35
@@ -11965,13 +12353,13 @@
           {
             "who": "scholar",
             "src": "/folk/gamtu/seg-cast-p2-1.mp3",
-            "text": "\"어휴, 날도 어두워지고…\n오늘 밤은 여기서 좀 쉬고 가야겠군.\""
+            "text": "\"어휴, 날도 어두워지고…\n오늘 밤은 여기서 좀 쉬고 가야겠다.\""
           }
         ],
         "hotspots": [
           {
             "label": "scholar",
-            "line": "어휴, 날도 어두워지고… 오늘 밤은 여기서 좀 쉬고 가야겠군.",
+            "line": "어휴, 날도 어두워지고… 오늘 밤은 여기서 좀 쉬고 가야겠다.",
             "box": [
               250,
               85,
@@ -11998,46 +12386,17 @@
       },
       {
         "n": 4,
-        "text": "도깨비들이 우르르 몰려온 거예요!\n\"도… 도깨비?\"\n선비는 숨을 죽이고\n문틈으로 가만히 지켜보았어요.",
+        "text": "도깨비들이 우르르 몰려온 거예요!\n선비는 숨을 죽이고\n문틈으로 가만히 지켜보았어요.",
         "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/gamtu/p4.webp?v=3",
-        "lines": [
-          {
-            "text": "도… 도깨비?",
-            "who": "scholar",
-            "feel": "toneup"
-          }
-        ],
+        "lines": [],
         "segments": [
           {
             "who": "narration",
             "src": "/folk/gamtu/seg-p4-0.mp3",
-            "text": "도깨비들이 우르르 몰려온 거예요!\n"
-          },
-          {
-            "who": "scholar",
-            "src": "/folk/gamtu/seg-cast-p4-1.mp3",
-            "text": "\"도… 도깨비?\""
-          },
-          {
-            "who": "narration",
-            "src": "/folk/gamtu/seg-p4-2.mp3",
-            "text": "\n선비는 숨을 죽이고\n문틈으로 가만히 지켜보았어요."
+            "text": "도깨비들이 우르르 몰려온 거예요!\n선비는 숨을 죽이고\n문틈으로 가만히 지켜보았어요."
           }
         ],
-        "hotspots": [
-          {
-            "label": "scholar",
-            "line": "도… 도깨비?",
-            "box": [
-              90,
-              30,
-              780,
-              175
-            ],
-            "feel": "toneup",
-            "audio": "/folk/gamtu/say-p4-scholar.mp3"
-          }
-        ]
+        "hotspots": []
       },
       {
         "n": 5,
@@ -12237,11 +12596,14 @@
           {
             "text": "안 돼!",
             "who": "scholar",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.5
           },
           {
             "text": "조금 찢어진 것쯤이야, 뭐 어때.",
-            "who": "scholar"
+            "who": "scholar",
+            "feel": "happy",
+            "intensity": 0.3
           }
         ],
         "segments": [
@@ -12271,7 +12633,9 @@
               850,
               520
             ],
-            "audio": "/folk/gamtu/say-p11-scholar.mp3"
+            "audio": "/folk/gamtu/say-p11-scholar.mp3",
+            "feel": "happy",
+            "intensity": 0.3
           }
         ]
       },
@@ -12295,12 +12659,14 @@
           {
             "text": "어어? 저기 봐! 머리카락이 떠다닌다!",
             "who": "villager",
-            "feel": "toneup"
+            "feel": "toneup",
+            "intensity": 0.45
           },
           {
             "text": "도둑이야!",
             "who": "villager",
-            "feel": "toneup"
+            "feel": "angry",
+            "intensity": 0.45
           }
         ],
         "segments": [
@@ -12331,7 +12697,8 @@
               700
             ],
             "feel": "toneup",
-            "audio": "/folk/gamtu/say-p13-villager.mp3"
+            "audio": "/folk/gamtu/say-p13-villager.mp3",
+            "intensity": 0.45
           }
         ]
       },

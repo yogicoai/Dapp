@@ -256,6 +256,21 @@ export const TYPECAST_VOICES: TypecastPreset[] = [
   { kind: "tc", id: "tc-sabrina", label: "마녀 사브리나", emoji: "🧙", voiceId: "tc_634f8ec12e351d8a3d548e61", model: "ssfm-v30", desc: "여자 · 중년 마녀 목소리", sample: "배가 고팠구나. 어서 들어오렴. 따뜻한 수프가 있단다." },
   // 인어 공주 · 인어 공주 역 (2026-10-16 사장님 채팅 "인어공주를 지안으로 변경", Typecast 이름 Jian — 표시는 여자 청소년).
   { kind: "tc", id: "tc-jian", label: "지안", emoji: "🫧", voiceId: "tc_615c6a4e369566b08b8a7a71", model: "ssfm-v30", desc: "여자 · 청소년 목소리", sample: "사랑하는 왕자님, 부디 행복하세요." },
+  // 흥부와 놀부 · 흥부 역 (2026-10-16 밤 사장님 채팅 "성우도 성호로 변경" · "힘이 없는 남자 목소리로 연출", Typecast 이름 Sungho — 표시는 남자 중년).
+  { kind: "tc", id: "tc-sungho", label: "성호", emoji: "🌾", voiceId: "tc_5fe06471a9f79e8f959be96f", model: "ssfm-v30", desc: "남자 · 중년 목소리", sample: "미안하구려. 형님한테 한번 가 볼게요." },
+  // 토끼와 거북이 · 부엉이 할아버지(심판) 역 (2026-10-17 사장님 채팅 "김 보안관으로 변경해볼게 부엉이 성우를", Typecast 이름 Sheriff Kim — 표시는 남자 중년).
+  { kind: "tc", id: "tc-sheriffkim", label: "김 보안관", emoji: "🦉", voiceId: "tc_63aaebf1cef3e7d6ce6d3628", model: "ssfm-v30", desc: "남자 · 중년 목소리", sample: "자아… 준비이이… 시자아악!" },
+  // 해님 달님 · 오빠 역 (2026-10-17 사장님 채팅 "오빠를 창희로 변경", Typecast 이름 Changhee — 표시는 남자 청소년).
+  { kind: "tc", id: "tc-changhee", label: "창희", emoji: "🌙", voiceId: "tc_677627eb0c63239147ab40a4", model: "ssfm-v30", desc: "남자 · 청소년 목소리", sample: "조금만 더 기다려 보자. 곧 오실 거야." },
+  // 해님 달님 · 누이(동생) 역 (2026-10-17 사장님 채팅 "하은이로 할게", Typecast 이름 Ha Eun — 표시는 여자 어린이).
+  { kind: "tc", id: "tc-haeun", label: "하은", emoji: "☀️", voiceId: "tc_5de781b108fd6b000882c58f", model: "ssfm-v30", desc: "여자 · 어린이 목소리", sample: "오빠, 엄마 왜 이렇게 안 오는 걸까?" },
+  // 팥죽 할머니와 호랑이 · 할머니 역 (2026-10-17 사장님 채팅 "팥죽할머니 주인공 순이로 변경", Typecast 이름 Sooni — 표시는 여자 노년).
+  { kind: "tc", id: "tc-sooni", label: "순이", emoji: "🫘", voiceId: "tc_60ad0841061ee28740ec2e1c", model: "ssfm-v30", desc: "여자 · 노년 목소리", sample: "호랑이야, 가을에 팥이 익으면 팥죽을 쒀 줄게." },
+  { kind: "tc", id: "tc-choiseok", label: "최석", emoji: "👑", voiceId: "tc_62ce545fb130717df10ea37a", model: "ssfm-v30", desc: "남자 · 중년 목소리", sample: "내 귀가… 당나귀 귀가 되었다니!" },
+  { kind: "tc", id: "tc-bongman", label: "김봉만", emoji: "🐂", voiceId: "tc_661797310ae4c893f6a25353", model: "ssfm-v30", desc: "남자 · 중년 목소리", sample: "어어? 소가 왜 이렇게 빠르지?" },
+  { kind: "tc", id: "tc-gunwoo", label: "건우", emoji: "🐸", voiceId: "tc_624cccbcadcd568510764d65", model: "ssfm-v30", desc: "남자 · 어린이 목소리", sample: "개굴! 난 거꾸로가 제일 재밌어!" },
+  { kind: "tc", id: "tc-duckchun", label: "덕춘", emoji: "🥩", voiceId: "tc_5c3c52c95827e00008dd7f34", model: "ssfm-v30", desc: "남자 · 노년 목소리", sample: "아이고, 양반님. 고기 대령했습니다." },
+  { kind: "tc", id: "tc-insun", label: "인순", emoji: "🧺", voiceId: "tc_664599ee6c2fb2b4a1e4b3aa", model: "ssfm-v30", desc: "여자 · 중년 목소리", sample: "아이고, 저 집 선비님이 어젯밤에 도깨비를 봤다지 뭐예요." },
 ];
 
 /**

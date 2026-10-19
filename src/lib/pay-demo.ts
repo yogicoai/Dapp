@@ -13,6 +13,7 @@
  * import 는 ./plans.ts 하나뿐인 순수 파일이다 — node --test 가 그대로 읽는다.
  */
 import {
+  CREDIT_EXTRAS_TEXT,
   DEFAULT_PLAN_TERMS,
   EXTRA,
   PLANS,
@@ -105,7 +106,7 @@ export const CONSENTS: readonly [ConsentDef, ConsentDef] = [
       if (p.kind === "credit") {
         return [
           `${p.name}은 ${price}(부가세 포함)이에요.`,
-          "한 번만 결제되고, 자동으로 다시 결제되지 않아요. 가족 패스·스타트팩에 든 몫을 다 쓴 뒤 동화·가족 캐릭터·가족 목소리를 더할 때 써요.",
+          `한 번만 결제되고, 자동으로 다시 결제되지 않아요. 가족 패스·스타트팩에 든 몫을 다 쓴 뒤 ${CREDIT_EXTRAS_TEXT}를 더할 때 써요.`,
           "크레딧을 쓸 수 있는 기간은 약관이 나오면 여기에 적어요.",
         ];
       }

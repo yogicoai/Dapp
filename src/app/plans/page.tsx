@@ -17,7 +17,7 @@ export const revalidate = 60;
 export async function generateMetadata(): Promise<Metadata> {
   const plans = plansOf((await getOfferView()).plans);
   return {
-    title: "요금제 · 우리 가족 보이스 동화",
+    title: "요금제", // 뒤의 사이트 이름은 app/layout 제목 틀(lib/seo)이 붙인다
     description: `가족 패스 ${priceLabel(plans.monthly)} · ${priceLabel(plans.yearly)}. 세계명작·전래동화 몇 권은 가입하지 않아도 들을 수 있어요.`,
     ...(PLANS_PREVIEW_NOTE ? { robots: { index: false, follow: true } } : {}),
   };
