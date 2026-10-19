@@ -87,7 +87,26 @@ function removeDraft(kind: LegalKind) {
   }
 }
 
-function baseForm(kind: LegalKind, hasCurrent: boolean, today: string): Form {
+/**
+ * 편집 칸의 처음 값. 시행 중인 판이 있으면 그 글로 채운다(사장님 2026-10-19 "미리보기에도 보이게 — 사이트로 이동이 아니라").
+ *  · 고칠 수 있는 계정: 다음 판을 지금 글에서 고쳐 쓴다(시행일은 기본값 — 7일 뒤).
+ *  · 보기만 되는 계정: 지금 판을 그대로 본다(시행일도 지금 판의 날).
+ * 시행 중인 판이 없으면 예전처럼 빈 칸.
+ */
+function baseForm(
+  kind: LegalKind,
+  hasCurrent: boolean,
+  today: string,
+  current: Pick<LegalVersion, "title" | "body" | "effectiveDate"> | null = null,
+  editable = true,
+): Form {
+  if (current) {
+    return {
+      title: current.title,
+      body: current.body,
+      effectiveDate: editable ? defaultEffectiveDate(kind, true, today) : current.effectiveDate,
+    };
+  }
   return { title: LEGAL_DOCS[kind].title, body: "", effectiveDate: defaultEffectiveDate(kind, hasCurrent, today) };
 }
 const sameForm = (a: Form, b: Form) => a.title === b.title && a.body === b.body && a.effectiveDate === b.effectiveDate;
@@ -149,7 +168,7 @@ function Editor({
   const hasCurrent = !!data.current;
   const editable = data.canEdit;
 
-  const [base, setBase] = useState<Form>(() => baseForm(kind, hasCurrent, today));
+  const [base, setBase] = useState<Form>(() => baseForm(kind, hasCurrent, today, data.current, editable));
   const [form, setForm] = useState<Form>(base);
   const [touched, setTouched] = useState(false);
   // 앞서 적어 둔 초안 — 불러오거나 버리기 전에는 새로 적지 않는다(모르고 덮어쓰지 않게).
@@ -245,7 +264,8 @@ function Editor({
     }
     setConfirming(false);
     removeDraft(kind);
-    const fresh = baseForm(kind, true, today);
+    // 방금 게시한 글을 다음 판의 출발점으로 둔다(빈 칸으로 비우면 '본문이 비어 있어요'로 보였다)
+    const fresh = baseForm(kind, true, today, { title: form.title, body: form.body, effectiveDate: form.effectiveDate }, true);
     setBase(fresh);
     setForm(fresh);
     setTouched(false);
@@ -528,7 +548,9 @@ function Editor({
           <div className="max-h-[75vh] overflow-y-auto rounded-xl border border-[#e5e8eb] px-4 py-5">
             <p className="text-[22px] font-bold leading-tight text-[#191f28]">{form.title.trim() || doc.title}</p>
             <p className="mb-5 mt-1.5 text-[13px] font-medium text-[#6b7684]">
-              시행일 {isValidYmd(form.effectiveDate) ? formatDateKoLong(form.effectiveDate) : "–"} · 제{nextVersion}판
+              {!editable && data.current
+                ? `시행일 ${formatDateKoLong(data.current.effectiveDate)} · 제${data.current.version}판 (지금 시행 중)`
+                : `시행일 ${isValidYmd(form.effectiveDate) ? formatDateKoLong(form.effectiveDate) : "–"} · 제${nextVersion}판`}
             </p>
             <LegalDocView blocks={blocks} compact />
           </div>
