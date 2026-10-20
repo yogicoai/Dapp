@@ -82,6 +82,15 @@ import { restAfter } from "@/lib/reading-rest";
 
 const SWIPE_THRESHOLD_PX = 50;
 
+/*
+ * 화면 가장자리(카메라 구멍·둥근 모서리·아래 제스처 막대) 비켜 두기 — 2026-10-20 사장님 폰(가로 전체화면)에서
+ * 왼쪽·아래에 흰 띠가 남았다. 동화 화면은 이제 가장자리까지 그리고(app/book/[id] 의 viewport-fit=cover),
+ * 가장자리에 붙은 단추만 안전 영역만큼 안쪽으로 민다. 안전 영역이 없는 기기·화면에서는 0 이라 그대로다.
+ */
+const SAFE_LEFT: React.CSSProperties = { marginLeft: "env(safe-area-inset-left, 0px)" };
+const SAFE_RIGHT: React.CSSProperties = { marginRight: "env(safe-area-inset-right, 0px)" };
+const SAFE_BOTTOM: React.CSSProperties = { marginBottom: "env(safe-area-inset-bottom, 0px)" };
+
 /**
  * 한 권에 다시 그릴 수 있는 그림 수 (마스터 제외).
  *
@@ -1781,6 +1790,18 @@ export function BookViewer({
     return () => clearTimeout(t);
   }, [burst]);
 
+  // 동화 화면이 떠 있는 동안 페이지 바탕을 어둡게 — 전체화면에서 안전 영역 밖 틈으로 흰 바탕이 비치지 않게(2026-10-20).
+  useEffect(() => {
+    const root = document.documentElement;
+    const prev = { html: root.style.backgroundColor, body: document.body.style.backgroundColor };
+    root.style.backgroundColor = "#0a0a0a";
+    document.body.style.backgroundColor = "#0a0a0a";
+    return () => {
+      root.style.backgroundColor = prev.html;
+      document.body.style.backgroundColor = prev.body;
+    };
+  }, []);
+
   // "가로로 보기" 버튼 상태 — 전체화면 여부를 따라간다 (브라우저 뒤로가기로
   // 빠져나가는 경우까지 이벤트로 감지).
   const [storyMode, setStoryMode] = useState(false);
@@ -2148,7 +2169,10 @@ export function BookViewer({
       {/* 아래 가운데 넘김 바 — 우측 상단 ◀▶는 작고 눈에 잘 안 띄어서, 크고 분명한
           '다음 장'을 아래에 하나 더 둔다. 지금 몇 쪽인지도 같이 보여 준다
           (아이는 "얼마나 남았어?"를 자주 묻는다). 마지막 쪽에선 다음이 잠긴다. */}
-      <div className={`absolute bottom-4 left-1/2 z-10 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 flex-nowrap items-center gap-0 rounded-full bg-black/45 px-1 py-1 backdrop-blur sm:bottom-6 sm:gap-2 sm:px-2 sm:py-1.5 ${chromeCls}`}>
+      <div
+        className={`absolute bottom-4 left-1/2 z-10 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 flex-nowrap items-center gap-0 rounded-full bg-black/45 px-1 py-1 backdrop-blur sm:bottom-6 sm:gap-2 sm:px-2 sm:py-1.5 ${chromeCls}`}
+        style={SAFE_BOTTOM}
+      >
         <button
           type="button"
           aria-label="이전 장"
@@ -2188,7 +2212,7 @@ export function BookViewer({
           대사와 겹쳐 오작동해서 걷어냈다. 스와이프와 키보드 ←→는 그대로 산다. */}
       <div
         className={`absolute right-3 z-10 flex gap-1.5 sm:right-4 sm:gap-2 ${chromeCls}`}
-        style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
+        style={{ top: "calc(1rem + env(safe-area-inset-top))", ...SAFE_RIGHT }}
       >
         <button
           type="button"
@@ -2251,7 +2275,7 @@ export function BookViewer({
       {voiceMenu && (
         <div
           className="absolute right-4 z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur"
-          style={{ top: "calc(3.75rem + env(safe-area-inset-top))" }}
+          style={{ top: "calc(3.75rem + env(safe-area-inset-top))", ...SAFE_RIGHT }}
         >
           <p className="px-2 py-1 text-[11px] font-bold text-neutral-400">
             {isCreated ? "읽어주는 성우를 골라요" : "이 동화 추천 성우 (무료로 바꿔 들어요)"}
@@ -2321,7 +2345,7 @@ export function BookViewer({
         * 이유가 없다. 아이콘을 누르면 그때 펼쳐진다.
         */}
       {editable && !editing && (
-        <div className="absolute left-3 top-16 z-20 flex flex-col items-start gap-1.5">
+        <div className="absolute left-3 top-16 z-20 flex flex-col items-start gap-1.5" style={SAFE_LEFT}>
           <button
             type="button"
             onClick={() => setToolsOpen((v) => !v)}
@@ -2550,7 +2574,7 @@ export function BookViewer({
 
       <div
         className={`absolute left-3 z-10 flex items-center gap-1.5 sm:left-4 sm:gap-2 ${chromeCls}`}
-        style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
+        style={{ top: "calc(1rem + env(safe-area-inset-top))", ...SAFE_LEFT }}
       >
         {onClose ? (
           // 띄운 모드 — 서재로 가지 않고 닫기만 한다(아래 만들기 화면이 계속 그린다).
@@ -2659,7 +2683,7 @@ export function BookViewer({
 
       {/* 글자 크기 — 배속 버튼 위. "보다가 작네" 싶을 때 책 안에서 바로 키운다.
           기본값(화면 크기 따라 자동)에 배율을 곱하는 방식이라 어느 기기에서도 자연스럽다. */}
-      <div className={`absolute bottom-4 left-3 z-10 sm:bottom-[4.75rem] sm:left-5 ${chromeCls}`}>
+      <div className={`absolute bottom-4 left-3 z-10 sm:bottom-[4.75rem] sm:left-5 ${chromeCls}`} style={{ ...SAFE_LEFT, ...SAFE_BOTTOM }}>
         {sizeMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
             <p className="px-5 pt-2.5 text-[11px] font-extrabold text-white/50">
@@ -2702,7 +2726,7 @@ export function BookViewer({
 
       {/* 재생 속도 (유튜브식) — 왼쪽 아래. 지금은 감춰 두었다(위 SPEED_CONTROL_ENABLED). */}
       {SPEED_CONTROL_ENABLED && (
-      <div className={`absolute bottom-4 left-[3.75rem] z-10 sm:bottom-5 sm:left-5 ${chromeCls}`}>
+      <div className={`absolute bottom-4 left-[3.75rem] z-10 sm:bottom-5 sm:left-5 ${chromeCls}`} style={{ ...SAFE_LEFT, ...SAFE_BOTTOM }}>
         {speedMenu && (
           <div className="mb-2 flex flex-col overflow-hidden rounded-2xl bg-black/70 shadow-lg backdrop-blur">
             {[0.75, 1, 1.25, 1.5, 2].map((s) => (
@@ -2746,7 +2770,7 @@ export function BookViewer({
           aria-label="조작 단추 보이기"
           onClick={() => setChromeShown(true)}
           className="absolute left-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-black/30 text-white/70 backdrop-blur transition hover:bg-black/50 hover:text-white outline-none focus:outline-none sm:left-4"
-          style={{ top: "calc(1rem + env(safe-area-inset-top))" }}
+          style={{ top: "calc(1rem + env(safe-area-inset-top))", ...SAFE_LEFT }}
         >
           <span aria-hidden className="text-lg leading-none">⋯</span>
         </button>
@@ -2754,7 +2778,7 @@ export function BookViewer({
 
       {/* 읽어주기 — 재생 버튼임이 한눈에 보이게 ①색이 도는 원 ②흰 재생 세모(▶)
           ③평소엔 "읽어주기" 라벨을 위에 띄운다. 읽는 중엔 정지(⏸) 막대로 바뀐다. */}
-      <div className="absolute bottom-3 right-3 z-10 flex flex-col items-center gap-0 sm:bottom-5 sm:right-5 sm:gap-2">
+      <div className="absolute bottom-3 right-3 z-10 flex flex-col items-center gap-0 sm:bottom-5 sm:right-5 sm:gap-2" style={{ ...SAFE_RIGHT, ...SAFE_BOTTOM }}>
         {/* 성우 목소리를 만드는 동안 — 눌렀는데 조용하면 고장으로 오해한다(피드백 4번).
             몇 초 걸리는지까지 보여줘서 "기다리면 되는구나"를 알게 한다. */}
         {showPreparing && (

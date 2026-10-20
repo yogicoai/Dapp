@@ -1,3 +1,4 @@
+import type { Viewport } from "next";
 import { BookViewer } from "@/components/BookViewer";
 import classicBooks from "@/data/classic-books.json";
 import folkBooks from "@/data/folk-books.json";
@@ -6,6 +7,18 @@ import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
 import { LibraryGate } from "./LibraryGate";
 import { SavedBook } from "./SavedBook";
+
+/*
+ * 동화 보기 화면만 화면 가장자리까지 그린다(viewport-fit=cover) — 가로 전체화면에서 카메라 구멍 쪽·아래 제스처 막대 자리에
+ * 흰 띠가 남았다(사장님 폰, 2026-10-20). 가장자리 단추는 BookViewer 가 안전 영역만큼 안쪽으로 민다.
+ * 다른 화면은 그대로 둔다 — 아이폰 가로에서 홈의 왼쪽 위 알약 등이 노치 밑으로 들어가지 않게.
+ */
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
 
 // 샘플(추후 회원 책) + 제공 서가(전래동화·세계명작).
 const ALL = [...asBooks(books), ...asBooks(folkBooks), ...asBooks(classicBooks)];
