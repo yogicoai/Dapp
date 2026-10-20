@@ -50,7 +50,7 @@ export function needsConsent(row: unknown, version: string = CONSENT_VERSION): b
   return (row as Record<string, unknown>).version !== version;
 }
 
-/** 동의 화면을 띄우지 않는 주소 — 로그인(가입 중), 약관 세 화면(동의 전에 읽어야 한다), 관리실 */
+/** 동의 화면을 띄우지 않는 주소 — 로그인(가입 중), 약관 세 화면(동의 전에 읽어야 한다), 계정 삭제 안내(지우려는 사람을 막지 않는다), 관리실 */
 export function consentExempt(pathname: string | null | undefined): boolean {
   const p = pathname ?? "";
   return (
@@ -59,6 +59,7 @@ export function consentExempt(pathname: string | null | undefined): boolean {
     p === "/terms" ||
     p === "/privacy" ||
     p === "/refund" ||
+    p === "/account-deletion" ||
     p === "/admin" ||
     p.startsWith("/admin/")
   );

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PlansView } from "@/components/pay/PlansView";
 import { getOfferView } from "@/lib/offer-settings-server";
+import { getSiteInfo } from "@/lib/site-info-server";
 import { PLANS_PREVIEW_NOTE, plansOf, priceLabel } from "@/lib/plans";
 
 /**
@@ -23,6 +24,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// 맨 아래 사업자 정보·약관 링크도 서버에서 읽어 첫 HTML 에 넣는다 — 예전엔 첫 HTML 에 '(준비 중)'이 찍혔다가 브라우저에서 바뀌었다
+// (결제사 심사 담당자·검색엔진이 보는 첫 화면이 실제와 같게, 2026-10-19).
 export default async function PlansPage() {
-  return <PlansView offer={await getOfferView()} />;
+  const [offer, siteInfo] = await Promise.all([getOfferView(), getSiteInfo()]);
+  return <PlansView offer={offer} siteInfo={siteInfo} />;
 }

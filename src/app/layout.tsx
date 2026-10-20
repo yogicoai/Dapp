@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Dongle, Gaegu, Gowun_Dodum, Jua, Nanum_Pen_Script } from "next/font/google";
+import { AppShellMark } from "@/components/AppShellMark";
 import { ConsentGate } from "@/components/ConsentGate";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { buildSiteMetadata } from "@/lib/seo";
@@ -65,6 +66,7 @@ export default function RootLayout({
           {children}
           {/* 로그인 직후 한 번 — 약관·개인정보·보호자 동의(lib/consent, 사장님 2026-10-19) */}
           <ConsentGate />
+          <AppShellMark />
         </ThemeProvider>
       </body>
     </html>

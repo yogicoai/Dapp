@@ -14,14 +14,17 @@ import Link from "next/link";
 import { useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 import { PAY_DEMO, checkoutHref } from "@/lib/pay-demo";
+import { useAppShell } from "@/lib/app-shell-client";
 import {
   CREDIT_USE_LABEL,
   CUSTOMER_CREDIT_USES,
   DEFAULT_OFFER_VIEW,
+  DELIVERY_NOTE,
   PASS_TAG,
   PLANS_PREVIEW_NOTE,
   READ_ALOUD_VOICE,
   REFUND_SUMMARY,
+  SERVICE_PERIODS,
   creditsText,
   freeFeatures,
   monthlyEquivalent,
@@ -40,21 +43,24 @@ import {
   Card,
   CardTitle,
   CheckList,
-  DraftPill,
   FOCUS,
   FOCUS_WITHIN,
   LockedButton,
   PayShell,
   SoftLink,
 } from "./pay-ui";
+import type { SiteInfo } from "@/lib/site-info-client";
 import { SiteFooter } from "./SiteFooter";
 
 type Period = "monthly" | "yearly";
 
-export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView }) {
+export function PlansView({ offer = DEFAULT_OFFER_VIEW, siteInfo }: { offer?: OfferView; siteInfo?: SiteInfo | null }) {
   const { theme } = useTheme();
   const colors = theme.colors;
   const [period, setPeriod] = useState<Period>("monthly");
+  // 안드로이드 앱 안에서는 웹 결제(시연·KG)로 데려가지 않는다 — 구글 플레이 정책(lib/app-shell). 앱 결제를 붙이기 전까지는 잠근다.
+  const inApp = useAppShell() === "android";
+  const demoPay = PAY_DEMO !== "off" && !inApp;
   // 값·구성은 관리실 요금제 값(offer.plans) — 연간 할인율도 그 값으로 계산한다(싸지 않으면 할인 꼬리표를 감춘다)
   const plans = plansOf(offer.plans);
   const plan = plans[period];
@@ -154,7 +160,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
           {/* 연간은 가족 캐릭터·가족 목소리가 더 많다 — 고른 주기의 구성을 보여 준다(바뀐 값은 위 가격 줄이 알린다) */}
           <CheckList items={passFeaturesFor(period, offer)} />
           <div className="mt-5">
-            {PAY_DEMO === "off" ? (
+            {!demoPay ? (
               <LockedButton describedBy="pass-soon">결제는 곧 열려요</LockedButton>
             ) : (
               <BigLink href={checkoutHref(period)} colors={colors}>
@@ -163,8 +169,8 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
             )}
           </div>
           <p id="pass-soon" className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
-            {PAY_DEMO === "off" ? (
-              "지금은 베타라 결제 없이 쓰고 있어요."
+            {!demoPay ? (
+              inApp ? "곧 앱에서 바로 결제할 수 있어요." : "지금은 베타라 결제 없이 쓰고 있어요."
             ) : (
               <>
                 {/* 시연 스위치가 켜져 있는 동안은 누구나 이 단추로 시연 결제를 지난다 — 누르기 전에 알린다. */}
@@ -190,7 +196,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
         </p>
         <CheckList items={starterFeatures(offer)} />
         <div className="mt-5">
-          {PAY_DEMO === "off" ? (
+          {!demoPay ? (
             <LockedButton describedBy="starter-soon">곧 열려요</LockedButton>
           ) : (
             <BigLink href={checkoutHref("starter")} colors={colors}>
@@ -198,7 +204,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
             </BigLink>
           )}
         </div>
-        {PAY_DEMO === "off" ? (
+        {!demoPay ? (
           <p id="starter-soon" className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
             스타트팩은 결제가 열리면 살 수 있어요.
           </p>
@@ -235,7 +241,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
                 <span className="text-[15px] font-extrabold text-neutral-800">{creditsText(p.credits)}</span>
                 <span className="flex items-center gap-1.5 text-[15px] font-extrabold tabular-nums" style={{ color: colors.accentDark }}>
                   {won(p.priceWon)}
-                  {PAY_DEMO !== "off" && (
+                  {demoPay && (
                     <span aria-hidden className="text-[17px] leading-none">
                       ›
                     </span>
@@ -246,7 +252,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
             const row = "flex min-h-[52px] items-center justify-between gap-2 rounded-[20px] bg-stone-50 px-4 py-3 shadow-[inset_0_0_0_1px_#f0ede8]";
             return (
               <li key={p.priceWon}>
-                {PAY_DEMO === "off" ? (
+                {!demoPay ? (
                   <div className={row}>{inner}</div>
                 ) : (
                   <Link
@@ -272,9 +278,23 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
         </ul>
         <p className="mt-2.5 break-keep text-[13px] font-medium leading-relaxed text-neutral-500">
           가족 패스·스타트팩에 든 몫을 다 쓴 뒤에 더할 때 써요.{" "}
-          {PAY_DEMO === "off" ? "크레딧은 결제가 열리면 살 수 있어요." : "묶음을 누르면 결제하기로 가요."}
+          {!demoPay ? "크레딧은 결제가 열리면 살 수 있어요." : "묶음을 누르면 결제하기로 가요."}
         </p>
-        {PAY_DEMO !== "off" && <DemoPayNote />}
+        {demoPay && <DemoPayNote />}
+      </Card>
+
+      {/* 상품별 이용 기간 — 무엇을 얼마 동안 쓰는지 결제 전에 보이게(약관 제9·10조와 같은 말, 2026-10-19 · 10-20 연간 기준) */}
+      <Card labelledBy="period-title">
+        <CardTitle id="period-title">상품별 이용 기간</CardTitle>
+        <dl className="flex flex-col gap-2">
+          {SERVICE_PERIODS.map((r) => (
+            <div key={r.name} className="flex flex-col gap-0.5 rounded-[18px] bg-stone-50 px-4 py-2.5 shadow-[inset_0_0_0_1px_#f0ede8]">
+              <dt className="text-[14px] font-extrabold text-neutral-800">{r.name}</dt>
+              <dd className="break-keep text-[13px] font-medium leading-relaxed text-neutral-600">{r.period}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="mt-2.5 break-keep text-[13px] font-medium leading-relaxed text-neutral-500">{DELIVERY_NOTE}</p>
       </Card>
 
       {/* 자주 묻는 질문 — details/summary 라 키보드·화면 읽기가 기본으로 된다 */}
@@ -300,11 +320,9 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
         </div>
       </Card>
 
-      {/* 환불 안내(요약) — 법률 확인 전이라 '초안' */}
+      {/* 환불 안내(요약) — 전문은 게시한 환불·청약철회 안내(/refund, 2026-10-19 게시) */}
       <Card id="refund" labelledBy="refund-title" className="scroll-mt-16">
-        <CardTitle id="refund-title" right={<DraftPill />}>
-          환불 안내 (요약)
-        </CardTitle>
+        <CardTitle id="refund-title">환불 안내 (요약)</CardTitle>
         <ul className="flex flex-col gap-1.5">
           {REFUND_SUMMARY.map((t) => (
             <li key={t} className="flex gap-2 break-keep text-[13px] font-medium leading-relaxed text-neutral-700">
@@ -315,10 +333,16 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW }: { offer?: OfferView })
             </li>
           ))}
         </ul>
-        <p className="mt-3 break-keep text-xs font-medium text-neutral-500">환불 정책 전문은 약관이 생기면 여기에 연결돼요.</p>
+        <Link
+          href="/refund"
+          className={`mt-3 inline-flex min-h-11 items-center rounded-full text-[13px] font-extrabold underline underline-offset-2 ${FOCUS}`}
+          style={{ color: colors.accentDark }}
+        >
+          환불·청약철회 안내 전문 보기 ›
+        </Link>
       </Card>
 
-      <SiteFooter />
+      <SiteFooter info={siteInfo} />
     </PayShell>
   );
 }

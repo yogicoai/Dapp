@@ -54,8 +54,8 @@ describe("주소", () => {
     assert.equal(feedbackPath({ open: true, mine: true }), "/api/admin/feedback?open=1&mine=1");
     assert.equal(feedbackPath({ open: false, mine: true }), "/api/admin/feedback?mine=1");
   });
-  it("탭은 사고 · 의견 둘", () => {
-    assert.deepEqual([...SUPPORT_TABS], ["incidents", "feedback"]);
+  it("탭은 사고 · 의견 · 신고 셋(신고는 2026-10-20 AI 결과물 신고)", () => {
+    assert.deepEqual([...SUPPORT_TABS], ["incidents", "feedback", "reports"]);
   });
   it("글쓴이 회원 화면 — uuid 만", () => {
     assert.equal(memberHref(MEMBER.toUpperCase()), `/admin/members/${MEMBER}`);

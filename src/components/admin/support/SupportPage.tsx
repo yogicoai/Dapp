@@ -4,7 +4,7 @@
  * 의견·오류(/admin/support) — 만들기 사고와 고객 의견을 한곳에서 처리한다(2026-09-30 정식판).
  * 옛 관리실(한 화면)의 '사고'·'의견' 메뉴를 탭 둘로 옮겼다.
  *
- * 주소가 화면 상태다: ?tab=incidents|feedback · ?mine=1 · (사고) ?kind= ?resolved=1 ?job= ?entry= · (의견) ?all=1.
+ * 주소가 화면 상태다: ?tab=incidents|feedback|reports · ?mine=1 · (사고) ?kind= ?resolved=1 ?job= ?entry= · (의견) ?all=1.
  * 대시보드의 '돈 냈는데 책 없음'은 ?tab=incidents&kind=paid_not_saved 로 곧장 들어온다.
  *
  * 탭은 **처음 열 때 만들고, 그 뒤로는 감추기만** 한다 — 의견에 답을 쓰다가 사고 탭을 보고 와도
@@ -20,6 +20,7 @@ import { Banner, PageHeader, SectionTabs, Switch, useMineParam, useTabParam } fr
 import { useAdmin } from "@/components/admin/shell/AdminContext";
 import { FeedbackTab } from "./FeedbackTab";
 import { IncidentsTab } from "./IncidentsTab";
+import { ReportsTab } from "./ReportsTab";
 
 export function SupportPage() {
   const { badges } = useAdmin();
@@ -64,6 +65,8 @@ export function SupportPage() {
               badgeTone: (badges.paidNotSaved ?? 0) > 0 ? "red" : "gray",
             },
             { key: "feedback", label: "의견", badge: badges.feedback, badgeTone: "gray" },
+            // AI 결과물 신고(2026-10-20) — 숫자는 탭 안 '처리 전' 칩이 말한다
+            { key: "reports", label: "신고" },
           ]}
         />
 
@@ -72,6 +75,9 @@ export function SupportPage() {
         </div>
         <div role="tabpanel" aria-label="의견" hidden={tab !== "feedback"}>
           {mounted("feedback") ? <FeedbackTab mine={mine} /> : null}
+        </div>
+        <div role="tabpanel" aria-label="신고" hidden={tab !== "reports"}>
+          {mounted("reports") ? <ReportsTab mine={mine} /> : null}
         </div>
       </div>
     </>

@@ -34,6 +34,7 @@ import {
   storyWeightForFont,
 } from "@/lib/prefs";
 import { loadSession } from "@/lib/auth";
+import { ReportSheet } from "@/components/ReportSheet";
 import { loadLibraryAccess } from "@/lib/library-access";
 import { viewerTierOf } from "@/lib/member-plan";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
@@ -338,6 +339,8 @@ export function BookViewer({
   // 글자 크기 배율 — 책 안에서 바로 바꾼다("보다가 작네" 싶을 때). 계정별로 저장된다.
   const [textScale, setTextScale] = useState(1);
   const [sizeMenu, setSizeMenu] = useState(false);
+  // AI 결과물 신고 시트(2026-10-20, 구글 플레이 AI 콘텐츠 정책 — 지금 보는 쪽을 신고한다)
+  const [reportOpen, setReportOpen] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용, 마운트 후 반영
   useEffect(() => setTextScale(loadTextScale()), []);
   /*
@@ -2623,7 +2626,32 @@ export function BookViewer({
             <span className="hidden min-[480px]:inline">펼침</span>
           </button>
         </div>
+        {/* 신고 — AI 가 만든 그림·글이 이상하거나 불편할 때 지금 쪽을 바로 알린다(구글 플레이 AI 콘텐츠 정책) */}
+        <button
+          type="button"
+          aria-label={`${index + 1}쪽 신고하기`}
+          title="신고하기"
+          onClick={() => {
+            if (reading) stopReading();
+            setReportOpen(true);
+          }}
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40 p-0 text-white/90 backdrop-blur transition hover:bg-black/60 outline-none focus:outline-none"
+        >
+          <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+            <path d="M6 21V4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path d="M6 4.5h11.5l-2.2 4 2.2 4H6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+          </svg>
+        </button>
       </div>
+      {reportOpen ? (
+        <ReportSheet
+          kind="book"
+          targetId={book.id}
+          page={index}
+          targetLabel={`이 동화 ${index + 1}쪽`}
+          onClose={() => setReportOpen(false)}
+        />
+      ) : null}
 
       {/* 글자 크기 — 배속 버튼 위. "보다가 작네" 싶을 때 책 안에서 바로 키운다.
           기본값(화면 크기 따라 자동)에 배율을 곱하는 방식이라 어느 기기에서도 자연스럽다. */}

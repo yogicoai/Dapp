@@ -12,8 +12,9 @@ import { dropMasterRows, withParams } from "./admin-console.ts";
 
 /* ── 탭 ─────────────────────────────────────────────────────────────────── */
 
-export type SupportTab = "incidents" | "feedback";
-export const SUPPORT_TABS: readonly SupportTab[] = ["incidents", "feedback"];
+/** reports — 고객이 앱 안에서 보낸 AI 결과물 신고(2026-10-20, 구글 플레이 AI 콘텐츠 정책) */
+export type SupportTab = "incidents" | "feedback" | "reports";
+export const SUPPORT_TABS: readonly SupportTab[] = ["incidents", "feedback", "reports"];
 
 /* ── 서버 주소 ───────────────────────────────────────────────────────────── */
 

@@ -41,6 +41,18 @@ export const FAMILY_CHARACTERS_IN_PASS = 4;
 /** 연간 가족 패스는 캐릭터를 더 — 2026-10-01 확정. */
 export const FAMILY_CHARACTERS_IN_YEARLY = 6;
 
+/**
+ * 돈 내고 산 크레딧을 쓸 수 있는 기간(달) — 산 날부터. 게시한 약관 제10조(산 날부터 1년)·환불 안내와 같다.
+ * 끝나기 30일 전부터 알린다(만료·알림 기능은 결제를 붙일 때 만든다 — 약관에 약속했다).
+ */
+export const CREDIT_VALID_MONTHS = 12;
+export const CREDIT_EXPIRY_NOTICE_DAYS = 30;
+
+/** "1년" · "6개월" — 크레딧 기간 글 */
+export function creditValidText(): string {
+  return CREDIT_VALID_MONTHS % 12 === 0 ? `${CREDIT_VALID_MONTHS / 12}년` : `${CREDIT_VALID_MONTHS}개월`;
+}
+
 /** 가족 패스 카드 꼬리표 — "가장 많이 골라요"는 실제 판매 기록이 생긴 뒤에(결정 D2). */
 export const PASS_TAG = "추천";
 
@@ -342,6 +354,18 @@ export function starterFeatures(offer: OfferView = DEFAULT_OFFER_VIEW): string[]
   ];
 }
 
+/**
+ * 상품별 이용 기간 — 요금제 화면에 그대로 보인다(2026-10-19 결제사 심사 대비로 시작, 10-20 연간 기준으로).
+ * 게시한 약관 제9·10조와 같은 말이다. 디지털 콘텐츠라 배송은 없다(DELIVERY_NOTE).
+ */
+export const SERVICE_PERIODS: readonly { name: string; period: string }[] = [
+  { name: "가족 패스 (월간)", period: "결제일부터 1개월 · 해지하기 전까지 매달 자동 결제" },
+  { name: "가족 패스 (연간)", period: "결제일부터 1년 · 해지하기 전까지 매년 자동 결제" },
+  { name: "스타트팩", period: "한 번만 결제 · 만든 동화는 계속 남아요" },
+  { name: "크레딧", period: `산 날부터 ${creditValidText()} 안에 사용` },
+];
+export const DELIVERY_NOTE = "모두 디지털 콘텐츠라 배송 없이 결제한 뒤 바로 쓸 수 있어요.";
+
 /** "50크레딧" */
 export function creditsText(n: number): string {
   return `${String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}크레딧`;
@@ -451,6 +475,10 @@ export function planFaq(offer: OfferView = DEFAULT_OFFER_VIEW): { q: string; a: 
       a: cheapest
         ? `크레딧으로 더 만들 수 있어요. 동화 1권에 ${creditsText(offer.creditCosts.book)}이고, 크레딧은 ${won(cheapest.priceWon)}(${creditsText(cheapest.credits)})부터 살 수 있어요.`
         : `크레딧으로 더 만들 수 있어요. 동화 1권에 ${creditsText(offer.creditCosts.book)}이에요.`,
+    },
+    {
+      q: "크레딧은 언제까지 쓸 수 있나요?",
+      a: `산 날부터 ${creditValidText()} 동안 쓸 수 있어요. 끝나기 ${CREDIT_EXPIRY_NOTICE_DAYS}일 전부터 화면과 이메일로 알려 드려요.`,
     },
     {
       q: "가족 그리기 토큰과 크레딧은 뭐가 달라요?",

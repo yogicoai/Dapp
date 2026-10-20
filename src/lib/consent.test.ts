@@ -20,7 +20,7 @@ describe("약관 동의 화면 — 누구에게·언제", () => {
     assert.equal(CONSENT_VERSION, LEGAL_DRAFT_EFFECTIVE);
   });
   it("로그인·약관 세 화면·관리실에서는 띄우지 않는다", () => {
-    for (const p of ["/login", "/terms", "/privacy", "/refund", "/admin", "/admin/members/x"]) assert.equal(consentExempt(p), true, p);
+    for (const p of ["/login", "/terms", "/privacy", "/refund", "/account-deletion", "/admin", "/admin/members/x"]) assert.equal(consentExempt(p), true, p);
     for (const p of ["/", "/create", "/family", "/book/my-1", "/settings", "/administrator"]) assert.equal(consentExempt(p), false, p);
   });
   it("약관과 개인정보처리방침이 둘 다 시행 중이어야 동의를 받는다", () => {

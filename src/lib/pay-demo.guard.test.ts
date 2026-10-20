@@ -65,6 +65,11 @@ const ALLOWED = new Set([
   "@/lib/scroll-lock", // 처리 가림막이 떠 있는 동안 뒤 화면 잠금 — 브라우저 모양만 바꾸고 서버·돈과 무관
   // 무료·스타트팩 권수와 크레딧 값은 관리실에서 바꾼다 — 요금제 서버 화면이 공개 값을 읽기만 하는 파일(G-T7 이 모양을 지킨다)
   "@/lib/offer-settings-server",
+  // 맨 아래 사업자 정보·약관 링크를 요금제 서버 화면이 첫 HTML 에 넣으려고 읽는 공개 정보(약관 화면과 같은 읽기 전용 파일, 2026-10-19)
+  "@/lib/site-info-server",
+  // 안드로이드 앱(TWA) 안이면 웹 결제로 데려가지 않으려고 '앱 안인가'만 읽는다 — 주소·referrer·sessionStorage 만 보고
+  // 아무것도 보내지 않는다(구글 플레이 정책, 2026-10-20)
+  "@/lib/app-shell-client",
 ]);
 const IMPORT_RE = /\bfrom\s*["']([^"']+)["']|\bimport\s*\(\s*["']([^"']+)["']\s*\)|\bimport\s+["']([^"']+)["']/g;
 

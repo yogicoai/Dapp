@@ -23,6 +23,7 @@ import { displayName, objectOf, ourChildHint, type Colors } from "./family-ui";
 import { PortraitImg } from "./Figures";
 import { NextIcon, Silhouette } from "./icons";
 import { Sheet } from "./Sheet";
+import { ReportSheet } from "@/components/ReportSheet";
 import { BigButton, CookiePill, costText, SwitchRow } from "./ui";
 
 export function MemberSheet({
@@ -74,6 +75,7 @@ export function MemberSheet({
   onRemove: () => void;
 }) {
   const [asking, setAsking] = useState(false);
+  const [reporting, setReporting] = useState(false);
   const pic = m.draft ?? m.portrait;
   // 관리실이 더해 준 무료 생성이 있으면 쿠키 대신 그걸 쓴다
   const { cost, free } = drawPrice(m.draws, master ? 0 : freeDraws);
@@ -114,6 +116,13 @@ export function MemberSheet({
     setWantOurChild(false);
     onOurChild(on);
   };
+
+  // AI 가 그린 그림 신고(2026-10-20, 구글 플레이 AI 콘텐츠 정책) — 이 시트 자리에 신고 시트를 띄운다
+  if (reporting) {
+    return (
+      <ReportSheet kind="portrait" targetId={m.id} targetLabel={`${name} 캐릭터 그림`} onClose={() => setReporting(false)} />
+    );
+  }
 
   if (asking) {
     return (
@@ -264,6 +273,15 @@ export function MemberSheet({
               className="flex min-h-[52px] w-full items-center justify-center rounded-2xl text-[15px] font-extrabold text-rose-600 transition hover:bg-rose-50"
             >
               {friend ? `${BEST_FRIEND_LABEL} 빼기` : "우리 가족에서 빼기"}
+            </button>
+          )}
+          {fixedOrDrawn && (
+            <button
+              type="button"
+              onClick={() => setReporting(true)}
+              className="flex min-h-11 w-full items-center justify-center rounded-2xl text-[13px] font-extrabold text-neutral-500 transition hover:bg-neutral-50"
+            >
+              그림이 이상하거나 불편하면 신고하기
             </button>
           )}
         </div>

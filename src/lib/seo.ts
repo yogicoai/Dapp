@@ -92,6 +92,8 @@ export const PUBLIC_PATHS: readonly { path: string; priority: number; changeFreq
   { path: "/terms", priority: 0.3, changeFrequency: "monthly" },
   { path: "/privacy", priority: 0.3, changeFrequency: "monthly" },
   { path: "/refund", priority: 0.3, changeFrequency: "monthly" },
+  // 계정 삭제 안내 — 구글 플레이 데이터 보안 양식에 적는 공개 주소(2026-10-20)
+  { path: "/account-deletion", priority: 0.2, changeFrequency: "monthly" },
 ];
 
 /* ── 입력 다듬기 ───────────────────────────────────────────────────────── */

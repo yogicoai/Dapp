@@ -17,6 +17,10 @@ import {
   PASS,
   PASS_FEATURES,
   PASS_YEARLY,
+  SERVICE_PERIODS,
+  DELIVERY_NOTE,
+  CREDIT_VALID_MONTHS,
+  creditValidText,
   PARENT_VOICE_OPEN,
   PLANS,
   CUSTOMER_CREDIT_USES,
@@ -133,6 +137,24 @@ describe("스타트팩 · 크레딧도 결제 목록에(2026-10-02 시연 결제
     assert.equal(productName("monthly"), "가족 패스 (월간)");
     assert.equal(productName("starter"), "스타트팩");
     assert.equal(productName("credit"), "크레딧");
+  });
+});
+
+describe("상품별 이용 기간 · 크레딧 기간(게시한 약관과 같은 말, 2026-10-20 연간 기준)", () => {
+  it("네 상품 모두 기간이 있고, 크레딧은 산 날부터 1년", () => {
+    assert.deepEqual(SERVICE_PERIODS.map((r) => r.name), ["가족 패스 (월간)", "가족 패스 (연간)", "스타트팩", "크레딧"]);
+    assert.equal(CREDIT_VALID_MONTHS, 12);
+    assert.equal(creditValidText(), "1년");
+    assert.ok(SERVICE_PERIODS[3].period.includes("산 날부터 1년"));
+    assert.match(DELIVERY_NOTE, /배송 없이/);
+  });
+  it("자주 묻는 질문에 크레딧 기간과 만료 알림", () => {
+    const q = FAQ.find((f) => f.q === "크레딧은 언제까지 쓸 수 있나요?");
+    assert.ok(q?.a.includes("산 날부터 1년") && q.a.includes("30일 전부터"), q?.a);
+  });
+  it("약관 초안(게시한 제1판)과 같은 기간", () => {
+    const terms = readFileSync(new URL("./legal-drafts.ts", import.meta.url), "utf8");
+    assert.ok(terms.includes("산 날부터 1년입니다"));
   });
 });
 

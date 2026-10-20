@@ -22,6 +22,7 @@ import { CheckIcon } from "@/components/family/icons";
 import { Sheet } from "@/components/family/Sheet";
 import { BigButton, BottomBar, TopBar } from "@/components/family/ui";
 import { loadSession } from "@/lib/auth";
+import { useAppShell } from "@/lib/app-shell-client";
 import {
   CONSENTS,
   PAY_DEMO,
@@ -119,6 +120,8 @@ export function CheckoutDemo({
   const viewButtons = useRef<(HTMLButtonElement | null)[]>([]);
   // ← 는 뒤로(요금제·내 결제·구독 등 온 곳으로). push 로 /plans 를 쌓으면 /plans 의 ← 가 여기로 되돌아와 맴돈다.
   const goBack = useGoBack("/plans");
+  // 안드로이드 앱 안에서는 웹 결제(시연·KG)를 열지 않는다 — 구글 플레이 정책(lib/app-shell)
+  const inApp = useAppShell() === "android";
 
   useEffect(() => {
     if (PAY_DEMO === "off") return;
@@ -159,6 +162,20 @@ export function CheckoutDemo({
     return () => list.forEach(clearTimeout);
   }, []);
 
+  if (inApp) {
+    return (
+      <PayShell>
+        <NoticeCard
+          title="앱에서는 곧 바로 결제할 수 있어요"
+          body="지금은 요금제를 둘러볼 수 있어요. 결제가 열리면 이 앱에서 바로 살 수 있어요."
+        >
+          <BigLink href="/plans" colors={colors} replace>
+            요금제 보기
+          </BigLink>
+        </NoticeCard>
+      </PayShell>
+    );
+  }
   if (view.kind === "loading") {
     return (
       <PayShell>
