@@ -36,3 +36,17 @@ export function assetLinksFor(packageName: string | undefined | null, fingerprin
     },
   ];
 }
+
+/**
+ * 시험판(2026-10-20 — 사장님 폰에 깔아 보는 APK, 이 PC 에서 Bubblewrap 으로 만든 시험 서명 키) 연결 값.
+ * 지문은 비밀이 아니다(assetlinks.json 에 그대로 공개되는 값). Vercel 환경변수가 비어 있을 때만 쓴다 —
+ * 플레이 출시 때는 환경변수(플레이 앱 서명 키 + 올리기 키)를 넣으면 그 값이 이것을 대신한다.
+ */
+export const TEST_APP_PACKAGE = "kr.yogico.voicestory";
+export const TEST_APP_FINGERPRINT = "DE:96:47:BC:7F:34:90:B8:FD:83:FC:7D:27:6C:50:7B:B2:A6:CC:FD:53:E6:E8:DD:35:02:16:4B:33:F0:29:18";
+
+/** 사이트가 내보내는 assetlinks — 환경변수 값이 맞으면 그것, 없거나 틀리면 시험판 값 */
+export function siteAssetLinks(packageName: string | undefined | null, fingerprintsRaw: string | undefined | null): AssetLink[] {
+  const fromEnv = assetLinksFor(packageName, fingerprintsRaw);
+  return fromEnv.length > 0 ? fromEnv : assetLinksFor(TEST_APP_PACKAGE, TEST_APP_FINGERPRINT);
+}
