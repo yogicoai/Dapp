@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { GoogleTtsError, synthesizeGoogle } from "@/lib/google-tts";
-import { getSupabase } from "@/lib/supabase";
-import { uidOf } from "@/lib/api-auth";
-import { ANON_TTS_CHARS_PER_HOUR, MEMBER_TTS_CHARS_PER_HOUR, clientIpOf, takeChars, type CharBook } from "@/lib/tts-guard";
+import { callerOf } from "@/lib/api-auth";
+import { MEMBER_TTS_CHARS_PER_HOUR, takeChars, type CharBook } from "@/lib/tts-guard";
 
 /** 시간당 글자 수 셈(lib/tts-guard, 2026-10-20 보안 점검) — 한 사람이 몰아 불러 이번 달 무료 한도를 다 쓰지 못하게 */
 const usage: CharBook = new Map();
@@ -37,33 +36,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "voiceId가 필요합니다." }, { status: 400 });
   }
 
-  const uid = await uidOf(request);
-  const allowed = uid
-    ? takeChars(usage, `u:${uid}`, text.length, MEMBER_TTS_CHARS_PER_HOUR, Date.now())
-    : takeChars(usage, `ip:${clientIpOf(request.headers)}`, text.length, ANON_TTS_CHARS_PER_HOUR, Date.now());
-  if (!allowed) {
+  // 구글 성우는 '내가 만든 동화'(회원)만 쓴다 — 로그인한 회원만, 그 회원의 토큰으로 사용량 함수를 부른다
+  // (2026-10-20 보안 점검: 사용량 함수 tts_reserve 를 비회원이 직접 불러 이번 달 칸을 채울 수 있었다 — supabase-security-1020.sql).
+  const caller = await callerOf(request);
+  if (!caller) {
+    return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  }
+  if (!takeChars(usage, `u:${caller.uid}`, text.length, MEMBER_TTS_CHARS_PER_HOUR, Date.now())) {
     return NextResponse.json({ error: "성우 목소리가 잠시 쉬고 있어요. 조금 뒤에 다시 들어 주세요." }, { status: 429 });
   }
 
   // 과금 자동 차단 — 이번 달 사용량에 이번 글자수를 더해도 안전선을 안 넘을 때만 합성한다.
   // 넘으면 합성을 막고 429를 준다 → 앱이 무료 브라우저 음성으로 자동 폴백(크레딧 0).
   // 가드가 아직 설정 안 됐거나(함수 없음) 오류면 통과한다 — 무료 100만 자가 1차 안전선이다.
-  const sb = getSupabase();
-  if (sb) {
-    try {
-      const { data, error } = await sb.rpc("tts_reserve", {
-        p_add: text.length,
-        p_limit: MONTHLY_SAFE_LIMIT,
-      });
-      if (!error && data != null && Number(data) < 0) {
-        return NextResponse.json(
-          { error: "이번 달 무료 성우 한도에 가까워 안전하게 잠갔어요. 다음 달에 다시 열려요." },
-          { status: 429 },
-        );
-      }
-    } catch {
-      /* 가드 호출 실패는 무시하고 통과 — 무료 한도가 1차 안전선 */
+  try {
+    const { data, error } = await caller.db.rpc("tts_reserve", {
+      p_add: text.length,
+      p_limit: MONTHLY_SAFE_LIMIT,
+    });
+    if (!error && data != null && Number(data) < 0) {
+      return NextResponse.json(
+        { error: "이번 달 무료 성우 한도에 가까워 안전하게 잠갔어요. 다음 달에 다시 열려요." },
+        { status: 429 },
+      );
     }
+  } catch {
+    /* 가드 호출 실패는 무시하고 통과 — 무료 한도가 1차 안전선 */
   }
 
   try {
