@@ -46,7 +46,7 @@ import { loadPrivatePageVideos } from "@/lib/private-media";
 import { fitScale } from "@/lib/fit-text";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
-import { enterStoryMode, exitStoryMode } from "@/lib/story-mode";
+import { enterStoryMode, exitStoryMode, exitStoryModeOnLeave, keepStoryModeForNextBook } from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
 import { locationKeyOf, neighbourPlaceClauses, repairStaleVehicleScene, sheetMatchesKey } from "@/lib/story-quality";
@@ -874,6 +874,7 @@ export function BookViewer({
     if (!goingNext || !nextBook) return;
     const t = window.setTimeout(() => {
       markAutoplayNext(nextBook.id);
+      keepStoryModeForNextBook();
       if (onClose && onOpenBook) onOpenBook(nextBook.id);
       else router.push(`/book/${nextBook.id}`);
     }, AUTO_NEXT_DELAY_MS);
@@ -1758,7 +1759,8 @@ export function BookViewer({
       el.pause();
     }
   }, []);
-  useEffect(() => () => exitStoryMode(), []);
+  // 책 화면을 닫으면 전체화면을 푼다 — 다음 동화로 넘어갈 때만은 그대로 둔다(lib/story-mode keepStoryModeForNextBook).
+  useEffect(() => () => exitStoryModeOnLeave(), []);
 
   // 배경음 — 켜면 잔잔히 반복, 끄면 멈춘다. 낭독을 덮지 않게 볼륨을 아주 낮게.
   useEffect(() => {
@@ -1784,6 +1786,8 @@ export function BookViewer({
   const [storyMode, setStoryMode] = useState(false);
   useEffect(() => {
     const onChange = () => setStoryMode(Boolean(document.fullscreenElement));
+    // 앞 책에서 전체화면으로 보다가 넘어왔으면 이미 전체화면이다 — 처음부터 그 상태로 맞춘다.
+    onChange();
     document.addEventListener("fullscreenchange", onChange);
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
@@ -2847,7 +2851,10 @@ export function BookViewer({
               // 띄운 모드 — 주소로 가면 아래 화면이 사라지므로 띄운 쪽에 바꿔 달라고 한다.
               <button
                 type="button"
-                onClick={() => onOpenBook(nextBook.id)}
+                onClick={() => {
+                  keepStoryModeForNextBook();
+                  onOpenBook(nextBook.id);
+                }}
                 style={{ background: ui.colors.accent }}
                 className="flex max-w-[18rem] flex-col items-center gap-0.5 rounded-3xl px-7 py-3.5 text-white shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0"
               >
@@ -2860,6 +2867,7 @@ export function BookViewer({
             {nextBook && !onClose && (
               <Link
                 href={`/book/${nextBook.id}`}
+                onClick={keepStoryModeForNextBook}
                 style={{ background: ui.colors.accent }}
                 className="flex max-w-[18rem] flex-col items-center gap-0.5 rounded-3xl px-7 py-3.5 text-white shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0"
               >

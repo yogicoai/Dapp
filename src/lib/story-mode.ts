@@ -74,3 +74,25 @@ export function exitStoryMode(): void {
     /* 무시 */
   }
 }
+
+/*
+ * 다음 동화로 넘어갈 때는 전체화면을 풀지 않는다(2026-10-20 사장님 — 전체보기로 듣다가 '이어서 틀기'로 넘어가면 풀려서
+ * 세로로 돌아갔다). 책 화면은 닫힐 때 exitStoryModeOnLeave 로 전체화면을 푸는데, 넘어가기 직전에 keepStoryModeForNextBook 을
+ * 불러 두면 그 한 번은 풀지 않는다. 같은 문서 안 이동(App Router)이라 전체화면·가로 고정이 다음 책까지 그대로 간다.
+ * 잠깐(3초)만 지키는 표시라, 넘어가지 못하고 남아 있어도 나중에 서재로 나갈 때는 평소처럼 푼다.
+ */
+const KEEP_MS = 3000;
+let keepUntil = 0;
+
+export function keepStoryModeForNextBook(): void {
+  keepUntil = Date.now() + KEEP_MS;
+}
+
+/** 책 화면이 닫힐 때 — 방금 다음 동화로 넘어가는 중이면 전체화면을 그대로 두고, 아니면 푼다. */
+export function exitStoryModeOnLeave(): void {
+  if (Date.now() < keepUntil) {
+    keepUntil = 0;
+    return;
+  }
+  exitStoryMode();
+}
