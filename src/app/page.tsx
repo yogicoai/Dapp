@@ -220,12 +220,6 @@ export default function Home() {
   const [shelfCols, setShelfCols] = useState(5);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 클라 전용
   useEffect(() => setShelfCols(loadShelfCols()), []);
-  // 게스트는 "우리 가족 책장"이 로그인 안내라, 콘텐츠가 있는 서가를 먼저 보여준다.
-  // 탭 순서가 우리 가족 → 세계명작 → 전래동화 가 되면서(사장님 지시) 기본도 세계명작.
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- 게스트 판별 후 기본 탭 전환
-    if (guest) setShelf("classic");
-  }, [guest]);
   // 공개 동화 단계(관리실) — 비회원과 요금제가 없는 회원은 무료 책만, 요금제를 지정한 회원은 그 요금제까지, 관리자는 전부.
   // (2026-10-20 — 예전엔 요금제 없는 회원도 결제 전이라 다 열려 있었는데, 웹 오픈 뒤 구글로 막 가입한 회원에게 책이 전부 보였다.)
   // 관리실 스위치가 꺼져 있거나 못 읽으면 지금처럼 다 열림.
@@ -243,6 +237,13 @@ export default function Home() {
       alive = false;
     };
   }, [memberUid]);
+  // 게스트는 "우리 가족 책장"이 로그인 안내라, 콘텐츠가 있는 서가를 먼저 보여준다.
+  // 탭 순서가 우리 가족 → 세계명작 → 전래동화 가 되면서(사장님 지시) 기본도 세계명작.
+  // 요금제가 없는 회원도 같다 — 빈 '우리 가족 책장'의 '첫 동화를 만들어 보세요'가 막힌 만들기로 이어졌다(2026-10-20 점검).
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 게스트·요금제 판별 후 기본 탭 전환
+    if (guest || (planReady && !master && !myPlan)) setShelf("classic");
+  }, [guest, planReady, master, myPlan]);
   const viewer = viewerTierOf(!guest, myPlan, master);
   // null = 아직 못 읽음 — 읽기 전에 책장을 열면 잠긴 책이 잠깐 보였다 사라진다(아래 준비 화면이 붙잡는다).
   const [libraryAccess, setLibraryAccess] = useState<LibraryAccess | null>(null);

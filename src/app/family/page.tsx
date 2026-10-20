@@ -79,6 +79,9 @@ import { ReviewView } from "@/components/family/ReviewView";
 import { StudioSheet } from "@/components/family/StudioSheet";
 import { BigButton } from "@/components/family/ui";
 import { fetchProfile, loadSession } from "@/lib/auth";
+import { canCreateWith } from "@/lib/create-access";
+import { loadMyPlanKey } from "@/lib/member-plan-client";
+import { PlanLockSheet } from "@/components/family/PlanLockSheet";
 import {
   byRoleOrder,
   CALL_NAMES,
@@ -270,6 +273,11 @@ export default function FamilyPage() {
   /** 관리실이 더해 준 무료 생성 남은 횟수(관리자는 0 — 원래 값이 안 나간다) */
   const [freeDraws, setFreeDraws] = useState(0);
   const [master, setMaster] = useState(false);
+  /**
+   * 결제 요금제가 없어 그리기가 막힌 회원 — 확인 창(값) 대신 잠금 안내를 띄운다(components/family/PlanLockSheet, 2026-10-20).
+   * 서버(/api/family/portrait)가 같은 문(lib/create-access)으로 막는다. 보기·옷 바꾸기·예전 그림은 그대로 쓴다.
+   */
+  const [planLocked, setPlanLocked] = useState(false);
   /** 개발자 모드(fe) — 펜선 끄기(예전 수채화 비교) 스위치를 보인다. 서버도 끄기는 fe 만 받는다(lib/dev-mode). */
   const [dev, setDev] = useState(false);
   /** fe 비교용 — 펜선 또렷한 수채화로 그리기(모두의 기본. fe 만 끌 수 있고, 끈 값은 이 기기에 기억한다) */
@@ -419,6 +427,9 @@ export default function FamilyPage() {
       if (!s.isMaster) {
         void loadFreeDraws().then((n) => {
           if (alive) setFreeDraws(n);
+        });
+        void loadMyPlanKey(s.uid).then((key) => {
+          if (alive) setPlanLocked(!canCreateWith(false, key ? { plan: key, ends_at: null } : null, Date.now()));
         });
       }
       // fe 비교 스위치 — 개발자 모드일 때만 보이고 처음엔 켜져 있다(펜선이 모두의 기본). 끈 값은 이 기기에 기억한다
@@ -1573,7 +1584,10 @@ export default function FamilyPage() {
         {view}
       </main>
 
-      {overlay?.kind === "confirm" && (
+      {overlay?.kind === "confirm" && planLocked && (
+        <PlanLockSheet colors={colors} onClose={() => setOverlay(null)} onPlans={() => router.push("/plans")} />
+      )}
+      {overlay?.kind === "confirm" && !planLocked && (
         <ConfirmSheet
           colors={colors}
           members={confirmMembers}
