@@ -5,12 +5,11 @@ import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } fro
 import { displayName, familyExampleSrc } from "@/components/family/family-ui";
 import { FaceAvatar } from "@/components/family/Figures";
 import { FamilyGroupPhoto } from "@/components/family/FamilyGroupPhoto";
-import { CookieIcon, NextIcon } from "@/components/family/icons";
+import { NextIcon } from "@/components/family/icons";
 import { OutfitPicker } from "@/components/family/OutfitPicker";
 import { StudioSheet } from "@/components/family/StudioSheet";
 import { useTheme } from "@/components/ThemeProvider";
 import {
-  FAMILY_FIRST_COST,
   familyMembersOnly,
   familyTitle,
   fixedMembers,
@@ -22,6 +21,9 @@ import {
 } from "@/lib/family";
 import type { MemberOutfit, OutfitThemeId } from "@/lib/family-outfit";
 import type { FamilyStudio } from "@/lib/family-studio";
+import { loadFamilyOffer } from "@/lib/library-access";
+import { DEFAULT_FAMILY_OFFER, type FamilyOfferNote } from "@/lib/offer-settings";
+import { creditsText } from "@/lib/plans";
 import type { ChildPrefs, Gender } from "@/lib/prefs";
 
 /**
@@ -113,6 +115,18 @@ export function FamilyFrame({
 }: Props) {
   const { theme } = useTheme();
   const { accent, accentDark, accentSoft } = theme.colors;
+  // 가족 그리기 안내 한 줄 값(가족 패스에 든 캐릭터 수 · 더 그릴 때 크레딧) — 못 읽으면 기본값 그대로.
+  const [familyOffer, setFamilyOffer] = useState<FamilyOfferNote>(DEFAULT_FAMILY_OFFER);
+  useEffect(() => {
+    if (guest) return;
+    let alive = true;
+    void loadFamilyOffer().then((o) => {
+      if (alive) setFamilyOffer(o);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [guest]);
   // 누른 즉시 바뀌게 화면 상태를 따로 둔다(저장은 800ms 뒤에 올라간다). null 이면 저장값을 따른다.
   const [foldedNow, setFoldedNow] = useState<boolean | null>(null);
   const wide = useSyncExternalStore(
@@ -358,9 +372,15 @@ export function FamilyFrame({
               >
                 우리 가족 그리기
               </Link>
-              <p className="mt-4 flex items-center gap-[5px] text-xs font-bold text-neutral-600">
-                {/* 사진으로도 그릴 수 있지만 저장하지 않는다(사장님 2026-09-29 — lib/family-photo.ts) */}
-                <CookieIcon size={15} />한 사람 쿠키 {FAMILY_FIRST_COST}개 · 사진은 저장하지 않아요
+              {/*
+                * 값은 요금제 화면과 같은 단위(크레딧)로 — 2026-10-20 사장님 "크레딧으로 맞춰야 해"(예전 '한 사람 쿠키 2개').
+                * 가족 패스에 든 캐릭터 수 · 넘어서 더 그릴 때 한 명 크레딧은 관리실 요금제·가격 값(공개 경로)에서 읽는다.
+                * 사진으로도 그릴 수 있지만 저장하지 않는다(사장님 2026-09-29 — lib/family-photo.ts).
+                */}
+              <p className="mt-4 break-keep text-center text-xs font-bold leading-relaxed text-neutral-600">
+                가족 패스에 캐릭터 {familyOffer.characters}명 포함 · 더 그리면 1명 {creditsText(familyOffer.characterCredits)}
+                <br />
+                사진은 저장하지 않아요
               </p>
             </div>
           </div>

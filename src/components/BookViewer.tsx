@@ -41,7 +41,7 @@ import { loadMyPlanKey } from "@/lib/member-plan-client";
 import { libraryLock, OPEN_LIBRARY } from "@/lib/offer-settings";
 import { placeVisits } from "@/lib/page-camera";
 import { shrunkPages, withBookScale } from "@/lib/scale-lock";
-import { authedFetch, currentUid } from "@/lib/supabase";
+import { authedFetch } from "@/lib/supabase";
 import { loadPrivatePageVideos } from "@/lib/private-media";
 import { fitScale } from "@/lib/fit-text";
 import classicBooksJson from "@/data/classic-books.json";
@@ -823,12 +823,12 @@ export function BookViewer({
     let alive = true;
     (async () => {
       // 안 보이는 책은 건너뛴다 — 관리실 '공개 동화'에서 '책장에 적용'을 켜면 다음 동화도 그 회원에게 보이는 책만.
-      // 비회원은 무료 책만, 요금제를 지정받은 회원은 그 요금제까지. 지정이 없는 회원은 결제 전이라 다 열려 있어 읽지 않는다
-      // (로그인 확인은 기기에 있는 세션만 본다).
+      // 비회원·요금제 없는 회원은 무료 책만, 요금제를 지정받은 회원은 그 요금제까지, 관리자는 전부(홈 책장과 같은 규칙).
       const library = book.id.startsWith("folk-") || book.id.startsWith("classic-");
-      const uid = library ? await currentUid().catch(() => null) : null;
-      const plan = uid ? await loadMyPlanKey(uid) : null;
-      const viewer = library ? viewerTierOf(!!uid, plan) : "pass";
+      const s = library ? await loadSession().catch(() => null) : null;
+      const uid = s?.uid ?? null;
+      const plan = uid && !s?.isMaster ? await loadMyPlanKey(uid) : null;
+      const viewer = library ? viewerTierOf(!!uid, plan, !!s?.isMaster) : "pass";
       const access = viewer === "pass" ? OPEN_LIBRARY : await loadLibraryAccess();
       if (!alive) return;
       const pickNext = (list: { id: string; title: string; hidden?: boolean }[]) => {

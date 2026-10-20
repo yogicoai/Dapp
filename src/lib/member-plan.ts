@@ -2,7 +2,8 @@
  * 회원 요금제 — 관리실 '회원'에서 회원마다 정한다(2026-10-02 사장님 "회원들도 그쪽에서 관리할 수 있게").
  *
  * 결제를 붙이기 전(베타)이라 요금제는 관리자가 지정한다 — DB member_plans(회원 한 명에 한 줄, supabase-offer-settings.sql).
- * 지정이 없는 회원은 베타라 모두 열려 있다(지금처럼). 결제를 붙이면 결제한 구독·스타트팩도 같은 자리에 적는다.
+ * 지정이 없는 회원은 무료 회원과 같다(2026-10-20 사장님 — 웹 오픈 뒤 구글로 막 가입한 회원에게 책이 전부 열렸다). 관리자는 전부 본다.
+ * 결제를 붙이면 결제한 구독·스타트팩도 같은 자리에 적는다.
  * 한도(매달 권수 · 가족 캐릭터 · 가족 목소리 · 가족 그리기 토큰)는 관리실 요금제 값(PlanTerms)에서 온다 — 회원마다 따로 두지 않는다.
  *
  * 순수 파일 — node --test 가 그대로 읽는다.
@@ -18,7 +19,7 @@ export const MEMBER_PLAN_LABEL: Readonly<Record<MemberPlanKey, string>> = {
   monthly: "가족 패스 (월간)",
   yearly: "가족 패스 (연간)",
 };
-/** 지정이 없을 때 — 결제를 붙이기 전이라 모두 열려 있다 */
+/** 지정이 없을 때 — 무료 회원과 같다(무료 동화만) */
 export const NO_PLAN_LABEL = "지정 없음";
 
 export function isMemberPlanKey(v: unknown): v is MemberPlanKey {
@@ -45,13 +46,14 @@ export function activePlanKey(p: { plan: MemberPlanKey; endsAt: string | null } 
   return p.plan;
 }
 
-/** 요금제 → 책장 단계. 지정 없음(null)은 베타라 모두 열림(가족 패스와 같다). */
+/** 요금제 → 책장 단계. 지정 없음(null)·끝난 요금제는 무료(2026-10-20 — 예전엔 베타라 모두 열림이었다). */
 export function tierOfPlan(k: MemberPlanKey | null): LibraryTier {
-  return k === "free" ? "free" : k === "starter" ? "starter" : "pass";
+  return k === "monthly" || k === "yearly" ? "pass" : k === "starter" ? "starter" : "free";
 }
 
-/** 보는 사람의 단계 — 비회원은 무료, 회원은 지정한 요금제(지정이 없으면 베타라 모두 열림) */
-export function viewerTierOf(member: boolean, plan: MemberPlanKey | null): LibraryTier {
+/** 보는 사람의 단계 — 관리자는 전부, 회원은 지정한 요금제(없으면 무료), 비회원은 무료 */
+export function viewerTierOf(member: boolean, plan: MemberPlanKey | null, master = false): LibraryTier {
+  if (master) return "pass";
   return member ? tierOfPlan(plan) : "free";
 }
 

@@ -28,18 +28,21 @@ const NOW = Date.parse("2026-10-02T05:00:00Z"); // 한국 14:00
 const ID = "0b8f1c2e-1111-4222-8333-444455556666";
 
 describe("요금제 → 책장 단계", () => {
-  it("지정 없음은 결제 전이라 모두 열림, 무료·스타트팩·가족 패스", () => {
-    assert.equal(tierOfPlan(null), "pass");
+  it("지정 없음은 무료 회원과 같다(10-20 — 예전엔 모두 열림), 무료·스타트팩·가족 패스", () => {
+    assert.equal(tierOfPlan(null), "free");
     assert.equal(tierOfPlan("free"), "free");
     assert.equal(tierOfPlan("starter"), "starter");
     assert.equal(tierOfPlan("monthly"), "pass");
     assert.equal(tierOfPlan("yearly"), "pass");
   });
-  it("비회원은 늘 무료, 회원은 지정한 요금제", () => {
+  it("비회원은 늘 무료, 회원은 지정한 요금제, 요금제 없는 회원은 무료, 관리자는 전부", () => {
     assert.equal(viewerTierOf(false, null), "free");
     assert.equal(viewerTierOf(false, "yearly"), "free");
-    assert.equal(viewerTierOf(true, null), "pass");
+    assert.equal(viewerTierOf(true, null), "free");
     assert.equal(viewerTierOf(true, "starter"), "starter");
+    assert.equal(viewerTierOf(true, "monthly"), "pass");
+    assert.equal(viewerTierOf(true, null, true), "pass");
+    assert.equal(viewerTierOf(true, "free", true), "pass");
   });
   it("끝나는 때가 지나면 지정 없음과 같다", () => {
     assert.equal(activePlanKey({ plan: "monthly", endsAt: null }, NOW), "monthly");

@@ -226,22 +226,26 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 게스트 판별 후 기본 탭 전환
     if (guest) setShelf("classic");
   }, [guest]);
-  // 공개 동화 단계(관리실) — 비회원은 무료 책만, 관리자가 요금제를 지정한 회원은 그 요금제까지 열린다.
-  // 요금제 지정이 없는 회원은 결제를 붙이기 전이라 다 열려 있어서 단계를 읽지 않는다.
+  // 공개 동화 단계(관리실) — 비회원과 요금제가 없는 회원은 무료 책만, 요금제를 지정한 회원은 그 요금제까지, 관리자는 전부.
+  // (2026-10-20 — 예전엔 요금제 없는 회원도 결제 전이라 다 열려 있었는데, 웹 오픈 뒤 구글로 막 가입한 회원에게 책이 전부 보였다.)
   // 관리실 스위치가 꺼져 있거나 못 읽으면 지금처럼 다 열림.
   const [myPlan, setMyPlan] = useState<MemberPlanKey | null>(null);
+  const [planReady, setPlanReady] = useState(false);
   useEffect(() => {
     if (!memberUid) return;
     let alive = true;
     void loadMyPlanKey(memberUid).then((p) => {
-      if (alive) setMyPlan(p);
+      if (!alive) return;
+      setMyPlan(p);
+      setPlanReady(true);
     });
     return () => {
       alive = false;
     };
   }, [memberUid]);
-  const viewer = viewerTierOf(!guest, myPlan);
-  const [libraryAccess, setLibraryAccess] = useState<LibraryAccess>(OPEN_LIBRARY);
+  const viewer = viewerTierOf(!guest, myPlan, master);
+  // null = 아직 못 읽음 — 읽기 전에 책장을 열면 잠긴 책이 잠깐 보였다 사라진다(아래 준비 화면이 붙잡는다).
+  const [libraryAccess, setLibraryAccess] = useState<LibraryAccess | null>(null);
   useEffect(() => {
     if (viewer === "pass") return;
     let alive = true;
@@ -252,10 +256,18 @@ export default function Home() {
       alive = false;
     };
   }, [viewer]);
+  // 누가 보는지(요금제)와 자물쇠 값을 다 알았나 — 관리자·비회원은 요금제를 읽지 않는다. 두 값 모두 못 읽어도 기본값으로 끝난다.
+  const shelfGateReady = (guest || master || planReady) && (viewer === "pass" || libraryAccess !== null);
+  // 망이 느려 위 값이 한참 안 오면 준비 화면에 갇히지 않게 5초 뒤에는 연다(자물쇠를 못 읽었을 때처럼 다 열림).
+  const [gateWaitOver, setGateWaitOver] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setGateWaitOver(true), 5000);
+    return () => clearTimeout(t);
+  }, []);
   // hidden 책은 서가에서만 내린다 (주소로는 열림) — 다듬는 중인 책 보관용.
   // 회원 종류마다 고른 동화만 보인다(관리실 '공개 동화'에서 '책장에 적용'을 켰을 때 — 사장님 2026-10-02 "비회원일 때는
   // 5권씩만 보여주기"). 나머지는 서가에서 감추고, 책장 아래 한 줄로 더 있다는 것만 알린다. 내가 만든 책은 감추지 않는다.
-  const canSee = (b: { id: string }) => !libraryLock(libraryAccess, b.id, viewer);
+  const canSee = (b: { id: string }) => !libraryLock(libraryAccess ?? OPEN_LIBRARY, b.id, viewer);
   const folkAll = asBooks(folkBooksJson).filter((b) => !b.hidden);
   const classicsAll = asBooks(classicBooksJson).filter((b) => !b.hidden);
   const folk = folkAll.filter(canSee);
@@ -264,10 +276,10 @@ export default function Home() {
   const moreBooks =
     shelf === "folk" ? folkAll.length - folk.length : shelf === "classic" ? classicsAll.length - classics.length : 0;
 
-  // 준비 화면 — 로그인 확인과 책장 데이터가 '둘 다' 끝날 때까지 붙잡아 둔다.
-  // 중간에 화면을 열면 빈 책장이 잠깐 보였다가 책이 채워져 어수선하다(사장님 지적).
-  // 캐시가 있으면 이 조건이 즉시 풀려 새로고침해도 곧바로 책장이 뜬다.
-  if (authed === null || !booksLoaded) {
+  // 준비 화면 — 로그인 확인과 책장 데이터(내 책 · 요금제 · 공개 동화 자물쇠)가 다 끝날 때까지 붙잡아 둔다.
+  // 중간에 화면을 열면 빈 책장이 잠깐 보였다가 책이 채워지거나, 잠긴 책이 보였다 사라져 어수선하다(사장님 지적).
+  // 캐시가 있으면 내 책 조건은 즉시 풀린다.
+  if (authed === null || !booksLoaded || (!shelfGateReady && !gateWaitOver)) {
     return (
       <div className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}

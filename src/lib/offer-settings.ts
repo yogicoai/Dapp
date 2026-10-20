@@ -318,7 +318,32 @@ export function asLibraryAccess(json: unknown): LibraryAccess {
   return { gateOn: r.gateOn === true, tiers };
 }
 
-/* 보는 사람의 단계는 lib/member-plan 의 viewerTierOf — 비회원은 무료, 회원은 관리자가 지정한 요금제(없으면 모두 열림). */
+/**
+ * 홈 가족 액자 안내 한 줄(FamilyFrame)에 쓰는 값 — 가족 패스(월간)에 든 캐릭터 수 · 넘어서 더 그릴 때 한 명 크레딧.
+ * 고객에게 보이는 단위는 크레딧이다(2026-10-20 사장님 "크레딧으로 맞춰야 해" — 예전 '한 사람 쿠키 2개'를 바꿈).
+ */
+export type FamilyOfferNote = { characters: number; characterCredits: number };
+
+export const DEFAULT_FAMILY_OFFER: FamilyOfferNote = {
+  characters: DEFAULT_PLAN_TERMS.monthly.familyCharacters,
+  characterCredits: DEFAULT_CREDIT_COSTS.character,
+};
+
+export function familyOfferOf(s: OfferSettings): FamilyOfferNote {
+  return { characters: s.plans.monthly.familyCharacters, characterCredits: s.creditCosts.character };
+}
+
+/** 공개 경로의 답 → 값. 칸이 없거나 틀리면 기본값으로 */
+export function asFamilyOffer(json: unknown): FamilyOfferNote {
+  const f = asObject(asObject(json)?.family) ?? {};
+  const count = (v: unknown, fallback: number) => (typeof v === "number" && Number.isInteger(v) && v >= 0 ? v : fallback);
+  return {
+    characters: count(f.characters, DEFAULT_FAMILY_OFFER.characters),
+    characterCredits: count(f.characterCredits, DEFAULT_FAMILY_OFFER.characterCredits),
+  };
+}
+
+/* 보는 사람의 단계는 lib/member-plan 의 viewerTierOf — 비회원·요금제 없는 회원은 무료, 회원은 지정한 요금제, 관리자는 전부. */
 
 /** 이 책을 열려면 필요한 단계 — 열려 있으면 null. 관리실 스위치가 꺼져 있으면 늘 null. 내가 만든 책은 잠그지 않는다. */
 export function libraryLock(access: LibraryAccess, bookId: string, viewer: LibraryTier): LibraryTier | null {

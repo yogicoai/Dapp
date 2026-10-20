@@ -2,7 +2,7 @@
 
 /**
  * 회원 요금제 카드 — 회원 화면 요약 아래(2026-10-02 사장님 "회원들도 그쪽에서 관리할 수 있게").
- *  · 지금 요금제(지정 없음이면 '결제를 붙이기 전이라 모두 열림') · 끝나는 날 · 사유 · 지정한 사람
+ *  · 지금 요금제(지정 없음이면 '무료 회원과 같아요' — 2026-10-20 부터) · 끝나는 날 · 사유 · 지정한 사람
  *  · 그 요금제의 몫(관리실 요금제 값) 옆에 지금 쓴 양 — 이번 달 동화 · 가족 캐릭터 · 가족 목소리. 넘으면 붉게 알린다.
  *  · [요금제 바꾸기] → 창에서 요금제 · 끝나는 날 · 사유(필수). 관리자 모두 — 토큰 충전과 같은 규칙(DB 가 다시 막는다).
  *  · 바꾼 이력(최근 30줄)은 접어 둔다.
@@ -89,7 +89,7 @@ export function MemberPlanCard({ memberId, username }: { memberId: string; usern
                     ? `${kstDateText(d.plan.endsAt)}에 끝났어요 — 지금은 지정 없음과 같아요`
                     : `${kstDateText(d.plan.endsAt)}까지`
                   : "끝나는 날 없음 (풀 때까지)"
-                : "결제를 붙이기 전이라 모두 열려 있어요"}
+                : "무료 회원과 같아요 · 무료 동화만 보이고 만들기는 막혀요"}
             </span>
           </div>
           {d.plan?.note ? (
@@ -244,7 +244,7 @@ function PlanDialog({
   const [error, setError] = useState<string | null>(null);
 
   const options: { key: Choice; label: string; desc: string }[] = [
-    { key: "none", label: NO_PLAN_LABEL, desc: "결제를 붙이기 전이라 모두 열려 있어요(지금 회원들과 같아요)" },
+    { key: "none", label: NO_PLAN_LABEL, desc: "무료 회원과 같아요 · 무료 동화만 보이고 만들기는 막혀요" },
     ...MEMBER_PLAN_KEYS.map((k) => ({ key: k as Choice, label: MEMBER_PLAN_LABEL[k], desc: planSummary(k, terms) })),
   ];
   const endNeeded = choice !== "none" && hasEnd;

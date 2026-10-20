@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import {
+  asFamilyOffer,
   asLibraryAccess,
+  DEFAULT_FAMILY_OFFER,
+  familyOfferOf,
   CREDIT_COST_MAX,
   CREDIT_PACKS_MAX,
   defaultLibraryTiers,
@@ -253,9 +256,11 @@ describe("책장 자물쇠", () => {
     assert.equal(libraryLock(on, "classic-b12", viewer), "pass");
   });
 
-  it("요금제 지정이 없는 회원은 결제를 붙이기 전(베타)까지 다 열린다 · 내가 만든 책은 잠그지 않는다 · 모르는 책은 가족 패스", () => {
-    assert.equal(viewerTierOf(true, null), "pass");
-    assert.equal(libraryLock(on, "classic-b12", viewerTierOf(true, null)), null);
+  it("요금제 지정이 없는 회원은 무료 회원과 같다(10-20) · 관리자는 전부 · 내가 만든 책은 잠그지 않는다 · 모르는 책은 가족 패스", () => {
+    assert.equal(viewerTierOf(true, null), "free");
+    assert.equal(libraryLock(on, "classic-b1", viewerTierOf(true, null)), null);
+    assert.equal(libraryLock(on, "classic-b12", viewerTierOf(true, null)), "pass");
+    assert.equal(libraryLock(on, "classic-b12", viewerTierOf(true, null, true)), null);
     assert.equal(libraryLock(on, "my-123", "free"), null);
     assert.equal(libraryLock(on, "classic-new", "free"), "pass");
     assert.equal(libraryLock(on, "classic-new", "starter"), "pass");
@@ -266,6 +271,14 @@ describe("책장 자물쇠", () => {
     assert.deepEqual(a, { gateOn: true, tiers: { "classic-b1": "free" } });
     assert.deepEqual(asLibraryAccess(null), OPEN_LIBRARY);
     assert.deepEqual(asLibraryAccess({ gateOn: "true" }), OPEN_LIBRARY);
+  });
+
+  it("가족 액자 안내 값 — 관리실 값(가족 패스 캐릭터 수 · 캐릭터 크레딧), 틀리면 기본값", () => {
+    const s = offerSettingsFromRow({ credit_costs: { book: 50, character: 30, voice: 15, draw: 5 } }, CAT);
+    assert.deepEqual(familyOfferOf(s), { characters: s.plans.monthly.familyCharacters, characterCredits: 30 });
+    assert.deepEqual(asFamilyOffer({ family: { characters: 4, characterCredits: 20 } }), { characters: 4, characterCredits: 20 });
+    assert.deepEqual(asFamilyOffer({ family: { characters: "4", characterCredits: -1 } }), DEFAULT_FAMILY_OFFER);
+    assert.deepEqual(asFamilyOffer(null), DEFAULT_FAMILY_OFFER);
   });
 });
 
