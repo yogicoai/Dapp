@@ -1631,12 +1631,6 @@ export default function SettingsPage() {
               회원 탈퇴
             </button>
           )}
-          {withdrawOpen && (
-            <WithdrawSheet
-              onClose={() => setWithdrawOpen(false)}
-              onDone={() => router.replace("/login?bye=1")}
-            />
-          )}
           </>)}
 
           {/* 모두 자동 저장이라 이 버튼은 "닫기"일 뿐이지만, 마무리 버튼이 있어야 안심한다. */}
@@ -1650,6 +1644,17 @@ export default function SettingsPage() {
           </button>
         </div>
       </main>
+      {/*
+        * 탈퇴 시트는 설정 카드 밖에 둔다(2026-10-20 점검) — 카드에 backdrop-blur 가 있어 그 안의 fixed 시트가 화면이 아니라
+        * 스크롤되는 카드에 붙었다. 아래로 내려 '회원 탈퇴'를 누르면 시트가 카드 위쪽에 숨어 안 보일 수 있었다
+        * (구글 플레이가 요구하는 앱 안 계정 삭제 경로).
+        */}
+      {withdrawOpen && (
+        <WithdrawSheet
+          onClose={() => setWithdrawOpen(false)}
+          onDone={() => router.replace("/login?bye=1")}
+        />
+      )}
     </div>
   );
 }

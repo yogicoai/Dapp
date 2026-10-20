@@ -372,7 +372,8 @@ export function creditsText(n: number): string {
 }
 
 /** 진짜 결제가 열리기 전까지 /plans 머리에 보이는 한 줄. 열리면 null. */
-export const PLANS_PREVIEW_NOTE: string | null = "곧 열리는 요금제예요. 지금은 베타라 결제 없이 쓰고 있어요.";
+// 2026-10-20 — 예전 "지금은 베타라 결제 없이 쓰고 있어요"는 요금제 없이는 만들기가 막힌 지금과 맞지 않았다(보안·흐름 점검).
+export const PLANS_PREVIEW_NOTE: string | null = "곧 열리는 요금제예요. 결제가 열리면 동화 만들기·가족 캐릭터를 바로 쓸 수 있어요.";
 
 /* ─────────────────────────── 글자 도우미 ─────────────────────────── */
 

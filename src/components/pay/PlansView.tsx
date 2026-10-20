@@ -170,7 +170,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW, siteInfo }: { offer?: Of
           </div>
           <p id="pass-soon" className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
             {!demoPay ? (
-              inApp ? "곧 앱에서 바로 결제할 수 있어요." : "지금은 베타라 결제 없이 쓰고 있어요."
+              inApp ? "곧 앱에서 바로 결제할 수 있어요." : "결제는 곧 열려요. 열리면 여기서 바로 시작할 수 있어요."
             ) : (
               <>
                 {/* 시연 스위치가 켜져 있는 동안은 누구나 이 단추로 시연 결제를 지난다 — 누르기 전에 알린다. */}

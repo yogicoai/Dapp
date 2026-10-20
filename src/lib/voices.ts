@@ -642,7 +642,8 @@ export async function fetchTypecastAudio(
   const key = { voiceId: tc.voiceId, emotion, intensity: safeIntensity, tempo, textHash: hashText(text) };
   const cacheId = liveReadCacheId(key);
   return fetchCachedVoiceAudio(cacheId, async () => {
-    const r = await fetch("/api/tts", {
+    // 로그인했으면 토큰을 함께 — 서버가 시간당 글자 수를 IP 대신 회원마다 넉넉히 센다(lib/tts-guard).
+    const r = await authedFetch("/api/tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -671,7 +672,7 @@ export async function fetchTypecastAudio(
 export async function fetchGoogleAudio(voiceId: string, text: string): Promise<Blob> {
   const cacheId = `gtts:${voiceId}:${hashText(text)}`;
   return fetchCachedVoiceAudio(cacheId, async () => {
-    const r = await fetch("/api/tts/google", {
+    const r = await authedFetch("/api/tts/google", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: spokenText(text), voiceId }),

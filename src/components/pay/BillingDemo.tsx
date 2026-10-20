@@ -105,7 +105,7 @@ export function BillingDemo({ terms = DEFAULT_PLAN_TERMS }: { terms?: PlanTerms 
         <Card className="flex flex-col items-center text-center">
           <h1 className="break-keep text-[21px] font-extrabold text-neutral-800">아직 쓰는 요금제가 없어요</h1>
           <p className="mt-1.5 break-keep text-[13px] font-medium text-neutral-500">
-            결제는 곧 열려요. 지금은 베타라 결제 없이 쓰고 있어요.
+            결제는 곧 열려요. 열리면 여기에서 결제·구독을 볼 수 있어요.
           </p>
           <div className="mt-5 w-full">
             <BigLink href="/plans" colors={colors}>

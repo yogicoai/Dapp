@@ -22,7 +22,8 @@ export const TOKEN_PRICE_KRW = 100;
  *
  * 이 값을 바꾸면 supabase-setup.sql의 가입 트리거 숫자도 함께 바꿔야 한다.
  */
-export const SIGNUP_BONUS_TOKENS = 200;
+// 2026-10-19 결정 "가입 토큰 0"(결제 전 생성 막기) — 기본값도 0. 예전 200이 로그인 화면 첫 그림에 "무료 토큰 200개"로 잠깐 떴다(10-20 점검).
+export const SIGNUP_BONUS_TOKENS = 0;
 
 /**
  * 장면(쪽)당 토큰 단가 — 비용은 "몇 장짜리냐"에 따라 달라진다.

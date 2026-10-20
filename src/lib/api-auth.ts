@@ -67,6 +67,19 @@ export async function callerOf(request: Request): Promise<Caller | null> {
   };
 }
 
+/**
+ * 토큰이 맞으면 회원 id 만 — 프로필은 읽지 않는다(callerOf 보다 한 번 덜 묻는다).
+ * 사용량 셈처럼 '누구인가'만 알면 될 때 쓴다. 토큰이 없거나 상했으면 null.
+ */
+export async function uidOf(request: Request): Promise<string | null> {
+  if (!url || !anon) return null;
+  const token = bearerOf(request);
+  if (!token) return null;
+  const db = createClient(url, anon, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { data, error } = await db.auth.getUser(token);
+  return error ? null : (data?.user?.id ?? null);
+}
+
 /** 복제된 개인 목소리인가 — Typecast 는 uc_ 로 시작하는 아이디를 준다. */
 export function isClonedVoice(voiceId: string): boolean {
   return /^uc_/i.test(voiceId.trim());

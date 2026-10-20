@@ -338,7 +338,7 @@ export function SoonCard({ colors, title = "결제는 곧 열려요" }: { colors
   return (
     <NoticeCard
       title={title}
-      body="지금은 베타라 결제 없이 쓰고 있어요. 가족 패스가 열리면 여기서 바로 시작할 수 있어요."
+      body="가족 패스가 열리면 여기서 바로 시작할 수 있어요. 그동안 무료 동화를 들어 보세요."
     >
       <BigLink href="/plans" colors={colors} replace>
         요금제 다시 보기

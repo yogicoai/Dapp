@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { GoogleTtsError, synthesizeGoogle } from "@/lib/google-tts";
 import { getSupabase } from "@/lib/supabase";
+import { uidOf } from "@/lib/api-auth";
+import { ANON_TTS_CHARS_PER_HOUR, MEMBER_TTS_CHARS_PER_HOUR, clientIpOf, takeChars, type CharBook } from "@/lib/tts-guard";
+
+/** 시간당 글자 수 셈(lib/tts-guard, 2026-10-20 보안 점검) — 한 사람이 몰아 불러 이번 달 무료 한도를 다 쓰지 못하게 */
+const usage: CharBook = new Map();
 
 /**
  * 이번 달 무료 한도(100만 자) 아래 안전선. 여기에 닿으면 합성을 막고 무료 음성으로
@@ -30,6 +35,14 @@ export async function POST(request: Request) {
   }
   if (!voiceId) {
     return NextResponse.json({ error: "voiceId가 필요합니다." }, { status: 400 });
+  }
+
+  const uid = await uidOf(request);
+  const allowed = uid
+    ? takeChars(usage, `u:${uid}`, text.length, MEMBER_TTS_CHARS_PER_HOUR, Date.now())
+    : takeChars(usage, `ip:${clientIpOf(request.headers)}`, text.length, ANON_TTS_CHARS_PER_HOUR, Date.now());
+  if (!allowed) {
+    return NextResponse.json({ error: "성우 목소리가 잠시 쉬고 있어요. 조금 뒤에 다시 들어 주세요." }, { status: 429 });
   }
 
   // 과금 자동 차단 — 이번 달 사용량에 이번 글자수를 더해도 안전선을 안 넘을 때만 합성한다.
