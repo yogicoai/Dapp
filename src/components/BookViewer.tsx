@@ -1790,15 +1790,13 @@ export function BookViewer({
     return () => clearTimeout(t);
   }, [burst]);
 
-  // 동화 화면이 떠 있는 동안 페이지 바탕을 어둡게 — 전체화면에서 안전 영역 밖 틈으로 흰 바탕이 비치지 않게(2026-10-20).
+  // 동화 화면이 떠 있는 동안 페이지 바탕(캔버스)을 어둡게 — 전체화면에서 안전 영역 밖 틈으로 흰 바탕이 비치지 않게(2026-10-20).
+  // body 에만 칠한다 — html 에 칠하면 body 바탕이 body 칸에 칠해져 뒤 화면의 -z-10 배경 그림을 덮는다(AppShellMark 참고).
   useEffect(() => {
-    const root = document.documentElement;
-    const prev = { html: root.style.backgroundColor, body: document.body.style.backgroundColor };
-    root.style.backgroundColor = "#0a0a0a";
+    const prev = document.body.style.backgroundColor;
     document.body.style.backgroundColor = "#0a0a0a";
     return () => {
-      root.style.backgroundColor = prev.html;
-      document.body.style.backgroundColor = prev.body;
+      document.body.style.backgroundColor = prev;
     };
   }, []);
 

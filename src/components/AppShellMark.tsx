@@ -4,21 +4,31 @@
  * 안드로이드 앱(TWA)으로 열린 첫 화면에서 '앱 안'을 이번 실행 동안 기억해 둔다(lib/app-shell).
  * 첫 화면이 요금제가 아니어도, 나중에 새로 고침해서 주소의 ?app=android 가 사라져도 요금제·결제 화면이 앱 안인 줄 알게.
  *
- * 앱 안에서는 페이지 바탕(html·body)을 어둡게 둔다(2026-10-20) — 앱은 화면 끝까지 쓰는 몰입 화면이라,
- * 화면 가장자리까지 그리지 않는 페이지에서는 카메라 구멍 쪽·아래 막대 자리에 바탕이 비친다. 흰 띠 대신
- * 안드로이드가 보통 칠하는 검은색이 보이게. 그 밖에 그리는 것은 없다.
+ * 앱 안에서만 하는 일(2026-10-20 — 시험판 2판은 화면 끝까지 쓰는 몰입 화면):
+ *  · 모든 화면을 가장자리(카메라 구멍·아래 막대 자리)까지 그린다(viewport-fit=cover). 안 그러면 그 자리에 연한 띠가 남는다.
+ *    서버가 내보내는 viewport 는 기기를 모르므로, 앱 안일 때 여기서 덧붙인다 — 화면을 옮기면 Next 가 다시 써서 그때마다 붙인다.
+ *    아이폰 등 다른 기기에는 붙이지 않는다(노치 밑으로 단추가 들어가지 않게).
+ *  · 페이지 바탕(캔버스)을 어둡게 — **body 에만** 칠한다. html 에 칠하면 body 바탕이 캔버스로 올라가지 않고 body 칸에 칠해져
+ *    화면들의 -z-10 배경 그림을 덮는다(홈이 새까매졌다 — 같은 날 겪음).
  */
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useAppShell } from "@/lib/app-shell-client";
 
 const APP_BACKDROP = "#0a0a0a";
 
+function coverViewport(): void {
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
+  if (meta && !meta.content.includes("viewport-fit")) meta.content = `${meta.content}, viewport-fit=cover`;
+}
+
 export function AppShellMark() {
   const shell = useAppShell();
+  const pathname = usePathname();
   useEffect(() => {
     if (shell !== "android") return;
-    document.documentElement.style.backgroundColor = APP_BACKDROP;
     document.body.style.backgroundColor = APP_BACKDROP;
-  }, [shell]);
+    coverViewport();
+  }, [shell, pathname]);
   return null;
 }
