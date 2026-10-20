@@ -18,7 +18,9 @@ import {
 import { usePricing } from "@/lib/use-pricing";
 
 /**
- * 베타 의견 게시판 — "우리 가족 의견 나무".
+ * 의견 쪽지 — "우리 가족 의견 나무".
+ * 2026-10-20(출시 전): 쪽지는 쓴 사람과 관리자만 본다(supabase-feedback-private-1020.sql — 아이 이름이 다른 부모에게 보이지 않게).
+ * 첫 쪽지 보상은 관리실 가격표 값(0 이면 안내를 감춘다).
  *
  * 베타에서 가장 아쉬운 건 "불편한데 말할 곳이 없어서 그냥 안 쓰는" 경우다.
  * 그래서 남기는 자리를 앱 안에 두고, 처음 글에는 토큰으로 고맙다고 한다.
@@ -202,9 +204,9 @@ export default function FeedbackPage() {
           <p className="break-keep text-sm font-bold leading-relaxed text-neutral-500">
             불편한 점, 안 되는 것, 있었으면 하는 기능을 쪽지로 남겨주세요.
             <br />
-            하나하나 다 읽고 고칠게요.
+            하나하나 다 읽고 고칠게요. 쪽지는 나와 관리자만 볼 수 있어요.
           </p>
-          {!rewardTaken && (
+          {!rewardTaken && pricing.feedback_bonus_tokens > 0 && (
             <p className="animate-pulse break-keep rounded-full bg-amber-100 px-4 py-1.5 text-sm font-extrabold text-amber-700 shadow-sm">
               🎁 첫 쪽지를 남기면 {pricing.feedback_bonus_tokens}토큰을 드려요
             </p>
@@ -278,7 +280,7 @@ export default function FeedbackPage() {
         {/* 쪽지 목록 */}
         <section className="flex flex-col gap-4 pb-8">
           <h2 className="text-sm font-extrabold text-neutral-500">
-            붙은 쪽지 {posts.length > 0 && `${posts.length}장`}
+            내 쪽지 {posts.length > 0 && `${posts.length}장`}
           </h2>
 
           {/* 관리자 공지 — 늘 맨 위에 붙어 있는 쪽지. DB 글이 아니라 화면에 박아 두었다:
@@ -316,17 +318,18 @@ export default function FeedbackPage() {
             </p>
             <p className="mt-1.5 whitespace-pre-line break-keep text-[14px] font-medium leading-relaxed text-neutral-700">
               {[
-                "우리 가족 보이스 동화는 지금 베타 테스트 중이에요.",
                 "쓰시다가 불편했던 점, 잘 안 되는 것, 이런 게 있으면 좋겠다 싶은 것을",
-                "편하게 쪽지로 남겨주세요.",
+                "편하게 쪽지로 남겨주세요. 쪽지는 쓰신 분과 관리자만 볼 수 있어요.",
                 "",
                 "남겨주신 이야기는 하나하나 읽고 서비스에 반영하겠습니다.",
                 "작은 의견도 아이들이 볼 동화를 더 좋게 만듭니다.",
               ].join("\n")}
             </p>
-            <p className="mt-2.5 break-keep rounded-xl bg-white/70 px-3 py-2 text-[13px] font-extrabold text-amber-800">
-              🎁 처음 쪽지를 남겨주시는 분께 {pricing.feedback_bonus_tokens}토큰을 드려요
-            </p>
+            {pricing.feedback_bonus_tokens > 0 && (
+              <p className="mt-2.5 break-keep rounded-xl bg-white/70 px-3 py-2 text-[13px] font-extrabold text-amber-800">
+                🎁 처음 쪽지를 남겨주시는 분께 {pricing.feedback_bonus_tokens}토큰을 드려요
+              </p>
+            )}
           </article>
           )}
 
@@ -336,7 +339,7 @@ export default function FeedbackPage() {
             </p>
           ) : posts.length === 0 ? (
             <p className="break-keep rounded-3xl bg-white/85 px-4 py-8 text-center text-sm font-bold text-neutral-400">
-              아직 붙은 쪽지가 없어요. 첫 번째 쪽지를 남겨주세요! 🌱
+              아직 남긴 쪽지가 없어요. 첫 쪽지를 남겨주세요! 🌱
             </p>
           ) : (
             posts.map((p, i) => {

@@ -48,7 +48,7 @@ export const DEFAULT_PRICING: Pricing = {
   cost_illustrated_per_page: COST_ILLUSTRATED_PER_PAGE,
   cost_parent_voice: COST_PARENT_VOICE,
   max_books_per_user: MAX_BOOKS_PER_USER,
-  feedback_bonus_tokens: 100,
+  feedback_bonus_tokens: 0, // 10-20 사장님 "0" — 기본값도 0(가격표를 읽기 전 첫 그림에 "100토큰"이 잠깐 뜨지 않게)
   max_free_rewrites: 2,
   single_book_krw: 1500,
   sub_weekly_krw: 2900,

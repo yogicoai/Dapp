@@ -33,7 +33,7 @@ export type FeedbackPost = {
   repliedAt?: string | null;
 };
 
-/** 게시판 글 목록 (최신 먼저). 로그인 회원이면 모두 볼 수 있다. */
+/** 쪽지 목록 (최신 먼저). 회원은 자기 쪽지만, 관리자는 모두 — DB 가 정한다(supabase-feedback-private-1020.sql, 2026-10-20). */
 export async function loadFeedback(limit = 50): Promise<FeedbackPost[]> {
   const sb = getSupabase();
   if (!sb) return [];
