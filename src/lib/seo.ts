@@ -82,6 +82,8 @@ export const PRIVATE_PATHS: readonly string[] = [
   "/art-review",
   "/tts-test",
   "/*.html",
+  // 안드로이드 시험판 내려받기(10-20) — 주소를 아는 사람만, 검색에는 안 나오게
+  "/download/",
 ];
 
 /** 검색 사이트에 알려 줄 공개 화면 */
