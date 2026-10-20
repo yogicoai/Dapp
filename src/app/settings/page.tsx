@@ -784,6 +784,15 @@ export default function SettingsPage() {
             </p>
           )}
 
+          {/* 사용 가이드 — 비회원·회원 모두. 만들기·듣기를 실제 화면 모양으로 따라 해 본다(2026-10-20). */}
+          <Link
+            href="/guide"
+            className="-mt-1 flex min-h-12 items-center justify-between gap-1 rounded-2xl bg-neutral-50 px-4 text-sm font-extrabold text-neutral-700 shadow-[inset_0_0_0_1px_#f0ede8]"
+          >
+            <span>📖 처음이세요? 사용 가이드</span>
+            <span aria-hidden>›</span>
+          </Link>
+
           {/* 계정·아이정보 등 회원 전용 설정 — 게스트에겐 숨긴다(스킨만 허용). */}
           {!guest && (<>
           {/* ── 계정 (베타) ── 로그인한 아이디·토큰·로그아웃. 실제 로그인 상태를 반영한다.

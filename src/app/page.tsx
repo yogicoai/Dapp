@@ -381,6 +381,17 @@ export default function Home() {
           <img src="/icons/func-gear.webp" alt="" className="h-9 w-9 object-contain" />
         </Link>
 
+        {/* 사용 가이드 — 처음 온 부모가 만들기·듣기를 실제 화면 모양으로 따라 해 본다(2026-10-20 사장님 "페이지에 보이게").
+            설정 단추 바로 왼쪽. 폰에서는 짧게 '가이드'(왼쪽 위 알약들과 겹치지 않게). */}
+        <Link
+          href="/guide"
+          aria-label="사용 가이드"
+          className="fixed right-[4.25rem] top-4 z-10 flex h-11 items-center gap-1 rounded-full bg-white/85 px-3.5 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+        >
+          📖 <span className="sm:hidden">가이드</span>
+          <span className="hidden sm:inline">사용 가이드</span>
+        </Link>
+
         {/* 회원은 제목만 두고 그 아래에 가족 액자를 건다 — 마스코트 큰 원·부제 알약 자리를
             액자가 이어받는다(마스코트는 액자 모서리로). 제목이 맨 위라 왼쪽 위 토큰·의견 알약,
             오른쪽 위 설정 버튼(고정, 높이 ~44px)과 겹치지 않게 위 여백(pt-10)을 준다.
@@ -565,6 +576,12 @@ export default function Home() {
                   <img src="/icons/tab-mine.webp" alt="" className="inline-block h-4 w-4 align-[-0.2em]" />{" "}
                   전래동화도 들어볼 수 있어요.
                 </p>
+                <Link
+                  href="/guide#make"
+                  className="mt-1 inline-flex min-h-11 items-center px-2 text-sm font-extrabold text-neutral-600 underline underline-offset-2"
+                >
+                  처음이면 사용 가이드부터 보기 ›
+                </Link>
               </>
             ) : (
               <>

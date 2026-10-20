@@ -117,7 +117,7 @@ describe("검색 노출(SEO) — lib/seo (2026-10-19)", () => {
     assert.equal(on.sitemap, "https://a.kr/sitemap.xml");
     assert.deepEqual(buildRobots(mergeSeo({ indexing: false }), "https://a.kr").rules, { userAgent: "*", disallow: "/" });
     const map = buildSitemap(mergeSeo(null), "https://a.kr", new Date("2026-10-19T00:00:00Z"));
-    assert.deepEqual(map.map((e) => e.url), ["https://a.kr/", "https://a.kr/plans", "https://a.kr/login", "https://a.kr/terms", "https://a.kr/privacy", "https://a.kr/refund", "https://a.kr/account-deletion"]);
+    assert.deepEqual(map.map((e) => e.url), ["https://a.kr/", "https://a.kr/plans", "https://a.kr/guide", "https://a.kr/login", "https://a.kr/terms", "https://a.kr/privacy", "https://a.kr/refund", "https://a.kr/account-deletion"]);
     assert.ok(!map.some((e) => PRIVATE_PATHS.some((p) => !p.includes("*") && e.url.endsWith(p))));
     assert.deepEqual(buildSitemap(mergeSeo({ indexing: false }), "https://a.kr", new Date()), []);
   });

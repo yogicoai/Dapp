@@ -88,6 +88,8 @@ export const PRIVATE_PATHS: readonly string[] = [
 export const PUBLIC_PATHS: readonly { path: string; priority: number; changeFrequency: "daily" | "weekly" | "monthly" }[] = [
   { path: "/", priority: 1, changeFrequency: "daily" },
   { path: "/plans", priority: 0.8, changeFrequency: "weekly" },
+  // 사용 가이드 — 처음 온 부모용 따라 하기(2026-10-20)
+  { path: "/guide", priority: 0.6, changeFrequency: "monthly" },
   { path: "/login", priority: 0.5, changeFrequency: "monthly" },
   { path: "/terms", priority: 0.3, changeFrequency: "monthly" },
   { path: "/privacy", priority: 0.3, changeFrequency: "monthly" },

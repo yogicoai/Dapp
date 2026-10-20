@@ -81,6 +81,7 @@ import {
 import { rewriteScene, suggestLocationDetail } from "@/lib/scene-edit";
 import { illustrationCost, scriptCost as scriptCostOf } from "@/lib/pricing";
 import {
+  BOOK_PAGE_COUNT,
   isRedoExhausted,
   makeScriptBlock,
   paidPlot,
@@ -438,7 +439,7 @@ type PageImageReply = {
  * 장면째 그리는 방식으로 바꾸면서 쪽 수를 늘리기로 했다. 한 권 값은 12토큰(대본 6 + 그림 6).
  * 요청이 권당 7번 이상이라 429(몰림)는 첫 몇 권에서 다시 지켜볼 것.
  */
-const FIXED_PAGE_COUNT = testPageCount(process.env.NEXT_PUBLIC_TEST_PAGE_COUNT) ?? 6;
+const FIXED_PAGE_COUNT = testPageCount(process.env.NEXT_PUBLIC_TEST_PAGE_COUNT) ?? BOOK_PAGE_COUNT;
 
 /**
  * 로컬 시험용 쪽수 — .env.local 의 NEXT_PUBLIC_TEST_PAGE_COUNT(2~6, 2026-10-01 사장님 "6장씩 계속 만들면 토큰 낭비, 시험은 2장").
@@ -4325,6 +4326,13 @@ export default function CreatePage() {
           className="fixed left-4 top-4 z-10 rounded-full bg-white/70 px-4 py-2 text-sm font-bold text-neutral-700 shadow-md backdrop-blur"
         >
           ← 서재
+        </Link>
+        {/* 사용 가이드 — 처음 만드는 부모가 다음에 무엇이 나오는지 실제 화면 모양으로 미리 본다(2026-10-20 사장님) */}
+        <Link
+          href="/guide#make"
+          className="fixed right-4 top-4 z-10 rounded-full bg-white/70 px-4 py-2 text-sm font-bold text-neutral-700 shadow-md backdrop-blur"
+        >
+          📖 사용 가이드
         </Link>
 
         {/* 로딩 오버레이 */}

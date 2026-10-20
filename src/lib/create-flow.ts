@@ -16,6 +16,12 @@ export const MAKE_STEPS = ["대본 만들기", "그림 그리기", "동화 완�
 export type MakeStepIndex = 0 | 1 | 2;
 
 /**
+ * 한 권의 장면(쪽) 수 — 쪽 수 = 그림 장수 = 값이라 고르게 두지 않는다(2026-09-28 사장님 "6장면으로 만들어요").
+ * 운영은 늘 이 값이다. 로컬 시험만 만들기 화면이 NEXT_PUBLIC_TEST_PAGE_COUNT 로 줄인다. 사용 가이드(/guide)도 이 값을 쓴다.
+ */
+export const BOOK_PAGE_COUNT = 6;
+
+/**
  * 대본 화면의 '다시 만들기' 남은 횟수. null = 끝없음(관리자는 토큰도 횟수도 세지 않는다).
  *
  * 값은 서버가 센다(supabase-setup.sql charge_story). 대본 값을 낸 줄거리 하나마다 무료 다시 쓰기

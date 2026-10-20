@@ -223,12 +223,21 @@ export default function LoginPage() {
         </div>
 
         {/* 가입 전에도 값을 볼 수 있게 — /plans 는 로그인 없이 열린다 */}
-        <Link
-          href="/plans"
-          className="mt-4 inline-flex min-h-11 items-center self-center rounded-full bg-white/85 px-4 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
-        >
-          요금제 보기 ›
-        </Link>
+        {/* 처음 온 분은 대개 이 화면을 먼저 본다(비회원은 홈에서 로그인으로 온다) — 사용 가이드를 요금제와 나란히(2026-10-20) */}
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          <Link
+            href="/guide"
+            className="inline-flex min-h-11 items-center rounded-full bg-white/85 px-4 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+          >
+            📖 사용 가이드 ›
+          </Link>
+          <Link
+            href="/plans"
+            className="inline-flex min-h-11 items-center rounded-full bg-white/85 px-4 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+          >
+            요금제 보기 ›
+          </Link>
+        </div>
 
         <p className="mt-3 text-center text-xs font-medium text-white/90" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>
           가입은 구글 계정으로만 받아요
