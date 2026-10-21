@@ -359,7 +359,9 @@ export default function Home() {
             className="fixed left-4 top-4 z-10 flex items-center gap-1 rounded-full bg-white/85 px-3.5 py-2 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
             style={SAFE_TOP_LEFT}
           >
-            로그인 / 회원가입
+            {/* 폰 폭에서는 '로그인'만 — 글자를 키운 폰에서 오른쪽 '가이드' 알약과 겹쳤다(2026-10-21 점검). 가입도 같은 화면이다. */}
+            <span className="min-[440px]:hidden">로그인</span>
+            <span className="hidden min-[440px]:inline">로그인 / 회원가입</span>
           </Link>
         ) : (
           <Link
@@ -427,10 +429,11 @@ export default function Home() {
         {/* 회원은 제목만 두고 그 아래에 가족 액자를 건다 — 마스코트 큰 원·부제 알약 자리를
             액자가 이어받는다(마스코트는 액자 모서리로). 제목이 맨 위라 왼쪽 위 토큰·의견 알약,
             오른쪽 위 설정 버튼(고정, 높이 ~44px)과 겹치지 않게 위 여백(pt-10)을 준다.
-            게스트는 그릴 수 없어 액자가 없으니 예전 모습 그대로. */}
+            게스트는 그릴 수 없어 액자가 없으니 예전 모습 그대로 — 다만 세로 폰은 폭이 좁아 마스코트 원이 위 알약들
+            사이에 끼어 겹쳤다(2026-10-21 점검) — 폰에서만 위 여백(pt-12)을 준다. */}
         {/* 회원은 mb-1 — 가족 액자 안쪽 위 여백(pt-8, 마스코트 둥실 자리)이 제목과의 간격을 대신한다. */}
         <header
-          className={`flex flex-col items-center text-center ${guest ? "mb-6" : "mb-1 pt-10"}`}
+          className={`flex flex-col items-center text-center ${guest ? "mb-6 pt-12 sm:pt-0" : "mb-1 pt-10"}`}
         >
           {/* 테마 마스코트 — 동그란 뱃지, 둥둥 떠서 아이를 반긴다 */}
           {guest && (
@@ -446,7 +449,7 @@ export default function Home() {
           {/* 흰 제목이 밝은 배경(그림책나라 크림 등)에 묻히지 않게, 어두운
               외곽선(text-stroke)+다층 그림자로 어느 테마에서든 윤곽이 뜨게 한다. */}
           <h1
-            className={`${guest ? "mt-2" : ""} text-3xl font-extrabold tracking-tight text-white sm:text-4xl`}
+            className={`${guest ? "mt-2" : ""} break-keep text-3xl font-extrabold tracking-tight text-white sm:text-4xl`}
             style={{
               textShadow:
                 "0 2px 8px rgba(0,0,0,0.5), 0 0 6px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.45)",
@@ -523,7 +526,7 @@ export default function Home() {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={theme.art.create} alt="" className="h-9 w-9 object-contain" />
-          <span className="text-xl font-extrabold tracking-tight">
+          <span className="break-keep text-xl font-extrabold tracking-tight">
             {guest ? "로그인하고 만들기" : "동화 만들기"}
           </span>
         </Link>
@@ -534,7 +537,8 @@ export default function Home() {
             선택 확대(scale) 때 옆 탭과 붙어 보였다. 한 통(흰 반투명) 안에 넣어 정돈:
             높이가 통일되고, 선택은 흰 배경+그림자로만 표시해 좁은 폰에서도 한 줄이다. */}
         <div className="mb-6 flex justify-center">
-          <div className="flex max-w-full items-center gap-1 rounded-full bg-white/60 p-1 shadow-md backdrop-blur sm:gap-1.5 sm:p-1.5">
+          {/* 글자를 키운 폰에서는 한 줄에 안 들어가 통 밖으로 넘쳤다 — 넘치면 두 줄로 내린다(모서리는 한 줄일 때 알약과 같다) */}
+          <div className="flex max-w-full flex-wrap items-center justify-center gap-1 rounded-[1.75rem] bg-white/60 p-1 shadow-md backdrop-blur sm:gap-1.5 sm:p-1.5">
             {(
               [
                 { key: "mine", label: "우리 가족 책장", icon: "/icons/tab-mine.webp" },
