@@ -12,7 +12,7 @@
 import { useEffect, useState } from "react";
 
 /** 페이지를 열기 시작한 때부터(performance.now) — 첫 그림까지 걸린 시간도 들어 있어 실제로 보이는 건 이보다 짧다 */
-const MIN_MS = 1500;
+const MIN_MS = 1800; // 페이지가 0.6초쯤 도착하면 1.2초쯤 보인다(10-21 운영에서 잰 값)
 const MAX_MS = 4000;
 const FADE_MS = 450;
 
