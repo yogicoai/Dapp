@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-import { markHomeReady, onHomeReady, starShadows } from "./app-intro.ts";
+import { introBookTitle, introTravelLine, markHomeReady, onHomeReady, starShadows } from "./app-intro.ts";
 
 describe("앱을 켤 때 '동화 나라로 이동 중' — 밤하늘 별·홈 준비 신호(2026-10-21)", () => {
   it("별자리는 씨앗이 같으면 늘 같다 — 서버 HTML 과 화면이 어긋나지 않는다", () => {
@@ -37,5 +37,20 @@ describe("앱을 켤 때 '동화 나라로 이동 중' — 밤하늘 별·홈 �
     const home = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
     assert.ok(home.includes("if (homeReady) markHomeReady();"));
     assert.ok(home.includes("if (!homeReady) {"));
+  });
+});
+
+describe("소개 화면 동화책 — 로그인한 가족이면 아이 이름(2026-10-21 사장님 \"아이 이름·얼굴, 로그인 된 상태라면\")", () => {
+  it("받침이 있으면 '이'를 붙인다 — 하온이의 · 지우의", () => {
+    assert.equal(introBookTitle("하온"), "하온이의 동화 나라");
+    assert.equal(introBookTitle(" 지우 "), "지우의 동화 나라");
+    assert.equal(introTravelLine("하온"), "하온이의 동화 나라로 가는 중");
+    assert.equal(introTravelLine("지우"), "지우의 동화 나라로 가는 중");
+  });
+  it("이름을 모르면(손님·처음 기기) 이름 없이", () => {
+    for (const n of [undefined, null, "", "  "]) {
+      assert.equal(introBookTitle(n), "동화 나라");
+      assert.equal(introTravelLine(n), "동화 나라로 이동 중");
+    }
   });
 });

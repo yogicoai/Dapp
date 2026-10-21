@@ -2,34 +2,37 @@
 
 /**
  * 앱을 새로 켤 때 잠깐 — '동화 나라로 이동 중'(2026-10-21 사장님: 켜질 때 아이콘이 커졌다 깜빡이는 게 오류 같다,
- * 차라리 들어가는 과정을 잠깐 넣자 → 검은 화면보다 디자인적으로 뭐 더).
- *  ① 밤하늘을 날아간다 — 반짝이는 별(살짝 다가온다)·별똥별, 가운데 우주 아이(앱 아이콘)와 '동화 나라로 이동 중…'
- *  ② 홈이 진짜 화면을 그리면(lib/app-intro markHomeReady) 도착한다 — 고른 나라의 배경이 흐릿하게 다가오며 선명해지고
- *     '○○나라 도착!'. 홈과 같은 그림·같은 흰 베일이라 걷히면 그대로 홈이다(홈의 준비 화면이 한 번 더 끼지 않는다).
- *     로그인 안 한 손님은 홈이 로그인 화면으로 보내므로, 첫 화면이 홈이 아닌 곳으로 바뀌면 그 화면이 뜬 것으로 본다.
- *  ③ 걷힌다. 누르면 언제든 바로 걷힌다.
- * 기다림을 늘리지 않는다 — 홈이 준비되는 시간을 채우는 화면이고, 너무 빨리 스치지 않게 TRAVEL_MIN_MS, 홈이 늦어도
- * TRAVEL_MAX_MS 에는 도착한다(홈 준비 화면의 5초와 같다).
- * 뜰지 말지는 body 맨 앞 스크립트가 첫 그림 전에 정한다(html[data-app-intro] — lib/app-shell APP_SHELL_BOOT_SCRIPT).
- * 그래서 밤하늘·로고·글자는 서버 HTML 에 늘 있고 CSS 로만 켜고 끈다 — 웹·화면 이동·다시 불러오기에는 안 뜬다.
- * 로고는 CSS 바탕 그림, 나라 배경은 소개 화면이 켜졌을 때만 그려 — 웹 손님은 아무것도 더 받지 않는다.
+ * 차라리 들어가는 과정을 잠깐 넣자 → 검은 화면보다 디자인적으로 → 아이 이름·얼굴 + 동화책이 펼쳐지는 장면).
+ *  ① 밤하늘(travel) — 반짝이는 별(살짝 다가온다)·별똥별, 가운데 우주 아이(앱 아이콘)와 '동화 나라로 이동 중…'.
+ *     여기까지는 서버 HTML 에 있어 첫 그림부터 보인다.
+ *  ② 동화책이 날아온다(book) — 우리 책장의 전집 표지 틀에 '하온이의 동화 나라'와 가족 캐릭터 얼굴(IntroBook,
+ *     로그인한 가족 — 손님은 '동화 나라'와 로고). 책 아래 '하온이의 동화 나라로 가는 중…'.
+ *  ③ 홈이 진짜 화면을 그리면(lib/app-intro markHomeReady) 표지가 열리고(open) '○○나라 도착!', 속지(고른 나라의 배경)로
+ *     다가가며(dive) 화면을 채운다. 홈과 같은 그림·같은 흰 베일이라 걷히면(leave) 그대로 홈이다.
+ *  책 그림이 늦으면 책 없이 나라 배경으로 바로 도착(arrive)한다. 누르면 언제든 바로 걷힌다.
+ * 기다림을 늘리지 않는다 — 홈이 준비되는 시간을 채우는 화면이고, 책은 최소 BOOK_MIN_MS 보이며, 홈이 늦어도 MAX_MS 에는 넘어간다.
+ * 뜰지 말지는 body 맨 앞 스크립트가 첫 그림 전에 정한다(html[data-app-intro] — lib/app-shell APP_SHELL_BOOT_SCRIPT) —
+ * 웹·화면 이동·다시 불러오기에는 안 뜬다. 로고는 CSS 바탕 그림, 책·나라 배경은 소개 화면이 켜졌을 때만 그린다.
  */
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
+import { IntroBook } from "@/components/IntroBook";
 import { useTheme } from "@/components/ThemeProvider";
-import { markHomeReady, onHomeReady, starShadows } from "@/lib/app-intro";
+import { markHomeReady, onHomeReady, starShadows, type IntroPhase } from "@/lib/app-intro";
 
 const STARS_SMALL = starShadows(90, 7);
 const STARS_MID = starShadows(36, 21);
 const STARS_BIG = starShadows(12, 42);
 
-/** 페이지를 열기 시작한 때부터(performance.now) — 첫 그림까지 걸린 시간도 들어 있어 실제로 보이는 건 이보다 짧다 */
-const TRAVEL_MIN_MS = 1300;
-const TRAVEL_MAX_MS = 5000;
+/** 시각은 페이지를 열기 시작한 때부터(performance.now) — 첫 그림까지 걸린 시간도 들어 있다 */
+const OPEN_AT_MS = 1700; // 표지는 아무리 빨라도 이때부터 연다
+const BOOK_MIN_MS = 900; // 책이 날아와 보이는 최소 시간
+const BOOK_WAIT_MS = 2600; // 홈은 준비됐는데 책 그림이 이때까지 안 오면 책 없이 도착
+const MAX_MS = 5500; // 홈이 늦어도 이때는 넘어간다(홈 준비 화면의 5초 + 여유)
+const OPEN_MS = 750;
+const DIVE_MS = 650;
 const ARRIVE_MS = 800;
-const FADE_MS = 450;
-
-type Phase = "travel" | "arrive" | "leave";
+const FADE_MS = 400;
 
 const noSubscribe = () => () => {};
 const introOn = () => document.documentElement.hasAttribute("data-app-intro");
@@ -37,11 +40,16 @@ const introOn = () => document.documentElement.hasAttribute("data-app-intro");
 export function AppIntro() {
   const { theme } = useTheme();
   const pathname = usePathname();
-  // 서버 HTML·첫 붙임은 늘 꺼진 값 — 나라 배경 그림은 붙은 뒤 소개 화면이 켜졌을 때만 그린다
+  // 서버 HTML·첫 붙임은 늘 꺼진 값 — 책·나라 배경은 붙은 뒤 소개 화면이 켜졌을 때만 그린다
   const active = useSyncExternalStore(noSubscribe, introOn, () => false);
-  const [phase, setPhase] = useState<Phase>("travel");
+  const [phase, setPhase] = useState<IntroPhase>("travel");
   const bgReady = useRef(false);
+  const bookReady = useRef(false);
   const recheck = useRef<() => void>(() => {});
+  const onBookReady = useCallback(() => {
+    bookReady.current = true;
+    recheck.current();
+  }, []);
 
   // 첫 화면이 홈이 아닌 곳(손님 → 로그인 화면)으로 바뀌었으면 기다릴 홈이 없다
   useEffect(() => {
@@ -72,24 +80,44 @@ export function AppIntro() {
     if (!active) return;
     const root = document.documentElement;
     const timers: number[] = [];
-    let stage: Phase = "travel";
+    const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, Math.max(0, ms)));
+    let stage: IntroPhase = "travel";
+    let bookAt = 0;
     let homeReady = false;
     let loaded = document.readyState === "complete";
+    const go = (next: IntroPhase) => {
+      stage = next;
+      setPhase(next);
+    };
     const leave = () => {
       if (stage === "leave") return;
-      stage = "leave";
-      setPhase("leave");
-      timers.push(window.setTimeout(() => root.removeAttribute("data-app-intro"), FADE_MS));
+      go("leave");
+      later(() => root.removeAttribute("data-app-intro"), FADE_MS);
     };
+    // 책 없이 도착 — 책 그림이 늦을 때
     const arrive = () => {
       if (stage !== "travel") return;
-      stage = "arrive";
-      setPhase("arrive");
-      timers.push(window.setTimeout(leave, ARRIVE_MS));
+      go("arrive");
+      later(leave, ARRIVE_MS);
+    };
+    const open = () => {
+      if (stage !== "book") return;
+      go("open");
+      later(() => {
+        if (stage !== "open") return;
+        go("dive");
+        later(leave, DIVE_MS);
+      }, OPEN_MS);
     };
     const check = () => {
-      if (stage !== "travel" || !homeReady || !loaded || !bgReady.current) return;
-      timers.push(window.setTimeout(arrive, Math.max(0, TRAVEL_MIN_MS - performance.now())));
+      if (stage === "travel" && bookReady.current) {
+        go("book");
+        bookAt = performance.now();
+      }
+      if (!homeReady || !loaded || !bgReady.current) return;
+      const now = performance.now();
+      if (stage === "book") later(open, Math.max(OPEN_AT_MS - now, bookAt + BOOK_MIN_MS - now));
+      else if (stage === "travel") later(() => (bookReady.current ? check() : arrive()), BOOK_WAIT_MS - now);
     };
     recheck.current = check;
     const onLoad = () => {
@@ -101,8 +129,8 @@ export function AppIntro() {
       homeReady = true;
       check();
     });
-    check();
-    timers.push(window.setTimeout(arrive, Math.max(0, TRAVEL_MAX_MS - performance.now())));
+    later(check, 0);
+    later(() => (stage === "book" ? open() : arrive()), MAX_MS - performance.now());
     root.addEventListener("click", leave, { once: true });
     return () => {
       timers.forEach((t) => window.clearTimeout(t));
@@ -114,11 +142,16 @@ export function AppIntro() {
   }, [active]);
 
   const traveling = phase === "travel";
+  // 나라 배경이 화면을 채우는 때 — 책 없이 도착했거나, 책 속지로 다가가는 중
+  const landed = phase === "arrive" || phase === "dive" || phase === "leave";
+  // 우주 아이 로고·글자는 밤하늘과 책 없는 도착에서만(책이 오면 책이 대신한다)
+  const showLogo = traveling || phase === "arrive";
   return (
     <div
-      className={`app-intro fixed inset-0 z-[1000] overflow-hidden transition-opacity duration-[450ms] motion-reduce:transition-none ${
+      className={`app-intro fixed inset-0 z-[1000] overflow-hidden transition-opacity motion-reduce:transition-none ${
         phase === "leave" ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
+      style={{ transitionDuration: `${FADE_MS}ms` }}
       role="status"
       aria-label={traveling ? "동화 나라로 이동 중" : `${theme.label} 도착`}
     >
@@ -141,12 +174,12 @@ export function AppIntro() {
       <span className="intro-shoot absolute motion-reduce:hidden" />
       <span className="intro-shoot intro-shoot-late absolute motion-reduce:hidden" />
 
-      {/* ② 도착 — 고른 나라의 배경이 흐릿하게 다가오며 선명해진다(홈과 같은 그림·같은 흰 베일) */}
+      {/* 고른 나라의 배경이 화면을 채운다(홈과 같은 그림·같은 흰 베일) — 책 없이 도착하면 흐릿하게 다가오며, 책 속지로 다가가면 함께 */}
       {active && (
         <div
-          className={`absolute inset-0 transition-[opacity,transform,filter] duration-700 ease-out motion-reduce:transform-none motion-reduce:filter-none ${
-            traveling ? "scale-110 opacity-0 blur-md" : "scale-100 opacity-100 blur-0"
-          }`}
+          className={`absolute inset-0 transition-[opacity,transform,filter] ease-out motion-reduce:transform-none motion-reduce:filter-none ${
+            phase === "dive" ? "duration-[650ms]" : "duration-700"
+          } ${landed ? "scale-100 opacity-100 blur-0" : "scale-110 opacity-0 blur-md"}`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={theme.background} alt="" className="h-full w-full object-cover" />
@@ -155,14 +188,25 @@ export function AppIntro() {
         </div>
       )}
 
-      {/* 걷힐 때 로고·글자는 먼저 빠르게 빠진다 — 배경만 홈으로 이어져, 홈·로그인 화면의 제목과 겹쳐 보이지 않게 */}
+      {/* ② 동화책 — 붙은 뒤 소개 화면이 켜졌을 때만. travel 동안은 숨어서 그림을 받는다 */}
+      {active && phase !== "arrive" && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <IntroBook theme={theme} phase={phase} onReady={onBookReady} />
+        </div>
+      )}
+
+      {/* 우주 아이·글자 — 책이 오거나 걷힐 때는 먼저 빠르게 빠진다(홈·로그인 화면의 제목과 겹쳐 보이지 않게) */}
       <div
-        className={`relative flex h-full w-full flex-col items-center justify-center gap-6 transition-opacity duration-200 ${
-          phase === "leave" ? "opacity-0" : ""
+        className={`relative flex h-full w-full flex-col items-center justify-center gap-6 transition-opacity duration-300 ${
+          showLogo ? "" : "opacity-0"
         }`}
       >
         <div className="app-intro-logo h-28 w-28 rounded-[26%] bg-cover bg-center shadow-[0_0_56px_rgba(150,160,255,0.5)] motion-safe:animate-[float_2.4s_ease-in-out_infinite]" />
-        {traveling ? (
+        {phase === "arrive" ? (
+          <p className="text-xl font-extrabold tracking-wide text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.45)] motion-safe:animate-[intro-pop_420ms_ease-out]">
+            {theme.label} 도착!
+          </p>
+        ) : (
           <p className="flex items-baseline gap-0.5 text-lg font-extrabold tracking-wide text-white/90">
             동화 나라로 이동 중
             {[0, 1, 2].map((i) => (
@@ -175,10 +219,6 @@ export function AppIntro() {
                 .
               </span>
             ))}
-          </p>
-        ) : (
-          <p className="text-xl font-extrabold tracking-wide text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.45)] motion-safe:animate-[intro-pop_420ms_ease-out]">
-            {theme.label} 도착!
           </p>
         )}
       </div>

@@ -5,7 +5,30 @@
  *    자리는 고정 씨앗으로 정해 서버·화면이 늘 같다(hydration 이 어긋나지 않는다).
  *  · 홈 준비 신호 — 홈이 로그인·책장까지 다 읽고 진짜 화면을 그리면 알린다. 소개 화면은 그때 '도착'하며 걷혀,
  *    홈의 준비 화면(마스코트 카드)이 한 번 더 끼지 않는다.
+ *  · 책 표지 글 — 로그인한 가족이면 아이 이름으로 '하온이의 동화 나라'(사장님 10-21 "로그인 된 상태라면").
  */
+import { hasBatchim } from "./family.ts";
+
+/** 소개 화면의 차례 — 밤하늘(travel) → 책이 날아옴(book) → 표지가 열림(open) → 책 속으로(dive) → 걷힘(leave).
+ *  책 그림이 늦으면 책 없이 나라 배경으로 바로 도착(arrive) → 걷힘. */
+export type IntroPhase = "travel" | "book" | "open" | "dive" | "arrive" | "leave";
+
+/** '하온' → '하온이' · '지우' → '지우' — 이름 뒤에 '의'를 붙일 때 */
+function nameStem(name: string): string {
+  return `${name}${hasBatchim(name) ? "이" : ""}`;
+}
+
+/** 책 표지 제목 — 아이 이름을 알면 '하온이의 동화 나라', 모르면(손님·처음 기기) '동화 나라' */
+export function introBookTitle(name: string | null | undefined): string {
+  const n = (name ?? "").trim();
+  return n ? `${nameStem(n)}의 동화 나라` : "동화 나라";
+}
+
+/** 책 아래 한 줄 — '하온이의 동화 나라로 가는 중', 이름을 모르면 '동화 나라로 이동 중'(점 셋은 화면이 붙인다) */
+export function introTravelLine(name: string | null | undefined): string {
+  const n = (name ?? "").trim();
+  return n ? `${nameStem(n)}의 동화 나라로 가는 중` : "동화 나라로 이동 중";
+}
 
 /** 0~1 사이 같은 순서의 수 — 씨앗이 같으면 늘 같은 별자리 */
 function seeded(seed: number): () => number {
