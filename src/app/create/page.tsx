@@ -4318,7 +4318,7 @@ export default function CreatePage() {
         </div>
       )}
 
-      <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col justify-center px-6 py-8">
+      <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col justify-center px-3 py-8 sm:px-6">
         {/* 뒤로 / 홈 — absolute면 스크롤 때 위로 밀려 나가고 카드가 덮어버린다(폰 실측).
             fixed+z-10으로 항상 보이게 (busy 오버레이 z-20보다는 아래라 로딩 중엔 가려진다). */}
         <Link
@@ -4438,7 +4438,7 @@ export default function CreatePage() {
           );
         })()}
 
-        <div className="rounded-[28px] bg-white/85 p-7 shadow-xl backdrop-blur">
+        <div className="rounded-[28px] bg-white/85 p-5 shadow-xl backdrop-blur sm:p-7">
           {/* ── 1. 아이 정보 ── */}
           {step === "child" && (
             <section className="flex flex-col gap-5">

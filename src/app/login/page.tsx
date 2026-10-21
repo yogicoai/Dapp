@@ -100,7 +100,7 @@ export default function LoginPage() {
       <img src={theme.background} alt="" className="fixed inset-0 -z-10 h-full w-full object-cover" />
       <div className="fixed inset-0 -z-10 bg-white/35" />
 
-      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-10">
+      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 py-10 sm:px-6">
         <div className="flex flex-col items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -116,7 +116,7 @@ export default function LoginPage() {
           </h1>
         </div>
 
-        <div className="mt-6 rounded-[28px] bg-white/92 p-7 shadow-xl backdrop-blur">
+        <div className="mt-6 rounded-[28px] bg-white/92 p-5 shadow-xl backdrop-blur sm:p-7">
           {bye && (
             <p role="status" className="mb-4 break-keep rounded-xl bg-neutral-50 px-3 py-2.5 text-center text-xs font-bold leading-relaxed text-neutral-600">
               탈퇴가 끝났어요. 그동안 함께해 주셔서 고마워요.

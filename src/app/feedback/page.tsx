@@ -182,7 +182,7 @@ export default function FeedbackPage() {
       <img src={theme.background} alt="" className="fixed inset-0 -z-10 h-full w-full object-cover" />
       <div className="fixed inset-0 -z-10 bg-white/50" />
 
-      <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col gap-5 px-5 py-6">
+      <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col gap-5 px-3 py-6 sm:px-5">
         <Link
           href="/"
           className="self-start rounded-full bg-white/85 px-4 py-2 text-sm font-bold text-neutral-700 shadow backdrop-blur"
