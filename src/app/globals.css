@@ -45,18 +45,45 @@ body {
 }
 
 /*
-  안드로이드 앱 안(AppShellMark 가 body 에 표시) — 6판부터 화면이 카메라 구멍 자리까지 그려진다(2026-10-21 사장님 "아이폰처럼 꽉").
-  배경 그림·동화 화면(fixed)은 그 자리까지 채우고, 본문만 안전 영역만큼 안쪽에 둬서 카메라 구멍에 글자·단추가 가리지 않게 한다.
-   · 가로(카메라가 왼쪽/오른쪽) — body 좌우 여백. 폭만 줄어 스크롤이 생기지 않는다.
-   · 세로(카메라가 위) — main 위 테두리(투명). 화면들이 main 에 높이 100dvh 를 주는데 테두리는 그 높이 안에 들어가
-     (border-box) 위 여백을 덧대도 화면이 길어지지 않는다. 각 화면의 padding 값은 그대로 둔다.
-  카메라가 없는 쪽·없는 기기·웹은 env 값이 0 이라 아무것도 바뀌지 않는다.
+  안드로이드 앱 안 — <html data-app-shell="android">(첫 그림 전 스크립트 lib/app-shell APP_SHELL_BOOT_SCRIPT, 이후 AppShellMark).
+  · 바탕을 첫 그림부터 검게 — **body 에만** 칠한다(html 에 칠하면 body 바탕이 캔버스로 안 올라가 -z-10 배경 그림을 덮는다,
+    10-20 겪음). React 가 붙은 뒤에 칠하던 때는 앱을 켤 때 흰 바탕이 한 번 깜빡였다(10-21).
+  · 6판부터 화면이 카메라 구멍 자리까지 그려진다(2026-10-21 사장님 "아이폰처럼 꽉"). 배경 그림·동화 화면(fixed)은 그 자리까지
+    채우고, 본문만 안전 영역만큼 안쪽에 둬서 카메라 구멍에 글자·단추가 가리지 않게 한다.
+     - 가로(카메라가 왼쪽/오른쪽) — body 좌우 여백. 폭만 줄어 스크롤이 생기지 않는다.
+     - 세로(카메라가 위) — main 위 테두리(투명). 화면들이 main 에 높이 100dvh 를 주는데 테두리는 그 높이 안에 들어가
+       (border-box) 위 여백을 덧대도 화면이 길어지지 않는다. 각 화면의 padding 값은 그대로 둔다.
+    카메라가 없는 쪽·없는 기기·웹은 env 값이 0 이라 아무것도 바뀌지 않는다.
 */
-body[data-app-shell="android"] {
+html[data-app-shell="android"] body {
+  background-color: #0a0a0a;
   padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
 }
-body[data-app-shell="android"] main {
+html[data-app-shell="android"] main {
   border-top: env(safe-area-inset-top, 0px) solid transparent;
+}
+
+/*
+  앱을 새로 켤 때의 '동화 나라로 이동 중' 화면(components/AppIntro) — html[data-app-intro] 일 때만 보인다.
+  로고는 바탕 그림으로 두어 소개 화면이 뜰 때만 받는다(<img> 는 숨겨 둬도 모든 화면에서 받아 버린다).
+*/
+.app-intro {
+  display: none;
+}
+html[data-app-intro] .app-intro {
+  display: flex;
+}
+html[data-app-intro] .app-intro-logo {
+  background-image: url("/icons/app/intro-logo.webp");
+}
+@keyframes intro-dot {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /*
