@@ -68,8 +68,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {/* 앱 안이면 첫 그림부터 검은 바탕·새로 켠 처음이면 '동화 나라로 이동 중'(lib/app-shell) — 무엇보다 먼저 돌아야 한다 */}
         <script dangerouslySetInnerHTML={{ __html: APP_SHELL_BOOT_SCRIPT }} />
-        <AppIntro />
         <ThemeProvider>
+          {/* 도착 장면이 고른 나라의 배경을 쓰므로 테마 안에 둔다 */}
+          <AppIntro />
           {children}
           {/* 로그인 직후 한 번 — 약관·개인정보·보호자 동의(lib/consent, 사장님 2026-10-19) */}
           <ConsentGate />

@@ -34,6 +34,7 @@ import { loadLibraryAccess } from "@/lib/library-access";
 import { viewerTierOf, type MemberPlanKey } from "@/lib/member-plan";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
 import { libraryLock, OPEN_LIBRARY, type LibraryAccess } from "@/lib/offer-settings";
+import { markHomeReady } from "@/lib/app-intro";
 import { READ_ALOUD_VOICE } from "@/lib/plans";
 import { acctKey, currentUid } from "@/lib/supabase";
 import type { Book } from "@/lib/types";
@@ -287,7 +288,13 @@ export default function Home() {
   // 준비 화면 — 로그인 확인과 책장 데이터(내 책 · 요금제 · 공개 동화 자물쇠)가 다 끝날 때까지 붙잡아 둔다.
   // 중간에 화면을 열면 빈 책장이 잠깐 보였다가 책이 채워지거나, 잠긴 책이 보였다 사라져 어수선하다(사장님 지적).
   // 캐시가 있으면 내 책 조건은 즉시 풀린다.
-  if (authed === null || !booksLoaded || (!shelfGateReady && !gateWaitOver)) {
+  const homeReady = !(authed === null || !booksLoaded || (!shelfGateReady && !gateWaitOver));
+  // 앱을 새로 켰을 때의 '동화 나라로 이동 중' 화면은 홈이 진짜 화면을 그릴 때 도착하며 걷힌다(lib/app-intro) —
+  // 아래 준비 화면이 그 사이에 한 번 더 끼지 않게.
+  useEffect(() => {
+    if (homeReady) markHomeReady();
+  }, [homeReady]);
+  if (!homeReady) {
     return (
       <div className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
