@@ -97,6 +97,11 @@ const SWIPE_THRESHOLD_PX = 50;
 const SAFE_LEFT: React.CSSProperties = { marginLeft: "env(safe-area-inset-left, 0px)" };
 const SAFE_RIGHT: React.CSSProperties = { marginRight: "env(safe-area-inset-right, 0px)" };
 const SAFE_BOTTOM: React.CSSProperties = { marginBottom: "env(safe-area-inset-bottom, 0px)" };
+/*
+ * 그림 무대도 카메라 구멍을 비킨다(2026-10-21 6판 — 앱이 크롬으로 열려 가로에서 카메라 자리까지 그린다). 무대·배우·핫스팟 틀이
+ * 모두 같은 좌우 자리에 서야 좌표가 맞으므로 셋 다 SAFE_X 를 쓰고, 펼침면 너비는 화면 너비 대신 --safe-vw(안전한 가로)로 잰다.
+ */
+const SAFE_X: React.CSSProperties = { left: "env(safe-area-inset-left, 0px)", right: "env(safe-area-inset-right, 0px)" };
 
 /**
  * 한 권에 다시 그릴 수 있는 그림 수 (마스터 제외).
@@ -1807,7 +1812,7 @@ export function BookViewer({
     };
   }, []);
 
-  // "가로로 보기" 버튼 상태 — 웹은 전체화면 여부, 앱 안(늘 전체화면)은 가로 고정 여부를 따라간다(lib/story-mode storyModeNow).
+  // "가로로 보기" 버튼 상태 — 전체화면 여부를 따라간다(lib/story-mode storyModeNow).
   // 브라우저 뒤로가기로 빠져나가는 경우까지 이벤트로 감지한다.
   const [storyMode, setStoryMode] = useState(false);
   useEffect(() => {
@@ -1855,7 +1860,11 @@ export function BookViewer({
       className="fixed inset-0 select-none overflow-hidden bg-neutral-950"
       // 고른 글꼴과 그 글꼴에 맞는 줄 간격을 .font-story가 받아 쓴다.
       style={
-        { "--story-font": font.family, "--story-leading": String(font.leading) } as React.CSSProperties
+        {
+          "--story-font": font.family,
+          "--story-leading": String(font.leading),
+          "--safe-vw": "calc(100vw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px))",
+        } as React.CSSProperties
       }
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
@@ -2054,10 +2063,10 @@ export function BookViewer({
                 <div
                   className={`absolute inset-0 flex items-center justify-center portrait:flex-col ${
                     spread
-                      ? "landscape:mx-auto landscape:my-auto landscape:w-[min(100vw,calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(100vw/(var(--ar)*2)))]"
+                      ? "landscape:mx-auto landscape:my-auto landscape:w-[min(var(--safe-vw),calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(var(--safe-vw)/(var(--ar)*2)))]"
                       : ""
                   }`}
-                  style={{ "--ar": String(ratioOf(i)) } as React.CSSProperties}
+                  style={{ ...SAFE_X, "--ar": String(ratioOf(i)) } as React.CSSProperties}
                 >
                   <div
                     className={`relative shrink-0 overflow-hidden shadow-[0_0_28px_rgba(0,0,0,0.18)] ${
@@ -2314,7 +2323,7 @@ export function BookViewer({
       {/* 움직이는 캐릭터(배우) 레이어 — 캐릭터 없는 배경 위에 투명 스티커를
           겹치고, 낭독 중에는 뒤뚱뒤뚱 움직인다. 클릭은 통과시켜 핫스팟이 받는다. */}
       {(book.pages[index].actors?.length ?? 0) > 0 && (
-        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center" style={SAFE_X}>
           {/* 그림 실측 비율(--ar)로 무대와 같은 크기를 유지한다 — 좌표가 그림과 맞아떨어진다. */}
           <div
             className="relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))]"
@@ -2478,10 +2487,10 @@ export function BookViewer({
         <div
           className={`pointer-events-none absolute inset-0 z-[5] flex items-center justify-center ${
             spread
-              ? "landscape:mx-auto landscape:my-auto landscape:w-[min(100vw,calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(100vw/(var(--ar)*2)))] landscape:justify-start"
+              ? "landscape:mx-auto landscape:my-auto landscape:w-[min(var(--safe-vw),calc(var(--ar)*2*100dvh))] landscape:h-[min(100dvh,calc(var(--safe-vw)/(var(--ar)*2)))] landscape:justify-start"
               : ""
           }`}
-          style={{ "--ar": String(ratioOf(index)) } as React.CSSProperties}
+          style={{ ...SAFE_X, "--ar": String(ratioOf(index)) } as React.CSSProperties}
         >
           <div
             className={`relative [aspect-ratio:var(--ar)] w-[min(100%,calc(var(--ar)*100dvh))] ${

@@ -42,47 +42,21 @@ function requestRootFullscreen(): Promise<unknown> {
 }
 
 /*
- * 앱(안드로이드) 안에서는 전체화면을 늘 유지한다(2026-10-21 사장님 — 아이폰 사진처럼 카메라 주변까지 배경을 꽉 채우기).
- * 크롬은 전체화면일 때만 viewport-fit=cover 페이지를 카메라 구멍 아래까지 그린다. 그래서 앱 안에서는 처음 누를 때 전체화면을 켜고
- * (components/AppShellMark), 동화의 '가로로 보기'는 가로 고정만 켜고 끈다 — '원래대로'가 전체화면까지 풀면 띠가 돌아온다.
+ * 앱(안드로이드)도 웹과 같다 — '가로로 보기'는 전체화면 + 가로 고정, '원래대로'는 둘 다 푼다.
+ * (10-21 4판에서 앱은 전체화면을 늘 켜 두었는데, 카메라 자리 띠는 그걸로 안 없어졌다 — 앱 엔진이 삼성 인터넷이었다.
+ *  6판부터 앱 틀이 크롬으로 열면서 카메라 자리까지 그리므로 전체화면이 따로 필요 없다.)
  */
-let appFullscreen = false;
-let landscapeLocked = false;
-const STORY_MODE_EVENT = "voice-storybook:story-mode";
 
-function announce(): void {
-  if (typeof window !== "undefined") window.dispatchEvent(new Event(STORY_MODE_EVENT));
-}
-
-/** 앱 안이면 켠다 — 그때부터 '원래대로'는 전체화면을 풀지 않는다 */
-export function keepAppFullscreen(on: boolean): void {
-  appFullscreen = on;
-}
-
-/** 앱 안 전체화면 켜기(누를 때마다 불러도 된다 — 이미 전체화면이면 아무것도 안 한다). 안 되는 기기는 조용히 넘긴다. */
-export function requestAppFullscreen(): void {
-  if (typeof document === "undefined" || isFullscreen()) return;
-  requestRootFullscreen().catch(() => {});
-}
-
-/** '가로로 보기' 단추가 켜진 상태인가 — 앱 안이면 가로 고정 여부, 웹이면 전체화면 여부 */
+/** '가로로 보기' 단추가 켜진 상태인가 — 전체화면 여부 */
 export function storyModeNow(): boolean {
   if (typeof document === "undefined") return false;
-  return appFullscreen ? landscapeLocked && isFullscreen() : isFullscreen();
+  return isFullscreen();
 }
 
-/** 상태가 바뀔 때(전체화면 들고 나기·가로 고정 켜고 끄기) 부른다. 돌려준 함수로 끊는다. */
+/** 전체화면에 들고 날 때(브라우저 뒤로 가기로 빠져나가는 경우까지) 부른다. 돌려준 함수로 끊는다. */
 export function onStoryModeChange(cb: () => void): () => void {
-  const onFullscreen = () => {
-    if (!isFullscreen()) landscapeLocked = false; // 전체화면이 풀리면 가로 고정도 함께 풀린다
-    cb();
-  };
-  document.addEventListener("fullscreenchange", onFullscreen);
-  window.addEventListener(STORY_MODE_EVENT, cb);
-  return () => {
-    document.removeEventListener("fullscreenchange", onFullscreen);
-    window.removeEventListener(STORY_MODE_EVENT, cb);
-  };
+  document.addEventListener("fullscreenchange", cb);
+  return () => document.removeEventListener("fullscreenchange", cb);
 }
 
 export function enterStoryMode(): void {
@@ -93,10 +67,6 @@ export function enterStoryMode(): void {
         lock?: (orientation: string) => Promise<void>;
       };
       return o.lock?.("landscape");
-    })
-    .then(() => {
-      landscapeLocked = true;
-      announce();
     })
     .catch(() => {
       /* 미지원 환경(아이폰 사파리 등) — 힌트가 대신한다 */
@@ -110,10 +80,7 @@ export function exitStoryMode(): void {
   } catch {
     /* 무시 */
   }
-  landscapeLocked = false;
-  announce();
-  // 앱 안에서는 전체화면을 그대로 둔다 — 풀면 카메라 자리에 띠가 돌아온다(가로 고정만 푼다).
-  if (appFullscreen || !isFullscreen()) return;
+  if (!isFullscreen()) return;
   const d = document as FsDocument;
   try {
     if (typeof d.exitFullscreen === "function") {
