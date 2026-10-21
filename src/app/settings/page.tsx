@@ -1441,7 +1441,8 @@ export default function SettingsPage() {
               선택한 글꼴에 실제로 들어 있는 굵기만 고를 수 있어요.
             </p>
 
-            <h2 className="mt-1 text-sm font-extrabold text-neutral-400">책장 한 줄에</h2>
+            {/* 넓은 화면에서만 다 들어간다 — 휴대폰은 폭에 맞춰 줄어서(세로 2권·가로 4권 안팎) 태블릿용이라고 밝힌다(사장님 10-21) */}
+            <h2 className="mt-1 text-sm font-extrabold text-neutral-400">책장 한 줄에 (태블릿·컴퓨터)</h2>
             <div className="flex flex-wrap gap-2">
               {SHELF_COLS.map((n) => {
                 const active = shelfCols === n;
@@ -1466,7 +1467,7 @@ export default function SettingsPage() {
               })}
             </div>
             <p className="-mt-1 text-xs font-medium text-neutral-400">
-              컴퓨터 화면에서 한 줄에 몇 권씩 놓을지예요. 휴대폰에서는 화면이 좁아 2권으로 보여요.
+              태블릿·컴퓨터처럼 넓은 화면에서 한 줄에 몇 권씩 놓을지예요. 휴대폰은 화면 폭에 맞춰 알아서 줄어요.
             </p>
 
             <h2 className="mt-1 text-sm font-extrabold text-neutral-400">동화가 끝나면</h2>

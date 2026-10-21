@@ -44,6 +44,7 @@ import { shrunkPages, withBookScale } from "@/lib/scale-lock";
 import { authedFetch } from "@/lib/supabase";
 import { loadPrivatePageVideos } from "@/lib/private-media";
 import { fitScale } from "@/lib/fit-text";
+import { stallTracker } from "@/lib/audio-stall";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import {
@@ -88,6 +89,10 @@ import { currentReadingChunk, splitStorySentences } from "@/lib/reading-chunks";
 import { restAfter } from "@/lib/reading-rest";
 
 const SWIPE_THRESHOLD_PX = 50;
+/** 낭독 소리가 이만큼 넘게 제자리면 '소리 없이 멈춤'으로 본다(받다 막힘·안드로이드가 잠깐 멈춤) — watchStall */
+const STALL_MS = 4500;
+/** 읽는 동안 손잡이(⋯)로 꺼낸 단추를 다시 감추기까지 */
+const CHROME_REHIDE_MS = 4000;
 
 /*
  * 화면 가장자리(카메라 구멍·둥근 모서리·아래 제스처 막대) 비켜 두기 — 2026-10-20 사장님 폰(가로 전체화면)에서
@@ -940,6 +945,24 @@ export function BookViewer({
   const voiceIdRef = useRef<string>("basic");
   const overriddenRef = useRef(false);
   const [voiceMenu, setVoiceMenu] = useState(false);
+  /*
+   * 손잡이(⋯)로 꺼낸 단추는 읽는 동안 CHROME_REHIDE_MS 손대지 않으면 다시 감춘다(2026-10-21 사장님: 가로로 보기에서
+   * 단추가 가끔 안 숨는다 — 한 번 꺼내면 그 책을 다 읽을 때까지 남아 있었다). 메뉴(글자 크기·성우·속도)를 열어 둔 동안은
+   * 기다리고, 화면을 만질 때마다 다시 센다.
+   */
+  useEffect(() => {
+    if (!chromeShown || !reading || sizeMenu || voiceMenu || speedMenu) return;
+    let t = setTimeout(() => setChromeShown(false), CHROME_REHIDE_MS);
+    const poke = () => {
+      clearTimeout(t);
+      t = setTimeout(() => setChromeShown(false), CHROME_REHIDE_MS);
+    };
+    window.addEventListener("pointerdown", poke);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("pointerdown", poke);
+    };
+  }, [chromeShown, reading, sizeMenu, voiceMenu, speedMenu]);
   // 이 회원의 복제된 부모 목소리(엄마·아빠) — 창작 동화 성우 선택지 맨 앞에 얹는다.
   const [parentVoices, setParentVoices] = useState<ParentVoice[]>([]);
   useEffect(() => {
@@ -1160,8 +1183,48 @@ export function BookViewer({
     el.play().catch(readable);
   };
 
+  /*
+   * 낭독이 소리 없이 멈춰 서는 일 막기(2026-10-21 사장님: 견우와 직녀를 읽다 순간 음성이 안 나와 앞뒤로 넘기니 나왔다).
+   * 조각 파일을 받다가 망이 막히면 오류도 끝(ended)도 오지 않아 '읽는 중'인 채 조용히 서 있었다 — 쪽을 넘겨야(go → readPage)
+   * 새로 틀었다. 안드로이드가 알림 소리 등으로 오디오를 잠깐 멈춰도 같다.
+   * 그래서 소리를 트는 동안 재생 위치가 STALL_MS 넘게 안 움직이면 onStuck 을 부른다 — 첫 번째는 그 소리를 다시 걸고
+   * (kickAudio), 그래도 안 되면 그 조각을 건너뛴다. 일시정지·캐릭터 대사로 일부러 멈춘 동안·화면이 안 보일 때는 세지 않고,
+   * 조각 사이의 쉼(숨)에는 걸지 않는다(끝나면 바로 푼다). 쪽을 넘기거나(haltPlayback) 화면을 떠나면 푼다.
+   */
+  const stallTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const clearStallWatch = () => {
+    if (stallTimer.current !== null) clearInterval(stallTimer.current);
+    stallTimer.current = null;
+  };
+  const watchStall = (run: number, el: HTMLAudioElement, onStuck: (tries: number) => void) => {
+    clearStallWatch();
+    const check = stallTracker(STALL_MS);
+    stallTimer.current = setInterval(() => {
+      if (run !== runIdRef.current) {
+        clearStallWatch();
+        return;
+      }
+      const tries = check({
+        holding: !readingRef.current || narrPausedRef.current || document.visibilityState !== "visible",
+        position: el.currentTime,
+        now: performance.now(),
+      });
+      if (tries !== null) onStuck(tries);
+    }, 1000);
+  };
+  /** 멈춘 소리를 다시 건다 — 멈춰 있으면 다시 틀고, 받다 막혔으면 그 자리부터 새로 받는다 */
+  const kickAudio = (el: HTMLAudioElement, src: string) => {
+    if (!el.paused) {
+      const at = el.currentTime;
+      el.src = src;
+      el.currentTime = at;
+    }
+    el.play().catch(() => {});
+  };
+
   /** 소리만 멈춘다 — 읽기 모드는 유지. 넘겨서 이어 읽을 때 쓴다. */
   const haltPlayback = () => {
+    clearStallWatch();
     runIdRef.current++;
     narrPausedRef.current = false;
     clearRest();
@@ -1269,7 +1332,10 @@ export function BookViewer({
           setHighlight(Math.min(total, Math.round((el.currentTime / el.duration) * total)));
         }
       };
-      el.onended = finishThen;
+      el.onended = () => {
+        clearStallWatch();
+        finishThen();
+      };
       el.play()
         .then(() => setPreparing(false))
         .catch((e: unknown) => {
@@ -1279,6 +1345,16 @@ export function BookViewer({
           if ((e as Error)?.name === "AbortError" || narrPausedRef.current) return;
           if (run === runIdRef.current) stopReading();
         });
+      // 소리 없이 멈추면 한 번 다시 걸고, 그래도 안 되면 이 쪽은 끝난 것으로 보고 넘어간다
+      watchStall(run, el, (tries) => {
+        if (tries === 1) {
+          kickAudio(el, audioSrc);
+          return;
+        }
+        clearStallWatch();
+        el.onended = null;
+        finishThen();
+      });
     };
 
     /**
@@ -1313,6 +1389,7 @@ export function BookViewer({
           }
         };
         el.onended = () => {
+          clearStallWatch();
           before += seg.chars;
           const after = srcs[i]; // i 는 이미 다음 조각을 가리킨다
           // 마지막 조각이면 여기서 쉬지 않는다 — 쪽 넘김 쉼을 finishThen 이 준다.
@@ -1351,6 +1428,15 @@ export function BookViewer({
             if ((e as Error)?.name === "AbortError" || narrPausedRef.current) return;
             if (run === runIdRef.current) stopReading();
           });
+        // 소리 없이 멈추면 한 번 다시 걸고, 그래도 안 되면 이 조각을 건너뛴다(깨진 조각과 같게)
+        watchStall(run, el, (tries) => {
+          if (tries === 1) {
+            kickAudio(el, seg.src);
+            return;
+          }
+          before += seg.chars;
+          next();
+        });
       };
       next();
     };
@@ -1439,6 +1525,7 @@ export function BookViewer({
           }
         };
         el.onended = () => {
+          clearStallWatch();
           URL.revokeObjectURL(url);
           const after = segments[si]; // si 는 이미 다음 조각을 가리킨다
           if (!after) {
@@ -1453,10 +1540,22 @@ export function BookViewer({
             setPreparing(false);
             prefetchNext();
           })
-          .catch(() => {
+          .catch((e: unknown) => {
+            // 캐릭터 대사·넘김으로 끊긴 재생(AbortError)은 실패가 아니다 — 다른 재생 길과 같게 넘긴다
+            if ((e as Error)?.name === "AbortError" || narrPausedRef.current) return;
             URL.revokeObjectURL(url);
             if (run === runIdRef.current) stopReading();
           });
+        // 소리 없이 멈추면 한 번 다시 걸고, 그래도 안 되면 다음 조각으로
+        watchStall(run, el, (tries) => {
+          if (tries === 1) {
+            kickAudio(el, url);
+            return;
+          }
+          clearStallWatch();
+          URL.revokeObjectURL(url);
+          void playNext();
+        });
       };
       void playNext();
     };
@@ -1772,6 +1871,8 @@ export function BookViewer({
     if (restTimer.current) clearTimeout(restTimer.current);
     restTimer.current = null;
     restHeld.current = null;
+    if (stallTimer.current !== null) clearInterval(stallTimer.current);
+    stallTimer.current = null;
     const el = audioRef.current;
     if (el) {
       el.onended = null;
@@ -2779,8 +2880,8 @@ export function BookViewer({
       </div>
       )}
 
-      {/* 손잡이 — 단추가 감춰졌을 때만 뜬다. 누르면 다시 나오고, 그 뒤로는
-          읽기가 끝날 때까지 그대로 있는다(읽는 내내 깜빡이면 더 거슬린다). */}
+      {/* 손잡이 — 단추가 감춰졌을 때만 뜬다. 누르면 다시 나오고, 4초 동안 손대지 않으면
+          다시 숨는다(CHROME_REHIDE_MS — 화면을 만질 때마다 다시 센다). */}
       {chromeOff && (
         <button
           type="button"
