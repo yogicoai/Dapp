@@ -1747,7 +1747,8 @@ export function BookViewer({
   useEffect(() => {
     if (!hasAutoplayNext(book.id)) return;
     const t = window.setTimeout(() => {
-      if (takeAutoplayNext(book.id)) replayFromStart();
+      // 앱을 내린 사이에 넘어왔으면 뒤에서 혼자 읽지 않는다 — 돌아와서 ▶ 를 누르게(아래 '앱에서 나가면 멈춤')
+      if (takeAutoplayNext(book.id) && document.visibilityState === "visible") replayFromStart();
     }, 700);
     return () => window.clearTimeout(t);
     // 책이 열릴 때 한 번만 — replayFromStart 는 렌더마다 새로 만들어지지만 여기서는 처음 것으로 충분하다.
@@ -1895,6 +1896,31 @@ export function BookViewer({
     else el.pause();
     return () => el.pause();
   }, [bgmOn]);
+
+  /*
+   * 앱에서 잠깐 나가거나(홈 단추·다른 앱·화면 끄기) 앱을 닫으면 소리를 멈춘다(2026-10-21 사장님: 나가도 그대로 계속 읽어진다 —
+   * "잠깐 나갔을 때 멈춤이 돼야 해, 보이스도"). 낭독은 ⏸ 와 같게 멈춰 멈춘 자리를 남기고, 돌아와도 저절로 다시 틀지 않는다 —
+   * ▶ 를 누르면 그 자리부터 잇는다. 캐릭터 대사는 끊고, 배경음은 쉬었다가 돌아오면 켜 둔 대로 다시 튼다.
+   * 다 읽고 다음 동화로 넘어가려던 참이었으면 넘어가지 않고 끝 창을 남긴다(돌아와서 고르게).
+   */
+  useEffect(() => {
+    const away = () => {
+      if (readingRef.current) stopReading();
+      stopSay();
+      bgmRef.current?.pause();
+      if (ended) setAutoNextStopped(true);
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") away();
+      else if (bgmOn) bgmRef.current?.play().catch(() => {});
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", away);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", away);
+    };
+  }, [stopReading, stopSay, bgmOn, ended]);
 
   // 반짝이 이펙트는 잠깐 떴다 사라진다 — 애니메이션이 끝날 때쯤 지운다.
   useEffect(() => {
@@ -2463,7 +2489,7 @@ export function BookViewer({
         * 이유가 없다. 아이콘을 누르면 그때 펼쳐진다.
         */}
       {editable && !editing && (
-        <div className="absolute left-3 top-16 z-20 flex flex-col items-start gap-1.5" style={SAFE_LEFT}>
+        <div className="absolute left-3 z-20 flex flex-col items-start gap-1.5" style={{ top: "calc(4rem + env(safe-area-inset-top))", ...SAFE_LEFT }}>
           <button
             type="button"
             onClick={() => setToolsOpen((v) => !v)}
@@ -2565,12 +2591,14 @@ export function BookViewer({
       )}
 
       {/* 처음 한 번만 뜨는 안내 — 눌러 볼 수 있다는 걸 모르고 지나가지 않게.
-          잠깐 떴다 사라지고, 눌러도 닫힌다. 넘김 버튼(z-10) 위에 잠깐 얹는다. */}
+          잠깐 떴다 사라지고, 눌러도 닫힌다. 넘김 버튼(z-10) 위에 잠깐 얹는다.
+          한 줄로 묶어 두면 휴대폰(특히 글자를 키운 폰)에서 글이 흰 바탕 밖으로 삐져나왔다(사장님 10-21) —
+          글 길이만큼 넓히되(w-max) 화면 폭을 넘으면 두 줄로 내린다. */}
       {tapHint && (
         <button
           type="button"
           onClick={() => setTapHint(false)}
-          className="absolute left-1/2 z-20 max-w-[calc(100vw-1.5rem)] -translate-x-1/2 animate-[float_2s_ease-in-out_infinite] whitespace-nowrap rounded-full bg-white/95 px-4 py-2 text-xs font-extrabold text-neutral-700 shadow-lg backdrop-blur sm:px-5 sm:py-2.5 sm:text-sm"
+          className="absolute left-1/2 z-20 w-max max-w-[calc(100vw-1.5rem)] -translate-x-1/2 animate-[float_2s_ease-in-out_infinite] break-keep rounded-3xl bg-white/95 px-4 py-2 text-center text-xs font-extrabold leading-snug text-neutral-700 shadow-lg backdrop-blur sm:px-5 sm:py-2.5 sm:text-sm"
           style={{ top: "calc(4.25rem + env(safe-area-inset-top))" }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
