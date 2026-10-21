@@ -13,11 +13,15 @@ import { useEffect, useRef, useState } from "react";
 import { logOut, loadSession } from "@/lib/auth";
 import { allAgreed, CONSENT_ITEMS, consentExempt, docsLive, NO_CHECKS, setAll, type ConsentChecks } from "@/lib/consent";
 import { agreeTerms, loadMyConsent } from "@/lib/consent-client";
+import { useAppShell } from "@/lib/app-shell-client";
 import { loadSiteInfo } from "@/lib/site-info-client";
 
 export function ConsentGate() {
   const pathname = usePathname();
   const router = useRouter();
+  // 앱(안드로이드) 안에서는 약관 '보기'를 새 창으로 열지 않는다 — 새 창은 앱 밖 크롬으로 나간다(2026-10-21 점검).
+  // 같은 화면에서 열어도 약관·개인정보 화면은 이 창이 덮지 않고(consentExempt), 돌아오면 이 창이 다시 뜬다.
+  const inApp = useAppShell() === "android";
   const [open, setOpen] = useState(false);
   const [checks, setChecks] = useState<ConsentChecks>(NO_CHECKS);
   const [busy, setBusy] = useState(false);
@@ -115,8 +119,8 @@ export function ConsentGate() {
               {item.href ? (
                 <a
                   href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={inApp ? undefined : "_blank"}
+                  rel={inApp ? undefined : "noopener noreferrer"}
                   className="flex min-h-11 shrink-0 items-center px-2 text-xs font-bold text-neutral-500 underline underline-offset-2"
                 >
                   보기
