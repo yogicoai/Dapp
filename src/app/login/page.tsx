@@ -129,7 +129,7 @@ export default function LoginPage() {
             안 켠 채로 단추만 있으면 눌렀을 때 오류만 나므로 아예 감추고, 가입은 준비 중이라고만 알린다.
           */}
           {isGoogleLoginEnabled() ? (
-            <p className="mb-3 text-center text-sm font-extrabold text-neutral-600">구글 계정으로 가입하고 로그인해요</p>
+            <p className="mb-3 break-keep text-center text-sm font-extrabold text-neutral-600">구글 계정으로 가입하고 로그인해요</p>
           ) : (
             <p className="mb-3 rounded-xl bg-neutral-50 px-3 py-2 text-center text-xs font-bold text-neutral-500">
               새 가입은 구글 계정으로 받아요 · 지금은 준비 중이에요

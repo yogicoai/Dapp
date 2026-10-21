@@ -62,6 +62,11 @@ html[data-app-shell="android"] body {
 html[data-app-shell="android"] main {
   border-top: env(safe-area-inset-top, 0px) solid transparent;
 }
+/* 앱 안에서는 그림을 끌거나 골라지지 않게 — 길게 누르기 메뉴는 AppShellMark 가 막는다 */
+html[data-app-shell="android"] img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
 
 /*
   앱을 새로 켤 때의 '동화 나라로 이동 중' 화면(components/AppIntro) — html[data-app-intro] 일 때만 보인다.

@@ -9,6 +9,8 @@
  *    앱 안일 때 여기서 덧붙인다 — 화면을 옮기면 Next 가 다시 써서 그때마다 붙인다. 아이폰 등 다른 기기에는 붙이지 않는다.
  *  · <html data-app-shell="android"> — 검은 바탕·카메라 구멍 비키기는 globals.css 가 이걸 보고 한다. 보통은 첫 그림 전
  *    스크립트(lib/app-shell APP_SHELL_BOOT_SCRIPT)가 이미 달아 두었고, 여기서는 빠졌을 때만 채운다.
+ *  · 길게 누르기 메뉴를 막는다(2026-10-21 점검) — 아이가 그림·책 표지를 꾹 누르면 크롬 메뉴('이미지 다운로드'·'새 탭에서 열기'·
+ *    렌즈 검색)가 올라와 앱답지 않고, 새 탭은 앱 밖 크롬으로 나간다. 글 쓰는 칸은 붙여넣기가 되게 그대로 둔다. 웹은 그대로.
  */
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
@@ -27,5 +29,16 @@ export function AppShellMark() {
     document.documentElement.dataset.appShell = "android";
     coverViewport();
   }, [shell, pathname]);
+
+  useEffect(() => {
+    if (shell !== "android") return;
+    const noMenu = (e: MouseEvent) => {
+      const t = e.target instanceof Element ? e.target : null;
+      if (t?.closest("input, textarea, [contenteditable='true']")) return;
+      e.preventDefault();
+    };
+    document.addEventListener("contextmenu", noMenu);
+    return () => document.removeEventListener("contextmenu", noMenu);
+  }, [shell]);
   return null;
 }
