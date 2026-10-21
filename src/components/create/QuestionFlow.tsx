@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { balancedCols, lonelyLast } from "@/lib/balanced-grid";
 import { chipIcon } from "@/lib/chip-icons";
 
 /**
@@ -17,6 +18,9 @@ import { chipIcon } from "@/lib/chip-icons";
  * - 답이 없으면 '건너뛰기', 있으면 '다음 →'. (재료는 하나만 있어도 만들 수 있어서 모든 질문이 선택이다.)
  * - 마지막 장은 '이렇게 만들어요' 요약 + '다음 →'.
  */
+
+/** 한 줄 칸 수 → 그리드 클래스(글자 그대로 둬야 Tailwind 가 찾는다) */
+const GRID_COLS: Record<number, string> = { 1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-3" };
 
 export type FlowOption = { t: string; e?: string; icon?: string };
 
@@ -265,11 +269,12 @@ export function QuestionFlow({
           <div
             role="group"
             aria-labelledby={titleId}
-            className={`grid ${
-              q.layout === "wide" ? "grid-cols-1 gap-1.5" : q.layout === "cards" ? "grid-cols-3 gap-2.5" : "grid-cols-3 gap-2"
+            // 한 줄 칸 수는 개수에 맞춰 고르게 — '3개 + 1개'는 '2개 + 2개'로(lib/balanced-grid, 사장님 10-21)
+            className={`grid ${GRID_COLS[q.layout === "wide" ? 1 : balancedCols(q.options.length, 3)]} ${
+              q.layout === "wide" ? "gap-1.5" : q.layout === "cards" ? "gap-2.5" : "gap-2"
             }`}
           >
-            {q.options.map((o) => {
+            {q.options.map((o, oi, all) => {
               const on = q.value === o.t;
               const tone = on ? "text-white shadow" : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200";
               const shape =
@@ -285,7 +290,10 @@ export function QuestionFlow({
                   onClick={() => pick(qi, o.t)}
                   aria-pressed={on}
                   style={on ? { background: accent } : undefined}
-                  className={`flex items-center rounded-2xl font-bold transition ${shape} ${tone}`}
+                  className={`flex items-center rounded-2xl font-bold transition ${shape} ${tone} ${
+                    // 어떻게 나눠도 하나가 홀로 남으면(7개 등) 그 하나는 가운데 칸에
+                    q.layout !== "wide" && oi === all.length - 1 && lonelyLast(all.length, balancedCols(all.length, 3)) ? "col-start-2" : ""
+                  }`}
                 >
                   <OptionIcon o={o} size={q.layout === "cards" ? "card" : q.layout === "wide" ? "line" : "chip"} />
                   <span
