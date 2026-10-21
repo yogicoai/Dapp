@@ -62,6 +62,14 @@ html[data-app-shell="android"] body {
 html[data-app-shell="android"] main {
   border-top: env(safe-area-inset-top, 0px) solid transparent;
 }
+/*
+  앱 안에서는 당겨서 새로고침을 끈다(2026-10-21 점검) — 크롬 앱(TWA)은 위에서 아래로 끌면 페이지를 새로 불러,
+  아이가 동화를 보다 아래로 쓸면 낭독이 끊기고 책이 처음부터 다시 열렸다. 웹(브라우저)은 그대로.
+*/
+html[data-app-shell="android"],
+html[data-app-shell="android"] body {
+  overscroll-behavior-y: none;
+}
 /* 앱 안에서는 그림을 끌거나 골라지지 않게 — 길게 누르기 메뉴는 AppShellMark 가 막는다 */
 html[data-app-shell="android"] img {
   -webkit-user-drag: none;

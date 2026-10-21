@@ -650,6 +650,8 @@ export default function Home() {
           aria-label="우리 가족 동화 만들기"
           className="fixed bottom-5 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-3 rounded-full px-7 py-3.5 text-white transition-transform hover:-translate-y-0.5 hover:-translate-x-1/2 active:translate-y-0 active:-translate-x-1/2 animate-[float_2.4s_ease-in-out_infinite] sm:flex lg:px-8 lg:py-4 [@media(max-height:600px)]:px-4 [@media(max-height:600px)]:py-2"
           style={{
+            // 아래 제스처 막대 자리만큼 비킨다(앱 안 가로 화면 — 없는 기기는 0)
+            bottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))",
             background: theme.colors.accent,
             boxShadow: `0 8px 0 ${theme.colors.accentDark}, 0 14px 24px rgba(0,0,0,0.25)`,
           }}
