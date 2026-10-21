@@ -1956,7 +1956,11 @@ export function BookViewer({
             <div
               className={`absolute ${
                 focusCurrent && position === "bottom"
-                  ? "inset-x-[6%] bottom-4 px-[2%] py-2 landscape:bottom-28"
+                  ? // 가로: 단추가 보일 땐 아래 넘김 바·글자 크기 위로, 읽어 주는 동안(단추가 숨음)은 그림 아래 가장자리 가까이
+                    //   (2026-10-21 사장님 "대본 글자가 너무 가운데 — 조금 더 아래로"). 오갈 때 툭 튀지 않게 천천히 움직인다.
+                    `inset-x-[6%] bottom-4 px-[2%] py-2 transition-[bottom] duration-500 motion-reduce:transition-none ${
+                      chromeOff ? "landscape:bottom-[4%]" : "landscape:bottom-24"
+                    }`
                   : {
                       bottom:
                         "inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-[6%] pb-[6%] pt-[14%]",
