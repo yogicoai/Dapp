@@ -4324,6 +4324,8 @@ export default function CreatePage() {
         <Link
           href="/"
           className="fixed left-4 top-4 z-10 rounded-full bg-white/70 px-4 py-2 text-sm font-bold text-neutral-700 shadow-md backdrop-blur"
+          // 앱 안 — 카메라 구멍 자리(안전 영역)만큼 비킨다(없는 기기는 0, 2026-10-21 점검)
+          style={{ marginTop: "env(safe-area-inset-top, 0px)", marginLeft: "env(safe-area-inset-left, 0px)" }}
         >
           ← 서재
         </Link>
@@ -4331,6 +4333,7 @@ export default function CreatePage() {
         <Link
           href="/guide#make"
           className="fixed right-4 top-4 z-10 rounded-full bg-white/70 px-4 py-2 text-sm font-bold text-neutral-700 shadow-md backdrop-blur"
+          style={{ marginTop: "env(safe-area-inset-top, 0px)", marginRight: "env(safe-area-inset-right, 0px)" }}
         >
           📖 사용 가이드
         </Link>

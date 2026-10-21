@@ -757,6 +757,8 @@ export default function SettingsPage() {
         <Link
           href="/"
           className="absolute left-4 top-4 rounded-full bg-white/70 px-4 py-2 text-sm font-bold text-neutral-700 backdrop-blur"
+          // 앱 안 — 세로 폰에서 카메라 구멍 자리(안전 영역)만큼 아래로(가로는 body 좌우 여백이 이미 비킨다, 2026-10-21 점검)
+          style={{ marginTop: "env(safe-area-inset-top, 0px)" }}
         >
           ← 돌아가기
         </Link>
