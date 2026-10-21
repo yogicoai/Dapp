@@ -17,6 +17,7 @@ import {
 } from "@/components/settings/AdultLooksEditor";
 import { FamilyCharacterRow } from "@/components/settings/FamilyBits";
 import { WithdrawSheet } from "@/components/settings/WithdrawSheet";
+import { ScreenDiag } from "@/components/settings/ScreenDiag";
 import type { FamilyMember } from "@/lib/family";
 import { deleteBookConfirmText } from "@/lib/retention";
 import {
@@ -1618,6 +1619,8 @@ export default function SettingsPage() {
               <p className="-mt-1 text-xs font-medium text-neutral-400">
                 회원·토큰, 결제·구독, 의견·오류, 요금제, 사업자 정보·약관을 한곳에서 관리해요.
               </p>
+              {/* 앱(안드로이드)이 카메라 자리까지 그리는지 사장님 폰의 실제 값 — 10-21 */}
+              <ScreenDiag />
             </section>
           )}
 
