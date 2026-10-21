@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useAppShell } from "@/lib/app-shell-client";
 
 type Diag = {
+  browser: string;
   fullscreen: boolean;
   displayMode: string;
   insets: string;
@@ -29,11 +30,25 @@ function readInsets(): string {
   return v;
 }
 
+/** 앱(TWA)을 실제로 띄우는 브라우저 — 갤럭시는 기본 브라우저(삼성 인터넷일 수 있다)가 앱 엔진이 된다 */
+function readBrowser(): string {
+  const ua = navigator.userAgent;
+  const major = (re: RegExp) => ua.match(re)?.[1]?.split(".")[0];
+  const samsung = major(/SamsungBrowser\/([\d.]+)/);
+  const edge = major(/EdgA\/([\d.]+)/);
+  const chrome = major(/Chrome\/([\d.]+)/);
+  if (samsung) return `삼성 인터넷 ${samsung}`;
+  if (edge) return `엣지 ${edge}`;
+  if (chrome) return `크롬 ${chrome}`;
+  return ua.slice(0, 60);
+}
+
 function read(): Diag {
   const modes = ["fullscreen", "standalone", "minimal-ui", "browser"];
   const displayMode = modes.find((m) => window.matchMedia(`(display-mode: ${m})`).matches) ?? "?";
   const meta = document.querySelector<HTMLMetaElement>('meta[name="viewport"]')?.content ?? "";
   return {
+    browser: readBrowser(),
     fullscreen: Boolean(document.fullscreenElement),
     displayMode,
     insets: readInsets(),
@@ -56,6 +71,7 @@ export function ScreenDiag() {
   if (!d) return null;
   const rows: [string, string][] = [
     ["앱 안", shell === "android" ? "예" : "아니오(웹)"],
+    ["브라우저", d.browser],
     ["전체화면", d.fullscreen ? "예" : "아니오 — 화면을 한 번 눌러 보세요"],
     ["화면 방식", d.displayMode],
     ["가장자리까지 그리기", d.viewportFit],
