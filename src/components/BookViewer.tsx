@@ -46,7 +46,14 @@ import { loadPrivatePageVideos } from "@/lib/private-media";
 import { fitScale } from "@/lib/fit-text";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
-import { enterStoryMode, exitStoryMode, exitStoryModeOnLeave, keepStoryModeForNextBook } from "@/lib/story-mode";
+import {
+  enterStoryMode,
+  exitStoryMode,
+  exitStoryModeOnLeave,
+  keepStoryModeForNextBook,
+  onStoryModeChange,
+  storyModeNow,
+} from "@/lib/story-mode";
 import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
 import { locationKeyOf, neighbourPlaceClauses, repairStaleVehicleScene, sheetMatchesKey } from "@/lib/story-quality";
@@ -1800,15 +1807,14 @@ export function BookViewer({
     };
   }, []);
 
-  // "가로로 보기" 버튼 상태 — 전체화면 여부를 따라간다 (브라우저 뒤로가기로
-  // 빠져나가는 경우까지 이벤트로 감지).
+  // "가로로 보기" 버튼 상태 — 웹은 전체화면 여부, 앱 안(늘 전체화면)은 가로 고정 여부를 따라간다(lib/story-mode storyModeNow).
+  // 브라우저 뒤로가기로 빠져나가는 경우까지 이벤트로 감지한다.
   const [storyMode, setStoryMode] = useState(false);
   useEffect(() => {
-    const onChange = () => setStoryMode(Boolean(document.fullscreenElement));
+    const onChange = () => setStoryMode(storyModeNow());
     // 앞 책에서 전체화면으로 보다가 넘어왔으면 이미 전체화면이다 — 처음부터 그 상태로 맞춘다.
     onChange();
-    document.addEventListener("fullscreenchange", onChange);
-    return () => document.removeEventListener("fullscreenchange", onChange);
+    return onStoryModeChange(onChange);
   }, []);
 
   // 크롬은 음성 목록이 늦게 채워진다 — 첫 "읽어주기"부터 배정 음성이 적용되게 예열.

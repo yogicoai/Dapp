@@ -62,6 +62,13 @@ function writeLocalFold(f: boolean): void {
   }
 }
 
+/*
+ * 화면 위 모서리 알약은 카메라 구멍·둥근 모서리를 비켜 둔다(2026-10-21 — 앱 안에서는 카메라 주변까지 꽉 채워 그린다).
+ * 안전 영역이 없는 기기·화면(웹 브라우저 등)에서는 0 이라 그대로다.
+ */
+const SAFE_TOP_LEFT: React.CSSProperties = { marginTop: "env(safe-area-inset-top, 0px)", marginLeft: "env(safe-area-inset-left, 0px)" };
+const SAFE_TOP_RIGHT: React.CSSProperties = { marginTop: "env(safe-area-inset-top, 0px)", marginRight: "env(safe-area-inset-right, 0px)" };
+
 export default function Home() {
   const { theme } = useTheme();
   const router = useRouter();
@@ -343,6 +350,7 @@ export default function Home() {
           <Link
             href="/login"
             className="fixed left-4 top-4 z-10 flex items-center gap-1 rounded-full bg-white/85 px-3.5 py-2 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+            style={SAFE_TOP_LEFT}
           >
             로그인 / 회원가입
           </Link>
@@ -351,6 +359,7 @@ export default function Home() {
             href="/settings"
             aria-label={master ? "관리자" : "내 토큰"}
             className="fixed left-4 top-4 z-10 flex items-center gap-1 rounded-full bg-white/85 px-3.5 py-2 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+            style={SAFE_TOP_LEFT}
           >
             {master ? (
               "👑 관리자"
@@ -379,6 +388,7 @@ export default function Home() {
             href="/feedback"
             aria-label="베타 의견 남기기"
             className="fixed left-[7.5rem] top-4 z-10 flex items-center gap-1 rounded-full bg-white/85 px-3.5 py-2 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+            style={SAFE_TOP_LEFT}
           >
             📝 <span className="hidden sm:inline">의견 남기기</span>
           </Link>
@@ -389,6 +399,7 @@ export default function Home() {
           href="/settings"
           aria-label="설정"
           className="fixed right-4 top-4 z-10 flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-white/80 shadow backdrop-blur transition hover:bg-white"
+          style={SAFE_TOP_RIGHT}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/icons/func-gear.webp" alt="" className="h-9 w-9 object-contain" />
@@ -400,6 +411,7 @@ export default function Home() {
           href="/guide"
           aria-label="사용 가이드"
           className="fixed right-[4.25rem] top-4 z-10 flex h-11 items-center gap-1 rounded-full bg-white/85 px-3.5 text-sm font-extrabold text-neutral-700 shadow backdrop-blur transition hover:bg-white"
+          style={SAFE_TOP_RIGHT}
         >
           📖 <span className="sm:hidden">가이드</span>
           <span className="hidden sm:inline">사용 가이드</span>
