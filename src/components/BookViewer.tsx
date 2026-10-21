@@ -126,7 +126,8 @@ const FALLBACK_CHARS_PER_SEC = 5.5;
  * 마지막 쪽 뒤에는 이미 쪽 넘김 숨이 있어서 길게 둘 필요가 없다. 대신 0으로 두면
  * "다음 동화로 넘어가요" 알림을 아이가 못 보고 갑자기 다른 이야기가 시작된다.
  */
-const AUTO_NEXT_DELAY_MS = 1600;
+/** 이어서 틀기 — 마지막 쪽 낭독이 끝나고 다음 동화로 넘어가기까지 한숨(알림 창 없이 바로, 사장님 10-21) */
+const AUTO_NEXT_DELAY_MS = 500;
 
 /**
  * 본문이 준비된 칸보다 길면 스크롤을 만들지 않고 글자만 단계적으로 줄인다.
@@ -843,49 +844,54 @@ export function BookViewer({
   const [nextBook, setNextBook] = useState<{ id: string; title: string } | null>(null);
   // 다음 책을 찾아봤나 — 내가 만든 책은 계정에서 목록을 받아 오느라 한 박자 늦다.
   // 이어서 틀기를 켜 두었을 때, 찾는 동안 "이야기가 끝났어요" 창이 잠깐 번쩍이지 않게 쓴다.
+  // 책을 열 때 미리 찾아 둔다 — 끝나고 나서 찾으면 그만큼 마지막 쪽에 서서 기다렸다(사장님 10-21 "바로 다음 동화로").
+  // 찾다가 실패해도(망·로그인 확인) 끝 창은 떠야 하니 다 찾은 것으로 친다(다음 동화 없음).
   const [nextChecked, setNextChecked] = useState(false);
   useEffect(() => {
-    if (!ended) return;
     let alive = true;
     (async () => {
-      // 안 보이는 책은 건너뛴다 — 관리실 '공개 동화'에서 '책장에 적용'을 켜면 다음 동화도 그 회원에게 보이는 책만.
-      // 비회원·요금제 없는 회원은 무료 책만, 요금제를 지정받은 회원은 그 요금제까지, 관리자는 전부(홈 책장과 같은 규칙).
-      const library = book.id.startsWith("folk-") || book.id.startsWith("classic-");
-      const s = library ? await loadSession().catch(() => null) : null;
-      const uid = s?.uid ?? null;
-      const plan = uid && !s?.isMaster ? await loadMyPlanKey(uid) : null;
-      const viewer = library ? viewerTierOf(!!uid, plan, !!s?.isMaster) : "pass";
-      const access = viewer === "pass" ? OPEN_LIBRARY : await loadLibraryAccess();
-      if (!alive) return;
-      const pickNext = (list: { id: string; title: string; hidden?: boolean }[]) => {
-        const shown = list.filter((b) => !b.hidden);
-        const at = shown.findIndex((b) => b.id === book.id);
-        if (at < 0) return null;
-        return shown.slice(at + 1).find((b) => !libraryLock(access, b.id, viewer)) ?? null;
-      };
-      if (book.id.startsWith("folk-")) {
-        setNextBook(pickNext(asBooks(folkBooksJson)));
-      } else if (book.id.startsWith("classic-")) {
-        setNextBook(pickNext(asBooks(classicBooksJson)));
-      } else if (book.id.startsWith("my-")) {
-        // 내가 만든 책은 계정에서 목록을 가져온다(제목·id만이라 가볍다).
-        const mine = await loadMyBooksBrief().catch(() => []);
-        if (alive) setNextBook(pickNext(mine));
+      try {
+        // 안 보이는 책은 건너뛴다 — 관리실 '공개 동화'에서 '책장에 적용'을 켜면 다음 동화도 그 회원에게 보이는 책만.
+        // 비회원·요금제 없는 회원은 무료 책만, 요금제를 지정받은 회원은 그 요금제까지, 관리자는 전부(홈 책장과 같은 규칙).
+        const library = book.id.startsWith("folk-") || book.id.startsWith("classic-");
+        const s = library ? await loadSession().catch(() => null) : null;
+        const uid = s?.uid ?? null;
+        const plan = uid && !s?.isMaster ? await loadMyPlanKey(uid) : null;
+        const viewer = library ? viewerTierOf(!!uid, plan, !!s?.isMaster) : "pass";
+        const access = viewer === "pass" ? OPEN_LIBRARY : await loadLibraryAccess();
+        if (!alive) return;
+        const pickNext = (list: { id: string; title: string; hidden?: boolean }[]) => {
+          const shown = list.filter((b) => !b.hidden);
+          const at = shown.findIndex((b) => b.id === book.id);
+          if (at < 0) return null;
+          return shown.slice(at + 1).find((b) => !libraryLock(access, b.id, viewer)) ?? null;
+        };
+        if (book.id.startsWith("folk-")) {
+          setNextBook(pickNext(asBooks(folkBooksJson)));
+        } else if (book.id.startsWith("classic-")) {
+          setNextBook(pickNext(asBooks(classicBooksJson)));
+        } else if (book.id.startsWith("my-")) {
+          // 내가 만든 책은 계정에서 목록을 가져온다(제목·id만이라 가볍다).
+          const mine = await loadMyBooksBrief().catch(() => []);
+          if (alive) setNextBook(pickNext(mine));
+        }
+      } catch {
+        // 다음 동화를 못 찾았다 — 끝 창이 평소대로 뜬다
       }
       if (alive) setNextChecked(true);
     })();
     return () => {
       alive = false;
     };
-  }, [ended, book.id]);
+  }, [book.id]);
 
   /*
    * 동화 이어서 듣기(설정) — 켜 두면 끝났을 때 묻지 않고 다음 동화로 넘어가 바로 읽는다.
    *
    * 잠자리에 틀어 두면 한 편마다 "다음 동화 보기"를 눌러 줄 사람이 없다(사장님 요청,
-   * 2026-09-20). 끝 창 대신 작은 알림만 잠깐 띄우고 넘어간다. 그 알림의 '여기서 멈추기'를
-   * 누르면 이번 한 번은 평소처럼 끝 창을 띄운다. 서가의 마지막 책이면 넘어갈 곳이 없으니
-   * 평소대로 끝 창이 뜬다.
+   * 2026-09-20). 끝 창 없이 한숨(AUTO_NEXT_DELAY_MS) 쉬고 바로 넘어간다 — 예전엔 '다음 동화로 넘어가요 ·
+   * 여기서 멈추기' 알림을 1.6초 띄웠는데, 확인 창처럼 보여 뺐다(사장님 10-21 "확인 팝업 안 뜨고 바로").
+   * 서가의 마지막 책이거나 다음 책이 잠겨 있으면 넘어갈 곳이 없으니 평소대로 끝 창이 뜬다.
    */
   // 끝났을 때만 설정을 본다 — 끝남은 재생한 뒤에만 생기므로 서버 그림과 어긋날 일이 없다.
   const autoNext = ended && loadAutoNext();
@@ -963,6 +969,29 @@ export function BookViewer({
       window.removeEventListener("pointerdown", poke);
     };
   }, [chromeShown, reading, sizeMenu, voiceMenu, speedMenu]);
+  /*
+   * 위쪽 단추 줄 — 왼쪽 묶음(서재·가로로 보기·그림/펼침·신고)과 오른쪽 묶음(넘김·배경음·성우)은 따로 떠 있어서,
+   * 휴대폰 글자를 크게 키우면(단추도 같이 커진다) 둘이 겹쳤다(사장님 10-21). 두 묶음의 가로 자리를 재서 겹치면
+   * 오른쪽 묶음을 한 줄 아래로 내린다(성우 목록도 같이). 가로 자리만 보므로 내린 뒤에도 판단이 흔들리지 않는다.
+   */
+  const leftBarRef = useRef<HTMLDivElement>(null);
+  const rightBarRef = useRef<HTMLDivElement>(null);
+  const [barsCrowded, setBarsCrowded] = useState(false);
+  useEffect(() => {
+    const l = leftBarRef.current;
+    const r = rightBarRef.current;
+    if (!l || !r) return;
+    const check = () => setBarsCrowded(l.getBoundingClientRect().right + 8 > r.getBoundingClientRect().left);
+    // 지켜보기 시작할 때 한 번 불러 주고, 크기가 바뀔 때마다(글자 크기·화면 돌림) 다시 잰다
+    const ro = new ResizeObserver(check);
+    ro.observe(l);
+    ro.observe(r);
+    window.addEventListener("resize", check);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", check);
+    };
+  }, []);
   // 이 회원의 복제된 부모 목소리(엄마·아빠) — 창작 동화 성우 선택지 맨 앞에 얹는다.
   const [parentVoices, setParentVoices] = useState<ParentVoice[]>([]);
   useEffect(() => {
@@ -2355,8 +2384,9 @@ export function BookViewer({
       {/* 넘김은 우측 상단 전용 버튼(◀ ▶) — 화면 절반 탭 방식은 캐릭터 클릭
           대사와 겹쳐 오작동해서 걷어냈다. 스와이프와 키보드 ←→는 그대로 산다. */}
       <div
+        ref={rightBarRef}
         className={`absolute right-3 z-10 flex gap-1.5 sm:right-4 sm:gap-2 ${chromeCls}`}
-        style={{ top: "calc(1rem + env(safe-area-inset-top))", ...SAFE_RIGHT }}
+        style={{ top: barsCrowded ? "calc(4rem + env(safe-area-inset-top))" : "calc(1rem + env(safe-area-inset-top))", ...SAFE_RIGHT }}
       >
         <button
           type="button"
@@ -2419,7 +2449,7 @@ export function BookViewer({
       {voiceMenu && (
         <div
           className="absolute right-4 z-20 max-h-[70dvh] w-56 overflow-y-auto rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur"
-          style={{ top: "calc(3.75rem + env(safe-area-inset-top))", ...SAFE_RIGHT }}
+          style={{ top: barsCrowded ? "calc(6.75rem + env(safe-area-inset-top))" : "calc(3.75rem + env(safe-area-inset-top))", ...SAFE_RIGHT }}
         >
           <p className="px-2 py-1 text-[11px] font-bold text-neutral-400">
             {isCreated ? "읽어주는 성우를 골라요" : "이 동화 추천 성우 (무료로 바꿔 들어요)"}
@@ -2599,7 +2629,7 @@ export function BookViewer({
           type="button"
           onClick={() => setTapHint(false)}
           className="absolute left-1/2 z-20 w-max max-w-[calc(100vw-1.5rem)] -translate-x-1/2 animate-[float_2s_ease-in-out_infinite] break-keep rounded-3xl bg-white/95 px-4 py-2 text-center text-xs font-extrabold leading-snug text-neutral-700 shadow-lg backdrop-blur sm:px-5 sm:py-2.5 sm:text-sm"
-          style={{ top: "calc(4.25rem + env(safe-area-inset-top))" }}
+          style={{ top: barsCrowded ? "calc(7.25rem + env(safe-area-inset-top))" : "calc(4.25rem + env(safe-area-inset-top))" }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/icons/hint-tap.webp" alt="" aria-hidden className="mr-1.5 inline-block h-7 w-7 object-contain align-[-0.45em]" />
@@ -2719,6 +2749,7 @@ export function BookViewer({
       )}
 
       <div
+        ref={leftBarRef}
         className={`absolute left-3 z-10 flex items-center gap-1.5 sm:left-4 sm:gap-2 ${chromeCls}`}
         style={{ top: "calc(1rem + env(safe-area-inset-top))", ...SAFE_LEFT }}
       >
@@ -2977,37 +3008,6 @@ export function BookViewer({
           )}
         </button>
       </div>
-
-      {/* 동화 이어서 듣기 — 끝 창 대신 작은 알림만 잠깐 띄우고 다음 동화로 넘어간다. */}
-      {(goingNext || findingNext) && (
-        <div
-          className="pointer-events-none absolute inset-x-0 z-20 flex justify-center px-4"
-          style={{ bottom: "calc(7rem + env(safe-area-inset-bottom))" }}
-        >
-          <div
-            role="status"
-            className="pointer-events-auto flex max-w-full items-center gap-3 rounded-full bg-white/95 py-2 pl-5 pr-2 shadow-2xl"
-          >
-            <span className="line-clamp-1 break-keep text-sm font-extrabold text-neutral-700">
-              {nextBook ? (
-                <>
-                  다음 동화로 넘어가요 ·{" "}
-                  <span style={{ color: ui.colors.accentDark }}>{nextBook.title}</span>
-                </>
-              ) : (
-                "다음 동화를 찾고 있어요…"
-              )}
-            </span>
-            <button
-              type="button"
-              onClick={() => setAutoNextStopped(true)}
-              className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-extrabold text-neutral-500 transition hover:bg-neutral-200"
-            >
-              여기서 멈추기
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* 이야기 끝 — 그 자리에서 처음부터 다시 듣기 (서재로 나갔다 올 필요 없음). */}
       {ended && !goingNext && !findingNext && (
