@@ -22,6 +22,7 @@ import { familyExampleSrc } from "@/components/family/family-ui";
 import { BackPill, BigLink, Card, CardTitle, FOCUS, PayShell, SoftLink } from "@/components/pay/pay-ui";
 import { SiteFooter } from "@/components/pay/SiteFooter";
 import { useAppShell } from "@/lib/app-shell-client";
+import { balancedCols, lonelyLast } from "@/lib/balanced-grid";
 import { chipIcon } from "@/lib/chip-icons";
 import { CREATE_LOCKED_MESSAGE } from "@/lib/create-access";
 import {
@@ -36,6 +37,9 @@ import {
 import { AGES } from "@/lib/prefs";
 import { useSiteInfo, type SiteInfo } from "@/lib/site-info-client";
 import { NARRATOR_PRESETS } from "@/lib/voices";
+
+/** 질문 장 칸 수 → 칸 클래스(Tailwind 는 글자 그대로 있어야 만든다) — 실제 만들기 화면(QuestionFlow)과 같다 */
+const GUIDE_GRID_COLS: Record<number, string> = { 1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-3" };
 
 type Colors = { accent: string; accentDark: string; accentSoft: string };
 
@@ -517,7 +521,7 @@ function ThemeScreen({ onNext }: { onNext: () => void }) {
       <div className="grid grid-cols-2 gap-2.5">
         {SCREEN.theme.modes.map((m, i) => {
           const card = (
-            <span className="flex h-full flex-col items-center gap-1.5 rounded-3xl bg-neutral-100 p-3 text-center">
+            <span className="flex h-full w-full flex-col items-center gap-1.5 rounded-3xl bg-neutral-100 p-3 text-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={m.icon} alt="" className="h-12 w-12 object-contain" />
               <b className="break-keep text-[15px] text-neutral-800">{m.label}</b>
@@ -555,8 +559,9 @@ function QuestionScreen({ colors, onNext }: { colors: Colors; onNext: () => void
       <ScreenTitle>
         <span aria-hidden>{EX.answers[0].q}</span>
       </ScreenTitle>
-      <div className="grid grid-cols-3 gap-2">
-        {EX.places.map((o) => {
+      {/* 한 줄 칸 수는 실제 만들기 화면과 같은 규칙 — 마지막 줄에 하나만 홀로 남지 않게(lib/balanced-grid, 10-21) */}
+      <div className={`grid ${GUIDE_GRID_COLS[balancedCols(EX.places.length, 3)]} gap-2`}>
+        {EX.places.map((o, oi) => {
           const on = o.t === EX.answers[0].a;
           const icon = chipIcon(o.t);
           const chip = (
@@ -580,7 +585,11 @@ function QuestionScreen({ colors, onNext }: { colors: Colors; onNext: () => void
               {chip}
             </Tap>
           ) : (
-            <span key={o.t} aria-hidden className="flex">
+            <span
+              key={o.t}
+              aria-hidden
+              className={`flex ${oi === EX.places.length - 1 && lonelyLast(EX.places.length, balancedCols(EX.places.length, 3)) ? "col-start-2" : ""}`}
+            >
               {chip}
             </span>
           );
@@ -812,9 +821,11 @@ function ReadSection({ colors, sample }: { colors: Colors; sample: GuideSample |
 
           {/* 쪽 글 */}
           {sample ? (
-            <p className="absolute inset-x-[12%] bottom-[22%] line-clamp-2 break-keep rounded-xl bg-white/80 px-3 py-1.5 text-center text-[11px] font-bold leading-relaxed text-neutral-800 sm:text-[13px]">
-              {sample.text}
-            </p>
+            // 여백은 바깥 상자에, 두 줄 자르기는 안쪽 글에 — 한 칸에 같이 두면 셋째 줄 윗부분이 아래 여백 자리에 비쳐
+            // 쪽 넘기기 단추에 깔린 것처럼 보였다(폰 390, 2026-10-22). 폰에서는 아래 단추 줄과 띄우려고 조금 올린다.
+            <div className="absolute inset-x-[12%] bottom-[26%] rounded-xl bg-white/80 px-3 py-1.5 sm:bottom-[22%]">
+              <p className="line-clamp-2 break-keep text-center text-[11px] font-bold leading-relaxed text-neutral-800 sm:text-[13px]">{sample.text}</p>
+            </div>
           ) : null}
 
           {/* 왼쪽 아래 */}
@@ -1064,7 +1075,8 @@ function Tap({
   const { theme } = useTheme();
   const inner = (
     <>
-      <span aria-hidden className={block ? "flex w-full" : "contents"}>
+      {/* block — 안쪽 그림도 칸을 꽉 채운다(*:w-full). 그림이 글자 폭으로 줄면 테두리만 칸 전체를 둘러 어긋났다(10-22 사장님 화면). */}
+      <span aria-hidden className={block ? "flex w-full *:w-full" : "contents"}>
         {children}
       </span>
       <span
