@@ -68,7 +68,7 @@ export type AdminNavKey =
   | "support"
   | "billing"
   | "pricing"
-  | "codes"
+  | "benefits"
   | "business"
   | "seo"
   | "report";
@@ -98,8 +98,8 @@ export const ADMIN_NAV: readonly AdminNavItem[] = [
   { key: "support", href: "/admin/support", label: "의견·오류", group: "운영", icon: "inbox" },
   { key: "billing", href: "/admin/billing", label: "결제·구독", group: "매출", icon: "card", tag: "연동 전" },
   { key: "pricing", href: "/admin/pricing", label: "요금제·가격", group: "매출", icon: "tag" },
-  // 혜택 코드 — 요기보 회원 혜택(공용 코드)·요기보 구매 고객 시리얼(2026-10-22 사장님 미팅)
-  { key: "codes", href: "/admin/codes", label: "혜택 코드", group: "매출", icon: "tag" },
+  // 혜택·이벤트 — 요기보 회원 혜택(모두 같은 코드)·요기보 구매 고객 시리얼, 받은 고객 목록(2026-10-22 사장님 "혜택 또는 이벤트 관리")
+  { key: "benefits", href: "/admin/benefits", label: "혜택·이벤트", group: "매출", icon: "tag" },
   { key: "business", href: "/admin/business", label: "사업자 정보·약관", group: "회사", icon: "building" },
   // 검색 노출(SEO) — 네이버·구글 검색 결과와 카카오톡 공유에 보이는 제목·설명·그림(2026-10-19 사장님, lib/seo)
   { key: "seo", href: "/admin/seo", label: "검색 노출(SEO)", group: "회사", icon: "search" },

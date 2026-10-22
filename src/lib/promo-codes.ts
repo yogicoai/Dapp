@@ -454,3 +454,134 @@ export function promoBenefitShort(b: {
   else if (b.libraryDays) parts.push(`전체 듣기 ${b.libraryDays}일`);
   return parts.join(" · ") || "—";
 }
+
+/* ── 혜택·이벤트 관리(관리실, 19번 SQL) — 이벤트 하나 = 공용 코드 하나 또는 시리얼 묶음 하나 ─────────────── */
+
+/** 혜택을 받은 고객 한 줄(이벤트 고객 목록 · 회원 상세 '받은 혜택') */
+export type PromoUser = {
+  /** 회원 id — 탈퇴로 계정이 지워졌으면 null */
+  id: string | null;
+  who: string | null;
+  at: string;
+  code: string;
+  kind: PromoKind;
+  label: string;
+  bookCredits: number;
+  drawCredits: number;
+  libraryUntil: string | null;
+};
+
+export type PromoUsersPage = { total: number; last7: number; rows: PromoUser[] };
+
+function promoUserOf(raw: unknown): PromoUser | null {
+  const r = obj(raw);
+  const at = isoOrNull(r?.at);
+  if (!r || !at || typeof r.code !== "string" || (r.kind !== "shared" && r.kind !== "serial")) return null;
+  return {
+    id: typeof r.id === "string" && r.id ? r.id : null,
+    who: str(r.who),
+    at,
+    code: r.code,
+    kind: r.kind,
+    label: str(r.label) ?? "",
+    bookCredits: count(r.book_credits),
+    drawCredits: count(r.draw_credits),
+    libraryUntil: isoOrNull(r.library_until),
+  };
+}
+
+/** master_promo_users 의 답 */
+export function promoUsersOf(raw: unknown): PromoUsersPage {
+  const r = obj(raw) ?? {};
+  const rows = (Array.isArray(r.rows) ? r.rows : []).map(promoUserOf).filter((x): x is PromoUser => x !== null);
+  return { total: count(r.total), last7: count(r.last7), rows };
+}
+
+/** master_member_promos 의 답 */
+export function memberPromosOf(raw: unknown): PromoUser[] {
+  return (Array.isArray(raw) ? raw : []).map(promoUserOf).filter((x): x is PromoUser => x !== null);
+}
+
+export type PromoStats = { customers: number; redemptions: number; last7: number; today: number };
+
+/** master_promo_stats 의 답 — 모양이 틀리면 null(19번 SQL 전) */
+export function promoStatsOf(raw: unknown): PromoStats | null {
+  const r = obj(raw);
+  if (!r) return null;
+  return { customers: count(r.customers), redemptions: count(r.redemptions), last7: count(r.last7), today: count(r.today) };
+}
+
+/** 관리실 목록 한 줄 — 공용 코드 하나 또는 시리얼 묶음 하나. key: "c:<코드 번호>" · "b:<묶음 이름>" */
+export type PromoEvent =
+  | { key: string; kind: "shared"; label: string; createdAt: string; shared: SharedPromo }
+  | { key: string; kind: "serial"; label: string; createdAt: string; batch: SerialBatch };
+
+/** 만든 때 최근 순으로 합친다 */
+export function promoEventsOf(o: { shared: readonly SharedPromo[]; batches: readonly SerialBatch[] }): PromoEvent[] {
+  const list: PromoEvent[] = [
+    ...o.shared.map((s): PromoEvent => ({ key: `c:${s.id}`, kind: "shared", label: s.label, createdAt: s.createdAt, shared: s })),
+    ...o.batches.map((b): PromoEvent => ({ key: `b:${b.label}`, kind: "serial", label: b.label, createdAt: b.createdAt, batch: b })),
+  ];
+  return list.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+}
+
+/** 이벤트가 지금 켜져 있나 — 꺼졌거나 넣는 기한이 지났으면 아니다(시리얼은 한 장이라도 켜져 있으면) */
+export function promoEventLive(e: PromoEvent, now: number): boolean {
+  const endsAt = e.kind === "shared" ? e.shared.endsAt : e.batch.endsAt;
+  const on = e.kind === "shared" ? e.shared.active : e.batch.active > 0;
+  return on && (!endsAt || Date.parse(endsAt) > now);
+}
+
+export type PromoUsersFilter = { codeId: number | null; label: string | null };
+
+/** 고객 목록 주소의 이벤트 칸 — "all" · "c:<번호>" · "b:<이름>" → 거르는 값(모양이 틀리면 null) */
+export function promoEventFilter(key: string | null | undefined): PromoUsersFilter | null {
+  if (key === "all") return { codeId: null, label: null };
+  if (typeof key !== "string") return null;
+  if (key.startsWith("c:")) {
+    const id = Number(key.slice(2));
+    return Number.isSafeInteger(id) && id > 0 ? { codeId: id, label: null } : null;
+  }
+  if (key.startsWith("b:")) {
+    const label = key.slice(2).trim();
+    return label.length >= PROMO_LABEL_MIN && label.length <= PROMO_LABEL_MAX ? { codeId: null, label } : null;
+  }
+  return null;
+}
+
+export const PROMO_USERS_PAGE = 50;
+export const PROMO_USERS_MAX = 500;
+
+/** 관리실 서버 — 고객 목록 주소 값 검사(?codeId · label · q · offset · limit) */
+export function parsePromoUsersQuery(sp: URLSearchParams): Parsed<PromoUsersFilter & { q: string | null; limit: number; offset: number }> {
+  const rawId = sp.get("codeId");
+  const codeId = rawId === null || rawId === "" ? null : Number(rawId);
+  if (codeId !== null && !(Number.isSafeInteger(codeId) && codeId > 0)) return { ok: false, error: "코드 번호가 올바르지 않아요." };
+  const label = (sp.get("label") ?? "").trim() || null;
+  if (label !== null && (label.length < PROMO_LABEL_MIN || label.length > PROMO_LABEL_MAX)) return { ok: false, error: "묶음 이름이 올바르지 않아요." };
+  const q = (sp.get("q") ?? "").trim().slice(0, 60) || null;
+  const limit = Number(sp.get("limit") ?? PROMO_USERS_PAGE);
+  const offset = Number(sp.get("offset") ?? 0);
+  if (!Number.isInteger(limit) || limit < 1 || limit > PROMO_USERS_MAX) return { ok: false, error: `한 번에 1~${PROMO_USERS_MAX}줄까지 볼 수 있어요.` };
+  if (!Number.isInteger(offset) || offset < 0 || offset > 1_000_000) return { ok: false, error: "몇 번째부터 볼지가 올바르지 않아요." };
+  return { ok: true, value: { codeId, label, q, limit, offset } };
+}
+
+/** 관리실 '코드 한 장 켜고 끄기' 본문 */
+export function parsePromoToggleBody(body: unknown): Parsed<{ code: string; active: boolean }> {
+  const b = obj(body);
+  if (!b) return { ok: false, error: "요청 본문이 JSON 객체가 아니에요." };
+  const code = normalizePromoCode(b.code);
+  if (!isPromoCodeShape(code)) return { ok: false, error: "코드는 영문·숫자 4~24자예요." };
+  if (typeof b.active !== "boolean") return { ok: false, error: "켜짐·꺼짐을 골라 주세요." };
+  return { ok: true, value: { code, active: b.active } };
+}
+
+/** 고객 목록 내려받기(CSV) — 아이디 · 코드 · 이벤트 · 받은 날 · 받은 혜택. 한글이 깨지지 않게 BOM. */
+export function promoUsersCsv(rows: readonly PromoUser[]): string {
+  const head = ["아이디", "코드", "혜택·이벤트", "받은 날", "받은 혜택"];
+  const lines = rows.map((r) =>
+    [r.who ?? "(탈퇴한 회원)", formatPromoCode(r.code, r.kind), r.label, kstDayOf(r.at), promoBenefitLines(r).join(" / ")].map(csvCell).join(","),
+  );
+  return `﻿${[head.join(","), ...lines].join("\r\n")}\r\n`;
+}

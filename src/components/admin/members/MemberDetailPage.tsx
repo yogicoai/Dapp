@@ -37,6 +37,7 @@ import { useCaseParam, type CaseOpen } from "@/components/admin/cases/useCasePar
 import { DeleteMemberDialog } from "./DeleteMemberDialog";
 import { MemberBooks } from "./MemberBooks";
 import { MemberCreditsCard } from "./MemberCreditsCard";
+import { MemberPromosCard } from "./MemberPromosCard";
 import { MemberGrants } from "./MemberGrants";
 import { MemberJobs } from "./MemberJobs";
 import { MemberLedger } from "./MemberLedger";
@@ -167,6 +168,8 @@ function MemberDetail({ id }: { id: string }) {
 
       {/* 보상 크레딧(동화 · 캐릭터 생성) — 사고·문의를 풀 때 더해 준다(2026-10-19). 관리자 계정은 원래 값이 안 나가 띄우지 않는다. */}
       {c && !c.profile.isMaster ? <MemberCreditsCard memberId={id} username={c.profile.username} /> : null}
+      {/* 받은 혜택 — 혜택·이벤트(요기보 회원 혜택·구매 시리얼)에서 받은 것(2026-10-22) */}
+      <MemberPromosCard memberId={id} />
 
       <SectionTabs
         label="회원 기록"

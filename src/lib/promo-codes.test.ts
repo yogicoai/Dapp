@@ -14,7 +14,16 @@ import {
   parsePromoUpdateBody,
   pendingCodeOf,
   pendingCodeRecord,
+  memberPromosOf,
+  parsePromoToggleBody,
+  parsePromoUsersQuery,
   promoBenefitLines,
+  promoEventFilter,
+  promoEventLive,
+  promoEventsOf,
+  promoStatsOf,
+  promoUsersCsv,
+  promoUsersOf,
   promoBenefitShort,
   promoLinkOf,
   promoLookupOf,
@@ -177,6 +186,88 @@ describe("혜택 코드 — lib/promo-codes (사장님 2026-10-22 미팅: 요기
     assert.ok(read("../app/login/page.tsx").includes("pendingPromoPath()"));
     for (const f of ["../app/page.tsx", "../app/book/[id]/LibraryGate.tsx", "../components/BookViewer.tsx"]) {
       assert.ok(read(f).includes("loadMyLibraryPass("), `${f} 가 전체 듣기 혜택을 안 본다`);
+    }
+  });
+});
+
+describe("혜택·이벤트 관리 — 이벤트 목록·고객 목록(사장님 2026-10-22 \"해당 혜택 사용한 고객 리스트까지\")", () => {
+  const shared = { id: 1, code: "YOGIBO", label: "요기보 회원 혜택", bookCredits: 0, drawCredits: 0, libraryUntil: "2026-12-31T14:59:59Z", libraryDays: null, endsAt: "2026-12-31T14:59:59Z", used: 3, active: true, createdAt: "2026-10-22T01:00:00Z", by: "SQL" };
+  const batch = { label: "요기보 구매 1차", total: 100, used: 4, active: 100, bookCredits: 1, drawCredits: 1, libraryUntil: null, libraryDays: null, endsAt: null, createdAt: "2026-10-22T05:00:00Z", by: "fe" };
+
+  it("이벤트 = 공용 코드 하나 또는 시리얼 묶음 하나, 만든 때 최근 순 · 열쇠 c:번호 / b:이름", () => {
+    const ev = promoEventsOf({ shared: [shared], batches: [batch] });
+    assert.deepEqual(ev.map((e) => e.key), ["b:요기보 구매 1차", "c:1"]);
+    assert.deepEqual(promoEventFilter("c:1"), { codeId: 1, label: null });
+    assert.deepEqual(promoEventFilter("b:요기보 구매 1차"), { codeId: null, label: "요기보 구매 1차" });
+    assert.deepEqual(promoEventFilter("all"), { codeId: null, label: null });
+    assert.equal(promoEventFilter("c:x"), null);
+    assert.equal(promoEventFilter("b:a"), null);
+    assert.equal(promoEventFilter(null), null);
+  });
+
+  it("진행 중 — 켜져 있고 넣는 기한 전(시리얼은 한 장이라도 켜져 있으면)", () => {
+    const [b, c] = promoEventsOf({ shared: [shared], batches: [batch] });
+    assert.equal(promoEventLive(c, NOW), true);
+    assert.equal(promoEventLive(c, Date.parse("2027-01-01T00:00:00Z")), false);
+    assert.equal(promoEventLive({ ...c, shared: { ...shared, active: false } } as typeof c, NOW), false);
+    assert.equal(promoEventLive(b, NOW), true);
+    assert.equal(promoEventLive({ ...b, batch: { ...batch, active: 0 } } as typeof b, NOW), false);
+  });
+
+  it("고객 목록 읽기 — 탈퇴 회원(id 없음)도 줄로, 틀린 줄은 버림 · 숫자 · 회원별", () => {
+    const page = promoUsersOf({
+      total: 2,
+      last7: 1,
+      rows: [
+        { id: "11111111-1111-1111-1111-111111111111", who: "lee", at: "2026-10-22T05:00:00Z", code: "ABCDEFGHJKLM", kind: "serial", label: "요기보 구매 1차", book_credits: 1, draw_credits: 1 },
+        { id: null, who: null, at: "2026-10-21T05:00:00Z", code: "YOGIBO", kind: "shared", label: "요기보 회원 혜택", library_until: "2026-12-31T14:59:59Z" },
+        { who: "bad" },
+      ],
+    });
+    assert.equal(page.total, 2);
+    assert.equal(page.rows.length, 2);
+    assert.equal(page.rows[1].id, null);
+    assert.deepEqual(promoStatsOf({ customers: 3, redemptions: 4, last7: 4, today: 1 }), { customers: 3, redemptions: 4, last7: 4, today: 1 });
+    assert.equal(promoStatsOf(null), null);
+    assert.equal(memberPromosOf([{ at: "2026-10-22T05:00:00Z", code: "YOGIBO", kind: "shared", label: "x" }, {}]).length, 1);
+  });
+
+  it("고객 목록 주소 값 검사 — 번호·이름·찾기·나눠 보기 범위", () => {
+    const ok = parsePromoUsersQuery(new URLSearchParams("label=요기보 구매 1차&q=lee&offset=50&limit=50"));
+    assert.ok(ok.ok && ok.value.label === "요기보 구매 1차" && ok.value.q === "lee" && ok.value.offset === 50 && ok.value.codeId === null);
+    const all = parsePromoUsersQuery(new URLSearchParams(""));
+    assert.ok(all.ok && all.value.limit === 50 && all.value.offset === 0);
+    for (const bad of ["codeId=0", "codeId=x", "label=a", "limit=0", "limit=501", "offset=-1", "offset=1.5"]) {
+      assert.equal(parsePromoUsersQuery(new URLSearchParams(bad)).ok, false, bad);
+    }
+    assert.deepEqual(parsePromoToggleBody({ code: "abcd-efgh-jklm", active: false }), { ok: true, value: { code: "ABCDEFGHJKLM", active: false } });
+    assert.equal(parsePromoToggleBody({ code: "ab", active: true }).ok, false);
+    assert.equal(parsePromoToggleBody({ code: "YOGIBO" }).ok, false);
+  });
+
+  it("고객 목록 엑셀(CSV) — 아이디·코드(시리얼은 4자리씩)·이벤트·받은 날·받은 혜택, 탈퇴 회원 표시", () => {
+    const csv = promoUsersCsv(
+      promoUsersOf({
+        rows: [
+          { id: "x", who: "lee", at: "2026-10-22T05:00:00Z", code: "ABCDEFGHJKLM", kind: "serial", label: "요기보 구매 1차", book_credits: 1, draw_credits: 1 },
+          { id: null, who: null, at: "2026-10-21T05:00:00Z", code: "YOGIBO", kind: "shared", label: "요기보 회원 혜택", library_until: "2026-12-31T14:59:59Z" },
+        ],
+      }).rows,
+    );
+    assert.equal(csv.charCodeAt(0), 0xfeff);
+    assert.ok(csv.startsWith(String.fromCharCode(0xfeff) + "아이디,코드,혜택·이벤트,받은 날,받은 혜택" + String.fromCharCode(13, 10)));
+    assert.ok(csv.includes("lee,ABCD-EFGH-JKLM,요기보 구매 1차,2026-10-22,우리 아이 동화 1권 만들기 / 가족 캐릭터 그리기 1번"));
+    assert.ok(csv.includes("(탈퇴한 회원),YOGIBO,요기보 회원 혜택,2026-10-21,세계명작·전래동화 전체 듣기 (2026년 12월 31일까지)"));
+  });
+
+  it("관리실 메뉴 '혜택·이벤트'(/admin/benefits) · 회원 화면 '받은 혜택' · 고객 목록 경로는 관리자만", () => {
+    assert.ok(read("../components/admin/members/MemberDetailPage.tsx").includes("<MemberPromosCard memberId={id} />"));
+    const users = read("../app/api/admin/promo/users/route.ts");
+    assert.ok(users.includes("masterOnly(") && users.includes('rpc("master_promo_users"'));
+    const sql = read("../../supabase-promo-admin.sql");
+    for (const fn of ["master_promo_users", "master_set_promo_code_active", "master_member_promos", "master_promo_stats"]) {
+      assert.ok(sql.includes(`function public.${fn}(`), fn);
+      assert.ok(sql.includes(`revoke all on function public.${fn}(`) && sql.includes(`function public.${fn}(`), `${fn} 손님 막기`);
     }
   });
 });
