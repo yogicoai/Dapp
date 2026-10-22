@@ -18,6 +18,7 @@ import {
 import { FamilyCharacterRow } from "@/components/settings/FamilyBits";
 import { WithdrawSheet } from "@/components/settings/WithdrawSheet";
 import { ScreenDiag } from "@/components/settings/ScreenDiag";
+import { PromoCodeCard } from "@/components/settings/PromoCodeCard";
 import type { FamilyMember } from "@/lib/family";
 import { deleteBookConfirmText } from "@/lib/retention";
 import {
@@ -853,6 +854,12 @@ export default function SettingsPage() {
             <p className="-mt-1 text-[11px] font-medium text-neutral-500">
               결제는 곧 열려요. &apos;요금제&apos;에서 가족 패스를 미리 볼 수 있어요.
             </p>
+          </section>
+
+          {/* ── 혜택 코드 ── 요기보 회원 혜택(공용 코드)·요기보 구매 고객 시리얼(2026-10-22). 웹·앱 같은 칸. */}
+          <section className="flex flex-col gap-3">
+            <h2 className="text-sm font-extrabold text-neutral-400">혜택 코드</h2>
+            <PromoCodeCard />
           </section>
 
           {/* ── 아이 정보 ── */}

@@ -51,9 +51,13 @@ export function tierOfPlan(k: MemberPlanKey | null): LibraryTier {
   return k === "monthly" || k === "yearly" ? "pass" : k === "starter" ? "starter" : "free";
 }
 
-/** 보는 사람의 단계 — 관리자는 전부, 회원은 지정한 요금제(없으면 무료), 비회원은 무료 */
-export function viewerTierOf(member: boolean, plan: MemberPlanKey | null, master = false): LibraryTier {
+/**
+ * 보는 사람의 단계 — 관리자는 전부, 회원은 지정한 요금제(없으면 무료), 비회원은 무료.
+ * libraryPass: 혜택 코드의 전체 듣기가 열린 회원(요기보 회원 혜택 등, lib/promo-client) — 듣기만 가족 패스와 같다(만들기는 아님).
+ */
+export function viewerTierOf(member: boolean, plan: MemberPlanKey | null, master = false, libraryPass = false): LibraryTier {
   if (master) return "pass";
+  if (member && libraryPass) return "pass";
   return member ? tierOfPlan(plan) : "free";
 }
 

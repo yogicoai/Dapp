@@ -640,7 +640,7 @@ async function handlePost(request: Request) {
   const caller = await callerOf(request);
   if (!caller) return fail(401, "로그인이 필요합니다.", "login");
   // 결제 전에는 관리자(yogico·fe)와 결제 요금제 회원만 그린다(lib/create-access — 사장님 2026-10-19)
-  if (!(await canCreate(caller))) return fail(403, CREATE_LOCKED_MESSAGE, CREATE_LOCKED_CODE);
+  if (!(await canCreate(caller, "portrait"))) return fail(403, CREATE_LOCKED_MESSAGE, CREATE_LOCKED_CODE);
   bindAiUsageSink(dbUsageSink(caller.db));
   clock.mark("auth");
 

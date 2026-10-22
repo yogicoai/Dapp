@@ -18,6 +18,7 @@ import { loadSession } from "@/lib/auth";
 import { loadLibraryAccess } from "@/lib/library-access";
 import { viewerTierOf } from "@/lib/member-plan";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
+import { loadMyLibraryPass } from "@/lib/promo-client";
 import { libraryLock, type LibraryTier } from "@/lib/offer-settings";
 import type { Book } from "@/lib/types";
 
@@ -38,8 +39,8 @@ export function LibraryGate({ book }: { book: Book }) {
       const s = await loadSession().catch(() => null);
       const uid = s?.uid ?? null;
       const master = Boolean(s?.isMaster);
-      const plan = uid && !master ? await loadMyPlanKey(uid) : null;
-      const viewer = viewerTierOf(Boolean(uid), plan, master);
+      const [plan, libraryPass] = uid && !master ? await Promise.all([loadMyPlanKey(uid), loadMyLibraryPass(uid)]) : ([null, false] as const);
+      const viewer = viewerTierOf(Boolean(uid), plan, master, libraryPass);
       if (viewer === "pass") return { state: "open" } as Gate;
       const need = libraryLock(await loadLibraryAccess(), book.id, viewer);
       return need ? ({ state: "locked", need } as Gate) : ({ state: "open" } as Gate);

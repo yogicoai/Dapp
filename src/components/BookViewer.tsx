@@ -38,6 +38,7 @@ import { ReportSheet } from "@/components/ReportSheet";
 import { loadLibraryAccess } from "@/lib/library-access";
 import { viewerTierOf } from "@/lib/member-plan";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
+import { loadMyLibraryPass } from "@/lib/promo-client";
 import { libraryLock, OPEN_LIBRARY } from "@/lib/offer-settings";
 import { placeVisits } from "@/lib/page-camera";
 import { shrunkPages, withBookScale } from "@/lib/scale-lock";
@@ -856,8 +857,8 @@ export function BookViewer({
         const library = book.id.startsWith("folk-") || book.id.startsWith("classic-");
         const s = library ? await loadSession().catch(() => null) : null;
         const uid = s?.uid ?? null;
-        const plan = uid && !s?.isMaster ? await loadMyPlanKey(uid) : null;
-        const viewer = library ? viewerTierOf(!!uid, plan, !!s?.isMaster) : "pass";
+        const [plan, libraryPass] = uid && !s?.isMaster ? await Promise.all([loadMyPlanKey(uid), loadMyLibraryPass(uid)]) : ([null, false] as const);
+        const viewer = library ? viewerTierOf(!!uid, plan, !!s?.isMaster, libraryPass) : "pass";
         const access = viewer === "pass" ? OPEN_LIBRARY : await loadLibraryAccess();
         if (!alive) return;
         const pickNext = (list: { id: string; title: string; hidden?: boolean }[]) => {

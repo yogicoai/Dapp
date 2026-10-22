@@ -30,19 +30,20 @@ describe("결제 전 생성 막기 — lib/create-access (사장님 2026-10-19 \
   it("AI 를 부르는 서버 경로가 모두 문지기를 지난다(화면만 숨기면 주소로 부를 수 있다)", () => {
     for (const r of ["story", "outline", "character-sheet", "location-sheet", "illustrate-page", "upload-art"]) {
       const src = read(`../app/api/${r}/route.ts`);
-      assert.ok(src.includes("if (!(await canCreate(caller))) return createLockedResponse();"), `${r} 에 문지기가 없다`);
+      assert.ok(/if \(!\(await canCreate\(caller, "(outline|story|image|upload)"\)\)\) return createLockedResponse\(\);/.test(src), `${r} 에 문지기가 없다`);
       // 로그인 확인 바로 뒤에 — 본문을 읽거나 AI 를 부르기 전에
-      assert.ok(src.indexOf("canCreate(caller)") < src.indexOf("request.json()") || !src.includes("request.json()"), `${r}: 문지기가 본문 읽기보다 뒤에 있다`);
+      assert.ok(src.indexOf("canCreate(caller,") < src.indexOf("request.json()") || !src.includes("request.json()"), `${r}: 문지기가 본문 읽기보다 뒤에 있다`);
     }
     const portrait = read("../app/api/family/portrait/route.ts");
     const post = portrait.slice(portrait.search(/export (async )?function POST/), portrait.search(/export (async )?function GET/));
-    assert.ok(post.includes("if (!(await canCreate(caller))) return fail(403, CREATE_LOCKED_MESSAGE, CREATE_LOCKED_CODE);"), "가족 그림 POST 에 문지기가 없다");
+    assert.ok(post.includes('if (!(await canCreate(caller, "portrait"))) return fail(403, CREATE_LOCKED_MESSAGE, CREATE_LOCKED_CODE);'), "가족 그림 POST 에 문지기가 없다");
   });
 
-  it("서버 문지기는 서비스 키 없이 부른 사람의 토큰으로 자기 요금제만 읽고, 못 읽으면 막는다", () => {
+  it("서버 문지기는 서비스 키 없이 부른 사람의 토큰으로 자기 요금제만 읽고, 못 읽으면 요금제로는 열지 않는다(크레딧은 DB 문지기)", () => {
     const src = read("./create-access-server.ts");
     assert.ok(src.includes('caller.db.from("member_plans")'));
-    assert.ok(src.includes("if (error) return false;"));
+    assert.ok(src.includes("if (!error && canCreateWith(false,"));
+    assert.ok(src.includes("return !gate.error && gate.data === true;"), "크레딧 문지기가 오류일 때 열린다");
     assert.ok(!/SERVICE_ROLE|service_role/.test(src));
   });
 

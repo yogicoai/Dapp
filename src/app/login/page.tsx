@@ -12,6 +12,7 @@ import {
   signInWithGoogle,
 } from "@/lib/auth";
 import { safeAdminNext } from "@/lib/admin-console";
+import { pendingPromoPath } from "@/lib/promo-client";
 import { RETENTION_DAYS } from "@/lib/retention";
 import { usePricing } from "@/lib/use-pricing";
 
@@ -22,10 +23,12 @@ import { usePricing } from "@/lib/use-pricing";
  * 성공하면 서재(/)로 보낸다.
  * 관리자 페이지 문 앞에서 온 로그인(?next=/admin…)이면 로그인 뒤 그 주소로 돌려보낸다 — 열려던 기록을 다시 찾지 않게.
  * 관리실 주소만 받는다(safeAdminNext) — 아무 주소나 받으면 남의 링크로 엉뚱한 곳에 보내는 길이 된다.
+ * 혜택 코드 링크(/code/…)로 왔다가 로그인하러 온 경우에는 그 링크 화면으로 돌려보낸다 — 구글 로그인은 늘 여기로 돌아와
+ * 주소의 값이 사라지므로, 링크 화면이 이 기기에 잠깐 둔 코드(1시간)를 본다(lib/promo-client pendingPromoPath).
  */
 function afterLoginPath(): string {
   if (typeof window === "undefined") return "/";
-  return safeAdminNext(new URLSearchParams(window.location.search).get("next")) ?? "/";
+  return safeAdminNext(new URLSearchParams(window.location.search).get("next")) ?? pendingPromoPath() ?? "/";
 }
 
 export default function LoginPage() {

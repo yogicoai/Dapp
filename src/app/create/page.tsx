@@ -27,6 +27,7 @@ import { detectBookScale, shrunkPages } from "@/lib/scale-lock";
 import { loadSession, spendTokens, spendTokensEntry } from "@/lib/auth";
 import { canCreateWith, CREATE_LOCKED_MESSAGE } from "@/lib/create-access";
 import { loadBookCredits } from "@/lib/member-credits-client";
+import { loadCreditBudget } from "@/lib/promo-client";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
 import { authedFetch, currentUid, getSupabase } from "@/lib/supabase";
 import {
@@ -1028,9 +1029,12 @@ export default function CreatePage() {
       if (!s.isMaster) {
         const key = await loadMyPlanKey(s.uid);
         if (!alive) return;
-        setPlanLocked(!canCreateWith(false, key ? { plan: key, ends_at: null } : null, Date.now()));
         const credits = await loadBookCredits();
+        // 요금제가 없어도 동화 크레딧(요기보 구매 시리얼·관리실 보상)이 있거나, 그 크레딧으로 시작한 책을 마무리하는 중이면 연다.
+        // 한도는 서버 문지기(credit_gate)가 깎는다 — lib/create-access-server(2026-10-22)
+        const finishing = credits > 0 ? false : (await loadCreditBudget()).storyLive;
         if (!alive) return;
+        setPlanLocked(!canCreateWith(false, key ? { plan: key, ends_at: null } : null, Date.now()) && credits <= 0 && !finishing);
         setBookCredits(credits);
       }
       // 권수 상한 확인용 — 숫자만 센다. 예전엔 책을 통째로 받아 세느라(삽화 포함)

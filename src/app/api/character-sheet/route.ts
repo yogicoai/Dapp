@@ -90,7 +90,7 @@ async function handlePost(request: Request) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
   // 결제 전에는 관리자(yogico·fe)와 결제 요금제 회원만 만든다(lib/create-access — 사장님 2026-10-19)
-  if (!(await canCreate(caller))) return createLockedResponse();
+  if (!(await canCreate(caller, "image"))) return createLockedResponse();
   bindAiUsageSink(dbUsageSink(caller.db));
   let body: unknown;
   try {

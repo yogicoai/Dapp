@@ -33,6 +33,7 @@ import {
 import { loadLibraryAccess } from "@/lib/library-access";
 import { viewerTierOf, type MemberPlanKey } from "@/lib/member-plan";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
+import { loadMyLibraryPass } from "@/lib/promo-client";
 import { libraryLock, OPEN_LIBRARY, type LibraryAccess } from "@/lib/offer-settings";
 import { markHomeReady } from "@/lib/app-intro";
 import { READ_ALOUD_VOICE } from "@/lib/plans";
@@ -232,13 +233,16 @@ export default function Home() {
   // (2026-10-20 — 예전엔 요금제 없는 회원도 결제 전이라 다 열려 있었는데, 웹 오픈 뒤 구글로 막 가입한 회원에게 책이 전부 보였다.)
   // 관리실 스위치가 꺼져 있거나 못 읽으면 지금처럼 다 열림.
   const [myPlan, setMyPlan] = useState<MemberPlanKey | null>(null);
+  // 혜택 코드의 전체 듣기(요기보 회원 혜택 등) — 열려 있으면 책장 단계를 가족 패스로(lib/promo-client, 2026-10-22)
+  const [libraryPass, setLibraryPass] = useState(false);
   const [planReady, setPlanReady] = useState(false);
   useEffect(() => {
     if (!memberUid) return;
     let alive = true;
-    void loadMyPlanKey(memberUid).then((p) => {
+    void Promise.all([loadMyPlanKey(memberUid), loadMyLibraryPass(memberUid)]).then(([p, pass]) => {
       if (!alive) return;
       setMyPlan(p);
+      setLibraryPass(pass);
       setPlanReady(true);
     });
     return () => {
@@ -252,7 +256,7 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 게스트·요금제 판별 후 기본 탭 전환
     if (guest || (planReady && !master && !myPlan)) setShelf("classic");
   }, [guest, planReady, master, myPlan]);
-  const viewer = viewerTierOf(!guest, myPlan, master);
+  const viewer = viewerTierOf(!guest, myPlan, master, libraryPass);
   // null = 아직 못 읽음 — 읽기 전에 책장을 열면 잠긴 책이 잠깐 보였다 사라진다(아래 준비 화면이 붙잡는다).
   const [libraryAccess, setLibraryAccess] = useState<LibraryAccess | null>(null);
   useEffect(() => {

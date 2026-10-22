@@ -276,8 +276,10 @@ export default function FamilyPage() {
   /**
    * 결제 요금제가 없어 그리기가 막힌 회원 — 확인 창(값) 대신 잠금 안내를 띄운다(components/family/PlanLockSheet, 2026-10-20).
    * 서버(/api/family/portrait)가 같은 문(lib/create-access)으로 막는다. 보기·옷 바꾸기·예전 그림은 그대로 쓴다.
+   * 요금제가 없어도 캐릭터 생성 크레딧(요기보 구매 시리얼·관리실 보상)이 남았으면 연다 — 다 쓰면 다시 잠긴다(2026-10-22).
    */
-  const [planLocked, setPlanLocked] = useState(false);
+  const [planOk, setPlanOk] = useState(true);
+  const planLocked = !planOk && freeDraws <= 0;
   /** 개발자 모드(fe) — 펜선 끄기(예전 수채화 비교) 스위치를 보인다. 서버도 끄기는 fe 만 받는다(lib/dev-mode). */
   const [dev, setDev] = useState(false);
   /** fe 비교용 — 펜선 또렷한 수채화로 그리기(모두의 기본. fe 만 끌 수 있고, 끈 값은 이 기기에 기억한다) */
@@ -425,11 +427,11 @@ export default function FamilyPage() {
       setMaster(s.isMaster);
       masterRef.current = s.isMaster;
       if (!s.isMaster) {
-        void loadFreeDraws().then((n) => {
-          if (alive) setFreeDraws(n);
-        });
-        void loadMyPlanKey(s.uid).then((key) => {
-          if (alive) setPlanLocked(!canCreateWith(false, key ? { plan: key, ends_at: null } : null, Date.now()));
+        // 요금제가 없어도 캐릭터 생성 크레딧(요기보 구매 시리얼·관리실 보상)이 남았으면 그린다 — 서버(credit_gate·charge_family_portrait)가 1번씩 깎는다
+        void Promise.all([loadFreeDraws(), loadMyPlanKey(s.uid)]).then(([n, key]) => {
+          if (!alive) return;
+          setFreeDraws(n);
+          setPlanOk(canCreateWith(false, key ? { plan: key, ends_at: null } : null, Date.now()));
         });
       }
       // fe 비교 스위치 — 개발자 모드일 때만 보이고 처음엔 켜져 있다(펜선이 모두의 기본). 끈 값은 이 기기에 기억한다
