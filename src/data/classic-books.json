@@ -16,7 +16,8 @@
             "src": "/classic/cinderella/seg-p1-0.mp3",
             "text": "옛날 어느 왕국에, 마음씨 고운 아이가 살았어요.\n아이에게는 새어머니와 두 언니가 있었지요.\n아버지가 돌아가신 뒤부터,\n세 사람은 아이를 식구로 여기지 않고\n아침부터 밤까지 집안일만 시켰답니다."
           }
-        ]
+        ],
+        "video": "/classic/cinderella/p1.mp4"
       },
       {
         "n": 2,
@@ -39,7 +40,8 @@
             "src": "/classic/cinderella/seg-cast-p2-1.mp3",
             "text": "\"얘, 재투성이 신데렐라야!\""
           }
-        ]
+        ],
+        "video": "/classic/cinderella/p2.mp4"
       },
       {
         "n": 3,
@@ -67,7 +69,8 @@
             "src": "/classic/cinderella/seg-p3-2.mp3",
             "text": "\n부엌 생쥐들과 창가의 작은 새들만이\n그 말을 가만히 들어 주었답니다."
           }
-        ]
+        ],
+        "video": "/classic/cinderella/p3.mp4"
       },
       {
         "n": 4,
@@ -125,7 +128,8 @@
             "src": "/classic/cinderella/seg-p5-2.mp3",
             "text": "\n집 안이 발칵 뒤집혔답니다."
           }
-        ]
+        ],
+        "video": "/classic/cinderella/p5.mp4"
       },
       {
         "n": 6,
@@ -162,7 +166,8 @@
             "src": "/classic/cinderella/seg-p6-3.mp3",
             "text": "\n신데렐라는 이리 뛰고 저리 뛰느라 숨 돌릴 틈도 없었답니다."
           }
-        ]
+        ],
+        "video": "/classic/cinderella/p6.mp4"
       },
       {
         "n": 7,
@@ -417,7 +422,8 @@
             "src": "/classic/cinderella/seg-p17-1.mp3",
             "text": "\n신데렐라는 손을 놓고 계단을 뛰어 내려갔어요.\n얼마나 급했던지 유리구두 한 짝이 벗겨진 줄도 몰랐지요.\n왕자님이 뒤따라왔지만, 이미 신데렐라는 사라진 후였어요."
           }
-        ]
+        ],
+        "video": "/classic/cinderella/p17.mp4"
       },
       {
         "n": 18,
@@ -457,7 +463,8 @@
             "src": "/classic/cinderella/seg-p19-2.mp3",
             "text": "\n아궁이 곁에서 신데렐라가 조용히 말했어요."
           }
-        ]
+        ],
+        "video": "/classic/cinderella/p19.mp4"
       },
       {
         "n": 20,
