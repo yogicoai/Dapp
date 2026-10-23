@@ -1440,6 +1440,32 @@ export function minPageLetters(age: number): number {
   return age <= 2 ? 15 : 25;
 }
 
+/**
+ * 부모가 적은 장소 칸 → 본문에 나와야 할 낱말들(validateStoryQuality 의 requiredTerms 로 넘긴다).
+ *
+ * 예전엔 칸을 통째로 찾았다. "어린이집과 공원"이면 본문은 "어린이집"·"공원"을 따로 쓰니 늘 빠졌다고 나와,
+ * 첫 대본을 버리고 한 편을 통째로 다시 썼다(값·시간 두 배). 2026-10-23 같은 주문을 세 번 뽑았더니 세 번 모두 그랬다.
+ * 그래서 '와·과·랑·이랑·하고·쉼표·및·그리고'로 곳을 나누고, 곳이 여러 낱말이면 마지막 낱말(가리키는 곳 —
+ * "집 근처 놀이터" → "놀이터")만 본다. 끝의 '에서·에·으로·로'는 뗀다. 한 글자는 아무 데나 맞아 버려 뺀다
+ * ("할머니 댁"처럼 마지막 낱말이 한 글자면 그 곳을 통째로 본다).
+ */
+export function placeTermsOf(place: string): string[] {
+  const terms = place
+    .normalize("NFC")
+    .split(/(?<=[가-힣])(?:와|과|이랑|랑|하고)\s+|\s*(?:,|，|·|및|그리고)\s*/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const words = part.split(/\s+/);
+      const last = words[words.length - 1];
+      const head = words.length > 1 && last.length >= 2 ? last : part;
+      const bare = head.replace(/(에서|에|으로|로)$/, "");
+      return bare.length >= 2 ? bare : head;
+    })
+    .filter((term) => term.length >= 2);
+  return [...new Set(terms)];
+}
+
 /** 추가 AI 호출 없이 판매 전 최소 품질을 거르는 보수적인 검사다. */
 export function validateStoryQuality(
   story: ParsedStory,

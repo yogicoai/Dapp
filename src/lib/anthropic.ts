@@ -13,6 +13,7 @@ import {
   StoryQualityError,
   isBlockingStoryQualityIssue,
   placeRuleNotes,
+  placeTermsOf,
   repairStoryContinuity,
   validateStoryQuality,
 } from "./story-quality";
@@ -27,10 +28,22 @@ import {
 import type { NarrationStyle } from "./types";
 
 const client = new Anthropic();
-// 이야기 생성 모델 — 가성비 Sonnet 기본(원가 약 1/5). 품질이 필요한 순간엔
-// 환경변수 ANTHROPIC_MODEL로 Opus 등으로 바꿀 수 있다.
+// 이야기 생성 모델 — 환경변수 ANTHROPIC_MODEL 로 바꿀 수 있다(운영은 Vercel 에 이 값이 있어 그쪽이 이긴다).
 // 2026-10-01 사장님 결정: Sonnet 5 → Sonnet 5.5(값 같음 — 입력 $2·출력 $10 / 100만 토큰). 생각하기(adaptive)·노력(effort)도 그대로 받는다.
-const MODEL = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-5-5";
+// 2026-10-23 사장님 결정: Opus 5.5(입력 $4·출력 $20) — Max 요금제의 매달 API 크레딧 $200 로 낸다. 같은 주문 비교에서
+// 줄거리 흐름과 쪽 그림 설명(인물 자리·키·물건)이 Sonnet 보다 또렷했다(tmp-stories/cmp-*.json).
+const MODEL = process.env.ANTHROPIC_MODEL ?? "claude-opus-5-5";
+/**
+ * 평소 생각 양 — 끊겨서 다시 쓸 때는 늘 low. ANTHROPIC_EFFORT=low|medium 으로 바꿀 수 있다.
+ * Opus 5.5 는 medium 이면 대본 한 번에 1분 30초~2분 10초·출력 1만~1만 4천 토큰(한도 16000)이라 low 가 기본(한 번 약 1분),
+ * Sonnet 은 예전 그대로 medium(2026-10-23 같은 주문 비교).
+ */
+const EFFORT: "low" | "medium" =
+  process.env.ANTHROPIC_EFFORT === "low" || process.env.ANTHROPIC_EFFORT === "medium"
+    ? process.env.ANTHROPIC_EFFORT
+    : MODEL.includes("opus")
+      ? "low"
+      : "medium";
 
 /**
  * 장면(쪽) 수는 부모가 3~8에서 고른다. 기승전결 네 막을 이 쪽수에 맞게 배분하되
@@ -712,7 +725,7 @@ export async function generateOutline(input: {
       max_tokens: 8000,
       system: OUTLINE_SYSTEM,
       thinking: { type: "adaptive" },
-      output_config: { effort: cutShort ? "low" : "medium" },
+      output_config: { effort: cutShort ? "low" : EFFORT },
       messages: [
         {
           role: "user",
@@ -1177,7 +1190,7 @@ export async function generateStory(input: {
       max_tokens: 16000,
       system: STORY_SYSTEM,
       thinking: { type: "adaptive" },
-      output_config: { effort: cutShort ? "low" : "medium" },
+      output_config: { effort: cutShort ? "low" : EFFORT },
       messages: [
         {
           role: "user",
@@ -1252,7 +1265,8 @@ export async function generateStory(input: {
       requiredTerms: [
         input.material.whoName,
         ...input.material.friends.map((friend) => friend.name),
-        input.material.place.length <= 20 ? input.material.place : "",
+        // 장소 칸은 통째가 아니라 곳마다(placeTermsOf — "어린이집과 공원"이 늘 빠졌다고 나와 대본을 두 번 쓰던 것)
+        ...(input.material.place.length <= 20 ? placeTermsOf(input.material.place) : []),
       ].filter(Boolean),
     });
     punctuationNotes = reviewPunctuation(story.pages, input.child.age);
