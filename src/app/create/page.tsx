@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BookViewer } from "@/components/BookViewer";
 import { WaitShowcase } from "@/components/WaitShowcase";
+import { WaitVideo } from "@/components/WaitVideo";
 import classicBooksJson from "@/data/classic-books.json";
 import folkBooksJson from "@/data/folk-books.json";
 import { useTheme } from "@/components/ThemeProvider";
@@ -4921,14 +4922,12 @@ export default function CreatePage() {
             <section className="flex flex-col items-center gap-5 py-4">
               {/* 만드는 순서 — 지금 ② 그림 그리기(대본은 끝났다). */}
               <MakeSteps current={1} accent={accent} className="-mx-3" />
-              {/* 나라 마스코트가 마법책에 그리는 그림 — 마스코트가 이미 들어 있어 따로 띄우지 않는다. */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={ui.art.loading}
-                alt=""
-                width={1168}
-                height={880}
-                className="h-auto w-full max-w-xs rounded-3xl border-4 border-white shadow-lg motion-safe:animate-[float_3s_ease-in-out_infinite]"
+              {/* 기다리는 동안 보는 동화 나라 영상(2026-10-23 사장님 "마스코트 그림 자리에 영상, 진행 막대·시간은 그대로") —
+                  소리 없이 되풀이. 예전 마스코트 그림(ui.art.loading)은 대본 기다리는 막에 그대로 있다. */}
+              <WaitVideo
+                src="/create/wait-dreamland.mp4"
+                poster="/create/wait-dreamland.webp"
+                className="aspect-video w-full max-w-sm rounded-3xl border-4 border-white object-cover shadow-lg"
               />
               <h1 className="break-keep text-center text-2xl font-extrabold text-neutral-800">
                 {uploading || busy ? "동화를 책장에 넣고 있어요…" : "동화를 그리고 있어요…"}
