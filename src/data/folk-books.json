@@ -4861,7 +4861,7 @@
       },
       {
         "text": "한편, 부지런한 나무꾼은 그 뒤로도 날마다 산에 올랐어요.\n금도끼 판 돈으로 좋은 약을 지어 드리자, 어머니의 병도 씻은 듯이 나았답니다.\n\"어머니, 저는 도끼 한 자루면 넉넉해요.\"\n어머니가 아들의 등을 토닥이며 말했지요.\n\"그럼. 정직한 네 마음이 금도끼보다 더 소중하단다.\"\n나무꾼과 어머니는 오래오래 행복하게 살았답니다.",
-        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p16.webp?v=8",
+        "image": "https://yogibo.openhost.cafe24.com/app/img/dapp/folk/goldaxe/p16.webp?v=9",
         "lines": [
           {
             "text": "어머니, 저는 도끼 한 자루면 넉넉해요.",
@@ -4891,19 +4891,6 @@
             "feel": "tonedown",
             "intensity": 0.35,
             "tempo": 0.88
-          },
-          {
-            "label": "mother",
-            "line": "그럼, 그게 제일이지.",
-            "box": [
-              185,
-              51,
-              995,
-              355
-            ],
-            "audio": "/folk/goldaxe/say-p17-mother.mp3",
-            "feel": "tonedown",
-            "intensity": 0.35
           }
         ],
         "segments": [
