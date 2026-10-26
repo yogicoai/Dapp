@@ -84,11 +84,13 @@ export async function listTypecastVoices(): Promise<TypecastVoice[]> {
 
 /* ── 과금 자동 차단 ──
  * 라이트 플랜은 20만 크레딧을 넘기면 자동으로 추가 결제($9/10만 자)가 붙는다.
- * 그래서 합성 전에 이번 달 사용량을 확인해, 안전선(19만)에 닿으면 합성을 거부한다
- * → 앱은 무료 브라우저 음성으로 자동 폴백되고, 요금은 절대 초과되지 않는다.
+ * 그래서 합성 전에 이번 달 사용량을 확인해, 안전선(19만 8천)에 닿으면 합성을 거부한다
+ * → 앱은 무료 브라우저 음성으로 자동 폴백된다.
+ * 안전선은 2026-10-26 사장님 요청으로 19만 → 19만 8천. 남는 틈이 2천 자라서, 사용량 조회가 몇 분 늦게
+ * 따라오거나 여러 서버가 한꺼번에 합성하면 20만을 조금 넘길 수 있다(그때는 추가 결제가 붙는다).
  * 사용량 조회는 5분 캐시(+로컬 누적)로 매 요청 API를 두 번 때리지 않게 한다.
  */
-const CREDIT_SAFE_LIMIT = 190_000;
+const CREDIT_SAFE_LIMIT = 198_000;
 const SUB_CACHE_MS = 5 * 60 * 1000;
 let subCache: { at: number; used: number } | null = null;
 let localUsedSinceRefresh = 0;
@@ -142,7 +144,7 @@ export async function synthesize(input: {
    */
   pitch?: number;
 }): Promise<{ audio: ArrayBuffer; contentType: string }> {
-  // 과금 자동 차단 — 안전선(19만 자)에 닿으면 합성하지 않는다(무료 음성으로 폴백).
+  // 과금 자동 차단 — 안전선(19만 8천 자)에 닿으면 합성하지 않는다(무료 음성으로 폴백).
   const used = await usedCreditsThisMonth();
   if (used !== null && used + input.text.length > CREDIT_SAFE_LIMIT) {
     throw new TypecastError(

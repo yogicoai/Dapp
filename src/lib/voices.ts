@@ -757,7 +757,7 @@ export function storyReadingEmotion(emotion: string | undefined, dialogue: boole
  *
  * true(현재, 2026-07-31 Typecast API 라이트 결제 후 켬)면 실시간 낭독이 전부
  * Typecast(감정 연기)로 간다 — 글자 수만큼 크레딧이 나가고, 같은 문장은 기기 캐시로 0원.
- * 과금 폭주는 서버(typecast.ts)의 월 19만 자 자동 잠금이 막는다.
+ * 과금 폭주는 서버(typecast.ts)의 월 19만 8천 자 자동 잠금이 막는다.
  * false로 내리면 Typecast 호출이 전부 멈추고 구글(GOOGLE_TTS_ENABLED)·딸린 파일·
  * 브라우저 기계음 순으로 물러난다 → 크레딧 0.
  */
@@ -903,7 +903,7 @@ export const PREWARM_PAGES = 2;
  * 보고 있으니, 그 사이에 앞쪽을 구워 두면 열자마자 소리가 난다.
  *
  * 왜 전부가 아니라 앞 2쪽만: 8쪽을 다 구우면 안 읽고 덮는 책에도 크레딧이 나가고
- * Typecast 월 한도(19만 자)에 훨씬 빨리 닿는다. 읽는 중에는 이미 '한 쪽 앞서
+ * Typecast 월 한도(19만 8천 자)에 훨씬 빨리 닿는다. 읽는 중에는 이미 '한 쪽 앞서
  * 받기'가 돌고 있어서, 앞 2쪽만 있으면 그 뒤로는 기다림이 이어지지 않는다.
  *
  * 목소리는 '책을 열었을 때 실제로 쓰일 것'과 같아야 캐시가 맞는다 — 부모 목소리가
