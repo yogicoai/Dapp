@@ -8,6 +8,7 @@
 import { acctKey, currentUid, getSupabase } from "./supabase.ts";
 import type { Book } from "./types.ts";
 import { interpretBookSave, type SaveBookResult } from "./book-jobs.ts";
+import { DEV_BOOK_LIKE } from "./dev-books.ts";
 import {
   dropPhotoFixedLooks,
   familyLooksToPrompt,
@@ -1100,7 +1101,7 @@ export function toShelfBook(b: Book): ShelfBook {
   };
 }
 
-/** 특정 회원의 책 (마스터 열람용 — RLS가 마스터만 허용). */
+/** 특정 회원의 책 (마스터 열람용 — RLS가 마스터만 허용). fe 전용 책(dev-books)은 관리 화면에 안 보인다. */
 export async function loadUserBooks(userId: string): Promise<Book[]> {
   const sb = getSupabase();
   if (!sb) return [];
@@ -1108,6 +1109,7 @@ export async function loadUserBooks(userId: string): Promise<Book[]> {
     .from("books")
     .select("id,owner,title,data,hidden")
     .eq("owner", userId)
+    .not("id", "like", DEV_BOOK_LIKE)
     .order("created_at", { ascending: false });
   return ((data as BookRow[]) ?? []).map(rowToBook);
 }
@@ -1158,7 +1160,7 @@ export async function loadMyBookBriefs(): Promise<BookBrief[]> {
 
 /**
  * 전 회원의 책을 한 번에 가벼운 형태로 (마스터 열람용 — RLS가 마스터만 허용).
- * 회원별 개수·목록을 회원 관리 화면에서 한눈에 보여주려고 owner로 묶어 쓴다.
+ * 회원별 개수·목록을 회원 관리 화면에서 한눈에 보여주려고 owner로 묶어 쓴다. fe 전용 책(dev-books)은 뺀다.
  */
 export async function loadAllBooksBrief(): Promise<BookBrief[]> {
   const sb = getSupabase();
@@ -1166,6 +1168,7 @@ export async function loadAllBooksBrief(): Promise<BookBrief[]> {
   const { data } = await sb
     .from("books")
     .select("id,owner,title,hidden,created_at")
+    .not("id", "like", DEV_BOOK_LIKE)
     .order("created_at", { ascending: false });
   return ((data as { id: string; owner: string; title: string | null; hidden: boolean; created_at: string }[]) ?? [])
     .map((r) => ({ id: r.id, owner: r.owner, title: r.title ?? "제목 없음", hidden: r.hidden, createdAt: r.created_at }));
@@ -1417,6 +1420,7 @@ export async function countBooksWithEmbeddedArt(): Promise<number> {
     const { count, error } = await sb
       .from("books")
       .select("id", { count: "exact", head: true })
+      .not("id", "like", DEV_BOOK_LIKE)
       .or("data->>coverImage.like.data:*,data->pages->0->>image.like.data:*");
     if (error) return -1;
     return count ?? 0;

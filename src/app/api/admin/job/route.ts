@@ -7,6 +7,7 @@ import {
   type JobDetail,
   type Payment,
 } from "@/lib/admin";
+import { DEV_BOOK_LIKE } from "@/lib/dev-books";
 import { fetchIncidents, ledgerFor, profilesFor, type LedgerRow } from "../_data";
 import { dbFail, fail, json, masterOnly } from "../_guard";
 
@@ -130,7 +131,7 @@ export const GET = masterOnly(async (caller, request) => {
   const [ledger, book] = await Promise.all([
     ledgerFor(caller.db, [storyEntry, illEntry, entry]),
     job?.book_id
-      ? caller.db.from("books").select("id,owner,hidden,title,pages:data->pages").eq("id", job.book_id).maybeSingle()
+      ? caller.db.from("books").select("id,owner,hidden,title,pages:data->pages").eq("id", job.book_id).not("id", "like", DEV_BOOK_LIKE).maybeSingle()
       : Promise.resolve({ data: null, error: null }),
   ]);
   if (book.error) console.warn("[admin] 책 읽기 오류", book.error.code, book.error.message);

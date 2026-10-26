@@ -1,6 +1,7 @@
 import { escapeLike, openIncidentCount, parseUsername, type CustomerJob, type CustomerResponse } from "@/lib/admin";
 import { parseAdminId } from "@/lib/admin-console";
 import type { Caller } from "@/lib/api-auth";
+import { DEV_BOOK_LIKE } from "@/lib/dev-books";
 import { fetchIncidents, INCIDENT_LIST_COLUMNS, ledgerFor, titleOf, titlesFor } from "../_data";
 import { dbFail, fail, json, masterOnly } from "../_guard";
 
@@ -63,7 +64,7 @@ async function customerBody(
   p: { id: string; username: string; tokens: number; is_master: boolean; created_at: string | null },
 ): Promise<Response> {
   const [books, jobsRes, inc] = await Promise.all([
-    caller.db.from("books").select("id", { count: "exact", head: true }).eq("owner", p.id),
+    caller.db.from("books").select("id", { count: "exact", head: true }).eq("owner", p.id).not("id", "like", DEV_BOOK_LIKE),
     caller.db
       .from("book_jobs")
       .select(JOB_COLUMNS)

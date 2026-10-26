@@ -10,6 +10,7 @@ import {
   type DashProfile,
   type DashRead,
 } from "@/lib/admin-dashboard";
+import { DEV_BOOK_LIKE } from "@/lib/dev-books";
 import { fetchIncidents, masterOwnerIds } from "../_data";
 import { json, masterOnly } from "../_guard";
 
@@ -56,7 +57,7 @@ export const GET = masterOnly(async (caller, request) => {
       .limit(10),
     readAllPages<DashBook>(
       (from, to) =>
-        db.from("books").select("owner,created_at").gte("created_at", weekStart).order("created_at").order("id").range(from, to),
+        db.from("books").select("owner,created_at").not("id", "like", DEV_BOOK_LIKE).gte("created_at", weekStart).order("created_at").order("id").range(from, to),
       10_000,
     ),
     // 장부는 칸 권한이 있는 여섯 칸 안에서만 고른다.

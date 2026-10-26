@@ -1,5 +1,6 @@
 import type { Caller } from "@/lib/api-auth";
 import type { IncidentRow } from "@/lib/admin";
+import { DEV_BOOK_LIKE } from "@/lib/dev-books";
 
 /**
  * 관리실 경로들이 같이 쓰는 DB 읽기. 전부 **마스터의 토큰(caller.db)** 으로 읽는다 —
@@ -77,7 +78,7 @@ export async function titlesFor(
   }
   const bookIds = uniq(rows.filter((r) => !(r.job_id && titles.has(r.job_id))).map((r) => r.book_id));
   for (const part of chunks(bookIds)) {
-    const { data, error } = await db.from("books").select("id,title").in("id", part);
+    const { data, error } = await db.from("books").select("id,title").in("id", part).not("id", "like", DEV_BOOK_LIKE);
     if (error) console.warn("[admin] 책 제목 읽기 오류", error.code, error.message);
     for (const r of (data as { id: string; title: string | null }[] | null) ?? []) {
       if (r.title && r.title.trim()) titles.set(`book:${r.id}`, r.title.trim());

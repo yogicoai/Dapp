@@ -1,6 +1,7 @@
 import { kstDayStart, openIncidentCount, summarizeToday, type IncidentListRow, type IncidentsResponse } from "@/lib/admin";
 import { dropMasterRows, isMineFlag } from "@/lib/admin-console";
 import { keepCustomerIncidents, notInFilter } from "@/lib/admin-support";
+import { DEV_BOOK_LIKE } from "@/lib/dev-books";
 import { fetchIncidents, INCIDENT_LIST_COLUMNS, masterOwnerIds, titleOf, titlesFor } from "../_data";
 import { dbFail, json, masterOnly } from "../_guard";
 
@@ -31,7 +32,7 @@ export const GET = masterOnly(async (caller, request) => {
   const { rows, total } = keepCustomerIncidents(all, masters, mine);
 
   const since = kstDayStart(now).toISOString();
-  let booksQuery = caller.db.from("books").select("id", { count: "exact", head: true }).gte("created_at", since);
+  let booksQuery = caller.db.from("books").select("id", { count: "exact", head: true }).not("id", "like", DEV_BOOK_LIKE).gte("created_at", since);
   // 오늘 만든 책 수도 관리자 계정 책은 빼고 센다 — 점검하느라 만든 책이 '오늘 만든 동화'를 부풀리지 않게.
   const notMine = mine ? null : notInFilter(masters);
   if (notMine) booksQuery = booksQuery.not("owner", "in", notMine);

@@ -11,6 +11,7 @@ import {
   type MemberUsage,
 } from "@/lib/member-plan";
 import { normalizePlanTerms } from "@/lib/offer-settings";
+import { DEV_BOOK_LIKE } from "@/lib/dev-books";
 import { bodyTooLarge, dbFail, fail, json, masterOnly, readBody } from "../_guard";
 
 /**
@@ -42,8 +43,9 @@ export const GET = masterOnly(async (caller, request) => {
       .from("books")
       .select("id", { count: "exact", head: true })
       .eq("owner", id.value)
+      .not("id", "like", DEV_BOOK_LIKE)
       .gte("created_at", kstMonthStart(now)),
-    db.from("books").select("id", { count: "exact", head: true }).eq("owner", id.value),
+    db.from("books").select("id", { count: "exact", head: true }).eq("owner", id.value).not("id", "like", DEV_BOOK_LIKE),
     db.from("voice_clones").select("role,status").eq("owner", id.value),
   ]);
 

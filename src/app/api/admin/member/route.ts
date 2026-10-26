@@ -8,6 +8,7 @@ import {
   type MemberExtras,
   type MemberExtrasPart,
 } from "@/lib/admin-members";
+import { DEV_BOOK_LIKE } from "@/lib/dev-books";
 import { profilesFor } from "../_data";
 import { dbFail, fail, json, masterOnly } from "../_guard";
 
@@ -42,6 +43,7 @@ export const GET = masterOnly(async (caller, request) => {
       .from("books")
       .select("id,title,hidden,created_at")
       .eq("owner", id.value)
+      .not("id", "like", DEV_BOOK_LIKE)
       .order("created_at", { ascending: false })
       .limit(BOOK_LIMIT + 1),
     db.from("voice_clones").select("role,status").eq("owner", id.value),

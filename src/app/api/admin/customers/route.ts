@@ -2,6 +2,7 @@ import { readAllPages } from "@/lib/admin-dashboard";
 import { isSchemaMissing } from "@/lib/admin-console";
 import { groupReadyVoices, type MembersListResponse, type MemberListRow } from "@/lib/admin-members";
 import { isMemberPlanKey, type MemberPlanKey } from "@/lib/member-plan";
+import { DEV_BOOK_LIKE } from "@/lib/dev-books";
 import { dbFail, json, masterOnly } from "../_guard";
 
 /**
@@ -40,7 +41,7 @@ export const GET = masterOnly(async (caller) => {
   const [total, books, feedback, voices, plans] = await Promise.all([
     db.from("profiles").select("id", { count: "exact", head: true }).eq("is_master", false),
     readAllPages<{ owner: string }>(
-      (from, to) => db.from("books").select("owner").order("created_at", { ascending: true }).order("id").range(from, to),
+      (from, to) => db.from("books").select("owner").not("id", "like", DEV_BOOK_LIKE).order("created_at", { ascending: true }).order("id").range(from, to),
       20_000,
     ),
     readAllPages<{ owner: string; handled_at: string | null }>(
