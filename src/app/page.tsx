@@ -11,6 +11,7 @@ import { SiteFooter } from "@/components/pay/SiteFooter";
 import { useTheme } from "@/components/ThemeProvider";
 import { UpdateNotice } from "@/components/UpdateNotice";
 import { DEMO_SHELF_OWNER, loadSession } from "@/lib/auth";
+import { splitDevShelves } from "@/lib/dev-books";
 import { newerStudio, type FamilyStudio } from "@/lib/family-studio";
 import { withOutfit, type MemberOutfit, type OutfitThemeId } from "@/lib/family-outfit";
 import classicBooksJson from "@/data/classic-books.json";
@@ -205,7 +206,9 @@ export default function Home() {
   // "우리 가족 책장" = 내가 만든 책(최신 먼저, 숨긴 건 제외).
   // 샘플 3권(sample-books.json)은 yogico 가 만든 데모라 yogico 책장에만 보인다 — 일반 회원도,
   // 다른 마스터(fe, 사장님 개인 개발 계정)도 안 보인다. 책 관리는 설정(⚙️) › "내 동화"에서 한다.
-  const mine = [...myBooks, ...(demoShelf ? all.map(toShelfBook) : [])].filter(
+  // fe 전용 전래동화·세계명작(lib/dev-books)은 여기서 빼서 그 서가 맨 앞에 놓는다 — 내 책은 자기 것만 오니 fe 에게만 해당.
+  const devShelves = splitDevShelves(myBooks);
+  const mine = [...devShelves.rest, ...(demoShelf ? all.map(toShelfBook) : [])].filter(
     (b) => b.lang === lang && !b.hidden,
   );
 
@@ -285,7 +288,13 @@ export default function Home() {
   const classicsAll = asBooks(classicBooksJson).filter((b) => !b.hidden);
   const folk = folkAll.filter(canSee);
   const classics = classicsAll.filter(canSee);
-  const shown = shelf === "mine" ? mine : shelf === "folk" ? folk : classics;
+  // fe 전용 책은 서가 맨 앞에(최신 먼저) — 자물쇠·'더 들을 수 있어요' 개수는 원래 서가로만 센다.
+  const shown =
+    shelf === "mine"
+      ? mine
+      : shelf === "folk"
+        ? [...devShelves.folk.filter((b) => !b.hidden), ...folk]
+        : [...devShelves.classic.filter((b) => !b.hidden), ...classics];
   const moreBooks =
     shelf === "folk" ? folkAll.length - folk.length : shelf === "classic" ? classicsAll.length - classics.length : 0;
 

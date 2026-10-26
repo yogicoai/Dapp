@@ -16,3 +16,25 @@ export const DEV_BOOK_LIKE = `${DEV_BOOK_PREFIX}%`;
 export function isDevBookId(id: unknown): id is string {
   return typeof id === "string" && id.startsWith(DEV_BOOK_PREFIX);
 }
+
+/** fe 전용 책이 놓일 제공 서가 — 책 데이터의 shelf 칸. 없으면 '우리 가족 책장'(만든 동화)에 그대로 있다. */
+export type DevShelf = "folk" | "classic";
+
+/**
+ * 내 책 목록에서 fe 전용 전래동화·세계명작을 골라낸다(2026-10-26 사장님 "fe 계정으로 새로 추가되는 애들은 동화 맨 앞으로").
+ * 홈은 folk·classic 을 그 서가 맨 앞에 놓고, '우리 가족 책장'에는 rest 만 둔다(두 번 보이지 않게).
+ * 내 책은 RLS 로 자기 것만 오므로 fe 에게만 해당한다. 순서는 받은 그대로(최신 먼저).
+ */
+export function splitDevShelves<T extends { id: string; shelf?: string | null }>(
+  books: readonly T[],
+): { folk: T[]; classic: T[]; rest: T[] } {
+  const folk: T[] = [];
+  const classic: T[] = [];
+  const rest: T[] = [];
+  for (const b of books) {
+    if (isDevBookId(b.id) && b.shelf === "folk") folk.push(b);
+    else if (isDevBookId(b.id) && b.shelf === "classic") classic.push(b);
+    else rest.push(b);
+  }
+  return { folk, classic, rest };
+}

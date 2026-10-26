@@ -965,7 +965,11 @@ export type ShelfBook = {
   coverImage: string | null;
   pageCount: number | null;
   hidden: boolean;
+  /** fe 전용 제공 책의 서가(lib/dev-books) — 만든 동화는 비어 있다. */
+  shelf?: "folk" | "classic" | null;
 };
+
+const shelfOf = (v: unknown): "folk" | "classic" | null => (v === "folk" || v === "classic" ? v : null);
 
 export async function loadMyBooksBrief(): Promise<ShelfBook[]> {
   const sb = getSupabase();
@@ -974,7 +978,7 @@ export async function loadMyBooksBrief(): Promise<ShelfBook[]> {
   if (!uid) return [];
   const { data, error } = await sb
     .from("books")
-    .select("id,title,hidden,lang:data->>lang,cover:data->>coverImage,n:data->>pageCount")
+    .select("id,title,hidden,lang:data->>lang,cover:data->>coverImage,n:data->>pageCount,shelf:data->>shelf")
     .eq("owner", uid)
     .order("created_at", { ascending: false });
   // 가벼운 조회가 막히면(구버전 PostgREST 등) 예전 방식으로 물러난다 — 느려도 보이게.
@@ -987,6 +991,7 @@ export async function loadMyBooksBrief(): Promise<ShelfBook[]> {
     lang: string | null;
     cover: string | null;
     n: string | null;
+    shelf: string | null;
   }[];
   const list: ShelfBook[] = rows.map((r) => ({
     id: r.id,
@@ -995,6 +1000,7 @@ export async function loadMyBooksBrief(): Promise<ShelfBook[]> {
     coverImage: r.cover,
     pageCount: r.n ? Number(r.n) : null,
     hidden: !!r.hidden,
+    shelf: shelfOf(r.shelf),
   }));
 
   // 작은 표지가 없는 옛 책만 첫 쪽 그림을 따로 채운다(그래도 본문 전체보단 훨씬 가볍다).
@@ -1098,6 +1104,7 @@ export function toShelfBook(b: Book): ShelfBook {
     coverImage: b.coverImage ?? b.pages.find((p) => p.image)?.image ?? null,
     pageCount: b.pageCount ?? b.pages.length,
     hidden: !!b.hidden,
+    shelf: shelfOf(b.shelf),
   };
 }
 

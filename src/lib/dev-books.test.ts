@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { describe, it } from "node:test";
-import { DEV_BOOK_LIKE, DEV_BOOK_PREFIX, isDevBookId } from "./dev-books.ts";
+import { DEV_BOOK_LIKE, DEV_BOOK_PREFIX, isDevBookId, splitDevShelves } from "./dev-books.ts";
 
 const SRC = new URL("../", import.meta.url); // src/
 const read = (rel: string) => readFileSync(new URL(rel, SRC), "utf8");
@@ -27,6 +27,35 @@ describe("fe 전용 책 아이디", () => {
 
   it("'내가 만든 동화' 아이디 모양 검사(^my-…)를 그대로 통과한다 — 뷰어·쪽 다시 그리기 길을 그대로 탄다", () => {
     assert.match("my-dev-mh7k2q-a1b2c3", /^my-[A-Za-z0-9_-]{1,77}$/);
+  });
+});
+
+describe("fe 전용 전래동화·세계명작은 그 서가 맨 앞으로(2026-10-26 사장님)", () => {
+  const books = [
+    { id: "my-dev-b-2", shelf: "classic" },
+    { id: "my-a1", shelf: null },
+    { id: "my-dev-a-1", shelf: "folk" },
+    { id: "my-dev-c-3" }, // 서가가 없는 fe 책 — 만든 동화 그대로
+    { id: "my-x9", shelf: "folk" }, // 아이디가 my-dev- 가 아니면 서가 칸이 있어도 만든 동화
+  ];
+
+  it("서가별로 나누고, 나머지는 '우리 가족 책장'에 남긴다 — 받은 순서(최신 먼저) 그대로", () => {
+    const s = splitDevShelves(books);
+    assert.deepEqual(s.folk.map((b) => b.id), ["my-dev-a-1"]);
+    assert.deepEqual(s.classic.map((b) => b.id), ["my-dev-b-2"]);
+    assert.deepEqual(s.rest.map((b) => b.id), ["my-a1", "my-dev-c-3", "my-x9"]);
+  });
+
+  it("빈 목록은 빈 세 칸", () => {
+    assert.deepEqual(splitDevShelves([]), { folk: [], classic: [], rest: [] });
+  });
+
+  it("홈이 나눈 것을 쓴다 — 우리 가족 책장은 rest, 서가는 fe 책을 앞에", () => {
+    const src = read("app/page.tsx");
+    assert.match(src, /splitDevShelves\(myBooks\)/);
+    assert.match(src, /\[\.\.\.devShelves\.rest,/);
+    assert.match(src, /\[\.\.\.devShelves\.folk\.filter\(\(b\) => !b\.hidden\), \.\.\.folk\]/);
+    assert.match(src, /\[\.\.\.devShelves\.classic\.filter\(\(b\) => !b\.hidden\), \.\.\.classics\]/);
   });
 });
 
