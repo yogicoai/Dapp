@@ -24,6 +24,17 @@ const chars = (...names: string[]) => names.map((name) => ({ name, description: 
 const pick = (names: string[], family: FamilyMember[] | undefined, max?: number) =>
   castPortraits(chars(...names), family, max === undefined ? {} : { max }).map((p) => [p.name, p.memberId]);
 
+describe("뺀 사람(회색 카드, 2026-10-26) — 등장인물 얼굴·이야기 생김새에서 빠진다", () => {
+  it("뺀 엄마·단짝 친구는 얼굴을 붙이지 않고, 이야기에도 건네지 않는다", () => {
+    const offMom = { ...mom, inactive: true };
+    const friend = fixed({ id: "m-f", role: "friend", callName: "친구", name: "서준" });
+    assert.deepEqual(pick(["하온", "엄마", "서준"], [child, offMom, { ...friend, inactive: true }]), [["하온", "child"]]);
+    assert.deepEqual(pick(["하온", "엄마", "서준"], [child, mom, friend]), [["하온", "child"], ["엄마", "mom"], ["서준", "m-f"]]);
+    assert.deepEqual(storyFamilyLooks([{ ...friend, inactive: true }]), []);
+    assert.deepEqual(storyFamilyLooks([friend]), [{ who: "서준(단짝 친구)", fixed: true }]);
+  });
+});
+
 describe("castPortraits — 주인공", () => {
   it("아이 호칭과 같은 이름이면 아이 그림 — '하온이'도 하온", () => {
     assert.deepEqual(castPortraits(chars("하온"), [child]), [

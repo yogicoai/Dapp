@@ -12,6 +12,7 @@ import {
   familyLooksToPrompt,
   familyMembersOnly,
   familyTitle,
+  fixedMembers,
   freeRedrawsLeft,
   groupOrder,
   heightCm,
@@ -19,6 +20,7 @@ import {
   heightFor,
   homeGreeting,
   homeMembers,
+  isActive,
   isKidRole,
   isPhotoFixed,
   isYoungerThanChild,
@@ -293,13 +295,13 @@ describe("mergeRemoteChild — 가족", () => {
   it("서버에 가족 칸이 없으면 이 기기 것을 지킨다", () => {
     assert.deepEqual(mergeRemoteChild({ ...BASE }, { ...BASE, family: fam }).family, fam);
   });
-  it("서버에 뺀 기록이 있으면 이 기기 목록에서도 빠진다", () => {
+  it("서버에 뺀 기록이 있으면 이 기기 목록에서도 '빠짐'(회색)이 된다 — 지우지 않는다", () => {
     const grandma: FamilyMember = { id: "m-g", role: "grandma", callName: "할머니", addedAt: "2026-09-28T09:00:00Z" };
     const out = mergeRemoteChild(
       { ...BASE, family: fam, familyRemoved: [{ id: "m-g", at: "2026-09-28T09:10:00Z" }] },
       { ...BASE, family: [...fam, grandma] },
     );
-    assert.deepEqual(out.family?.map((m) => m.id), ["child"]);
+    assert.deepEqual(out.family?.map((m) => [m.id, m.inactive === true]), [["child", false], ["m-g", true]]);
     assert.deepEqual(out.familyRemoved, [{ id: "m-g", at: "2026-09-28T09:10:00Z" }]);
   });
   it("서버 목록이 비어 있어도 뺀 기록이 없으면 이 기기 사람을 지킨다(합집합)", () => {
@@ -463,17 +465,28 @@ describe("mergeFamily — 기기·서버 가족 합치기", () => {
     assert.equal(out.family?.find((m) => m.id === "dad")?.draws, 1);
     assert.equal(out.familyAt, local.familyAt);
   });
-  it("나중에 뺀 사람은 되살리지 않는다 — 뺀 기록이 그림보다 나중", () => {
+  it("나중에 뺀 사람은 지우지 않고 '빠짐'(회색)으로 남긴다 — 뺀 기록이 그림보다 나중(2026-10-26)", () => {
     const server = {
       family: [mom()],
       familyAt: "2026-09-28T09:10:00Z",
       familyRemoved: [{ id: "dad", at: "2026-09-28T09:10:00Z" }],
     };
     const local = { family: [mom(), dad({ portrait: P2, picAt: "2026-09-28T09:00:00Z" })], familyAt: "2026-09-28T09:00:00Z" };
-    assert.deepEqual(mergeFamily(server, local).family?.map((m) => m.id), ["mom"]);
-    // 뺀 기록이 진 쪽(옛 목록이 이긴 쪽)에만 있어도 뺀다 — 목록 전체가 이기고 지지 않는다.
+    const out = mergeFamily(server, local).family;
+    assert.deepEqual(out?.map((m) => [m.id, m.inactive === true]), [["mom", false], ["dad", true]]);
+    // 그림은 그대로 — 예전엔 목록에서 지워 그림까지 사라졌다.
+    assert.deepEqual(out?.find((m) => m.id === "dad")?.portrait, P2);
+    // 뺀 기록이 진 쪽(옛 목록이 이긴 쪽)에만 있어도 회색 — 목록 전체가 이기고 지지 않는다.
     const staleLocal = { family: [mom(), dad({ portrait: P2, picAt: "2026-09-28T09:00:00Z" })], familyAt: "2026-09-28T09:30:00Z" };
-    assert.deepEqual(mergeFamily(server, staleLocal).family?.map((m) => m.id), ["mom"]);
+    assert.equal(mergeFamily(server, staleLocal).family?.find((m) => m.id === "dad")?.inactive, true);
+  });
+  it("회색에서 다시 넣은 사람(activeAt)은 예전 뺀 기록에 다시 걸리지 않고, 넣은 때는 그대로다", () => {
+    const removed = [{ id: "dad", at: "2026-09-28T09:10:00Z" }];
+    const back = dad({ portrait: P2, picAt: "2026-09-28T09:00:00Z", addedAt: "2026-09-01T00:00:00Z", activeAt: "2026-09-28T09:20:00Z" });
+    const out = mergeFamily({ family: [mom()], familyRemoved: removed }, { family: [mom(), back], familyAt: "2026-09-28T09:20:00Z" }).family;
+    const d = out?.find((m) => m.id === "dad");
+    assert.equal(d?.inactive, undefined);
+    assert.equal(d?.addedAt, "2026-09-01T00:00:00Z");
   });
   it("빼기 뒤에 다른 기기에서 쿠키를 내고 그린 사람은 되살린다", () => {
     const server = { family: [mom()], familyAt: "2026-09-28T09:10:00Z", familyRemoved: [{ id: "dad", at: "2026-09-28T09:10:00Z" }] };
@@ -496,8 +509,8 @@ describe("mergeFamily — 기기·서버 가족 합치기", () => {
     const removed = [{ id: "mom", at: "2026-09-28T09:10:00Z" }];
     const again = { family: [mom({ addedAt: "2026-09-28T09:20:00Z" })], familyAt: "2026-09-28T09:20:00Z" };
     assert.deepEqual(mergeFamily({ family: [], familyAt: "2026-09-28T09:10:00Z", familyRemoved: removed }, again).family?.map((m) => m.id), ["mom"]);
-    // 다시 넣기 전의 옛 엄마(넣은 때 없음)는 빠진다.
-    assert.deepEqual(mergeFamily({ family: [], familyRemoved: removed }, { family: [mom()] }).family, []);
+    // 다시 넣기 전의 옛 엄마(넣은 때 없음)는 회색으로 남는다(예전엔 빠졌다).
+    assert.deepEqual(mergeFamily({ family: [], familyRemoved: removed }, { family: [mom()] }).family, [mom({ inactive: true })]);
   });
   it("뺀 기록 — 같은 사람은 더 나중 시각, 잘못된 값은 버린다, 아이는 빼지 않는다", () => {
     assert.deepEqual(
@@ -508,8 +521,6 @@ describe("mergeFamily — 기기·서버 가족 합치기", () => {
     assert.deepEqual(normalizeRemovals([{ id: "BAD ID", at: "x" }, { id: "m-b" }, { id: "m-c", at: "2026-09-28" }, "x"]), [
       { id: "m-c", at: "2026-09-28" },
     ]);
-    const kid: FamilyMember = { id: "child", role: "child", callName: "하온" };
-    assert.deepEqual(withoutRemoved([kid], [{ id: "child", at: "2099-01-01" }]), [kid]);
   });
   it("서버 저장이 실패해 이 기기에만 있는 그림 — 불러오기가 서버 옛 값으로 덮지 않는다", () => {
     const server = { family: [mom()], familyAt: "2026-09-28T09:00:00Z" };
@@ -519,6 +530,51 @@ describe("mergeFamily — 기기·서버 가족 합치기", () => {
   it("한쪽에 가족 칸이 없으면 다른 쪽을 그대로", () => {
     assert.deepEqual(mergeFamily({}, { family: [mom()] }).family, [mom()]);
     assert.deepEqual(mergeFamily({ family: [] }, {}).family, []);
+  });
+  it("'빠짐' 표시는 나중에 바꾼 목록을 따른다(다시 넣기도 같은 길)", () => {
+    const off = { family: [mom({ portrait: P2, inactive: true })], familyAt: "2026-10-26T01:00:00Z" };
+    const on = { family: [mom({ portrait: P2 })], familyAt: "2026-10-26T00:00:00Z" };
+    assert.equal(mergeFamily(on, off).family?.[0].inactive, true);
+    assert.equal(mergeFamily(off, { ...on, familyAt: "2026-10-26T02:00:00Z" }).family?.[0].inactive, undefined);
+  });
+});
+
+describe("뺀 사람(회색 카드) — 목록엔 남고 동화·홈 사진·명패·숫자에서 빠진다(2026-10-26 사장님)", () => {
+  const friend = (extra: Partial<FamilyMember> = {}): FamilyMember => ({ id: "m-f", role: "friend", callName: "친구", name: "서준", ...extra });
+  const sis = (extra: Partial<FamilyMember> = {}): FamilyMember => ({ id: "m-s", role: "sibling", callName: "누나", name: "수아", isOurChild: true, ...extra });
+
+  it("isActive — 표시가 없으면 식구, inactive 면 뺀 사람", () => {
+    assert.equal(isActive(friend()), true);
+    assert.equal(isActive(friend({ inactive: true })), false);
+  });
+  it("홈 사진·고정된 사람·단짝 친구 불러오기에서 빠진다", () => {
+    const fam = [friend({ portrait: P, showOnHome: true, inactive: true }), sis({ portrait: P, inactive: true })];
+    assert.deepEqual(homeMembers(fam), []);
+    assert.deepEqual(fixedMembers(fam), []);
+    assert.equal(bestFriend(fam), undefined);
+    assert.equal(bestFriend([...fam, friend({ id: "m-f2", name: "지안" })])?.name, "지안");
+  });
+  it("명패 — 뺀 '우리 아이'는 이름이 빠진다", () => {
+    assert.deepEqual(ourChildrenNames("하온", [sis()]), ["하온", "수아"]);
+    assert.deepEqual(ourChildrenNames("하온", [sis({ inactive: true })]), ["하온"]);
+  });
+  it("단짝 친구 한 명 — 뺀 친구는 세지 않아 새 친구를 넣을 수 있다, 엄마·아빠는 뺐어도 센다(회색 카드를 다시 넣는다)", () => {
+    assert.equal(canAddRole([friend()], "friend"), false);
+    assert.equal(canAddRole([friend({ inactive: true })], "friend"), true);
+    assert.equal(canAddRole([{ id: "mom", role: "mom", callName: "엄마", inactive: true }], "mom"), false);
+  });
+  it("저장된 값을 고를 때 '빠짐'·다시 넣은 때를 지킨다", () => {
+    const [m] = normalizeFamily([{ id: "m-f", role: "friend", callName: "친구", inactive: true, activeAt: "2026-10-26T01:00:00Z" }]) ?? [];
+    assert.equal(m.inactive, true);
+    assert.equal(m.activeAt, "2026-10-26T01:00:00Z");
+    const [n] = normalizeFamily([{ id: "m-f", role: "friend", callName: "친구", inactive: "yes" }]) ?? [];
+    assert.equal("inactive" in n, false);
+  });
+  it("뺀 기록 — 아이(주인공)는 빼지 않고, 이미 회색인 사람은 그대로", () => {
+    const kid: FamilyMember = { id: "child", role: "child", callName: "하온" };
+    assert.deepEqual(withoutRemoved([kid], [{ id: "child", at: "2099-01-01" }]), [kid]);
+    const off = friend({ inactive: true });
+    assert.equal(withoutRemoved([off], [{ id: "m-f", at: "2099-01-01" }])?.[0], off);
   });
 });
 

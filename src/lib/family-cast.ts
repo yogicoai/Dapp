@@ -25,7 +25,7 @@
  * 브라우저에서 돈다(이 기기 가족이 서버보다 새 그림을 들고 있을 수 있다). 서버는 주소만 다시 검사한다(lib/family-ref).
  * 순수 함수만 둔다 — node --test 로 시험한다(family-cast.test.ts).
  */
-import { familyLooksToPrompt, pictureDecidesLooks, type FamilyMember, type FamilyRole } from "./family.ts";
+import { familyLooksToPrompt, isActive, pictureDecidesLooks, type FamilyMember, type FamilyRole } from "./family.ts";
 
 /** 인물 시트에 물릴 고정 얼굴 한 사람 */
 export type CastPortrait = {
@@ -210,7 +210,8 @@ export function castPortraits(
   opts: { max?: number } = {},
 ): CastPortrait[] {
   const max = opts.max ?? CAST_PORTRAITS_MAX;
-  const members = family ?? [];
+  // 뺀 사람(가족 화면의 회색 카드)은 등장인물 얼굴로 붙이지 않는다
+  const members = (family ?? []).filter(isActive);
   const cast = (characters ?? []).slice(0, SHEET_CAST_MAX);
   if (!members.length || !cast.length || max <= 0) return [];
   const heroName = cast[0].name?.trim() ?? "";
@@ -257,6 +258,7 @@ export function storyFamilyLooks(family: readonly FamilyMember[] | undefined): S
   const out: StoryFamilyLook[] = [];
   for (const m of family ?? []) {
     if (m.role !== "grandma" && m.role !== "grandpa" && m.role !== "sibling" && m.role !== "friend") continue;
+    if (!isActive(m)) continue; // 뺀 사람은 이야기에 건네지 않는다
     const call = m.callName?.trim() ?? "";
     const name = m.name?.trim() ?? "";
     const who =

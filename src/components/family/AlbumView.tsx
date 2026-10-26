@@ -16,6 +16,7 @@
  *  - 마지막: '가족 더하기'(넣기만 하면 0개)
  * 가족 아래 '단짝 친구' 칸이 따로 있다 — 가족이 아니라 'N명' 숫자에 안 든다.
  * 그 밖의 카드를 누르면 MemberSheet(다시 그리기·생김새 고치기·홈 사진 켜기·빼기)가 뜬다.
+ * 뺀 사람(inactive)은 지우지 않고 칸 끝에 회색 카드로 남긴다(2026-10-26 사장님 "회색처럼만") — 숫자·값 표시에서 빠지고, 누르면 다시 넣기.
  *
  * 액자 아래 '사진 꾸미기'는 가족 사진관 시트(StudioSheet — 배경 고르기·스티커, 사장님 2026-09-30)를 연다.
  *
@@ -32,6 +33,7 @@ import {
   familyTitle,
   fixedMembers,
   homeMembers,
+  isActive,
   isKidRole,
   nextDrawCost,
   ourChildrenNames,
@@ -90,22 +92,26 @@ export function AlbumView({
   // 단짝 친구는 처음 값이 '홈 사진 끔'이라, 친구만 고정한 때를 '모두 껐다'로 보면 안 된다(홈 FamilyFrame 과 같은 규칙).
   const fixedKin = familyMembersOnly(fixedMembers(family));
   const onHomeNow = homeMembers(family);
-  const kin = byRoleOrder(familyMembersOnly(family));
-  const friends = family.filter((m) => m.role === "friend");
+  // 칸마다 지금 식구 먼저, 뺀 사람(회색)은 끝에
+  const activeFirst = (list: FamilyMember[]) => [...list.filter(isActive), ...list.filter((m) => !isActive(m))];
+  const kin = activeFirst(byRoleOrder(familyMembersOnly(family)));
+  const kinActive = kin.filter(isActive);
+  const friends = activeFirst(family.filter((m) => m.role === "friend"));
+  const friendsActive = friends.filter(isActive);
   // 단짝 친구 칸 머리 — 홈 보이기를 켰으면 '가족 사진엔 안 나와요'가 사실과 반대가 된다.
-  const friendOnHome = friends.some((f) => showsOnHome(f));
+  const friendOnHome = friendsActive.some((f) => showsOnHome(f));
   const friendNote = friendOnHome
-    ? friends.some((f) => f.portrait && showsOnHome(f))
+    ? friendsActive.some((f) => f.portrait && showsOnHome(f))
       ? "홈 사진에도 나와요"
       : "얼굴을 고정하면 홈 사진에도 나와요"
     : "가족 사진엔 안 나와요";
   const title = familyTitle(ourChildrenNames(child.name, family));
-  const isChanged = (m: FamilyMember) => showsLooksChanged(m, child);
+  const isChanged = (m: FamilyMember) => isActive(m) && showsLooksChanged(m, child);
   const changedList = byRoleOrder(family.filter(isChanged));
   // '얼굴 고정하기' 카드의 무료 표시 — 보이는 순서(가족 → 단짝 친구)대로 앞사람부터. 한 명만 눌러도 카드보다 비싸지 않다.
   const freeIds = new Set(
     priceMembers(
-      [...kin, ...friends].filter((m) => !m.portrait && !m.draft),
+      [...kinActive, ...friendsActive].filter((m) => !m.portrait && !m.draft),
       master ? 0 : freeDraws,
     )
       .filter((r) => r.free)
@@ -113,6 +119,7 @@ export function AlbumView({
   );
 
   const card = (m: FamilyMember) => {
+    if (!isActive(m)) return <RestingCard key={m.id} member={m} onClick={() => onCard(m.id)} />;
     const changed = isChanged(m);
     return (
       <MemberCard
@@ -232,7 +239,7 @@ export function AlbumView({
         )}
 
         <p className="mt-5 text-sm font-extrabold text-neutral-500">
-          우리 가족 · {kin.length}명 <span className="font-bold">(얼굴 고정 {kin.filter((m) => m.portrait).length}명)</span>
+          우리 가족 · {kinActive.length}명 <span className="font-bold">(얼굴 고정 {kinActive.filter((m) => m.portrait).length}명)</span>
         </p>
 
         <div className="mt-2.5 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
@@ -443,6 +450,43 @@ function MemberCard({
           <CookieIcon size={14} />
           얼굴 고정하기 · {free ? "무료" : `${cost}개`}
         </span>
+      </span>
+    </button>
+  );
+}
+
+/**
+ * 뺀 사람 — 지우지 않고 회색으로 남긴 카드(2026-10-26 사장님 "비활성처럼 회색처럼만"). 그림은 흑백·흐리게,
+ * 누르면 사람 메뉴(다시 넣기)가 뜬다.
+ */
+function RestingCard({ member: m, onClick }: { member: FamilyMember; onClick: () => void }) {
+  const kid = isKidRole(m.role);
+  const name = displayName(m);
+  const age = m.role === "sibling" || m.role === "friend" ? ageText(m.age) : "";
+  const pic = m.portrait ?? m.draft;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`${name} — 빠져 있어요, 누르면 다시 넣을 수 있어요`}
+      className="relative flex h-44 flex-col overflow-hidden rounded-3xl bg-neutral-100 text-left ring-1 ring-neutral-200"
+    >
+      <span className="relative flex h-[120px] w-full items-end justify-center opacity-60 grayscale">
+        {pic ? (
+          <PortraitImg p={pic} className="w-auto max-w-none" style={{ height: kid ? 84 : 106 }} />
+        ) : (
+          <Silhouette width={kid ? 46 : 50} height={kid ? 90 : 98} className="mb-2" />
+        )}
+      </span>
+      <span className="absolute left-2 top-2 rounded-full bg-white px-2.5 py-[3px] text-[11px] font-extrabold text-neutral-500">
+        빠져 있어요
+      </span>
+      <span className="flex flex-1 flex-col justify-center gap-0.5 bg-white/80 px-3">
+        <span className="truncate text-[15px] font-extrabold text-neutral-500">
+          {name}
+          {age && <span className="text-xs font-bold text-neutral-400"> · {age}</span>}
+        </span>
+        <span className="truncate text-xs font-semibold text-neutral-400">누르면 다시 넣을 수 있어요</span>
       </span>
     </button>
   );

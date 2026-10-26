@@ -3,6 +3,7 @@
 /**
  * 모아 보기에서 사람 카드를 눌렀을 때 — 다시 그리기 · 생김새 고치기 · 예전 그림으로 돌아가기 · 켜기 두 개 · 빼기.
  * 고정 안 된 사람은 '얼굴 고정하기'가 맨 위. 아이(주인공)는 뺄 수 없다.
+ * 빼기는 지우지 않는다(2026-10-26 사장님 "회색처럼만") — 뺀 사람(inactive)의 회색 카드를 누르면 '다시 넣기'만 있는 시트가 뜬다.
  * '그림 없이 특징만 저장'한 사람(looksOnly)은 '특징만 저장됨 · 동화마다 이 특징으로 그려요'로 알리고,
  * 같은 '얼굴 고정하기'(쿠키)로 나중에 그릴 수 있다.
  *
@@ -44,6 +45,7 @@ export function MemberSheet({
   onOurChild,
   onRename,
   onRemove,
+  onRestore,
 }: {
   colors: Colors;
   member: FamilyMember;
@@ -72,7 +74,10 @@ export function MemberSheet({
    * 켜기를 미뤄 둔 경우 — 한 번에 저장해야 이름 없는 '우리 아이'가 잠깐도 생기지 않는다).
    */
   onRename: (name: string, ourChild?: boolean) => void;
+  /** 빼기 — 지우지 않고 회색(inactive)으로 둔다 */
   onRemove: () => void;
+  /** 뺀 사람 다시 넣기(회색 카드) */
+  onRestore: () => void;
 }) {
   const [asking, setAsking] = useState(false);
   const [reporting, setReporting] = useState(false);
@@ -124,6 +129,38 @@ export function MemberSheet({
     );
   }
 
+  // 뺀 사람 — 회색으로 남아 있다. 다시 넣기만 고른다(그림·생김새 그대로).
+  if (m.inactive) {
+    return (
+      <Sheet onClose={onClose} label={`${name} 메뉴`}>
+        <div className="mt-4 flex w-full items-center gap-3.5">
+          <div className="flex h-24 w-[72px] shrink-0 items-end justify-center overflow-hidden rounded-2xl bg-neutral-100 grayscale">
+            {pic ? (
+              <PortraitImg p={pic} alt="" className="h-[88px] w-auto max-w-none opacity-70" />
+            ) : (
+              <Silhouette width={40} height={78} className="mb-1.5" />
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xl font-extrabold text-neutral-500">{name}</p>
+            {friend && <p className="text-xs font-extrabold text-neutral-400">{BEST_FRIEND_LABEL}</p>}
+            <p className="mt-0.5 break-keep text-[13px] font-semibold text-neutral-500">
+              빠져 있어요 — 동화와 홈 사진에 안 나와요. {fixedOrDrawn ? "그린 그림은 그대로 있어요." : ""}
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 flex w-full flex-col gap-2">
+          <BigButton colors={colors} onClick={onRestore}>
+            {friend ? `${BEST_FRIEND_LABEL}로 다시 넣기` : "우리 가족에 다시 넣기"}
+          </BigButton>
+        </div>
+        <button type="button" onClick={onClose} className="mt-1 min-h-11 px-3.5 text-sm font-extrabold text-neutral-500">
+          닫기
+        </button>
+      </Sheet>
+    );
+  }
+
   if (asking) {
     return (
       <Sheet onClose={() => setAsking(false)} label={`${name} 빼기`}>
@@ -131,9 +168,7 @@ export function MemberSheet({
           {friend ? `${objectOf(m)} 뺄까요?` : `${objectOf(m)} 우리 가족에서 뺄까요?`}
         </h2>
         <p className="mt-2 break-keep text-center text-sm font-medium leading-normal text-neutral-600">
-          {fixedOrDrawn
-            ? "그린 그림도 같이 지워져요. 다시 넣으면 처음부터 새로 그려야 해요."
-            : "빼도 이미 만든 동화는 그대로예요."}
+          동화와 홈 사진에 안 나와요. {fixedOrDrawn ? "그린 그림은 지우지 않아요 — " : ""}회색으로 남아 있어서 누르면 언제든 다시 넣을 수 있어요.
         </p>
         <button
           type="button"

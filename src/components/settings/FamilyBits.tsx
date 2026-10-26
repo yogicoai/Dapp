@@ -22,6 +22,7 @@ import {
   byRoleOrder,
   familyMembersOnly,
   fixedMembers,
+  isActive,
   showsLooksChanged,
   type FamilyMember,
 } from "@/lib/family";
@@ -52,7 +53,7 @@ export function FamilyCharacterRow({
   const fixed = byRoleOrder(fixedMembers(family));
   const kinFixed = familyMembersOnly(fixed).length;
   const friendFixed = fixed.some((m) => m.role === "friend");
-  const pending = family.some((m) => m.draft && !m.portrait);
+  const pending = family.some((m) => m.draft && !m.portrait && isActive(m));
   const changed = fixed.some((m) => showsLooksChanged(m, child));
   const alert = changed ? "모습이 바뀐 사람이 있어요" : pending ? "확인 안 한 그림이 있어요" : "";
   const fixedText =

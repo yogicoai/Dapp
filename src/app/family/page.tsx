@@ -94,6 +94,7 @@ import {
   familyTitle,
   FIXED_ID_ROLES,
   homeMembers,
+  isActive,
   isPhotoFixed,
   pictureDecidesLooks,
   lockChanges,
@@ -759,6 +760,12 @@ export default function FamilyPage() {
 
   function addPreset(role: "mom" | "dad" | "grandma" | "grandpa") {
     const fam = familyRef.current;
+    // 뺀(회색) 사람이 있으면 새로 넣지 않고 그 사람을 다시 넣는다 — 엄마·아빠는 id 가 하나뿐이고, 그림·생김새도 그대로 있다.
+    const resting = fam.find((m) => m.role === role && !isActive(m));
+    if (resting) {
+      restoreMember(resting.id);
+      return;
+    }
     // 넣은 때 — 엄마·아빠는 id 가 늘 같아서, 예전에 뺀 기록이 다시 넣은 사람을 지우지 않게 적어 둔다.
     const addedAt = new Date().toISOString();
     if (role === "mom" || role === "dad") {
@@ -798,19 +805,63 @@ export default function FamilyPage() {
     );
   }
 
+  /**
+   * 빼기(사람 메뉴의 '우리 가족에서 빼기'·'단짝 친구 빼기') — 지우지 않고 '빠짐'(회색 카드)으로 둔다(2026-10-26 사장님
+   * "빼도 목록에선 사라지지 않게 … 비활성처럼 회색처럼만"). 동화·홈 사진·명패·숫자·단짝 친구 불러오기에서만 빠지고 그림·생김새는
+   * 그대로 — 회색 카드를 누르면 다시 넣는다. 예전엔 목록에서 지워(뺀 기록 familyRemoved) 그린 그림까지 사라졌다.
+   */
   function removeMember(id: string) {
     const m = findMember(id);
-    if (!m || m.role === "child") return;
-    // 뺀 기록을 남긴다 — 다른 기기·서버 목록과 합칠 때 이 사람만 빠진다(목록 전체가 이기고 지지 않게).
-    // 그림이 걸렸을 수 있어 바로 저장한다(다른 기기에서 되살아나지 않게).
-    commit(
-      familyRef.current.filter((x) => x.id !== id),
-      m.portrait || m.draft ? "now" : "soon",
-      [{ id, at: new Date().toISOString() }],
-    );
+    if (!m || m.role === "child" || !isActive(m)) return;
+    // 그림이 걸렸으면 바로 저장한다 — 다른 기기가 '빠짐'을 늦게 받지 않게.
+    patchMember(id, (x) => ({ ...x, inactive: true }), m.portrait || m.draft ? "now" : "soon");
     setPhoto(id, null);
     setOverlay(null);
-    if (step === "album") showToast(m.role === "friend" ? `${objectOf(m)} 뺐어요` : `${objectOf(m)} 우리 가족에서 뺐어요`);
+    if (step === "album") {
+      showToast(
+        m.role === "friend"
+          ? `${objectOf(m)} 뺐어요 · 회색 카드를 누르면 다시 넣어요`
+          : `${objectOf(m)} 우리 가족에서 뺐어요 · 회색 카드를 누르면 다시 넣어요`,
+      );
+    }
+  }
+
+  /**
+   * 1단계(누가 우리 가족인가요?)에서 켠 사람 끄기 — 넣기만 하고 아무것도 없는 사람(그림·특징·이름 없음)은 목록에서 지운다
+   * (회색 카드로 남길 것이 없다). 그림·특징이 있으면 빼기와 같다(회색).
+   */
+  function dropMember(id: string) {
+    const m = findMember(id);
+    if (!m || m.role === "child") return;
+    const empty = !m.portrait && !m.draft && !m.prevDraft && !m.looks && !m.looksOnly && !(m.name ?? "").trim();
+    if (!empty) {
+      removeMember(id);
+      return;
+    }
+    // 뺀 기록 — 다른 기기·서버 목록과 합칠 때 되살아나지 않게(옛 목록에 남아 있으면 회색으로 온다)
+    commit(familyRef.current.filter((x) => x.id !== id), "soon", [{ id, at: new Date().toISOString() }]);
+    setPhoto(id, null);
+    setOverlay(null);
+  }
+
+  /**
+   * 회색 카드 다시 넣기 — 그림·생김새 그대로. 다시 넣은 때(activeAt)를 적어 예전 방식의 뺀 기록이 다시 회색으로 돌리지 않게 한다.
+   * 단짝 친구 '한 명' 규칙은 새로 넣을 때만 본다 — 예전 목록에 친구가 여럿인 계정도 있어 다시 넣기는 막지 않는다.
+   */
+  function restoreMember(id: string) {
+    const m = findMember(id);
+    if (!m || isActive(m)) return;
+    patchMember(
+      id,
+      (x) => {
+        const { inactive: _off, ...rest } = x;
+        void _off;
+        return { ...rest, activeAt: new Date().toISOString() };
+      },
+      "now",
+    );
+    setOverlay(null);
+    showToast(m.role === "friend" ? `${objectOf(m)} 단짝 친구로 다시 넣었어요` : `${objectOf(m)} 우리 가족에 다시 넣었어요`);
   }
 
   /** '홈 가족 사진에 보이기' — 끔(false)도 저장한다. 처음 값이 역할마다 달라서(가족 켬·단짝 친구 끔). */
@@ -1438,7 +1489,7 @@ export default function FamilyPage() {
         freeDraws={freeDraws}
         onBack={() => (hasAlbum(family) ? go("album") : router.push("/"))}
         onToggle={addPreset}
-        onRemove={removeMember}
+        onRemove={dropMember}
         onFixedTap={(m) => showToast(`${displayName(m)} 얼굴은 고정돼 있어요. 모아 보기에서 고칠 수 있어요`)}
         onOpenAdd={(role) => setOverlay({ kind: "add", role, mode: "members", key: ++addSeq.current })}
         onNext={() =>
@@ -1647,6 +1698,7 @@ export default function FamilyPage() {
           onOurChild={(on) => setOurChild(sheetMember.id, on)}
           onRename={(name, ourChild) => renameMember(sheetMember.id, name, ourChild)}
           onRemove={() => removeMember(sheetMember.id)}
+          onRestore={() => restoreMember(sheetMember.id)}
         />
       )}
 

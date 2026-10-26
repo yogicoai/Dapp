@@ -114,12 +114,16 @@ export function mergePictures(a: readonly PastPicture[], b: readonly PastPicture
   return [...byName.values()].sort((x, y) => Date.parse(y.at) - Date.parse(x.at)).slice(0, Math.max(0, max));
 }
 
-/** 넣은 때와 뺀 기록 가운데 가장 나중 — picturesSince 의 since */
+/**
+ * 넣은 때와 뺀 기록 가운데 가장 나중 — picturesSince 의 since.
+ * 회색 카드에서 다시 넣은 사람(activeAt)은 같은 사람이다 — 그 전에 적힌 뺀 기록으로 예전 그림을 가리지 않는다(2026-10-26 빼기가 회색이 됨).
+ */
 export function historyFloor(
-  member: { id: string; addedAt?: string },
+  member: { id: string; addedAt?: string; activeAt?: string },
   removed: readonly { id: string; at: string }[] | undefined,
 ): string | undefined {
-  const times = [member.addedAt, ...(removed ?? []).filter((r) => r.id === member.id).map((r) => r.at)]
+  const stillGone = (r: { id: string; at: string }) => r.id === member.id && !(member.activeAt && r.at <= member.activeAt);
+  const times = [member.addedAt, ...(removed ?? []).filter(stillGone).map((r) => r.at)]
     .map((t) => (t ? Date.parse(t) : NaN))
     .filter((t) => Number.isFinite(t));
   return times.length ? new Date(Math.max(...times)).toISOString() : undefined;

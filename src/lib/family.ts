@@ -154,6 +154,18 @@ export type FamilyMember = {
    */
   addedAt?: string;
   /**
+   * 뺀 사람(2026-10-26 사장님 "빼도 목록에선 사라지지 않게 … 비활성처럼 회색처럼만") — 목록·그림은 그대로 두고, 동화(등장인물
+   * 얼굴·생김새)·홈 사진·명패·숫자·단짝 친구 불러오기에서만 빠진다(isActive). 가족 화면엔 회색 카드로 남고 누르면 다시 넣는다.
+   * 예전엔 목록에서 지워 그린 그림까지 사라졌다. 예전 방식의 뺀 기록(FamilyRemoval)도 이제 지우지 않고 이 표시로 바꾼다
+   * (withoutRemoved). true 만 저장한다.
+   */
+  inactive?: boolean;
+  /**
+   * 다시 넣은 때(이 기기 시계, ISO) — 예전 방식의 뺀 기록보다 나중이면 그 기록에 다시 걸리지 않는다(aliveTime).
+   * 넣은 때(addedAt)는 건드리지 않는다 — 같은 사람이라 예전 그림 목록(lib/family-history historyFloor)이 이어져야 한다.
+   */
+  activeAt?: string;
+  /**
    * 가족 사진관 '옷 갈아입기'로 만든 테마 옷(사장님 2026-09-30 — lib/family-outfit): 테마 → {합친 그림 주소, 받은 때,
    * 만든 원본 그림 주소, 몸 판}. 고정된 그림(portrait)에서 만든 옷만 남는다 — 얼굴을 다시 고정하면 불러올 때 옛 옷은 빠진다.
    * 합칠 때는 테마마다 더 새것(mergeFamily). 없으면 칸을 두지 않는다.
@@ -298,20 +310,27 @@ export function isKidRole(role: FamilyRole): boolean {
 /** 단짝 친구는 한 명뿐 */
 export const FRIEND_LIMIT = 1;
 
-/** 단짝 친구(없으면 undefined). 옛 목록에 친구가 여럿이면 첫 사람. */
+/** 빠지지 않은 사람 — 뺀 사람(inactive)은 가족 화면에 회색으로만 남고 동화·홈 사진·명패·숫자에서 빠진다. */
+export function isActive(m: Pick<FamilyMember, "inactive">): boolean {
+  return m.inactive !== true;
+}
+
+/** 단짝 친구(없으면 undefined) — 뺀 친구는 빼고. 옛 목록에 친구가 여럿이면 첫 사람. */
 export function bestFriend(family: readonly FamilyMember[] | undefined): FamilyMember | undefined {
-  return (family ?? []).find((m) => m.role === "friend");
+  return (family ?? []).find((m) => m.role === "friend" && isActive(m));
 }
 
 /**
  * 이 역할을 더 넣을 수 있나 — 아이·엄마·아빠는 한 명, 단짝 친구도 한 명, 그 밖은 식구 수 상한까지.
  * (옛 목록에 친구가 여럿이어도 지우지 않는다 — 쿠키 내고 그린 그림이 있을 수 있다. 더하기만 막는다.)
+ * 뺀 단짝 친구는 세지 않는다(새 친구를 넣을 수 있다 — 뺀 친구를 다시 넣을 때 가족 화면이 한 명인지 다시 본다).
+ * 엄마·아빠는 뺐어도 센다 — id 가 하나뿐이라 새로 넣지 않고 회색 카드를 다시 넣는다.
  */
 export function canAddRole(family: readonly FamilyMember[] | undefined, role: FamilyRole): boolean {
   const fam = family ?? [];
   if (fam.length >= FAMILY_MAX_MEMBERS) return false;
   if (FIXED_ID_ROLES.includes(role)) return !fam.some((m) => m.role === role);
-  if (role === "friend") return fam.filter((m) => m.role === "friend").length < FRIEND_LIMIT;
+  if (role === "friend") return fam.filter((m) => m.role === "friend" && isActive(m)).length < FRIEND_LIMIT;
   return true;
 }
 
@@ -320,9 +339,9 @@ export function showsOnHome(m: Pick<FamilyMember, "role" | "showOnHome">): boole
   return m.showOnHome ?? m.role !== "friend";
 }
 
-/** 홈 단체 사진에 설 사람 — 고정된 사람 가운데 홈 보이기를 켠 사람. 비면 홈은 명패 한 줄. */
+/** 홈 단체 사진에 설 사람 — 고정된 사람 가운데 홈 보이기를 켠 사람(뺀 사람 빼고). 비면 홈은 명패 한 줄. */
 export function homeMembers(family: readonly FamilyMember[] | undefined): FamilyMember[] {
-  return (family ?? []).filter((m) => m.portrait && showsOnHome(m));
+  return (family ?? []).filter((m) => m.portrait && isActive(m) && showsOnHome(m));
 }
 
 /** 가족만(단짝 친구 뺌) — 가족 명패·'우리 가족 · N명' 숫자에 쓴다. */
@@ -363,7 +382,7 @@ export function ourChildrenNames(
   const c = (childName ?? "").trim();
   if (c) out.push(c);
   for (const m of family ?? []) {
-    if (m.role !== "sibling" || !m.isOurChild) continue;
+    if (m.role !== "sibling" || !m.isOurChild || !isActive(m)) continue;
     const n = (m.name ?? "").trim();
     if (n) out.push(n);
   }
@@ -1157,6 +1176,8 @@ export function normalizeFamily(raw: unknown): FamilyMember[] | undefined {
       ...(typeof m.showOnHome === "boolean" ? { showOnHome: m.showOnHome } : {}),
       ...(role === "sibling" && m.isOurChild === true ? { isOurChild: true } : {}),
       ...(m.looksOnly === true ? { looksOnly: true } : {}),
+      ...(m.inactive === true ? { inactive: true } : {}),
+      ...(str(m.activeAt, 40) ? { activeAt: str(m.activeAt, 40) } : {}),
       ...(outfits ? { outfits } : {}),
     });
     if (out.length >= MAX_MEMBERS) break;
@@ -1210,16 +1231,15 @@ function picTime(m: FamilyMember): string {
   return ats.reduce((best, x) => (x > best ? x : best), "");
 }
 
-/** 이 사람이 마지막으로 '살아 있다'고 적힌 때 — 넣은 때와 그림 시각 가운데 늦은 쪽 */
+/** 이 사람이 마지막으로 '살아 있다'고 적힌 때 — 넣은 때·그림 시각·다시 넣은 때 가운데 가장 늦은 쪽 */
 function aliveTime(m: FamilyMember): string {
-  const p = picTime(m);
-  const a = m.addedAt ?? "";
-  return a > p ? a : p;
+  return [picTime(m), m.addedAt ?? "", m.activeAt ?? ""].reduce((best, x) => (x > best ? x : best), "");
 }
 
 /**
- * 뺀 기록에 걸린 사람을 뺀다 — 기록이 그 사람의 넣은 때·그림 시각보다 나중일 때만.
- * 뺀 뒤에 다른 기기에서 다시 넣었거나 쿠키를 내고 그렸으면 남는다. 아이(주인공)는 빼지 않는다.
+ * 뺀 기록에 걸린 사람을 '빠짐'(inactive — 회색)으로 둔다 — 기록이 그 사람의 넣은 때·그림 시각·다시 넣은 때보다 나중일 때만.
+ * 예전엔 목록에서 지웠다 — 그린 그림까지 사라졌다(2026-10-26 사장님 "이미지 자체가 사라져 버렸는데"). 이제는 지우지 않는다.
+ * 뺀 뒤에 다른 기기에서 다시 넣었거나 쿠키를 내고 그렸으면 그대로 둔다. 아이(주인공)는 빼지 않는다. (이름은 부르는 곳이 많아 그대로.)
  */
 export function withoutRemoved(
   family: FamilyMember[] | undefined,
@@ -1227,9 +1247,10 @@ export function withoutRemoved(
 ): FamilyMember[] | undefined {
   if (!family || !removed || removed.length === 0) return family;
   const gone = new Map(removed.map((r) => [r.id, r.at]));
-  return family.filter((m) => {
+  return family.map((m) => {
     const at = gone.get(m.id);
-    return m.role === "child" || at === undefined || !(at > aliveTime(m));
+    if (m.role === "child" || m.inactive || at === undefined || !(at > aliveTime(m))) return m;
+    return { ...m, inactive: true };
   });
 }
 
@@ -1261,8 +1282,8 @@ function mergeMember(win: FamilyMember, other: FamilyMember): FamilyMember {
  *
  *  - **사람은 두 목록을 합집합으로 모은다.** 한쪽에만 있는 사람은 그쪽에서 넣었거나 다른 쪽이 아직 못 본
  *    사람이다 — 오래 열어 둔 화면이 옛 목록으로 저장해도 다른 기기에서 넣고 고정한 사람이 사라지지 않는다.
- *  - 빼기는 뺀 기록(familyRemoved)으로만 전한다 — 두 쪽 기록을 합치고, 기록이 그 사람의 넣은 때·그림 시각보다
- *    나중인 사람만 뺀다(withoutRemoved). 뺀 뒤에 다른 기기에서 다시 넣거나 그렸으면 남는다.
+ *  - 빼기는 '빠짐' 표시(inactive)로 — 이름·생김새 칸처럼 나중에 바꾼 목록을 따른다. 예전 방식의 뺀 기록(familyRemoved)은 두 쪽을
+ *    합치고, 기록이 그 사람의 넣은 때·그림 시각·다시 넣은 때보다 나중이면 지우지 않고 '빠짐'으로 둔다(withoutRemoved).
  *  - 이름·생김새·홈 보이기 같은 칸과 순서는 **나중에 바꾼 쪽**(familyAt 이 큰 쪽)을 따른다. 같으면 a 쪽(보통 서버).
  *  - 양쪽에 다 있는 사람은 그림 칸(portrait·draft·prevDraft)을 **더 새 그림** 쪽에서 가져온다.
  *  - 한쪽에 가족 칸이 아예 없으면(옛 계정) 다른 쪽을 쓴다.
@@ -1298,7 +1319,7 @@ export function newMemberId(): string {
   return `m-${rand}`;
 }
 
-/** 고정된 사람만 */
+/** 고정된 사람만(뺀 사람 빼고 — 홈 액자·설정 얼굴·모아 보기 숫자가 쓴다) */
 export function fixedMembers(family: FamilyMember[] | undefined): FamilyMember[] {
-  return (family ?? []).filter((m) => m.portrait);
+  return (family ?? []).filter((m) => m.portrait && isActive(m));
 }

@@ -16,6 +16,7 @@ import {
   groupOrder,
   homeGreeting,
   homeMembers,
+  isActive,
   ourChildrenNames,
   type FamilyMember,
 } from "@/lib/family";
@@ -169,7 +170,7 @@ export function FamilyFrame({
   // 단체 사진에 설 사람 — 고정된 사람 중 '홈 가족 사진에 보이기'를 켠 사람(처음 값: 가족 켬, 단짝 친구 끔).
   const onHome = homeMembers(family);
   // 그렸지만 아직 '마음에 들어요'를 안 누른 사람 — 쿠키를 냈으니 잊지 않게 알려 준다.
-  const pending = (family ?? []).some((m) => m.draft && !m.portrait);
+  const pending = (family ?? []).some((m) => m.draft && !m.portrait && isActive(m));
 
   // 확인 안 한 그림이 있으면 접지 않는다 — 쿠키를 낸 그림을 잊어버리면 안 된다.
   const open = pending || !(foldedNow ?? folded ?? false);

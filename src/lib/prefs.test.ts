@@ -244,7 +244,7 @@ describe("saveChild — 안 넘긴 항목은 그대로 둔다", () => {
     assert.equal(loadChild()?.looks, undefined);
   });
 
-  it("뺀 기록은 더하기만 하고, 읽을 때 뺀 사람은 목록에서 빠진다 — 저장 모양 판(schema)도 적는다", async () => {
+  it("뺀 기록은 더하기만 하고, 읽을 때 뺀 사람은 회색(빠짐)이 된다 — 저장 모양 판(schema)도 적는다", async () => {
     stubWindow();
     const { saveChild, loadChild, CHILD_SCHEMA } = await import("./prefs.ts");
     const g = { id: "m-g", role: "grandma" as const, callName: "할머니" };
@@ -254,7 +254,7 @@ describe("saveChild — 안 넘긴 항목은 그대로 둔다", () => {
     saveChild({ name: "하온", family: [g, s], familyRemoved: [{ id: "m-g", at: "2026-09-28T09:10:00Z" }] });
     const out = loadChild();
     assert.deepEqual(out?.familyRemoved?.map((r) => r.id).sort(), ["m-g", "m-x"]);
-    assert.deepEqual(out?.family?.map((m) => m.id), ["m-s"]);
+    assert.deepEqual(out?.family?.map((m) => [m.id, m.inactive === true]), [["m-g", true], ["m-s", false]]);
     assert.equal(out?.schema, CHILD_SCHEMA);
   });
 });

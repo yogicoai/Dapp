@@ -14,6 +14,7 @@ import type { ReactNode } from "react";
 import {
   BEST_FRIEND_LABEL,
   canAddRole,
+  isActive,
   priceMembers,
   ROLE_LABEL,
   ROLE_ORDER,
@@ -59,7 +60,7 @@ export function MembersView({
   onBack: () => void;
   /** 엄마·아빠·(첫)할머니·할아버지 켜기 */
   onToggle: (role: "mom" | "dad" | "grandma" | "grandpa") => void;
-  /** 켜진 사람 끄기(우리 가족에서 빼기 — 그림이 없을 때만) */
+  /** 켜진 사람 끄기 — 아무것도 없는 사람은 지우고, 그림·특징이 있으면 회색으로 뺀다(가족 화면 dropMember) */
   onRemove: (id: string) => void;
   /** 이미 고정된 사람을 눌렀을 때 */
   onFixedTap: (m: FamilyMember) => void;
@@ -67,7 +68,8 @@ export function MembersView({
   onNext: () => void;
 }) {
   const kid = family.find((m) => m.role === "child");
-  const others = family.filter((m) => m.role !== "child");
+  // 뺀 사람(회색)은 여기서 안 보인다 — 엄마·아빠·할머니·할아버지 칸을 다시 켜면 그 사람이 그대로 돌아온다(가족 화면 addPreset).
+  const others = family.filter((m) => m.role !== "child" && isActive(m));
   const of = (role: FamilyRole) => others.filter((m) => m.role === role);
   const hasParentLooks = (r: "mom" | "dad") => Boolean(child.parents?.[r]);
 
@@ -95,7 +97,7 @@ export function MembersView({
   if (canAddRole(family, "friend")) friendTiles.push({ kind: "adder", role: "friend", label: BEST_FRIEND_LABEL });
 
   // 이번에 그릴 사람 = 아직 고정 안 된 사람 전부(아이·단짝 친구 포함)
-  const targets = family.filter((m) => !m.portrait);
+  const targets = family.filter((m) => !m.portrait && isActive(m));
   // 관리실이 더해 준 무료 생성은 앞사람부터(확인 창과 같은 셈)
   const priced = priceMembers(targets, master ? 0 : freeDraws);
   const total = priced.reduce((s, r) => s + r.cost, 0);

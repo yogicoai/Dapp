@@ -121,6 +121,14 @@ describe("뺐다가 다시 넣은 사람 — 그 앞의 그림은 감춘다", ()
     // 처음부터 있던 사람(옛 값 — 넣은 때 없음)은 모두 보인다
     assert.equal(historyFloor({ id: "child" }, undefined), undefined);
   });
+
+  it("회색에서 다시 넣은 사람(activeAt)은 같은 사람 — 그 전에 적힌 뺀 기록으로 예전 그림을 가리지 않는다(2026-10-26)", () => {
+    const added = new Date(T1).toISOString();
+    const removed = [{ id: "mom", at: new Date(T2).toISOString() }];
+    assert.equal(historyFloor({ id: "mom", addedAt: added, activeAt: new Date(T3).toISOString() }, removed), added);
+    // 다시 넣은 뒤에 또 뺀 기록은 본다
+    assert.equal(historyFloor({ id: "mom", addedAt: added, activeAt: new Date(T1 + 1).toISOString() }, removed), removed[0].at);
+  });
 });
 
 describe("건넨 그림만 — 쿠키를 되돌린(건네지 못한) 그림은 예전 그림으로 고를 수 없다", () => {
