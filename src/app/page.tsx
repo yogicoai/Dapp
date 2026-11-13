@@ -467,7 +467,10 @@ export default function Home() {
             style={{
               textShadow:
                 "0 2px 8px rgba(0,0,0,0.5), 0 0 6px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.45)",
-              WebkitTextStroke: "0.6px rgba(60,40,25,0.4)",
+              // 테두리는 글자 뒤에(paint-order) — 앞에 그리면 '보·따'처럼 획이 겹치는 곳 안쪽에 가는 선이 비친다(11-13).
+              // 뒤로 보내면 바깥 절반만 보여서 굵기를 두 배로.
+              WebkitTextStroke: "1.2px rgba(60,40,25,0.4)",
+              paintOrder: "stroke fill",
             }}
           >
             {APP_NAME}

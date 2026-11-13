@@ -70,9 +70,20 @@ html[data-app-shell="android"],
 html[data-app-shell="android"] body {
   overscroll-behavior-y: none;
 }
-/* 앱 안에서는 그림을 끌거나 골라지지 않게 — 길게 누르기 메뉴는 AppShellMark 가 막는다 */
-html[data-app-shell="android"] img {
+/*
+  확대 막기(사장님 2026-11-13 "확대랑 마우스 왼쪽 되는 것 때문에 가끔 오류") — 웹·앱 모두.
+  viewport 의 user-scalable=no(app/layout)만으로는 삼성 인터넷(갤럭시 앱 엔진)·접근성 '강제 확대' 설정에서 두 손가락 확대가 살아 있었다.
+  touch-action 은 조상 값과 겹쳐(교집합) 적용돼 html 에 두면 모든 화면에서 두 손가락 확대·두 번 눌러 확대가 꺼진다.
+  스티커처럼 손가락을 직접 쓰는 곳은 그 칸이 touch-action none 이라 그대로 된다(components/family/StudioStickers).
+  PC 의 Ctrl+휠·트랙패드 확대·Ctrl +/- 는 components/ZoomLock 이 막는다.
+*/
+html {
+  touch-action: pan-x pan-y;
+}
+/* 그림을 끌거나 골라지지 않게 — 웹에서도(마우스 왼쪽으로 끌면 그림이 따라오거나 파랗게 골라지던 것). 길게 누르기 메뉴는 앱 안에서 AppShellMark 가 막는다 */
+img {
   -webkit-user-drag: none;
+  -webkit-user-select: none;
   user-select: none;
 }
 

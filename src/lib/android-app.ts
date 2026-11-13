@@ -38,15 +38,21 @@ export function assetLinksFor(packageName: string | undefined | null, fingerprin
 }
 
 /**
- * 시험판(2026-10-20 — 사장님 폰에 깔아 보는 APK, 이 PC 에서 Bubblewrap 으로 만든 시험 서명 키) 연결 값.
- * 지문은 비밀이 아니다(assetlinks.json 에 그대로 공개되는 값). Vercel 환경변수가 비어 있을 때만 쓴다 —
- * 플레이 출시 때는 환경변수(플레이 앱 서명 키 + 올리기 키)를 넣으면 그 값이 이것을 대신한다.
+ * 기본 연결 값 — Vercel 환경변수가 비어 있을 때만 쓴다(지문은 비밀이 아니다 — assetlinks.json 에 그대로 공개되는 값).
+ *  · 정식 올리기 키(2026-11-13, 이 PC 의 maeum-android/keys/upload.keystore — scripts/android/build-twa.mjs 가 서명) —
+ *    폰에 바로 깔아 보는 APK 가 이 키로 서명된다.
+ *  · 시험 키(2026-10-20 시험판 1~8판) — 키 파일은 사라졌지만 이미 깔린 시험판이 주소창 없이 열리게 남긴다.
+ * 플레이에 올리면 구글이 '앱 서명 키'로 다시 서명한다 — 플레이 콘솔 '앱 무결성'의 그 지문을 RELEASE_APP_FINGERPRINTS 에 더하거나
+ * 환경변수(앱 서명 키 + 올리기 키)로 넣으면 플레이에서 받은 앱도 주소창 없이 열린다.
  */
 export const TEST_APP_PACKAGE = "kr.yogico.voicestory";
+export const UPLOAD_KEY_FINGERPRINT = "EA:C6:A1:6A:D8:8E:D9:A9:D2:24:F9:C7:B4:37:BC:73:12:4E:F2:F5:A7:13:0F:76:B8:27:89:92:0A:E1:37:18";
 export const TEST_APP_FINGERPRINT = "DE:96:47:BC:7F:34:90:B8:FD:83:FC:7D:27:6C:50:7B:B2:A6:CC:FD:53:E6:E8:DD:35:02:16:4B:33:F0:29:18";
+/** 환경변수가 없을 때 내보내는 지문들 — 플레이 앱 서명 키 지문을 받으면 맨 앞에 더한다 */
+export const RELEASE_APP_FINGERPRINTS: readonly string[] = [UPLOAD_KEY_FINGERPRINT, TEST_APP_FINGERPRINT];
 
-/** 사이트가 내보내는 assetlinks — 환경변수 값이 맞으면 그것, 없거나 틀리면 시험판 값 */
+/** 사이트가 내보내는 assetlinks — 환경변수 값이 맞으면 그것, 없거나 틀리면 기본 연결 값 */
 export function siteAssetLinks(packageName: string | undefined | null, fingerprintsRaw: string | undefined | null): AssetLink[] {
   const fromEnv = assetLinksFor(packageName, fingerprintsRaw);
-  return fromEnv.length > 0 ? fromEnv : assetLinksFor(TEST_APP_PACKAGE, TEST_APP_FINGERPRINT);
+  return fromEnv.length > 0 ? fromEnv : assetLinksFor(TEST_APP_PACKAGE, RELEASE_APP_FINGERPRINTS.join(","));
 }
