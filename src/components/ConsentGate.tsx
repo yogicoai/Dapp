@@ -12,6 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { logOut, loadSession } from "@/lib/auth";
 import { allAgreed, CONSENT_ITEMS, consentExempt, docsLive, NO_CHECKS, setAll, type ConsentChecks } from "@/lib/consent";
+import { APP_NAME } from "@/lib/brand";
 import { agreeTerms, loadMyConsent } from "@/lib/consent-client";
 import { useAppShell } from "@/lib/app-shell-client";
 import { loadSiteInfo } from "@/lib/site-info-client";
@@ -86,7 +87,7 @@ export function ConsentGate() {
         className="flex w-full max-w-md flex-col rounded-[28px] bg-white px-5 pb-5 pt-6 shadow-2xl"
       >
         <h2 id="consent-title" className="break-keep text-center text-xl font-extrabold text-neutral-800">
-          우리 가족 보이스 동화를 시작해요
+          {APP_NAME}를 시작해요
         </h2>
         <p className="mt-1 text-center text-[13px] font-medium text-neutral-500">처음 한 번만 확인할게요.</p>
 

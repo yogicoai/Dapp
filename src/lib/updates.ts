@@ -40,7 +40,7 @@ export type UpdateNote = {
 export const LATEST_UPDATE: UpdateNote = {
   id: "2026-10-21-open",
   date: "2026년 10월 21일",
-  headline: "우리 가족 보이스 동화가 문을 열었어요",
+  headline: "마음보따리가 문을 열었어요",
   items: [
     {
       icon: "📖",

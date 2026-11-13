@@ -11,11 +11,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/pay/SiteFooter";
+import { APP_NAME } from "@/lib/brand";
 import { formatDateKoLong, LEGAL_DOCS, parseLegalMarkdown, withObjectParticle, type LegalKind } from "@/lib/legal-doc";
 import { getLegalPair, getSiteInfo } from "@/lib/site-info-server";
 import { LegalDocView } from "./LegalDocView";
 
-const APP_NAME = "우리 가족 보이스 동화";
 
 export async function legalMetadata(kind: LegalKind): Promise<Metadata> {
   const { current } = await getLegalPair(kind);

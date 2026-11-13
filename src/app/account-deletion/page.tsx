@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/pay/SiteFooter";
+import { APP_NAME } from "@/lib/brand";
 import { getSiteInfo } from "@/lib/site-info-server";
 
 /**
@@ -15,10 +16,9 @@ export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "계정 삭제 안내",
-  description: "우리 가족 보이스 동화 계정과 데이터를 지우는 방법, 지우는 정보와 보관 기간을 알려 드려요.",
+  description: `${APP_NAME} 계정과 데이터를 지우는 방법, 지우는 정보와 보관 기간을 알려 드려요.`,
 };
 
-const APP_NAME = "우리 가족 보이스 동화";
 const FOCUS = "focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#3182f6]";
 
 export default async function AccountDeletionPage() {

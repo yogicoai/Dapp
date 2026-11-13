@@ -67,7 +67,7 @@ export const FIXED_COSTS: readonly FixedCost[] = [
   { item: "Typecast API 라이트 (낭독 · 가족 목소리)", now: "$15", launch: "그대로", won: 21_000, must: true },
   // 사장님 2026-10-02: Supabase 는 계산에 다시 넣는다("superbase 넣어줘 정책에 그냥 다시"). 토스페이먼츠 연관리비는 뺀다.
   { item: "Supabase (회원·책 데이터)", now: "무료 · 1주 안 쓰면 멈춤, DB 500MB", launch: "Pro 권장 · $25", won: 35_000, must: false },
-  { item: "도메인", now: "vercel.app 주소", launch: "정식 주소 연 2만 원 안팎", won: 1_667, must: false },
+  { item: "도메인", now: "www.familitale.com(11-13 구매)", launch: "정식 주소 연 2만 원 안팎", won: 1_667, must: false },
   { item: "cafe24 이미지 호스팅 (그림·음성 파일)", now: "선결제로 쓰는 중", launch: "그대로", won: null, must: false },
 ];
 

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
 import { READ_ALOUD_VOICE } from "@/lib/plans";
 
 /**
@@ -14,9 +15,10 @@ import { READ_ALOUD_VOICE } from "@/lib/plans";
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "우리 가족 보이스 동화",
-    short_name: "보이스 동화",
-    description: `아이가 주인공인 그림동화를 ${READ_ALOUD_VOICE}로 읽어줍니다.`,
+    // 앱 설치 이름 — 홈 화면 아이콘 아래에도 다섯 글자 그대로 들어간다(2026-11-12 '마음보따리')
+    name: APP_NAME,
+    short_name: APP_NAME,
+    description: `${APP_TAGLINE}. 아이가 주인공인 그림동화를 ${READ_ALOUD_VOICE}로 읽어줍니다.`,
     id: "/",
     start_url: "/",
     scope: "/",

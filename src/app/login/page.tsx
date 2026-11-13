@@ -12,6 +12,7 @@ import {
   signInWithGoogle,
 } from "@/lib/auth";
 import { safeAdminNext } from "@/lib/admin-console";
+import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
 import { pendingPromoPath } from "@/lib/promo-client";
 import { RETENTION_DAYS } from "@/lib/retention";
 import { usePricing } from "@/lib/use-pricing";
@@ -115,8 +116,11 @@ export default function LoginPage() {
             className="text-2xl font-extrabold text-white"
             style={{ textShadow: "0 2px 8px rgba(0,0,0,0.45)" }}
           >
-            우리 가족 보이스 동화
+            {APP_NAME}
           </h1>
+          <p className="-mt-1 break-keep text-center text-sm font-bold text-white" style={{ textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
+            {APP_TAGLINE}
+          </p>
         </div>
 
         <div className="mt-6 rounded-[28px] bg-white/92 p-5 shadow-xl backdrop-blur sm:p-7">

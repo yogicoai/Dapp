@@ -9,6 +9,7 @@
  */
 import Link from "next/link";
 import type { MouseEvent } from "react";
+import { APP_NAME } from "@/lib/brand";
 import { ADMIN_NAV, ADMIN_NAV_GROUPS, activeNavKey, type AdminBadges, type AdminNavItem } from "@/lib/admin-console";
 import { Icon } from "../kit/Icon";
 
@@ -80,7 +81,7 @@ export function SideNav({
         className="mb-2 flex items-center gap-2.5 rounded-xl px-3 py-2"
       >
         <BrandMark />
-        <span className="text-[15px] font-bold tracking-tight text-[#191f28]">보이스 동화 관리</span>
+        <span className="text-[15px] font-bold tracking-tight text-[#191f28]">{APP_NAME} 관리</span>
       </Link>
       {ADMIN_NAV_GROUPS.map((g) => (
         <div key={g} className="mt-5 flex flex-col gap-0.5">

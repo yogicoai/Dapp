@@ -38,6 +38,7 @@ import { loadMyLibraryPass } from "@/lib/promo-client";
 import { libraryLock, OPEN_LIBRARY, type LibraryAccess } from "@/lib/offer-settings";
 import { markHomeReady } from "@/lib/app-intro";
 import { READ_ALOUD_VOICE } from "@/lib/plans";
+import { APP_NAME } from "@/lib/brand";
 import { acctKey, currentUid } from "@/lib/supabase";
 import type { Book } from "@/lib/types";
 import { asBooks } from "@/lib/types";
@@ -469,7 +470,7 @@ export default function Home() {
               WebkitTextStroke: "0.6px rgba(60,40,25,0.4)",
             }}
           >
-            우리 가족 보이스 동화
+            {APP_NAME}
           </h1>
           {/* 밝은 하늘 배경 위라 흰 글자는 묻힌다 — 불투명 흰 알약 + 짙은 글자로 */}
           {guest && (

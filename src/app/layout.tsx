@@ -5,6 +5,7 @@ import { AppShellMark } from "@/components/AppShellMark";
 import { ConsentGate } from "@/components/ConsentGate";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { APP_SHELL_BOOT_SCRIPT } from "@/lib/app-shell";
+import { APP_NAME } from "@/lib/brand";
 import { buildSiteMetadata } from "@/lib/seo";
 import { readSeo } from "@/lib/seo-server";
 import "./globals.css";
@@ -38,7 +39,7 @@ const APPLE_WEB_APP: Metadata["appleWebApp"] = {
    * 상태표시줄은 검은 반투명 — 배경 그림이 위까지 이어져 책처럼 보인다.
    */
   capable: true,
-  title: "보이스 동화",
+  title: APP_NAME,
   statusBarStyle: "black-translucent",
 };
 

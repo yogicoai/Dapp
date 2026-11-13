@@ -99,7 +99,7 @@ describe("검색 노출(SEO) — lib/seo (2026-10-19)", () => {
     const s = mergeSeo({ google_verification: "googleCode123", naver_verification: "naverCode123" });
     const m = buildSiteMetadata(s, "https://a.kr");
     assert.equal(String(m.metadataBase), "https://a.kr/");
-    assert.deepEqual(m.title, { default: DEFAULT_SEO.siteTitle, template: "%s · 우리 가족 보이스 동화" });
+    assert.deepEqual(m.title, { default: DEFAULT_SEO.siteTitle, template: "%s · 마음보따리" });
     assert.deepEqual(m.keywords, DEFAULT_SEO.keywords);
     const og = m.openGraph as { locale?: string; images?: { url: string; width: number }[] };
     assert.equal(og.locale, "ko_KR");

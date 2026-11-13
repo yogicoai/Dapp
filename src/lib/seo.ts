@@ -7,12 +7,17 @@
  * 이 파일은 순수 함수만 — 모양 · 기본값 · 입력 검사 · Metadata/robots/sitemap 만들기(node --test 가 그대로 읽는다).
  */
 import type { Metadata, MetadataRoute } from "next";
+import { APP_NAME, APP_TITLE } from "./brand.ts";
 import { READ_ALOUD_VOICE } from "./plans.ts";
 
-export const SITE_NAME = "우리 가족 보이스 동화";
+/** 서비스 이름(lib/brand — 2026-11-12 '마음보따리'로 확정) */
+export const SITE_NAME = APP_NAME;
 
-/** 대표 주소를 아직 안 정했을 때 — 지금 쓰는 배포 주소 */
-export const FALLBACK_SITE_URL = "https://dapp-three-pearl.vercel.app";
+/**
+ * 대표 주소 기본값 — 관리실 대표 주소·환경변수가 비었을 때. 2026-11-13 정식 주소 www.familitale.com 연결
+ * (familitale.com 은 www 로 넘어간다). 옛 배포 주소 dapp-three-pearl.vercel.app 도 함께 열려 있다(안드로이드 시험판·로그인 유지).
+ */
+export const FALLBACK_SITE_URL = "https://www.familitale.com";
 
 export type SeoSettings = {
   /** 검색 결과·브라우저 탭의 제목(첫 화면) */
@@ -45,7 +50,9 @@ export const SEO_LIMITS = {
 export type SeoColumn = keyof typeof SEO_LIMITS;
 
 export const DEFAULT_SEO: SeoSettings = {
-  siteTitle: SITE_NAME, // 사장님 10-19 "우리 가족 보이스 동화 정도로" — 검색어는 설명·검색어 칸이 맡는다
+  // 이름 + 부제(11-12 '마음보따리 - 아이의 마음을 이야기로 푸는 가족 동화') — 부제의 '가족 동화'가 검색어 몫을 한다.
+  // (10-19 엔 이름만 '우리 가족 보이스 동화'.) 관리실 값이 비어 있을 때만 쓰인다.
+  siteTitle: APP_TITLE,
   description: `우리 아이 이름과 가족 캐릭터로 세상에 하나뿐인 그림동화를 만들어요. 세계명작·전래동화를 ${READ_ALOUD_VOICE}로 읽어 주는 가족 동화 서비스예요.`,
   keywords: [
     "AI 동화",
@@ -244,7 +251,7 @@ export function siteOrigin(s: Pick<SeoSettings, "siteUrl">, envUrl?: string | nu
 
 /* ── <head> · robots · sitemap ────────────────────────────────────────── */
 
-/** 사이트 전체 <head> 태그(app/layout 의 generateMetadata). 화면마다 제목은 '제목 · 우리 가족 보이스 동화' 꼴로 붙는다. */
+/** 사이트 전체 <head> 태그(app/layout 의 generateMetadata). 화면마다 제목은 '제목 · 마음보따리' 꼴로 붙는다. */
 export function buildSiteMetadata(s: SeoSettings, origin: string): Metadata {
   const verificationOther: Record<string, string> = {};
   if (s.naverVerification) verificationOther["naver-site-verification"] = s.naverVerification;
