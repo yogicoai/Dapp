@@ -5,7 +5,8 @@
  * 그래서 만드는 법은 이 파일(저장소)에 두고, 도구·키는 이 PC 의 고정 폴더(MAEUM_ANDROID, 기본 C:\Users\YOGIBO~1\maeum-android)에 둔다.
  *   jdk/        Temurin JDK 17
  *   sdk/        안드로이드 SDK(platforms/android-36 · build-tools/36.1.0·35.0.0, 새 android CLI 로 설치) — 빈 bin/ 필요(Bubblewrap 검사)
- *   keys/       정식 올리기 키 upload.keystore + 키-정보.txt(비밀번호) — **이 PC 가 마스터**(사장님 11-13). 저장소에 넣지 않는다.
+ * 정식 올리기 키는 사장님이 관리하는 폴더(MAEUM_KEYS, 기본 바탕화면\동화앱\안드로이드-서명키 — 11-13 사장님 "여기서 관리할게")에:
+ *   upload.keystore + 키-정보.txt(비밀번호) — **이 PC 가 마스터**(사장님 11-13). 저장소에 넣지 않는다.
  *   node_modules/@bubblewrap/core 1.27
  *   project/    이 스크립트가 만드는 안드로이드 프로젝트(매번 새로 만든다)
  *   out/        결과물 — 마음보따리-<버전>.aab · .apk
@@ -26,8 +27,9 @@ const PROJECT = path.join(ROOT, "project");
 const OUT = path.join(ROOT, "out");
 const JDK = path.join(ROOT, "jdk");
 const SDK = path.join(ROOT, "sdk");
-const KEYSTORE = path.join(ROOT, "keys", "upload.keystore");
-const KEY_NOTE = path.join(ROOT, "keys", "키-정보.txt");
+const KEYS = process.env.MAEUM_KEYS ?? "C:/Users/Yogibo Design/Desktop/동화앱/안드로이드-서명키";
+const KEYSTORE = path.join(KEYS, "upload.keystore");
+const KEY_NOTE = path.join(KEYS, "키-정보.txt");
 
 const SITE = "https://www.familitale.com";
 
@@ -101,18 +103,34 @@ async function generate() {
   console.log(`틀을 만들었어요: ${PROJECT} (versionCode ${VERSION_CODE}, ${VERSION_NAME})`);
 }
 
+/**
+ * Gradle — 출력은 project/gradle.log 로 보내고 끝부분만 보여 준다. 화면(이 스크립트의 출력 통로)을 그대로 물려주면
+ * Gradle 이 따로 띄우는 데몬이 그 통로를 쥔 채 끝나면서, 서명 직후 이 스크립트가 소리 없이 끝났다(11-13, 종료 코드 127 ·
+ * exit 훅도 안 불림 — 로그 파일로 돌리니 멀쩡했다).
+ */
 function gradle(tasks) {
-  execFileSync("cmd", ["/c", "gradlew.bat", ...tasks, "--no-daemon", "--console=plain"], {
-    cwd: PROJECT,
-    env: toolEnv(),
-    stdio: "inherit",
-  });
+  const logFile = path.join(PROJECT, "gradle.log");
+  const fd = fs.openSync(logFile, "w");
+  try {
+    execFileSync("cmd", ["/c", "gradlew.bat", ...tasks, "--no-daemon", "--console=plain"], {
+      cwd: PROJECT,
+      env: toolEnv(),
+      stdio: ["ignore", fd, fd],
+    });
+  } catch (e) {
+    const tail = fs.readFileSync(logFile, "utf8").split(/\r?\n/).filter(Boolean).slice(-15).join("\n");
+    throw new Error(`Gradle 실패 — ${logFile}\n${tail}`, { cause: e });
+  } finally {
+    fs.closeSync(fd);
+  }
+  console.log(fs.readFileSync(logFile, "utf8").split(/\r?\n/).filter((l) => l.startsWith("BUILD ")).join("\n"));
 }
 
 function signOutputs(pw) {
   fs.mkdirSync(OUT, { recursive: true });
   const env = toolEnv();
-  const base = `마음보따리-${VERSION_NAME}-${VERSION_CODE}`;
+  // 파일 이름은 영문으로 — 한글 이름이면 서명 직후 임시 파일을 지우는 순간 이 스크립트가 통째로 끝났다(11-13, 종료 코드 127)
+  const base = `maeumbottari-${VERSION_NAME}-${VERSION_CODE}`;
   // AAB — jarsigner(플레이에 올리는 파일. 구글이 앱 서명 키로 다시 서명한다)
   const aabIn = path.join(PROJECT, "app", "build", "outputs", "bundle", "release", "app-release.aab");
   const aabOut = path.join(OUT, `${base}.aab`);
@@ -128,9 +146,10 @@ function signOutputs(pw) {
   const aligned = path.join(OUT, `${base}-aligned.apk`);
   const apkOut = path.join(OUT, `${base}.apk`);
   execFileSync(path.join(bt, "zipalign.exe"), ["-p", "-f", "4", apkIn, aligned], { env, stdio: "inherit" });
+  // apksigner.bat 를 cmd 로 부르면 한글 경로(키 폴더 '바탕화면\동화앱')를 못 찾는다 — 자바로 jar 를 바로 부른다
   execFileSync(
-    "cmd",
-    ["/c", path.join(bt, "apksigner.bat"), "sign", "--ks", KEYSTORE, "--ks-key-alias", "upload", "--ks-pass", `pass:${pw}`, "--key-pass", `pass:${pw}`, "--out", apkOut, aligned],
+    path.join(JDK, "bin", "java.exe"),
+    ["-jar", path.join(bt, "lib", "apksigner.jar"), "sign", "--ks", KEYSTORE, "--ks-key-alias", "upload", "--ks-pass", `pass:${pw}`, "--key-pass", `pass:${pw}`, "--v4-signing-enabled", "false", "--out", apkOut, aligned],
     { env, stdio: ["ignore", "ignore", "inherit"] },
   );
   fs.rmSync(aligned, { force: true });
@@ -138,9 +157,13 @@ function signOutputs(pw) {
   console.log(`결과물: ${aabOut}\n        ${apkOut}`);
 }
 
-await generate();
+const SIGN_ONLY = process.argv.includes("--sign-only");
+const NO_SIGN = process.argv.includes("--no-sign");
+if (!SIGN_ONLY) await generate();
 if (!GENERATE_ONLY) {
-  patchProject(PROJECT);
-  gradle(["bundleRelease", "assembleRelease"]);
-  signOutputs(keyPassword());
+  if (!SIGN_ONLY) {
+    patchProject(PROJECT);
+    gradle(["bundleRelease", "assembleRelease"]);
+  }
+  if (!NO_SIGN) signOutputs(keyPassword());
 }
