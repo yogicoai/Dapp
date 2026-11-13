@@ -20,7 +20,9 @@ import { usePricing } from "@/lib/use-pricing";
 /**
  * 로그인 / 가입 — 가입은 구글로만 받는다(2026-10-16 사장님 "웹 오픈은 구글 회원가입으로만").
  * 구글로 처음 들어오면 그대로 가입된다(가입 트리거가 회원 줄과 가입 토큰을 만든다).
- * 아이디·비밀번호는 이미 있는 계정(관리자·베타 회원)의 로그인만 — 새 아이디 가입 탭은 없앴다(auth.signUp 은 남겨 둠).
+ * 아이디·비밀번호 로그인은 손님 화면에서 뺐다(사장님 2026-11-13 "고객이 저게 뭐야 할 것 같아서") — 관리자(아이디 계정)는
+ * 관리실(/admin) 문 앞에서 로그인한다(components/admin/shell/NotAllowed). 구글 로그인이 꺼진 환경에서만 이 화면에 아이디 칸을 연다.
+ * 새 아이디 가입은 받지 않는다(auth.signUp 은 남겨 둠).
  * 성공하면 서재(/)로 보낸다.
  * 관리자 페이지 문 앞에서 온 로그인(?next=/admin…)이면 로그인 뒤 그 주소로 돌려보낸다 — 열려던 기록을 다시 찾지 않게.
  * 관리실 주소만 받는다(safeAdminNext) — 아무 주소나 받으면 남의 링크로 엉뚱한 곳에 보내는 길이 된다.
@@ -39,8 +41,8 @@ export default function LoginPage() {
   const { theme } = useTheme();
   const { accent, accentDark } = theme.colors;
 
-  // 아이디 로그인 칸 — 구글이 켜져 있으면 접어 두고(기존 회원만 연다), 꺼져 있으면 처음부터 연다.
-  const [idOpen, setIdOpen] = useState(!isGoogleLoginEnabled());
+  // 아이디 로그인 칸 — 구글 로그인이 꺼진 환경에서만(관리자는 /admin 문 앞에서 로그인한다).
+  const idOpen = !isGoogleLoginEnabled();
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
@@ -164,8 +166,8 @@ export default function LoginPage() {
             </p>
           )}
 
-          {/* 이미 있는 아이디 계정(관리자·베타 회원)의 로그인 — 새 아이디 가입은 받지 않는다 */}
-          {idOpen ? (
+          {/* 아이디 로그인 — 구글 로그인이 꺼진 환경에서만(손님 화면엔 구글만). 새 아이디 가입은 받지 않는다 */}
+          {idOpen && (
             <form onSubmit={submit} className="mt-5 flex flex-col gap-3 border-t border-neutral-200 pt-4">
               <p className="text-center text-xs font-bold text-neutral-400">기존 아이디로 로그인</p>
               <div>
@@ -201,17 +203,6 @@ export default function LoginPage() {
                 로그인
               </button>
             </form>
-          ) : (
-            <button
-              type="button"
-              onClick={() => {
-                setIdOpen(true);
-                setError("");
-              }}
-              className="mt-3 flex min-h-11 w-full items-center justify-center text-xs font-bold text-neutral-500 underline underline-offset-2"
-            >
-              기존 아이디로 로그인
-            </button>
           )}
 
           {error && <p className="mt-3 text-center text-sm font-bold text-red-600">{error}</p>}

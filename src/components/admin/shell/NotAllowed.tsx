@@ -6,10 +6,14 @@
  * 이 화면들은 메뉴도 데이터도 없다. 겉틀(AdminShell)이 /api/admin/me 로 서버에 확인하기 전에는
  * 메뉴·화면을 아예 그리지 않으므로, 마스터가 아닌 사람은 관리 화면의 모양조차 보지 못한다.
  * '들어올 수 없어요'는 누가 들어올 수 있는지 말하지 않는다(계정 구성을 드러내지 않는다).
+ *
+ * 관리자 로그인은 이 문 앞에서 한다(사장님 2026-11-13 "관리자단은 /admin 으로 가서 거기서 로그인") — 손님 로그인 화면(/login)은
+ * 구글만 남기고 아이디 칸을 뺐다("고객이 저게 뭐야 할 것 같아서"). 아이디·비밀번호로 로그인하면 같은 확인(onRetry)을 다시 돈다.
+ * 다른 계정(구글 손님 계정 등)으로 들어와 막히면 '관리자 계정으로 다시 로그인'이 로그아웃하고 이 칸을 다시 연다.
  */
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
-import { safeAdminNext } from "@/lib/admin-console";
+import { useState, type FormEvent, type ReactNode } from "react";
+import { logIn, logOut } from "@/lib/auth";
 import { Icon, type IconName } from "../kit/Icon";
 
 export type GateState = "checking" | "login" | "forbidden" | "error";
@@ -50,19 +54,54 @@ const PRIMARY =
 const SECONDARY =
   "inline-flex min-h-11 items-center justify-center rounded-xl bg-[#f2f4f6] px-5 text-sm font-bold text-[#4e5968] hover:bg-[#e5e8eb]";
 
+const FIELD =
+  "min-h-11 w-full rounded-xl border border-[#e5e8eb] bg-white px-3.5 text-[15px] font-semibold text-[#191f28] outline-none focus:border-[#3182f6]";
+
 /**
- * [로그인하기] — 지금 열려던 관리실 주소를 ?next= 로 넘겨, 로그인 뒤 그 기록(예: /admin/billing?id=…)으로 바로 돌아오게.
- * 이 단추는 서버 확인이 401 을 준 뒤(브라우저에서)만 그려지므로 첫 그리기에서 주소를 읽어도 된다.
+ * 관리자 아이디 로그인 — 이 주소(열려던 기록 포함) 그대로 로그인하고, 끝나면 같은 확인을 다시 돈다(onDone = onRetry).
+ * 그래서 로그인 뒤 다른 화면으로 보냈다가 돌아올 일이 없다.
  */
-function LoginLink() {
-  const [href] = useState(() => {
-    const next = typeof window === "undefined" ? null : safeAdminNext(window.location.pathname + window.location.search);
-    return next ? `/login?next=${encodeURIComponent(next)}` : "/login";
-  });
+function AdminLoginForm({ onDone }: { onDone: () => void }) {
+  const [id, setId] = useState("");
+  const [pw, setPw] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setError("");
+    const res = await logIn(id, pw);
+    setBusy(false);
+    if (res.ok) onDone();
+    else setError(res.error);
+  }
   return (
-    <Link href={href} className={PRIMARY}>
-      로그인하기
-    </Link>
+    <form onSubmit={submit} className="mt-1 flex w-full flex-col gap-2 text-left">
+      <label htmlFor="admin-login-id" className="text-xs font-bold text-[#6b7684]">
+        아이디
+      </label>
+      <input id="admin-login-id" value={id} onChange={(e) => setId(e.target.value)} autoComplete="username" className={FIELD} />
+      <label htmlFor="admin-login-pw" className="mt-1 text-xs font-bold text-[#6b7684]">
+        비밀번호
+      </label>
+      <input
+        id="admin-login-pw"
+        type="password"
+        value={pw}
+        onChange={(e) => setPw(e.target.value)}
+        autoComplete="current-password"
+        className={FIELD}
+      />
+      {error && (
+        <p role="alert" className="break-keep text-[13px] font-bold text-[#f04452]">
+          {error}
+        </p>
+      )}
+      <button type="submit" disabled={busy || !id.trim() || !pw} className={`${PRIMARY} mt-2 disabled:opacity-50`}>
+        {busy ? "로그인하는 중…" : "로그인"}
+      </button>
+    </form>
   );
 }
 
@@ -85,15 +124,15 @@ export function NotAllowed({ state, onRetry }: { state: GateState; onRetry: () =
       <Frame>
         <Card
           icon="lock"
-          title="로그인이 필요해요"
-          body="관리자 계정으로 로그인한 뒤 다시 열어 주세요."
+          title="관리자 로그인"
+          body="관리자 아이디로 로그인해 주세요."
           actions={
-            <>
-              <LoginLink />
+            <div className="flex w-full flex-col gap-2">
+              <AdminLoginForm onDone={onRetry} />
               <Link href="/" className={SECONDARY}>
                 사이트로
               </Link>
-            </>
+            </div>
           }
         />
       </Frame>
@@ -107,9 +146,20 @@ export function NotAllowed({ state, onRetry }: { state: GateState; onRetry: () =
           title="관리자만 들어올 수 있는 곳이에요"
           body="이 계정으로는 열 수 없어요."
           actions={
-            <Link href="/" className={PRIMARY}>
-              사이트로
-            </Link>
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  void logOut().finally(onRetry);
+                }}
+                className={PRIMARY}
+              >
+                관리자 계정으로 다시 로그인
+              </button>
+              <Link href="/" className={SECONDARY}>
+                사이트로
+              </Link>
+            </>
           }
         />
       </Frame>
