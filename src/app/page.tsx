@@ -527,15 +527,17 @@ export default function Home() {
 
           · 폰(세로, sm 미만): 떠 있는 버튼이 책장을 가리므로 제목 아래
             흐름 안의 큰 버튼으로 둔다.
-          · 태블릿·PC(sm 이상): 화면 아래 고정 — 태블릿을 두 손으로 잡았을 때
-            엄지가 닿는 자리. 화면이 낮으면(가로 폰 등) 한 단계 줄인다.
+          · 태블릿·PC(폭 640px 이상이면서 높이 601px 이상): 화면 아래 고정 — 태블릿을 두 손으로 잡았을 때
+            엄지가 닿는 자리.
+          · 가로 폰(폭은 넓지만 높이 600px 이하): 폰처럼 흐름 안의 큰 버튼 — 떠 있는 버튼이 바로 아래 책장 탭
+            (세계명작·전래동화)을 덮었다(2026-11-13 스토어 스크린샷에서 발견, 사장님 "고쳐줘").
           · 아이콘은 나라별 배지(theme.art.create, 사장님 결정 2026-09-22). 대신 버튼
             자리·크기·모양은 나라가 바뀌어도 그대로 둔다 — 아이는 자리로 기억한다.
         */}
         <Link
           href={guest ? "/login" : "/create"}
           aria-label="우리 가족 동화 만들기"
-          className="mx-auto mb-7 flex w-full max-w-sm items-center justify-center gap-2 rounded-full px-6 py-3.5 text-white transition-transform active:translate-y-0.5 sm:hidden"
+          className="mx-auto mb-7 flex w-full max-w-sm items-center justify-center gap-2 rounded-full px-6 py-3.5 text-white transition-transform active:translate-y-0.5 [@media(min-width:640px)_and_(min-height:601px)]:hidden"
           style={{
             background: theme.colors.accent,
             boxShadow: `0 6px 0 ${theme.colors.accentDark}, 0 10px 18px rgba(0,0,0,0.22)`,
@@ -665,7 +667,7 @@ export default function Home() {
         <Link
           href={guest ? "/login" : "/create"}
           aria-label="우리 가족 동화 만들기"
-          className="fixed bottom-5 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-3 rounded-full px-7 py-3.5 text-white transition-transform hover:-translate-y-0.5 hover:-translate-x-1/2 active:translate-y-0 active:-translate-x-1/2 animate-[float_2.4s_ease-in-out_infinite] sm:flex lg:px-8 lg:py-4 [@media(max-height:600px)]:px-4 [@media(max-height:600px)]:py-2"
+          className="fixed bottom-5 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-3 rounded-full px-7 py-3.5 text-white transition-transform hover:-translate-y-0.5 hover:-translate-x-1/2 active:translate-y-0 active:-translate-x-1/2 animate-[float_2.4s_ease-in-out_infinite] [@media(min-width:640px)_and_(min-height:601px)]:flex lg:px-8 lg:py-4"
           style={{
             // 아래 제스처 막대 자리만큼 비킨다(앱 안 가로 화면 — 없는 기기는 0)
             bottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))",
@@ -678,9 +680,9 @@ export default function Home() {
           <img
             src={theme.art.create}
             alt=""
-            className="h-10 w-10 object-contain lg:h-12 lg:w-12 [@media(max-height:600px)]:h-7 [@media(max-height:600px)]:w-7"
+            className="h-10 w-10 object-contain lg:h-12 lg:w-12"
           />
-          <span className="text-xl font-extrabold tracking-tight lg:text-2xl [@media(max-height:600px)]:text-base">
+          <span className="text-xl font-extrabold tracking-tight lg:text-2xl">
             {guest ? "로그인하고 만들기" : "동화 만들기"}
           </span>
         </Link>
