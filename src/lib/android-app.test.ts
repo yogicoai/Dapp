@@ -2,7 +2,14 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 
-import { assetLinksFor, siteAssetLinks, TEST_APP_FINGERPRINT, TEST_APP_PACKAGE, UPLOAD_KEY_FINGERPRINT } from "./android-app.ts";
+import {
+  assetLinksFor,
+  PLAY_APP_SIGNING_FINGERPRINT,
+  siteAssetLinks,
+  TEST_APP_FINGERPRINT,
+  TEST_APP_PACKAGE,
+  UPLOAD_KEY_FINGERPRINT,
+} from "./android-app.ts";
 
 const FP = Array.from({ length: 32 }, (_, i) => (i * 7).toString(16).padStart(2, "0").toUpperCase()).join(":");
 
@@ -27,11 +34,11 @@ describe("안드로이드 앱 연결(assetlinks.json, 2026-10-20)", () => {
     assert.deepEqual(assetLinksFor("kr.yogico.voicestory", ""), []);
     assert.deepEqual(assetLinksFor("kr.yogico.voicestory", "AB:CD"), []);
   });
-  it("환경변수가 없으면 기본 값(정식 올리기 키 + 10-20 시험 키), 있으면 환경변수 값", () => {
+  it("환경변수가 없으면 기본 값(플레이 앱 서명 키 + 정식 올리기 키 + 10-20 시험 키), 있으면 환경변수 값", () => {
     const test = siteAssetLinks(undefined, undefined);
     assert.equal(test.length, 1);
     assert.equal(test[0].target.package_name, TEST_APP_PACKAGE);
-    assert.deepEqual(test[0].target.sha256_cert_fingerprints, [UPLOAD_KEY_FINGERPRINT, TEST_APP_FINGERPRINT]);
+    assert.deepEqual(test[0].target.sha256_cert_fingerprints, [PLAY_APP_SIGNING_FINGERPRINT, UPLOAD_KEY_FINGERPRINT, TEST_APP_FINGERPRINT]);
     assert.deepEqual(siteAssetLinks("kr.yogico.voicestory", FP)[0].target.sha256_cert_fingerprints, [FP]);
     assert.deepEqual(siteAssetLinks("kr.yogico.voicestory", "nope"), test);
   });

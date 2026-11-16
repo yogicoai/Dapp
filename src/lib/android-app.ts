@@ -46,10 +46,12 @@ export function assetLinksFor(packageName: string | undefined | null, fingerprin
  * 환경변수(앱 서명 키 + 올리기 키)로 넣으면 플레이에서 받은 앱도 주소창 없이 열린다.
  */
 export const TEST_APP_PACKAGE = "kr.yogico.voicestory";
+/** 구글 플레이 앱 서명 키(2026-11-16 첫 내부 테스트 때 구글이 만듦 — 콘솔 'Google Play로 보호됨 → 앱 서명') — 플레이에서 받은 앱이 이 키로 서명된다 */
+export const PLAY_APP_SIGNING_FINGERPRINT = "8D:3F:1E:36:18:FA:2C:75:E3:73:E8:C1:A5:D1:77:A6:CC:CD:2A:17:D7:87:78:55:AC:88:6B:11:72:2A:04:D6";
 export const UPLOAD_KEY_FINGERPRINT = "EA:C6:A1:6A:D8:8E:D9:A9:D2:24:F9:C7:B4:37:BC:73:12:4E:F2:F5:A7:13:0F:76:B8:27:89:92:0A:E1:37:18";
 export const TEST_APP_FINGERPRINT = "DE:96:47:BC:7F:34:90:B8:FD:83:FC:7D:27:6C:50:7B:B2:A6:CC:FD:53:E6:E8:DD:35:02:16:4B:33:F0:29:18";
-/** 환경변수가 없을 때 내보내는 지문들 — 플레이 앱 서명 키 지문을 받으면 맨 앞에 더한다 */
-export const RELEASE_APP_FINGERPRINTS: readonly string[] = [UPLOAD_KEY_FINGERPRINT, TEST_APP_FINGERPRINT];
+/** 환경변수가 없을 때 내보내는 지문들 — 플레이 앱 서명 키(플레이에서 받은 앱) · 올리기 키(폰에 바로 깐 APK) · 옛 시험 키 */
+export const RELEASE_APP_FINGERPRINTS: readonly string[] = [PLAY_APP_SIGNING_FINGERPRINT, UPLOAD_KEY_FINGERPRINT, TEST_APP_FINGERPRINT];
 
 /** 사이트가 내보내는 assetlinks — 환경변수 값이 맞으면 그것, 없거나 틀리면 기본 연결 값 */
 export function siteAssetLinks(packageName: string | undefined | null, fingerprintsRaw: string | undefined | null): AssetLink[] {
