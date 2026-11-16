@@ -13,6 +13,7 @@ import {
   hasBatchim,
   isKidRole,
   ourChildrenNames,
+  PET_LABEL,
   PORTRAIT_LOOKS_MAX,
   siblingGender,
   type FamilyLooks,
@@ -50,8 +51,9 @@ export type Job = {
 
 // 받침은 lib/family hasBatchim 하나로 본다(명패·홈 인사와 같은 규칙).
 
-/** 화면에 부를 이름 — 누나 수아 / 친구 서준 / 외할머니 / 하온. 이름 없는 단짝 친구는 '단짝 친구'. */
+/** 화면에 부를 이름 — 누나 수아 / 친구 서준 / 외할머니 / 하온 / 콩이(반려견). 이름 없는 단짝 친구는 '단짝 친구'. */
 export function displayName(m: FamilyMember): string {
+  if (m.role === "pet") return m.name || PET_LABEL;
   if (m.role === "friend") return m.name ? `친구 ${m.name}` : BEST_FRIEND_LABEL;
   if (m.role === "sibling") return m.name ? `${m.callName} ${m.name}` : m.callName;
   return m.callName;
@@ -60,7 +62,7 @@ export function displayName(m: FamilyMember): string {
 /** 사람 이름이면 '하온이'처럼 부르고, 호칭(엄마·형)이면 그대로 둔다. */
 function personal(m: FamilyMember): { word: string; named: boolean } {
   if (m.role === "child") return { word: m.callName, named: true };
-  if ((m.role === "sibling" || m.role === "friend") && m.name) return { word: m.name, named: true };
+  if ((m.role === "sibling" || m.role === "friend" || m.role === "pet") && m.name) return { word: m.name, named: true };
   return { word: displayName(m), named: false };
 }
 
@@ -181,6 +183,7 @@ export const ROLE_STICKER = {
   siblingGirl: "/icons/voices/tc-sua.webp",
   sibling: "/icons/occasion-sibling.webp",
   friend: "/icons/who-friends.webp",
+  pet: "/icons/chips/puppy.webp",
 } as const;
 
 /** 이 사람의 스티커(얼굴 그림이 없을 때) */
@@ -199,6 +202,8 @@ export function stickerFor(m: FamilyMember, childGender?: Gender): string {
     }
     case "friend":
       return m.gender === "boy" ? "/icons/gender-boy.webp" : m.gender === "girl" ? "/icons/gender-girl.webp" : ROLE_STICKER.friend;
+    case "pet":
+      return ROLE_STICKER.pet;
   }
 }
 

@@ -20,6 +20,8 @@ import {
   BEST_FRIEND_LABEL,
   CALL_NAMES,
   canAddRole,
+  PET_LABEL,
+  PET_LIMIT,
   ROLE_LABEL,
   ROLE_ORDER,
   siblingGender,
@@ -31,11 +33,12 @@ import { MinusIcon, PlusIcon } from "./icons";
 import { Sheet } from "./Sheet";
 import { BigButton, Chip, SwitchRow } from "./ui";
 
-type AddRole = Exclude<FamilyRole, "child">;
-/** 가족 타일 — ROLE_ORDER 그대로(엄마 → 아빠 → 형제자매 → 할머니 → 할아버지). 단짝 친구는 따로. */
-const FAMILY_ROLES = ROLE_ORDER.filter((r): r is Exclude<AddRole, "friend"> => r !== "child" && r !== "friend").map(
-  (role) => ({ role, label: ROLE_LABEL[role] }),
-);
+/** 이 시트에서 넣는 사람 — 반려견은 반려견 시트(PetSheet)가 따로 받는다(onPet) */
+type AddRole = Exclude<FamilyRole, "child" | "pet">;
+/** 가족 타일 — ROLE_ORDER 그대로(엄마 → 아빠 → 형제자매 → 할머니 → 할아버지). 단짝 친구·반려견은 따로. */
+const FAMILY_ROLES = ROLE_ORDER.filter(
+  (r): r is Exclude<AddRole, "friend"> => r !== "child" && r !== "friend" && r !== "pet",
+).map((role) => ({ role, label: ROLE_LABEL[role] }));
 const OLDER = ["형", "오빠", "누나", "언니"];
 const MIN_AGE = 1;
 const MAX_AGE = 19;
@@ -51,6 +54,7 @@ export function AddMemberSheet({
   mode,
   onClose,
   onAdd,
+  onPet,
 }: {
   colors: Colors;
   family: FamilyMember[];
@@ -61,14 +65,17 @@ export function AddMemberSheet({
   mode: "members" | "album";
   onClose: () => void;
   onAdd: (m: NewMember) => void;
+  /** '반려견' 줄 — 이 시트를 닫고 반려견 시트를 연다(반려견은 이름·특징을 거기서 받는다) */
+  onPet?: () => void;
 }) {
-  // 엄마·아빠는 없을 때만, 단짝 친구는 한 명뿐이라 이미 있으면 못 고른다.
+  // 엄마·아빠는 없을 때만, 단짝 친구는 한 명뿐이라 이미 있으면 못 고른다. 반려견은 두 마리까지.
   const canPick = (r: AddRole) => canAddRole(family, r);
   const familyRoles = FAMILY_ROLES.filter((r) => (r.role === "mom" || r.role === "dad" ? canPick(r.role) : true));
   const friendOpen = canPick("friend");
+  const petOpen = canAddRole(family, "pet");
 
   const start: AddRole | null =
-    initialRole && initialRole !== "child" && canPick(initialRole) ? (initialRole as AddRole) : null;
+    initialRole && initialRole !== "child" && initialRole !== "pet" && canPick(initialRole) ? initialRole : null;
   const [role, setRole] = useState<AddRole | null>(start);
   const [callName, setCallName] = useState<string>(defaultCall(start, family));
   const [name, setName] = useState("");
@@ -190,6 +197,30 @@ export function AddMemberSheet({
           {!friendOpen && <span className="text-xs font-extrabold text-neutral-500">이미 있어요</span>}
         </button>
       </div>
+
+      {/* 반려견 — 이름·특징은 반려견 시트에서 받는다(두 마리까지) */}
+      {onPet && (
+        <div className="mt-3 w-full">
+          <p className="mb-1.5 break-keep text-xs font-extrabold text-neutral-500">
+            {PET_LABEL} {PET_LIMIT}마리까지 · 동화에 특징대로 나와요
+          </p>
+          <button
+            type="button"
+            disabled={!petOpen}
+            onClick={onPet}
+            className="flex min-h-[60px] w-full items-center gap-3 rounded-2xl border-2 border-transparent bg-neutral-100 px-3 text-left transition disabled:cursor-not-allowed"
+          >
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={ROLE_STICKER.pet} alt="" className={`h-9 w-9 object-contain ${petOpen ? "" : "opacity-50"}`} />
+            </span>
+            <span className={`flex-1 text-[15px] font-extrabold ${petOpen ? "text-neutral-700" : "text-neutral-500"}`}>
+              {PET_LABEL}
+            </span>
+            {!petOpen && <span className="text-xs font-extrabold text-neutral-500">이미 {PET_LIMIT}마리예요</span>}
+          </button>
+        </div>
+      )}
 
       {role && role !== "friend" && !isParent && (
         <Field label="뭐라고 부르나요?">

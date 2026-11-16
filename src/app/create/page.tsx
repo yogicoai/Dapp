@@ -20,8 +20,9 @@ import {
   hasBestFriendInfo,
   isBestFriendIn,
 } from "@/components/create/BestFriendChip";
+import { PetChip } from "@/components/create/PetChip";
 import { ART_STYLES } from "@/lib/art-styles";
-import { bestFriend, heightFor, type FamilyMember } from "@/lib/family";
+import { activePets, bestFriend, heightFor, type FamilyMember } from "@/lib/family";
 import { castPortraits, storyFamilyLooks } from "@/lib/family-cast";
 import { placeVisits } from "@/lib/page-camera";
 import { detectBookScale, shrunkPages } from "@/lib/scale-lock";
@@ -897,6 +898,7 @@ function WhoNameInput({
   onFriendsChange,
   accent,
   bestFriend,
+  pets = [],
 }: {
   who: string;
   value: string;
@@ -908,6 +910,8 @@ function WhoNameInput({
   accent: string;
   /** 가족 캐릭터의 단짝 친구 — '친구랑'·'친구들이랑'일 때만 '단짝 친구 불러오기' 칩으로 쓴다. */
   bestFriend?: FamilyMember | null;
+  /** 가족 캐릭터의 반려견(두 마리까지) — '동물 친구랑'일 때만 '우리 강아지 불러오기' 칩으로 쓴다(이름만 채운다). */
+  pets?: FamilyMember[];
 }) {
   if (!who || who === "혼자서") return null;
   if (who === "친구들이랑") {
@@ -918,8 +922,18 @@ function WhoNameInput({
   // 친구 한 명('친구랑') — 단짝 친구를 불러오면 이름 칸·성별을 그 친구로 바꾼다(이름이 없으면 이름 칸은 비운다).
   const buddy = who === "친구랑" && bestFriend ? bestFriendEntry(bestFriend) : null;
   const showBuddy = bestFriend && buddy && hasBestFriendInfo(buddy) && !isBestFriendIn(buddy, value, gender);
+  // 동물 친구 — 반려견 이름을 채운다(이미 그 이름이면 그 칩은 숨긴다). 특징은 이야기에 따로 간다(storyFamilyLooks).
+  const petChips =
+    who === "동물 친구랑" ? pets.filter((p) => (p.name ?? "").trim() && (p.name ?? "").trim() !== value.trim()) : [];
   return (
     <div className="flex flex-col gap-3">
+      {petChips.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-2">
+          {petChips.map((p) => (
+            <PetChip key={p.id} pet={p} onPick={() => onChange((p.name ?? "").trim().slice(0, 20))} />
+          ))}
+        </div>
+      )}
       {showBuddy && (
         <BestFriendChip
           friend={bestFriend}
@@ -1049,6 +1063,7 @@ export default function CreatePage() {
         setGender(remoteChild.gender);
         // 다른 기기에서 넣은 단짝 친구도 불러오기 칩에 뜨게 — 서버 값과 합친 가족에서 다시 찾는다.
         setMyBestFriend(bestFriend(remoteChild.family) ?? null);
+        setMyPets(activePets(remoteChild.family));
         if (remoteChild.name && remoteChild.age !== null) setStep("theme");
         setPageCount(FIXED_PAGE_COUNT);
       }
@@ -1171,6 +1186,8 @@ export default function CreatePage() {
    * 이 기기 값(loadChild)으로 먼저 채우고, 계정 값(loadChildRemote)이 오면 다시 채운다.
    */
   const [myBestFriend, setMyBestFriend] = useState<FamilyMember | null>(null);
+  /** 가족 캐릭터에 넣어 둔 반려견(뺀 반려견 빼고, 두 마리까지) — '동물 친구랑'의 '우리 강아지 불러오기' 칩(PetChip). 단짝 친구와 같이 채운다. */
+  const [myPets, setMyPets] = useState<FamilyMember[]>([]);
   // 「오늘의 이야기」 전용 — 어디서·무슨 일(자유)·기분. 누구랑(who)은 공유한다.
   const [place, setPlace] = useState("");
   const [todayEvent, setTodayEvent] = useState("");
@@ -1197,6 +1214,7 @@ export default function CreatePage() {
     setAge(saved.age);
     setGender(saved.gender);
     setMyBestFriend(bestFriend(saved.family) ?? null);
+    setMyPets(activePets(saved.family));
     if (saved.name && saved.age !== null) setStep("theme");
     setPageCount(FIXED_PAGE_COUNT);
   }, []);
@@ -2221,6 +2239,7 @@ export default function CreatePage() {
               onFriendsChange={setFriends}
               accent={accent}
               bestFriend={myBestFriend}
+              pets={myPets}
             />
           ),
         },

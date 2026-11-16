@@ -9,7 +9,7 @@ import { isDevUser } from "@/lib/dev-mode";
 import { ART_STYLES } from "@/lib/art-styles";
 import { ftpErrorCode, uploadHitDeadline, uploadManyToCafe24 } from "@/lib/cafe24";
 import { removeWhiteBackground } from "@/lib/cutout";
-import { PORTRAIT_LOOKS_MAX, ROLE_LABEL, freeRedrawsLeft, type FamilyRole } from "@/lib/family";
+import { PORTRAIT_LOOKS_MAX, ROLE_LABEL, canDrawRole, freeRedrawsLeft, type FamilyRole } from "@/lib/family";
 import {
   CARD_TIMEOUT_MS,
   CARD_WAIT_MS,
@@ -148,7 +148,8 @@ export const maxDuration = 60;
  */
 
 const MEMBER_ID = /^[a-z0-9-]{1,40}$/;
-const ROLES = Object.keys(ROLE_LABEL) as FamilyRole[];
+// 그림으로 고정할 수 있는 역할만 — 반려견은 아직 그리지 않는다(lib/family canDrawRole, 2026-11-06 1차는 특징만).
+const ROLES = (Object.keys(ROLE_LABEL) as FamilyRole[]).filter(canDrawRole);
 
 /*
  * 시간 값(DRAW_DEADLINE_MS·UPLOAD_DEADLINE_MS·HEAD_CHECK_DEADLINE_MS·STRETCH_DEADLINE_MS …)은 lib/family-portrait-budget 에 있다 —

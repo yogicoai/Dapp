@@ -25,7 +25,7 @@ const PICS = {
 };
 /** opaque — 배경 지우기에 실패한 흰 바탕 그림(위·아래 여백 OPAQUE_PAD, 화면에서 곱하기) */
 type Who = { id: string; role: FamilyRole; age?: number; pic?: keyof typeof PICS; cm?: number; opaque?: boolean };
-const RANK: Record<FamilyRole, number> = { grandpa: 0, mom: 1, sibling: 2, child: 3, friend: 4, dad: 5, grandma: 6 };
+const RANK: Record<FamilyRole, number> = { grandpa: 0, mom: 1, sibling: 2, child: 3, friend: 4, dad: 5, grandma: 6, pet: 7 };
 
 const MOM: Who = { id: "mom", role: "mom" };
 const DAD: Who = { id: "dad", role: "dad" };
@@ -36,7 +36,7 @@ const sib = (id: string, age: number): Who => ({ id, role: "sibling", age });
 
 function cmOf(w: Who): number {
   if (w.cm) return w.cm;
-  if (w.role === "child" || w.role === "sibling" || w.role === "friend") return childHeightCm(w.age ?? 5);
+  if (w.role === "child" || w.role === "sibling" || w.role === "friend" || w.role === "pet") return childHeightCm(w.age ?? 5);
   return adultHeightCm(w.role);
 }
 function picOf(w: Who): (typeof PICS)[keyof typeof PICS] {

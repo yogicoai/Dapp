@@ -233,6 +233,9 @@ export function faceSize(role: FamilyRole, age?: number | null, gender?: "girl" 
     case "friend":
       if (!age || age <= 19) return kidFace(age);
       return gender === "boy" ? FACE_SIZE.man : gender === "girl" ? FACE_SIZE.woman : (FACE_SIZE.man + FACE_SIZE.woman) / 2;
+    case "pet":
+      // 반려견은 아직 그림이 없어 단체 사진에 서지 않는다(lib/family canDrawRole) — 자리만 채운 값
+      return FACE_SIZE.kid6;
   }
 }
 

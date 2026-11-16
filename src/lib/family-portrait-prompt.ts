@@ -348,6 +348,9 @@ function identityOf(input: PortraitInput, source: Source): Identity {
         proportion: ADULT_BODY,
       };
     }
+    case "pet":
+      // 반려견은 아직 그리지 않는다(lib/family canDrawRole — 그리기 서버가 먼저 막는다). 여기 오면 잘못 부른 것.
+      throw new Error("반려견 그림은 아직 그리지 않아요");
   }
 }
 

@@ -75,6 +75,7 @@ import { LooksView } from "@/components/family/LooksView";
 import { MembersView } from "@/components/family/MembersView";
 import { MemberSheet } from "@/components/family/MemberSheet";
 import { OutfitPicker } from "@/components/family/OutfitPicker";
+import { PetSheet, type PetDraft } from "@/components/family/PetSheet";
 import { ReviewView } from "@/components/family/ReviewView";
 import { StudioSheet } from "@/components/family/StudioSheet";
 import { BigButton } from "@/components/family/ui";
@@ -86,6 +87,7 @@ import {
   byRoleOrder,
   CALL_NAMES,
   canAddRole,
+  canDrawRole,
   currentLockKey,
   currentLooksOf,
   drawPrice,
@@ -104,6 +106,9 @@ import {
   newMemberId,
   nextDrawCost,
   ourChildrenNames,
+  PET_CALL_NAME,
+  PET_LABEL,
+  PET_LIMIT,
   priceMembers,
   ROLE_LABEL,
   type FamilyLooks,
@@ -152,6 +157,8 @@ type Overlay =
   | { kind: "confirm"; ids: string[]; variant: "fix" | "redraw"; from: From; inline?: boolean }
   | { kind: "member"; id: string }
   | { kind: "add"; role?: FamilyRole; mode: From; key: number }
+  /** 반려견 시트 — id 가 있으면 그 반려견 고치기·빼기·다시 넣기, 없으면 새로 넣기 */
+  | { kind: "pet"; id?: string; key: number }
   /** fromAlbum: 모아 보기의 '모습이 바뀌었어요' 카드에서 열었다 — 다른 메뉴로 갈 길을 둔다 */
   | { kind: "changed"; id: string; diff: string[]; fromAlbum?: boolean }
   /** 예전 그림으로 돌아가기 — 그 사람을 그린 예전 그림 목록(HistorySheet) */
@@ -805,6 +812,58 @@ export default function FamilyPage() {
     );
   }
 
+  /* ───────────────────────── 반려견(사장님 2026-11-06) ───────────────────────── */
+
+  /** 반려견 시트 열기 — id 가 있으면 그 반려견, 없으면 새로 넣기(두 마리면 알린다) */
+  function openPet(id?: string) {
+    if (!id && !canAddRole(familyRef.current, "pet")) {
+      showToast(`${PET_LABEL}은 ${PET_LIMIT}마리까지 넣을 수 있어요`);
+      return;
+    }
+    setOverlay({ kind: "pet", ...(id ? { id } : {}), key: ++addSeq.current });
+  }
+
+  /**
+   * 반려견 넣기 — 이름·특징만(1차, 쿠키 0개). 그림이 걸린 변경이 아니라 사람 넣기처럼 'soon'.
+   * 두 마리 규칙은 시트가 막지만 다른 기기 값이 먼저 들어왔을 수 있어 한 번 더 본다.
+   */
+  function addPet(d: PetDraft) {
+    if (!d.name.trim() || !roomLeft()) return;
+    const fam = familyRef.current;
+    if (!canAddRole(fam, "pet")) {
+      showToast(`${PET_LABEL}은 ${PET_LIMIT}마리까지 넣을 수 있어요`);
+      return;
+    }
+    const m: FamilyMember = {
+      id: newMemberId(),
+      role: "pet",
+      callName: PET_CALL_NAME,
+      name: d.name.trim().slice(0, 20),
+      ...(d.looks ? { looks: d.looks } : {}),
+      addedAt: new Date().toISOString(),
+    };
+    commit([...fam, m], "soon");
+    setOverlay(null);
+    showToast(`${objectOf(m)} ${PET_LABEL}으로 넣었어요`);
+  }
+
+  /** 반려견 고치기 — 이름·특징을 시트 값으로 바꾼다(특징을 다 지우면 looks 도 지운다) */
+  function savePet(id: string, d: PetDraft) {
+    const nm = d.name.trim().slice(0, 20);
+    if (!nm) return;
+    patchMember(
+      id,
+      (m) => {
+        const { looks: _old, ...rest } = m;
+        void _old;
+        return { ...rest, name: nm, ...(d.looks ? { looks: d.looks } : {}) };
+      },
+      "soon",
+    );
+    setOverlay(null);
+    showToast("저장했어요");
+  }
+
   /**
    * 빼기(사람 메뉴의 '우리 가족에서 빼기'·'단짝 친구 빼기') — 지우지 않고 '빠짐'(회색 카드)으로 둔다(2026-10-26 사장님
    * "빼도 목록에선 사라지지 않게 … 비활성처럼 회색처럼만"). 동화·홈 사진·명패·숫자·단짝 친구 불러오기에서만 빠지고 그림·생김새는
@@ -819,7 +878,7 @@ export default function FamilyPage() {
     setOverlay(null);
     if (step === "album") {
       showToast(
-        m.role === "friend"
+        m.role === "friend" || m.role === "pet"
           ? `${objectOf(m)} 뺐어요 · 회색 카드를 누르면 다시 넣어요`
           : `${objectOf(m)} 우리 가족에서 뺐어요 · 회색 카드를 누르면 다시 넣어요`,
       );
@@ -851,6 +910,11 @@ export default function FamilyPage() {
   function restoreMember(id: string) {
     const m = findMember(id);
     if (!m || isActive(m)) return;
+    // 반려견은 두 마리 규칙을 다시 넣을 때도 본다(시트가 막지만 다른 기기 값이 먼저 들어왔을 수 있다)
+    if (m.role === "pet" && !canAddRole(familyRef.current, "pet")) {
+      showToast(`${PET_LABEL}은 ${PET_LIMIT}마리까지예요 · 다른 ${PET_LABEL}을 먼저 빼 주세요`);
+      return;
+    }
     patchMember(
       id,
       (x) => {
@@ -861,7 +925,13 @@ export default function FamilyPage() {
       "now",
     );
     setOverlay(null);
-    showToast(m.role === "friend" ? `${objectOf(m)} 단짝 친구로 다시 넣었어요` : `${objectOf(m)} 우리 가족에 다시 넣었어요`);
+    showToast(
+      m.role === "friend"
+        ? `${objectOf(m)} 단짝 친구로 다시 넣었어요`
+        : m.role === "pet"
+          ? `${objectOf(m)} ${PET_LABEL}으로 다시 넣었어요`
+          : `${objectOf(m)} 우리 가족에 다시 넣었어요`,
+    );
   }
 
   /** '홈 가족 사진에 보이기' — 끔(false)도 저장한다. 처음 값이 역할마다 달라서(가족 켬·단짝 친구 끔). */
@@ -1445,6 +1515,8 @@ export default function FamilyPage() {
     overlay?.kind === "member" || overlay?.kind === "changed" || overlay?.kind === "history"
       ? family.find((m) => m.id === overlay.id)
       : undefined;
+  // 반려견 시트의 반려견(고치기·다시 넣기) — 새로 넣기면 없다
+  const petMember = overlay?.kind === "pet" && overlay.id ? family.find((m) => m.id === overlay.id) : undefined;
   // 시트 한 사람의 값 — 무료 생성이 있으면 쿠키 대신(관리자는 셈 없음)
   const sheetPrice = sheetMember ? drawPrice(sheetMember.draws, master ? 0 : freeDraws) : null;
   const roundMembers = round.ids.map((id) => family.find((m) => m.id === id)).filter((m): m is FamilyMember => Boolean(m));
@@ -1492,9 +1564,11 @@ export default function FamilyPage() {
         onRemove={dropMember}
         onFixedTap={(m) => showToast(`${displayName(m)} 얼굴은 고정돼 있어요. 모아 보기에서 고칠 수 있어요`)}
         onOpenAdd={(role) => setOverlay({ kind: "add", role, mode: "members", key: ++addSeq.current })}
+        onPet={openPet}
         onNext={() =>
           startLooks(
-            byRoleOrder(familyRef.current.filter((m) => !m.portrait)).map((m) => m.id),
+            // 화면의 '이번에 그릴 사람'(MembersView targets)과 같게 — 뺀 사람(회색)·반려견(아직 그리지 않음)은 빼고
+            byRoleOrder(familyRef.current.filter((m) => !m.portrait && isActive(m) && canDrawRole(m.role))).map((m) => m.id),
             "fix",
             "members",
           )
@@ -1594,6 +1668,7 @@ export default function FamilyPage() {
         onChanged={openChanged}
         onAdd={() => setOverlay({ kind: "add", mode: "album", key: ++addSeq.current })}
         onAddFriend={() => setOverlay({ kind: "add", role: "friend", mode: "album", key: ++addSeq.current })}
+        onPet={openPet}
         onCreate={() => router.push("/create")}
         studio={child.familyStudio}
         onStudio={() => setOverlay({ kind: "studio" })}
@@ -1725,6 +1800,21 @@ export default function FamilyPage() {
           mode={overlay.mode}
           onClose={() => setOverlay(null)}
           onAdd={(nm) => addMember(nm, overlay.mode)}
+          onPet={() => openPet()}
+        />
+      )}
+
+      {overlay?.kind === "pet" && (!overlay.id || petMember) && (
+        <PetSheet
+          key={overlay.key}
+          colors={colors}
+          pet={petMember}
+          canAdd={canAddRole(family, "pet")}
+          onClose={() => setOverlay(null)}
+          onAdd={addPet}
+          onSave={(d) => petMember && savePet(petMember.id, d)}
+          onRemove={() => petMember && removeMember(petMember.id)}
+          onRestore={() => petMember && restoreMember(petMember.id)}
         />
       )}
 

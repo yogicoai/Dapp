@@ -8,13 +8,19 @@
  * 엄마·아빠는 켜고 끄는 타일, 형제자매는 '+' 타일로 여러 명, 할머니·할아버지는 첫 분을 타일로 켜고
  * 두 번째 분(외가·친가)은 '+ 더 넣기'로 호칭을 골라 넣는다.
  * 단짝 친구는 가족 타일과 떨어진 자리에 한 명만 — 가족이 아니라 가족 사진·명패에는 안 나온다.
+ * 반려견(사장님 2026-11-06)은 그 아래 따로 두 마리까지 — 1차는 이름·특징만이라 이번에 그릴 사람(쿠키)에 들지 않는다.
+ * 반려견 타일을 누르면 빼지 않고 반려견 시트(고치기·빼기)를 연다.
  */
 
 import type { ReactNode } from "react";
 import {
   BEST_FRIEND_LABEL,
   canAddRole,
+  canDrawRole,
   isActive,
+  PET_LABEL,
+  PET_LIMIT,
+  petSummary,
   priceMembers,
   ROLE_LABEL,
   ROLE_ORDER,
@@ -24,13 +30,13 @@ import {
 import type { ChildPrefs } from "@/lib/prefs";
 import { ageText, displayName, ROLE_STICKER, stickerFor, type Colors } from "./family-ui";
 import { FaceAvatar } from "./Figures";
-import { CheckIcon, CookieIcon, PawIcon, PlusIcon } from "./icons";
+import { CheckIcon, CookieIcon, PlusIcon } from "./icons";
 import { BigButton, BottomBar, StepDots, TopBar } from "./ui";
 
 type Tile =
   | { kind: "member"; member: FamilyMember; sub?: string }
   | { kind: "placeholder"; role: "mom" | "dad" | "grandma" | "grandpa"; label: string }
-  | { kind: "adder"; role: "sibling" | "friend"; label: string };
+  | { kind: "adder"; role: "sibling" | "friend" | "pet"; label: string };
 
 /** 형제·친구 타일 아래 글자 — '우리 아이 · 7살' */
 function kidSub(m: FamilyMember): string | undefined {
@@ -49,6 +55,7 @@ export function MembersView({
   onRemove,
   onFixedTap,
   onOpenAdd,
+  onPet,
   onNext,
 }: {
   colors: Colors;
@@ -65,6 +72,8 @@ export function MembersView({
   /** 이미 고정된 사람을 눌렀을 때 */
   onFixedTap: (m: FamilyMember) => void;
   onOpenAdd: (role?: FamilyRole) => void;
+  /** 반려견 시트 — id 가 있으면 그 반려견 고치기, 없으면 새로 넣기 */
+  onPet: (id?: string) => void;
   onNext: () => void;
 }) {
   const kid = family.find((m) => m.role === "child");
@@ -73,10 +82,10 @@ export function MembersView({
   const of = (role: FamilyRole) => others.filter((m) => m.role === role);
   const hasParentLooks = (r: "mom" | "dad") => Boolean(child.parents?.[r]);
 
-  // 가족 타일 — ROLE_ORDER 그대로(엄마 → 아빠 → 형제자매(+) → 할머니 → 할아버지). 아이·단짝 친구는 따로.
+  // 가족 타일 — ROLE_ORDER 그대로(엄마 → 아빠 → 형제자매(+) → 할머니 → 할아버지). 아이·단짝 친구·반려견은 따로.
   const tiles: Tile[] = [];
   for (const r of ROLE_ORDER) {
-    if (r === "child" || r === "friend") continue;
+    if (r === "child" || r === "friend" || r === "pet") continue;
     if (r === "sibling") {
       for (const m of of(r)) tiles.push({ kind: "member", member: m, sub: kidSub(m) });
       tiles.push({ kind: "adder", role: r, label: ROLE_LABEL[r] });
@@ -96,8 +105,12 @@ export function MembersView({
   const friendTiles: Tile[] = friends.map((m) => ({ kind: "member", member: m, sub: kidSub(m) }));
   if (canAddRole(family, "friend")) friendTiles.push({ kind: "adder", role: "friend", label: BEST_FRIEND_LABEL });
 
-  // 이번에 그릴 사람 = 아직 고정 안 된 사람 전부(아이·단짝 친구 포함)
-  const targets = family.filter((m) => !m.portrait && isActive(m));
+  // 반려견 — 따로 두 마리까지. 타일 아래 글자는 견종·털 색.
+  const petTiles: Tile[] = of("pet").map((m) => ({ kind: "member", member: m, sub: petSummary(m.looks) || undefined }));
+  if (canAddRole(family, "pet")) petTiles.push({ kind: "adder", role: "pet", label: PET_LABEL });
+
+  // 이번에 그릴 사람 = 아직 고정 안 된 사람 전부(아이·단짝 친구 포함, 반려견은 아직 그리지 않는다)
+  const targets = family.filter((m) => !m.portrait && isActive(m) && canDrawRole(m.role));
   // 관리실이 더해 준 무료 생성은 앞사람부터(확인 창과 같은 셈)
   const priced = priceMembers(targets, master ? 0 : freeDraws);
   const total = priced.reduce((s, r) => s + r.cost, 0);
@@ -107,6 +120,21 @@ export function MembersView({
     if (t.kind === "member") {
       const m = t.member;
       const fixed = Boolean(m.portrait);
+      // 반려견 — 누르면 빼지 않고 반려견 시트(고치기·빼기)를 연다
+      if (m.role === "pet") {
+        return (
+          <TileShell
+            key={m.id}
+            on
+            colors={colors}
+            label={displayName(m)}
+            sub={t.sub}
+            art={<RoleArt role="pet" />}
+            ariaLabel={`${displayName(m)} — 누르면 고치거나 뺄 수 있어요`}
+            onClick={() => onPet(m.id)}
+          />
+        );
+      }
       return (
         <TileShell
           key={m.id}
@@ -142,7 +170,7 @@ export function MembersView({
         label={t.label}
         art={<RoleArt role={t.role} />}
         ariaLabel={`${t.label} 더하기`}
-        onClick={() => onOpenAdd(t.role)}
+        onClick={() => (t.role === "pet" ? onPet() : onOpenAdd(t.role))}
       />
     );
   };
@@ -196,10 +224,12 @@ export function MembersView({
           <div className="mt-2 grid grid-cols-3 gap-2.5">{friendTiles.map(renderTile)}</div>
         </div>
 
-        <div className="mt-3 flex h-[50px] items-center gap-2.5 rounded-3xl border-2 border-dashed border-neutral-200 px-4 text-neutral-500">
-          <PawIcon />
-          <span className="flex-1 text-sm font-extrabold">반려동물</span>
-          <span className="rounded-full bg-neutral-100 px-2.5 py-[3px] text-[11px] font-extrabold">곧 만나요</span>
+        {/* 반려견 — 단짝 친구 아래 따로, 두 마리까지. 1차는 이름·특징만(쿠키 0개) */}
+        <div className="mt-2 rounded-3xl bg-neutral-50 px-3 pb-3 pt-2.5 shadow-[inset_0_0_0_1px_#f0ede8]">
+          <p className="break-keep px-0.5 text-[13px] font-extrabold text-neutral-600">
+            {PET_LABEL} {PET_LIMIT}마리까지 <span className="font-bold text-neutral-500">· 특징대로 동화에 나와요 · 쿠키 0개</span>
+          </p>
+          <div className="mt-2 grid grid-cols-3 gap-2.5">{petTiles.map(renderTile)}</div>
         </div>
 
         <p className="mt-3 break-keep text-xs font-medium leading-normal text-neutral-500">
@@ -289,8 +319,8 @@ function TileArt({ member, childGender }: { member: FamilyMember; childGender: C
   );
 }
 
-/** 아직 없는 사람 타일의 스티커 — 할머니 정순·할아버지·엄마·아빠·형제자매·단짝 친구 */
-function RoleArt({ role }: { role: "mom" | "dad" | "grandma" | "grandpa" | "sibling" | "friend" }) {
+/** 아직 없는 사람 타일의 스티커 — 할머니 정순·할아버지·엄마·아빠·형제자매·단짝 친구·반려견 */
+function RoleArt({ role }: { role: "mom" | "dad" | "grandma" | "grandpa" | "sibling" | "friend" | "pet" }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={ROLE_STICKER[role]} alt="" className="h-[52px] w-[52px] object-contain" />

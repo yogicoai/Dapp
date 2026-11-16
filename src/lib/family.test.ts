@@ -2,9 +2,11 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  activePets,
   bestFriend,
   byRoleOrder,
   canAddRole,
+  canDrawRole,
   currentLockKey,
   drawPrice,
   drawPrices,
@@ -21,6 +23,7 @@ import {
   homeGreeting,
   homeMembers,
   isActive,
+  isPet,
   isKidRole,
   isPhotoFixed,
   isYoungerThanChild,
@@ -36,11 +39,17 @@ import {
   normalizeLooksFor,
   normalizeRemovals,
   ourChildrenNames,
+  PET_CALL_NAME,
+  PET_LIMIT,
+  petHeightCm,
+  petLooksToPrompt,
+  petSummary,
   pictureDecidesLooks,
   portraitLooksChanged,
   priceMembers,
   ROLE_ORDER,
   showsLooksChanged,
+  showsOnHome,
   vocative,
   withoutRemoved,
   type FamilyMember,
@@ -226,8 +235,8 @@ describe("홈 가족 사진·단짝 친구·순서", () => {
     assert.equal(canAddRole(fam, "grandpa"), true);
     assert.equal(canAddRole(fam, "sibling"), true);
   });
-  it("역할 순서: 아이 → 엄마 → 아빠 → 형제자매 → 할머니 → 할아버지 → 단짝 친구", () => {
-    assert.deepEqual(ROLE_ORDER, ["child", "mom", "dad", "sibling", "grandma", "grandpa", "friend"]);
+  it("역할 순서: 아이 → 엄마 → 아빠 → 형제자매 → 할머니 → 할아버지 → 단짝 친구 → 반려견", () => {
+    assert.deepEqual(ROLE_ORDER, ["child", "mom", "dad", "sibling", "grandma", "grandpa", "friend", "pet"]);
     assert.deepEqual(byRoleOrder(fam).map((m) => m.role), ["child", "mom", "dad", "sibling", "grandma", "friend"]);
   });
   it("normalizeFamily 가 보이기(켬·끔 둘 다)와 '우리 아이'(형제만)를 지킨다", () => {
@@ -1004,5 +1013,95 @@ describe("칩 줄(look-options)", () => {
     // 안경 종류는 준비 전엔 지금 안경 스티커로.
     assert.equal(lookIcon("뿔테", undefined, "dad"), READY_ICONS.has("glasses-horn") ? "/icons/looks/glasses-horn.webp" : GLASSES_ICON);
     assert.equal(lookIcon("안 써요", undefined, "dad"), undefined);
+  });
+});
+
+describe("반려견(2026-11-06) — 두 마리까지, 이름·특징만, 그리기·가족 숫자에서 빠진다", () => {
+  const pet = (id: string, extra: Partial<FamilyMember> = {}): FamilyMember => ({
+    id,
+    role: "pet",
+    callName: PET_CALL_NAME,
+    name: "콩이",
+    ...extra,
+  });
+  const kid: FamilyMember = { id: "child", role: "child", callName: "하온" };
+
+  it("두 마리까지 넣는다 — 뺀 반려견은 세지 않는다", () => {
+    assert.equal(PET_LIMIT, 2);
+    assert.equal(canAddRole([kid], "pet"), true);
+    assert.equal(canAddRole([kid, pet("m-a")], "pet"), true);
+    assert.equal(canAddRole([kid, pet("m-a"), pet("m-b")], "pet"), false);
+    assert.equal(canAddRole([kid, pet("m-a"), pet("m-b", { inactive: true })], "pet"), true);
+    assert.deepEqual(
+      activePets([kid, pet("m-a"), pet("m-b", { inactive: true })]).map((m) => m.id),
+      ["m-a"],
+    );
+  });
+
+  it("그리지 않는다(canDrawRole) — 사람은 모두 그린다", () => {
+    assert.equal(canDrawRole("pet"), false);
+    for (const r of ["child", "mom", "dad", "grandma", "grandpa", "sibling", "friend"] as const) assert.equal(canDrawRole(r), true);
+    assert.equal(isPet(pet("m-a")), true);
+    assert.equal(isPet(kid), false);
+  });
+
+  it("가족 숫자·명패에 안 든다 — 단짝 친구처럼 따로", () => {
+    const fam = [kid, { id: "mom", role: "mom", callName: "엄마" } as FamilyMember, pet("m-a")];
+    assert.deepEqual(familyMembersOnly(fam).map((m) => m.id), ["child", "mom"]);
+    assert.deepEqual(ourChildrenNames("하온", fam), ["하온"]);
+  });
+
+  it("순서는 맨 끝, 홈 사진 처음 값은 켬(그림이 생기면 선다)", () => {
+    assert.deepEqual(
+      byRoleOrder([pet("m-a"), { id: "m-f", role: "friend", callName: "친구" } as FamilyMember, kid]).map((m) => m.role),
+      ["child", "friend", "pet"],
+    );
+    assert.equal(showsOnHome(pet("m-a")), true);
+    // 그림이 없으니 아직 홈 사진에는 서지 않는다
+    assert.deepEqual(homeMembers([kid, pet("m-a")]), []);
+  });
+
+  it("불러올 때 반려견 칸과 메모만 남긴다 — 사람 칸은 버리고, 사람에게서는 반려견 칸을 버린다", () => {
+    const [m] = normalizeFamily([
+      {
+        id: "m-a",
+        role: "pet",
+        callName: "강아지",
+        name: "콩이",
+        looks: { breed: "푸들", furColor: "갈색", hair: "숏컷", glasses: true, note: "산책을 좋아해요", size: "작아요" },
+      },
+    ])!;
+    assert.equal(m.role, "pet");
+    assert.equal(m.name, "콩이");
+    assert.deepEqual(m.looks, { breed: "푸들", furColor: "갈색", size: "작아요", note: "산책을 좋아해요" });
+    assert.equal(normalizeLooksFor({ breed: "푸들", hair: "숏컷" }, "grandma")?.breed, undefined);
+    assert.equal(normalizeLooksFor({}, "pet"), undefined);
+  });
+
+  it("특징 → 문장(동화에 간다) · 카드 요약", () => {
+    assert.equal(
+      petLooksToPrompt({ breed: "푸들", furColor: "갈색", size: "작아요", coat: "곱슬곱슬해요", ears: "축 처졌어요", note: "빨간 목줄을 해요" }),
+      "견종은 푸들이다, 털이 갈색이다, 몸집이 작은 강아지다, 털이 곱슬곱슬하다, 귀가 축 처져 있다, 빨간 목줄을 해요",
+    );
+    assert.equal(petLooksToPrompt({ breed: "말티즈", furColor: "하양·까만 얼룩" }), "견종은 말티즈다, 하얀 털에 까만 얼룩이 있다");
+    assert.equal(petLooksToPrompt(undefined), "");
+    assert.equal(petLooksToPrompt({}), "");
+    assert.equal(petSummary({ breed: "푸들", furColor: "갈색", size: "작아요" }), "푸들 · 갈색");
+    assert.equal(petSummary(undefined), "");
+  });
+
+  it("칩 줄은 반려견 줄 — 칩 글자마다 문장이 있다(견종은 '견종은 …')", () => {
+    const rows = lookRowsFor("pet");
+    assert.deepEqual(rows.map((r) => r.key), ["breed", "furColor", "size", "coat", "ears"]);
+    for (const r of rows) {
+      if (r.key === "breed") continue;
+      for (const o of r.options) assert.doesNotMatch(petLooksToPrompt({ [r.key]: o }), /: /, `${r.key}=${o}`);
+    }
+  });
+
+  it("단체 사진 키 어림 — 몸집으로, 모르면 보통", () => {
+    assert.equal(heightCm(pet("m-a", { looks: { size: "작아요" } })), petHeightCm("작아요"));
+    assert.ok(petHeightCm("작아요") < petHeightCm("커요"));
+    assert.equal(petHeightCm(undefined), petHeightCm("보통이에요"));
   });
 });

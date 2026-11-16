@@ -227,7 +227,7 @@ export function adultLookRows(role: AdultRole): AdultLookRow[] {
 /* ─────────────────────────── 옛 값 옮기기 ─────────────────────────── */
 
 /** 칩을 쓰는 사람 — FamilyRole 과 같은 글자(여기서 family.ts 를 부르지 않으려고 따로 적는다). */
-export type LookWho = "child" | "mom" | "dad" | "grandma" | "grandpa" | "sibling" | "friend";
+export type LookWho = "child" | "mom" | "dad" | "grandma" | "grandpa" | "sibling" | "friend" | "pet";
 
 /**
  * 예전 칩 글자 → 새 글자(역할·칸마다). 불러올 때(normalize)와 '모습이 바뀌었어요' 견줄 때 쓴다.

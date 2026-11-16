@@ -15,6 +15,7 @@
  *  - 고정 안 됨: 점선 사람 + '동화마다 새로 그려요' + '얼굴 고정하기 · 쿠키 2개'
  *  - 마지막: '가족 더하기'(넣기만 하면 0개)
  * 가족 아래 '단짝 친구' 칸이 따로 있다 — 가족이 아니라 'N명' 숫자에 안 든다.
+ * 그 아래 '반려견' 칸(사장님 2026-11-06, 두 마리까지) — 1차는 이름·특징만이라 강아지 스티커 카드다. 누르면 반려견 시트.
  * 그 밖의 카드를 누르면 MemberSheet(다시 그리기·생김새 고치기·홈 사진 켜기·빼기)가 뜬다.
  * 뺀 사람(inactive)은 지우지 않고 칸 끝에 회색 카드로 남긴다(2026-10-26 사장님 "회색처럼만") — 숫자·값 표시에서 빠지고, 누르면 다시 넣기.
  *
@@ -37,6 +38,9 @@ import {
   isKidRole,
   nextDrawCost,
   ourChildrenNames,
+  PET_LABEL,
+  PET_LIMIT,
+  petSummary,
   priceMembers,
   showsLooksChanged,
   showsOnHome,
@@ -63,6 +67,7 @@ export function AlbumView({
   onChanged,
   onAdd,
   onAddFriend,
+  onPet,
   onCreate,
   studio,
   onStudio,
@@ -86,6 +91,8 @@ export function AlbumView({
   onAdd: () => void;
   /** 단짝 친구 넣기 */
   onAddFriend: () => void;
+  /** 반려견 시트 — id 가 있으면 그 반려견(고치기·빼기·다시 넣기), 없으면 새로 넣기 */
+  onPet: (id?: string) => void;
   onCreate: () => void;
 }) {
   // 얼굴을 고정한 가족(단짝 친구 뺌) — '홈 사진에 보일 사람이 없어요'는 가족을 고정하고 모두 껐을 때만.
@@ -98,6 +105,8 @@ export function AlbumView({
   const kinActive = kin.filter(isActive);
   const friends = activeFirst(family.filter((m) => m.role === "friend"));
   const friendsActive = friends.filter(isActive);
+  const pets = activeFirst(family.filter((m) => m.role === "pet"));
+  const petOpen = canAddRole(family, "pet");
   // 단짝 친구 칸 머리 — 홈 보이기를 켰으면 '가족 사진엔 안 나와요'가 사실과 반대가 된다.
   const friendOnHome = friendsActive.some((f) => showsOnHome(f));
   const friendNote = friendOnHome
@@ -280,6 +289,28 @@ export function AlbumView({
             </div>
           </>
         )}
+
+        {/* 반려견 — 단짝 친구 아래 따로, 두 마리까지. 1차는 이름·특징만(그림 고정은 다음 단계). */}
+        <p className="mt-6 text-sm font-extrabold text-neutral-500">
+          {PET_LABEL} <span className="font-bold">· 특징대로 동화에 나와요</span>
+        </p>
+        <div className="mt-2.5 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+          {pets.map((m) => (
+            <PetCard key={m.id} member={m} colors={colors} onClick={() => onPet(m.id)} />
+          ))}
+          {petOpen && (
+            <button
+              type="button"
+              onClick={() => onPet()}
+              className="flex h-44 flex-col items-center justify-center gap-1.5 rounded-3xl border-2 border-dashed border-neutral-300 bg-white/60 transition hover:bg-white"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={ROLE_STICKER.pet} alt="" aria-hidden className="h-12 w-12 object-contain" />
+              <span className="text-sm font-extrabold text-neutral-700">{PET_LABEL} 넣기</span>
+              <span className="text-xs font-bold text-neutral-500">{PET_LIMIT}마리까지 · 쿠키 0개</span>
+            </button>
+          )}
+        </div>
 
         <p className="mt-6 flex items-center justify-center gap-1.5 text-xs font-semibold text-neutral-500">
           <LockIcon size={14} />
@@ -487,6 +518,44 @@ function RestingCard({ member: m, onClick }: { member: FamilyMember; onClick: ()
           {age && <span className="text-xs font-bold text-neutral-400"> · {age}</span>}
         </span>
         <span className="truncate text-xs font-semibold text-neutral-400">누르면 다시 넣을 수 있어요</span>
+      </span>
+    </button>
+  );
+}
+
+/**
+ * 반려견 카드 — 1차는 그림이 없어 강아지 스티커 + 이름 + 견종·털 색. 뺀 반려견은 회색('빠져 있어요').
+ * 누르면 반려견 시트(고치기·빼기·다시 넣기).
+ */
+function PetCard({ member: m, colors, onClick }: { member: FamilyMember; colors: Colors; onClick: () => void }) {
+  const resting = !isActive(m);
+  const summary = petSummary(m.looks);
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={resting ? `${m.name ?? PET_LABEL} — 빠져 있어요, 누르면 다시 넣을 수 있어요` : undefined}
+      className={`relative flex h-44 flex-col overflow-hidden rounded-3xl text-left ${
+        resting ? "bg-neutral-100 ring-1 ring-neutral-200" : "shadow-[0_2px_8px_rgba(60,40,25,.10)]"
+      }`}
+      style={resting ? undefined : { background: colors.accentSoft }}
+    >
+      <span className={`relative flex h-[120px] w-full items-center justify-center ${resting ? "opacity-60 grayscale" : ""}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={ROLE_STICKER.pet} alt="" aria-hidden className="h-[92px] w-[92px] object-contain" />
+      </span>
+      {resting && (
+        <span className="absolute left-2 top-2 rounded-full bg-white px-2.5 py-[3px] text-[11px] font-extrabold text-neutral-500">
+          빠져 있어요
+        </span>
+      )}
+      <span className={`flex flex-1 flex-col justify-center gap-0.5 px-3 ${resting ? "bg-white/80" : "bg-white"}`}>
+        <span className={`truncate text-[15px] font-extrabold ${resting ? "text-neutral-500" : "text-neutral-800"}`}>
+          {m.name || PET_LABEL}
+        </span>
+        <span className={`truncate text-xs font-semibold ${resting ? "text-neutral-400" : "text-neutral-500"}`}>
+          {resting ? "누르면 다시 넣을 수 있어요" : summary || "특징을 골라 주세요"}
+        </span>
       </span>
     </button>
   );

@@ -384,3 +384,31 @@ describe("storyFamilyLookLines — 이야기 프롬프트 줄", () => {
     assert.deepEqual(storyFamilyLookLines([]), []);
   });
 });
+
+describe("반려견(2026-11-06) — 이야기에 '콩이(우리 강아지)'와 고른 특징으로", () => {
+  const pet = (extra: Partial<FamilyMember> = {}): FamilyMember => ({
+    id: "m-pet",
+    role: "pet",
+    callName: "강아지",
+    name: "콩이",
+    looks: { breed: "푸들", furColor: "갈색" },
+    ...extra,
+  });
+
+  it("특징을 고른 반려견만 건넨다 — 이름·특징이 없거나 뺀 반려견은 안 간다", () => {
+    assert.deepEqual(storyFamilyLooks([pet()]), [{ who: "콩이(우리 강아지)", line: "견종은 푸들이다, 털이 갈색이다" }]);
+    assert.deepEqual(storyFamilyLooks([pet({ looks: undefined })]), []);
+    assert.deepEqual(storyFamilyLooks([pet({ name: undefined })]), []);
+    assert.deepEqual(storyFamilyLooks([pet({ inactive: true })]), []);
+  });
+
+  it("프롬프트 줄 — '콩이(우리 강아지)가 이야기에 나오면 …'", () => {
+    const [line] = storyFamilyLookLines(storyFamilyLooks([pet()]));
+    assert.match(line, /^콩이\(우리 강아지\)가 이야기에 나오면 생김새는 이대로 쓴다/);
+  });
+
+  it("등장인물 얼굴은 붙이지 않는다 — 그림이 없고, 이름이 같아도 사람 칸이 아니다", () => {
+    const fam: FamilyMember[] = [{ id: "child", role: "child", callName: "하온" }, pet()];
+    assert.deepEqual(castPortraits([{ name: "하온" }, { name: "콩이" }], fam), []);
+  });
+});

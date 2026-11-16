@@ -147,6 +147,9 @@ export function outfitBodyRole(
       if (age <= KID_MAX_AGE) return gender;
       return gender === "girl" ? "mom" : "dad";
     }
+    case "pet":
+      // 반려견은 옷을 갈아입지 않는다(사람 몸 판이 없다)
+      return null;
   }
 }
 

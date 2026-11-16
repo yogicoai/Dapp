@@ -12,6 +12,10 @@
  *    (홈 보이기를 따로 켜면 단체 사진에만 선다). 값·고정 방식은 가족과 같다.
  *  - 홈 단체 사진에는 '홈 가족 사진에 보이기'를 켠 고정된 사람만 선다(처음 값: 가족 켬, 단짝 친구 끔).
  *  - 형제자매 가운데 '우리 아이'를 켜면 명패가 '하온·하린이네 가족'이 된다.
+ *  - 반려견(role "pet", 사장님 2026-11-06 "반려견 추가하는 기능") — **두 마리까지**, 이름과 특징(견종·털 색·몸집 …)만
+ *    저장한다(1차: 그림 고정은 다음 단계). 그래서 그리기(쿠키·확인 창·api/family/portrait)에는 들어가지 않는다(canDrawRole).
+ *    사람이 아니라 '우리 가족 · N명' 숫자·명패에 안 든다(familyMembersOnly). 동화에는 특징 그대로 나온다(family-cast
+ *    storyFamilyLooks). 홈 사진 처음 값은 켬(사장님 결정) — 그림이 생기면 그때부터 단체 사진에 선다.
  *
  * 이 파일은 순수 함수만 둔다(브라우저·Supabase 없음) — node --test 로 시험할 수 있게.
  * (2026-09-28 검토 반영으로 더한 것: FamilyPortrait.lockKey · FamilyMember.picAt · FAMILY_MAX_MEMBERS 60
@@ -46,17 +50,36 @@ import {
   type LookWho,
 } from "./look-options.ts";
 
-export type FamilyRole = "child" | "mom" | "dad" | "grandma" | "grandpa" | "sibling" | "friend";
+export type FamilyRole = "child" | "mom" | "dad" | "grandma" | "grandpa" | "sibling" | "friend" | "pet";
+
+/**
+ * 반려견 특징(사장님 2026-11-06) — 모두 선택, 하나씩 고르는 칩(PET_LOOK_ROWS). 메모(note)는 FamilyLooks 의 칸을 같이 쓴다.
+ * 반려견만 쓰는 칸이라 사람의 생김새 정리(normalizeLooksFor)는 이 칸을 버리고, 반려견은 이 칸과 메모만 남긴다.
+ */
+export type PetLooks = {
+  /** 견종 — 말티즈·푸들 … */
+  breed?: string;
+  /** 털 색 */
+  furColor?: string;
+  /** 몸집 */
+  size?: string;
+  /** 털 모양 */
+  coat?: string;
+  /** 귀 모양 */
+  ears?: string;
+};
 
 /**
  * 새로 생기는 사람(할머니·할아버지·형제·친구)의 생김새. 모두 선택.
  * 엄마·아빠(ParentLooks)와 같은 칸이다 — 할머니·할아버지는 어른 칩(adultLookRows),
  * 형제·친구는 아이 칩(CHILD_LOOK_ROWS_ALL)을 쓰므로 아이 쪽 칸(items)도 받는다.
+ * 반려견은 PetLooks 칸과 메모만 쓴다.
  */
-export type FamilyLooks = ParentLooks & {
-  /** 늘 지니는 것(형제·친구 — 아이 칩) */
-  items?: string[];
-};
+export type FamilyLooks = ParentLooks &
+  PetLooks & {
+    /** 늘 지니는 것(형제·친구 — 아이 칩) */
+    items?: string[];
+  };
 
 /** 그린 그림 한 벌 — 투명 PNG(화면용)와 흰 바탕 JPEG(AI 참고용). 둘 다 cafe24 https 주소. */
 export type FamilyPortrait = {
@@ -259,16 +282,22 @@ export const ROLE_LABEL: Record<FamilyRole, string> = {
   grandpa: "할아버지",
   sibling: "형제자매",
   friend: "친구",
+  pet: "반려견",
 };
 
 /** 단짝 친구를 화면에 부를 때(타일·칸 제목). 호칭(callName)은 그대로 '친구'다 — 이야기 인물 열쇠라서. */
 export const BEST_FRIEND_LABEL = "단짝 친구";
 
+/** 반려견을 화면에 부를 때(칸 제목·버튼) */
+export const PET_LABEL = "반려견";
+/** 반려견의 호칭(callName) — 화면에는 이름이 서고, 이야기에는 '콩이(우리 강아지)'로 간다(family-cast). */
+export const PET_CALL_NAME = "강아지";
+
 /**
  * 역할 순서 — 고르기 타일·추가 시트·목록·확인 화면 모두 이 순서(사장님 2026-09-28).
- * 단짝 친구는 맨 끝, 가족과 떨어진 자리.
+ * 단짝 친구는 가족 끝, 가족과 떨어진 자리. 반려견은 그 뒤 따로.
  */
-export const ROLE_ORDER: readonly FamilyRole[] = ["child", "mom", "dad", "sibling", "grandma", "grandpa", "friend"];
+export const ROLE_ORDER: readonly FamilyRole[] = ["child", "mom", "dad", "sibling", "grandma", "grandpa", "friend", "pet"];
 
 /** ROLE_ORDER 로 줄 세우기 — 같은 역할끼리는 원래 순서를 지킨다(더한 순서). */
 export function byRoleOrder<T extends Pick<FamilyMember, "role">>(members: readonly T[]): T[] {
@@ -288,6 +317,7 @@ export const CALL_NAMES: Partial<Record<FamilyRole, string[]>> = {
   grandpa: ["할아버지", "외할아버지", "친할아버지"],
   sibling: ["형", "오빠", "누나", "언니", "남동생", "여동생"],
   friend: ["친구"],
+  pet: [PET_CALL_NAME],
 };
 
 /** 형제 호칭 → 성별 */
@@ -309,10 +339,30 @@ export function isKidRole(role: FamilyRole): boolean {
 
 /** 단짝 친구는 한 명뿐 */
 export const FRIEND_LIMIT = 1;
+/** 반려견은 두 마리까지(사장님 2026-11-06) */
+export const PET_LIMIT = 2;
 
 /** 빠지지 않은 사람 — 뺀 사람(inactive)은 가족 화면에 회색으로만 남고 동화·홈 사진·명패·숫자에서 빠진다. */
 export function isActive(m: Pick<FamilyMember, "inactive">): boolean {
   return m.inactive !== true;
+}
+
+/** 반려견인가 */
+export function isPet(m: Pick<FamilyMember, "role"> | null | undefined): boolean {
+  return m?.role === "pet";
+}
+
+/**
+ * 그림으로 고정할 수 있는 역할인가 — 반려견은 아직 아니다(1차는 특징만, 사장님 2026-11-06 "칸+특징 먼저").
+ * 가족 화면의 그리기 대상과 그리기 서버(api/family/portrait)가 같이 본다 — 서버가 반려견 그리기 요청을 받지 않게.
+ */
+export function canDrawRole(role: FamilyRole): boolean {
+  return role !== "pet";
+}
+
+/** 지금 반려견(뺀 반려견 빼고) — 만들기 화면 '우리 강아지 불러오기' 칩 */
+export function activePets(family: readonly FamilyMember[] | undefined): FamilyMember[] {
+  return (family ?? []).filter((m) => m.role === "pet" && isActive(m));
 }
 
 /** 단짝 친구(없으면 undefined) — 뺀 친구는 빼고. 옛 목록에 친구가 여럿이면 첫 사람. */
@@ -321,7 +371,7 @@ export function bestFriend(family: readonly FamilyMember[] | undefined): FamilyM
 }
 
 /**
- * 이 역할을 더 넣을 수 있나 — 아이·엄마·아빠는 한 명, 단짝 친구도 한 명, 그 밖은 식구 수 상한까지.
+ * 이 역할을 더 넣을 수 있나 — 아이·엄마·아빠는 한 명, 단짝 친구도 한 명, 반려견은 두 마리, 그 밖은 식구 수 상한까지.
  * (옛 목록에 친구가 여럿이어도 지우지 않는다 — 쿠키 내고 그린 그림이 있을 수 있다. 더하기만 막는다.)
  * 뺀 단짝 친구는 세지 않는다(새 친구를 넣을 수 있다 — 뺀 친구를 다시 넣을 때 가족 화면이 한 명인지 다시 본다).
  * 엄마·아빠는 뺐어도 센다 — id 가 하나뿐이라 새로 넣지 않고 회색 카드를 다시 넣는다.
@@ -331,6 +381,7 @@ export function canAddRole(family: readonly FamilyMember[] | undefined, role: Fa
   if (fam.length >= FAMILY_MAX_MEMBERS) return false;
   if (FIXED_ID_ROLES.includes(role)) return !fam.some((m) => m.role === role);
   if (role === "friend") return fam.filter((m) => m.role === "friend" && isActive(m)).length < FRIEND_LIMIT;
+  if (role === "pet") return activePets(fam).length < PET_LIMIT;
   return true;
 }
 
@@ -344,9 +395,9 @@ export function homeMembers(family: readonly FamilyMember[] | undefined): Family
   return (family ?? []).filter((m) => m.portrait && isActive(m) && showsOnHome(m));
 }
 
-/** 가족만(단짝 친구 뺌) — 가족 명패·'우리 가족 · N명' 숫자에 쓴다. */
+/** 가족만(단짝 친구·반려견 뺌) — 가족 명패·'우리 가족 · N명' 숫자에 쓴다. */
 export function familyMembersOnly(family: readonly FamilyMember[] | undefined): FamilyMember[] {
-  return (family ?? []).filter((m) => m.role !== "friend");
+  return (family ?? []).filter((m) => m.role !== "friend" && m.role !== "pet");
 }
 
 /* ─────────────────────────────── 명패 ─────────────────────────────── */
@@ -480,7 +531,7 @@ export function adultHeightCm(role: AdultRole, height?: string | null): number {
  * member.looks.height 를 쓴다. 둘 다 없으면 '보통'(예전 값 그대로 163·175·154·166).
  */
 export function heightCm(
-  member: Pick<FamilyMember, "role" | "age"> & { looks?: Pick<FamilyLooks, "height"> },
+  member: Pick<FamilyMember, "role" | "age"> & { looks?: Pick<FamilyLooks, "height" | "size"> },
   childAge?: number | null,
   height?: string | null,
 ): number {
@@ -495,7 +546,16 @@ export function heightCm(
     case "sibling":
     case "friend":
       return childHeightCm(member.age ?? childAge ?? 5);
+    case "pet":
+      return petHeightCm(member.looks?.size);
   }
+}
+
+/** 반려견 몸집 칩 → 선 키(cm, 단체 사진용 어림). 모르는 칩·빈 값은 '보통이에요'. */
+const PET_HEIGHT_CM: Readonly<Record<string, number>> = { 작아요: 28, 보통이에요: 45, 커요: 62 };
+
+export function petHeightCm(size?: string | null): number {
+  return (size ? PET_HEIGHT_CM[size] : undefined) ?? PET_HEIGHT_CM["보통이에요"];
 }
 
 /** heightCm 을 원본에서 알아서 — 엄마·아빠 키는 설정(parents), 나머지는 member.looks. */
@@ -507,9 +567,9 @@ export function heightFor(
   return heightCm(member, child?.age, h);
 }
 
-/** 단체 사진 순서 — 가운데 아이, 양옆 부모, 바깥에 조부모, 형제·친구는 아이 옆. */
+/** 단체 사진 순서 — 가운데 아이, 양옆 부모, 바깥에 조부모, 형제·친구는 아이 옆, 반려견은 맨 끝. */
 export function groupOrder(members: FamilyMember[]): FamilyMember[] {
-  const rank: Record<FamilyRole, number> = { grandpa: 0, mom: 1, sibling: 2, child: 3, friend: 4, dad: 5, grandma: 6 };
+  const rank: Record<FamilyRole, number> = { grandpa: 0, mom: 1, sibling: 2, child: 3, friend: 4, dad: 5, grandma: 6, pet: 7 };
   return [...members].sort((a, b) => rank[a.role] - rank[b.role]);
 }
 
@@ -545,9 +605,35 @@ export function lookRowsFor(role: FamilyRole): LookRow[] {
       lock: r.lock,
       ...(r.multi ? { multi: true } : {}),
     }));
+  if (role === "pet") return [...PET_LOOK_ROWS];
   if (role === "child") return [...kid(true), ...kid(false)];
   return [...kid(true), { key: "outfit", label: "옷 종류", options: KID_OUTFIT, lock: false }, ...kid(false)];
 }
+
+/**
+ * 반려견 특징 칩 줄(사장님 2026-11-06) — 반려견 시트(components/family/PetSheet)가 이 줄을 그대로 그린다.
+ * 하나씩 고르는 칩이고, 다시 누르면 지운다. 글자를 바꾸면 PET_PHRASE 도 같이 바꾼다(문장으로 풀어 동화에 간다).
+ */
+export const PET_LOOK_ROWS: readonly LookRow[] = [
+  {
+    key: "breed",
+    label: "견종",
+    options: ["말티즈", "푸들", "포메라니안", "비숑", "시츄", "치와와", "요크셔테리어", "웰시코기", "시바견", "진돗개", "골든 리트리버", "믹스견"],
+    lock: true,
+  },
+  {
+    key: "furColor",
+    label: "털 색",
+    options: ["하얀색", "크림색", "갈색", "황금색", "까만색", "회색", "하양·갈색 얼룩", "하양·까만 얼룩"],
+    lock: true,
+  },
+  { key: "size", label: "몸집", options: ["작아요", "보통이에요", "커요"], lock: true },
+  { key: "coat", label: "털", options: ["곱슬곱슬해요", "길고 복슬복슬해요", "짧고 매끈해요"], lock: true },
+  { key: "ears", label: "귀", options: ["쫑긋 섰어요", "축 처졌어요"], lock: true },
+];
+
+/** 반려견 특징 칸(메모 빼고) — 저장값 정리(normalizeLooksFor)가 이 칸만 남긴다 */
+const PET_LOOK_KEYS = ["breed", "furColor", "size", "coat", "ears"] as const;
 
 /* ─────────────────────── 생김새 → 한 줄(한국어) ─────────────────────── */
 
@@ -785,6 +871,51 @@ export function familyLooksToPrompt(
   if (items.length) push(`늘 ${eulReul(items.join("·"))} 지니고 다닌다`);
   if (typeof l.note === "string" && l.note.trim()) push(l.note.trim());
   return parts.join(", ");
+}
+
+/** 반려견 칩 → 문장(동화에 간다). 모르는 글자는 '털 색은 …'처럼 칸 이름을 붙여 그대로. */
+const PET_PHRASE: Readonly<Record<(typeof PET_LOOK_KEYS)[number], Readonly<Record<string, string>>>> = {
+  breed: {},
+  furColor: {
+    하얀색: "털이 하얗다",
+    크림색: "털이 크림색이다",
+    갈색: "털이 갈색이다",
+    황금색: "털이 황금색이다",
+    까만색: "털이 까맣다",
+    회색: "털이 회색이다",
+    "하양·갈색 얼룩": "하얀 털에 갈색 얼룩이 있다",
+    "하양·까만 얼룩": "하얀 털에 까만 얼룩이 있다",
+  },
+  size: { 작아요: "몸집이 작은 강아지다", 보통이에요: "몸집이 보통인 강아지다", 커요: "몸집이 큰 강아지다" },
+  coat: { 곱슬곱슬해요: "털이 곱슬곱슬하다", "길고 복슬복슬해요": "털이 길고 복슬복슬하다", "짧고 매끈해요": "털이 짧고 매끈하다" },
+  ears: { "쫑긋 섰어요": "귀가 쫑긋 서 있다", "축 처졌어요": "귀가 축 처져 있다" },
+};
+
+/** '푸들이다' · '말티즈다' — 받침이 있으면 '이다'(한글이 아니면 '이다') */
+function copula(word: string): string {
+  return `${word}${batchimOf(word) === false ? "다" : "이다"}`;
+}
+
+/**
+ * 반려견 특징을 한 줄로(한국어) — 이야기(storyFamilyLooks)에 그대로 들어간다. 안 고른 칸은 빠진다.
+ * 칸 순서: 견종 → 털 색 → 몸집 → 털 → 귀 → 메모. 아무것도 없으면 빈 글자.
+ */
+export function petLooksToPrompt(l: FamilyLooks | undefined): string {
+  if (!l) return "";
+  const parts: string[] = [];
+  for (const k of PET_LOOK_KEYS) {
+    const v = typeof l[k] === "string" ? (l[k] as string).trim() : "";
+    if (!v) continue;
+    if (k === "breed") parts.push(`견종은 ${copula(v)}`);
+    else parts.push(PET_PHRASE[k][v] ?? `${PET_LOOK_ROWS.find((r) => r.key === k)?.label ?? k}: ${v}`);
+  }
+  if (typeof l.note === "string" && l.note.trim()) parts.push(l.note.trim());
+  return parts.join(", ");
+}
+
+/** 카드 아래 짧은 요약 — '푸들 · 갈색'(견종·털 색). 없으면 빈 글자. */
+export function petSummary(l: FamilyLooks | undefined): string {
+  return [l?.breed, l?.furColor].filter((x): x is string => typeof x === "string" && x.trim() !== "").join(" · ");
 }
 
 /* ─────────────────────── '늘 그대로' 견주기(lockKey) ─────────────────────── */
@@ -1047,7 +1178,7 @@ export function lockedLooksChanged(a: FamilyLooks | undefined, b: FamilyLooks | 
 
 /* ─────────────────────────────── 정규화 ─────────────────────────────── */
 
-const ROLES: FamilyRole[] = ["child", "mom", "dad", "grandma", "grandpa", "sibling", "friend"];
+const ROLES: FamilyRole[] = ["child", "mom", "dad", "grandma", "grandpa", "sibling", "friend", "pet"];
 /**
  * 식구 수 상한 — '제한 없음'이 약속이라 넉넉히 둔다(저장 크기만 지키는 안전판). 화면(가족 더하기)도
  * 같은 값에서 막고 알린다 — 넘긴 사람이 다음 불러오기 때 그림째 말없이 잘려 나가지 않게.
@@ -1114,6 +1245,16 @@ export function normalizeLooksFor(raw: unknown, who: LookWho, noteMax = lookNote
   const v = raw as Record<string, unknown> | null | undefined;
   if (!v || typeof v !== "object") return undefined;
   const out: Record<string, unknown> = {};
+  // 반려견 — 반려견 칸과 메모만(사람 칸은 버린다). 사람에게는 반려견 칸이 LOOK_SINGLE_KEYS 에 없어서 버려진다.
+  if (who === "pet") {
+    for (const k of PET_LOOK_KEYS) {
+      const s = str(v[k], 30);
+      if (s) out[k] = s;
+    }
+    const note = str(v.note, noteMax);
+    if (note) out.note = note;
+    return Object.keys(out).length ? (out as FamilyLooks) : undefined;
+  }
   for (const k of LOOK_SINGLE_KEYS) {
     if (k === "beard" && !hasBeard(who)) continue;
     const s = str(v[k], 30);

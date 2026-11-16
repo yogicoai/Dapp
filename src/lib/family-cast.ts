@@ -25,7 +25,14 @@
  * 브라우저에서 돈다(이 기기 가족이 서버보다 새 그림을 들고 있을 수 있다). 서버는 주소만 다시 검사한다(lib/family-ref).
  * 순수 함수만 둔다 — node --test 로 시험한다(family-cast.test.ts).
  */
-import { familyLooksToPrompt, isActive, pictureDecidesLooks, type FamilyMember, type FamilyRole } from "./family.ts";
+import {
+  familyLooksToPrompt,
+  isActive,
+  petLooksToPrompt,
+  pictureDecidesLooks,
+  type FamilyMember,
+  type FamilyRole,
+} from "./family.ts";
 
 /** 인물 시트에 물릴 고정 얼굴 한 사람 */
 export type CastPortrait = {
@@ -257,10 +264,20 @@ const STORY_FAMILY_MAX = 8;
 export function storyFamilyLooks(family: readonly FamilyMember[] | undefined): StoryFamilyLook[] {
   const out: StoryFamilyLook[] = [];
   for (const m of family ?? []) {
-    if (m.role !== "grandma" && m.role !== "grandpa" && m.role !== "sibling" && m.role !== "friend") continue;
     if (!isActive(m)) continue; // 뺀 사람은 이야기에 건네지 않는다
     const call = m.callName?.trim() ?? "";
     const name = m.name?.trim() ?? "";
+    /*
+     * 반려견(사장님 2026-11-06) — '콩이(우리 강아지)'와 고른 특징 한 줄(견종·털 색 …). 1차는 그림이 없어 특징만 간다.
+     * 만들기 화면 '동물 친구랑'에서 불러오면 동행 이름이 '콩이'가 되고, 이 줄이 그 강아지의 생김새를 정한다.
+     */
+    if (m.role === "pet") {
+      const line = petLooksToPrompt(m.looks);
+      if (name && line) out.push({ who: `${name}(우리 강아지)`, line });
+      if (out.length >= STORY_FAMILY_MAX) break;
+      continue;
+    }
+    if (m.role !== "grandma" && m.role !== "grandpa" && m.role !== "sibling" && m.role !== "friend") continue;
     const who =
       m.role === "grandma" || m.role === "grandpa"
         ? call
