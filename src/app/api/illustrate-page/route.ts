@@ -58,9 +58,11 @@ import { composePortraitCard, sheetFigureMeta } from "@/lib/sheet-compose";
  * 그리는 데 20~30초가 걸린다(검사에 걸려 다시 그리면 그 두 배).
  * 이 값을 안 적으면 배포 환경의 짧은 기본값이 걸려 도중에 잘린다 — 그때 돌아오는
  * 응답은 JSON이 아니라, 부르는 쪽은 이유도 모른 채 그 쪽만 빈 채로 넘어갔다.
+ * 2026-11-17: 60초로는 '그리기 → 검사 → 다시 그리기 → 검사'가 넘쳐 504(그림 2장 못 그림)가 났다.
+ * Vercel Pro(11-12)라 300초까지 된다 — 넉넉히 300.
  */
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /*
  * 얼굴 카드 잠깐 기억 — 쪽마다(8~12번) 같은 사람의 카드를 다시 짜지 않게. 가족 그림 주소는 그릴 때마다 새 이름이라

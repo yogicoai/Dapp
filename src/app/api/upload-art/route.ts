@@ -19,7 +19,7 @@ import { ftpErrorCode, uploadToCafe24 } from "@/lib/cafe24";
  * 찾아보거나 지울 수 있다.
  */
 export const runtime = "nodejs"; // FTP는 Node 런타임에서만 된다(Edge 불가)
-export const maxDuration = 60;
+export const maxDuration = 300; // 11-17 Vercel Pro — 그림이 검사에 걸려 다시 그리면 60초를 넘는다
 
 /** 폴더·파일 이름으로 쓸 수 있게 다듬는다 — 경로 탈출(../)과 이상한 글자를 막는다. */
 function safeSegment(v: unknown, fallback: string): string {

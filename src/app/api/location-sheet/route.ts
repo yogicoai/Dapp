@@ -16,7 +16,7 @@ import { isIndoorPlace, placeVehicleKind, schoolShuttleName } from "@/lib/story-
  * 응답은 JSON이 아니라, 부르는 쪽은 이유도 모른 채 그 쪽만 빈 채로 넘어갔다.
  */
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 300; // 11-17 Vercel Pro — 그림이 검사에 걸려 다시 그리면 60초를 넘는다
 
 /**
  * 장소 시트 — 인물 시트의 장소판.
