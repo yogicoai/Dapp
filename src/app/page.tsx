@@ -34,6 +34,7 @@ import {
 import { loadLibraryAccess } from "@/lib/library-access";
 import { viewerTierOf, type MemberPlanKey } from "@/lib/member-plan";
 import { loadMyPlanKey } from "@/lib/member-plan-client";
+import { PLAN_REFRESH_EVENT } from "@/lib/billing-sync-gate";
 import { loadMyLibraryPass } from "@/lib/promo-client";
 import { libraryLock, OPEN_LIBRARY, type LibraryAccess } from "@/lib/offer-settings";
 import { markHomeReady } from "@/lib/app-intro";
@@ -240,6 +241,13 @@ export default function Home() {
   // 혜택 코드의 전체 듣기(요기보 회원 혜택 등) — 열려 있으면 책장 단계를 가족 패스로(lib/promo-client, 2026-10-22)
   const [libraryPass, setLibraryPass] = useState(false);
   const [planReady, setPlanReady] = useState(false);
+  // 구글 결제 동기화가 끝나면(다음 달 갱신·방금 산 패스) 요금제를 새로 읽는다 — 앱을 다시 열지 않아도 책장이 바뀌게(2026-11-26)
+  const [planTick, setPlanTick] = useState(0);
+  useEffect(() => {
+    const onRefresh = () => setPlanTick((n) => n + 1);
+    window.addEventListener(PLAN_REFRESH_EVENT, onRefresh);
+    return () => window.removeEventListener(PLAN_REFRESH_EVENT, onRefresh);
+  }, []);
   useEffect(() => {
     if (!memberUid) return;
     let alive = true;
@@ -252,7 +260,7 @@ export default function Home() {
     return () => {
       alive = false;
     };
-  }, [memberUid]);
+  }, [memberUid, planTick]);
   // 게스트는 "우리 가족 책장"이 로그인 안내라, 콘텐츠가 있는 서가를 먼저 보여준다.
   // 탭 순서가 우리 가족 → 세계명작 → 전래동화 가 되면서(사장님 지시) 기본도 세계명작.
   // 요금제가 없는 회원도 같다 — 빈 '우리 가족 책장'의 '첫 동화를 만들어 보세요'가 막힌 만들기로 이어졌다(2026-10-20 점검).

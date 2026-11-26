@@ -9,7 +9,7 @@
  *
  * 서버 파일(lib/google-play — 서명·열쇠)은 가져오지 않는다 — 상품 표는 lib/google-play-products 에서.
  */
-import { markPlayBuyer, registerPlaySync } from "./billing-sync-gate";
+import { PLAN_REFRESH_EVENT, markPlayBuyer, registerPlaySync } from "./billing-sync-gate";
 import { SELLING_NOW } from "./google-play-products";
 import { activePlanKey, isMemberPlanKey, type MemberPlanKey } from "./member-plan";
 import { forgetMyPlanKey } from "./member-plan-client";
@@ -234,6 +234,12 @@ function afterSync(uid: string, now: number, j: SyncBody | null): void {
   rememberSync({ uid, at: now, until: Number.isFinite(until) ? until : null });
   if (j?.active || j?.starterOwned) markPlayBuyer(uid);
   forgetMyPlanKey();
+  // 이미 그려진 책장이 요금제를 새로 읽게 알린다(홈 — app/page.tsx)
+  try {
+    window.dispatchEvent(new Event(PLAN_REFRESH_EVENT));
+  } catch {
+    /* 알림을 못 보내도 다음에 화면에 들어올 때 새로 읽는다 */
+  }
 }
 
 /**

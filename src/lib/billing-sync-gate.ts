@@ -10,6 +10,12 @@
  */
 
 const BUYER_PREFIX = "voice-storybook:play-buyer:";
+
+/**
+ * 결제 동기화가 끝났다는 알림(window 이벤트) — 홈 책장처럼 이미 그려진 화면이 요금제를 새로 읽는다.
+ * 동기화보다 먼저 그려진 화면(이 기기에서 처음 확인된 회원·오래 안 연 회원)도 앱을 다시 열지 않고 바로 바뀐다.
+ */
+export const PLAN_REFRESH_EVENT = "voice-storybook:plan-refresh";
 /** 기다리는 가장 긴 시간 — 넘으면 동기화를 기다리지 않고 지금 기록으로 그린다(동기화는 뒤에서 마저 끝난다) */
 export const SETTLE_MAX_MS = 2500;
 
