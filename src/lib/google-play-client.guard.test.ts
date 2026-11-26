@@ -115,6 +115,15 @@ describe("B3 이용권을 주는 DB 함수는 서버 열쇠가 있어야 돈다"
   });
 });
 
+describe("B3-2 구글 결제 창 앞에는 어른 확인이 있다(가족 정책)", () => {
+  const src = read("components/billing/GooglePlayBuy.tsx");
+  it("결제 단추는 어른 확인부터 — 맞혀야 결제 창(buy)", () => {
+    assert.match(src, /onClick=\{askParent\}/);
+    assert.ok(!/onClick=\{buy\}/.test(src), "결제 단추가 바로 결제 창을 열면 안 된다");
+    assert.match(src, /<ParentCheck[\s\S]*onPass=\{\(\) => \{\s*setQuestion\(null\);\s*void buy\(\);/);
+  });
+});
+
 describe("B4 요금제 화면은 앱 안에서만 구글 결제 단추를 그린다", () => {
   const plans = read("components/pay/PlansView.tsx");
   it("단추 둘(가족 패스 · 스타트팩), 둘 다 inApp 갈래 안", () => {

@@ -17,6 +17,8 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 import { BigLink, Card, CardTitle, FOCUS, LockedButton, SkeletonCard } from "@/components/pay/pay-ui";
+// 어른 확인(곱셈) — 웹 결제하기와 같은 창. 아이가 모르고 결제하지 않게 구글 결제 창 앞에 끼운다(가족 정책, 2026-11-26)
+import { ParentCheck } from "@/components/pay/ParentCheck";
 import { buyOnPlay, loadPlayStatus, type PlayStatus } from "@/lib/google-play-client";
 import { playSubscriptionsUrl } from "@/lib/google-play-products";
 import { kstDateText } from "@/lib/member-plan";
@@ -27,6 +29,12 @@ const PASS_NAME: Readonly<Record<string, string>> = {
   family_pass: "가족 패스 (월간)",
   family_pass_yearly: "가족 패스 (연간)",
 };
+
+/** 어른 확인 문제 — 웹 결제하기의 어른 확인과 같은 규칙(두 자리 12~19 × 한 자리 3~9). 시연 모듈은 결제 쪽에서 가져오지 않아 여기 둔다. */
+type ParentQuestion = { a: number; b: number };
+function newParentQuestion(): ParentQuestion {
+  return { a: 12 + Math.floor(Math.random() * 8), b: 3 + Math.floor(Math.random() * 7) };
+}
 
 /**
  * '내 결제·구독'(앱 안) — 구글 플레이로 산 것과 정기 결제 관리(해지는 플레이 스토어에서). 시연 기록 대신 이 카드를 보인다.
@@ -118,6 +126,8 @@ export function GooglePlayBuy({
   const colors = theme.colors;
   const [status, setStatus] = useState<PlayStatus | null>(null);
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
+  // 어른 확인 문제 — 결제 단추를 누르면 낸다. 맞히면 그 자리(같은 누름)에서 구글 결제 창을 연다
+  const [question, setQuestion] = useState<ParentQuestion | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -223,6 +233,7 @@ export function GooglePlayBuy({
   }
 
   const busy = phase.kind === "busy";
+  // 어른 확인을 맞힌 그 누름 안에서 부른다 — 구글 결제 창은 사용자가 누른 직후에만 열린다(그 앞에서 기다리지 않는다)
   const buy = async () => {
     if (busy) return;
     setPhase({ kind: "busy" });
@@ -230,12 +241,28 @@ export function GooglePlayBuy({
     if (r.ok) setPhase({ kind: "done", endsAt: r.endsAt });
     else setPhase(r.cancelled ? { kind: "idle" } : { kind: "error", message: r.message });
   };
+  const askParent = () => {
+    if (busy) return;
+    setQuestion(newParentQuestion());
+  };
 
   return (
     <>
+      {question && (
+        <ParentCheck
+          colors={colors}
+          question={question}
+          onPass={() => {
+            setQuestion(null);
+            void buy();
+          }}
+          onWrong={() => setQuestion(newParentQuestion())}
+          onClose={() => setQuestion(null)}
+        />
+      )}
       <button
         type="button"
-        onClick={buy}
+        onClick={askParent}
         aria-disabled={busy}
         aria-describedby={noteId}
         className={`flex min-h-[54px] w-full items-center justify-center gap-2 rounded-full px-5 text-center text-[19px] font-extrabold text-white transition active:translate-y-[3px] ${busy ? "cursor-wait opacity-80" : ""} ${FOCUS}`}
