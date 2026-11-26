@@ -9,6 +9,9 @@
  *  ③ 태블릿은 가로 — smallestScreenWidthDp ≥ 600 이면 TWA 를 가로로 연다(8판, 사장님 "태블릿 이상은 웹처럼 넓게"). 폰은 돌리는 대로.
  *  ④ 켤 때 깜빡임 없애기 — 안드로이드 12 시스템 시작 화면(작은 아이콘) → Bubblewrap 시작 그림(큰 아이콘) → 흰 바탕 순서로 번쩍였다(7판).
  *     시작 그림(splash.png)을 1×1 투명으로, 시스템 시작 화면은 검은 바탕 + 투명 아이콘으로. 이어서 사이트의 '동화 나라로 이동 중'이 뜬다.
+ *  ⑤ 구글 결제 다리 켜기(2026-11-26, 1.1.1) — Bubblewrap 틀은 DelegationService 의 enabled·exported 를 '알림 사용'(enableNotification)에
+ *     묶어 둔다. 우리는 알림을 꺼서 결제 다리까지 꺼진 채 빌드됐고(1.1.0), 크롬이 연결하지 못해 Digital Goods 가
+ *     'clientAppUnavailable'로 실패했다(앱 요금제 화면 확인 코드로 찾음). 결제를 켠 빌드는 알림과 상관없이 늘 켠다.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -150,8 +153,27 @@ function patchSplash(projectDir) {
   fs.writeFileSync(manifest, xml);
 }
 
-export function patchProject(projectDir) {
+/** ⑤ 결제 다리(DelegationService)를 알림 설정과 상관없이 켠다 — 구글 결제(Digital Goods)가 이 서비스로 크롬과 이어진다 */
+function patchDelegationService(projectDir) {
+  const manifest = path.join(projectDir, "app", "src", "main", "AndroidManifest.xml");
+  const xml = fs.readFileSync(manifest, "utf8");
+  const re = /(android:name="\.DelegationService"\s+)android:enabled="@bool\/enableNotification"(\s+)android:exported="@bool\/enableNotification"/g;
+  const hits = xml.match(re)?.length ?? 0;
+  if (hits !== 1) throw new Error(`patch-twa: DelegationService 자리를 ${hits}곳 찾았어요(1곳이어야) — Bubblewrap 틀이 바뀌었는지 보세요`);
+  fs.writeFileSync(manifest, xml.replace(re, '$1android:enabled="true"$2android:exported="true"'));
+}
+
+/** 빌드에 넣은 결제 다리가 켜져 있나(⑤ 확인용) — 매니페스트 원문에서 본다 */
+export function delegationServiceEnabled(projectDir) {
+  const xml = fs.readFileSync(path.join(projectDir, "app", "src", "main", "AndroidManifest.xml"), "utf8");
+  return /android:name="\.DelegationService"\s+android:enabled="true"\s+android:exported="true"/.test(xml);
+}
+
+export function patchProject(projectDir, { playBilling = false } = {}) {
   patchLauncher(projectDir);
   patchSplash(projectDir);
-  console.log("덧대기 끝: 카메라 자리·크롬 우선·태블릿 가로·켤 때 깜빡임");
+  if (playBilling) patchDelegationService(projectDir);
+  console.log(
+    `덧대기 끝: 카메라 자리·크롬 우선·태블릿 가로·켤 때 깜빡임${playBilling ? "·구글 결제 다리 켜기" : ""}`,
+  );
 }

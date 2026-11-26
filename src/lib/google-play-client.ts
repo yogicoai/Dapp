@@ -9,8 +9,10 @@
  *
  * 서버 파일(lib/google-play — 서명·열쇠)은 가져오지 않는다 — 상품 표는 lib/google-play-products 에서.
  */
+import { markPlayBuyer, registerPlaySync } from "./billing-sync-gate";
 import { SELLING_NOW } from "./google-play-products";
 import { activePlanKey, isMemberPlanKey, type MemberPlanKey } from "./member-plan";
+import { forgetMyPlanKey } from "./member-plan-client";
 import { authedFetch, currentUid } from "./supabase";
 
 export const PLAY_BILLING_METHOD = "https://play.google.com/billing";
@@ -107,6 +109,8 @@ async function readStatus(): Promise<PlayStatus> {
   const j = (await r.json().catch(() => null)) as SyncBody | null;
   if (!r.ok) return unavailable(`server-${r.status}`);
   if (!j?.ready) return unavailable("server-not-ready");
+  const uid = await currentUid();
+  if (uid) afterSync(uid, Date.now(), j);
   const plan = isMemberPlanKey(j.plan) ? activePlanKey({ plan: j.plan, endsAt: typeof j.endsAt === "string" ? j.endsAt : null }, Date.now()) : null;
   return {
     kind: "ready",
@@ -179,6 +183,12 @@ export async function buyOnPlay(productId: string): Promise<BuyResult> {
     /* 네트워크 — 아래 안내. 결제는 구글에 남아 있어 다음에 이 화면을 열 때 이어 붙는다 */
   }
   await response.complete(ok ? "success" : "fail").catch(() => {});
+  if (ok) {
+    // 이 기기의 '구글로 산 회원' 표시 · 요금제 캐시 비우기 — 책장·만들기가 새로 읽을 때 방금 산 요금제로 그린다
+    const uid = await currentUid();
+    if (uid) markPlayBuyer(uid);
+    forgetMyPlanKey();
+  }
   void loadPlayStatus(true);
   if (ok) return { ok: true, plan: body?.plan ?? null, endsAt: body?.endsAt ?? null };
   return {
@@ -191,32 +201,70 @@ export async function buyOnPlay(productId: string): Promise<BuyResult> {
 const SYNC_KEY = "voice-storybook:play-sync";
 /** 앱을 켜 둔 채 다음 결제일을 넘겨도 맞추도록 — 화면을 옮길 때, 마지막으로 맞춘 지 이만큼 지났으면 다시 */
 export const SYNC_EVERY_MS = 10 * 60_000;
-let lastSync: { uid: string; at: number } | null = null;
 
-/** sessionStorage 의 "회원id|시각" — 새로 고쳐도 10분 안에는 다시 부르지 않게 */
-function storedSync(): { uid: string; at: number } | null {
+/** 마지막 동기화 — 회원 · 시각 · 그때 알려진 구독 만료(그 시각이 지나면 10분을 기다리지 않고 바로 다시 — 갱신을 받아 오게) */
+type LastSync = { uid: string; at: number; until: number | null };
+let lastSync: LastSync | null = null;
+let inflight: Promise<void> | null = null;
+
+/** sessionStorage 의 "회원id|시각|만료" — 새로 고쳐도 10분 안에는 다시 부르지 않게 */
+function storedSync(): LastSync | null {
   try {
-    const [uid, at] = (window.sessionStorage.getItem(SYNC_KEY) ?? "").split("|");
-    return uid && Number.isFinite(Number(at)) ? { uid, at: Number(at) } : null;
+    const [uid, at, until] = (window.sessionStorage.getItem(SYNC_KEY) ?? "").split("|");
+    const a = Number(at);
+    const u = until ? Number(until) : NaN;
+    return uid && Number.isFinite(a) ? { uid, at: a, until: Number.isFinite(u) ? u : null } : null;
   } catch {
     return null;
   }
 }
 
-/**
- * 이 회원의 구글 결제를 서버가 다시 맞춘다(다음 달 결제·해지·환불, 연간 패스의 새 달 몫) — 앱을 연 뒤 첫 화면,
- * 그 뒤로는 화면을 옮길 때 10분에 한 번. 로그인 전이면 아무것도 안 한다(로그인한 뒤 화면을 옮기면 그때 한다).
- */
-export async function syncPlaySoon(now = Date.now()): Promise<void> {
-  const uid = await currentUid();
-  if (!uid) return;
-  const prev = lastSync?.uid === uid ? lastSync : storedSync();
-  if (prev && prev.uid === uid && now - prev.at < SYNC_EVERY_MS) return;
-  lastSync = { uid, at: now };
+function rememberSync(s: LastSync): void {
+  lastSync = s;
   try {
-    window.sessionStorage.setItem(SYNC_KEY, `${uid}|${now}`);
+    window.sessionStorage.setItem(SYNC_KEY, `${s.uid}|${s.at}|${s.until ?? ""}`);
   } catch {
     /* 저장소가 막힌 브라우저 — 이 창 안에서만 기억한다(위 lastSync) */
   }
-  await authedFetch("/api/billing/google/sync", { method: "POST", headers: JSON_HEADERS, body: "{}" }).catch(() => {});
 }
+
+/** 동기화 답을 받은 뒤 — 다음 만료 기억 · 이 기기의 '구글로 산 회원' 표시 · 요금제 캐시 비우기(다음에 읽을 때 새로) */
+function afterSync(uid: string, now: number, j: SyncBody | null): void {
+  const until = j?.active?.expiresAt ? Date.parse(j.active.expiresAt) : NaN;
+  rememberSync({ uid, at: now, until: Number.isFinite(until) ? until : null });
+  if (j?.active || j?.starterOwned) markPlayBuyer(uid);
+  forgetMyPlanKey();
+}
+
+/**
+ * 이 회원의 구글 결제를 서버가 다시 맞춘다(다음 달 결제·해지·환불, 연간 패스의 새 달 몫) — 앱을 연 뒤 첫 화면,
+ * 그 뒤로는 화면을 옮길 때 10분에 한 번, 알던 만료가 지났으면 바로. 로그인 전이면 아무것도 안 한다.
+ * 이미 도는 중이면 그 동기화를 같이 기다린다(책장·만들기 화면이 lib/billing-sync-gate 로 끝나기를 기다린다).
+ */
+export function syncPlaySoon(now = Date.now()): Promise<void> {
+  if (inflight) return inflight;
+  inflight = (async () => {
+    const uid = await currentUid();
+    if (!uid) return;
+    const prev = lastSync?.uid === uid ? lastSync : storedSync();
+    const known = prev && prev.uid === uid ? prev : null;
+    if (known && now - known.at < SYNC_EVERY_MS && (known.until === null || now < known.until)) return;
+    // 먼저 적어 둔다 — 실패해도 화면을 옮길 때마다 다시 부르지 않게
+    rememberSync({ uid, at: now, until: known?.until ?? null });
+    let j: SyncBody | null = null;
+    try {
+      const r = await authedFetch("/api/billing/google/sync", { method: "POST", headers: JSON_HEADERS, body: "{}" });
+      j = (await r.json().catch(() => null)) as SyncBody | null;
+      if (!r.ok || !j?.ready) return;
+    } catch {
+      return;
+    }
+    afterSync(uid, now, j);
+  })().finally(() => {
+    inflight = null;
+  });
+  return inflight;
+}
+
+// 책장·만들기 화면이 읽기 전에 기다릴 수 있게 등록한다(lib/billing-sync-gate)
+registerPlaySync(() => syncPlaySoon());

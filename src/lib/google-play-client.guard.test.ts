@@ -44,13 +44,30 @@ describe("B1 화면 쪽은 우리 서버 두 경로만 부르고 비밀·서버 
       assert.ok(!/from\s+["'](@\/lib\/|\.\/)google-play-(server|env)(\.ts)?["']/.test(src), `${f}: 서버 파일을 가져온다`);
     });
   }
-  it("구매 토큰은 서버(verify)로 바로 보낸다 — sessionStorage 에는 동기화 표시(회원 id|시각)만", () => {
+  it("구매 토큰은 서버(verify)로 바로 보낸다 — sessionStorage 에는 동기화 표시(회원 id|시각|만료)만", () => {
     const src = read("lib/google-play-client.ts");
     const writes = [...src.matchAll(/sessionStorage\.setItem\(([^)]*)\)/g)].map((m) => m[1]);
-    assert.deepEqual(writes, ["SYNC_KEY, `${uid}|${now}`"]);
+    assert.deepEqual(writes, ['SYNC_KEY, `${s.uid}|${s.at}|${s.until ?? ""}`']);
     assert.match(src, /"\/api\/billing\/google\/verify"[\s\S]*purchaseToken: token/);
     assert.match(src, /supportedMethods: PLAY_BILLING_METHOD/);
     assert.match(src, /PLAY_BILLING_METHOD = "https:\/\/play\.google\.com\/billing"/);
+  });
+});
+
+describe("B1-2 '먼저 맞추기' 문(billing-sync-gate)은 표시 하나만 두고 서버·결제에 닿지 않는다", () => {
+  const src = read("lib/billing-sync-gate.ts");
+  it("localStorage 에는 회원마다 '1' 표시만", () => {
+    const writes = [...src.matchAll(/localStorage\.setItem\(([^)]*)\)/g)].map((m) => m[1]);
+    assert.deepEqual(writes, ['BUYER_PREFIX + uid, "1"']);
+  });
+  it("서버 경로·토큰·비밀 값이 없고 아무것도 가져오지 않는다", () => {
+    for (const w of ["/api/", "purchaseToken", "fetch(", "SERVICE_ROLE", ".rpc("]) assert.ok(!src.includes(w), `금지 글자 "${w}"`);
+    assert.ok(!/^\s*import\s/m.test(src), "import 없음");
+  });
+  it("책장(요금제)·남은 동화 읽기가 읽기 전에 기다린다", () => {
+    assert.match(read("lib/member-plan-client.ts"), /await settlePlaySync\(uid\);[\s\S]*from\("member_plans"\)/);
+    assert.match(read("lib/member-credits-client.ts"), /await settlePlaySync\(uid\);/);
+    assert.match(read("lib/google-play-client.ts"), /registerPlaySync\(\(\) => syncPlaySoon\(\)\);/);
   });
 });
 

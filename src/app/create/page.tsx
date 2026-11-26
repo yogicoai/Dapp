@@ -4375,13 +4375,13 @@ export default function CreatePage() {
         */}
         {chargeAsk === "script" && (
           <ChargeConfirm
-            title={useBookCredit && !resumePlot ? "남은 동화 1권으로 만들어요" : `토큰 ${scriptCost}개가 나가요`}
+            title={useBookCredit && !resumePlot ? "새로 만들 수 있는 동화 1권을 써요" : `토큰 ${scriptCost}개가 나가요`}
             lines={
               useBookCredit && !resumePlot
                 ? [
                     "줄거리를 짓고 대본까지 한 번에 써요.",
-                    `남은 동화 1권(가족 패스 이번 달 몫·동화 크레딧)을 쓰고, 이 동화 한 권 값(대본 ${scriptCost}개${IMAGES_ENABLED ? ` + 그림 ${imageCost}개` : ""} 토큰)을 채워 드려요.`,
-                    `남은 동화 ${bookCredits}권 · 내 잔액 ${tokens}개`,
+                    `새로 만들 수 있는 동화 1권(가족 패스 이번 달 몫·동화 크레딧)을 쓰고, 이 동화 한 권 값(대본 ${scriptCost}개${IMAGES_ENABLED ? ` + 그림 ${imageCost}개` : ""} 토큰)을 채워 드려요.`,
+                    `새로 만들 수 있는 동화 ${bookCredits}권 남음 · 내 잔액 ${tokens}개`,
                   ]
                 : [
                     resumePlot
@@ -4856,7 +4856,7 @@ export default function CreatePage() {
                     {master
                       ? "관리자는 토큰이 들지 않아요."
                       : useBookCredit && !resumePlot
-                        ? `남은 동화가 ${bookCredits}권 있어요 — 이 동화에 1권을 쓰고, 대본·그림 값을 채워 드려요.`
+                        ? `새로 만들 수 있는 동화가 ${bookCredits}권 남았어요 — 이 동화에 1권을 쓰고, 대본·그림 값을 채워 드려요.`
                         : `지금은 대본 값 ${scriptCost}개만 나가요 (내 잔액 ${tokens}개).`}
                     {IMAGES_ENABLED && !master && !(useBookCredit && !resumePlot) && ` 그림 값 ${imageCost}개는 대본을 읽어 본 뒤 그릴 때 내요.`}
                   </span>

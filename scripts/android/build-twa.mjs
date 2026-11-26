@@ -170,7 +170,7 @@ const NO_SIGN = process.argv.includes("--no-sign");
 if (!SIGN_ONLY) await generate();
 if (!GENERATE_ONLY) {
   if (!SIGN_ONLY) {
-    patchProject(PROJECT);
+    patchProject(PROJECT, { playBilling: PLAY_BILLING });
     gradle(["bundleRelease", "assembleRelease"]);
   }
   if (!NO_SIGN) signOutputs(keyPassword());

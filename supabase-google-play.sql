@@ -474,6 +474,8 @@ declare
   v_sub      uuid;
   v_status   text;
   v_okey     text;
+  v_target   timestamptz;
+  v_longer   boolean;
   v_paid     boolean := coalesce(p_paid, false) and coalesce(p_entitled, false);
 begin
   if not public.billing_server_ok(p_key) then
@@ -562,19 +564,36 @@ begin
      where s.owner = v_uid and s.product_id = 'starter_pack' and s.granted)
     into v_starter;
 
-  -- (3) 요금제(member_plans) — 만드는 허가와 책장 단계
+  -- (3) 요금제(member_plans) — 만드는 허가와 책장 단계.
+  -- 자동 갱신 중(결제됨)이면 구글 만료보다 3일 여유를 둔다(2026-11-26): 다음 달 결제를 우리 서버가 받기 전(앱을 열어
+  -- 동기화하기 전)에 책장·만들기가 잠기지 않게. 갱신이 안 되면(보류·만료·환불) 다음 동기화가 바로 끝낸다(아래 갈래).
+  -- 해지 예약(자동 갱신 꺼짐)은 여유 없이 결제한 기간 끝까지.
+  v_target := case when p_entitled and coalesce(p_auto_renew, false) and p_state = 'SUBSCRIPTION_STATE_ACTIVE'
+                   then p_expires_at + interval '3 days' else p_expires_at end;
+  -- 이 회원의 더 오래 가는 다른 구글 구독이 살아 있나(그쪽이 요금제를 맡는다)
+  select exists (
+    select 1 from public.google_play_purchases o
+     where o.owner = v_uid and o.purchase_token <> p_token and o.kind = 'subscription' and o.replaced_by is null
+       and o.expires_at > coalesce(p_expires_at, now())
+       and o.state in ('SUBSCRIPTION_STATE_ACTIVE','SUBSCRIPTION_STATE_IN_GRACE_PERIOD','SUBSCRIPTION_STATE_CANCELED'))
+    into v_longer;
   select * into cur from public.member_plans where owner = v_uid for update;
   had := found;
   v_live := had and (cur.ends_at is null or cur.ends_at > now());
   if p_entitled then
-    if v_live and cur.plan in ('monthly','yearly') and (cur.ends_at is null or cur.ends_at > p_expires_at) then
-      null;  -- 더 오래 가는 패스(관리자가 준 끝없는 패스 포함)가 살아 있으면 그대로 둔다
-    elsif not had or cur.plan <> v_plan or cur.ends_at is distinct from p_expires_at then
+    if v_live and cur.plan in ('monthly','yearly') and coalesce(cur.set_by_username, '') <> '구글 결제'
+       and (cur.ends_at is null or cur.ends_at > v_target) then
+      null;  -- 관리자가 준 더 오래 가는 패스(끝없는 패스 포함)는 그대로 둔다
+    elsif v_longer then
+      null;  -- 더 오래 가는 다른 구글 구독이 요금제를 맡는다
+    elsif not had or cur.plan <> v_plan or cur.ends_at is distinct from v_target then
       v_change := true;
       v_new_plan := v_plan;
-      v_new_ends := p_expires_at;
+      v_new_ends := v_target;
       v_note := '구글 결제 — ' || v_label ||
-                case when v_live and cur.plan = v_plan then ' 다음 기간' else ' 시작' end;
+                case when not (v_live and cur.plan = v_plan) then ' 시작'
+                     when not coalesce(p_auto_renew, false) then ' 해지 예약(결제한 기간 끝까지)'
+                     else ' 다음 기간' end;
     end if;
   elsif not v_other and had and cur.set_by is null and cur.set_by_username = '구글 결제' and cur.plan = v_plan then
     -- 이 구독으로 준 요금제 — 끝낸다(만료·환불·보류). 스타트팩을 산 적이 있으면 스타트팩으로 돌아간다.
