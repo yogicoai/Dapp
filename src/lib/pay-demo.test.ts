@@ -47,7 +47,7 @@ const NOW = new Date(2026, 8, 30, 10, 0, 0);
 const OID = "DEMO-20260930-7K2Q9X";
 
 function pending(over: Partial<DemoPending> = {}): DemoPending {
-  return { orderId: OID, plan: "monthly", method: "card", amountWon: 19_900, at: NOW.toISOString(), ...over };
+  return { orderId: OID, plan: "monthly", method: "card", amountWon: 9_900, at: NOW.toISOString(), ...over };
 }
 function state(over: Partial<DemoState> = {}): DemoState {
   return { v: 1, pending: null, pass: null, starter: null, credits: 0, receipts: [], ...over };
@@ -134,8 +134,8 @@ describe("동의", () => {
   it("구독과 추가 3권의 문구가 다르다", () => {
     assert.match(CONSENTS[0].label(PLANS.monthly), /자동 결제/);
     assert.doesNotMatch(CONSENTS[0].label(PLANS.extra3), /자동 결제/);
-    assert.ok(CONSENTS[0].sheetBody(PLANS.monthly).join(" ").includes("19,900원"));
-    assert.ok(CONSENTS[0].sheetBody(PLANS.yearly).join(" ").includes("199,000원"));
+    assert.ok(CONSENTS[0].sheetBody(PLANS.monthly).join(" ").includes("9,900원"));
+    assert.ok(CONSENTS[0].sheetBody(PLANS.yearly).join(" ").includes("99,000원"));
     assert.ok(CONSENTS[0].sheetBody(PLANS.extra3).join(" ").includes("9,900원"));
   });
   it("스타트팩·크레딧 — 한 번 결제, 크레딧은 '쓰기 시작하면'으로", () => {
@@ -239,10 +239,10 @@ describe("applyDemoOrder", () => {
     assert.equal(s.pass?.booksLeft, 4);
     assert.equal(formatDateKo(new Date(s.pass?.nextBillingAt ?? "")), "2026. 10. 30.");
     assert.equal(s.receipts.length, 1);
-    assert.equal(s.receipts[0].amountWon, 19_900);
+    assert.equal(s.receipts[0].amountWon, 9_900);
   });
   it("연간 — 다음 결제일 한 해 뒤", () => {
-    const s = applyDemoOrder(state({ pending: pending({ plan: "yearly", amountWon: 199_000 }) }), NOW);
+    const s = applyDemoOrder(state({ pending: pending({ plan: "yearly", amountWon: 99_000 }) }), NOW);
     assert.equal(s.pass?.plan, "yearly");
     assert.equal(formatDateKo(new Date(s.pass?.nextBillingAt ?? "")), "2027. 9. 30.");
   });
@@ -253,7 +253,7 @@ describe("applyDemoOrder", () => {
       yearly: { ...DEFAULT_PLAN_TERMS.yearly, booksPerMonth: 8 },
     };
     assert.equal(applyDemoOrder(state({ pending: pending() }), NOW, terms).pass?.booksLeft, 6);
-    const y = applyDemoOrder(state({ pending: pending({ plan: "yearly", amountWon: 199_000 }) }), NOW, terms);
+    const y = applyDemoOrder(state({ pending: pending({ plan: "yearly", amountWon: 99_000 }) }), NOW, terms);
     assert.equal(y.pass?.booksLeft, 8);
   });
   it("가족 패스 없이 추가 3권 → 아무것도 바뀌지 않음", () => {
@@ -384,7 +384,7 @@ describe("스타트팩 · 크레딧 시연 결제(2026-10-02)", () => {
     const at = NOW.toISOString();
     assert.equal(receiptName({ orderId: CID, plan: "credit", amountWon: 9_900, method: "card", at, credits: 105 }), "105크레딧");
     assert.equal(receiptName({ orderId: OID, plan: "starter", amountWon: 4_900, method: "card", at }), "스타트팩");
-    assert.equal(receiptName({ orderId: OID, plan: "monthly", amountWon: 19_900, method: "card", at }), "가족 패스 (월간)");
+    assert.equal(receiptName({ orderId: OID, plan: "monthly", amountWon: 9_900, method: "card", at }), "가족 패스 (월간)");
     assert.equal(plansOf(DEFAULT_PLAN_TERMS).credit.name, "50크레딧");
   });
 });

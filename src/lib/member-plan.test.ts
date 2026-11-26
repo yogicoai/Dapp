@@ -96,8 +96,8 @@ describe("요금제의 몫 — 관리실 요금제 값에서", () => {
   it("고르는 칸 설명", () => {
     // 목소리 칸 — 부모 목소리를 닫아 둔 동안은 'AI 성우 목소리 N명 추가'(사장님 2026-10-19)
     const v = (n: number) => (PARENT_VOICE_OPEN ? `가족 목소리 ${n}명` : `AI 성우 목소리 ${n}명 추가`);
-    assert.equal(planSummary("monthly", DEFAULT_PLAN_TERMS), `매달 동화 4권 · 가족 캐릭터 4명 · ${v(1)} · 월 19,900원`);
-    assert.equal(planSummary("yearly", DEFAULT_PLAN_TERMS), `매달 동화 4권 · 가족 캐릭터 6명 · ${v(2)} · 연 199,000원`);
+    assert.equal(planSummary("monthly", DEFAULT_PLAN_TERMS), `매달 동화 4권 · 가족 캐릭터 4명 · ${v(1)} · 월 9,900원`);
+    assert.equal(planSummary("yearly", DEFAULT_PLAN_TERMS), `매달 동화 4권 · 가족 캐릭터 6명 · ${v(2)} · 연 99,000원`);
     assert.equal(planSummary("starter", DEFAULT_PLAN_TERMS), `동화 1권 · 가족 캐릭터 1명 · ${v(1)} · 4,900원`);
     if (!PARENT_VOICE_OPEN) assert.ok(!["monthly", "yearly", "starter"].some((k) => planSummary(k as "monthly", DEFAULT_PLAN_TERMS).includes("가족 목소리")));
     assert.match(planSummary("free", DEFAULT_PLAN_TERMS), /무료/);

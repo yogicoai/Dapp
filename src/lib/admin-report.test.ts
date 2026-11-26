@@ -53,7 +53,7 @@ describe("보고 화면 내용", () => {
     assert.ok(r.banner.join(" ").includes("지워요"));
     assert.equal(r.source, "db");
     const all = JSON.stringify(r);
-    assert.ok(all.includes("월 19,900원"));
+    assert.ok(all.includes("월 9,900원"));
     assert.ok(all.includes("지금 가입하면 200토큰(동화 약 16권치)"));
   });
 
@@ -61,12 +61,12 @@ describe("보고 화면 내용", () => {
     const profitRow = (r: ReturnType<typeof buildAdminReport>) =>
       r.sections.find((s) => s.id === "profit")?.tables?.[0].rows[0] ?? [];
     const base = profitRow(buildAdminReport(DEFAULT_OFFER_VIEW, app, "db"));
-    assert.equal(base[3], "11,127원 (64%)"); // 웹(1차 출시) 칸이 먼저
-    assert.equal(base[4], "9,157원 (60%)");
-    assert.equal(base[5], "8명 / 10명");
+    assert.equal(base[3], "2,410원 (28%)"); // 웹(1차 출시) 칸이 먼저 — 2026-11-26 월 9,900원
+    assert.equal(base[4], "1,430원 (19%)");
+    assert.equal(base[5], "36명 / 60명");
     const cheaper = {
       ...DEFAULT_OFFER_VIEW,
-      plans: { ...DEFAULT_PLAN_TERMS, monthly: { ...DEFAULT_PLAN_TERMS.monthly, priceWon: 12_900 } },
+      plans: { ...DEFAULT_PLAN_TERMS, monthly: { ...DEFAULT_PLAN_TERMS.monthly, priceWon: 7_900 } },
     };
     assert.notDeepEqual(profitRow(buildAdminReport(cheaper, app, "db")), base);
   });

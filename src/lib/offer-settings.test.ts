@@ -326,8 +326,8 @@ describe("이력 글", () => {
 
 describe("요금제 값(가족 패스 월간·연간 · 스타트팩) — 관리실에서 바꾼다(2026-10-02)", () => {
   it("기본값은 plans.ts 의 확정안과 같다", () => {
-    assert.equal(DEFAULT_PLAN_TERMS.monthly.priceWon, 19_900);
-    assert.equal(DEFAULT_PLAN_TERMS.yearly.priceWon, 199_000);
+    assert.equal(DEFAULT_PLAN_TERMS.monthly.priceWon, 9_900);
+    assert.equal(DEFAULT_PLAN_TERMS.yearly.priceWon, 99_000);
     assert.equal(DEFAULT_PLAN_TERMS.monthly.familyCharacters, PASS.familyCharacters);
     assert.equal(DEFAULT_PLAN_TERMS.yearly.familyCharacters, PASS_YEARLY.familyCharacters);
     assert.equal(DEFAULT_PLAN_TERMS.yearly.voices, PASS_YEARLY.voices);
@@ -388,7 +388,7 @@ describe("요금제 값(가족 패스 월간·연간 · 스타트팩) — 관리
     after.yearly.familyCharacters = 8;
     after.starter.books = 2;
     assert.deepEqual(describeOfferChange("plan_settings", {}, after, CAT), [
-      "가족 패스(월간) 값(부가세 포함): 19,900원 → 17,900원",
+      "가족 패스(월간) 값(부가세 포함): 9,900원 → 17,900원",
       "가족 패스(연간) 가족 캐릭터: 6명 → 8명",
       "스타트팩 동화 만들기: 1권 → 2권",
     ]);

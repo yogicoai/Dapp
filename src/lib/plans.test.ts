@@ -54,8 +54,8 @@ const ymd = (d: Date | null) => (d ? [d.getFullYear(), d.getMonth() + 1, d.getDa
 
 describe("요금제 값 — 권고안 4장 구조 + 사장님 최종안(2026-10-01 가족 패스 월 19,900원)", () => {
   it("가격(부가세 포함)", () => {
-    assert.equal(PLANS.monthly.priceWon, 19_900);
-    assert.equal(PLANS.yearly.priceWon, 199_000);
+    assert.equal(PLANS.monthly.priceWon, 9_900);
+    assert.equal(PLANS.yearly.priceWon, 99_000);
     assert.equal(PLANS.extra3.priceWon, 9_900);
     assert.equal(STARTER.priceWon, 4_900);
   });
@@ -168,14 +168,14 @@ describe("글자 도우미", () => {
   });
 
   it("연간 월 환산 · 할인율은 계산해서", () => {
-    assert.equal(monthlyEquivalent(PLANS.yearly), 16583);
-    assert.equal(monthlyEquivalent(PLANS.monthly), 19900);
+    assert.equal(monthlyEquivalent(PLANS.yearly), 8250);
+    assert.equal(monthlyEquivalent(PLANS.monthly), 9900);
     assert.equal(yearlyDiscountPct(), 17);
   });
 
   it("priceLabel", () => {
-    assert.equal(priceLabel(PLANS.monthly), "월 19,900원");
-    assert.equal(priceLabel(PLANS.yearly), "연 199,000원");
+    assert.equal(priceLabel(PLANS.monthly), "월 9,900원");
+    assert.equal(priceLabel(PLANS.yearly), "연 99,000원");
     assert.equal(priceLabel(PLANS.extra3), "9,900원");
   });
 

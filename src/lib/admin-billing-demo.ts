@@ -197,7 +197,7 @@ export function demoBilling(now: Date): BillingDemoData {
     refund("02", "demo-p06", 4_900, "withdrawn", "잘못 누른 줄 알았는데 쓰신다고 하셔서 요청을 거뒀어요.", at(4, 10, 0), {
       processed: at(4, 10, 20), by: "시연관리자", note: "고객이 계속 쓰기로 함",
     }),
-    refund("03", "demo-p09", 12_900, "failed", "결제일을 착각하셨다고 해요.", at(15, 13, 0), {
+    refund("03", "demo-p09", PLANS.monthly.priceWon, "failed", "결제일을 착각하셨다고 해요.", at(15, 13, 0), {
       processed: at(15, 13, 1), failure: "결제사가 취소를 받지 않았어요(시연).",
     }),
     refund("04", "demo-p08", PLANS.monthly.priceWon, "done", "결제 뒤 7일 안에 한 권도 만들지 않으셨어요.", at(19, 10, 40), {

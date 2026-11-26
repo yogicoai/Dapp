@@ -29,6 +29,6 @@ describe("약관 세 문서의 준비된 초안 — 관리실 '준비된 초안 
     assert.match(LEGAL_DRAFTS.terms.body, /산 날부터 1년입니다/);
     assert.match(LEGAL_DRAFTS.terms.body, /유효기간이 끝나기 30일 전부터/);
     assert.match(LEGAL_DRAFTS.privacy.body, /Supabase Inc\. \(서버: 일본 도쿄\)/);
-    assert.match(LEGAL_DRAFTS.refund.body, /139,300원 환불/);
+    assert.match(LEGAL_DRAFTS.refund.body, /69,300원 환불/);
   });
 });
