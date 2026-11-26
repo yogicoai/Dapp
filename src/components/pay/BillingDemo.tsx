@@ -19,6 +19,8 @@ import { LockIcon } from "@/components/family/icons";
 import { TopBar } from "@/components/family/ui";
 import { loadSession } from "@/lib/auth";
 import { PAY_DEMO, clearDemoState, readDemoState, receiptName, type DemoState } from "@/lib/pay-demo";
+import { useAppShell } from "@/lib/app-shell-client";
+import { GooglePlayManageCard } from "@/components/billing/GooglePlayBuy";
 import {
   CREDIT_EXTRAS_TEXT,
   DEFAULT_PLAN_TERMS,
@@ -54,6 +56,7 @@ export function BillingDemo({ terms = DEFAULT_PLAN_TERMS }: { terms?: PlanTerms 
   const { theme } = useTheme();
   const colors = theme.colors;
   const [view, setView] = useState<View>({ kind: "loading" });
+  const inApp = useAppShell() === "android";
 
   useEffect(() => {
     let alive = true;
@@ -95,6 +98,17 @@ export function BillingDemo({ terms = DEFAULT_PLAN_TERMS }: { terms?: PlanTerms 
     return (
       <PayShell>
         <LoginCard colors={colors} then="설정 › 내 결제·구독" />
+      </PayShell>
+    );
+  }
+  // 안드로이드 앱 안 — 시연 기록 대신 구글 플레이로 산 것과 정기 결제 관리(2026-11-26 구글 결제 1단계)
+  if (inApp) {
+    return (
+      <PayShell>
+        {top}
+        <h1 className="sr-only">내 결제·구독</h1>
+        <GooglePlayManageCard />
+        <SiteFooter compact />
       </PayShell>
     );
   }

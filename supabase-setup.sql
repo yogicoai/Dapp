@@ -957,6 +957,7 @@ revoke insert, update, delete, truncate on public.story_charges from anon, authe
 --   rewrites 이 줄거리로 다시 쓴 횟수
 --   tokens   남은 잔액
 drop function if exists public.charge_story(text, integer, integer);
+-- ⚠ 2026-11-26 새 판은 supabase-google-play.sql(가족 패스 이번 달 몫을 먼저 쓴다) — 이 판으로 다시 돌렸다면 그 파일도 한 번 더.
 create or replace function public.charge_story(
   p_outline_key text,
   p_pages integer,
@@ -1053,6 +1054,7 @@ grant execute on function public.charge_story(text, integer, integer, boolean) t
 
 -- 대본 만들기가 실패했을 때 되돌린다 — 토큰도, '값 냈다'는 기록도.
 -- 기록을 안 지우면 다음 시도가 '다시 쓰기'로 세어져 공짜 횟수를 헛되이 깎는다.
+-- ⚠ 2026-11-26 새 판은 supabase-google-play.sql(가족 패스 이번 달 몫을 먼저 쓴다) — 이 판으로 다시 돌렸다면 그 파일도 한 번 더.
 create or replace function public.refund_story(p_entry uuid, p_outline_key text)
 returns integer
 language plpgsql security definer
@@ -2947,6 +2949,7 @@ revoke all on public.family_draw_grants from anon, authenticated;
 alter table public.family_portraits add column if not exists last_free boolean not null default false;
 
 
+-- ⚠ 2026-11-26 새 판은 supabase-google-play.sql(가족 패스 이번 달 몫을 먼저 쓴다) — 이 판으로 다시 돌렸다면 그 파일도 한 번 더.
 create or replace function public.family_portrait_undo(p_owner uuid, p_member text)
 returns boolean
 language plpgsql security definer
@@ -2999,6 +3002,7 @@ revoke all on function public.family_portrait_undo(uuid, text) from public, anon
 --   price  실제 값(cost)이 p_expected 보다 크다. cost · draws · tokens.
 -- 90초가 지나도 건네지 않은 앞 그리기는 서버가 이미 끝난 것이다(경로 제한 60초) — 먼저 되돌리고 새로 받는다.
 -- 잔액이 모자라면 spend_tokens 가 22003('토큰이 부족합니다.')으로 던진다 — 그러면 줄도 셈도 그대로다.
+-- ⚠ 2026-11-26 새 판은 supabase-google-play.sql(가족 패스 이번 달 몫을 먼저 쓴다) — 이 판으로 다시 돌렸다면 그 파일도 한 번 더.
 create or replace function public.charge_family_portrait(p_member text, p_expected integer default null)
 returns json
 language plpgsql security definer

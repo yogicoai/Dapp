@@ -40,6 +40,13 @@ function arg(name, fallback) {
 const VERSION_CODE = Number(arg("version-code", "10")); // 시험판(1~8)보다 크게 — 같은 기기에 옛 시험판이 깔려 있어도 헷갈리지 않게
 const VERSION_NAME = arg("version-name", "1.0.0");
 const GENERATE_ONLY = process.argv.includes("--generate-only");
+/**
+ * 구글 플레이 결제(2026-11-26 연동 시작) — 1.1.0(코드 11)부터 켠다. 끄려면 --no-play-billing.
+ * Bubblewrap playBilling: androidbrowserhelper billing 라이브러리 + PaymentActivity·PaymentService +
+ * DelegationService 의 DigitalGoodsRequestHandler — 사이트(앱 안)가 Digital Goods API·Payment Request 로 구글 결제를 부른다.
+ * 결제 권한이 든 앱 파일을 한 번 올려야 플레이 콘솔에서 상품(구독·단품)을 만들 수 있다.
+ */
+const PLAY_BILLING = !process.argv.includes("--no-play-billing") && VERSION_CODE >= 11;
 
 /** 키 비밀번호 — 키-정보.txt 의 '저장소·키 비밀번호(같음): …' 줄. 화면·로그에 찍지 않는다. */
 function keyPassword() {
@@ -92,6 +99,7 @@ async function generate() {
   twa.shortcuts = [];
   twa.generatorApp = "maeum-build-twa";
   twa.fullScopeUrl = new URL(`${SITE}/`);
+  twa.features = { ...(twa.features ?? {}), playBilling: { enabled: PLAY_BILLING } };
   const v = twa.validate?.();
   if (v) throw new Error(`앱 설정이 맞지 않아요: ${v}`);
   fs.rmSync(PROJECT, { recursive: true, force: true });
@@ -100,7 +108,7 @@ async function generate() {
   fs.writeFileSync(path.join(PROJECT, "twa-manifest.json"), JSON.stringify(twa.toJson(), null, 2));
   // Gradle 데몬이 폴더를 잡지 않게
   fs.appendFileSync(path.join(PROJECT, "gradle.properties"), "\norg.gradle.daemon=false\n");
-  console.log(`틀을 만들었어요: ${PROJECT} (versionCode ${VERSION_CODE}, ${VERSION_NAME})`);
+  console.log(`틀을 만들었어요: ${PROJECT} (versionCode ${VERSION_CODE}, ${VERSION_NAME}, 구글 결제 ${PLAY_BILLING ? "켬" : "끔"})`);
 }
 
 /**

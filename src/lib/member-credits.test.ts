@@ -4,9 +4,11 @@ import assert from "node:assert/strict";
 import {
   creditsFromRow,
   creditText,
+  creditsLeftFromRow,
   freeLeftFromRow,
   mergedCreditLog,
   parseCreditGrantBody,
+  passLeftFromRow,
   type MemberCreditsResponse,
 } from "./member-credits.ts";
 
@@ -64,6 +66,18 @@ describe("보상 크레딧 — DB 답 읽기", () => {
     assert.equal(freeLeftFromRow({ free_left: "2" }), 2);
     assert.equal(freeLeftFromRow({ free_left: 0.5 }), 0);
     assert.equal(freeLeftFromRow(null), 0);
+  });
+  it("가족 패스 이번 달 몫 — 그 달이 지나면 0, 화면 수는 몫 + 크레딧", () => {
+    const now = Date.parse("2026-12-01T00:00:00Z");
+    const live = { free_left: 1, pass_left: 4, pass_until: "2026-12-26T00:00:00Z" };
+    assert.equal(passLeftFromRow(live, now), 4);
+    assert.equal(creditsLeftFromRow(live, now), 5);
+    const gone = { ...live, pass_until: "2026-11-30T23:59:59Z" };
+    assert.equal(passLeftFromRow(gone, now), 0);
+    assert.equal(creditsLeftFromRow(gone, now), 1, "지난 몫은 넘어가지 않는다");
+    assert.equal(passLeftFromRow({ free_left: 2 }, now), 0, "칸이 없는 옛 DB");
+    assert.equal(passLeftFromRow({ pass_left: 3, pass_until: null }, now), 0);
+    assert.equal(passLeftFromRow(null, now), 0);
   });
   it("두 가지 기록을 최근 것부터 한 줄로", () => {
     const r: MemberCreditsResponse = {

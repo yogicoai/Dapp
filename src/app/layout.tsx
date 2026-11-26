@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Dongle, Gaegu, Gowun_Dodum, Jua, Nanum_Pen_Script } from "next/font/google";
 import { AppIntro } from "@/components/AppIntro";
 import { AppShellMark } from "@/components/AppShellMark";
+import { BillingSync } from "@/components/BillingSync";
 import { ZoomLock } from "@/components/ZoomLock";
 import { ConsentGate } from "@/components/ConsentGate";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -76,6 +77,8 @@ export default function RootLayout({
           {children}
           {/* 로그인 직후 한 번 — 약관·개인정보·보호자 동의(lib/consent, 사장님 2026-10-19) */}
           <ConsentGate />
+          {/* 로그인한 뒤 한 번 — 구글 플레이로 산 가족 패스의 다음 달 결제·해지·새 달 몫을 맞춘다(lib/google-play-client) */}
+          <BillingSync />
           <AppShellMark />
           {/* 확대 막기 — PC Ctrl+휠·키보드, 아이폰 두 손가락(손가락 확대는 globals.css touch-action) */}
           <ZoomLock />

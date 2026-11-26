@@ -104,6 +104,23 @@ export function freeLeftFromRow(raw: unknown): number {
   return Number.isInteger(n) && n > 0 ? n : 0;
 }
 
+/**
+ * 가족 패스의 '이번 달 몫'(pass_left — 구글 결제, supabase-google-play.sql) — 그 달(pass_until)이 지났으면 0.
+ * 남은 몫은 다음 달로 넘어가지 않는다. 서버(charge_story · charge_family_portrait)도 같은 셈으로 몫부터 쓴다.
+ */
+export function passLeftFromRow(raw: unknown, now: number): number {
+  if (!raw || typeof raw !== "object") return 0;
+  const r = raw as Record<string, unknown>;
+  const n = Number(r.pass_left);
+  const until = typeof r.pass_until === "string" ? Date.parse(r.pass_until) : NaN;
+  return Number.isInteger(n) && n > 0 && Number.isFinite(until) && until > now ? n : 0;
+}
+
+/** 화면에 보이는 남은 수 = 이번 달 몫 + 따로 받은 크레딧 — 서버가 '쓸 수 있다'고 보는 수와 같다 */
+export function creditsLeftFromRow(raw: unknown, now: number): number {
+  return freeLeftFromRow(raw) + passLeftFromRow(raw, now);
+}
+
 /** 두 가지 기록을 한 줄로(최근 것부터) — 관리실 카드의 '더해 준 기록' */
 export function mergedCreditLog(r: MemberCreditsResponse): (CreditGrant & { kind: CreditKind })[] {
   return CREDIT_KINDS.flatMap((kind) => r[kind].log.map((g) => ({ ...g, kind })))

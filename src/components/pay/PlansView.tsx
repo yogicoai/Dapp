@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 import { PAY_DEMO, checkoutHref } from "@/lib/pay-demo";
 import { useAppShell } from "@/lib/app-shell-client";
+import { GooglePlayBuy } from "@/components/billing/GooglePlayBuy";
 import {
   CREDIT_USE_LABEL,
   CUSTOMER_CREDIT_USES,
@@ -58,7 +59,8 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW, siteInfo }: { offer?: Of
   const { theme } = useTheme();
   const colors = theme.colors;
   const [period, setPeriod] = useState<Period>("monthly");
-  // 안드로이드 앱 안에서는 웹 결제(시연·KG)로 데려가지 않는다 — 구글 플레이 정책(lib/app-shell). 앱 결제를 붙이기 전까지는 잠근다.
+  // 안드로이드 앱 안에서는 웹 결제(시연·KG)로 데려가지 않는다 — 구글 플레이 정책(lib/app-shell).
+  // 앱 안의 결제 단추는 구글 플레이 결제(components/billing/GooglePlayBuy, 2026-11-26) — 결제 다리가 없는 옛 앱이면 지금처럼 잠긴다.
   const inApp = useAppShell() === "android";
   const demoPay = PAY_DEMO !== "off" && !inApp;
   // 값·구성은 관리실 요금제 값(offer.plans) — 연간 할인율도 그 값으로 계산한다(싸지 않으면 할인 꼬리표를 감춘다)
@@ -81,7 +83,7 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW, siteInfo }: { offer?: Of
           <br />
           {READ_ALOUD_VOICE}로 들려주세요.
         </p>
-        {PLANS_PREVIEW_NOTE && (
+        {PLANS_PREVIEW_NOTE && !inApp && (
           <p className="mt-3 break-keep rounded-2xl bg-neutral-100 px-4 py-2 text-xs font-bold leading-snug text-neutral-600">
             {PLANS_PREVIEW_NOTE}
           </p>
@@ -159,27 +161,42 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW, siteInfo }: { offer?: Of
         <div className="px-5 pb-5 pt-4">
           {/* 연간은 가족 캐릭터·가족 목소리가 더 많다 — 고른 주기의 구성을 보여 준다(바뀐 값은 위 가격 줄이 알린다) */}
           <CheckList items={passFeaturesFor(period, offer)} />
-          <div className="mt-5">
-            {!demoPay ? (
-              <LockedButton describedBy="pass-soon">결제는 곧 열려요</LockedButton>
-            ) : (
-              <BigLink href={checkoutHref(period)} colors={colors}>
-                가족 패스 시작하기
-              </BigLink>
-            )}
-          </div>
-          <p id="pass-soon" className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
-            {!demoPay ? (
-              inApp ? "곧 앱에서 바로 결제할 수 있어요." : "결제는 곧 열려요. 열리면 여기서 바로 시작할 수 있어요."
-            ) : (
-              <>
-                {/* 시연 스위치가 켜져 있는 동안은 누구나 이 단추로 시연 결제를 지난다 — 누르기 전에 알린다. */}
-                <span className="font-extrabold text-amber-800">지금은 시연 결제로 이어져요 · 실제로 결제되지 않아요</span>
-                <br />
-                결제 전에 로그인이 필요해요
-              </>
-            )}
-          </p>
+          {inApp ? (
+            <div className="mt-5">
+              {/* 고른 주기의 구독 상품(월간 family_pass · 연간 family_pass_yearly) — key 로 주기를 바꾸면 단추를 새로 그린다 */}
+              <GooglePlayBuy
+                key={period}
+                product={period === "yearly" ? "family_pass_yearly" : "family_pass"}
+                label="가족 패스 시작하기"
+                soonNote="곧 앱에서 바로 결제할 수 있어요."
+                noteId="pass-soon"
+              />
+            </div>
+          ) : (
+            <>
+              <div className="mt-5">
+                {!demoPay ? (
+                  <LockedButton describedBy="pass-soon">결제는 곧 열려요</LockedButton>
+                ) : (
+                  <BigLink href={checkoutHref(period)} colors={colors}>
+                    가족 패스 시작하기
+                  </BigLink>
+                )}
+              </div>
+              <p id="pass-soon" className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
+                {!demoPay ? (
+                  "결제는 곧 열려요. 열리면 여기서 바로 시작할 수 있어요."
+                ) : (
+                  <>
+                    {/* 시연 스위치가 켜져 있는 동안은 누구나 이 단추로 시연 결제를 지난다 — 누르기 전에 알린다. */}
+                    <span className="font-extrabold text-amber-800">지금은 시연 결제로 이어져요 · 실제로 결제되지 않아요</span>
+                    <br />
+                    결제 전에 로그인이 필요해요
+                  </>
+                )}
+              </p>
+            </>
+          )}
         </div>
       </section>
 
@@ -195,21 +212,34 @@ export function PlansView({ offer = DEFAULT_OFFER_VIEW, siteInfo }: { offer?: Of
           처음이라면 우리 아이 동화 한 권부터 만들어 보세요.
         </p>
         <CheckList items={starterFeatures(offer)} />
-        <div className="mt-5">
-          {!demoPay ? (
-            <LockedButton describedBy="starter-soon">곧 열려요</LockedButton>
-          ) : (
-            <BigLink href={checkoutHref("starter")} colors={colors}>
-              스타트팩으로 시작하기
-            </BigLink>
-          )}
-        </div>
-        {!demoPay ? (
-          <p id="starter-soon" className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
-            스타트팩은 결제가 열리면 살 수 있어요.
-          </p>
+        {inApp ? (
+          <div className="mt-5">
+            <GooglePlayBuy
+              product="starter_pack"
+              label="스타트팩으로 시작하기"
+              soonNote="스타트팩은 결제가 열리면 살 수 있어요."
+              noteId="starter-soon"
+            />
+          </div>
         ) : (
-          <DemoPayNote />
+          <>
+            <div className="mt-5">
+              {!demoPay ? (
+                <LockedButton describedBy="starter-soon">곧 열려요</LockedButton>
+              ) : (
+                <BigLink href={checkoutHref("starter")} colors={colors}>
+                  스타트팩으로 시작하기
+                </BigLink>
+              )}
+            </div>
+            {!demoPay ? (
+              <p id="starter-soon" className="mt-3 break-keep text-center text-xs font-semibold leading-relaxed text-neutral-500">
+                스타트팩은 결제가 열리면 살 수 있어요.
+              </p>
+            ) : (
+              <DemoPayNote />
+            )}
+          </>
         )}
       </Card>
 

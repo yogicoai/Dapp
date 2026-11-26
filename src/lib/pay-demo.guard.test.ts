@@ -70,6 +70,9 @@ const ALLOWED = new Set([
   // 안드로이드 앱(TWA) 안이면 웹 결제로 데려가지 않으려고 '앱 안인가'만 읽는다 — 주소·referrer·sessionStorage 만 보고
   // 아무것도 보내지 않는다(구글 플레이 정책, 2026-10-20)
   "@/lib/app-shell-client",
+  // 앱 안 요금제 화면의 구글 플레이 결제 단추(2026-11-26) — 진짜 결제 길은 이 파일(components/billing)과
+  // lib/google-play-client 에만 있고, 그 모양은 google-play-client.guard.test 가 따로 지킨다. 시연 파일은 이 단추를 그리기만 한다.
+  "@/components/billing/GooglePlayBuy",
 ]);
 const IMPORT_RE = /\bfrom\s*["']([^"']+)["']|\bimport\s*\(\s*["']([^"']+)["']\s*\)|\bimport\s+["']([^"']+)["']/g;
 
