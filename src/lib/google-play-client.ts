@@ -22,23 +22,34 @@ type DigitalGoodsService = {
   listPurchases(): Promise<PurchaseDetails[]>;
 };
 
-/** 구글 결제 다리 — 앱 밖이거나 옛 앱이면 null */
-async function playService(): Promise<DigitalGoodsService | null> {
-  if (typeof window === "undefined" || typeof window.PaymentRequest === "undefined") return null;
+/** 오류에서 짧은 까닭만(이름·글 앞부분) — 확인 코드로 보인다. 구매 토큰 같은 값은 여기 오지 않는다 */
+function why(e: unknown): string {
+  const x = e as { name?: unknown; message?: unknown } | null;
+  const name = typeof x?.name === "string" ? x.name : "Error";
+  const msg = typeof x?.message === "string" ? x.message.replace(/\s+/g, " ").slice(0, 80) : "";
+  return msg ? `${name}: ${msg}` : name;
+}
+
+/** 구글 결제 다리 — 앱 밖이거나 옛 앱이면 왜 없는지(확인 코드) */
+async function playService(): Promise<DigitalGoodsService | string> {
+  if (typeof window === "undefined" || typeof window.PaymentRequest === "undefined") return "no-payment-request";
   const w = window as unknown as { getDigitalGoodsService?: (method: string) => Promise<DigitalGoodsService> };
-  if (typeof w.getDigitalGoodsService !== "function") return null;
+  if (typeof w.getDigitalGoodsService !== "function") return "no-digital-goods";
   try {
     return await w.getDigitalGoodsService(PLAY_BILLING_METHOD);
-  } catch {
-    return null;
+  } catch (e) {
+    return `no-service (${why(e)})`;
   }
 }
 
 export type PlayActive = { productId: string; expiresAt: string; autoRenew: boolean; canceled: boolean };
 
 export type PlayStatus =
-  /** 결제 다리가 없거나(웹·옛 앱) 상품을 못 찾았거나 서버가 결제 준비 전 */
-  | { kind: "unavailable" }
+  /**
+   * 결제 다리가 없거나(웹·옛 앱) 상품을 못 찾았거나 서버가 결제 준비 전.
+   * reason 은 확인 코드 — 앱 화면 '곧 열려요' 아래에 작게 보인다(무엇이 막았는지 사장님이 캡처로 알려 주게, 2026-11-26).
+   */
+  | { kind: "unavailable"; reason: string }
   /** 살 수 있지만 로그인부터 */
   | { kind: "login" }
   | {
@@ -52,7 +63,7 @@ export type PlayStatus =
       packageName: string;
     };
 
-const UNAVAILABLE: PlayStatus = { kind: "unavailable" };
+const unavailable = (reason: string): PlayStatus => ({ kind: "unavailable", reason });
 const JSON_HEADERS = { "content-type": "application/json" };
 
 type SyncBody = {
@@ -66,14 +77,14 @@ type SyncBody = {
 
 async function readStatus(): Promise<PlayStatus> {
   const svc = await playService();
-  if (!svc) return UNAVAILABLE;
+  if (typeof svc === "string") return unavailable(svc);
   let items: string[] = [];
   try {
     items = (await svc.getDetails([...SELLING_NOW])).map((d) => d.itemId).filter((id) => SELLING_NOW.includes(id));
-  } catch {
-    return UNAVAILABLE;
+  } catch (e) {
+    return unavailable(`details (${why(e)})`);
   }
-  if (items.length === 0) return UNAVAILABLE;
+  if (items.length === 0) return unavailable("no-items");
   if (!(await currentUid())) return { kind: "login" };
 
   // 플레이가 아는 내 구매를 함께 보낸다 — 다른 기기에서 샀거나 확인이 끊긴 결제를 이 계정에 이어 붙인다
@@ -83,13 +94,19 @@ async function readStatus(): Promise<PlayStatus> {
   } catch {
     /* 목록을 못 읽어도 서버에 적힌 것으로 맞춘다 */
   }
-  const r = await authedFetch("/api/billing/google/sync", {
-    method: "POST",
-    headers: JSON_HEADERS,
-    body: JSON.stringify({ purchases: purchases.map((p) => ({ productId: p.itemId, purchaseToken: p.purchaseToken })) }),
-  });
+  let r: Response;
+  try {
+    r = await authedFetch("/api/billing/google/sync", {
+      method: "POST",
+      headers: JSON_HEADERS,
+      body: JSON.stringify({ purchases: purchases.map((p) => ({ productId: p.itemId, purchaseToken: p.purchaseToken })) }),
+    });
+  } catch (e) {
+    return unavailable(`network (${why(e)})`);
+  }
   const j = (await r.json().catch(() => null)) as SyncBody | null;
-  if (!r.ok || !j?.ready) return UNAVAILABLE;
+  if (!r.ok) return unavailable(`server-${r.status}`);
+  if (!j?.ready) return unavailable("server-not-ready");
   const plan = isMemberPlanKey(j.plan) ? activePlanKey({ plan: j.plan, endsAt: typeof j.endsAt === "string" ? j.endsAt : null }, Date.now()) : null;
   return {
     kind: "ready",
@@ -110,7 +127,7 @@ const STATUS_TTL_MS = 60_000;
 export function loadPlayStatus(force = false): Promise<PlayStatus> {
   const now = Date.now();
   if (!loading || force || now - loading.at > STATUS_TTL_MS) {
-    loading = { at: now, status: readStatus().catch(() => UNAVAILABLE) };
+    loading = { at: now, status: readStatus().catch((e: unknown) => unavailable(`error (${why(e)})`)) };
   }
   return loading.status;
 }

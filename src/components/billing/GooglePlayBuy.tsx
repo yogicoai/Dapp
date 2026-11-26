@@ -147,10 +147,13 @@ export function GooglePlayBuy({
   }
 
   if (status.kind === "unavailable" || (status.kind === "ready" && !status.items.includes(product))) {
+    // 확인 코드 — 결제를 못 여는 까닭(결제 다리·상품·서버). 사장님이 캡처로 알려 주면 어디를 고칠지 바로 안다(2026-11-26)
+    const code = status.kind === "unavailable" ? status.reason : `no-item ${product}`;
     return (
       <>
         <LockedButton describedBy={noteId}>{isPass ? "결제는 곧 열려요" : "곧 열려요"}</LockedButton>
         {note(soonNote)}
+        <p className="mt-1 break-all text-center text-[10px] font-medium leading-snug text-neutral-400">확인 코드: {code}</p>
       </>
     );
   }

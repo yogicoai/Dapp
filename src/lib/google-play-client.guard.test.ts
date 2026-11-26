@@ -16,7 +16,13 @@ const read = (rel: string) => readFileSync(new URL(rel, SRC), "utf8");
 
 const CLIENT_FILES = ["components/billing/GooglePlayBuy.tsx", "lib/google-play-client.ts", "components/BillingSync.tsx"];
 const ROUTES = ["app/api/billing/google/verify/route.ts", "app/api/billing/google/sync/route.ts"];
-const SERVER_FILES = [...ROUTES, "lib/google-play-server.ts", "lib/google-play-env.ts", "lib/google-play.ts"];
+const SERVER_FILES = [
+  ...ROUTES,
+  "app/api/billing/google/status/route.ts",
+  "lib/google-play-server.ts",
+  "lib/google-play-env.ts",
+  "lib/google-play.ts",
+];
 
 describe("B0 파일이 제자리에 있다", () => {
   it("화면·서버 파일", () => {
